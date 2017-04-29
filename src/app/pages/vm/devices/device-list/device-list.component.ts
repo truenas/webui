@@ -66,6 +66,23 @@ export class DeviceListComponent {
     return actions;
   }
 
+  getActions(row) {
+    let actions = [];
+    actions.push({
+        label: "Edit",
+        onClick: (row) => {
+            //console.log(row);
+            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm, "edit", row.id, row.dtype]));
+        }
+    });
+    actions.push({
+        label: "Delete",
+        onClick: (row) => {
+            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm, "delete", row.id]));
+        },
+    });
+    return actions;
+  }
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
