@@ -89,6 +89,14 @@ export const PAGES_MENU = [
     order: 0,
     children: [
       {
+        path: ['network', 'configuration'],
+        title: 'Configuration',
+        icon: 'ion-settings',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
+      {
         path: ['network', 'interfaces'],
         title: 'Interfaces',
         icon: 'ion-network',
