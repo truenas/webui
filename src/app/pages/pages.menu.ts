@@ -46,6 +46,14 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
+      {
+        path: ['system', 'certificates'],
+        title: 'Certificates',
+        icon: 'ion-ios-locked',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
     ]
   },
   {
