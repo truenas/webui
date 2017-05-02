@@ -10,6 +10,7 @@ import { routing }       from './jails.routing';
 
 import { JailListComponent } from './jail-list/';
 import { JailAddComponent } from './jail-add/';
+import { JailEditComponent } from './jail-edit/';
 
 @NgModule({
 	imports: [
@@ -25,6 +26,7 @@ import { JailAddComponent } from './jail-add/';
 	declarations: [
 		JailListComponent,
 		JailAddComponent,
+		JailEditComponent,
 	],
 	providers: [
 	]

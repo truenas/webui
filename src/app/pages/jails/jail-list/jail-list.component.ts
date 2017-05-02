@@ -36,6 +36,7 @@ export class JailListComponent {
         id: "edit",
         label: "Edit",
         onClick: (row) => {
+          this.router.navigate(new Array('/pages').concat(["jails", "edit", row.id]));
         }
     });
     actions.push({
