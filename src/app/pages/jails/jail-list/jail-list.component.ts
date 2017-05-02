@@ -62,6 +62,7 @@ export class JailListComponent {
     actions.push({
         label: "Delete",
         onClick: (row) => {
+          this.router.navigate(new Array('/pages').concat(["jails", "delete", row.id]));
         }
     });
     return actions;
