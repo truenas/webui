@@ -6,6 +6,7 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 
 export const routes: Routes = [
-  { path: '', component: JailListComponent, pathMatch: 'full' },
+  { path: '', component: JailListComponent, pathMatch: 'full' },  
+  { path: 'add', component: JailAddComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

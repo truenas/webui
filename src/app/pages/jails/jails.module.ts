@@ -9,6 +9,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { routing }       from './jails.routing';
 
 import { JailListComponent } from './jail-list/';
+import { JailAddComponent } from './jail-add/';
 
 @NgModule({
 	imports: [
@@ -23,6 +24,7 @@ import { JailListComponent } from './jail-list/';
 	],
 	declarations: [
 		JailListComponent,
+		JailAddComponent,
 	],
 	providers: [
 	]
