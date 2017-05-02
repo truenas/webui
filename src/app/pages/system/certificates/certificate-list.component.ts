@@ -14,7 +14,30 @@ import { EntityConfigComponent } from '../../common/entity/entity-config/';
 })
 
 export class CertificateListComponent {
+
+  protected resource_name: string = 'system/certificate';
+  protected route_add: string[] = ['certificate', 'add'];
+  protected route_edit: string[] = ['certificate', 'edit'];
+  protected route_delete: string[] = ['certificate', 'delete'];
+
+  private busy: Subscription;
+
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
 
   }
+
+  public columns:Array<any> = [
+    {title: 'Name', name: 'cert_name'},
+    {title: 'Issuer', name: 'cert_issuer'},
+    {title: 'Internal' name: 'cert_type_internal'},
+    {title: 'Lifetime', name: 'cert_lifetime'},
+    {title: 'From', name: 'cert_from'},
+    {title: 'Until', name: 'cert_from'},
+  ];
+
+  public config: any = {
+      paging: true,
+      sorting: {columns: this.columns},
+  }
+
 }
