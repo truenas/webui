@@ -189,7 +189,7 @@ export const PAGES_MENU = [
         order: 0
       },
       {
-        path: ['vm', 'Jail'],
+        path: ['jails'],
         title: 'Jails',
         icon: 'ion-social-freebsd-devil',
         selected: false,
