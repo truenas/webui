@@ -8,13 +8,9 @@ import { NgUploaderModule } from 'ngx-uploader';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { CommonFormComponent } from '../common/form/';
-import { routing } from './system.routing';
+import { routing } from './network.routing';
 
-import { AdvancedComponent } from './advanced/';
-import { EmailComponent } from './email/';
-import { GeneralComponent, ConfigSaveComponent, ConfigUploadComponent, ConfigResetComponent } from './general/';
-import { UpdateComponent } from './update/';
-import { CertificateListComponent } from './certificates/';
+import { ConfigurationComponent } from './configuration/';
 
 @NgModule({
   imports: [
@@ -30,16 +26,9 @@ import { CertificateListComponent } from './certificates/';
   ],
   declarations: [
     CommonFormComponent,
-    AdvancedComponent,
-    EmailComponent,
-    GeneralComponent,
-    ConfigSaveComponent,
-    ConfigUploadComponent,
-    ConfigResetComponent,
-    UpdateComponent,
-    CertificateListComponent
+    ConfigurationComponent,
   ],
   providers: [
   ]
 })
-export class SystemModule { }
+export class NetworkModule { }

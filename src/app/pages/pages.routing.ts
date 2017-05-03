@@ -20,7 +20,7 @@ export const routes: Routes = [
       { path: 'system', loadChildren: 'app/pages/system/system.module#SystemModule' },
       { path: 'users', loadChildren: 'app/pages/users/users.module#UsersModule' },
       { path: 'groups', loadChildren: 'app/pages/groups/groups.module#GroupsModule' },
-      { path: 'network/interfaces', loadChildren: 'app/pages/interfaces/interfaces.module#InterfacesModule' },
+      { path: 'network', loadChildren: 'app/pages/network/network.module#NetworkModule' },
       { path: 'storage/volumes', loadChildren: 'app/pages/storage/volumes/volumes.module#VolumesModule' },
       { path: 'storage/snapshots', loadChildren: 'app/pages/storage/snapshots/snapshots.module#SnapshotsModule' },
       { path: 'sharing/afp', loadChildren: 'app/pages/sharing/afp/afp.module#AFPModule' },
@@ -28,6 +28,7 @@ export const routes: Routes = [
       { path: 'sharing/smb', loadChildren: 'app/pages/sharing/smb/smb.module#SMBModule' },
       { path: 'services', loadChildren: 'app/pages/services/services.module#ServicesModule' },
       { path: 'vm', loadChildren: 'app/pages/vm/vm.module#VmModule' },
+      { path: 'jails', loadChildren: 'app/pages/jails/jails.module#JailsModule'},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ]
   },

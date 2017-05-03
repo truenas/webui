@@ -46,6 +46,14 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
+      {
+        path: ['system', 'certificates'],
+        title: 'Certificates',
+        icon: 'ion-ios-locked',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
     ]
   },
   {
@@ -80,6 +88,14 @@ export const PAGES_MENU = [
     expanded: false,
     order: 0,
     children: [
+      {
+        path: ['network', 'configuration'],
+        title: 'Configuration',
+        icon: 'ion-settings',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
       {
         path: ['network', 'interfaces'],
         title: 'Interfaces',
@@ -173,7 +189,7 @@ export const PAGES_MENU = [
         order: 0
       },
       {
-        path: ['vm', 'Jail'],
+        path: ['jails'],
         title: 'Jails',
         icon: 'ion-social-freebsd-devil',
         selected: false,
