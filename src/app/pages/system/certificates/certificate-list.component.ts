@@ -29,7 +29,7 @@ export class CertificateListComponent {
   public columns:Array<any> = [
     {title: 'Name', name: 'cert_name'},
     {title: 'Issuer', name: 'cert_issuer'},
-    {title: 'Internal' name: 'cert_type_internal'},
+    {title: 'Internal', name: 'cert_type_internal'},
     {title: 'Lifetime', name: 'cert_lifetime'},
     {title: 'From', name: 'cert_from'},
     {title: 'Until', name: 'cert_from'},
