@@ -28,8 +28,8 @@ On some Operating Systems it is quickest to install npm > 3 first then install n
 Checkout FreeNAS git repository:
 
 ```sh
-$ git clone https://github.com/freenas/freenas.git
-$ cd freenas/webui
+$ git clone https://github.com/freenas/webui.git
+$ cd webui
 ```
 
 Install npm packages:
