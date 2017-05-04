@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector, Input, OnInit, QueryList, ViewChil
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DynamicFormControlModel, DynamicFormService } from '@ng2-dynamic-forms/core';
+import { Location } from '@angular/common';
 
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
@@ -26,13 +27,17 @@ export class EntityAddComponent implements OnInit {
 
   private busy: Subscription;
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected location: Location) {
 
   }
 
   ngOnInit() {
     this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     this.conf.afterInit(this);
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   onSubmit() {
