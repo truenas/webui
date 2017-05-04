@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { DynamicFormControlModel, DynamicFormService } from '@ng2-dynamic-forms/core';
 import { RestService, WebSocketService } from '../../../../services/';
+import { Location } from '@angular/common';
 
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../utils';
@@ -30,7 +31,7 @@ export class EntityEditComponent implements OnInit, OnDestroy {
   public error: string;
   public data: Object = {};
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef) {
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected location: Location) {
 
   }
 
@@ -54,8 +55,8 @@ export class EntityEditComponent implements OnInit, OnDestroy {
     this.conf.afterInit(this);
   }
 
-  gotoDelete() {
-    this.router.navigate(new Array('/pages').concat(this.conf.route_delete).concat(this.pk));
+  goBack() {
+    this.location.back();
   }
 
   onSubmit() {
