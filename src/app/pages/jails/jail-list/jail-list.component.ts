@@ -45,65 +45,65 @@ export class JailListComponent {
   }
 
   getActions(row) {
-    let actions = [];
-    actions.push({
+    return [
+      {
         id: "edit",
         label: "Edit",
         onClick: (row) => {
           this.router.navigate(new Array('/pages').concat(["jails", "edit", row.id]));
         }
-    });
-    actions.push({
+      },
+      {
         label: "Add Storage",
         onClick: (row) => {
         }
-    });
-    actions.push({
-      id: "start",
-      label: "Start",
-      onClick: (row) => {
-        this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/start/', {
-        }).subscribe((res) => {
-          row.jail_status = 'Running';
-        }, (res) => {
-          console.log(res);
-        });
+      },
+      {
+        id: "start",
+        label: "Start",
+        onClick: (row) => {
+          this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/start/', {
+          }).subscribe((res) => {
+            row.jail_status = 'Running';
+          }, (res) => {
+            console.log(res);
+          });
+        }
+      },
+      {
+        id: "stop",
+        label: "Stop",
+        onClick: (row) => {
+          this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/stop/', {
+          }).subscribe((res) => {
+            row.jail_status = 'Stopped';
+          }, (res) => {
+            console.log(res);
+          });
+        }
+      },
+      {
+        label: "Restart",
+        onClick: (row) => {
+          this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/restart/', {
+          }).subscribe((res) => {
+            row.jail_status = 'Running';
+          }, (res) => {
+            console.log(res);
+          });
+        }
+      },
+      {
+        label: "Shell",
+        onClick: (row) => {
+        }
+      },
+      {
+        label: "Delete",
+        onClick: (row) => {
+          this.router.navigate(new Array('/pages').concat(["jails", "delete", row.id]));
+        }
       }
-    },
-    {
-      id: "stop",
-      label: "Stop",
-      onClick: (row) => {
-        this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/stop/', {
-        }).subscribe((res) => {
-          row.jail_status = 'Stopped';
-        }, (res) => {
-          console.log(res);
-        });
-      }
-    },
-    {
-      label: "Restart",
-      onClick: (row) => {
-        this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/restart/', {
-        }).subscribe((res) => {
-          row.jail_status = 'Running';
-        }, (res) => {
-          console.log(res);
-        });
-      }
-    },
-    {
-      label: "Shell",
-      onClick: (row) => {
-      }
-    },
-    {
-      label: "Delete",
-      onClick: (row) => {
-        this.router.navigate(new Array('/pages').concat(["jails", "delete", row.id]));
-      }
-    }
-    return actions;
+    ]
   }
 }
