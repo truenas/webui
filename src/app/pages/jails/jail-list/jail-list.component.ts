@@ -85,6 +85,12 @@ export class JailListComponent {
     {
       label: "Restart",
       onClick: (row) => {
+        this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/restart/', {
+        }).subscribe((res) => {
+          row.jail_status = 'Running';
+        }, (res) => {
+          console.log(res);
+        });
       }
     },
     {
