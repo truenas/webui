@@ -4,6 +4,8 @@ import { GlobalState } from '../../../global.state';
 import { RestService, WebSocketService } from '../../../services/';
 import { Subscription } from 'rxjs';
 
+import { EntityListComponent } from '../../common/entity/entity-list/';
+
 @Component({
   selector: 'app-vm-list',
   template: `
@@ -17,7 +19,7 @@ export class VmListComponent {
   protected route_edit: string[] = ['vm', 'edit'];
   protected route_delete: string[] = ['vm', 'delete'];
 
-  private busy: Subscription;
+  protected entityList: EntityListComponent;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
@@ -35,6 +37,10 @@ export class VmListComponent {
     sorting: {columns: this.columns},
   };
 
+  afterInit(entityList: EntityListComponent) {
+    this.entityList = entityList;
+  }
+  
   getActions(row) {
     let actions = [];
     actions.push({
@@ -47,7 +53,7 @@ export class VmListComponent {
           } else {
             rpc = 'vm.stop';
           }
-          this.ws.call(rpc, [row.id]).subscribe((res) => {
+          this.entityList.busy = this.ws.call(rpc, [row.id]).subscribe((res) => {
             //console.log(res);
           });
         }
