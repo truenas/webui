@@ -40,6 +40,8 @@ export class JailListComponent {
       return false;
     } else if (actionId == 'stop' && row.jail_status == "Stopped") {
       return false;
+    } else if (actionId == 'restart' && row.jail_status == "Stopped") {
+      return false;
     }
     return true;
   }
@@ -83,6 +85,7 @@ export class JailListComponent {
         }
       },
       {
+        id: "restart",
         label: "Restart",
         onClick: (row) => {
           this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/restart/', {
@@ -94,11 +97,13 @@ export class JailListComponent {
         }
       },
       {
+        id: "shell",
         label: "Shell",
         onClick: (row) => {
         }
       },
       {
+        id: "delete",
         label: "Delete",
         onClick: (row) => {
           this.router.navigate(new Array('/pages').concat(["jails", "delete", row.id]));
