@@ -4,6 +4,8 @@ import { GlobalState } from '../../../global.state';
 import { RestService, WebSocketService } from '../../../services/';
 import { Subscription } from 'rxjs';
 
+import { EntityListComponent } from '../../common/entity/entity-list/';
+
 @Component({
   selector: 'app-jail-list',
   template: `
@@ -14,8 +16,7 @@ export class JailListComponent {
 
   protected resource_name: string = 'jails/jails';
   protected route_add: string[] = ['jails', 'add'];
-
-  private busy: Subscription;
+  protected entityList: EntityListComponent;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
@@ -29,6 +30,19 @@ export class JailListComponent {
     paging: true,
     sorting: {columns: this.columns},
   };
+
+  afterInit(entityList: EntityListComponent) {
+    this.entityList = entityList;
+  }
+
+  isActionVisible(actionId: string, row: any) {
+    if (actionId == 'start' && row.jail_status == "Running") {
+      return false;
+    } else if (actionId == 'stop' && row.jail_status == "Stopped") {
+      return false;
+    }
+    return true;
+  }
 
   getActions(row) {
     let actions = [];
@@ -45,26 +59,45 @@ export class JailListComponent {
         }
     });
     actions.push({
-        label: "Stop",
-        onClick: (row) => {
-        },
-    });
-    actions.push({
-        label: "Restart",
-        onClick: (row) => {
-        }
-    });
-    actions.push({
-        label: "Shell",
-        onClick: (row) => {
-        }
-    });
-    actions.push({
-        label: "Delete",
-        onClick: (row) => {
-          this.router.navigate(new Array('/pages').concat(["jails", "delete", row.id]));
-        }
-    });
+      id: "start",
+      label: "Start",
+      onClick: (row) => {
+        this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/start/', {
+        }).subscribe((res) => {
+          row.jail_status = 'Running';
+        }, (res) => {
+          console.log(res);
+        });
+      }
+    },
+    {
+      id: "stop",
+      label: "Stop",
+      onClick: (row) => {
+        this.entityList.busy = this.rest.post(this.resource_name + '/' + row.id + '/stop/', {
+        }).subscribe((res) => {
+          row.jail_status = 'Stopped';
+        }, (res) => {
+          console.log(res);
+        });
+      }
+    },
+    {
+      label: "Restart",
+      onClick: (row) => {
+      }
+    },
+    {
+      label: "Shell",
+      onClick: (row) => {
+      }
+    },
+    {
+      label: "Delete",
+      onClick: (row) => {
+        this.router.navigate(new Array('/pages').concat(["jails", "delete", row.id]));
+      }
+    }
     return actions;
   }
 }

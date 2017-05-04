@@ -10,8 +10,8 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-entity-list-actions',
   template: `
-    <span *ngFor="let action of actions">
-      <button class="btn" (click)="action.onClick(this.row)">{{ action?.label }}</button>
+    <span *ngFor="let action of entity.getActions(row)">
+      <button *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" class="btn" (click)="action.onClick(this.row)">{{ action?.label }}</button>
     </span>
   `
 })
