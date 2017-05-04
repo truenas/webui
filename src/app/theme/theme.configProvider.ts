@@ -15,25 +15,25 @@ export class BaThemeConfigProvider {
     this.basic = {
       default: '#ffffff',
       defaultText: '#ffffff',
-      border: '#dddddd',
-      borderDark: '#aaaaaa',
+      border: '#424242',
+      borderDark: '#212121',
     };
 
     // main functional color scheme
     this.colorScheme = {
-      primary: '#00abff',
-      info: '#40daf1',
-      success: '#8bd22f',
-      warning: '#e7ba08',
-      danger: '#f95372',
+      primary: '#263238',
+      info: '#95a5a6',
+      success: '#27ae60',
+      warning: '#e67e22',
+      danger: '#c0392b',
     };
 
     // dashboard colors for charts
     this.dashboardColors = {
-      blueStone: '#40daf1',
-      surfieGreen: '#00abff',
-      silverTree: '#1b70ef',
-      gossip: '#3c4eb9',
+      blueStone: '#546e7a',
+      surfieGreen: '#9ccc65',
+      silverTree: '#ecf0f1',
+      gossip: '#9b59b6',
       white: '#ffffff',
     };
 

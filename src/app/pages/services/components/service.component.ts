@@ -11,12 +11,13 @@ import { Subscription } from 'rxjs';
   <ba-card>
     <div [ngBusy]="busy" class="row">
       <div class="col-md-2">
+        <span [ngClass]="status.state == 'RUNNING' ? 'state-label-running' : 'state-label-stopped'" class="v-center"></span>
+      </div>
+      <div class="col-md-2">
         <span class="v-center">{{ status.label }}</span>
       </div>
 
-      <div class="col-md-2">
-        <span [ngClass]="status.state == 'RUNNING' ? 'state-label-running' : 'state-label-stopped'" class="v-center">{{ status.state }}</span>
-      </div>
+
 
       <div class="col-md-2">
         <button class="btn btn-primary" (click)="toggle()">

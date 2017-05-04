@@ -1,22 +1,21 @@
 .state-label-stopped {
-    background-color: red;
-    text-align: center;
-    border-radius: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
+  width: 12px;
+  height: 12px;
+  margin-right: 12px;
+  background-color: #c0392b;
+  border-radius: 50%;
+  box-shadow: #000 0 -1px 7px 1px, inset #e74c3c 0 -1px 9px, #c0392b 0 2px 12px;
 }
 
 .state-label-running {
-    background-color: green;
-    text-align: center;
-    font-style: italic;
-    border-radius: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
+  width: 12px;
+  height: 12px;
+  margin-right: 12px;
+  background-color: #16a085;
+  border-radius: 50%;
+  box-shadow: #000 0 -1px 7px 1px, inset #1abc9c 0 -1px 9px, #16a085 0 2px 12px;
 }
 
 .v-center {
-	height: 30px;
 	display: table-cell;
-	vertical-align: middle;
-}
+  float:left;  }
