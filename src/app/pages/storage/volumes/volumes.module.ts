@@ -13,6 +13,7 @@ import { DragulaModule } from 'ng2-dragula';
 
 import { DatasetAddComponent } from './datasets/dataset-add/';
 import { ZvolAddComponent } from './zvol/zvol-add/';
+import { ZvolEditComponent } from './zvol/zvol-edit/';
 import { ZvolDeleteComponent } from './zvol/zvol-delete/';
 import { DatasetDeleteComponent } from './datasets/dataset-delete/';
 import { VolumesListComponent } from './volumes-list/';
@@ -44,6 +45,7 @@ import { VolumeDeleteComponent } from './volume-delete/';
     VolumeDeleteComponent,
     ZvolAddComponent,
     ZvolDeleteComponent,
+    ZvolEditComponent,
   ],
   providers: [
   ]

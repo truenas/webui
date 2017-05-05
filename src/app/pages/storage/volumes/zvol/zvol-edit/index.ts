@@ -1,1 +1,1 @@
-export { DatasetAddComponent } from './dataset-add.component';
+export { ZvolEditComponent } from './zvol-edit.component';

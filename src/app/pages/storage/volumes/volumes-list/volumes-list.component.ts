@@ -87,6 +87,12 @@ export class VolumesListComponent {
           this._router.navigate(new Array('/pages').concat(["storage", "volumes", "id", row.path.split('/')[0], "zvol", "delete", row.path]));
         }
       });
+      actions.push({
+        label: "Edit Zvol",
+        onClick: (row) => {
+          this._router.navigate(new Array('/pages').concat(["storage", "volumes", "id", row.path.split('/')[0], "zvol", "edit", row.path]));
+        }
+      });
     }
     return actions;
   }
