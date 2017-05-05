@@ -15,7 +15,7 @@ export class EntityListComponent implements OnInit {
 
   @Input('conf') conf: any;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
   public rows: Array<any> = [];
   public columns: Array<any> = [];
