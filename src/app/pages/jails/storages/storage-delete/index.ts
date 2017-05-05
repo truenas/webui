@@ -1,0 +1,1 @@
+export { StorageDeleteComponent } from './storage-delete.component';
