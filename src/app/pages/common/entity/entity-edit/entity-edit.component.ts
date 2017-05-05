@@ -76,7 +76,12 @@ export class EntityEditComponent implements OnInit, OnDestroy {
       value = this.conf.clean.bind(this.conf)(value);
     }
 
-    this.busy = this.rest.put(this.conf.resource_name + '/' + this.pk + '/', {
+    var edit_query = this.conf.resource_name + '/' + this.pk + '/'
+    if (this.conf.custom_edit_query) {
+      edit_query = this.conf.custom_edit_query;
+    }
+
+    this.busy = this.rest.put(edit_query, {
       body: JSON.stringify(value),
     }).subscribe((res) => {
       this.router.navigate(new Array('/pages').concat(this.conf.route_success));
