@@ -41,4 +41,4 @@ import { CertificateCSRComponent } from './certificate-csr/';
   providers: [
   ]
 })
-export class CertificateModule { }
+export class CertificateModule {}
