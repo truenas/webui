@@ -14,7 +14,6 @@ import { AdvancedComponent } from './advanced/';
 import { EmailComponent } from './email/';
 import { GeneralComponent, ConfigSaveComponent, ConfigUploadComponent, ConfigResetComponent } from './general/';
 import { UpdateComponent } from './update/';
-import { CertificateListComponent } from './certificates/';
 
 @NgModule({
   imports: [
@@ -37,7 +36,6 @@ import { CertificateListComponent } from './certificates/';
     ConfigUploadComponent,
     ConfigResetComponent,
     UpdateComponent,
-    CertificateListComponent
   ],
   providers: [
   ]

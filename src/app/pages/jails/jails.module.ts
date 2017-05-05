@@ -11,7 +11,8 @@ import { routing }       from './jails.routing';
 import { JailListComponent } from './jail-list/';
 import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
-import { JailDeleteComponent } from './jail-delete';
+import { JailDeleteComponent } from './jail-delete/';
+import { StorageListComponent } from './storages/storage-list/';
 
 @NgModule({
 	imports: [
@@ -29,6 +30,7 @@ import { JailDeleteComponent } from './jail-delete';
 		JailAddComponent,
 		JailEditComponent,
 		JailDeleteComponent,
+		StorageListComponent,
 	],
 	providers: [
 	]

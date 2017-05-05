@@ -5,11 +5,13 @@ import { JailListComponent } from './jail-list/';
 import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
+import { StorageListComponent } from './storages/storage-list/';
 
 export const routes: Routes = [
   	{ path: '', component: JailListComponent, pathMatch: 'full' },  
   	{ path: 'add', component: JailAddComponent},
 	{ path: 'edit/:pk', component: JailEditComponent},
 	{ path: 'delete/:pk', component: JailDeleteComponent},
+	{ path: ':pk/storages', component: StorageListComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
