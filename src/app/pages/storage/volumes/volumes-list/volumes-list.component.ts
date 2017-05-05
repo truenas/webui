@@ -59,6 +59,12 @@ export class VolumesListComponent {
         }
       });
       actions.push({
+        label: "Add Zvol",
+        onClick: (row) => {
+          this._router.navigate(new Array('/pages').concat(["storage", "volumes", "id", row.path.split('/')[0], "zvol", "add", row.path]));
+        }
+      });
+      actions.push({
         label: "Create Snapshot",
         onClick: (row) => {
           this._router.navigate(new Array('/pages').concat(["storage", "snapshots", "id", row.path.split('/')[0], "add"]));
@@ -73,6 +79,14 @@ export class VolumesListComponent {
           }
         });
       }
+    }
+    if(row.type == "zvol") {
+      actions.push({
+        label: "Delete Zvol",
+        onClick: (row) => {
+          this._router.navigate(new Array('/pages').concat(["storage", "volumes", "id", row.path.split('/')[0], "zvol", "delete", row.path]));
+        }
+      });
     }
     return actions;
   }
