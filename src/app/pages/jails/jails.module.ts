@@ -13,6 +13,7 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
+import { StorageAddComponent } from './storages/storage-add/';
 
 @NgModule({
 	imports: [
@@ -31,6 +32,7 @@ import { StorageListComponent } from './storages/storage-list/';
 		JailEditComponent,
 		JailDeleteComponent,
 		StorageListComponent,
+		StorageAddComponent,
 	],
 	providers: [
 	]
