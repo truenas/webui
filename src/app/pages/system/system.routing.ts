@@ -17,5 +17,6 @@ export const routes: Routes = [
   { path: 'certificates', loadChildren: 'app/pages/system/certificates/certificate.module#CertificateModule'},
 
   { path: 'ntpservers', loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule' },
+  { path: 'bootenv', loadChildren: 'app/pages/system/bootenv/bootenv.module#BootEnvironmentsModule'},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

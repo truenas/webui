@@ -54,6 +54,14 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
+      {
+        path: ['system', 'bootenv'],
+        title: 'Boot Environments',
+        icon: 'ion-beer',
+        selected: false,
+        expanded: false,
+        order: 0
+      }
     ]
   },
   {
