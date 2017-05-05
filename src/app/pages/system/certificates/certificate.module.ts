@@ -7,10 +7,9 @@ import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 import { NgUploaderModule } from 'ngx-uploader';
 
 import { EntityModule } from '../../common/entity/entity.module';
-import { CommonFormComponent } from '../common/form/';
+import { CommonFormComponent } from '../../common/form/';
 import { routing } from './certificate.routing';
 
-import { ConfigurationComponent } from './configuration/';
 
 import { CertificateEditComponent } from './certificate-edit/';
 import { CertificateListComponent } from './certificate-list';
