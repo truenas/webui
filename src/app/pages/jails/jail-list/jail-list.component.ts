@@ -56,8 +56,10 @@ export class JailListComponent {
         }
       },
       {
-        label: "Add Storage",
+        id: "storages",
+        label: "Storages",
         onClick: (row) => {
+          this.router.navigate(new Array('/pages').concat(["jails", row.id, "storages"]));
         }
       },
       {
