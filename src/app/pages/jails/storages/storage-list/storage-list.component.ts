@@ -16,6 +16,7 @@ export class StorageListComponent {
 
   protected resource_name: string = 'jails/mountpoints';
   protected route_add: string[];
+  protected route_delete: string[];
   protected entityList: EntityListComponent;
   protected pk: any;
   private sub: Subscription;
@@ -42,6 +43,7 @@ export class StorageListComponent {
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.route_add = ['jails', this.pk, 'storages', 'add'];
+      this.route_delete = ['jails', this.pk, 'storages', 'delete'];
     });
   }
 }

@@ -1,4 +1,4 @@
-<aside class="al-sidebar" sidebarResize>
+<aside class="al-sidebar" sidebarResize (mouseleave)="autoCollapse()">
   <ba-menu [menuHeight]="menuHeight"
            [sidebarCollapsed]="isMenuCollapsed"
            (expandMenu)="menuExpand()"></ba-menu>
