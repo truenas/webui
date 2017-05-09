@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
 import { Subscription } from 'rxjs';
@@ -15,10 +15,12 @@ import { EntityListComponent } from '../../../common/entity/entity-list/';
 export class StorageListComponent {
 
   protected resource_name: string = 'jails/mountpoints';
-  protected route_add: string[] = ['storage', 'add'];
+  protected route_add: string[];
   protected entityList: EntityListComponent;
+  protected pk: any;
+  private sub: Subscription;
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns:Array<any> = [
     {title: 'Jail', name: 'jail'},
@@ -34,5 +36,12 @@ export class StorageListComponent {
 
   afterInit(entityList: EntityListComponent) {
     this.entityList = entityList;
+  }
+
+  preInit(entityList: any) {
+    this.sub = this.aroute.params.subscribe(params => {
+      this.pk = params['pk'];
+      this.route_add = ['jails', this.pk, 'storages', 'add'];
+    });
   }
 }
