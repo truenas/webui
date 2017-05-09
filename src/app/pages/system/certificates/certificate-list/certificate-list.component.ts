@@ -77,7 +77,6 @@ export class CertificateListComponent {
 
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {
-      console.log(this);
     });
   }
 }
