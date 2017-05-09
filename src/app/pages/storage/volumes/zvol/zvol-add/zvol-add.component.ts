@@ -40,7 +40,7 @@ export class ZvolAddComponent {
       id: 'compression',
       label: 'Compression level:',
       options: [
-        { label: 'Inherit (lz4)', value: "lz4" },
+        { label: 'Inherit', value: "inherit" },
         { label: 'Off', value: "off" },
         { label: 'lz4 (recommended)', value: "lz4" },
         { label: 'gzip (default level, 6)', value: "gzip" },
@@ -69,7 +69,6 @@ export class ZvolAddComponent {
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.path = params['path'];
-      this.compression = <DynamicSelectModel<string>>this.formService.findById("compression", this.formModel);
     });
     // this.rest.get(this.resource_name, {limit: 0, bsdgrp_builtin: false}).subscribe((res) => {
     //   let gid = 999;

@@ -45,7 +45,7 @@ export class ZvolEditComponent {
       id: 'compression',
       label: 'Compression level:',
       options: [
-        { label: 'Inherit (lz4)', value: "lz4" },
+        { label: 'Inherit', value: "inherit" },
         { label: 'Off', value: "off" },
         { label: 'lz4 (recommended)', value: "lz4" },
         { label: 'gzip (default level, 6)', value: "gzip" },
