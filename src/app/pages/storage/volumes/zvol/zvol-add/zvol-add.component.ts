@@ -25,11 +25,15 @@ export class ZvolAddComponent {
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
-      label: 'Name',
+      label: 'zvol name:',
     }),
     new DynamicInputModel({
       id: 'volsize',
-      label: 'Size',
+      label: 'Size for this zvol:',
+    }),
+    new DynamicCheckboxModel({
+      id: 'sparse',
+      label: 'Sparse Volume:',
     }),
   ];
 

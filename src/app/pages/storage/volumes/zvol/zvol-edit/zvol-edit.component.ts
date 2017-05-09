@@ -38,14 +38,15 @@ export class ZvolEditComponent {
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
-      label: 'Name',
+      label: 'zvol name:',
       readOnly: true,
     }),
     new DynamicInputModel({
       id: 'volsize',
-      label: 'Size',
+      label: 'Size for this zvol:',
     }),
   ];
+
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService) {
     
