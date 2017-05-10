@@ -182,6 +182,39 @@ export const PAGES_MENU = [
     order: 0
   },
   {
+    title: 'Jails',
+    icon: 'ion-social-freebsd-devil',
+    selected: false,
+    expanded: false,
+    order: 0,
+    children: [
+      {
+        path: ['jails'],
+        title: 'Instances',
+        icon: 'ion-ios-list',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
+      {
+        path: ['templates'],
+        title: 'Templates',
+        icon: 'ion-ios-albums',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
+      {
+        path: ['configuration'],
+        title: 'Configuration',
+        icon: 'ion-settings',
+        selected: false,
+        expanded: false,
+        order: 0
+      }
+    ],
+  },
+  {
     title: 'VM/Container',
     icon: 'ion-monitor',
     selected: false,
@@ -192,14 +225,6 @@ export const PAGES_MENU = [
         path: ['vm'],
         title: 'VMs',
         icon: 'ion-ios-monitor',
-        selected: false,
-        expanded: false,
-        order: 0
-      },
-      {
-        path: ['jails'],
-        title: 'Jails',
-        icon: 'ion-social-freebsd-devil',
         selected: false,
         expanded: false,
         order: 0
