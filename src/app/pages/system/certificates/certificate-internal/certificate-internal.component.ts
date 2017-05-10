@@ -4,11 +4,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel, DynamicTextAreaModel } from '@ng2-dynamic-forms/core';
 import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 
 @Component({
   selector: 'system-certificate-internal',
-  template: `<entity-add [conf]="this"></entity-add>`
+  template: `<entity-add [conf]="this"></entity-add>`,
+  providers: [SystemGeneralService]
 })
 
 export class CertificateInternalComponent {
@@ -78,11 +79,10 @@ export class CertificateInternalComponent {
         label: 'common',
     }),
   ];
-  // protected dtype: string = 'CDROM';
   private cert_signedby: DynamicSelectModel<string>;
 
   afterInit(entityEdit: any) {
-    entityEdit.ws.call('certificateauthority.query', [[['cert_signedby', '=', null]]]).subscribe((res) => {
+    this.systemGeneralService.getCA().subscribe((res) => {
       this.cert_signedby = <DynamicSelectModel<string>>this.formService.findById('cert_signedby', this.formModel);
       res.forEach((item) => {
         this.cert_signedby.add({ label: item.cert_name, value: item.id });
@@ -90,7 +90,11 @@ export class CertificateInternalComponent {
     });
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
+  ngOnInit() {
+
+  }
+
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {
 
   }
 
