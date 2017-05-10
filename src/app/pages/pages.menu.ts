@@ -190,6 +190,14 @@ export const PAGES_MENU = [
     order: 0
   },
   {
+    path: ['vm', 'Plugins'],
+    title: 'Plugins',
+    icon: 'ion-ios-keypad',
+    selected: false,
+    expanded: false,
+    order: 0
+  },
+  {
     title: 'Jails',
     icon: 'ion-social-freebsd-devil',
     selected: false,
@@ -233,14 +241,6 @@ export const PAGES_MENU = [
         path: ['vm'],
         title: 'VMs',
         icon: 'ion-ios-monitor',
-        selected: false,
-        expanded: false,
-        order: 0
-      },
-      {
-        path: ['vm', 'Plugins'],
-        title: 'Plugins',
-        icon: 'ion-ios-keypad',
         selected: false,
         expanded: false,
         order: 0
