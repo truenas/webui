@@ -12,6 +12,9 @@ import { CommonFormComponent } from '../../common/form/';
 import { routing } from './ca.routing';
 
 import { CertificateAuthorityListComponent } from './ca-list/';
+import { CertificateAuthorityImportComponent } from './ca-import/';
+import { CertificateAuthorityInternalComponent } from './ca-internal/';
+import { CertificateAuthorityIntermediateComponent } from './ca-intermediate/';
 
 @NgModule({
   imports: [
@@ -26,7 +29,10 @@ import { CertificateAuthorityListComponent } from './ca-list/';
     routing
   ],
   declarations: [
-     CertificateAuthorityListComponent
+     CertificateAuthorityListComponent,
+     CertificateAuthorityImportComponent,
+     CertificateAuthorityInternalComponent,
+     CertificateAuthorityIntermediateComponent,
   ],
   providers: [
   ]

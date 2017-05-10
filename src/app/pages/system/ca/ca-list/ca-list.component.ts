@@ -39,6 +39,31 @@ export class CertificateAuthorityListComponent {
       sorting: {columns: this.columns},
   }
 
+  getAddActions() {
+    let actions = [];
+    actions.push({
+          label: "Import CA",
+          onClick: () => {
+              this.router.navigate(new Array('/pages').concat(["system", "ca", "import"]));
+          }
+        },
+        {
+          label: "Create Internal CA",
+          onClick: () => {
+              this.router.navigate(new Array('/pages').concat(["system", "ca", "internal"]));
+          }
+        },
+        {
+          label: "Create Intermediate CA",
+          onClick: () => {
+              this.router.navigate(new Array('/pages').concat(["system", "ca", "intermediate"]));
+          }
+        }
+     );
+
+    return actions;
+  }
+
   getActions(row) {
     let actions = [];
     actions.push({
