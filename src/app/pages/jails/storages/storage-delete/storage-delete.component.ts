@@ -17,8 +17,8 @@ export class StorageDeleteComponent {
 
   afterInit(entityAdd: any) {
     this.aroute.params.subscribe(params => {
-    	this.jail = params['jail'];
-        this.route_success = ['jails', this.jail, 'storages'];
+      this.jail = params['jail'];
+      this.route_success = ['jails', this.jail, 'storages'];
     });
   }
 }

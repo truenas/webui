@@ -8,6 +8,7 @@ import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
 import { StorageAddComponent } from './storages/storage-add/';
 import { StorageDeleteComponent } from './storages/storage-delete/';
+import { StorageEditComponent } from './storages/storage-edit/';
 
 export const routes: Routes = [
   	{ path: '', component: JailListComponent, pathMatch: 'full' },  
@@ -17,5 +18,6 @@ export const routes: Routes = [
 	{ path: ':pk/storages', component: StorageListComponent},
 	{ path: ':pk/storages/add', component: StorageAddComponent},
 	{ path: ':jail/storages/delete/:pk', component: StorageDeleteComponent},
+	{ path: ':jail/storages/edit/:pk', component: StorageEditComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
