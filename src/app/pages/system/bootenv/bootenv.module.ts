@@ -10,7 +10,7 @@ import { routing }       from './bootenv.routing';
 
 import { BootEnvironmentListComponent } from './bootenv-list/';
 import { BootEnvironmentDeleteComponent } from './bootenv-delete/';
-import { BootEnvironmentAddComponent } from './bootenv-add/';
+import { BootEnvironmentCloneComponent } from './bootenv-clone/';
 
 @NgModule({
   imports: [
@@ -26,9 +26,9 @@ import { BootEnvironmentAddComponent } from './bootenv-add/';
   declarations: [
     BootEnvironmentListComponent,
     BootEnvironmentDeleteComponent,
-    BootEnvironmentAddComponent
+    BootEnvironmentCloneComponent
   ],
   providers: [
   ]
 })
-export class SnapshotsModule {}
+export class BootEnvironmentsModule {}

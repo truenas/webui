@@ -14,17 +14,19 @@ export class BootEnvironmentListComponent {
   protected resource_name: string = 'system/bootenv';
   protected route_delete: string[] = ['system', 'bootenv', 'delete'];
 
-  public columns:Array<any> = [
-    {title: 'Fullname', name: 'fullname'},
-    {title: 'Used', name: 'used'},
-    {title: 'Refer', name: 'refer'}
+  public columns: Array<any> = [
+    {title: 'Name', name: 'name'},
+    {title: 'Active', name: 'active'},
+    {title: 'Created', name: 'created'},
+    {title: 'Space', name: 'space'},
+    {title: 'Keep', name: 'keep'},
   ];
   public config:any = {
     paging: true,
     sorting: {columns: this.columns},
   };
 
-  rowValue(row, attr) {
+  /*rowValue(row, attr) {
     switch(attr) {
       case 'used':
         return filesize(row[attr]);
@@ -33,7 +35,7 @@ export class BootEnvironmentListComponent {
       default:
         return row[attr];
     }
-  }
+  }*/
 
   constructor(_rest: RestService, private _router: Router, _state: GlobalState, _eRef: ElementRef) {
   }
