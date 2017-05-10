@@ -18,6 +18,7 @@ export class ZvolAddComponent {
   protected path: string;
   private sub: Subscription;
   protected route_success: string[] = ['storage', 'volumes'];
+  protected compression: any;
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols';
   }
@@ -25,11 +26,29 @@ export class ZvolAddComponent {
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
-      label: 'Name',
+      label: 'zvol name:',
     }),
     new DynamicInputModel({
       id: 'volsize',
-      label: 'Size',
+      label: 'Size for this zvol:',
+    }),
+    new DynamicCheckboxModel({
+      id: 'sparse',
+      label: 'Sparse Volume:',
+    }),
+    new DynamicSelectModel({
+      id: 'compression',
+      label: 'Compression level:',
+      options: [
+        { label: 'Inherit', value: "inherit" },
+        { label: 'Off', value: "off" },
+        { label: 'lz4 (recommended)', value: "lz4" },
+        { label: 'gzip (default level, 6)', value: "gzip" },
+        { label: 'gzip (fastest)', value: "gzip-1" },
+        { label: 'gzip (maximum, slow)', value: "gzip-9" },
+        { label: 'zle (runs of zeros)', value: "zle" },
+        { label: 'lzjb (legacy, not recommended)', value: "lzjb" },
+      ],
     }),
   ];
 
