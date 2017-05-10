@@ -33,7 +33,7 @@
     "core-js": "2.4.1",
     "dragula": "^3.7.2",
     "easy-pie-chart": "2.1.7",
-    "filesize.js": "^1.0.2",
+    "filesize": "^3.5.9",
     "font-awesome": "4.7.0",
     "font-awesome-sass-loader": "1.0.3",
     "ie-shim": "0.1.0",

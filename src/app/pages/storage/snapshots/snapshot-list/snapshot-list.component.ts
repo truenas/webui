@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { GlobalState } from '../../../../global.state';
 import { RestService } from '../../../../services/rest.service';
-import filesize from 'filesize.js';
+import filesize from 'filesize';
 
 @Component({
   selector: 'app-snapshot-list',
@@ -27,9 +27,9 @@ export class SnapshotListComponent {
   rowValue(row, attr) {
     switch(attr) {
       case 'used':
-        return filesize(row[attr]);
+        return filesize(row[attr], {standard: "iec"});
       case 'refer':
-        return filesize(row[attr]);
+        return filesize(row[attr], {standard: "iec"});
       default:
         return row[attr];
     }

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { GlobalState } from '../../../../global.state';
 import { RestService } from '../../../../services/rest.service';
 
-import filesize from 'filesize.js';
+import filesize from 'filesize';
 
 @Component({
   selector: 'app-volumes-list',
@@ -33,9 +33,9 @@ export class VolumesListComponent {
   rowValue(row, attr) {
     switch(attr) {
       case 'avail':
-        return filesize(row[attr]);
+        return filesize(row[attr], {standard: "iec"});
       case 'used':
-        return filesize(row[attr]) + " (" + row['used_pct'] + ")";
+        return filesize(row[attr], {standard: "iec"}) + " (" + row['used_pct'] + ")";
       default:
         return row[attr];
     }

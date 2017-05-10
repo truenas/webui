@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, Type } from '@angular/core';
 
-import filesize from 'filesize.js';
+import filesize from 'filesize';
 
 @Component({
   selector: 'app-disk',
@@ -21,7 +21,7 @@ export class DiskComponent implements OnInit {
 
   ngOnInit() {
     console.log()
-    this.capacity = filesize(this.data.capacity, {standard: "si"});
+    this.capacity = filesize(this.data.capacity, {standard: "iec"});
   }
 
 }
