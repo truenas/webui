@@ -70,14 +70,6 @@ export class ZvolAddComponent {
       this.pk = params['pk'];
       this.path = params['path'];
     });
-    // this.rest.get(this.resource_name, {limit: 0, bsdgrp_builtin: false}).subscribe((res) => {
-    //   let gid = 999;
-    //   res.data.forEach((item, i) => {
-    //     if(item.bsdgrp_gid > gid) gid = item.bsdgrp_gid;
-    //   });
-    //   gid += 1;
-    //   entityAdd.formGroup.controls['bsdgrp_gid'].setValue(gid);
-    // });
   }
 
 }

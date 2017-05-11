@@ -8,6 +8,7 @@ import { RestService, WebSocketService } from '../../../../../services/';
 
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../../common/entity/utils.ts';
+import filesize from 'filesize';
 
 import * as _ from 'lodash';
 
@@ -25,16 +26,21 @@ export class ZvolEditComponent {
   public data: Object = {};
   public error: string;
   private busy: Subscription;
+  protected fs: any = filesize;
   protected route_success: string[] = ['storage', 'volumes'];
+
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols/';
   }
+
   get custom_get_query() : string {
     return this.resource_name + this.zvol + '/';
   }
+
   get custom_edit_query(): string {
     return this.resource_name + this.zvol + '/';
   }
+
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
@@ -73,10 +79,11 @@ export class ZvolEditComponent {
   ];
   private compression: DynamicSelectModel<string>;
   private dedup: DynamicSelectModel<string>;
-
-
   constructor(protected router: Router, protected route: ActivatedRoute, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService) {
-    
+  }
+
+  initial(entityEdit){
+    entityEdit.formGroup.controls.volsize.setValue(this.fs(entityEdit.data.volsize,  {standard: "iec"}));
   }
 
   preInit(entityEdit: any) {
