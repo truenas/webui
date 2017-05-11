@@ -26,7 +26,14 @@ export class EntityUtils {
           }
         }
       } else if(res.code == 400) {
-        entity.error = res.error;
+        if (typeof res.error === 'object') {
+          entity.error = $.map(res.error, function(value, index) {
+            return [value];
+          });
+        } else {
+          entity.error = res.error;
+        }
+        console.log(entity.error);
       } else if(res.code == 500) {
         if(res.error.error_message) {
           entity.error = res.error.error_message;
