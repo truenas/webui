@@ -15,6 +15,5 @@ export const routes: Routes = [
   { path: 'edit/:pk', component: CertificateEditComponent },
   { path: 'delete/:pk', component: CertificateDeleteComponent },
   { path: '', component: CertificateListComponent, pathMatch: 'full' },
-  // { path: ':pk/devices/:name/cdrom/add', component: DeviceCdromAddComponent },
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

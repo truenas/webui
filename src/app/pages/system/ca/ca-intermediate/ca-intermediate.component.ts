@@ -7,15 +7,15 @@ import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 
 @Component({
-  selector: 'system-certificate-internal',
+  selector: 'system-certificate-intermediate',
   template: `<entity-add [conf]="this"></entity-add>`,
   providers: [SystemGeneralService]
 })
 
-export class CertificateInternalComponent {
+export class CertificateAuthorityIntermediateComponent {
 
-  protected resource_name: string = 'system/certificate/internal';
-  protected route_success: string[] = ['system','certificates'];
+  protected resource_name: string = 'system/certificateauthority/intermediate';
+  protected route_success: string[] = ['system','ca'];
   protected formModel: DynamicFormControlModel[] = [
     new DynamicSelectModel({
         id: 'cert_signedby',

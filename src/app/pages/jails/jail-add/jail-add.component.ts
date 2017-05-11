@@ -11,23 +11,21 @@ import { RestService, WebSocketService } from '../../../services/';
 	template: `<entity-add [conf]="this"></entity-add>`
 })
 export class JailAddComponent {
-	
+
 	protected resource_name: string = 'jails/jails';
-  	protected route_success: string[] = ['jails'];
-  	protected formModel: DynamicFormControlModel[] = [
-    	new DynamicInputModel({
-        	id: 'jail_host',
-        	label: 'Jails Name',
-    	})
-  	];
-  	private bootloader: DynamicSelectModel<string>;
-  	public bootloader_type: any[];
+  protected route_success: string[] = ['jails', 'jails'];
+  protected formModel: DynamicFormControlModel[] = [
+    new DynamicInputModel({
+      id: 'jail_host',
+      label: 'Jails Name',
+    })
+  ];
 
-  	constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
 
-  	}
+  }
 
-  	afterInit(entityAdd: any) {
+  afterInit(entityAdd: any) {
     
-  	}
+  }
 }

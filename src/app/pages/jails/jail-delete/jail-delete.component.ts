@@ -10,6 +10,6 @@ import { RestService } from '../../../services/rest.service';
 export class JailDeleteComponent {
 
   protected resource_name: string = 'jails/jails';
-  protected route_success: string[] = ['jails'];
+  protected route_success: string[] = ['jails', 'jails'];
 
 }

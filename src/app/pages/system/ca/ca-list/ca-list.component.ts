@@ -9,14 +9,13 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 
 @Component({
-    selector: 'certificate-list',
+    selector: 'ca-list',
     template: `
     <entity-list [conf]="this"></entity-list>`
 })
 
-export class CertificateListComponent {
-
-  protected resource_name: string = 'system/certificate';
+export class CertificateAuthorityListComponent {
+  protected resource_name: string = 'system/certificateauthority';
 
   private busy: Subscription;
   private sub: Subscription;
@@ -27,9 +26,10 @@ export class CertificateListComponent {
 
   public columns:Array<any> = [
     {title: 'Name', name: 'cert_name'},
-    {title: 'Issuer', name: 'cert_issuer'},
-    {title: 'Internal', name: 'cert_type_internal'},
-    {title: 'Lifetime', name: 'cert_lifetime'},
+    {title: 'Internal', name: 'cert_issuer'},
+    {title: 'Issuer', name: 'cert_type_internal'},
+    {title: 'Certificates', name: 'cert_lifetime'},
+    {title: 'Distinguished Name', name: 'cert_from'},
     {title: 'From', name: 'cert_from'},
     {title: 'Until', name: 'cert_from'},
   ];
@@ -42,24 +42,24 @@ export class CertificateListComponent {
   getAddActions() {
     let actions = [];
     actions.push({
-          label: "Import Certificate",
+          label: "Import CA",
           onClick: () => {
-              this.router.navigate(new Array('/pages').concat(["system", "certificates", "import"]));
+              this.router.navigate(new Array('/pages').concat(["system", "ca", "import"]));
           }
         },
         {
-          label: "Create Internal",
+          label: "Create Internal CA",
           onClick: () => {
-              this.router.navigate(new Array('/pages').concat(["system", "certificates", "internal"]));
+              this.router.navigate(new Array('/pages').concat(["system", "ca", "internal"]));
           }
         },
         {
-          label: "Create CSR",
+          label: "Create Intermediate CA",
           onClick: () => {
-              this.router.navigate(new Array('/pages').concat(["system", "certificates", "csr"]));
+              this.router.navigate(new Array('/pages').concat(["system", "ca", "intermediate"]));
           }
         }
-     );    
+     );
 
     return actions;
   }
@@ -69,14 +69,10 @@ export class CertificateListComponent {
     actions.push({
       label: "Delete",
       onClick: (row) => {
-        this.router.navigate(new Array('/pages').concat(["system","certificates", "delete", row.id]));  
+        this.router.navigate(new Array('/pages').concat(["system","ca", "delete", row.id]));  
       }
     });
     return actions;
   }
-
-  preInit(entityList: any) {
-    this.sub = this.aroute.params.subscribe(params => {
-    });
-  }
+     
 }

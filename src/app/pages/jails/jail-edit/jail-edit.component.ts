@@ -12,7 +12,7 @@ export class JailEditComponent {
 
   protected resource_name: string = 'jails/jails';
   protected route_delete: string[] = ['jails', 'delete'];
-  protected route_success: string[] = ['jails'];
+  protected route_success: string[] = ['jails', 'jails'];
 
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({

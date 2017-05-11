@@ -7,20 +7,16 @@ import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 
 @Component({
-  selector: 'system-certificate-internal',
+  selector: 'system-ca-internal',
   template: `<entity-add [conf]="this"></entity-add>`,
   providers: [SystemGeneralService]
 })
 
-export class CertificateInternalComponent {
+export class CertificateAuthorityInternalComponent {
 
-  protected resource_name: string = 'system/certificate/internal';
-  protected route_success: string[] = ['system','certificates'];
+  protected resource_name: string = 'system/certificateauthority/internal';
+  protected route_success: string[] = ['system','ca'];
   protected formModel: DynamicFormControlModel[] = [
-    new DynamicSelectModel({
-        id: 'cert_signedby',
-        label: 'Signing Certificate Authority',
-    }),
     new DynamicInputModel({
         id: 'cert_name',
         label: 'Identifier',
@@ -82,12 +78,7 @@ export class CertificateInternalComponent {
   private cert_signedby: DynamicSelectModel<string>;
 
   afterInit(entityEdit: any) {
-    this.systemGeneralService.getCA().subscribe((res) => {
-      this.cert_signedby = <DynamicSelectModel<string>>this.formService.findById('cert_signedby', this.formModel);
-      res.forEach((item) => {
-        this.cert_signedby.add({ label: item.cert_name, value: item.id });
-      });
-    });
+
   }
 
   ngOnInit() {
