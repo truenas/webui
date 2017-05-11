@@ -15,7 +15,7 @@ export class TemplateListComponent {
   protected resource_name: string = 'jails/templates';
   protected route_add: string[] = ['jails','templates','add'];
   protected route_delete: string[] = ['jails', 'templates', 'delete'];
-  protected route_edit: string[];
+  protected route_edit: string[] = ['jails', 'templates', 'edit'];
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) {}
 

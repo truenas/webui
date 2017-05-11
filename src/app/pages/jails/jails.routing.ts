@@ -13,6 +13,7 @@ import { JailsConfigurationComponent } from './configuration/';
 import { TemplateListComponent } from './templates/template-list/';
 import { TemplateAddComponent } from './templates/template-add/';
 import { TemplateDeleteComponent } from './templates/template-delete/';
+import { TemplateEditComponent } from './templates/template-edit/';
 
 export const routes: Routes = [
   	{ path: 'jails', component: JailListComponent, pathMatch: 'full' },  
@@ -27,5 +28,6 @@ export const routes: Routes = [
 	{ path: 'templates', component: TemplateListComponent},
 	{ path: 'templates/add', component: TemplateAddComponent},
 	{ path: 'templates/delete/:pk', component: TemplateDeleteComponent},
+	{ path: 'templates/edit/:pk', component: TemplateEditComponent};
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

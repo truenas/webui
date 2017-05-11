@@ -20,6 +20,7 @@ import { JailsConfigurationComponent } from './configuration/';
 import { TemplateListComponent } from './templates/template-list/';
 import { TemplateAddComponent } from './templates/template-add/';
 import { TemplateDeleteComponent } from './templates/template-delete/';
+import { TemplateEditComponent } from './templates/template-edit/';
 
 @NgModule({
 	imports: [
@@ -45,6 +46,7 @@ import { TemplateDeleteComponent } from './templates/template-delete/';
 		TemplateListComponent,
 		TemplateAddComponent,
 		TemplateDeleteComponent,
+		TemplateEditComponent,
 	],
 	providers: [
 	]
