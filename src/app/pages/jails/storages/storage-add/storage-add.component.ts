@@ -13,7 +13,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class StorageAddComponent {
 
   protected resource_name: string = 'jails/mountpoints';
-  protected route_success: string[];
+  protected route_success: string[] = ['jails', 'storage'];
   protected pk: any;
 
   protected formModel: DynamicFormControlModel[] = [
@@ -43,10 +43,4 @@ export class StorageAddComponent {
 
   }
 
-  afterInit(entityAdd: any) {
-    this.aroute.params.subscribe(params => {
-        this.pk = params['pk'];
-        this.route_success = ['jails', this.pk, 'storages'];
-    });
-  }
 }

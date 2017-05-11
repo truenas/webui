@@ -8,17 +8,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class StorageDeleteComponent {
 
   protected resource_name: string = 'jails/mountpoints';
-  protected route_success: string[];
+  protected route_success: string[] = ['jails', 'storage'];
   protected jail: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute) {
 
   }
 
-  afterInit(entityAdd: any) {
-    this.aroute.params.subscribe(params => {
-      this.jail = params['jail'];
-      this.route_success = ['jails', this.jail, 'storages'];
-    });
-  }
 }

@@ -56,13 +56,6 @@ export class JailListComponent {
         }
       },
       {
-        id: "storages",
-        label: "Storages",
-        onClick: (row) => {
-          this.router.navigate(new Array('/pages').concat(["jails", row.id, "storages"]));
-        }
-      },
-      {
         id: "start",
         label: "Start",
         onClick: (row) => {

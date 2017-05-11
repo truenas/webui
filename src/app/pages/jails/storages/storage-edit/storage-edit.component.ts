@@ -11,7 +11,7 @@ import { RestService } from '../../../../services/rest.service';
 export class StorageEditComponent {
 
   protected resource_name: string = 'jails/mountpoints';
-  protected route_success: string[];
+  protected route_success: string[] = ['jails', 'storage'];
   protected jail: any;
   
   protected formModel: DynamicFormControlModel[] = [
@@ -43,13 +43,6 @@ export class StorageEditComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected formService: DynamicFormService) {
 
-  }
-
-  afterInit(entityAdd: any) {
-    this.aroute.params.subscribe(params => {
-      this.jail = params['jail'];
-      this.route_success = ['jails', this.jail, 'storages'];
-    });
   }
 
 }

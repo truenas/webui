@@ -4,8 +4,6 @@ import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
 import { Subscription } from 'rxjs';
 
-import { EntityListComponent } from '../../../common/entity/entity-list/';
-
 @Component({
   selector: 'app-storage-list',
   template: `
@@ -15,12 +13,9 @@ import { EntityListComponent } from '../../../common/entity/entity-list/';
 export class StorageListComponent {
 
   protected resource_name: string = 'jails/mountpoints';
-  protected route_add: string[];
-  protected route_delete: string[];
-  protected route_edit: string[];
-  protected entityList: EntityListComponent;
-  protected pk: any;
-  private sub: Subscription;
+  protected route_add: string[] = ['jails', 'storage', 'add'];
+  protected route_delete: string[] = ['jails', 'storage', 'delete'];
+  protected route_edit: string[] = ['jails', 'storage', 'edit'];
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) {}
 
@@ -36,16 +31,4 @@ export class StorageListComponent {
     sorting: {columns: this.columns},
   };
 
-  afterInit(entityList: EntityListComponent) {
-    this.entityList = entityList;
-  }
-
-  preInit(entityList: any) {
-    this.sub = this.aroute.params.subscribe(params => {
-      this.pk = params['pk'];
-      this.route_add = ['jails', this.pk, 'storages', 'add'];
-      this.route_delete = ['jails', this.pk, 'storages', 'delete'];
-      this.route_edit = ['jails', this.pk, 'storages', 'edit'];
-    });
-  }
 }

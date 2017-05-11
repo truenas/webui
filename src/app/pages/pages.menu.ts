@@ -213,6 +213,14 @@ export const PAGES_MENU = [
         order: 0
       },
       {
+        path: ['jails', 'storage'],
+        title: 'Storage',
+        icon: 'ion-cloud',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
+      {
         path: ['jails', 'templates'],
         title: 'Templates',
         icon: 'ion-ios-albums',
