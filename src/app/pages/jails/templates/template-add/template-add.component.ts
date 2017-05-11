@@ -18,7 +18,7 @@ export class TemplateAddComponent {
     new DynamicInputModel({
       id: 'jt_name',
       label: 'Name',
-    })，
+    }),
     new DynamicSelectModel({
       id: 'jt_os',
       label: 'OS',
@@ -42,11 +42,11 @@ export class TemplateAddComponent {
     new DynamicInputModel({
       id: 'jt_mtree',
       label: 'Mtree',
-    })，
+    }),
     new DynamicCheckboxModel({
       id: 'jt_readonly',
       label: 'Read-only',
-    })，
+    }),
   ];
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
