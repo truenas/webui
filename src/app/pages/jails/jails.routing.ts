@@ -28,6 +28,6 @@ export const routes: Routes = [
 	{ path: 'templates', component: TemplateListComponent},
 	{ path: 'templates/add', component: TemplateAddComponent},
 	{ path: 'templates/delete/:pk', component: TemplateDeleteComponent},
-	{ path: 'templates/edit/:pk', component: TemplateEditComponent};
+	{ path: 'templates/edit/:pk', component: TemplateEditComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
