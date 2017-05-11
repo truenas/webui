@@ -205,7 +205,7 @@ export const PAGES_MENU = [
     order: 0,
     children: [
       {
-        path: ['jails'],
+        path: ['jails', 'jails'],
         title: 'Instances',
         icon: 'ion-ios-list',
         selected: false,
@@ -213,7 +213,7 @@ export const PAGES_MENU = [
         order: 0
       },
       {
-        path: ['templates'],
+        path: ['jails', 'templates'],
         title: 'Templates',
         icon: 'ion-ios-albums',
         selected: false,
@@ -221,7 +221,7 @@ export const PAGES_MENU = [
         order: 0
       },
       {
-        path: ['configuration'],
+        path: ['jails', 'configuration'],
         title: 'Configuration',
         icon: 'ion-settings',
         selected: false,
