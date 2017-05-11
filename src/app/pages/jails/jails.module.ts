@@ -18,6 +18,7 @@ import { StorageDeleteComponent } from './storages/storage-delete/';
 import { StorageEditComponent } from './storages/storage-edit/';
 import { JailsConfigurationComponent } from './configuration/';
 import { TemplateListComponent } from './templates/template-list/';
+import { TemplateAddComponent } from './templates/template-add/';
 
 @NgModule({
 	imports: [
@@ -41,6 +42,7 @@ import { TemplateListComponent } from './templates/template-list/';
 		StorageEditComponent,
 		JailsConfigurationComponent,
 		TemplateListComponent,
+		TemplateAddComponent,
 	],
 	providers: [
 	]

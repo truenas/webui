@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 export class TemplateListComponent {
 
   protected resource_name: string = 'jails/templates';
-  protected route_add: string[] = ['add'];
+  protected route_add: string[] = ['jails','templates','add'];
   protected route_delete: string[];
   protected route_edit: string[];
 
