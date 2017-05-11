@@ -15,6 +15,7 @@ import { CertificateAuthorityListComponent } from './ca-list/';
 import { CertificateAuthorityImportComponent } from './ca-import/';
 import { CertificateAuthorityInternalComponent } from './ca-internal/';
 import { CertificateAuthorityIntermediateComponent } from './ca-intermediate/';
+import { CertificateAuthorityDeleteComponent } from './ca-delete/';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { CertificateAuthorityIntermediateComponent } from './ca-intermediate/';
      CertificateAuthorityImportComponent,
      CertificateAuthorityInternalComponent,
      CertificateAuthorityIntermediateComponent,
+     CertificateAuthorityDeleteComponent,
   ],
   providers: [
   ]
