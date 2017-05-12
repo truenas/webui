@@ -37,13 +37,9 @@ export class CertificateImportComponent {
         label: 'Confirm Passphrase',
     }),
   ];
-  // protected dtype: string = 'CDROM';
 
   afterInit() {
     this.route.params.subscribe(params => {
-        // this.pk = params['pk'];
-        // this.vm = params['name'];
-        // this.route_success = ['vm', this.pk, 'devices', this.vm];
     });
   }
 
