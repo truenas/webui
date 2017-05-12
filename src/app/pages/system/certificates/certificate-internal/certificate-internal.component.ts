@@ -64,7 +64,7 @@ export class CertificateInternalComponent {
     }),
     new DynamicInputModel({
         id: 'cert_city',
-        label: 'local',
+        label: 'Locality',
     }),
     new DynamicInputModel({
         id: 'cert_organization',
