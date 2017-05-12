@@ -26,10 +26,10 @@ export class CertificateAuthorityListComponent {
 
   public columns:Array<any> = [
     {title: 'Name', name: 'cert_name'},
-    {title: 'Internal', name: 'cert_issuer'},
-    {title: 'Issuer', name: 'cert_type_internal'},
-    {title: 'Certificates', name: 'cert_lifetime'},
-    {title: 'Distinguished Name', name: 'cert_from'},
+    {title: 'Internal', name: 'cert_internal'},
+    {title: 'Issuer', name: 'cert_issuer'},
+    {title: 'Lifetime', name: 'cert_lifetime'},
+    {title: 'Common Name', name: 'cert_common'},
     {title: 'From', name: 'cert_from'},
     {title: 'Until', name: 'cert_from'},
   ];
