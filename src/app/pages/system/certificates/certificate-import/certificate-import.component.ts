@@ -13,21 +13,19 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 export class CertificateImportComponent {
 
-  protected resource_name: string = 'system/certificate';
-  protected pk: any;
-  protected route_success: string[];
-  protected vm: string;
+  protected resource_name: string = 'system/certificate/import';
+  protected route_success: string[] = ['system','certificates'];
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
-        id: 'Identifier',
+        id: 'cert_name',
         label: 'Identifier',
     }),
     new DynamicTextAreaModel({
-        id: 'Certificate',
+        id: 'cert_certificate',
         label: 'Certificate',
     }),
     new DynamicTextAreaModel({
-        id: 'Private_key',
+        id: 'cert_privatekey',
         label: 'Private Key',
     }),
     new DynamicInputModel({
@@ -39,13 +37,9 @@ export class CertificateImportComponent {
         label: 'Confirm Passphrase',
     }),
   ];
-  // protected dtype: string = 'CDROM';
 
   afterInit() {
     this.route.params.subscribe(params => {
-        // this.pk = params['pk'];
-        // this.vm = params['name'];
-        // this.route_success = ['vm', this.pk, 'devices', this.vm];
     });
   }
 

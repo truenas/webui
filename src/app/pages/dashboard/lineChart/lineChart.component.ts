@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { LineChartService } from './lineChart.service';
 
 import 'style-loader!./lineChart.scss';
-import filesize from 'filesize.js';
+import filesize from 'filesize';
 import * as Chartist from 'chartist';
 
 declare var ChartistLegend: any;
@@ -54,7 +54,7 @@ export class LineChart implements OnInit {
       delete this.options.axisY;
       this.options.labelInterpolationFnc = function(value, index) {
         // FIXME, workaround to work with just size pie
-        return filesize(value);
+        return filesize(value, {standard: "iec"});
       }
     }
     if(this.legends && this.type != 'Pie') {

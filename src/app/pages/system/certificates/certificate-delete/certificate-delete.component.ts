@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-snapshot-delete',
+  selector: 'system-certificate-delete',
   template: `<entity-delete [conf]="this"></entity-delete>`
 })
 export class CertificateDeleteComponent {

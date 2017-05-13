@@ -1,10 +1,8 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
 import { Subscription } from 'rxjs';
-
-import { EntityListComponent } from '../../../common/entity/entity-list/';
 
 @Component({
   selector: 'app-storage-list',
@@ -15,10 +13,11 @@ import { EntityListComponent } from '../../../common/entity/entity-list/';
 export class StorageListComponent {
 
   protected resource_name: string = 'jails/mountpoints';
-  protected route_add: string[] = ['storage', 'add'];
-  protected entityList: EntityListComponent;
+  protected route_add: string[] = ['jails', 'storage', 'add'];
+  protected route_delete: string[] = ['jails', 'storage', 'delete'];
+  protected route_edit: string[] = ['jails', 'storage', 'edit'];
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns:Array<any> = [
     {title: 'Jail', name: 'jail'},
@@ -32,7 +31,4 @@ export class StorageListComponent {
     sorting: {columns: this.columns},
   };
 
-  afterInit(entityList: EntityListComponent) {
-    this.entityList = entityList;
-  }
 }

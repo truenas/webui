@@ -36,10 +36,17 @@ export class EntityEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.conf.preInit){
+      this.conf.preInit(this);
+    }
     this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     this.sub = this.route.params.subscribe(params => {
       this.pk = params['pk'];
-      this.rest.get(this.conf.resource_name + '/' + this.pk + '/', {}).subscribe((res) => {
+      var get_query = this.conf.resource_name + '/' + this.pk + '/';
+      if (this.conf.custom_get_query) {
+        get_query = this.conf.custom_get_query;
+      }
+      this.rest.get(get_query, {}).subscribe((res) => {
         this.data = res.data;
         for(let i in this.data) {
           let fg = this.formGroup.controls[i];
@@ -52,7 +59,9 @@ export class EntityEditComponent implements OnInit, OnDestroy {
         }
       })
     });
-    this.conf.afterInit(this);
+    if (this.conf.afterInit){
+      this.conf.afterInit(this);
+    }
   }
 
   goBack() {

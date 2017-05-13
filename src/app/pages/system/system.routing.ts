@@ -14,6 +14,7 @@ export const routes: Routes = [
   { path: 'email', component: EmailComponent },
   { path: 'advanced', component: AdvancedComponent },
   { path: 'update', component: UpdateComponent },
+  { path: 'ca', loadChildren: 'app/pages/system/ca/ca.module#CertificateAuthorityModule'},
   { path: 'certificates', loadChildren: 'app/pages/system/certificates/certificate.module#CertificateModule'},
 
   { path: 'ntpservers', loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule' },

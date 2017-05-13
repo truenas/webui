@@ -4,52 +4,97 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel, DynamicTextAreaModel } from '@ng2-dynamic-forms/core';
 import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 
 @Component({
   selector: 'system-certificate-internal',
-  template: `<entity-add [conf]="this"></entity-add>`
+  template: `<entity-add [conf]="this"></entity-add>`,
+  providers: [SystemGeneralService]
 })
 
 export class CertificateInternalComponent {
 
-  protected resource_name: string = 'system/certificate';
-  protected pk: any;
-  protected route_success: string[];
-  protected vm: string;
+  protected resource_name: string = 'system/certificate/internal';
+  protected route_success: string[] = ['system','certificates'];
   protected formModel: DynamicFormControlModel[] = [
+    new DynamicSelectModel({
+        id: 'cert_signedby',
+        label: 'Signing Certificate Authority',
+    }),
     new DynamicInputModel({
-        id: 'Identifier',
+        id: 'cert_name',
         label: 'Identifier',
     }),
-    new DynamicTextAreaModel({
-        id: 'Certificate',
-        label: 'Certificate',
+    new DynamicSelectModel({
+        id: 'cert_key_length',
+        label: 'Key Length',
+        options: [
+          { label: '1024', value: 1024 },
+          { label: '2048', value: 2048 },
+          { label: '4096', value: 4096 },
+        ],
     }),
-    new DynamicTextAreaModel({
-        id: 'Private_key',
-        label: 'Private Key',
+    new DynamicSelectModel({
+        id: 'cert_digest_algorithm',
+        label: 'Digest Algorithm',
+        options: [
+          { label: 'SHA1', value: 'SHA1' },
+          { label: 'SHA224', value: 'SHA224' },
+          { label: 'SHA256', value: 'SHA256' },
+          { label: 'SHA384', value: 'SHA384' },
+          { label: 'SHA512', value: 'SHA512' },
+        ],
     }),
     new DynamicInputModel({
-        id: 'Passphrase',
-        label: 'Passphrase',
+        id: 'cert_lifetime',
+        label: 'lifetime',
+    }),
+    new DynamicSelectModel({
+        id: 'cert_country',
+        label: 'country',
+        options: [
+          { label: 'US', value: 'US' },
+          { label: 'CHINA', value: 'CN' },
+          { label: 'RUSSIA', value: 'RU' },
+        ],
     }),
     new DynamicInputModel({
-        id: 'Passphrase2',
-        label: 'Confirm Passphrase',
+        id: 'cert_state',
+        label: 'state',
+    }),
+    new DynamicInputModel({
+        id: 'cert_city',
+        label: 'Locality',
+    }),
+    new DynamicInputModel({
+        id: 'cert_organization',
+        label: 'organization',
+    }),
+    new DynamicInputModel({
+        id: 'cert_email',
+        label: 'email',
+    }),
+    new DynamicInputModel({
+        id: 'cert_common',
+        label: 'common',
     }),
   ];
-  // protected dtype: string = 'CDROM';
+  private cert_signedby: DynamicSelectModel<string>;
 
-  afterInit() {
-    this.route.params.subscribe(params => {
-        // this.pk = params['pk'];
-        // this.vm = params['name'];
-        // this.route_success = ['vm', this.pk, 'devices', this.vm];
+  afterInit(entityEdit: any) {
+    this.systemGeneralService.getCA().subscribe((res) => {
+      this.cert_signedby = <DynamicSelectModel<string>>this.formService.findById('cert_signedby', this.formModel);
+      res.forEach((item) => {
+        this.cert_signedby.add({ label: item.cert_name, value: item.id });
+      });
     });
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
+  ngOnInit() {
+
+  }
+
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {
 
   }
 

@@ -13,6 +13,14 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
+import { StorageAddComponent } from './storages/storage-add/';
+import { StorageDeleteComponent } from './storages/storage-delete/';
+import { StorageEditComponent } from './storages/storage-edit/';
+import { JailsConfigurationComponent } from './configuration/';
+import { TemplateListComponent } from './templates/template-list/';
+import { TemplateAddComponent } from './templates/template-add/';
+import { TemplateDeleteComponent } from './templates/template-delete/';
+import { TemplateEditComponent } from './templates/template-edit/';
 
 @NgModule({
 	imports: [
@@ -31,6 +39,14 @@ import { StorageListComponent } from './storages/storage-list/';
 		JailEditComponent,
 		JailDeleteComponent,
 		StorageListComponent,
+		StorageAddComponent,
+		StorageDeleteComponent,
+		StorageEditComponent,
+		JailsConfigurationComponent,
+		TemplateListComponent,
+		TemplateAddComponent,
+		TemplateDeleteComponent,
+		TemplateEditComponent,
 	],
 	providers: [
 	]

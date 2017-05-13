@@ -20,6 +20,7 @@ import { DeviceNicAddComponent } from './devices/device-nic-add/';
 import { DeviceDiskAddComponent } from './devices/device-disk-add/';
 import { DeviceVncAddComponent } from './devices/device-vnc-add/';
 import { DeviceDeleteComponent } from './devices/device-delete/';
+import { DeviceEditComponent } from './devices/device-edit/';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import { DeviceDeleteComponent } from './devices/device-delete/';
     DeviceNicAddComponent,
     DeviceDiskAddComponent,
     DeviceVncAddComponent,
-    DeviceDeleteComponent
+    DeviceDeleteComponent,
+    DeviceEditComponent,
   ],
   providers: [
   ]

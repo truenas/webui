@@ -11,7 +11,6 @@ import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 @Component({
     selector: 'certificate-list',
     template: `
-    <h1>Work in Progress</h1>
     <entity-list [conf]="this"></entity-list>`
 })
 
@@ -78,7 +77,6 @@ export class CertificateListComponent {
 
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {
-      console.log(this);
     });
   }
 }
