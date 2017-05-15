@@ -63,6 +63,14 @@ export const PAGES_MENU = [
         order: 0
       },
       {
+        path: ['system', 'tunable'],
+        title: 'Tunables',
+        icon: 'ion-ios-locked',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
+      {
         path: ['system', 'bootenv'],
         title: 'Boot Environments',
         icon: 'ion-beer',
