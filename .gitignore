@@ -3,3 +3,4 @@ node_modules/
 dll/
 dist/
 npm-debug.log
+.DS_Store
