@@ -8,7 +8,7 @@ import { RestService } from '../../../services/rest.service';
   selector: 'app-general',
   template: `
   <p>
-    <button class="btn btn-outline-primary (click)="gotoSaveConfig()">Save Config</button>
+    <button class="btn btn-outline-primary" (click)="gotoSaveConfig()">Save Config</button>
     <button class="btn btn-outline-warning" (click)="gotoUploadConfig()">Upload Config</button>
     <button class="btn btn-outline-danger" (click)="gotoResetConfig()">Reset Config</button>
     <button class="btn btn-outline-info" (click)="gotoNTPServers()">NTP Servers</button>
