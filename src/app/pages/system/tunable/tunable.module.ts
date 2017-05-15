@@ -12,6 +12,7 @@ import { routing } from './tunable.routing';
 
 import { TunableListComponent } from './tunable-list/';
 import { TunableAddComponent } from './tunable-add/';
+import { TunableEditComponent } from './tunable-edit/';
 import { TunableDeleteComponent } from './tunable-delete/';
 
 @NgModule({
@@ -30,6 +31,7 @@ import { TunableDeleteComponent } from './tunable-delete/';
     TunableListComponent,
     TunableAddComponent,
     TunableDeleteComponent,
+    TunableEditComponent,
   ],
   providers: [
   ]
