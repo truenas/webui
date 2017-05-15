@@ -1,8 +1,28 @@
 export class EntityUtils {
 
     handleError(entity: any, res: any) {
-
       if(res.code == 409) {
+        this.handleObjError(entity, res);
+      } else if(res.code == 400) {
+        if (typeof res.error === 'object') {
+          this.handleObjError(entity, res);
+        } else {
+          entity.error = res.error;
+        }
+      } else if(res.code == 500) {
+        if(res.error.error_message) {
+          entity.error = res.error.error_message;
+        } else {
+          entity.error = 'Server error: ' + res.error;
+        }
+      } else {
+        entity.error = 'Fatal error! Check logs.';
+        console.log("Unknown error code", res.code);
+      }
+
+    }
+
+    handleObjError(entity: any, res: any) {
         entity.error = '';
         for(let i in res.error) {
           let field = res.error[i];
@@ -25,26 +45,5 @@ export class EntityUtils {
             });
           }
         }
-      } else if(res.code == 400) {
-        if (typeof res.error === 'object') {
-          entity.error = $.map(res.error, function(value, index) {
-            return [value];
-          });
-        } else {
-          entity.error = res.error;
-        }
-        console.log(entity.error);
-      } else if(res.code == 500) {
-        if(res.error.error_message) {
-          entity.error = res.error.error_message;
-        } else {
-          entity.error = 'Server error: ' + res.error;
-        }
-      } else {
-        entity.error = 'Fatal error! Check logs.';
-        console.log("Unknown error code", res.code);
-      }
-
     }
-
 }

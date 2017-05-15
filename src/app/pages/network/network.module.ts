@@ -7,7 +7,7 @@ import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 import { NgUploaderModule } from 'ngx-uploader';
 
 import { EntityModule } from '../common/entity/entity.module';
-import { CommonFormComponent } from '../common/form/';
+import { FnCommonModule } from '../common/common.module';
 import { routing } from './network.routing';
 
 import { ConfigurationComponent } from './configuration/';
@@ -22,10 +22,10 @@ import { ConfigurationComponent } from './configuration/';
     ReactiveFormsModule,
     NgaModule,
     NgUploaderModule,
+    FnCommonModule,
     routing
   ],
   declarations: [
-    CommonFormComponent,
     ConfigurationComponent,
   ],
   providers: [
