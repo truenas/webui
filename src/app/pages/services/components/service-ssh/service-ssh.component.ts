@@ -12,12 +12,12 @@ import { Subscription } from 'rxjs';
 
 @Component ({
     selector: 'ssh-edit',
-    template: ` <entity-edit [conf]="this"></entity-edit>`,
+    template: ` <entity-config [conf]="this"></entity-config>`,
 })
 
 export class ServiceSSHComponent {
   // Form Layout
-  protected resource_name: string = 'services';
+  protected resource_name: string = 'services/ssh';
   private entityEdit: EntityConfigComponent;
 
   protected formModel: DynamicFormControlModel[] = [
