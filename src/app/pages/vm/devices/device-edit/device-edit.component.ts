@@ -7,16 +7,19 @@ import { Subscription } from 'rxjs';
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
 import { RestService } from '../../../../services/rest.service';
 import { EntityUtils } from '../../../common/entity/utils';
+import { VmService } from '../../../../services/vm.service';
 
 import * as _ from 'lodash';
 
 @Component({
   selector: 'app-vm-device-edit',
-  templateUrl: './device-edit.component.html'
+  templateUrl: './device-edit.component.html',
+  providers: [VmService]
 })
 export class DeviceEditComponent implements OnInit{ 
 
   protected resource_name: string = 'vm/device';
+  protected volume_resource_name: string = 'storage/volume'
   protected route_delete: string[] ;
   protected route_success: string[] ;
   protected vmid: any;
@@ -28,16 +31,20 @@ export class DeviceEditComponent implements OnInit{
   public data: Object = {};
   protected pk: any;
   private busy: Subscription;
-
-
+  private zvol_path: Array<any> = [];
+  private DISK_zvol: DynamicSelectModel<string>;
 
   protected formModel: DynamicFormControlModel[] = [];
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef) {
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , protected VmService: VmService) {
 
   }
 
   ngOnInit() {
+    this.zvol_path = this.VmService.getStorageVolumes()
+    this.zvol_path.forEach((item) => {
+        this.DISK_zvol.add({ label: item[1], value: item[0] });
+      });
     this.sub = this.route.params.subscribe(params => {
       this.vmid = params['vmid'];
       this.vm = params['name'];
@@ -98,7 +105,7 @@ export class DeviceEditComponent implements OnInit{
        ];
     } else if (this.dtype === "DISK"){
       this.formModel = [
-        new DynamicInputModel({
+        new DynamicSelectModel({
           id: 'DISK_zvol',
           label: 'ZVol',
           }),
@@ -130,6 +137,7 @@ export class DeviceEditComponent implements OnInit{
       let cdrom_lookup_table: Object = {
         'path': "CDROM_path", 
       };
+
       this.rest.get(this.resource_name + '/' + this.pk + '/', {}).subscribe((res) => {
         function setgetValues(data, lookup_table) {
           for(let i in data) {
