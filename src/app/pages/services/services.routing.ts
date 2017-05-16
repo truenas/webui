@@ -11,7 +11,7 @@ export const routes: Routes = [
     path: '', pathMatch: 'full',
     component: Services,
   },
-  { // :pk to ssh breaks the functionality 
+  { // Routes to SSH Service component
     path: 'ssh',
     component: ServiceSSHComponent,
   },

@@ -81,7 +81,7 @@ export class Service {
   }
 
   editService(service: any) {
-    debugger
+    // Determines the route path
      this.router.navigate(new Array('/pages').concat(['services', service]));
   }
 
