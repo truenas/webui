@@ -68,4 +68,12 @@ export class EntityAddComponent implements OnInit {
     });
   }
 
+  isShow(id:any):any {
+    if (this.conf.isBasicMode) {
+      if (this.conf.advanced_field.indexOf(id) > -1) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
