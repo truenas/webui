@@ -103,4 +103,13 @@ export class EntityEditComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  isShow(id:any):any {
+    if (this.conf.isBasicMode) {
+      if (this.conf.advanced_field.indexOf(id) > -1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }

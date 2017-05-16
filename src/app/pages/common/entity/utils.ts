@@ -46,4 +46,20 @@ export class EntityUtils {
           }
         }
     }
+
+    flattenData(data, level = 0, parent?: any) {
+      let ndata = [];
+      data.forEach((item) => {
+        item._level = level;
+        if (parent) {
+          item._parent = parent.id;
+        }
+        ndata.push(item);
+        if (item.children) {
+          ndata = ndata.concat(this.flattenData(item.children, level + 1, item));
+        }
+        delete item.children;
+      });
+      return ndata;
+    }
 }

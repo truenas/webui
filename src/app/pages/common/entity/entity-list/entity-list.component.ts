@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { GlobalState } from '../../../../global.state';
 import { RestService } from '../../../../services/rest.service';
+import { EntityUtils } from '../utils';
 
 import { Subscription } from 'rxjs';
 
@@ -63,24 +64,8 @@ export class EntityListComponent implements OnInit {
 
     this.busy = this.rest.get(this.conf.resource_name, options).subscribe((res) => {
       this.length = res.total;
-      this.rows = this.flattenData(res.data);
+      this.rows = new EntityUtils().flattenData(res.data);
     });
-  }
-
-  flattenData(data, level = 0, parent?: any) {
-    let ndata = [];
-    data.forEach((item) => {
-      item._level = level;
-      if (parent) {
-        item._parent = parent.id;
-      }
-      ndata.push(item);
-      if (item.children) {
-        ndata = ndata.concat(this.flattenData(item.children, level + 1, item));
-      }
-      delete item.children;
-    });
-    return ndata;
   }
 
   onChangeTable(config, page: any = { page: this.page, itemsPerPage: this.itemsPerPage }) {
