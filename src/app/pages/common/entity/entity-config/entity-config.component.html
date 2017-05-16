@@ -6,11 +6,11 @@
   <form (ngSubmit)="onSubmit()" [formGroup]="formGroup" [ngBusy]="busy">
 
     <dynamic-form-bootstrap-control #component *ngFor="let controlModel of conf.formModel" [group]="formGroup" [model]="controlModel"
-      [hasErrorMessaging]="controlModel.hasErrorMessages">
+      [hasErrorMessaging]="controlModel.hasErrorMessages" [ngClass]="isShow(controlModel.id) ? 'show' :'hide'">
     </dynamic-form-bootstrap-control>
     <button class="btn btn-primary" type="submit">Update</button>
     <span *ngFor="let custBtn of conf.custActions">
-      <button class="btn btn-primary" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+      <button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" class="btn btn-primary" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
     </span>
     <button *ngIf="conf.route_delete" class="btn btn-danger" type="button" (click)="gotoDelete()">Delete</button>
 
