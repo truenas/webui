@@ -18,6 +18,7 @@ export class VlanEditComponent {
     new DynamicInputModel({
       id: 'vlan_vint',
       label: 'Virtual Interface',
+      disabled: true
     }),
     new DynamicSelectModel({
       id: 'vlan_pint',
