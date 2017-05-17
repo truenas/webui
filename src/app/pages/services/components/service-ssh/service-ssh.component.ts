@@ -18,8 +18,9 @@ import { Subscription } from 'rxjs';
 export class ServiceSSHComponent {
   // Form Layout
   protected resource_name: string = 'services/ssh';
-    protected isBasicMode: boolean = true;
+  protected isBasicMode: boolean = true;
   private entityEdit: EntityConfigComponent;
+  protected route_success: string[] = ['services'];
 
   protected formModel: DynamicFormControlModel[] = [
       new DynamicInputModel({
