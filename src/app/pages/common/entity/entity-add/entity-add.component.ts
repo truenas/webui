@@ -42,7 +42,11 @@ export class EntityAddComponent implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    let route = this.conf.route_cancel;
+    if(!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
   }
 
   onSubmit() {
