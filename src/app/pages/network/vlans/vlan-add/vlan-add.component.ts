@@ -18,6 +18,7 @@ export class VlanAddComponent {
     new DynamicInputModel({
       id: 'vlan_vint',
       label: 'Virtual Interface',
+      placeholder: 'e.g. vlan0'
     }),
     new DynamicSelectModel({
       id: 'vlan_pint',
