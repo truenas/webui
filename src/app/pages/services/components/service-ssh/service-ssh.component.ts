@@ -81,7 +81,7 @@ export class ServiceSSHComponent {
         { label: 'Local 4', value: 'LOCAL4' },
         { label: 'Local 5', value: 'LOCAL5' },
         { label: 'Local 6', value: 'LOCAL6' },
-        { label: 'Local 7', value: 'LOCAL7 ' },
+        { label: 'Local 7', value: 'LOCAL7' },
       ],
     }),
     new DynamicTextAreaModel({
