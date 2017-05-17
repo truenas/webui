@@ -19,11 +19,18 @@ export class ZvolAddComponent {
   private sub: Subscription;
   protected route_success: string[] = ['storage', 'volumes'];
   protected compression: any;
+  protected advanced_field: Array<any> = ['bs',];
+  protected isBasicMode: boolean = true;
+
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols';
   }
 
   protected formModel: DynamicFormControlModel[] = [
+    new DynamicInputModel({
+      id: 'comments',
+      label: 'Comments:',
+    }),
     new DynamicInputModel({
       id: 'name',
       label: 'zvol name:',
@@ -33,8 +40,8 @@ export class ZvolAddComponent {
       label: 'Size for this zvol:',
     }),
     new DynamicCheckboxModel({
-      id: 'sparse',
-      label: 'Sparse Volume:',
+      id: 'forcesize',
+      label: 'Force size:',
     }),
     new DynamicSelectModel({
       id: 'compression',
@@ -50,6 +57,52 @@ export class ZvolAddComponent {
         { label: 'lzjb (legacy, not recommended)', value: "lzjb" },
       ],
     }),
+    new DynamicCheckboxModel({
+      id: 'sparse',
+      label: 'Sparse Volume:',
+    }),
+    new DynamicSelectModel({
+      id: 'bs',
+      'label':'Block size:',
+      options:[
+        { label:'512',value: '512'},
+        { label:'1K', value: '1K'},
+        { label:'2K', value: '2K'},
+        { label:'4K', value: '4K'},
+        { label:'8K', value: '8K'},
+        { label:'16K', value: '16K'},
+        { label:'32K', value: '32K'},
+        { label:'64K', value: '64K'},
+        { label:'128K', value: '128K'},
+        ],
+        value: "16K"
+      })
+
+  ];
+    isCustActionVisible(actionId: string) {
+    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+      return false;
+    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+      return false;
+    }
+    return true;
+  }
+
+  protected custActions: Array<any> = [
+    {
+      id: 'basic_mode',
+      name: 'Basic Mode',
+      function: () => {
+        this.isBasicMode = !this.isBasicMode;
+      }
+    },
+    {
+      'id': 'advanced_mode',
+      name: 'Advanced Mode',
+      function: () => {
+        this.isBasicMode = !this.isBasicMode;
+      }
+    }
   ];
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService) {
