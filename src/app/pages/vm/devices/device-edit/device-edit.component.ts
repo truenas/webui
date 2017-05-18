@@ -31,7 +31,6 @@ export class DeviceEditComponent implements OnInit{
   public data: Object = {};
   protected pk: any;
   private busy: Subscription;
-  private zvol_path: Array<any> = [];
   private DISK_zvol: DynamicSelectModel<string>;
 
   protected formModel: DynamicFormControlModel[] = [];
@@ -41,10 +40,6 @@ export class DeviceEditComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.zvol_path = this.VmService.getStorageVolumes()
-    this.zvol_path.forEach((item) => {
-        this.DISK_zvol.add({ label: item[1], value: item[0] });
-      });
     this.sub = this.route.params.subscribe(params => {
       this.vmid = params['vmid'];
       this.vm = params['name'];
@@ -118,9 +113,18 @@ export class DeviceEditComponent implements OnInit{
           ],
         }),
       ];
+      this.VmService.getStorageVolumes().subscribe((res) => {
+        let data = new EntityUtils().flattenData(res.data);
+        this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById("DISK_zvol", this.formModel);;
+        for (let dataset of data){
+          if (dataset.type === 'zvol') {
+            this.DISK_zvol.add({ label: dataset.name, value: dataset.path });
+          };
+        };
+      });
     }
     
-      this.formGroup = this.formService.createFormGroup(this.formModel);
+    this.formGroup = this.formService.createFormGroup(this.formModel);
       let vnc_lookup_table: Object = {
         'vnc_port':'VNC_port',
         'vnc_resolution': 'VNC_resolution',
