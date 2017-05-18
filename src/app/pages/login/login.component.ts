@@ -34,6 +34,7 @@ export class Login {
   }
 
   ngOnInit() {
+    this.username.setValue("root");
     if(this._ws.username && this._ws.password && this._ws.redirectUrl) {
       this.busy = this._ws.login(this._ws.username, this._ws.password).subscribe((result) => {
         this.loginCallback(result);
