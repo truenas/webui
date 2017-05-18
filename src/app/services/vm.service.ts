@@ -14,16 +14,7 @@ export class VmService {
     constructor(protected rest: RestService){
     };
 
-getStorageVolumes() {
-    let zvols: Array<any> = [];
-    this.rest.get(this.volume_resource_name , {}).subscribe((res) => {
-        let data = new EntityUtils().flattenData(res.data);
-        for (let zvol_obj of data){
-            if (zvol_obj.type === 'zvol') {
-                zvols.push(zvol_obj.path);
-            }
-        }
-    });
-    return zvols;
-}
+    getStorageVolumes() {
+        return this.rest.get(this.volume_resource_name , {});
+    }
 }

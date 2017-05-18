@@ -21,6 +21,7 @@ import { DeviceDiskAddComponent } from './devices/device-disk-add/';
 import { DeviceVncAddComponent } from './devices/device-vnc-add/';
 import { DeviceDeleteComponent } from './devices/device-delete/';
 import { DeviceEditComponent } from './devices/device-edit/';
+import { VmService } from '../../services'
 
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import { DeviceEditComponent } from './devices/device-edit/';
     DeviceEditComponent,
   ],
   providers: [
+    VmService
   ]
 })
 export class VmModule {}
