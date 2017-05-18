@@ -32,10 +32,10 @@ export class EntityAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
