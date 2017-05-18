@@ -19,7 +19,7 @@ export class ZvolAddComponent {
   private sub: Subscription;
   protected route_success: string[] = ['storage', 'volumes'];
   protected compression: any;
-  protected advanced_field: Array<any> = ['bs',];
+  protected advanced_field: Array<any> = ['blocksize'];
   protected isBasicMode: boolean = true;
 
   get resource_name(): string {
@@ -40,7 +40,7 @@ export class ZvolAddComponent {
       label: 'Size for this zvol:',
     }),
     new DynamicCheckboxModel({
-      id: 'forcesize',
+      id: 'force',
       label: 'Force size:',
     }),
     new DynamicSelectModel({
@@ -62,7 +62,7 @@ export class ZvolAddComponent {
       label: 'Sparse Volume:',
     }),
     new DynamicSelectModel({
-      id: 'bs',
+      id: 'blocksize',
       'label':'Block size:',
       options:[
         { label:'512',value: '512'},
@@ -79,6 +79,7 @@ export class ZvolAddComponent {
       })
 
   ];
+
     isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
       return false;

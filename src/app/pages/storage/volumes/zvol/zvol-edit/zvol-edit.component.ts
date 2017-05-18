@@ -1,3 +1,4 @@
+import { check } from '@angular/tsc-wrapped/src/tsc';
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { FormGroup, } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -47,6 +48,10 @@ export class ZvolEditComponent {
       label: 'zvol name:',
       readOnly: true,
     }),
+    new DynamicInputModel({
+      id: 'comments',
+      label: 'comments:',
+    }),
     new DynamicSelectModel({
       id: 'compression',
       label: 'Compression level:',
@@ -75,10 +80,15 @@ export class ZvolEditComponent {
       id: 'volsize',
       label: 'Size for this zvol:',
     }),
+    new DynamicCheckboxModel({
+      id: 'force',
+      label: 'Force size:',
+    })
 
   ];
   private compression: DynamicSelectModel<string>;
   private dedup: DynamicSelectModel<string>;
+  private comments: DynamicInputModel;
   constructor(protected router: Router, protected route: ActivatedRoute, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService) {
   }
 
@@ -89,6 +99,7 @@ export class ZvolEditComponent {
   preInit(entityEdit: any) {
     this.compression = <DynamicSelectModel<string>>this.formService.findById("compression", this.formModel);
     this.dedup = <DynamicSelectModel<string>>this.formService.findById("dedup", this.formModel);
+    this.comments = <DynamicInputModel>this.formService.findById("comments", this.formModel);
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.path = params['path'];
