@@ -20,7 +20,7 @@ export class DeviceEditComponent implements OnInit{
 
   protected resource_name: string = 'vm/device';
   protected volume_resource_name: string = 'storage/volume'
-  protected route_delete: string[] ;
+  protected route_cancel: string[] ;
   protected route_success: string[] ;
   protected vmid: any;
   protected vm: string;
@@ -44,7 +44,7 @@ export class DeviceEditComponent implements OnInit{
       this.vmid = params['vmid'];
       this.vm = params['name'];
       this.route_success = ['vm', this.vmid, 'devices', this.vm];
-      this.route_delete = ['vm', this.vmid, 'devices', this.vm, 'delete'];
+      this.route_cancel = ['vm', this.vmid, 'devices', this.vm];
       this.dtype = params['dtype'];
       this.pk = params['pk'];
     });
@@ -169,6 +169,14 @@ export class DeviceEditComponent implements OnInit{
         }
       });
     }
+    goBack() {
+      let route = this.route_cancel;
+    if(!route) {
+      route = this.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
+  }
+
   onSubmit() {
     this.error = null;
     let value = _.cloneDeep(this.formGroup.value);
