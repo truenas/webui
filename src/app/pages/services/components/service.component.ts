@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router, RouterModule, Routes } from '@angular/router';
 
 import { RestService, WebSocketService } from '../../../services/';
 
@@ -32,7 +33,7 @@ import { Subscription } from 'rxjs';
       </div>
 
       <div class="col-md-1">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" (click)="editService(this.status.service)">
           <i class="ion-wrench"></i>
           <span>Edit</span>
         </button>
@@ -47,7 +48,7 @@ export class Service {
 
   private busy: Subscription;
 
-  constructor(private rest: RestService, private ws: WebSocketService) {
+  constructor(protected router: Router, private rest: RestService, private ws: WebSocketService) {
   }
 
   toggle() {
@@ -77,6 +78,11 @@ export class Service {
       }
     });
 
+  }
+
+  editService(service: any) {
+    // Determines the route path
+     this.router.navigate(new Array('/pages').concat(['services', service]));
   }
 
 }
