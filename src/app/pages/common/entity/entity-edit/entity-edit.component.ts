@@ -21,7 +21,7 @@ export class EntityEditComponent implements OnInit, OnDestroy {
   @Input('conf') conf: any;
 
   protected pk: any;
-  protected formGroup: FormGroup;
+  public formGroup: FormGroup;
 
   @ViewChildren('component') components;
 
@@ -36,10 +36,10 @@ export class EntityEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     if (this.conf.preInit){
       this.conf.preInit(this);
     }
-    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     this.sub = this.route.params.subscribe(params => {
       this.pk = params['pk'];
       var get_query = this.conf.resource_name + '/' + this.pk + '/';
