@@ -17,6 +17,7 @@ export class JailAddComponent {
 
 	protected resource_name: string = 'jails/jails';
   protected route_success: string[] = ['jails', 'jails'];
+  protected route_conf: string[] = ['jails', 'configuration'];
   protected isBasicMode: boolean = true;
   protected entityAdd: EntityAddComponent;
 
@@ -24,6 +25,9 @@ export class JailAddComponent {
     new DynamicInputModel({
       id: 'jail_host',
       label: 'Jails Name',
+      validators: {
+        required: null,
+      },
     }),
     new DynamicSelectModel({
       id: 'jail_type',
@@ -295,6 +299,11 @@ export class JailAddComponent {
 
     this.rest.get("jails/configuration/", {}).subscribe((res) => {
       for(let i in res.data) {
+        if (i == "jc_path" && res.data[i] == "") {
+          console.log("not configured");
+          entityAdd.hasConf = false;
+        }
+
         let fg = entityAdd.formGroup.controls[i];
         if(fg) {
           fg.setValue(res.data[i]);

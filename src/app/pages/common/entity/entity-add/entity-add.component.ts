@@ -21,6 +21,7 @@ export class EntityAddComponent implements OnInit {
 
   public formGroup: FormGroup;
   public error: string;
+  public hasConf: boolean = true;
   public data: Object = {};
 
   @ViewChildren('component') components;
@@ -43,6 +44,14 @@ export class EntityAddComponent implements OnInit {
 
   goBack() {
     let route = this.conf.route_cancel;
+    if(!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
+  }
+
+  goConf() {
+    let route = this.conf.route_conf;
     if(!route) {
       route = this.conf.route_success;
     }
