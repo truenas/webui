@@ -25,7 +25,7 @@ export class Login {
   constructor(fb:FormBuilder, private _ws: WebSocketService, private _router: Router) {
     this._ws = _ws;
     this.form = fb.group({
-      'username': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
+      'username': ['', Validators.compose([Validators.required])],
       'password': ['', Validators.compose([Validators.required])]
     });
 
@@ -34,6 +34,7 @@ export class Login {
   }
 
   ngOnInit() {
+    this.username.setValue("root");
     if(this._ws.username && this._ws.password && this._ws.redirectUrl) {
       this.busy = this._ws.login(this._ws.username, this._ws.password).subscribe((result) => {
         this.loginCallback(result);

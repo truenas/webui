@@ -26,6 +26,10 @@ export class AdvancedComponent {
       label: 'Serial Port',
       options: [],
     }),
+    new DynamicInputModel({
+        id: 'adv_swapondrive',
+        label: 'Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).',
+    }),
     new DynamicSelectModel({
       id: 'adv_serialspeed',
       label: 'Serial Speed',
@@ -46,8 +50,16 @@ export class AdvancedComponent {
       label: 'Enable Power Saving Daemon',
     }),
     new DynamicCheckboxModel({
+      id: 'adv_autotune',
+      label: 'Enable autotune',
+    }),
+    new DynamicCheckboxModel({
       id: 'adv_debugkernel',
       label: 'Enable Debug Kernel',
+    }),
+    new DynamicCheckboxModel({
+      id: 'adv_consolemsg',
+      label: 'Show console messages in the footer',
     }),
     new DynamicTextAreaModel({
       id: 'adv_motd',

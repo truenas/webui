@@ -32,17 +32,21 @@ export class EntityAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
   }
 
   goBack() {
-    this.location.back();
+    let route = this.conf.route_cancel;
+    if(!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
   }
 
   onSubmit() {

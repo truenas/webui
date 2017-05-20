@@ -6,10 +6,14 @@ import filesize from 'filesize';
   selector: 'app-disk',
   template: `
   <span>
-    {{ data.devname }} ({{ capacity }})
+	<i class="fa fa-hdd-o fa-25">  
+	</i>
+	<br>
+	{{ data.devname }} ({{ capacity }})
+	<br>
   </span>
   `,
-  styles: ['span { float: letf; display:inline-block; margin: 5px; padding: 1px; margin-top: 4px; border: 1px solid #ddd; }'],
+  styles: ['span { float: left; display:inline-block; margin:.5em;} .fa-25 { font-size:2.5em; color:#1384c0; text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4); }'],
 })
 export class DiskComponent implements OnInit {
 

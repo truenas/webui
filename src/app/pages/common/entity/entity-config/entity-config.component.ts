@@ -8,7 +8,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../utils';
 import { EntityTemplateDirective } from '../entity-template.directive';
-
+import { Location } from '@angular/common';
 import * as _ from 'lodash';
 
 @Component({
@@ -34,7 +34,7 @@ export class EntityConfigComponent implements OnInit, OnDestroy {
   public data: Object = {};
 
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService) {
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected location: Location) {
 
   }
 
@@ -63,6 +63,14 @@ export class EntityConfigComponent implements OnInit, OnDestroy {
       })
     });
     this.conf.afterInit(this);
+  }
+  
+  goBack() {
+     let route = this.conf.route_cancel;
+     if(!route) {
+       route = this.conf.route_success;
+      }
+   this.router.navigate(new Array('/pages').concat(route));
   }
 
   onSubmit() {

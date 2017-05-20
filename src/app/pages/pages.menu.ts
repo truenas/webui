@@ -128,6 +128,14 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
+      {
+        path: ['network', 'vlans'],
+        title: 'Vlans',
+        icon: 'ion-pull-request',
+        selected: false,
+        expanded: false,
+        order: 0
+      }
     ]
   },
   {
