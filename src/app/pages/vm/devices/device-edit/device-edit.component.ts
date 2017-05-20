@@ -5,7 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
-import { RestService } from '../../../../services/rest.service';
+import { RestService, WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { VmService } from '../../../../services/vm.service';
 
@@ -16,6 +16,9 @@ import * as _ from 'lodash';
   templateUrl: './device-edit.component.html',
   providers: [VmService]
 })
+
+
+
 export class DeviceEditComponent implements OnInit{ 
 
   protected resource_name: string = 'vm/device';
@@ -32,13 +35,11 @@ export class DeviceEditComponent implements OnInit{
   protected pk: any;
   private busy: Subscription;
   private DISK_zvol: DynamicSelectModel<string>;
-
   protected formModel: DynamicFormControlModel[] = [];
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , protected VmService: VmService) {
+  constructor(protected router: Router, protected route: ActivatedRoute,protected ws: WebSocketService, protected rest: RestService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , protected VmService: VmService) {
 
   }
-
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.vmid = params['vmid'];
@@ -77,7 +78,7 @@ export class DeviceEditComponent implements OnInit{
           id: 'VNC_port',
           label: 'port',
           inputType: 'number',
-          min: '81',
+          min: '0',
           max: ' 65535'
           }),
        new DynamicCheckboxModel({
@@ -142,7 +143,7 @@ export class DeviceEditComponent implements OnInit{
         'path': "CDROM_path", 
       };
 
-      this.rest.get(this.resource_name + '/' + this.pk + '/', {}).subscribe((res) => {
+    this.ws.call('vm.query').subscribe((res) => {
         function setgetValues(data, lookup_table) {
           for(let i in data) {
             let fg = self.formGroup.controls[lookup_table[i]];
@@ -152,31 +153,39 @@ export class DeviceEditComponent implements OnInit{
           }
         }
         var self = this;
-        var data = res.data.attributes;
-        switch(this.dtype){
-          case 'VNC':{
-            setgetValues(data, vnc_lookup_table);
-          };
-          case 'NIC':{
-            setgetValues(data, nic_lookup_table);
-            };
-          case 'CDROM':{
-            setgetValues(data, cdrom_lookup_table);
-            };
-          case 'DISK':{
-            setgetValues(data, disk_lookup_table);
+        
+        for (let vm of res) {
+          if (vm.name == this.vm) {
+            for (let device of vm.devices) {
+              switch(device.dtype){
+                case 'VNC':{
+                  setgetValues(device.attributes, vnc_lookup_table);
+                };
+                case 'NIC':{
+                  debugger;
+                  setgetValues(device.attributes, nic_lookup_table);
+                };
+                case 'CDROM':{
+                  setgetValues(device.attributes, cdrom_lookup_table);
+                };
+                case 'DISK':{
+                  setgetValues(device.attributes, disk_lookup_table);
+                };
+            }
           }
-        }
+          };
+        }   
+        
       });
     }
-    goBack() {
+  goBack() {
       let route = this.route_cancel;
     if(!route) {
       route = this.route_success;
     }
     this.router.navigate(new Array('/pages').concat(route));
   }
-
+  
   onSubmit() {
     this.error = null;
     let value = _.cloneDeep(this.formGroup.value);
