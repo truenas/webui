@@ -13,7 +13,7 @@ import filesize from 'filesize';
 	<br>
   </span>
   `,
-  styles: ['span { float: left; display:inline-block; margin:.5em;} .fa-25 { font-size:2.5em; color:#1384c0; text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4); }'],
+  styles: ['span { float: left; display:inline-block; margin:.05em;} .fa-25 { font-size:2em; color:#1384c0; text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4); }'],
 })
 export class DiskComponent implements OnInit {
 

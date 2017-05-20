@@ -76,7 +76,7 @@ button.btn.btn-default {
   @include buttonColor(transparent, $border);
   &:active, &:target {
     background-color: rgba(0, 0, 0, 0.2);
-    color: $default-text;
+    color: $dark-text;
   }
 }
 

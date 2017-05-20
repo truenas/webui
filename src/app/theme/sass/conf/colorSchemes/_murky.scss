@@ -1,25 +1,25 @@
-$default: rgba(#000000, 1);
+$default: rgba(0,0,0, .8);
 $body-bg: #263238;
 
 $default-text: #fafafa;
-$content-text: $default-text;
+$content-text: #e0e0e0;
+$dark-text: #212121;
 $help-text: #e0e0e0;
 
-$label-text: #fafafa;
 $disabled: #bdbdbd;
 $disabled-bg: transparent;
 $border: #fafafa;
-$border-light: rgba(#212121, 0.2);
+$border-light: rgba(0,0,0, 0.2);
 $input-border: transparent;
-$input-background: rgba(#000000, 0.7);
-$dropdown-text: #00ff00;
+$input-background: rgba(0,0,0, 0.7);
+$dropdown-text: #212121;
 
-$sidebar: rgba(#000000, 0.4);
+$sidebar: rgba(0,0,0, 0.6);
 $sidebar-text: #e0e0e0;
 
 $mail-box: whitesmoke;
-$auth-panel-background: rgba(#000000, 0.55);
-$progress-background: rgba(#000000, 0.15);
+$auth-panel-background: rgba(0,0,0, 0.55);
+$progress-background: rgba(0,0,0, 0.15);
 $progress-default: #eceff1;
 
 $bootstrap-panel-radius: 5px;
@@ -53,6 +53,7 @@ $success-bg: tint($success, 20%);
 $warning-bg: tint($warning, 20%);
 $danger-bg: tint($danger, 20%);
 
+$label-text:#618fa6;
 $activelink: $primary;
 $hoverlink: $primary-dark;
 

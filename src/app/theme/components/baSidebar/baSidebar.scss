@@ -11,7 +11,7 @@ $angle-right: "\f101";
   z-index: 1001;
   display: block;
   min-height: 100%;
-  background-color: $sidebar;
+  background-color: rgba(33, 33, 33, 0.6); 
   height: 100%;
   position: fixed;
 }
@@ -19,12 +19,12 @@ $angle-right: "\f101";
 .al-sidebar-list {
   margin: 0;
   overflow: hidden;
-  padding: 18px 0 0 0;
+  padding: 1.5em 0em 0em 0em;
   list-style: none;
 }
 
 .al-sidebar-sublist .subitem-submenu-list {
-  padding-left: 15px;
+  padding-left: .4em;
 }
 
 .subitem-submenu-link {
@@ -39,11 +39,11 @@ $angle-right: "\f101";
   float: none;
   padding: 0;
   &.selected:not(.with-sub-menu) {
-    background-color: $primary;
+    background-color: $primary-bg;
     a.al-sidebar-list-link {
-      color: $sidebar-text;
+      color: $dark-text;
       b {
-        color: $sidebar-text;
+        color: $content-text;
       }
     }
   }
@@ -60,7 +60,7 @@ $angle-right: "\f101";
   &.ba-sidebar-item-expanded {
     > .al-sidebar-list-link {
       b {
-        transform: rotate(180deg);
+        transform: rotate(290deg);
       }
     }
 
@@ -72,20 +72,20 @@ $angle-right: "\f101";
 
 a.al-sidebar-list-link {
   display: block;
-  height: 42px;
-  padding-left: 18px;
+  height: 1.4em;
+  padding-left: .5em;
   text-shadow: none;
-  font-size: 13px;
+  font-size: 1.2em;
   text-decoration: none;
-  color: $sidebar-text;
-  line-height: 42px;
+  color: $primary;
+  line-height: 1.6em;
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
   &:hover {
-    color: $primary;
+    color: $help-text;
     b {
-      color: $primary;
+      color: $info-dark;
     }
   }
   i {
@@ -100,7 +100,7 @@ a.al-sidebar-list-link {
     height: 14px;
     line-height: 14px;
     text-shadow: none;
-    font-size: 18px;
+    font-size: 1.3em;
     position: absolute;
     right: 10px;
     top: 12px;
@@ -141,24 +141,25 @@ a.al-sidebar-list-link {
     padding: 0;
     border-bottom: none;
     position: relative;
+    color: $info-dark;
     a {
       display: block;
       text-shadow: none;
-      font-size: 13px;
+      font-size: 1.1em;
       text-decoration: none;
-      color: $sidebar-text;
-      padding-left: 52px;
+      color: $label-text;
+      padding-left: 2.2em;
       height: auto;
-      line-height: 29px;
+      line-height: 1.4em;
       &:hover {
-        color: $primary;
+        color: $help-text;
       }
     }
     &.selected:not(.with-sub-menu) > a {
       border: none;
-      background-color: $primary;
+      background-color: $body-bg;
       &:hover {
-        color: $sidebar-text;
+        color: $info-dark;
       }
     }
 
@@ -177,7 +178,7 @@ a.al-sidebar-list-link {
   left: $sidebar-width - $sidebar-scroll-width;
   transition: all 0.5s ease;
   transition-property: top, height;
-  height: 42px;
+  height: 1.1em;
   display: block;
 }
 
@@ -204,7 +205,7 @@ a.al-sidebar-list-link {
       overflow: hidden;
       transition: width 0.5s ease;
       &.slide-right {
-        width: 135px;
+        width: 270px;
       }
       &:before {
         display: none;
@@ -216,7 +217,7 @@ a.al-sidebar-list-link {
         a {
           padding-left: 18px;
           padding-right: 18px;
-          min-width: 130px;
+          min-width: 270px;
           white-space: nowrap;
         }
       }
