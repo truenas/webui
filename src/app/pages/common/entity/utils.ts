@@ -62,4 +62,8 @@ export class EntityUtils {
       });
       return ndata;
     }
+    
+    bool(v){
+       return v==="false" || v==="null" || v==="NaN" || v==="undefined" || v==="0" ? false : !!v;
+      }
 }

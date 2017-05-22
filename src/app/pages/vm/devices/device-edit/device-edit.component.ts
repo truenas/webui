@@ -201,7 +201,7 @@ export class DeviceEditComponent implements OnInit{
               , "mac": formvalue.NIC_mac ? formvalue.NIC_mac : device.attributes.mac}})
             }
             if (device.dtype=='VNC'){
-              devices.push({"dtype" : 'VNC', "attributes":{"wait": formvalue.VNC_wait ? formvalue.VNC_wait : device.attributes.wait, 
+              devices.push({"dtype" : 'VNC', "attributes":{"wait": new EntityUtils().bool(formvalue.VNC_wait ? formvalue.VNC_wait : device.attributes.wait), 
               "vnc_port": formvalue.VNC_port ? formvalue.VNC_port : device.attributes.port, 
               "vnc_resolution":formvalue.VNC_resolution? formvalue.VNC_resolution:device.attributes.vnc_resolution}})
             }
