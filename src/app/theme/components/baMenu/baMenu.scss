@@ -2,16 +2,18 @@
 
 .power-button {
 	width: inherit;
-	background-color: #282828;
-    border-color: #282828;
-    color: #ffffff;
+	position:relative;
+	top: -10%;
+	text-align: center;
+	line-height: 1.5em;
+	font-size: 1.5em;
 }
 
-.power-dropdown-menu {
-	top: 80%;
-	width: inherit;
+.fa-power-off {
+	padding:.2em;
+	color: $danger;
 }
-
-.power-button-icon {
-	color: #ffffff;
+.fa-rotate-left {
+	padding:.2em;
+	color: $warning;
 }

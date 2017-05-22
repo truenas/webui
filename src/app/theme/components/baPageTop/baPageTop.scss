@@ -6,7 +6,7 @@
   position: fixed;
   z-index: 904;
   box-shadow: 2px 0 3px rgba(10, 9, 9, .8);
-  height: 73px;
+  height: 66px;
   width: 100%;
   min-width: $resMin;
   padding: 0;
@@ -24,7 +24,7 @@
 
 a.al-logo {
   width: 222px;
-  height: 73px;
+  height: 66px;
   color: $sidebar-text;
   display: block;
   font-size: 2em;
@@ -32,7 +32,7 @@ a.al-logo {
   white-space: nowrap;
   float: left;
   outline: none !important;
-  line-height: 73px;
+  line-height: 66px;
   @include bg('freenas-logo.png');
 
   span {
@@ -85,18 +85,18 @@ a.refresh-data {
 }
 
 a.collapse-menu-link {
-  font-size: 2.2em;
+  font-size: 2em;
   cursor: pointer;
   display: block;
   text-decoration: none;
-  line-height: 1.3em;
+  line-height: 2em;
   padding: 0;
   float: left;
-  margin: 0.5em 0em 0em 0.5em;
+  margin: 0 0 0 15px;
 
   &:hover {
     text-decoration: none;
-    color: $warning;
+    color: $info;
   }
 }
 

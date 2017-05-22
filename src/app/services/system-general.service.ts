@@ -13,6 +13,6 @@ export class SystemGeneralService {
     };
 
     getCA() {
-        return this.ws.call('certificateauthority.query', [[['cert_signedby', '=', null]]]);
+        return this.ws.call('certificateauthority.query', []);
     }
 }
