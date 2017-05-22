@@ -5,7 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
-import { RestService, WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { VmService } from '../../../../services/vm.service';
 
@@ -37,7 +37,7 @@ export class DeviceEditComponent implements OnInit{
   private DISK_zvol: DynamicSelectModel<string>;
   protected formModel: DynamicFormControlModel[] = [];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,protected ws: WebSocketService, protected rest: RestService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , protected VmService: VmService) {
+  constructor(protected router: Router, protected route: ActivatedRoute,protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , protected VmService: VmService) {
 
   }
   ngOnInit() {
