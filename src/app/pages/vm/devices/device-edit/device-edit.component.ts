@@ -124,7 +124,7 @@ export class DeviceEditComponent implements OnInit{
         };
       });
     }
-    
+
     this.formGroup = this.formService.createFormGroup(this.formModel);
       let vnc_lookup_table: Object = {
         'vnc_port':'VNC_port',
@@ -132,51 +132,48 @@ export class DeviceEditComponent implements OnInit{
         'wait': 'VNC_wait',
       };
       let nic_lookup_table: Object = {
-        'mac': 'NIC_mac', 
+        'mac': 'NIC_mac',
         'type': 'NIC_type',
       };
       let disk_lookup_table: Object = {
-        'path': "DISK_zvol", 
+        'path': "DISK_zvol",
         'type': "DISK_mode",
       };
       let cdrom_lookup_table: Object = {
-        'path': "CDROM_path", 
+        'path': "CDROM_path",
       };
-    /* 
+
     this.ws.call('vm.query').subscribe((res) => {
-        function setgetValues(data, lookup_table) {
-          for(let i in data) {
-            let fg = self.formGroup.controls[lookup_table[i]];
-            if(fg) {
-              fg.setValue(data[i]);
-            }
+      function setgetValues(data, lookupTable) {
+        for(let i in data) {
+          let fg = self.formGroup.controls[lookupTable[i]];
+          if(fg) {
+            fg.setValue(data[i]);
           }
         }
-        var self = this;
-        
-        for (let vm of res) {
-          if (vm.name == this.vm) {
-            for (let device of vm.devices) {
-              switch(device.dtype){
-                case 'VNC':{
-                  setgetValues(device.attributes, vnc_lookup_table);
-                };
-                case 'NIC':{
-                  setgetValues(device.attributes, nic_lookup_table);
-                };
-                case 'CDROM':{
-                  setgetValues(device.attributes, cdrom_lookup_table);
-                };
-                case 'DISK':{
-                  setgetValues(device.attributes, disk_lookup_table);
-                };
-            }
+      }
+      let self = this;
+      for (let vm of res) {
+        if (vm.name === this.vm) {
+          for (let device of vm.devices) {
+            switch(device.dtype){
+              case 'VNC':{
+                setgetValues(device.attributes, vnc_lookup_table);
+              };
+              case 'NIC':{
+                setgetValues(device.attributes, nic_lookup_table);
+              };
+              case 'CDROM':{
+                setgetValues(device.attributes, cdrom_lookup_table);
+              };
+              case 'DISK':{     
+                setgetValues(device.attributes, disk_lookup_table);
+              };
           }
-          };
-        }   
-        
-      });
-      */
+        }
+        };
+      }
+    });
     }
   goBack() {
       let route = this.route_cancel;
@@ -185,64 +182,40 @@ export class DeviceEditComponent implements OnInit{
     }
     this.router.navigate(new Array('/pages').concat(route));
   }
-  
+
   onSubmit() {
     this.ws.call('vm.query').subscribe((res) => {
-      var self = this; 
+      let self = this;
       this.error = null;
+      let payload = {};
       let formvalue = _.cloneDeep(this.formGroup.value);
-      let payload = "";
       for (let vm of res) {
-        if (vm.name == this.vm) {          
+        if (vm.name === this.vm) {
           var devices = []
           for (let device of vm.devices) {
             if (device.dtype=='NIC'){
               devices.push({"dtype" : 'NIC', "attributes":{"type": formvalue.NIC_type ? formvalue.NIC_type : device.attributes.type 
               , "mac": formvalue.NIC_mac ? formvalue.NIC_mac : device.attributes.mac}})
             }
-            if (device.dtype=='VNC'){
+            if (device.dtype === 'VNC'){
               devices.push({"dtype" : 'VNC', "attributes":{"wait": new EntityUtils().bool(formvalue.VNC_wait ? formvalue.VNC_wait : device.attributes.wait), 
               "vnc_port": formvalue.VNC_port ? formvalue.VNC_port : device.attributes.port, 
               "vnc_resolution":formvalue.VNC_resolution? formvalue.VNC_resolution:device.attributes.vnc_resolution}})
             }
-            if (device.dtype=='DISK'){
+            if (device.dtype === 'DISK'){
               devices.push({"dtype" : 'DISK', "attributes":{
                 "type": formvalue.DISK_type ? formvalue.DISK_type: device.attributes.type, 
                 "path": formvalue.DISK_path ? formvalue.DISK_path: device.attributes.path}})
             }
-            if (device.dtype=='CDROM'){
+            if (device.dtype === 'CDROM'){
               devices.push({"dtype" : 'CDROM', "attributes":{ 
                 "path": formvalue.CDROM_path ? formvalue.CDROM_path: device.attributes.path}})
             }
-          }    
+          }
         }
       }
-      payload = '{"devices":' + JSON.stringify(devices) +'}'
-      console.log(payload);
-      /*
-      payload= '"'+self.vmid +'" "{"devices":' + JSON.stringify(devices) +'}"'
-      switch(self.dtype){
-        case 'VNC':{
-          payload['VNC_port'] = formvalue['VNC_port'];
-          payload['VNC_wait'] = formvalue['VNC_wait'];
-          payload['VNC_resolution'] = formvalue['VNC_resolution'];
-        };
-        case 'NIC':{
-          payload['NIC_type'] = formvalue['NIC_type'];
-          payload['NIC_mac'] = formvalue['NIC_mac'];
-        };
-        case 'CDROM':{
-          payload['CDROM_path'] = formvalue['CDROM_path'];
-        }
-        case 'DISK':{
-          payload['DISK_zvol'] = formvalue['DISK_zvol'];
-          payload['DISK_mode'] = formvalue['DISK_mode'];
-        }
-      }
-      payload['dtype'] = self.dtype;
-      payload['vm'] = self.vmid; 
-      */
-      this.busy = this.ws.call('vm.update', [self.vmid, [payload]]).subscribe((res) => {
+      payload['devices'] = devices;
+      this.busy = this.ws.call('vm.update', [self.vmid, payload]).subscribe((res) => {
         this.router.navigate(new Array('/pages').concat(this.route_success));
       }, (res) => {
         new EntityUtils().handleError(this, res);
