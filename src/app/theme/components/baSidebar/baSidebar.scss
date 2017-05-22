@@ -72,13 +72,13 @@ $angle-right: "\f101";
 
 a.al-sidebar-list-link {
   display: block;
-  height: 1.4em;
+  height: 1.5em;
   padding-left: .5em;
   text-shadow: none;
-  font-size: 1.2em;
+  font-size: 1.5em;
   text-decoration: none;
   color: $primary;
-  line-height: 1.6em;
+  line-height: 1.5em;
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
@@ -89,8 +89,8 @@ a.al-sidebar-list-link {
     }
   }
   i {
-    margin-right: 18px;
-    width: 16px;
+    margin-right: .5em;
+    width: 1em;
     display: inline-block;
   }
   b {
