@@ -29,6 +29,7 @@ export const routes: Routes = [
       { path: 'services', loadChildren: 'app/pages/services/services.module#ServicesModule' },
       { path: 'vm', loadChildren: 'app/pages/vm/vm.module#VmModule' },
       { path: 'jails', loadChildren: 'app/pages/jails/jails.module#JailsModule'},
+      { path: 'plugins', loadChildren: 'app/pages/plugin/plugin.module#PluginModule'},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ]
   },
