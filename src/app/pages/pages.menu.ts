@@ -206,23 +206,6 @@ export const PAGES_MENU = [
     order: 0
   },
   {
-    title: 'Plugins',
-    icon: 'ion-ios-keypad',
-    selected: false,
-    expanded: false,
-    order: 0,
-    children: [
-      {
-        path: ['plugins', 'installed'],
-        title: 'Installed',
-        icon: 'ion-ios-list',
-        selected: false,
-        expanded: false,
-        order: 0
-      },
-    ],
-  },
-  {
     title: 'Jails',
     icon: 'ion-social-freebsd-devil',
     selected: false,
