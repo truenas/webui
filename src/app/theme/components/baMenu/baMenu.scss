@@ -2,18 +2,42 @@
 
 .power-button {
 	width: inherit;
-	position:relative;
-	top: -10%;
 	text-align: center;
-	line-height: 1.5em;
-	font-size: 1.5em;
+	position:relative;
+	top: -81px;
+	padding-left: -0.5em;
+	background-color: rgba(0, 0, 0, 0.6);
+	cursor: pointer;
+	whitespace: nowrap;
+}
+.reboot-button {
+	width: inherit;
+	padding-left: -0.5em;
+	text-align: center;
+	position:relative;
+	top: -87px;
+	background-color: rgba(0, 0, 0, 0.6);
+	cursor: pointer;
 }
 
 .fa-power-off {
-	padding:.2em;
+	line-height: 1.5em;
+	font-size: 1.5em;
+	padding:.2em 0 0 .5em;
 	color: $danger;
+	white-space: nowrap;
+	overflow: hidden;
+	width:inherit;
 }
+.fa-power-off span{ margin-left: .5em; }
+
 .fa-rotate-left {
-	padding:.2em;
+	line-height: 1.5em;
+	font-size: 1.5em;
+	padding: .2em 0 0 .5em;
 	color: $warning;
+	white-space: nowrap;
+	overflow: hidden;
+	width:inherit;
 }
+.fa-rotate-left span{ margin-left: .5em; }
