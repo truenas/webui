@@ -204,7 +204,7 @@ export class DeviceEditComponent implements OnInit{
             }
             if (device.dtype === 'DISK'){
               devices.push({"dtype" : 'DISK', "attributes":{
-                "type": formvalue.DISK_type ? formvalue.DISK_type: device.attributes.type, 
+                "type": formvalue.DISK_mode ? formvalue.DISK_mode: device.attributes.type, 
                 "path": formvalue.DISK_zvol ? formvalue.DISK_zvol: device.attributes.path}})
             }
             if (device.dtype === 'CDROM'){
