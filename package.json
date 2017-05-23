@@ -51,6 +51,7 @@
     "ngx-bootstrap": "1.6.2",
     "ngx-uploader": "2.2.7",
     "normalize.css": "5.0.0",
+    "raven-js": "^3.15.0",
     "reflect-metadata": "0.1.9",
     "rxjs": "5.1.1",
     "tether": "1.4.0",
