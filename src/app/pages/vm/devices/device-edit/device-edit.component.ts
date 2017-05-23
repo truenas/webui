@@ -159,15 +159,19 @@ export class DeviceEditComponent implements OnInit{
             switch(device.dtype){
               case 'VNC':{
                 setgetValues(device.attributes, vnc_lookup_table);
+                break;
               };
               case 'NIC':{
                 setgetValues(device.attributes, nic_lookup_table);
+                break;
               };
               case 'CDROM':{
                 setgetValues(device.attributes, cdrom_lookup_table);
+                break;
               };
               case 'DISK':{
                 setgetValues(device.attributes, disk_lookup_table);
+                break;
               };
           }
         }
