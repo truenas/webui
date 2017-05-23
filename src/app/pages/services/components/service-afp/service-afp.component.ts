@@ -5,7 +5,7 @@ import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, Dyna
 
 import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, UserService } from '../../../../services/';
 import * as _ from 'lodash';
 
 import { Subscription } from 'rxjs';
@@ -13,11 +13,11 @@ import { Subscription } from 'rxjs';
 @Component ({
     selector: 'afp-edit',
     template: ` <entity-config [conf]="this"></entity-config>`,
+    providers: [UserService]
 })
 
 export class ServiceAFPComponent {
   protected resource_name: string = 'services/ssh';
-  protected isBasicMode: boolean = true;
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
@@ -77,43 +77,16 @@ export class ServiceAFPComponent {
         label: 'Bind Interfaces',
     }),
   ];
-protected advanced_field: Array<any> = [
-    'ssh_bindiface',
-    'ssh_kerberosauth',
-    'ssh_sftp_log_level',
-    'ssh_sftp_log_facility',
-    'ssh_options', 
-  ];
 
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
-      return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
-      return false;
-    } 
-    return true;
+
+
+  private guestList: DynamicSelectModel<string>;
+  
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState, protected userService: UserService) {
+
   }
 
-  protected custActions: Array<any> = [
-    {
-      id: 'basic_mode',
-      name: 'Basic Mode',
-      function: () => {
-        this.isBasicMode = !this.isBasicMode;
-      }
-    },
-    {
-      'id': 'advanced_mode',
-      name: 'Advanced Mode',
-      function: () => {
-        this.isBasicMode = !this.isBasicMode;
-      }
-    }
-  ];
- constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState) {}
-
   afterInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
   }
 
 }
