@@ -8,6 +8,7 @@ import { Services } from './services.component';
 import { routing }       from './services.routing';
 import { EntityModule } from '../common/entity/entity.module';
 import { ServiceSSHComponent } from './components/service-ssh';
+import { ServiceAFPComponent } from './components/service-afp';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { ServiceSSHComponent } from './components/service-ssh';
     Service,
     Services,
     ServiceSSHComponent,
+    ServiceAFPComponent,
   ],
   providers: [
   ]
