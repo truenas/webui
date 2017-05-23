@@ -9,6 +9,8 @@ import { EntityModule } from '../common/entity/entity.module';
 import { routing }       from './plugin.routing';
 
 import { PluginListComponent } from './installed/plugin-list/plugin-list.component';
+import { PluginDeleteComponent } from './installed/plugin-delete/plugin-delete.component';
+import { PluginConfigurationComponent } from './configuration/configuration.component';
 
 @NgModule({
 	imports: [
@@ -23,6 +25,8 @@ import { PluginListComponent } from './installed/plugin-list/plugin-list.compone
 	],
 	declarations: [
 		PluginListComponent,
+		PluginDeleteComponent,
+		PluginConfigurationComponent,
 	],
 	providers: [
 	]
