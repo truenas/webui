@@ -147,6 +147,7 @@ export class DeviceEditComponent implements OnInit{
       function setgetValues(data, lookupTable) {
         for(let i in data) {
           let fg = self.formGroup.controls[lookupTable[i]];
+          console.log(data); console.log(i)
           if(fg) {
             fg.setValue(data[i]);
           }
@@ -166,7 +167,7 @@ export class DeviceEditComponent implements OnInit{
               case 'CDROM':{
                 setgetValues(device.attributes, cdrom_lookup_table);
               };
-              case 'DISK':{     
+              case 'DISK':{
                 setgetValues(device.attributes, disk_lookup_table);
               };
           }
@@ -205,7 +206,7 @@ export class DeviceEditComponent implements OnInit{
             if (device.dtype === 'DISK'){
               devices.push({"dtype" : 'DISK', "attributes":{
                 "type": formvalue.DISK_type ? formvalue.DISK_type: device.attributes.type, 
-                "path": formvalue.DISK_path ? formvalue.DISK_path: device.attributes.path}})
+                "path": formvalue.DISK_zvol ? formvalue.DISK_zvol: device.attributes.path}})
             }
             if (device.dtype === 'CDROM'){
               devices.push({"dtype" : 'CDROM', "attributes":{ 
