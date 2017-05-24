@@ -1,12 +1,11 @@
-<ba-card>
-<form [ngBusy]="busy">
-  <div *ngIf="error" class="error">
-    {{ error }}
-  </div>
-  <div>
-  Are you sure you want to delete?
-  </div>
-   <button class="btn btn-danger" (click)="doSubmit()">Yes</button>
-   <button class="btn btn-primary" (click)="doCancel()">Cancel</button>
-</form>
+<ba-card class="animated fadeIn card" title="Are You Sure?">
+	<form [ngBusy]="busy">
+  	<div *ngIf="error" class="error">
+    		<span>{{ error }}</span>
+  	</div>
+  	<p>Are you sure you want to delete?</p>
+   	<button class="btn btn-outline-danger" (click)="doSubmit()">Yes</button>
+   	<button class="btn btn-outline-warning" (click)="doCancel()">Cancel</button>
+	</form>
+
 </ba-card>

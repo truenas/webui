@@ -49,6 +49,7 @@ $angle-right: "\f101";
   }
 }
 
+
 .ba-sidebar-item-expanded {
   > ul.al-sidebar-sublist {
     display: block!important;
@@ -72,13 +73,13 @@ $angle-right: "\f101";
 
 a.al-sidebar-list-link {
   display: block;
-  height: 1.5em;
-  padding-left: .5em;
+  height: 1.6em;
   text-shadow: none;
-  font-size: 1.5em;
+  font-size: 1.3em;
   text-decoration: none;
+  margin-left: .7em;
   color: $primary;
-  line-height: 1.5em;
+  line-height: 1.6em;
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
@@ -89,7 +90,7 @@ a.al-sidebar-list-link {
     }
   }
   i {
-    margin-right: .5em;
+    margin-right: .6em;
     width: 1em;
     display: inline-block;
   }
@@ -116,7 +117,6 @@ a.al-sidebar-list-link {
   width: $sidebar-scroll-width !important;
   left: $sidebar-width - $sidebar-scroll-width;
 }
-
 @mixin layout-collapsed() {
   .al-main {
     margin-left: 50px;

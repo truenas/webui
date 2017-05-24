@@ -9,10 +9,10 @@
                                     [hasErrorMessaging]="controlModel.hasErrorMessages"
                                     [ngClass]="isShow(controlModel.id) ? 'show' :'hide'">
     </dynamic-form-bootstrap-control>
-   <button class="btn btn-primary" type="submit">Update</button>
-   <button class="btn btn-primary" type="button" (click)="goBack()">Cancel</button>
+   <button class="btn btn-outline-success" type="submit">Update</button>
+   <button class="btn btn-outline-warning" type="button" (click)="goBack()">Cancel</button>
    <span *ngFor="let custBtn of conf.custActions">
-      <button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" class="btn btn-primary" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+      <button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" class="btn btn-outline-default" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
     </span>
 
 </form>
