@@ -20,6 +20,7 @@ export const routes: Routes = [
       { path: 'system', loadChildren: 'app/pages/system/system.module#SystemModule' },
       { path: 'users', loadChildren: 'app/pages/users/users.module#UsersModule' },
       { path: 'groups', loadChildren: 'app/pages/groups/groups.module#GroupsModule' },
+      { path: 'directoryservice', loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule' },
       { path: 'network', loadChildren: 'app/pages/network/network.module#NetworkModule' },
       { path: 'storage/volumes', loadChildren: 'app/pages/storage/volumes/volumes.module#VolumesModule' },
       { path: 'storage/snapshots', loadChildren: 'app/pages/storage/snapshots/snapshots.module#SnapshotsModule' },

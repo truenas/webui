@@ -106,6 +106,23 @@ export const PAGES_MENU = [
     ],
   },
   {
+    title: 'Directory Service',
+    icon: 'ion-ios-book',
+    selected: false,
+    expanded: false,
+    order: 0,
+    children: [
+      {
+        path: ['directoryservice', 'ldap'],
+        title: 'LDAP',
+        icon: 'ion-pizza',
+        selected: false,
+        expanded: false,
+        order: 0
+      }
+    ]
+  },
+  {
     title: 'Network',
     icon: 'ion-network',
     selected: false,
