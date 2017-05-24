@@ -9,6 +9,7 @@ import { routing }       from './services.routing';
 import { EntityModule } from '../common/entity/entity.module';
 import { ServiceSSHComponent } from './components/service-ssh';
 import { ServiceAFPComponent } from './components/service-afp';
+import { ServiceDCComponent } from './components/service-dc';
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ import { ServiceAFPComponent } from './components/service-afp';
     Services,
     ServiceSSHComponent,
     ServiceAFPComponent,
+    ServiceDCComponent,
   ],
   providers: [
   ]
