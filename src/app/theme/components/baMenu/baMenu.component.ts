@@ -92,14 +92,18 @@ export class BaMenu {
   }
 
   public onShutdown(): void {
-    this.ws.call('system.shutdown', {}).subscribe((res)=>{
-      alert('system is shutting down...');
-    });
+    if(confirm("Are you sure to shutdown?")) {
+      this.ws.call('system.shutdown', {}).subscribe((res)=>{
+        alert('system is shutting down...');
+      });
+    }
   }
 
   public onReboot(): void {
-    this.ws.call('system.reboot', {}).subscribe((res)=>{
-      alert('system is rebooting...');
-    });
+    if(confirm("Are you sure to reboot?")) {
+      this.ws.call('system.reboot', {}).subscribe((res)=>{
+        alert('system is rebooting...');
+      });
+    }
   }
 }
