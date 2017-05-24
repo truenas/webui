@@ -22,10 +22,19 @@ export class DeviceNicAddComponent {
 
   protected formModel: DynamicFormControlModel[] = [
     new DynamicSelectModel({
-        id: 'type',
-        label: 'Network Interface',
-    }),
-  ];
+      id: 'NIC_type',
+      label: 'Adapter Type:',
+      options: [
+        { label: 'Intel e82545 (e1000)', value: "E1000" },
+        { label: 'VirtIO', value: "VIRTIO" },
+        ],
+      }),
+    new DynamicInputModel({
+      id: 'NIC_mac',
+      label: 'Mac Address',
+      value: '00:a0:98:FF:FF:FF',
+      }),
+    ];
 
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {

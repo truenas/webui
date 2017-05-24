@@ -5,6 +5,8 @@ import { Router, ActivatedRoute} from '@angular/router';
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
+import { EntityUtils } from '../../../common/entity/utils';
+import { VmService } from '../../../../services/vm.service';
 
 @Component({
   selector: 'app-device-disk-add',
@@ -17,17 +19,21 @@ export class DeviceDiskAddComponent {
   protected vm: string;
   protected route_success: string[];
   protected dtype: string = 'DISK';
-  private diskModeType: DynamicSelectModel<string>;
+  private DISK_zvol: DynamicSelectModel<string>;
   protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'zvol',
-      label: 'ZVol',
-    }),
-    new DynamicSelectModel({
-      id: 'mode',
-      label: 'Mode',
-    }),
-  ];
+        new DynamicSelectModel({
+          id: 'DISK_zvol',
+          label: 'ZVol',
+          }),
+        new DynamicSelectModel({
+          id: 'DISK_mode',
+          label: 'Mode',
+          options: [
+            { label:'AHCI', value: 'AHCI'},
+            { label: 'VirtIO',  value: 'VIRTIO'},
+          ],
+        }),
+      ];
 
   afterInit(deviceAdd: any) {
     this.route.params.subscribe(params => {
@@ -36,9 +42,9 @@ export class DeviceDiskAddComponent {
         this.route_success = ['vm', this.pk, 'devices', this.vm];
     });
     deviceAdd.ws.call('notifier.choices', ['VM_DISKMODETYPES']).subscribe((res) => {
-      this.diskModeType = <DynamicSelectModel<string>>this.formService.findById("mode", this.formModel);
+      this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById("DISK_mode", this.formModel);
       res.forEach((item) => {
-        this.diskModeType.add({ label: item[1], value: item[0] });
+        this.DISK_zvol.add({ label: item[1], value: item[0] });
       });
     });
   }
