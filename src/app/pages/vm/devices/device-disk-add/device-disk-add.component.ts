@@ -10,7 +10,8 @@ import { VmService } from '../../../../services/vm.service';
 
 @Component({
   selector: 'app-device-disk-add',
-  template: `<device-add [conf]="this"></device-add>`
+  template: `<device-add [conf]="this"></device-add>`,
+  providers: [VmService]
 })
 export class DeviceDiskAddComponent {
 
@@ -41,15 +42,18 @@ export class DeviceDiskAddComponent {
         this.vm = params['name'];
         this.route_success = ['vm', this.pk, 'devices', this.vm];
     });
-    deviceAdd.ws.call('notifier.choices', ['VM_DISKMODETYPES']).subscribe((res) => {
-      this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById("DISK_mode", this.formModel);
-      res.forEach((item) => {
-        this.DISK_zvol.add({ label: item[1], value: item[0] });
-      });
+    this.VmService.getStorageVolumes().subscribe((res) => {
+      let data = new EntityUtils().flattenData(res.data);
+      this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById("DISK_zvol", this.formModel);
+      for (let dataset of data){
+        if (dataset.type === 'zvol') {
+          this.DISK_zvol.add({ label: dataset.name, value: dataset.path });
+        };
+      };
     });
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected VmService: VmService,) {
 
   }
 
