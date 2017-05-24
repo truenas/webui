@@ -47,40 +47,38 @@ export class DeviceAddComponent implements OnInit {
 
   onSubmit() {
     this.ws.call('vm.query').subscribe((res) => {
+      let formvalue = _.cloneDeep(this.formGroup.value);
       this.route_success = ['vm', this.vmid, 'devices', this.vm];
       this.route_cancel = ['vm', this.vmid, 'devices', this.vm];
       let self = this;
       this.error = null;
       let payload = {};
-      let formvalue = _.cloneDeep(this.formGroup.value);
+
+      
       for (let vm of res) {
         if (vm.name === self.conf.vm) {
-          var devices = []
-          for (let device of vm.devices) {
-            if (device.dtype === 'NIC'){
-              devices.push({"dtype" : 'NIC', "attributes":{"type": formvalue.NIC_type ? formvalue.NIC_type : device.attributes.type ,
-              "mac": formvalue.NIC_mac ? formvalue.NIC_mac : device.attributes.mac}})
-            }
-            if (device.dtype === 'VNC'){
-              devices.push({"dtype" : 'VNC', "attributes":{"wait": new EntityUtils().bool(formvalue.VNC_wait ? formvalue.VNC_wait : device.attributes.wait), 
-              "vnc_port": formvalue.VNC_port ? formvalue.VNC_port : device.attributes.port, 
-              "vnc_resolution":formvalue.VNC_resolution? formvalue.VNC_resolution:device.attributes.vnc_resolution}})
-            }
-            if (device.dtype === 'DISK'){
-              devices.push({"dtype" : 'DISK', "attributes":{
-                "type": formvalue.DISK_mode ? formvalue.DISK_mode: device.attributes.type, 
-                "path": formvalue.DISK_zvol ? formvalue.DISK_zvol: device.attributes.path}})
-            }
-            if (device.dtype === 'CDROM'){
-              devices.push({"dtype" : 'CDROM', "attributes":{ 
-                "path": formvalue.CDROM_path ? formvalue.CDROM_path: device.attributes.path}})
-            }
+          var devices = vm.devices
+          var before_adding_devices = JSON.stringify(devices)
+          if (self.conf.dtype === 'NIC'){
+            devices.push({"dtype" : 'NIC', "attributes":{"type": formvalue.NIC_type , "mac": formvalue.NIC_mac}})}
+          if (self.conf.dtype === 'VNC'){
+            devices.push({"dtype" : 'VNC', "attributes":{"wait": formvalue.VNC_wait, "vnc_port": formvalue.VNC_port, 
+            "vnc_resolution": formvalue.VNC_resolution}})
+          }
+          if (self.conf.dtype === 'DISK'){
+            devices.push({"dtype" : 'DISK', "attributes":{"type": formvalue.DISK_mode, "path": formvalue.DISK_zvol }})
+          }
+          if (self.conf.dtype === 'CDROM'){
+            devices.push({"dtype" : 'CDROM', "attributes":{ "path": formvalue.CDROM_path}})
           }
         }
       }
       payload['devices'] = devices;
-      this.busy = this.ws.call('vm.update', [self.vmid, payload]).subscribe((res) => {
-        this.router.navigate(new Array('/pages').concat(this.route_success));
+      var after_adding_devices = JSON.stringify(payload)
+      console.log("before adding devies: "+ before_adding_devices);
+      console.log("after adding devies: "+ after_adding_devices);
+      this.busy = this.ws.call('vm.update', [self.conf.pk, payload]).subscribe((res) => {
+        this.router.navigate(new Array('/pages').concat(self.conf.route_success));
       }, (res) => {
         new EntityUtils().handleError(this, res);
       });
