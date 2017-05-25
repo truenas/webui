@@ -212,6 +212,14 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
+      {
+        path: ['sharing', 'iscsi'],
+        title: 'iSCSI',
+        icon: 'ion-ios-box',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
     ],
   },
   {

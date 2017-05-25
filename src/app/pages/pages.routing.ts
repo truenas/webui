@@ -27,6 +27,7 @@ export const routes: Routes = [
       { path: 'sharing/afp', loadChildren: 'app/pages/sharing/afp/afp.module#AFPModule' },
       { path: 'sharing/nfs', loadChildren: 'app/pages/sharing/nfs/nfs.module#NFSModule' },
       { path: 'sharing/smb', loadChildren: 'app/pages/sharing/smb/smb.module#SMBModule' },
+      { path: 'sharing/iscsi', loadChildren: 'app/pages/sharing/iscsi/iscsi.module#ISCSIModule'},
       { path: 'services', loadChildren: 'app/pages/services/services.module#ServicesModule' },
       { path: 'vm', loadChildren: 'app/pages/vm/vm.module#VmModule' },
       { path: 'jails', loadChildren: 'app/pages/jails/jails.module#JailsModule'},
