@@ -195,6 +195,7 @@ export class DeviceEditComponent implements OnInit{
       let formvalue = _.cloneDeep(this.formGroup.value);
       for (let vm of res) {
         if (vm.name === this.vm) {
+          var before_adding_devices = JSON.stringify(vm.devices)
           var devices = []
           for (let device of vm.devices) {
             if (device.dtype=='NIC'){
@@ -219,6 +220,9 @@ export class DeviceEditComponent implements OnInit{
         }
       }
       payload['devices'] = devices;
+      var after_adding_devices = JSON.stringify(payload)
+      console.log("before editing devies: "+ before_adding_devices);
+      console.log("after editing devies: "+ after_adding_devices);
       this.busy = this.ws.call('vm.update', [self.vmid, payload]).subscribe((res) => {
         this.router.navigate(new Array('/pages').concat(this.route_success));
       }, (res) => {

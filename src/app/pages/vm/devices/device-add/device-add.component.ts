@@ -10,6 +10,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../common/entity/utils';
 
+import * as _ from 'lodash';
 @Component({
   selector: 'device-add',
   templateUrl: './device-add.component.html',
@@ -22,14 +23,20 @@ export class DeviceAddComponent implements OnInit {
   public formGroup: FormGroup;
   public error: string;
   public data: Object = {};
+  protected vm: string;
+  protected vmid: any;
+  protected route_cancel: string[] ;
+  protected route_success: string[] ;
 
   @ViewChildren('component') components;
 
   private busy: Subscription;
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, private location: Location) {
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
+   protected formService: DynamicFormService, protected _injector: Injector,
+   protected _appRef: ApplicationRef, protected _state: GlobalState, private location: Location){
 
-  }
+   }
 
   ngOnInit() {
     this.formGroup = this.formService.createFormGroup(this.conf.formModel);
@@ -41,30 +48,36 @@ export class DeviceAddComponent implements OnInit {
   }
 
   onSubmit() {
-    this.error = null;
-    let value = this.formGroup.value;
-    for(let i in value) {
-      let clean = this.conf['clean_' + i];
-      if(clean) {
-        value[i] = clean.bind(this.conf)(value[i]);
+    this.ws.call('vm.query').subscribe((res) => {
+      let formvalue = _.cloneDeep(this.formGroup.value);
+      this.route_success = ['vm', this.vmid, 'devices', this.vm];
+      this.route_cancel = ['vm', this.vmid, 'devices', this.vm];
+      let self = this;
+      this.error = null;
+      let payload = {};
+      let devices = []
+      for (let vm of res) {
+        if (vm.name === self.conf.vm) {
+          if (self.conf.dtype === 'NIC'){
+            devices.push({"dtype" : 'NIC', "attributes":{"type": formvalue.NIC_type , "mac": formvalue.NIC_mac}})}
+          if (self.conf.dtype === 'VNC'){
+            devices.push({"dtype" : 'VNC', "attributes":{"wait": formvalue.VNC_wait, "vnc_port": formvalue.VNC_port, 
+            "vnc_resolution": formvalue.VNC_resolution}})
+          }
+          if (self.conf.dtype === 'DISK'){
+            devices.push({"dtype" : 'DISK', "attributes":{"type": formvalue.DISK_mode, "path": formvalue.DISK_zvol }})
+          }
+          if (self.conf.dtype === 'CDROM'){
+            devices.push({"dtype" : 'CDROM', "attributes":{ "path": formvalue.CDROM_path}})
+          }
+        }
       }
-    }
-
-    if(this.conf.clean) {
-      value = this.conf.clean.bind(this.conf)(value);
-    }
-
-    let values = {};
-    values['attributes'] = value;
-    values['dtype'] = this.conf.dtype;
-    values['vm'] = this.conf.pk;
-
-    this.rest.post(this.conf.resource_name + '/', {
-      body: JSON.stringify(values),
-    }).subscribe((res) => {
-      this.router.navigate(new Array('/pages').concat(this.conf.route_success));
-    }, (res) => {
-      new EntityUtils().handleError(this, res);
+      payload['devices'] = devices;
+      this.busy = this.ws.call('vm.create_device', [self.conf.pk, payload]).subscribe((res) => {
+        this.router.navigate(new Array('/pages').concat(self.conf.route_success));
+      }, (res) => {
+        new EntityUtils().handleError(this, res);
+      });
     });
   }
 
