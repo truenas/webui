@@ -77,10 +77,6 @@ export class ServiceAFPComponent {
         label: 'Bind Interfaces',
     }),
   ];
-
-
-
-  private guestList: DynamicSelectModel<string>;
   
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState, protected userService: UserService) {
 
