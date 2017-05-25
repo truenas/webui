@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
 })
 
 export class ServiceAFPComponent {
-  protected resource_name: string = 'services/ssh';
+  protected resource_name: string = 'services/afp';
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
@@ -87,6 +87,7 @@ export class ServiceAFPComponent {
   }
 
   afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
   }
 
 }
