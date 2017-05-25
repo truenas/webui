@@ -32,9 +32,11 @@ export class DeviceAddComponent implements OnInit {
 
   private busy: Subscription;
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, private location: Location) {
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
+   protected formService: DynamicFormService, protected _injector: Injector,
+   protected _appRef: ApplicationRef, protected _state: GlobalState, private location: Location){
 
-  }
+   }
 
   ngOnInit() {
     this.formGroup = this.formService.createFormGroup(this.conf.formModel);
@@ -53,12 +55,9 @@ export class DeviceAddComponent implements OnInit {
       let self = this;
       this.error = null;
       let payload = {};
-
-      
+      let devices = []
       for (let vm of res) {
         if (vm.name === self.conf.vm) {
-          var devices = vm.devices
-          var before_adding_devices = JSON.stringify(devices)
           if (self.conf.dtype === 'NIC'){
             devices.push({"dtype" : 'NIC', "attributes":{"type": formvalue.NIC_type , "mac": formvalue.NIC_mac}})}
           if (self.conf.dtype === 'VNC'){
@@ -74,10 +73,7 @@ export class DeviceAddComponent implements OnInit {
         }
       }
       payload['devices'] = devices;
-      var after_adding_devices = JSON.stringify(payload)
-      console.log("before adding devies: "+ before_adding_devices);
-      console.log("after adding devies: "+ after_adding_devices);
-      this.busy = this.ws.call('vm.update', [self.conf.pk, payload]).subscribe((res) => {
+      this.busy = this.ws.call('vm.create_device', [self.conf.pk, payload]).subscribe((res) => {
         this.router.navigate(new Array('/pages').concat(self.conf.route_success));
       }, (res) => {
         new EntityUtils().handleError(this, res);
