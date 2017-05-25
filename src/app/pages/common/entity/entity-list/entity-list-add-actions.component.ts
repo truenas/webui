@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-entity-list-add-actions',
   template: `
     <span *ngFor="let action of actions">
-      <button class="btn btn-primary btn-add" (click)="action.onClick()">{{ action?.label }}</button>
+      <button class="btn btn-primary btn-fab" (click)="action.onClick()">{{ action?.label }}</button>
     </span>
   `
 })

@@ -1,4 +1,4 @@
-<button *ngIf="conf.route_add" class="btn btn-primary btn-add" (click)="doAdd()">Add</button>
+<a *ngIf="conf.route_add" class="btn btn-success btn-fab" (click)="doAdd()"><i class="ion-plus"></i></a>
 <app-entity-list-add-actions [entity]="this"></app-entity-list-add-actions>
 
 <ba-card>

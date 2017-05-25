@@ -1,5 +1,5 @@
-.btn-add {
-  margin-bottom: 10px;
+.btn-fab {
+  margin-bottom: 40px;
 }
 
 .table > thead > tr > th:first-child {
@@ -14,4 +14,7 @@
 	line-height:1.5em;
 	height:1.5em;
 	padding: .5em;
+}
+i {
+	line-height: 54px;
 }

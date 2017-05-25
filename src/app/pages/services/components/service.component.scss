@@ -6,7 +6,6 @@
   border-radius: 50%;
   box-shadow: #000 0 -1px 7px 1px, inset #e74c3c 0 -1px 9px, #c0392b 0 2px 12px;
 }
-
 .state-label-running {
   width: 12px;
   height: 12px;
@@ -15,7 +14,7 @@
   border-radius: 50%;
   box-shadow: #000 0 -1px 7px 1px, inset #1abc9c 0 -1px 9px, #16a085 0 2px 12px;
 }
-
+i { line-height: 54px; }
 .v-center {
 	display: table-cell;
   float:left;  }

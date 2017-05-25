@@ -1,4 +1,5 @@
 .vscode/
+*/**/tags
 node_modules/
 dll/
 dist/
