@@ -18,7 +18,7 @@ export class GlobalconfigurationComponent {
       label: 'Base Name',
     }),
     new DynamicTextAreaModel({
-      id: 'iscsi_ins_servers',
+      id: 'iscsi_isns_servers',
       label: 'ISNS Servers',
     }),
     new DynamicInputModel({
