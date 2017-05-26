@@ -58,6 +58,17 @@ export class EntityAddComponent implements OnInit {
     this.router.navigate(new Array('/pages').concat(route));
   }
 
+  getIPs(data: any[]):any[] {
+    var IPs = new Array();
+    for(let i in data) {
+      if('ip' in data[i] && 'port' in data[i]) {
+        let ip = data[i]['ip'] + ':' + data[i]['port'];
+        IPs.push(ip);
+      }
+    }
+    return IPs;
+  }
+
   onSubmit() {
     this.error = null;
     let value = this.formGroup.value;
@@ -65,6 +76,10 @@ export class EntityAddComponent implements OnInit {
       let clean = this.conf['clean_' + i];
       if(clean) {
         value[i] = clean.bind(this.conf)(value[i]);
+      }
+
+      if(Array.isArray(value[i])) {
+        value[i] = this.getIPs(value[i]);
       }
     }
 

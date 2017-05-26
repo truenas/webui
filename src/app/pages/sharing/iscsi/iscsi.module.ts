@@ -12,6 +12,7 @@ import { ISCSI } from './iscsi.component';
 import { GlobalconfigurationComponent } from './globalconfiguration/';
 import { PortalListComponent } from './portal/portal-list/';
 import { PortalDeleteComponent } from './portal/portal-delete/';
+import { PortalAddComponent } from './portal/portal-add/';
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import { PortalDeleteComponent } from './portal/portal-delete/';
     GlobalconfigurationComponent,
     PortalListComponent,
     PortalDeleteComponent,
+    PortalAddComponent,
   ],
   providers: [
   ]

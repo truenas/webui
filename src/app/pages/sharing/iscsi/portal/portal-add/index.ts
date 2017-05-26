@@ -1,0 +1,1 @@
+export { PortalAddComponent } from './portal-add.component';
