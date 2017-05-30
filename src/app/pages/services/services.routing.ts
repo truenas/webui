@@ -6,6 +6,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { ServiceSSHComponent } from './components/service-ssh/';
 import { ServiceAFPComponent } from './components/service-afp/';
 import { ServiceDCComponent } from './components/service-dc/';
+import { ServiceFTPComponent } from './components/service-ftp/';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,10 @@ export const routes: Routes = [
   {
     path: 'domaincontroller',
     component: ServiceDCComponent,
+  },
+  {
+    path: 'ftp',
+    component: ServiceFTPComponent,
   }
 ];
 
