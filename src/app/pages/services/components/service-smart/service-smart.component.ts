@@ -11,7 +11,6 @@ import { NG_VALIDATORS } from '@angular/forms';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-
 @Component ({
     selector: 'smart-edit',
     template: ` <entity-config [conf]="this"></entity-config>`
