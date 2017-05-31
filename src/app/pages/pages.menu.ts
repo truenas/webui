@@ -119,7 +119,15 @@ export const PAGES_MENU = [
         selected: false,
         expanded: false,
         order: 0
-      }
+      },
+      {
+        path: ['directoryservice', 'activedirectory'],
+        title: 'Active Directory',
+        icon: 'ion-ios-nutrition',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
     ]
   },
   {

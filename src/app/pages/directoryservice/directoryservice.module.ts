@@ -11,6 +11,7 @@ import { FnCommonModule } from '../common/common.module';
 import { routing } from './directoryservice.routing';
 
 import { LdapComponent } from './ldap/';
+import { ActiveDirectoryComponent } from './activedirectory/';
 
 import { SystemGeneralService } from '../../services';
 
@@ -29,6 +30,7 @@ import { SystemGeneralService } from '../../services';
   ],
   declarations: [
     LdapComponent,
+    ActiveDirectoryComponent
   ],
   providers: [
     SystemGeneralService
