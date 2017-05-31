@@ -47,6 +47,9 @@ export class EntityConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.conf.preInit) {
+      this.conf.preInit(this);
+    }
     this.formGroup = this.formService.createFormGroup(this.conf.formModel);
     this.sub = this.route.params.subscribe(params => {
       this.rest.get(this.conf.resource_name + '/', {}).subscribe((res) => {

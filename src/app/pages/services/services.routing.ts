@@ -6,6 +6,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { ServiceSSHComponent } from './components/service-ssh/';
 import { ServiceAFPComponent } from './components/service-afp/';
 import { ServiceDCComponent } from './components/service-dc/';
+import { ServiceNFSComponent } from './components/service-nfs/';
 
 export const routes: Routes = [
   {
@@ -23,7 +24,11 @@ export const routes: Routes = [
   {
     path: 'domaincontroller',
     component: ServiceDCComponent,
-  }
+  },
+  {
+    path: 'nfs',
+    component: ServiceNFSComponent,
+  },
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

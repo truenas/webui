@@ -10,6 +10,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { ServiceSSHComponent } from './components/service-ssh';
 import { ServiceAFPComponent } from './components/service-afp';
 import { ServiceDCComponent } from './components/service-dc';
+import { ServiceNFSComponent } from './components/service-nfs';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { ServiceDCComponent } from './components/service-dc';
     ServiceSSHComponent,
     ServiceAFPComponent,
     ServiceDCComponent,
+    ServiceNFSComponent
   ],
   providers: [
   ]
