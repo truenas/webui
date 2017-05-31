@@ -24,8 +24,17 @@ export class ServiceNFSComponent {
   protected resource_name: string = 'services/nfs';
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
+  protected formModel: DynamicFormControlModel[]
+  protected nfs_srv_bindip: DynamicCheckboxGroupModel;
 
-  protected formModel: DynamicFormControlModel[] = [
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,
+                protected ws: WebSocketService, protected formService: DynamicFormService,
+                protected _injector: Injector, protected _appRef: ApplicationRef,
+                protected _state: GlobalState, protected userService: UserService) {
+  }
+preInit(entityEdit: any){
+
+  this.formModel = [
     new DynamicInputModel({
     id: 'nfs_srv_servers',
     label: 'Number of servers:',
@@ -50,6 +59,17 @@ export class ServiceNFSComponent {
     new DynamicCheckboxModel({
       id: 'nfs_srv_v3_v4',
       label: 'NFSv3 ownership model for NFSv4:',
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              id: 'nfs_srv_16',
+              value: true,
+            }
+          ]
+        },
+      ],
     }),
     new DynamicCheckboxModel({
       id: 'nfs_srv_v4_krb',
@@ -80,26 +100,17 @@ export class ServiceNFSComponent {
       label: 'Log rpc.statd(8) and rpc.lockd(8)',
     }),
   ];
-
-private nfs_srv_bindip: DynamicCheckboxGroupModel;
-constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,
-                protected ws: WebSocketService, protected formService: DynamicFormService,
-                protected _injector: Injector, protected _appRef: ApplicationRef,
-                protected _state: GlobalState, protected userService: UserService) {
-
-  }
-
-  preInit(entityEdit: any){
-    this.rest.get('network/interface/', {}).subscribe((res) => {
-      this.nfs_srv_bindip = <DynamicCheckboxGroupModel>this.formService.findById('nfs_srv_bindip', this.formModel);
-      res.data.forEach((item) => {
-
-      });
-    });
-  }
+}
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+    let self = this
+    this.ws.call('notifier.choices', ['IPChoices']).subscribe((res) => {
+      self.nfs_srv_bindip = <DynamicCheckboxGroupModel>self.formService.findById('nfs_srv_bindip', self.formModel);
+      res.forEach((item) => {
+        self.nfs_srv_bindip;
+      });
+    });
   }
 
 }
