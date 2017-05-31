@@ -9,7 +9,6 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { NG_VALIDATORS } from '@angular/forms';
 
 import * as _ from 'lodash';
-
 import { Subscription } from 'rxjs';
 
 
@@ -39,7 +38,6 @@ export class ServiceLLDPComponent {
   ];
   
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState) {
-
   }
 
   afterInit(entityEdit: any) {
