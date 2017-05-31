@@ -14,6 +14,7 @@ import { ServiceFTPComponent } from './components/service-ftp';
 import { ServiceLLDPComponent } from './components/service-lldp';
 import { ServiceRSYNCComponent } from './components/service-rsync';
 import { ServiceSMARTComponent } from './components/service-smart';
+import { ServiceNFSComponent } from './components/service-nfs';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { ServiceSMARTComponent } from './components/service-smart';
     ServiceLLDPComponent,
     ServiceRSYNCComponent,
     ServiceSMARTComponent,
+    ServiceNFSComponent
   ],
   providers: [
   ]
