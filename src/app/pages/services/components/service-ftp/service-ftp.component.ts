@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 @Component ({
-    selector: 'afp-edit',
+    selector: 'ftp-edit',
     template: ` <entity-config [conf]="this"></entity-config>`,
     providers: [SystemGeneralService]
 })
