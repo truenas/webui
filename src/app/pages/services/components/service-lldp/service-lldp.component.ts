@@ -1,4 +1,4 @@
-import {  ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel,    DynamicSelectModel,DynamicTextAreaModel, } from '@ng2-dynamic-forms/core';
 
