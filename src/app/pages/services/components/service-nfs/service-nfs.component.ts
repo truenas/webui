@@ -43,11 +43,17 @@ preInit(entityEdit: any){
       id: 'nfs_srv_udp',
       label: 'Serve UDP NFS clients:',
     }),
+    /*
     new DynamicCheckboxGroupModel({
       id: 'nfs_srv_bindip',
       label: 'Bind IP Addresses:',
       group: [],
     }),
+    */
+    new DynamicInputModel({
+      id: 'nfs_srv_bindip',
+      label: 'Bind IP Addresses:',
+    }),    
     new DynamicCheckboxModel({
       id: 'nfs_srv_allow_nonroot',
       label: 'Allow non-root mount:',
@@ -57,7 +63,7 @@ preInit(entityEdit: any){
       label: 'Enable NFSv4:',
     }),
     new DynamicCheckboxModel({
-      id: 'nfs_srv_v3_v4',
+      id: 'nfs_srv_v4_v3owner',
       label: 'NFSv3 ownership model for NFSv4:',
       relation: [
         {
@@ -92,11 +98,11 @@ preInit(entityEdit: any){
       label: 'Support >16 groups:',
     }),
     new DynamicCheckboxModel({
-      id: 'log_mntd_requests',
+      id: 'nfs_srv_mountd_log',
       label: 'Log mountd(8) requests:',
     }),
     new DynamicCheckboxModel({
-      id: 'log_rpc_statd_lockd_requests',
+      id: 'nfs_srv_statd_lockd_log',
       label: 'Log rpc.statd(8) and rpc.lockd(8)',
     }),
   ];
@@ -104,6 +110,7 @@ preInit(entityEdit: any){
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+    /*
     let self = this
     this.ws.call('notifier.choices', ['IPChoices']).subscribe((res) => {
       self.nfs_srv_bindip = <DynamicCheckboxGroupModel>self.formService.findById('nfs_srv_bindip', self.formModel);
@@ -111,6 +118,7 @@ preInit(entityEdit: any){
         self.nfs_srv_bindip;
       });
     });
+   */
   }
 
 }
