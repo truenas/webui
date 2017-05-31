@@ -8,6 +8,7 @@ import { ServiceAFPComponent } from './components/service-afp/';
 import { ServiceDCComponent } from './components/service-dc/';
 import { ServiceFTPComponent } from './components/service-ftp/';
 import { ServiceLLDPComponent } from './components/service-lldp/';
+import { ServiceRSYNCComponent } from './components/service-rsync/';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,10 @@ export const routes: Routes = [
   {
     path: 'lldp',
     component: ServiceLLDPComponent,
+  },
+  {
+    path: 'rsync',
+    component: ServiceRSYNCComponent,
   }
 ];
 
