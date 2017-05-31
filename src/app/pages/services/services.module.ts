@@ -11,6 +11,7 @@ import { ServiceSSHComponent } from './components/service-ssh';
 import { ServiceAFPComponent } from './components/service-afp';
 import { ServiceDCComponent } from './components/service-dc';
 import { ServiceFTPComponent } from './components/service-ftp';
+import { ServiceLLDPComponent } from './components/service-lldp';
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { ServiceFTPComponent } from './components/service-ftp';
     ServiceAFPComponent,
     ServiceDCComponent,
     ServiceFTPComponent,
+    ServiceLLDPComponent,
   ],
   providers: [
   ]
