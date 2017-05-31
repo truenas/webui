@@ -7,6 +7,7 @@ import { ServiceSSHComponent } from './components/service-ssh/';
 import { ServiceAFPComponent } from './components/service-afp/';
 import { ServiceDCComponent } from './components/service-dc/';
 import { ServiceFTPComponent } from './components/service-ftp/';
+import { ServiceLLDPComponent } from './components/service-lldp/';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,10 @@ export const routes: Routes = [
   {
     path: 'ftp',
     component: ServiceFTPComponent,
+  },
+  {
+    path: 'lldp',
+    component: ServiceLLDPComponent,
   }
 ];
 
