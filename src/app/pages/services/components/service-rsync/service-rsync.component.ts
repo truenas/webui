@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 
 
 @Component ({
-    selector: 'rsyncd-edit',
+    selector: 'rsync-edit',
     template: ` <entity-config [conf]="this"></entity-config>`
 })
 
