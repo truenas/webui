@@ -12,6 +12,7 @@ import { ServiceRSYNCComponent } from './components/service-rsync/';
 import { ServiceSMARTComponent } from './components/service-smart/';
 import { ServiceNFSComponent } from './components/service-nfs/';
 import { ServiceTFTPComponent } from './components/service-tftp/';
+import { ServiceUPSComponent } from './components/service-ups';
 
 export const routes: Routes = [
   {
@@ -53,6 +54,10 @@ export const routes: Routes = [
   {
     path: 'tftp',
     component: ServiceTFTPComponent,
+  },
+  {
+    path: 'ups',
+    component: ServiceUPSComponent,
   },
 ];
 
