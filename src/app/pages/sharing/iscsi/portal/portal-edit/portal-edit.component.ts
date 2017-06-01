@@ -66,6 +66,7 @@ export class PortalEditComponent {
           new DynamicSelectModel({
               id: "ip",
               label: "IP Address",
+              value: '0.0.0.0',
           }),
           new DynamicInputModel({
               id: "port",
