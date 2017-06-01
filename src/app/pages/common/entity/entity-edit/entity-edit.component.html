@@ -10,11 +10,11 @@
                                     [ngClass]="isShow(controlModel.id) ? 'show' :'hide'">
     </dynamic-form-bootstrap-control>
     <div class="btn-group btn-group-justified btn-group-raised">
-   <button class="btn btn-lg btn-success" type="submit">Update</button>
-   <button class="btn btn-lg btn-warning" type="button" (click)="goBack()">Cancel</button>
-   </div>
-   <span *ngFor="let custBtn of conf.custActions">
-      <button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" class="btn btn-lg btn-block btn-default" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+      <button class="btn btn-lg btn-success" type="submit">Update</button>
+      <button class="btn btn-lg btn-warning" type="button" (click)="goBack()">Cancel</button>
+    </div>
+    <span *ngFor="let custBtn of conf.custActions">
+      <button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" class="btn btn-lg btn-primary" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
     </span>
 
 </form>
