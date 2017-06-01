@@ -81,6 +81,3 @@ export class ServiceDDNSComponent {
   }
 
 }
-
-
-
