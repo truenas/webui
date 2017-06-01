@@ -17,6 +17,7 @@ import { ServiceSMARTComponent } from './components/service-smart';
 import { ServiceNFSComponent } from './components/service-nfs';
 import { ServiceTFTPComponent } from './components/service-tftp';
 import { ServiceUPSComponent } from './components/service-ups';
+import { ServiceDDNSComponent } from './components/service-dynamicdns';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { ServiceUPSComponent } from './components/service-ups';
     ServiceSMARTComponent,
     ServiceNFSComponent,
     ServiceTFTPComponent,
-    ServiceUPSComponent
+    ServiceUPSComponent,
+    ServiceDDNSComponent
   ],
   providers: [
   ]
