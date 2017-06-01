@@ -8,6 +8,7 @@ import { PortalDeleteComponent } from './portal/portal-delete/';
 import { PortalAddComponent } from './portal/portal-add/';
 import { PortalEditComponent } from './portal/portal-edit/';
 import { InitiatorAddComponent } from './initiator/initiator-add/';
+import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 
 export const routes: Routes = [
 	{ path: '', component: ISCSI},
@@ -15,5 +16,6 @@ export const routes: Routes = [
 	{ path: 'portals/add', component: PortalAddComponent},
 	{ path: 'portals/edit/:pk', component: PortalEditComponent},
 	{ path: 'initiators/add', component: InitiatorAddComponent},
+	{ path: 'initiators/delete/:pk', component: InitiatorDeleteComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

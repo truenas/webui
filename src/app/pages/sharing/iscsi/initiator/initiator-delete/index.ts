@@ -1,0 +1,1 @@
+export { InitiatorDeleteComponent } from './initiator-delete.component';
