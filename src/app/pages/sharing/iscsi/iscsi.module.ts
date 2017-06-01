@@ -17,6 +17,7 @@ import { PortalEditComponent } from './portal/portal-edit/';
 import { InitiatorListComponent } from './initiator/initiator-list/';
 import { InitiatorAddComponent } from './initiator/initiator-add/';
 import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
+import { InitiatorEditComponent } from './initiator/initiator-edit/';
 
 @NgModule({
   imports: [
@@ -39,6 +40,7 @@ import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
     InitiatorListComponent,
     InitiatorAddComponent,
     InitiatorDeleteComponent,
+    InitiatorEditComponent,
   ],
   providers: [
   ]
