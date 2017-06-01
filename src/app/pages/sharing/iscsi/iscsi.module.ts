@@ -13,6 +13,7 @@ import { GlobalconfigurationComponent } from './globalconfiguration/';
 import { PortalListComponent } from './portal/portal-list/';
 import { PortalDeleteComponent } from './portal/portal-delete/';
 import { PortalAddComponent } from './portal/portal-add/';
+import { PortalEditComponent } from './portal/portal-edit/';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { PortalAddComponent } from './portal/portal-add/';
     PortalListComponent,
     PortalDeleteComponent,
     PortalAddComponent,
+    PortalEditComponent,
   ],
   providers: [
   ]
