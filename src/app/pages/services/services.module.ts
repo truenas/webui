@@ -16,6 +16,7 @@ import { ServiceRSYNCComponent } from './components/service-rsync';
 import { ServiceSMARTComponent } from './components/service-smart';
 import { ServiceNFSComponent } from './components/service-nfs';
 import { ServiceTFTPComponent } from './components/service-tftp';
+import { ServiceUPSComponent } from './components/service-ups';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { ServiceTFTPComponent } from './components/service-tftp';
     ServiceRSYNCComponent,
     ServiceSMARTComponent,
     ServiceNFSComponent,
-    ServiceTFTPComponent
+    ServiceTFTPComponent,
+    ServiceUPSComponent
   ],
   providers: [
   ]
