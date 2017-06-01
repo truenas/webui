@@ -114,8 +114,6 @@ export class PortalAddComponent {
   setIpFormArray(groupModel: DynamicFormArrayGroupModel) {
     this.ip = <DynamicSelectModel<string>>groupModel.group[0];
     this.ip.add({ label: '0.0.0.0', value: '0.0.0.0' });
-    this.ip.value = '0.0.0.0';
-    debugger;
     this.ipChoice.forEach((item) => {
       this.ip.add({ label: item[1], value: item[0] });
     });
