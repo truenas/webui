@@ -11,6 +11,7 @@ import { ServiceLLDPComponent } from './components/service-lldp/';
 import { ServiceRSYNCComponent } from './components/service-rsync/';
 import { ServiceSMARTComponent } from './components/service-smart/';
 import { ServiceNFSComponent } from './components/service-nfs/';
+import { ServiceTFTPComponent } from './components/service-tftp/';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,10 @@ export const routes: Routes = [
   {
     path: 'nfs',
     component: ServiceNFSComponent,
+  },
+  {
+    path: 'tftp',
+    component: ServiceTFTPComponent,
   },
 ];
 
