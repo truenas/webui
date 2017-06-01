@@ -16,13 +16,13 @@ import { Subscription } from 'rxjs';
 })
 
 export class ServiceTFTPComponent {
-  // Form Layout
+
   protected resource_name: string = 'services/tftp';
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services', 'tftp'];
 
   protected formModel: DynamicFormControlModel[] = [
-      new DynamicInputModel({
+    new DynamicInputModel({
         id: 'tftp_directory',
         label: 'Directory',
     }),
