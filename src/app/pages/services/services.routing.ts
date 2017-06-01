@@ -13,6 +13,7 @@ import { ServiceSMARTComponent } from './components/service-smart/';
 import { ServiceNFSComponent } from './components/service-nfs/';
 import { ServiceTFTPComponent } from './components/service-tftp/';
 import { ServiceUPSComponent } from './components/service-ups';
+import { ServiceDDNSComponent } from './components/service-dynamicdns';
 
 export const routes: Routes = [
   {
@@ -58,6 +59,10 @@ export const routes: Routes = [
   {
     path: 'ups',
     component: ServiceUPSComponent,
+  },
+  {
+    path: 'dynamicdns',
+    component: ServiceDDNSComponent,
   },
 ];
 
