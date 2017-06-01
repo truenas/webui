@@ -11,6 +11,9 @@ import { IscsiNavComponent } from './navbar/navbar.component';
     
     <h2>Portals</h2>
     <app-iscsi-portal-list></app-iscsi-portal-list>
+
+    <h2>Initiators</h2>
+    <app-iscsi-initiator-list></app-iscsi-initiator-list>
     `
 })
 export class ISCSI {
