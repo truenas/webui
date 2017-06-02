@@ -17,6 +17,9 @@ import { IscsiNavComponent } from './navbar/navbar.component';
 
     <h2>Authorized Access</h2>
     <app-iscsi-authorizedaccess-list></app-iscsi-authorizedaccess-list>
+
+    <h2>Targets</h2>
+    <app-iscsi-target-list></app-iscsi-target-list>
     `
 })
 export class ISCSI {

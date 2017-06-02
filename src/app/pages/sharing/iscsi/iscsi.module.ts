@@ -22,6 +22,7 @@ import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedacce
 import { AuthorizedAccessAddComponent } from './authorizedaccess/authorizedaccess-add/';
 import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 import { AuthorizedAccessEditComponent } from './authorizedaccess/authorizedaccess-edit/';
+import { TargetListComponent } from './target/target-list/';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { AuthorizedAccessEditComponent } from './authorizedaccess/authorizedacce
     AuthorizedAccessAddComponent,
     AuthorizedAccessDeleteComponent,
     AuthorizedAccessEditComponent,
+    TargetListComponent,
   ],
   providers: [
   ]
