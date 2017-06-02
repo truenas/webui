@@ -19,6 +19,7 @@ import { InitiatorAddComponent } from './initiator/initiator-add/';
 import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 import { InitiatorEditComponent } from './initiator/initiator-edit/';
 import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
+import { AuthorizedAccessAddComponent } from './authorizedaccess/authorizedaccess-add/';
 
 @NgModule({
   imports: [
@@ -43,6 +44,7 @@ import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedacce
     InitiatorDeleteComponent,
     InitiatorEditComponent,
     AuthorizedAccessListComponent,
+    AuthorizedAccessAddComponent,
   ],
   providers: [
   ]

@@ -10,6 +10,7 @@ import { PortalEditComponent } from './portal/portal-edit/';
 import { InitiatorAddComponent } from './initiator/initiator-add/';
 import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 import { InitiatorEditComponent } from './initiator/initiator-edit/';
+import { AuthorizedAccessAddComponent } from './authorizedaccess/authorizedaccess-add/';
 
 export const routes: Routes = [
 	{ path: '', component: ISCSI},
@@ -19,5 +20,6 @@ export const routes: Routes = [
 	{ path: 'initiators/add', component: InitiatorAddComponent},
 	{ path: 'initiators/delete/:pk', component: InitiatorDeleteComponent},
 	{ path: 'initiators/edit/:pk', component: InitiatorEditComponent},
+	{ path: 'auth/add', component:AuthorizedAccessAddComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

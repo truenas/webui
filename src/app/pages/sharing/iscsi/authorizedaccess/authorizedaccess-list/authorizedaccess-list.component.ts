@@ -15,9 +15,9 @@ import { EntityListComponent } from '../../../../common/entity/entity-list/';
 export class AuthorizedAccessListComponent {
 
   protected resource_name: string = 'services/iscsi/authcredential';
-  protected route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
-  protected route_delete: string[] = ['sharing', 'iscsi', 'portals', 'delete'];
-  protected route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
+  protected route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
+  protected route_delete: string[] = ['sharing', 'iscsi', 'auth', 'delete'];
+  protected route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
   protected entityList: EntityListComponent;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
