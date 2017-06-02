@@ -21,6 +21,7 @@ import { InitiatorEditComponent } from './initiator/initiator-edit/';
 import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
 import { AuthorizedAccessAddComponent } from './authorizedaccess/authorizedaccess-add/';
 import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
+import { AuthorizedAccessEditComponent } from './authorizedaccess/authorizedaccess-edit/';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedac
     AuthorizedAccessListComponent,
     AuthorizedAccessAddComponent,
     AuthorizedAccessDeleteComponent,
+    AuthorizedAccessEditComponent,
   ],
   providers: [
   ]
