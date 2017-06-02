@@ -12,6 +12,10 @@ export const routes: Routes = [
     loadChildren: 'app/pages/login/login.module#LoginModule'
   },
   {
+    path: 'pageNotFound',
+    loadChildren: 'app/pages/page-not-found/page-not-found.module#PageNotFoundModule'
+  },
+  {
     path: 'pages',
     component: Pages,
     canActivate: [AuthGuard],
@@ -34,7 +38,7 @@ export const routes: Routes = [
       { path: 'plugins', loadChildren: 'app/pages/plugin/plugin.module#PluginModule'},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ]
-  },
+  }
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
