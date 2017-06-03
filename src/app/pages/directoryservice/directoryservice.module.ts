@@ -12,6 +12,7 @@ import { routing } from './directoryservice.routing';
 
 import { LdapComponent } from './ldap/';
 import { ActiveDirectoryComponent } from './activedirectory/';
+import { NISComponent } from './nis/'
 
 import { SystemGeneralService } from '../../services';
 
@@ -30,7 +31,8 @@ import { SystemGeneralService } from '../../services';
   ],
   declarations: [
     LdapComponent,
-    ActiveDirectoryComponent
+    ActiveDirectoryComponent,
+    NISComponent
   ],
   providers: [
     SystemGeneralService
