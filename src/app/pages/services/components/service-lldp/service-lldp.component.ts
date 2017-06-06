@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 export class ServiceLLDPComponent {
   protected resource_name: string = 'services/lldp';
   private entityEdit: EntityConfigComponent;
-  protected route_success: string[] = ['services','lldp'];
+  protected route_success: string[] = ['services'];
 
   protected formModel: DynamicFormControlModel[] = [
     new DynamicCheckboxModel({
