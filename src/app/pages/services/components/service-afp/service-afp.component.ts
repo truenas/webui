@@ -71,6 +71,7 @@ export class ServiceAFPComponent {
           { label: 'None', value: 'none' },
           { label: 'Mode', value: 'mode' },
         ],
+        value: 'afp_srv_map_acls'
     }),
     new DynamicInputModel({
         id: 'afp_srv_bindip',

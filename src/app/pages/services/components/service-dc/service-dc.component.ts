@@ -37,7 +37,8 @@ export class ServiceDCComponent {
         label: 'Server Roll',
         options: [
           { label: 'DC', value: 'dc' },
-        ]
+        ],
+        value: "dc"
     }),
     new DynamicInputModel({
       id: 'dc_dns_forwarder',
@@ -51,7 +52,7 @@ export class ServiceDCComponent {
         { label: '2003', value: '2003' },
         { label: '2008', value: '2008' },
         { label: '2008_R2', value: '2008_R2' },
-      ]
+      ],
     }),
     new DynamicInputModel({
       id: 'dc_passwd',

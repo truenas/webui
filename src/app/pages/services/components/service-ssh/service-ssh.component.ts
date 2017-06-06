@@ -83,6 +83,7 @@ export class ServiceSSHComponent {
         { label: 'Local 6', value: 'LOCAL6' },
         { label: 'Local 7', value: 'LOCAL7' },
       ],
+      value: "ssh_sftp_log_facility"
     }),
     new DynamicTextAreaModel({
         id: 'ssh_options',

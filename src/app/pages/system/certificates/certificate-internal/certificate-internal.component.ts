@@ -57,6 +57,7 @@ export class CertificateInternalComponent {
           { label: 'CHINA', value: 'CN' },
           { label: 'RUSSIA', value: 'RU' },
         ],
+        value: 'cert_country'
     }),
     new DynamicInputModel({
         id: 'cert_state',
