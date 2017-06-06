@@ -10,7 +10,7 @@
     </dynamic-form-bootstrap-control>
     <div class="btn-group btn-group-justified btn-group-raised">
     <button class="btn btn-block btn-warning" type="submit">Update</button>
-    <button *ngIf="conf.route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()">Cancel</button>
+    <button *ngIf="conf.route_success" class="btn btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()">Cancel</button>
     </div>
     <div class="btn-group btn-group-justified btn-group-raised">
     <span *ngFor="let custBtn of conf.custActions">

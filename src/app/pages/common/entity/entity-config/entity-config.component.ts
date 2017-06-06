@@ -69,11 +69,11 @@ export class EntityConfigComponent implements OnInit, OnDestroy {
   }
   
   goBack() {
-     let route = this.conf.route_cancel;
-     if(!route) {
-       route = this.conf.route_success;
-      }
-   this.router.navigate(new Array('/pages').concat(route));
+    let route = this.conf.route_cancel;
+    if(!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
   }
 
   onSubmit() {
