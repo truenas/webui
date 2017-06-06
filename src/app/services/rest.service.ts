@@ -29,13 +29,19 @@ export class RestService {
     let range = res.headers.get("CONTENT-RANGE");
     let total = null;
     let data = null;
+
     if(range) {
       total = range.split('/');
       total = new Number(total[total.length - 1]);
     }
-    if(res.status !== 204 && res.status !== 202 && res.status !== 201) {
-      data = res.json();
+    if(res.status !== 204) {
+      try {
+        data = res.json();
+      } catch(e) {
+        data = res.text();
+      }
     }
+
     return {
       data: data,
       code: res.status,
