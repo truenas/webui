@@ -12,7 +12,7 @@
     "importHelpers": true,
     "strictNullChecks": false,
     "lib": [
-      "es2015",
+      "es2016",
       "dom"
     ],
     "typeRoots": [
