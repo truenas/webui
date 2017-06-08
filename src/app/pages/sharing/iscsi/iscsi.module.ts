@@ -24,6 +24,7 @@ import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedac
 import { AuthorizedAccessEditComponent } from './authorizedaccess/authorizedaccess-edit/';
 import { TargetListComponent } from './target/target-list/';
 import { TargetDeleteComponent } from './target/target-delete/';
+import { TargetAddComponent } from './target/target-add/';
 
 @NgModule({
   imports: [
@@ -53,6 +54,7 @@ import { TargetDeleteComponent } from './target/target-delete/';
     AuthorizedAccessEditComponent,
     TargetListComponent,
     TargetDeleteComponent,
+    TargetAddComponent,
   ],
   providers: [
   ]

@@ -14,6 +14,7 @@ import { AuthorizedAccessAddComponent } from './authorizedaccess/authorizedacces
 import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 import { AuthorizedAccessEditComponent } from './authorizedaccess/authorizedaccess-edit/';
 import { TargetDeleteComponent } from './target/target-delete/';
+import { TargetAddComponent } from './target/target-add/';
 
 export const routes: Routes = [
 	{ path: '', component: ISCSI},
@@ -27,5 +28,6 @@ export const routes: Routes = [
 	{ path: 'auth/delete/:pk', component: AuthorizedAccessDeleteComponent},
 	{ path: 'auth/edit/:pk', component: AuthorizedAccessEditComponent},
 	{ path: 'target/delete/:pk', component: TargetDeleteComponent},
+	{ path: 'target/add', component: TargetAddComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
