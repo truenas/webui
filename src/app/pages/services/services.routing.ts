@@ -12,8 +12,10 @@ import { ServiceRSYNCComponent } from './components/service-rsync/';
 import { ServiceSMARTComponent } from './components/service-smart/';
 import { ServiceNFSComponent } from './components/service-nfs/';
 import { ServiceTFTPComponent } from './components/service-tftp/';
-import { ServiceUPSComponent } from './components/service-ups';
-import { ServiceDDNSComponent } from './components/service-dynamicdns';
+import { ServiceUPSComponent } from './components/service-ups/';
+import { ServiceDDNSComponent } from './components/service-dynamicdns/';
+import { ServiceCIFSComponent } from './components/service-cifs/';
+import { ServiceSMBComponent } from './components/service-smb/';
 
 export const routes: Routes = [
   {
@@ -64,6 +66,10 @@ export const routes: Routes = [
     path: 'dynamicdns',
     component: ServiceDDNSComponent,
   },
+  {
+    path: 'cifs',
+    component: ServiceSMBComponent,
+  }
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
