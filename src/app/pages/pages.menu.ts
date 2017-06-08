@@ -136,6 +136,14 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
+      {
+        path: ['directoryservice', 'nt4'],
+        title: 'NT4',
+        icon: 'ion-ios-nutrition',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
     ]
   },
   {
