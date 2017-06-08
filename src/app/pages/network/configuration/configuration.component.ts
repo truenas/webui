@@ -74,7 +74,7 @@ export class ConfigurationComponent {
       label: 'Netwait IP list',
     },
     {
-      type: 'input',
+      type: 'textarea',
       name: 'gc_hosts',
       label: 'Host name data base',
     },

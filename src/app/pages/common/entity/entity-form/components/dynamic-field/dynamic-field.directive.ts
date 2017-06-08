@@ -5,6 +5,7 @@ import { FormButtonComponent } from '../form-button/form-button.component';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { FormSelectComponent } from '../form-select/form-select.component';
 import { FormCheckboxComponent } from '../form-checkbox/form-checkbox.component';
+import { FormTextareaComponent } from '../form-textarea/form-textarea.component';
 
 import { Field } from '../../models/field.interface';
 import { FieldConfig } from '../../models/field-config.interface';
@@ -13,7 +14,8 @@ const components: {[type: string]: Type<Field>} = {
   button: FormButtonComponent,
   input: FormInputComponent,
   select: FormSelectComponent,
-  checkbox: FormCheckboxComponent
+  checkbox: FormCheckboxComponent,
+  textarea: FormTextareaComponent
 };
 
 @Directive({
