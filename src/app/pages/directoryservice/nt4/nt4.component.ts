@@ -5,6 +5,7 @@ import { GlobalState } from '../../../global.state';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { MdInputModule } from '@angular/material';
 
 import { Subscription } from 'rxjs';
 
@@ -34,12 +35,12 @@ export class NT4Component {
       label: 'Administrator Name',
     },
     {
-      type: 'input',
+      type: 'password',
       name: 'nt4_adminpw',
       label: 'Administrator Password',
     },
     {
-      type: 'input',
+      type: 'password',
       name: 'nt4_conf_adminpw',
       label: 'Confirm Administrator Password',
     },
