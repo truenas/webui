@@ -2,7 +2,7 @@
 
 <alert *ngIf="success" type="success">Successfully updated.</alert>
 <alert *ngIf="error" type="danger"><span [innerHTML]="error"></span></alert>
-<ba-card>
+<md-card>
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" [ngBusy]="busy">
     <ng-container *ngFor="let field of fieldConfig;" 
       dynamicField [config]="field" [group]="formGroup">
@@ -18,4 +18,4 @@
     <button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">Delete</button>
     </div>
   </form>
-</ba-card>
+</md-card>
