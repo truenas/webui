@@ -26,57 +26,57 @@ export class ConfigurationComponent {
     {
       type: 'input',
       name: 'gc_hostname',
-      label: 'Hostname',
+      placeholder: 'Hostname',
     },
     {
       type: 'input',
       name: 'gc_domain',
-      label: 'Domain',
+      placeholder: 'Domain',
     },
     {
       type: 'input',
       name: 'gc_ipv4gateway',
-      label: 'IPv4 Default Gateway',
+      placeholder: 'IPv4 Default Gateway',
     },
     {
       type: 'input',
       name: 'gc_ipv6gateway',
-      label: 'IPv6 Default Gateway',
+      placeholder: 'IPv6 Default Gateway',
     },
     {
       type: 'input',
       name: 'gc_nameserver1',
-      label: 'Nameserver 1',
+      placeholder: 'Nameserver 1',
     },
     {
       type: 'input',
       name: 'gc_nameserver2',
-      label: 'Nameserver 2',
+      placeholder: 'Nameserver 2',
     },
     {
       type: 'input',
       name: 'gc_nameserver3',
-      label: 'Nameserver 3',
+      placeholder: 'Nameserver 3',
     },
     {
       type: 'input',
       name: 'gc_httpproxy',
-      label: 'HTTP Proxy',
+      placeholder: 'HTTP Proxy',
     },
     {
       type: 'checkbox',
       name: 'gc_netwait_enabled',
-      label: 'Enable netwait feature',
+      placeholder: 'Enable netwait feature',
     },
     {
       type: 'input',
       name: 'gc_netwait_ip',
-      label: 'Netwait IP list',
+      placeholder: 'Netwait IP list',
     },
     {
       type: 'textarea',
       name: 'gc_hosts',
-      label: 'Host name data base',
+      placeholder: 'Host name data base',
     },
   ];
 
