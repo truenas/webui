@@ -22,6 +22,7 @@ import { EntityListActionsComponent } from './entity-list/entity-list-actions.co
 import { EntityListAddActionsComponent } from './entity-list/entity-list-add-actions.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { RangePipe } from '../../../utils/range.pipe';
+import { MaterialModule } from '@angular/material';
 
 import { RestService, WebSocketService } from '../../../services/index';
 
@@ -33,6 +34,7 @@ import { RestService, WebSocketService } from '../../../services/index';
     DynamicFormsCoreModule.forRoot(),
     DynamicFormsBootstrapUIModule,
     NgaModule,
+    MaterialModule,
   ],
   declarations: [
     EntityAddComponent,

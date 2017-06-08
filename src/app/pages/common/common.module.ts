@@ -6,6 +6,7 @@ import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
 import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 import { BusyModule } from 'angular2-busy';
 import { NgaModule } from '../../theme/nga.module';
+import { MaterialModule } from '@angular/material';
 
 import { CommonFormComponent } from './form';
 
@@ -18,7 +19,8 @@ import { CommonFormComponent } from './form';
     DynamicFormsCoreModule.forRoot(),
     DynamicFormsBootstrapUIModule,
     BusyModule,
-    NgaModule
+    NgaModule,
+    MaterialModule
   ],
   declarations: [CommonFormComponent],
   exports: [CommonFormComponent]

@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FieldConfig } from './models/field-config.interface';
 
 import { RestService, WebSocketService } from '../../../../services/';
-
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../utils';
 import { EntityTemplateDirective } from '../entity-template.directive';
