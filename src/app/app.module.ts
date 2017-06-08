@@ -1,5 +1,6 @@
 import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { MaterialModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -21,6 +22,7 @@ import { PagesModule } from './pages/pages.module';
 
 import 'style-loader!angular2-busy/build/style/busy.css';
 
+import 'hammerjs';
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
@@ -43,6 +45,7 @@ export type StoreType = {
   ],
   imports: [ // import Angular's modules
     BrowserModule,
+    MaterialModule,
     BrowserAnimationsModule,
     HttpModule,
     RouterModule,
