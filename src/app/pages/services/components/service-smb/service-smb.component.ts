@@ -25,22 +25,22 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'input',
       name: 'cifs_srv_netbiosname',
-      label: 'NetBIOS Name',
+      placeholder: 'NetBIOS Name',
     },
     {
       type: 'input',
       name: 'cifs_srv_netbiosalias',
-      label: 'NetBIOS Alias',
+      placeholder: 'NetBIOS Alias',
     },
     {
       type: 'input',
       name: 'cifs_srv_workgroup',
-      label: 'Workgroup',
+      placeholder: 'Workgroup',
     },
     {
       type: 'input',
       name: 'cifs_srv_description',
-      label: 'Description',
+      placeholder: 'Description',
     },
     {
       type: 'select',
@@ -112,12 +112,12 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'input',
       name: 'cifs_srv_filemask',
-      label: 'File Mask'
+      placeholder: 'File Mask'
     },
     {
       type: 'input',
       name: 'cifs_srv_dirmask',
-      label: 'Directory Mask'
+      placeholder: 'Directory Mask'
     },
     {
       type: 'checkbox',
@@ -127,7 +127,7 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'input',
       name: 'cifs_srv_smb_options',
-      label: 'Auxiliary Parameters'
+      placeholder: 'Auxiliary Parameters'
     },
     {
       type: 'checkbox',
