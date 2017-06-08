@@ -1,0 +1,10 @@
+    <div 
+      class="dynamic-field form-select"
+      [formGroup]="group">
+      <label>{{ config.label }}</label>
+      <md-select [formControlName]="config.name">
+        <md-option *ngFor="let option of config.options" [value]="option.value">
+          {{ option.label }}
+        </md-option>
+      </md-select>
+    </div>
