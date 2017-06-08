@@ -7,16 +7,7 @@ import { FieldConfig } from '../../models/field-config.interface';
 @Component({
   selector: 'form-checkbox',
   styleUrls: ['form-checkbox.component.scss'],
-  template: `
-    <div 
-      class="dynamic-field form-checkbox" 
-      [formGroup]="group">
-      <label>{{ config.label }}</label>
-      <input
-        type="checkbox"
-        [formControlName]="config.name">
-    </div>
-  `
+  templateUrl: './form-checkbox.component.html'
 })
 export class FormCheckboxComponent implements Field {
   config: FieldConfig;
