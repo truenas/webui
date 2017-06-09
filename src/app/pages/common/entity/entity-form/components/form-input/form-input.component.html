@@ -1,6 +1,6 @@
 <div class="dynamic-field form-input" [formGroup]="group">
 	<md-input-container>
-		<input mdInput type="text" 
+		<input mdInput [type]="config.inputType ? config.inputType : 'text'" 
 			[placeholder]="config.placeholder"
 			[attr.value]="config.value"
 			[formControlName]="config.name">
