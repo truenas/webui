@@ -4,28 +4,35 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel, DynamicTextAreaModel } from '@ng2-dynamic-forms/core';
 import { RestService } from '../../../../services/';
 
+import { EntityFormComponent } from '../../../common/entity/entity-form';
+
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+
 @Component({
   selector: 'app-iscsi-globalconfiguration',
-  template: `<entity-config [conf]="this"></entity-config>`
+  template: `<entity-form [conf]="this"></entity-form>`
 })
 export class GlobalconfigurationComponent {
 
   protected resource_name: string = 'services/iscsi/globalconfiguration/';
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'iscsi_basename',
-      label: 'Base Name',
-    }),
-    new DynamicTextAreaModel({
-      id: 'iscsi_isns_servers',
-      label: 'ISNS Servers',
-    }),
-    new DynamicInputModel({
-      id: 'iscsi_pool_avail_threshold',
-      label: 'Pool Available Space Threshold (%)',
-      inputType: 'integer',
-    }),
+  protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'iscsi_basename',
+      placeholder: 'Base Name',
+    },
+    {
+      type: 'textarea',
+      name: 'iscsi_isns_servers',
+      placeholder: 'ISNS Servers',
+    },
+    {
+      type: 'input',
+      name: 'iscsi_pool_avail_threshold',
+      placeholder: 'Pool Available Space Threshold (%)',
+      inputType: 'number',
+    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected formService: DynamicFormService) {
