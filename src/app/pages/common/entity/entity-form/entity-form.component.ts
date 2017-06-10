@@ -20,8 +20,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   @Input('conf') conf: any;
 
+  protected pk: any;
   public formGroup: FormGroup;
   protected fieldConfig: FieldConfig [];
+  protected resourceName: string;
+  private submitFunction = this.editSubmit;
+  private skipGet: boolean = false;
 
   get controls() { return this.fieldConfig.filter(({type}) => type !== 'button'); }
   get changes() { return this.formGroup.valueChanges; }
@@ -64,20 +68,41 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     this.fieldConfig = this.conf.fieldConfig;
     this.formGroup = this.createGroup();
     this.sub = this.route.params.subscribe(params => {
-      this.rest.get(this.conf.resource_name + '/', {}).subscribe((res) => {
-        this.data = res.data;
-        for(let i in this.data) {
-          let fg = this.formGroup.controls[i];
-          if(fg) {
-            fg.setValue(this.data[i]);
+      this.resourceName = this.conf.resource_name;
+      if (!this.resourceName.endsWith('/')) {
+        this.resourceName = this.resourceName + '/';
+      }
+      if (this.conf.isEntity) {
+        this.pk = params['pk'];
+        if (this.pk) {
+          this.resourceName = this.resourceName + this.pk + '/';
+        } else {
+          this.submitFunction = this.addSubmit;
+          this.skipGet = true;
+        }
+      }
+      let getQuery = this.resourceName;
+      if (this.conf.custom_get_query) {
+        getQuery = this.conf.custom_get_query;
+      }
+      if (!this.skipGet) {
+        this.rest.get(getQuery, {}).subscribe((res) => {
+          this.data = res.data;
+          for(let i in this.data) {
+            let fg = this.formGroup.controls[i];
+            if(fg) {
+              fg.setValue(this.data[i]);
+            }
           }
-        }
-        if(this.conf.initial) {
-          this.conf.initial.bind(this.conf)(this);
-        }
-      })
+          if(this.conf.initial) {
+            this.conf.initial.bind(this.conf)(this);
+          }
+        });
+      }
     });
-    this.conf.afterInit(this);
+    if (this.conf.afterInit) {
+      this.conf.afterInit(this);
+    }
   }
 
   ngOnChanges() {
@@ -103,8 +128,16 @@ export class EntityFormComponent implements OnInit, OnDestroy {
      let route = this.conf.route_cancel;
      if(!route) {
        route = this.conf.route_success;
-      }
-   this.router.navigate(new Array('/pages').concat(route));
+     }
+     this.router.navigate(new Array('/pages').concat(route));
+  }
+
+  editSubmit(body: any) {
+     return this.rest.put(this.resourceName, body);
+  }
+
+  addSubmit(body: any) {
+     return this.rest.post(this.resourceName, body);
   }
 
   onSubmit(event: Event) {
@@ -127,9 +160,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       value = this.conf.clean.bind(this.conf)(value);
     }
 
-    this.busy = this.rest.put(this.conf.resource_name + '/', {
-      body: JSON.stringify(value),
-    }).subscribe((res) => {
+    this.busy = this.submitFunction(
+      {body: JSON.stringify(value)}).subscribe((res) => {
       if(this.conf.route_success) {
         this.router.navigate(new Array('/pages').concat(this.conf.route_success));
       } else {
@@ -140,7 +172,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  isShow(id:any):any {
+  isShow(id: any): any {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
