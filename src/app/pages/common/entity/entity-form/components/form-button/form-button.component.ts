@@ -22,4 +22,5 @@ import { FieldConfig } from '../../models/field-config.interface';
 export class FormButtonComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
+  fieldShow: string;
 }
