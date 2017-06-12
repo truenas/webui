@@ -58,7 +58,6 @@ export class ServiceSMBComponent implements OnInit {
         { label: 'CP1251', value: 'CP1251'},
         { label: 'ASCII', value: 'ASCII'},
       ],
-      multiple: true,
     },
     {
       type: 'select',
@@ -177,8 +176,7 @@ export class ServiceSMBComponent implements OnInit {
       options: [
       ],
       placeholder: 'Select IP Address',
-      multiple: true,
-      selectType: true
+      multiple: true
     },
   ];
 
