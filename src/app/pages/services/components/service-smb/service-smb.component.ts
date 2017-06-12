@@ -173,15 +173,24 @@ export class ServiceSMBComponent implements OnInit {
       type: 'select',
       name: 'cifs_srv_bindip',
       label: 'Bind IP Addresses',
+      options: [
+      ],
+      placeholder: 'Select IP Address',
       multiple: true,
     },
   ];
 
+  private cifs_srv_bindip: any;
   ngOnInit() {
-    console.log("init");
+    this.iscsiService.getIpChoices().subscribe((res) => {
+      this.cifs_srv_bindip = _.find(this.fieldConfig, {'name': 'cifs_srv_bindip'});
+      res.forEach((item) => {
+        console.log(item);
+        this.cifs_srv_bindip.options.push({ label: item[0], value: item[0]});
+      })
+    };
     this.idmapService.getADIdmap().subscribe((res) => {
-      console.log(res.data);
-    })
+    });
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState, protected iscsiService: IscsiService, protected idmapService: IdmapService) {
