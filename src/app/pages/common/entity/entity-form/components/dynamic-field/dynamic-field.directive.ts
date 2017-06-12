@@ -28,6 +28,9 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
   @Input()
   group: FormGroup;
 
+  @Input()
+  fieldShow: string;
+
   component: ComponentRef<Field>;
 
   constructor(
@@ -39,6 +42,7 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
     if (this.component) {
       this.component.instance.config = this.config;
       this.component.instance.group = this.group;
+      this.component.instance.fieldShow = this.fieldShow;
     }
   }
 
@@ -54,5 +58,6 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
     this.component = this.container.createComponent(component);
     this.component.instance.config = this.config;
     this.component.instance.group = this.group;
+    this.component.instance.fieldShow = this.fieldShow;
   }
 }

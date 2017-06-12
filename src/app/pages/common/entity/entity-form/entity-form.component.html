@@ -5,7 +5,7 @@
 <md-card>
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" [ngBusy]="busy">
     <ng-container *ngFor="let field of fieldConfig;" 
-      dynamicField [config]="field" [group]="formGroup">
+      dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
     </ng-container>
     <div class="btn-group btn-group-justified btn-group-raised">
     <button class="btn btn-block btn-warning" type="submit">Save</button>
