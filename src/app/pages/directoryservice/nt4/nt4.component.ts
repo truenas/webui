@@ -22,27 +22,29 @@ export class NT4Component {
     {
       type: 'input',
       name: 'nt4_dcname',
-      label: 'Domain Contoller',
+      placeholder: 'Domain Contoller',
     },
     {
       type: 'input',
       name: 'nt4_workgroup',
-      label: 'Workgroup Name',
+      placeholder: 'Workgroup Name',
     },
     {
       type: 'input',
       name: 'nt4_adminname',
-      label: 'Administrator Name',
+      placeholder: 'Administrator Name',
     },
     {
-      type: 'password',
+      type: 'input',
       name: 'nt4_adminpw',
-      label: 'Administrator Password',
+      placeholder: 'Administrator Password',
+      inputType: 'password',
     },
     {
-      type: 'password',
+      type: 'input',
       name: 'nt4_conf_adminpw',
-      label: 'Confirm Administrator Password',
+      placeholder: 'Confirm Administrator Password',
+      inputType: 'password',
     },
     {
       type: 'checkbox',
