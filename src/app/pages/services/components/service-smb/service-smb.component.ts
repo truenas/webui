@@ -185,7 +185,6 @@ export class ServiceSMBComponent implements OnInit {
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip = _.find(this.fieldConfig, {'name': 'cifs_srv_bindip'});
       res.forEach((item) => {
-        console.log(item);
         this.cifs_srv_bindip.options.push({ label: item[0], value: item[0]});
       })
     };
