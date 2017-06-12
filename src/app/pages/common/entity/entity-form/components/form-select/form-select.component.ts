@@ -6,10 +6,11 @@ import { FieldConfig } from '../../models/field-config.interface';
 
 @Component({
   selector: 'form-select',
-  styleUrls: ['form-select.component.scss'],
+  styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.css'],
   templateUrl: './form-select.component.html',
 })
 export class FormSelectComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
+  fieldShow: string;
 }
