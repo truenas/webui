@@ -125,7 +125,7 @@ export class ServiceSMBComponent implements OnInit {
       label: 'Allow Empty Password'
     },
     {
-      type: 'input',
+      type: 'textarea',
       name: 'cifs_srv_smb_options',
       placeholder: 'Auxiliary Parameters'
     },
