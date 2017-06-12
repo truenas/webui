@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 export class ServiceDDNSComponent {
   protected resource_name: string = 'services/dynamicdns';
   private entityEdit: EntityConfigComponent;
-  protected route_success: string[] = ['services','dynamicdns'];
+  protected route_success: string[] = ['services'];
 
   protected formModel: DynamicFormControlModel[] = [
     new DynamicSelectModel({

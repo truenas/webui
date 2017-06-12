@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 export class ServiceSMBComponent implements OnInit {
 
   protected resource_name: string = 'services/cifs';
-  protected route_success: string[] = ['services','cifs'];
+  protected route_success: string[] = ['services'];
   private entityEdit: EntityConfigComponent;
   protected fieldConfig: FieldConfig[] = [
     {

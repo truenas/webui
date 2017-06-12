@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 export class ServiceRSYNCComponent {
   protected resource_name: string = 'services/rsyncd';
   private entityEdit: EntityConfigComponent;
-  protected route_success: string[] = ['services','rsync'];
+  protected route_success: string[] = ['services'];
 
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({

@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 export class ServiceSMARTComponent {
   protected resource_name: string = 'services/smart';
   private entityEdit: EntityConfigComponent;
-  protected route_success: string[] = ['services','smartd'];
+  protected route_success: string[] = ['services'];
 
   protected formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({

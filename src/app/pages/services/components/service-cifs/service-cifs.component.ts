@@ -32,7 +32,7 @@ import { Subscription } from 'rxjs';
 export class ServiceCIFSComponent {
   protected resource_name: string = 'services/cifs';
   private entityEdit: EntityConfigComponent;
-  protected route_success: string[] = ['services','cifs'];
+  protected route_success: string[] = ['services'];
 
   protected arrayControl: FormArray;
   protected arrayModel: DynamicFormArrayModel;
