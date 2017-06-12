@@ -11,4 +11,5 @@ export interface FieldConfig {
   validation?: ValidatorFn[],
   value?: any,
   multiple?: boolean,
+  selectType?: boolean,
 }

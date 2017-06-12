@@ -58,6 +58,7 @@ export class ServiceSMBComponent implements OnInit {
         { label: 'CP1251', value: 'CP1251'},
         { label: 'ASCII', value: 'ASCII'},
       ],
+      multiple: true,
     },
     {
       type: 'select',
@@ -107,7 +108,7 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_guest',
-      label: 'Guest Account'
+      label: 'Guest Account',
     },
     {
       type: 'input',
@@ -147,12 +148,12 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_min_protocol',
-      label: 'Server Minimum Protocol'
+      label: 'Server Minimum Protocol',
     },
     {
       type: 'select',
       name: 'cifs_srv_max_protocol',
-      label: 'Server Maximum Protocol'
+      label: 'Server Maximum Protocol',
     },
     {
       type: 'checkbox',
@@ -177,6 +178,7 @@ export class ServiceSMBComponent implements OnInit {
       ],
       placeholder: 'Select IP Address',
       multiple: true,
+      selectType: true
     },
   ];
 
