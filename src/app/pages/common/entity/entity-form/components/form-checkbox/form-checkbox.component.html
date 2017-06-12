@@ -1,8 +1,5 @@
-    <div 
-      class="dynamic-field form-checkbox" 
-      [formGroup]="group">
-      <label>{{ config.label }}</label>
-      <md-checkbox
-        [formControlName]="config.name">
-      </md-checkbox>
-    </div>
+<div class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow">
+	<label>{{ config.label }}</label>
+	<md-checkbox [formControlName]="config.name">
+	</md-checkbox>
+</div>
