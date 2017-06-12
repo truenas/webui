@@ -7,6 +7,8 @@ import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
 import { NG_VALIDATORS } from '@angular/forms';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -14,7 +16,7 @@ import { Subscription } from 'rxjs';
 
 @Component ({
     selector: 'rsync-edit',
-    template: ` <entity-config [conf]="this"></entity-config>`
+    template: ` <entity-form [conf]="this"></entity-form>`
 })
 
 export class ServiceRSYNCComponent {
@@ -22,16 +24,18 @@ export class ServiceRSYNCComponent {
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'rsyncd_port',
-      label: 'TCP Port',
-    }),
-    new DynamicInputModel({
-      id: 'rsyncd_auxiliary',
-      label: 'Auxiliary parameters',
-    }),
-  ];
+  protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'rsyncd_port',
+      placeholder: 'TCP Port',
+    },
+    {
+      type: 'textarea',
+      name: 'rsyncd_auxiliary',
+      placeholder: 'Auxiliary parameters',
+    },
+  ]
   
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState) {
   }
