@@ -187,7 +187,7 @@ export class ServiceSMBComponent implements OnInit {
       res.forEach((item) => {
         this.cifs_srv_bindip.options.push({ label: item[0], value: item[0]});
       })
-    };
+    });
     this.idmapService.getADIdmap().subscribe((res) => {
     });
   }
