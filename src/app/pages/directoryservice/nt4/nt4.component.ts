@@ -49,12 +49,12 @@ export class NT4Component {
     {
       type: 'checkbox',
       name: 'nt4_enable',
-      label: 'Enable',
+      placeholder: 'Enable',
     },
     {
       type: 'checkbox',
       name: 'nt4_default_domain',
-      label: 'Use Default Domain',
+      placeholder: 'Use Default Domain',
     },
   ];
 

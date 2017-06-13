@@ -1,7 +1,7 @@
 import {  ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, 
-         DynamicTextAreaModel } from '@ng2-dynamic-forms/core';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+
 
 
 import { EntityConfigComponent } from '../../common/entity/entity-config/';
@@ -13,47 +13,46 @@ import { Subscription } from 'rxjs';
 
 @Component ({
     selector: 'nis',
-    template: ` <entity-config [conf]="this"></entity-config>`,
+    template: `<entity-form [conf]="this"></entity-form>`,
 })
 
 export class NISComponent {
-  // Form Layout
   protected resource_name: string = 'directoryservice/nis/';
-  private entityEdit: EntityConfigComponent;
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'nis_domain',
-      label: 'NIS domain:'
-    }),
-    new DynamicInputModel({
-      id: 'nis_servers',
-      label: 'NIS servers:'
-    }),
-    new DynamicCheckboxModel({
-      id: 'nis_secure_mode',
-      label: ' Secure mode',
-    }),
-    new DynamicCheckboxModel({
-      id: 'nis_manycast',
-      label: ' Manycast',
-    }),
-   new DynamicCheckboxModel({
-      id: 'nis_enable',
-      label: ' Enable',
-    }),
+  protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'nis_domain',
+      placeholder: 'NIS domain:',
+    },
+    {
+      type: 'input',
+      name: 'nis_servers',
+      placeholder: 'NIS servers:'
+    },
+   {  type: 'checkbox',
+      name: 'nis_secure_mode',
+      placeholder: 'Secure mode',
+    },
+    {
+      type: 'checkbox',
+      name: 'nis_manycast',
+      placeholder: 'Manycast',
+    },
+   {
+     type: 'checkbox',
+     name: 'nis_enable',
+     placeholder: 'Enable',
+    },
   ];
-  
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, 
-              protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef:
-              ApplicationRef, protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {
+  constructor(
+    protected router: Router, protected route: ActivatedRoute,
+    protected rest: RestService, protected ws: WebSocketService,
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {
 
               }
-
-  afterInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
-  }
 
 }
 
