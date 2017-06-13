@@ -1,22 +1,11 @@
 import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import {  DynamicFormControlModel,
-          DynamicFormArrayGroupModel, 
-          DynamicFormService, 
-          DynamicCheckboxModel, 
-          DynamicCheckboxGroupModel,
-          DynamicInputModel,
-          DynamicSelectModel,
-          DynamicRadioGroupModel,
-          DynamicTextAreaModel,
-          DynamicFormArrayModel,
-          DynamicFormGroupModel
-} from '@ng2-dynamic-forms/core';
 
 import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService, IscsiService, IdmapService } from '../../../../services/';
-import { FormGroup, FormArray } from '@angular/forms';
+import { FormGroup, FormArray, Validators, AbstractControl} from '@angular/forms';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -36,7 +25,7 @@ export class ServiceSNMPComponent {
       type: 'input',
       name: 'snmp_location',
       placeholder: 'Location',
-      label: 'Location'
+      label: 'Location',
     },
     {
       type: 'input',
@@ -51,19 +40,62 @@ export class ServiceSNMPComponent {
     {
       type: 'checkbox',
       name: 'snmp_traps',
-      label: 'SNMP v3 Support'
+      placeholder: 'SNMP v3 Support',
+    },
+    {
+      type: 'input',
+      name: 'snmp_v3_username',
+      placeholder: 'Username',
+    },
+    {
+      type: 'select',
+      name: 'snmp_v3_authtype',
+      label: 'Authentic Type',
+      options: [
+        { label: '---', value: null },
+        { label: 'MD5', value: 'MD5' },
+        { label: 'SHA', value: 'SHA' }
+      ]
+    },
+    {
+      type: 'input',
+      name: 'snmp_v3_password',
+      inputType: 'password',
+      placeholder: 'password'
+    },
+    {
+      type: 'input',
+      name: 'snmp_v3_password_2',
+      inputType: 'password',
+      placeholder: 'Confirm password',
+    },
+    {
+      type: 'select',
+      name: 'snmp_v3_privproto',
+      label: 'Privacy Protocol',
+      options: [
+        { label: '---', value: null },
+        { label: 'AES', value: 'AES' },
+        { label: 'DES', value: 'DES' },
+      ]
+    },
+    {
+      type: 'input',
+      name: 'snmp_v3_privpassphrase',
+      inputType: 'password',
+      placeholder: 'Privacy Passphrase'
+    },
+    {
+      type: 'input',
+      name: 'snmp_v3_privpassphrase_2',
+      inputType: 'password',
+      placeholder: 'Confirm Privacy Passphrase',
     },
     {
       type: 'textarea',
       name: 'snmp_options',
       placeholder: 'Auxiliary Parameters'
     },
-    {
-      type: 'input',
-      name: 'snmp_v3_password',
-      disabled: true,
-      inputType: 'password',
-    }
   ];
 
   ngOnInit() {
