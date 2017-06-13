@@ -8,7 +8,6 @@ import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService } from '../../../../services/';
 import { NG_VALIDATORS } from '@angular/forms';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
