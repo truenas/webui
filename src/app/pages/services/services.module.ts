@@ -20,6 +20,7 @@ import { ServiceUPSComponent } from './components/service-ups';
 import { ServiceDDNSComponent } from './components/service-dynamicdns';
 import { ServiceCIFSComponent } from './components/service-cifs';
 import { ServiceSMBComponent } from './components/service-smb';
+import { ServiceSNMPComponent } from './components/service-snmp';
 
 @NgModule({
   imports: [
@@ -45,6 +46,7 @@ import { ServiceSMBComponent } from './components/service-smb';
     ServiceDDNSComponent,
     ServiceCIFSComponent,
     ServiceSMBComponent,
+    ServiceSNMPComponent,
   ],
   providers: [
   ]
