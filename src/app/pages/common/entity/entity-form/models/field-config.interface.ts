@@ -8,7 +8,7 @@ export interface FieldConfig {
   placeholder?: string,
   type: string,
   inputType?: string,
-  validation?: any[],
+  validation?: any[]|ValidatorFn|ValidatorFn[],
   value?: any,
   multiple?: boolean,
 }
