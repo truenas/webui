@@ -6,6 +6,7 @@ import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
 import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
+import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { FormButtonComponent } from './entity-form/components/form-button/form-button.component';
 import { FormInputComponent } from './entity-form/components/form-input/form-input.component';
@@ -53,6 +54,7 @@ import { RestService, WebSocketService } from '../../../services/index';
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
+    TooltipComponent
   ],
   exports: [
     EntityAddComponent,

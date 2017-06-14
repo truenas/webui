@@ -6,5 +6,6 @@
       {{ option.label }}
     </md-option>
   </md-select>
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>

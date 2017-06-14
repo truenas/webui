@@ -13,4 +13,5 @@ export interface FieldConfig {
   validation?: any[]|ValidatorFn|ValidatorFn[],
   value?: any,
   multiple?: boolean,
+  tooltip?: string,
 }
