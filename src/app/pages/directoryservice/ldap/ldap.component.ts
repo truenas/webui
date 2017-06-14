@@ -1,8 +1,6 @@
 import {  ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel,    DynamicSelectModel,DynamicTextAreaModel, } from '@ng2-dynamic-forms/core';
-
-
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityConfigComponent } from '../../common/entity/entity-config/';
 import { GlobalState } from '../../../global.state';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
@@ -12,77 +10,84 @@ import { Subscription } from 'rxjs';
 
 @Component ({
     selector: 'ldap',
-    template: ` <entity-config [conf]="this"></entity-config>`,
+    template: `<entity-form [conf]="this"></entity-form>`,
 })
 
 export class LdapComponent {
-  // Form Layout
   protected resource_name: string = 'directoryservice/ldap';
   protected isBasicMode: boolean = true;
-  private entityEdit: EntityConfigComponent;
+  protected entityEdit: EntityConfigComponent;
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'ldap_hostname',
-      label: 'Hostname'
-    }),
-    new DynamicInputModel({
-      id: 'ldap_basedn',
-      label: 'Base DN'
-    }),
-    new DynamicInputModel({
-      id: 'ldap_binddn',
-      label: 'Bind DN'
-    }),
-    new DynamicInputModel({
-      id: 'ldap_bindpw',
-      label: 'Bind Password',
-      inputType: 'password'
-    }),
-    new DynamicInputModel({
-      id: 'ldap_anonbind',
-      label: 'Allow Anonymous Binding',
-    }),
-    new DynamicInputModel({
-      id: 'ldap_usersuffix',
-      label: 'User Suffix'
-    }),
-    new DynamicInputModel({
-      id: 'ldap_groupsuffix',
-      label: 'Group Suffix'
-    }),
-    new DynamicInputModel({
-      id: 'ldap_passwordsuffix',
-      label: 'Password Suffix'
-    }),
-    new DynamicSelectModel({
-      id: 'ldap_ssl',
-      label: 'Encryption Mode',
+  protected fieldConfig: FieldConfig[] = [
+    { type: 'input',
+      name: 'ldap_hostname',
+      placeholder: 'Hostname'
+    },
+    { type: 'input',
+      name: 'ldap_basedn',
+      placeholder: 'Base DN'
+    },
+    { type: 'input',
+      name: 'ldap_binddn',
+      placeholder: 'Bind DN'
+    },
+
+    { type: 'input',
+      name: 'ldap_bindpw',
+      placeholder: 'Bind Password',
+      inputType: 'password',
+    },
+    { type: 'checkbox',
+      name: 'ldap_anonbind',
+      placeholder: 'Allow Anonymous Binding',
+    },
+    {
+      type: 'input',
+      name: 'ldap_usersuffix',
+      placeholder: 'User Suffix'
+    },
+    {
+      type: 'input',
+      name: 'ldap_groupsuffix',
+      placeholder: 'Group Suffix'
+    },
+    {
+      type: 'input',
+      name: 'ldap_passwordsuffix',
+      placeholder: 'Password Suffix'
+    },
+    {
+      type: 'select',
+      name: 'ldap_ssl',
+      placeholder: 'Encryption Mode',
       options: [
         { label: 'Off', value: 'off' },
         { label: 'SSL', value: 'on' },
         { label: 'TLS', value: 'start_tls' }
       ]
-    }),
-    new DynamicSelectModel({
-      id: 'ldap_certificate',
-      label: 'Certificate',
+    },
+    {
+      type: 'select',
+      name: 'ldap_certificate',
+      placeholder: 'Certificate',
       options: []
-    }),
-    new DynamicInputModel({
-      id: 'ldap_netbiosname_a',
-      label: 'Netbios Name',
-    }),
-    new DynamicCheckboxModel({
-      id: 'ldap_has_samba_schema',
-      label: 'Samba Schema',
-    }),
-    new DynamicCheckboxModel({
-      id: 'ldap_enable',
-      label: 'Enable',
-    }),
+    },
+    {
+      type: 'input',
+      name: 'ldap_netbiosname_a',
+      placeholder: 'Netbios Name',
+    },
+    {
+      type: 'checkbox',
+      name: 'ldap_has_samba_schema',
+      placeholder: 'Samba Schema',
+    },
+    { type: 'checkbox',
+      name: 'ldap_enable',
+      placeholder: 'Enable',
+    },
   ];
-  
+
   protected advanced_field: Array<any> = [
     'ldap_anonbind',
     'ldap_usersuffix',
@@ -95,9 +100,9 @@ export class LdapComponent {
   ];
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
@@ -119,17 +124,22 @@ export class LdapComponent {
       }
     }
   ];
-  
-  protected ldap_certificate: DynamicSelectModel<String> 
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {}
+  private ldapCertificate: any;
+
+  constructor(protected router: Router, protected route: ActivatedRoute,
+              protected rest: RestService,  protected ws: WebSocketService,
+              protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {
+
+              }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.systemGeneralService.getCA().subscribe((res) => {
-      this.ldap_certificate = <DynamicSelectModel<string>>this.formService.findById('ldap_certificate', this.formModel);
+      this.ldapCertificate = _.find(this.fieldConfig, { name : 'ldap_certificate'});
       res.forEach((item) => {
-        this.ldap_certificate.add({ label: item.cert_name, value: item.id });
+        this.ldapCertificate.options.push({ label: item.cert_name, value: item.id });
       });
     });
   }
