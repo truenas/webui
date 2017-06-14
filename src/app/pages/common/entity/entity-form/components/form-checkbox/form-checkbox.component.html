@@ -1,5 +1,6 @@
 <div class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow">
-	<label>{{ config.placeholder }}</label>
 	<md-checkbox [formControlName]="config.name">
 	</md-checkbox>
+	<label>{{ config.placeholder }}</label>
+	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>

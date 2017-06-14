@@ -145,24 +145,27 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.error = null;
     this.success = false;
+    this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-    for(let i in value) {
-      let clean = this['clean_' + i];
-      if(clean) {
-        value = clean(value, i);
+    for (let i in value) {
+      if (value.hasOwnProperty(i)) {
+        let clean = this['clean_' + i];
+        if (clean) {
+          value = clean(value, i);
+        }
       }
     }
-    if('id' in value) {
+    if ('id' in value) {
       delete value['id'];
     }
 
-    if(this.conf.clean) {
+    if (this.conf.clean) {
       value = this.conf.clean.bind(this.conf)(value);
     }
 
     this.busy = this.submitFunction(
       {body: JSON.stringify(value)}).subscribe((res) => {
-      if(this.conf.route_success) {
+      if (this.conf.route_success) {
         this.router.navigate(new Array('/pages').concat(this.conf.route_success));
       } else {
         this.success = true;
@@ -170,6 +173,13 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     }, (res) => {
       new EntityUtils().handleError(this, res);
     });
+  }
+
+  clearErrors() {
+    for (let f = 0; f < this.fieldConfig.length; f++) {
+      this.fieldConfig[f].errors = '';
+      this.fieldConfig[f].hasErrors = false;
+    }
   }
 
   isShow(id: any): any {

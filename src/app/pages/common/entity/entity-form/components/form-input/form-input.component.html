@@ -5,4 +5,5 @@
 			[attr.value]="config.value"
 			[formControlName]="config.name">
 	</md-input-container>
+	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>

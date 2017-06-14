@@ -1,8 +1,10 @@
 <div class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow">
-  <label>{{ config.label }}</label>
-  <md-select [formControlName]="config.name" [multiple]="config.multiple"> 
+  <md-select [formControlName]="config.name"
+      [multiple]="config.multiple"
+      [placeholder]="config.placeholder"> 
     <md-option *ngFor="let option of config.options" [value]="option.value">
       {{ option.label }}
     </md-option>
   </md-select>
+  <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>

@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export class EntityUtils {
 
     handleError(entity: any, res: any) {
@@ -23,28 +25,25 @@ export class EntityUtils {
     }
 
     handleObjError(entity: any, res: any) {
-        entity.error = '';
-        for(let i in res.error) {
+      entity.error = '';
+      for (let i in res.error) {
+        if (res.error.hasOwnProperty(i)) {
           let field = res.error[i];
-          let fc = entity.formService.findById(i, entity.conf.formModel);
-          if(fc) {
-            entity.components.forEach((item) => {
-            if(item.model == fc) {
-              item.hasErrorMessages = true;
-              let errors = '';
-              field.forEach((item, j) => {
-                errors += item + ' ';
-              });
-              item.model.errorMessages = {error: errors};
-              item.control.setErrors({error: 'yes'});
-            }
+          let fc: any = _.find(entity.fieldConfig, {'name': i});
+          if (fc) {
+            let errors = '';
+            field.forEach((item, j) => {
+              errors += item + ' ';
             });
+            fc.hasErrors = true;
+            fc.errors = errors;
           } else {
             field.forEach((item, j) => {
               entity.error += item + '<br />';
             });
           }
         }
+      }
     }
 
     flattenData(data, level = 0, parent?: any) {
@@ -62,7 +61,7 @@ export class EntityUtils {
       });
       return ndata;
     }
-    
+
     bool(v){
        return v==="false" || v==="null" || v==="NaN" || v==="undefined" || v==="0" ? false : !!v;
       }

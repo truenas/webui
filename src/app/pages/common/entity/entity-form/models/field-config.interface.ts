@@ -5,6 +5,8 @@ export interface FieldConfig {
   label?: string,
   name: string,
   options?: any[],
+  errors?: string,
+  hasErrors?: boolean,
   placeholder?: string,
   type: string,
   inputType?: string,
