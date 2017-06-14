@@ -5,10 +5,14 @@ import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService, IscsiService, IdmapService } from '../../../../services/';
 import { FormGroup, FormArray, Validators, AbstractControl} from '@angular/forms';
+
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+
+
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component ({
     selector: 'snmp-edit',
@@ -26,6 +30,9 @@ export class ServiceSNMPComponent {
       name: 'snmp_location',
       placeholder: 'Location',
       label: 'Location',
+      validation: [
+        Validators.required
+      ]
     },
     {
       type: 'input',
@@ -61,13 +68,18 @@ export class ServiceSNMPComponent {
       type: 'input',
       name: 'snmp_v3_password',
       inputType: 'password',
-      placeholder: 'password'
+      placeholder: 'password',
+      validation: [
+        Validators.minLength(8),
+        matchOtherValidator('snmp_v3_password_2')
+      ]
     },
     {
       type: 'input',
       name: 'snmp_v3_password_2',
       inputType: 'password',
       placeholder: 'Confirm password',
+
     },
     {
       type: 'select',
@@ -90,6 +102,8 @@ export class ServiceSNMPComponent {
       name: 'snmp_v3_privpassphrase_2',
       inputType: 'password',
       placeholder: 'Confirm Privacy Passphrase',
+      validation: [
+      ]
     },
     {
       type: 'textarea',
