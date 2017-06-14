@@ -71,12 +71,12 @@ export class ServiceSNMPComponent {
       placeholder: 'password',
       validation: [
         Validators.minLength(8),
-        matchOtherValidator('snmp_v3_password_2')
+        matchOtherValidator('snmp_v3_password2')
       ]
     },
     {
       type: 'input',
-      name: 'snmp_v3_password_2',
+      name: 'snmp_v3_password2',
       inputType: 'password',
       placeholder: 'Confirm password',
 
@@ -95,15 +95,17 @@ export class ServiceSNMPComponent {
       type: 'input',
       name: 'snmp_v3_privpassphrase',
       inputType: 'password',
-      placeholder: 'Privacy Passphrase'
+      placeholder: 'Privacy Passphrase',
+      validation: [
+        Validators.minLength(8),
+        matchOtherValidator('snmp_v3_privpassphrase2')
+      ]
     },
     {
       type: 'input',
-      name: 'snmp_v3_privpassphrase_2',
+      name: 'snmp_v3_privpassphrase2',
       inputType: 'password',
       placeholder: 'Confirm Privacy Passphrase',
-      validation: [
-      ]
     },
     {
       type: 'textarea',
