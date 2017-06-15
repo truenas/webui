@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component ({
-    selector: 'dynamicdns-edit',
+    selector: 'ftp-edit',
     template: `<entity-form [conf]="this"></entity-form>`,
     providers: [ SystemGeneralService ]
 })
