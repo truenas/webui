@@ -1,8 +1,6 @@
 import {  ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel,DynamicTextAreaModel, } from '@ng2-dynamic-forms/core';
-
-
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityConfigComponent } from '../../common/entity/entity-config/';
 import { GlobalState } from '../../../global.state';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
@@ -12,83 +10,86 @@ import { Subscription } from 'rxjs';
 
 @Component ({
     selector: 'activedirectory',
-    template: ` <entity-config [conf]="this"></entity-config>`,
+    template: ` <entity-form [conf]="this"></entity-form>`,
 })
 
 export class ActiveDirectoryComponent {
-  // Form Layout
   protected resource_name: string = 'directoryservice/activedirectory';
   protected isBasicMode: boolean = true;
   private entityEdit: EntityConfigComponent;
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'ad_domainname',
-      label: 'Domain Name'
-    }),
-    new DynamicInputModel({
-      id: 'ad_bindname',
-      label: 'Domain Account Name'
-    }),
-    new DynamicInputModel({
-      id: 'ad_bindpw',
-      label: 'Domain Account Password',
+  protected fieldConfig: FieldConfig[] = [
+    { type: 'input',
+      name: 'ad_domainname',
+      placeholder: 'Domain Name'
+    },
+    { type: 'input',
+      name: 'ad_bindname',
+      placeholder: 'Domain Account Name'
+    },
+    { type: 'input',
+      name: 'ad_bindpw',
+      placeholder: 'Domain Account Password',
       inputType: 'password'
-    }),
-    new DynamicInputModel({
-      id: 'ad_dcname',
-      label: 'Domain Controller',
-    }),
-    new DynamicInputModel({
-      id: 'ad_gcname',
-      label: 'Global Catalog Server'
-    }),
-    new DynamicInputModel({
-      id: 'ad_site',
-      label: 'Site Name'
-    }),
-    new DynamicInputModel({
-      id: 'ad_timeout',
-      label: 'AD Timeout'
-    }),
-    new DynamicInputModel({
-      id: 'ad_dns_timeout',
-      label: 'DNS Timeout'
-    }),
-    new DynamicSelectModel({
-      id: 'ad_ssl',
-      label: 'Encryption Mode',
+    },
+    { type: 'input',
+      name: 'ad_dcname',
+      placeholder: 'Domain Controller',
+    },
+    { type: 'input',
+      name: 'ad_gcname',
+      placeholder: 'Global Catalog Server'
+    },
+    { type: 'input',
+      name: 'ad_site',
+      placeholder: 'Site Name'
+    },
+    { type: 'input',
+      name: 'ad_timeout',
+      placeholder: 'AD Timeout'
+    },
+    { type: 'input',
+      name: 'ad_dns_timeout',
+      placeholder: 'DNS Timeout'
+    },
+    { type: 'select',
+      name: 'ad_ssl',
+      placeholder: 'Encryption Mode',
       options: [
         { label: 'Off', value: 'off' },
         { label: 'SSL', value: 'on' },
         { label: 'TLS', value: 'start_tls' }
       ]
-    }),
-    new DynamicSelectModel({
-      id: 'ad_certificate',
-      label: 'Certificate',
+    },
+    { type: 'select',
+      name: 'ad_certificate',
+      placeholder: 'Certificate',
       options: []
-    }),
-    new DynamicInputModel({
-      id: 'ad_netbiosname_a',
-      label: 'Netbios Name',
-    }),
-    new DynamicCheckboxModel({
-      id: 'ad_allow_trusted_doms',
-      label: 'Allow Trusted Domains',
-    }),
-    new DynamicCheckboxModel({
-      id: 'ad_disable_freenas_cache',
-      label: 'Disable FreeNAS Cache',
-    }),
-    new DynamicCheckboxModel({
-      id: 'ad_enable_monitor',
-      label: 'Enable AD Monitoring'
-    }),
-    new DynamicCheckboxModel({
-      id: 'ad_enable',
-      label: 'Enable',
-    }),
+    },
+    { type: 'input',
+      name: 'ad_netbiosname_a',
+      placeholder: 'Netbios Name',
+    },
+    {
+      type: 'checkbox',
+      name: 'ad_allow_trusted_doms',
+      placeholder: 'Allow Trusted Domains',
+    },
+    {
+      type: 'checkbox',
+      name: 'ad_disable_freenas_cache',
+      placeholder: 'Disable FreeNAS Cache',
+    },
+    {
+      type: 'checkbox',
+      name: 'ad_enable_monitor',
+      placeholder: 'Enable AD Monitoring'
+    },
+    {
+      type: 'checkbox',
+      name: 'ad_enable',
+      placeholder: 'Enable',
+    },
   ];
   
   protected advanced_field: Array<any> = [
@@ -105,10 +106,10 @@ export class ActiveDirectoryComponent {
     'ad_site',
   ];
 
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionname === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
@@ -131,16 +132,16 @@ export class ActiveDirectoryComponent {
     }
   ];
   
-  protected ad_certificate: DynamicSelectModel<String> 
+  protected ad_certificate: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {}
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService,  protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.systemGeneralService.getCA().subscribe((res) => {
-      this.ad_certificate = <DynamicSelectModel<string>>this.formService.findById('ad_certificate', this.formModel);
+      this.ad_certificate = _.find(this.fieldConfig, {name : 'ad_certificate'} );
       res.forEach((item) => {
-        this.ad_certificate.add({ label: item.cert_name, value: item.id });
+        this.ad_certificate.options.push({ label: item.cert_name, value: item.id });
       });
     });
   }
