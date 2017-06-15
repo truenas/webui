@@ -9,10 +9,16 @@ import { RestService, WebSocketService } from '../services/';
 @Injectable()
 export class SystemGeneralService {
 
+    protected certificateList: string = 'system/certificate';
+
     constructor(protected rest: RestService, protected ws: WebSocketService){
     };
 
     getCA() {
         return this.ws.call('certificateauthority.query', []);
+    }
+
+    getCertificates() {
+        return this.rest.get(this.certificateList, {});
     }
 }
