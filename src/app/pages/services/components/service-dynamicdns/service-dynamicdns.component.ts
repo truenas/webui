@@ -1,31 +1,33 @@
 import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel,    DynamicSelectModel,DynamicTextAreaModel, } from '@ng2-dynamic-forms/core';
-
 
 import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService } from '../../../../services/';
-import { NG_VALIDATORS } from '@angular/forms';
+import { RestService, WebSocketService} from '../../../../services/';
+import { FormGroup, FormArray, Validators, AbstractControl} from '@angular/forms';
+
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component ({
     selector: 'dynamicdns-edit',
-    template: ` <entity-config [conf]="this"></entity-config>`
+    template: `<entity-form [conf]="this"></entity-form>`
 })
 
 export class ServiceDDNSComponent {
   protected resource_name: string = 'services/dynamicdns';
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicSelectModel({
-      id: 'ddns_provider',
-      label: 'Provider',
+  private entityEdit: EntityConfigComponent;
+
+  protected fieldConfig: FieldConfig[] = [
+    { 
+      type: 'select',
+      name: 'ddns_provider',
+      placeholder: 'Provider',
       options: [
         { label: 'dyndns.org', value: 'dyndns@dyndns.org'},
         { label: 'freedns.afraid.org', value: 'default@freedns.afraid.org'},
@@ -42,38 +44,63 @@ export class ServiceDDNSComponent {
         { label: 'majimoto.net', value: 'default@majimoto.net'},
         { label: 'zerigo', value: 'default@zerigo.com'},
       ]
-    }),
-    new DynamicInputModel({
-      id: 'ddns_ipserver',
-      label: 'IP Server',
-    }),
-    new DynamicInputModel({
-        id: 'ddns_domain',
-        label: 'Domain name',
-    }),
-    new DynamicInputModel({
-        id: 'ddns_username',
-        label: 'User name',
-    }),
-    new DynamicInputModel({
-        id: 'ddns_password',
-        label: 'Password',
-    }),
-    new DynamicInputModel({
-        id: 'ddns_updateperiod',
-        label: 'Update Period',
-    }),
-    new DynamicInputModel({
-        id: 'ddns_fupdateperiod',
-        label: 'Forced Update Period',
-    }),
-    new DynamicTextAreaModel({
-        id: 'lldp_location',
-        label: 'Auxiliary Parameters',
-    }),
+    },
+    {
+      type: 'input',
+      name: 'ddns_ipserver',
+      placeholder: 'IP Server',
+    },
+    {
+        type: 'input',
+        name: 'ddns_domain',
+        placeholder: 'Domain name',
+    },
+    {
+        type: 'input',
+        name: 'ddns_username',
+        placeholder: 'User name',
+    },
+    {
+        type: 'input',
+        name: 'ddns_password',
+        placeholder: 'Password',
+        inputType: 'password',
+        validation: [
+          Validators.minLength(8),
+          matchOtherValidator('ddns_password2')
+        ]
+    },
+    {
+        type: 'input',
+        name: 'ddns_password2',
+        placeholder: 'Password',
+        inputType: 'password',
+    },
+    {
+        type: 'input',
+        name: 'ddns_updateperiod',
+        placeholder: 'Update Period',
+    },
+    {
+        type: 'input',
+        name: 'ddns_fupdateperiod',
+        placeholder: 'Forced Update Period',
+    },
+    {
+        type: 'input',
+        name: 'lldp_location',
+        placeholder: 'Auxiliary Parameters',
+    },
   ];
   
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState) {
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected _state: GlobalState) {
   }
 
   afterInit(entityEdit: any) {
