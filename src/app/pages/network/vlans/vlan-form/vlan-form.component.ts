@@ -8,10 +8,10 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-vlan-add',
+  selector: 'app-vlan-form',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class VlanAddComponent {
+export class VlanFormComponent {
 
   protected resource_name: string = 'network/vlan/';
   protected route_success: string[] = ['network', 'vlans'];
@@ -47,13 +47,17 @@ export class VlanAddComponent {
 
   }
 
-  afterInit(entityAdd: any) {
+  afterInit(entityForm: any) {
     this.networkService.getVlanNicChoices().subscribe((res) => {
       this.vlan_pint = _.find(this.fieldConfig, {'name': 'vlan_pint'});
       res.forEach((item) => {
         this.vlan_pint.options.push({ label: item[1], value: item[0] });
       });
     });
+
+    if (!entityForm.isNew) {
+      entityForm.setDisabled('vlan_vint', true);
+    }
   }
 
 }

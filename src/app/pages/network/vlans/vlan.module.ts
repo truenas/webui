@@ -7,8 +7,7 @@ import { EntityModule } from '../../common/entity/entity.module';
 import { routing }       from './vlan.routing';
 
 import { VlanListComponent } from './vlan-list/';
-import { VlanAddComponent } from './vlan-add/';
-import { VlanEditComponent } from './vlan-edit/';
+import { VlanFormComponent } from './vlan-form/';
 import { VlanDeleteComponent } from './vlan-delete/';
 
 import { NetworkService } from '../../../services';
@@ -24,8 +23,7 @@ import { NetworkService } from '../../../services';
   ],
   declarations: [
     VlanListComponent,
-    VlanAddComponent,
-    VlanEditComponent,
+    VlanFormComponent,
     VlanDeleteComponent,
   ],
   providers: [

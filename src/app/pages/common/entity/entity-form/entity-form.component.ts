@@ -25,7 +25,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   protected fieldConfig: FieldConfig [];
   protected resourceName: string;
   private submitFunction = this.editSubmit;
-  private skipGet: boolean = false;
+  private isNew: boolean = false;
 
   get controls() { return this.fieldConfig.filter(({type}) => type !== 'button'); }
   get changes() { return this.formGroup.valueChanges; }
@@ -78,14 +78,14 @@ export class EntityFormComponent implements OnInit, OnDestroy {
           this.resourceName = this.resourceName + this.pk + '/';
         } else {
           this.submitFunction = this.addSubmit;
-          this.skipGet = true;
+          this.isNew = true;
         }
       }
       let getQuery = this.resourceName;
       if (this.conf.custom_get_query) {
         getQuery = this.conf.custom_get_query;
       }
-      if (!this.skipGet) {
+      if (!this.isNew) {
         this.rest.get(getQuery, {}).subscribe((res) => {
           this.data = res.data;
           for(let i in this.data) {
