@@ -27,7 +27,7 @@ export class JailsConfigurationComponent {
     {
       type: 'checkbox',
       name: 'jc_ipv4_dhcp',
-      label: 'IPv4 DHCP',
+      placeholder: 'IPv4 DHCP',
     },
     {
       type: 'input',
@@ -80,7 +80,7 @@ export class JailsConfigurationComponent {
     {
       type: 'checkbox',
       name: 'jc_ipv6_autoconf',
-      label: 'IPv6 Autoconfigure',
+      placeholder: 'IPv6 Autoconfigure',
     },
     {
       type: 'input',
