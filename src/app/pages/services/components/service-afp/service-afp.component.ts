@@ -1,86 +1,107 @@
-import {  ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel,    DynamicSelectModel,DynamicTextAreaModel, } from '@ng2-dynamic-forms/core';
-
 
 import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
 import { RestService, WebSocketService, UserService } from '../../../../services/';
-import * as _ from 'lodash';
+import { FormGroup, FormArray, Validators, AbstractControl} from '@angular/forms';
 
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+
+import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+
 
 @Component ({
     selector: 'afp-edit',
-    template: ` <entity-config [conf]="this"></entity-config>`,
+    template: ` <entity-form [conf]="this"></entity-form>`,
     providers: [UserService]
 })
 
 export class ServiceAFPComponent {
   protected resource_name: string = 'services/afp';
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicCheckboxModel({
-      id: 'afp_srv_guest',
-      label: 'Guest Access',
-    }),
-    new DynamicSelectModel({
-      id: 'afp_srv_guest_user',
-      label: 'Guest Account',
-    }),
-    new DynamicInputModel({
-        id: 'afp_srv_connections_limit',
-        label: 'Max. Connections',
-    }),
-    new DynamicCheckboxModel({
-      id: 'afp_srv_homedir_enable',
-      label: 'Enable home directories',
-    }),
-   new DynamicInputModel({
-      id: 'afp_srv_homedir',
-      label: 'Home Directories',
-    }),
-    new DynamicInputModel({
-      id: 'afp_srv_homename',
-      label: 'Home share name',
-    }),
-   new DynamicInputModel({
-      id: 'afp_srv_dbpath',
-      label: 'Database Path',
-    }),
-   new DynamicTextAreaModel({
-      id: 'afp_srv_global_aux',
-      label: 'Global auxiliary parameters',
-    }),
-    new DynamicSelectModel({
-        id: 'afp_srv_chmod_request',
-        label: 'Chmod Request',
+  private entityEdit: EntityConfigComponent;
+
+  protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'afp_srv_guest',
+      placeholder: 'Guest Access',
+    },
+    {
+      type: 'select',
+      name: 'afp_srv_guest',
+      placeholder: 'Guest Access',
+      options: [
+      ]
+    },
+    {
+      type: 'input',
+      name: 'afp_srv_connections_limit',
+      placeholder: 'Max. Connections',
+    },
+    {
+      type: 'checkbox',
+      name: 'afp_srv_homedir_enable',
+      placeholder: 'Enable home directories',
+    },
+    {
+      type: 'input',
+      name: 'afp_srv_homedir',
+      placeholder: 'Home Directories',
+    },
+    {
+      type: 'input',
+      name: 'afp_srv_homename',
+      placeholder: 'Home share name',
+    },
+    {
+      type: 'input',
+      name: 'afp_srv_dbpath',
+      placeholder: 'Database Path',
+    },
+    {
+        type: 'select',
+        name: 'afp_srv_chmod_request',
+        placeholder: 'Chmod Request',
         options: [
           { label: 'Ignore', value: 'ignore' },
           { label: 'Preserve', value: 'preserve' },
           { label: 'Simple', value: 'simple' },
         ],
-    }),
-    new DynamicSelectModel({
-        id: 'afp_srv_map_acls',
-        label: 'Map ACLs',
+    },
+    {
+        type: 'select',
+        name: 'afp_srv_map_acls',
         options: [
           { label: 'Rights', value: 'rights' },
           { label: 'None', value: 'none' },
           { label: 'Mode', value: 'mode' },
         ],
-        value: 'afp_srv_map_acls'
-    }),
-    new DynamicInputModel({
-        id: 'afp_srv_bindip',
-        label: 'Bind Interfaces',
-    }),
+    },
+    {
+        type: 'input',
+        name: 'afp_srv_bindip',
+        placeholder: 'Bind Interfaces',
+    },
+    {
+      type: 'textarea',
+      name: 'afp_srv_global_aux',
+      placeholder: 'Global auxiliary parameters'
+    }
   ];
   
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,  protected ws: WebSocketService, protected formService: DynamicFormService,  protected _injector: Injector, protected _appRef: ApplicationRef,   protected _state: GlobalState, protected userService: UserService) {
-
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected _state: GlobalState,
+    protected userService: UserService) {
   }
 
   afterInit(entityEdit: any) {
