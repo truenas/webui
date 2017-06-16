@@ -5,19 +5,22 @@ import { Subscription } from 'rxjs';
 
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicTextAreaModel } from '@ng2-dynamic-forms/core';
 import { GlobalState } from '../../../global.state';
-import { RestService, WebSocketService } from '../../../services/';
+import { RestService, WebSocketService, TooltipsService } from '../../../services/';
 import { EntityFormComponent } from '../../common/entity/entity-form';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { Tooltip } from '../../common/tooltip';
+import { TOOLTIPS } from '../../common/tooltips';
 
 
 @Component({
   selector: 'app-networkconfiguration',
   template: `
   <entity-form [conf]="this"></entity-form>
-  `
+  `,
+  providers: [TooltipsService],
 })
-export class ConfigurationComponent {
+export class ConfigurationComponent implements OnInit {
 
   protected resource_name: string = 'network/globalconfiguration/';
   protected fieldConfig: FieldConfig[] = [
@@ -71,7 +74,7 @@ export class ConfigurationComponent {
       type: 'input',
       name: 'gc_netwait_ip',
       placeholder: 'Netwait IP list',
-      tooltip: 'Space-delimited list of IP addresses to ping(8). If multiple IP addresses are specified, each will be tried until one is successful or the list is exhausted. If it is empty the default gateway will be used.'
+      tooltip: ''
     },
     {
       type: 'textarea',
@@ -82,8 +85,26 @@ export class ConfigurationComponent {
   ];
   private entityEdit: EntityFormComponent;
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
+  constructor(
+    protected router: Router,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected formService: DynamicFormService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected _state: GlobalState,
+    protected tooltipsService: TooltipsService) {
 
+  }
+
+  protected gc_netwait_ip: any;
+
+  ngOnInit() {
+    this.tooltipsService.getTooltip('gc_netwait_ip').then( (res) => {
+      let tooltip = res.body;
+      this.gc_netwait_ip = _.find(this.fieldConfig, {'name': 'gc_netwait_ip'});
+      this.gc_netwait_ip.tooltip = tooltip;
+    });
   }
 
   afterInit(entityEdit: any) {
