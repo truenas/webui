@@ -33,49 +33,49 @@ export class JailsConfigurationComponent {
       type: 'input',
       name: 'jc_ipv4_network',
       placeholder: 'IPv4 Network',
-      // relation: [
-      //   {
-      //     action: "DISABLE",
-      //     when: [
-      //       {
-      //         id: "jc_ipv4_dhcp",
-      //         value: true
-      //       }
-      //     ]
-      //   }
-      // ]
+      relation: [
+        {
+          action: "DISABLE",
+          when: [
+            {
+              name: "jc_ipv4_dhcp",
+              value: true
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'jc_ipv4_network_start',
       placeholder: 'IPv4 Network Start Address',
-      // relation: [
-      //   {
-      //     action: "DISABLE",
-      //     when: [
-      //       {
-      //         id: "jc_ipv4_dhcp",
-      //         value: true
-      //       }
-      //     ]
-      //   }
-      // ]
+      relation: [
+        {
+          action: "DISABLE",
+          when: [
+            {
+              name: "jc_ipv4_dhcp",
+              value: true
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'jc_ipv4_network_end',
       placeholder: 'IPv4 Network End Address',
-      // relation: [
-      //   {
-      //     action: "DISABLE",
-      //     when: [
-      //       {
-      //         id: "jc_ipv4_dhcp",
-      //         value: true
-      //       }
-      //     ]
-      //   }
-      // ]
+      relation: [
+        {
+          action: "DISABLE",
+          when: [
+            {
+              name: "jc_ipv4_dhcp",
+              value: true
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'checkbox',
@@ -86,50 +86,49 @@ export class JailsConfigurationComponent {
       type: 'input',
       name: 'jc_ipv6_network',
       placeholder: 'IPv6 Network',
-      // relation: [
-      //   {
-      //     action: "DISABLE",
-      //     when: [
-      //       {
-      //         id: "jc_ipv6_autoconf",
-      //         value: true
-      //       }
-      //     ]
-      //   }
-      // ]
+      relation: [
+        {
+          action: "DISABLE",
+          when: [
+            {
+              name: "jc_ipv6_autoconf",
+              value: true
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'jc_ipv6_network_start',
       placeholder: 'IPv6 Network Start Address',
-      // relation: [
-      //   {
-      //     action: "DISABLE",
-      //     when: [
-      //       {
-      //         id: "jc_ipv6_autoconf",
-      //         value: true
-      //       }
-      //     ]
-      //   }
-      // ]
-
+      relation: [
+        {
+          action: "DISABLE",
+          when: [
+            {
+              name: "jc_ipv6_autoconf",
+              value: true
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'jc_ipv6_network_end',
       placeholder: 'IPv6 Network End Address',
-      // relation: [
-      //   {
-      //     action: "DISABLE",
-      //     when: [
-      //       {
-      //         id: "jc_ipv6_autoconf",
-      //         value: true
-      //       }
-      //     ]
-      //   }
-      // ]
+      relation: [
+        {
+          action: "DISABLE",
+          when: [
+            {
+              name: "jc_ipv6_autoconf",
+              value: true
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'input',
