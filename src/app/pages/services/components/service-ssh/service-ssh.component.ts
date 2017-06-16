@@ -29,7 +29,7 @@ export class ServiceSSHComponent {
         type: 'select',
         name: 'ssh_bindiface',
         placeholder: 'Bind Interfaces',
-        multiple: true
+        multiple: true,
         options: [
         ]
     },
