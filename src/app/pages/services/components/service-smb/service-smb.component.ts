@@ -175,7 +175,6 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: 'Bind IP Addresses',
       options: [
       ],
-      placeholder: 'Select IP Address',
       multiple: true
     },
   ];
