@@ -45,7 +45,7 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_doscharset',
-      label: 'DOS Charset',
+      placeholder: 'DOS Charset',
       options: [
         { label: 'CP437', value: 'CP437'},
         { label: 'CP850', value: 'CP850'},
@@ -62,7 +62,7 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_unixcharset',
-      label: 'UNIX Charset',
+      placeholder: 'UNIX Charset',
       options: [
         { label: 'UTF-8', value: 'CP437'},
         { label: 'iso-8859-1', value: 'iso-8859-1'},
@@ -75,7 +75,7 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_loglevel',
-      label: 'Log Level',
+      placeholder: 'Log Level',
       options: [
         { label: 'None', value: 0},
         { label: 'Minimum', value: 1},
@@ -87,27 +87,27 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'cifs_srv_syslog',
-      label: 'Use syslog only'
+      placeholder: 'Use syslog only'
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_localmaster',
-      label: 'Local Master'
+      placeholder: 'Local Master'
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_domain_logons',
-      label: 'Domain Logons'
+      placeholder: 'Domain Logons'
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_timeserver',
-      label: 'Time Server For Domain',
+      placeholder: 'Time Server For Domain',
     },
     {
       type: 'select',
       name: 'cifs_srv_guest',
-      label: 'Guest Account',
+      placeholder: 'Guest Account',
     },
     {
       type: 'input',
@@ -122,7 +122,7 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'cifs_srv_nullpw',
-      label: 'Allow Empty Password'
+      placeholder: 'Allow Empty Password'
     },
     {
       type: 'textarea',
@@ -132,47 +132,47 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'cifs_srv_unixext',
-      label: 'UNIX Extensions'
+      placeholder: 'UNIX Extensions'
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_zeroconf',
-      label: 'Zeroconf share discovery'
+      placeholder: 'Zeroconf share discovery'
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_hostlookup',
-      label: 'Hostnames Lookups' 
+      placeholder: 'Hostnames Lookups' 
     },
     {
       type: 'select',
       name: 'cifs_srv_min_protocol',
-      label: 'Server Minimum Protocol',
+      placeholder: 'Server Minimum Protocol',
     },
     {
       type: 'select',
       name: 'cifs_srv_max_protocol',
-      label: 'Server Maximum Protocol',
+      placeholder: 'Server Maximum Protocol',
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_allow_execute_always',
-      label: 'Allow Execute Always' 
+      placeholder: 'Allow Execute Always' 
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_obey_pam_restrictions',
-      label: 'Obey Pam Restrictions' 
+      placeholder: 'Obey Pam Restrictions' 
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
-      label: 'NTLMv1 Auth' 
+      placeholder: 'NTLMv1 Auth' 
     },
     {
       type: 'select',
       name: 'cifs_srv_bindip',
-      label: 'Bind IP Addresses',
+      placeholder: 'Bind IP Addresses',
       options: [
       ],
       placeholder: 'Select IP Address',
