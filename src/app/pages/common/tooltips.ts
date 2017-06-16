@@ -1,4 +1,4 @@
-import { Tooltip } from './Tooltip';
+import { Tooltip } from './tooltip';
 
 export const TOOLTIPS: Tooltip[] = [
     {
