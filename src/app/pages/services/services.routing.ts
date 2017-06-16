@@ -18,6 +18,7 @@ import { ServiceCIFSComponent } from './components/service-cifs/';
 import { ServiceSMBComponent } from './components/service-smb/';
 import { ServiceSNMPComponent } from './components/service-snmp/';
 import { ServiceWebdavComponent } from './components/service-webdav/';
+import { ServiceS3Component } from './components/service-s3/';
 
 export const routes: Routes = [
   {
@@ -78,7 +79,11 @@ export const routes: Routes = [
   },
   {
     path: 'webdav',
-    component: ServiceWebdavComponent
+    component: ServiceWebdavComponent,
+  },
+  {
+    path: 's3',
+    component: ServiceS3Component,
   }
 ];
 

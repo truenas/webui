@@ -22,6 +22,7 @@ import { ServiceCIFSComponent } from './components/service-cifs';
 import { ServiceSMBComponent } from './components/service-smb';
 import { ServiceSNMPComponent } from './components/service-snmp';
 import { ServiceWebdavComponent } from './components/service-webdav';
+import { ServiceS3Component } from './components/service-s3';
 
 @NgModule({
   imports: [
@@ -48,7 +49,8 @@ import { ServiceWebdavComponent } from './components/service-webdav';
     ServiceCIFSComponent,
     ServiceSMBComponent,
     ServiceSNMPComponent,
-    ServiceWebdavComponent
+    ServiceWebdavComponent,
+    ServiceS3Component
   ],
   providers: [
   ]
