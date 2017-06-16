@@ -17,6 +17,7 @@ import { ServiceDDNSComponent } from './components/service-dynamicdns/';
 import { ServiceCIFSComponent } from './components/service-cifs/';
 import { ServiceSMBComponent } from './components/service-smb/';
 import { ServiceSNMPComponent } from './components/service-snmp/';
+import { ServiceWebdavComponent } from './components/service-webdav/';
 
 export const routes: Routes = [
   {
@@ -74,6 +75,10 @@ export const routes: Routes = [
   {
     path: 'snmp',
     component: ServiceSNMPComponent,
+  },
+  {
+    path: 'webdav',
+    component: ServiceWebdavComponent
   }
 ];
 

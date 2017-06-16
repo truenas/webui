@@ -21,6 +21,7 @@ import { ServiceDDNSComponent } from './components/service-dynamicdns';
 import { ServiceCIFSComponent } from './components/service-cifs';
 import { ServiceSMBComponent } from './components/service-smb';
 import { ServiceSNMPComponent } from './components/service-snmp';
+import { ServiceWebdavComponent } from './components/service-webdav';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { ServiceSNMPComponent } from './components/service-snmp';
     ServiceCIFSComponent,
     ServiceSMBComponent,
     ServiceSNMPComponent,
+    ServiceWebdavComponent
   ],
   providers: [
   ]
