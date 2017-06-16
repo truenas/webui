@@ -9,6 +9,8 @@ import { MdInputModule } from '@angular/material';
 
 import { Subscription } from 'rxjs';
 
+import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
+
 @Component ({
     selector: 'nt4',
     template: ` <entity-form [conf]="this"></entity-form>`,
@@ -39,6 +41,9 @@ export class NT4Component {
       name: 'nt4_adminpw',
       placeholder: 'Administrator Password',
       inputType: 'password',
+      validation: [
+        matchOtherValidator('nt4_conf_adminpw')
+      ]
     },
     {
       type: 'input',
