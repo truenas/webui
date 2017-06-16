@@ -3,6 +3,7 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { FieldConfig } from './models/field-config.interface';
+import { EntityFormService } from './services/entity-form.service';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { Subscription } from 'rxjs';
@@ -14,7 +15,8 @@ import * as _ from 'lodash';
 @Component({
   selector: 'entity-form',
   templateUrl: './entity-form.component.html',
-  styleUrls: ['./entity-form.component.css']
+  styleUrls: ['./entity-form.component.css'],
+  providers: [EntityFormService]
 })
 export class EntityFormComponent implements OnInit, OnDestroy {
 
@@ -50,7 +52,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected rest: RestService,
               protected ws: WebSocketService,
               protected location: Location,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              protected entityFormService: EntityFormService) {
   }
 
   ngAfterViewInit() {
@@ -66,7 +69,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.preInit(this);
     }
     this.fieldConfig = this.conf.fieldConfig;
-    this.formGroup = this.createGroup();
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
     this.sub = this.route.params.subscribe(params => {
       this.resourceName = this.conf.resource_name;
       if (!this.resourceName.endsWith('/')) {
@@ -189,12 +193,6 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       }
     }
     return true;
-  }
-
-  createGroup() {
-    const group = this.fb.group({});
-    this.controls.forEach(control => group.addControl(control.name, this.createControl(control)));
-    return group;
   }
 
   createControl(config: FieldConfig) {
