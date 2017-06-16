@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { FieldConfig } from './models/field-config.interface';
 import { EntityFormService } from './services/entity-form.service';
+import { FieldRelationService } from './services/field-relation.service';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { Subscription } from 'rxjs';
@@ -16,7 +17,7 @@ import * as _ from 'lodash';
   selector: 'entity-form',
   templateUrl: './entity-form.component.html',
   styleUrls: ['./entity-form.component.css'],
-  providers: [EntityFormService]
+  providers: [EntityFormService, FieldRelationService]
 })
 export class EntityFormComponent implements OnInit, OnDestroy {
 
@@ -53,7 +54,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected ws: WebSocketService,
               protected location: Location,
               private fb: FormBuilder,
-              protected entityFormService: EntityFormService) {
+              protected entityFormService: EntityFormService,
+              protected fieldRelationService: FieldRelationService) {
   }
 
   ngAfterViewInit() {
@@ -70,6 +72,13 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     }
     this.fieldConfig = this.conf.fieldConfig;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+    for (let i in this.fieldConfig) {
+      let config = this.fieldConfig[i];
+      if(config.relation.length > 0) {
+        this.setRelation(config);
+      }
+    }
 
     this.sub = this.route.params.subscribe(params => {
       this.resourceName = this.conf.resource_name;
@@ -217,6 +226,25 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   setValue(name: string, value: any) {
     this.formGroup.controls[name].setValue(value, {emitEvent: true});
+  }
+
+  setRelation(config: FieldConfig) {
+    let activations = this.fieldRelationService.findActivationRelation(config.relation);
+    if (activations) {
+      let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled);
+
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach(control => {
+        control.valueChanges.subscribe(() => {
+          this.relationUpdate(config, activations);
+        });
+      });
+    }
+  }
+
+  relationUpdate(config: FieldConfig, activations: any) {
+    let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled);
   }
 
   ngOnDestroy() {

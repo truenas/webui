@@ -1,4 +1,5 @@
 import { ValidatorFn } from '@angular/forms';
+import { RelationGroup } from './field-relation.interface';
 
 export interface FieldConfig {
   disabled?: boolean,
@@ -14,4 +15,5 @@ export interface FieldConfig {
   value?: any,
   multiple?: boolean,
   tooltip?: string,
+  relation?: RelationGroup[],
 }
