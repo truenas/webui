@@ -73,8 +73,14 @@ export class Service {
   }
 
   editService(service: any) {
-    // Determines the route path
-     this.router.navigate(new Array('/pages').concat(['services', service]));
+    if (service == 'iscsitarget') {
+      //iscsi target global config route
+      let route = ['sharing', 'iscsi'];
+      this.router.navigate(new Array('/pages').concat(route));
+    } else {
+      // Determines the route path
+      this.router.navigate(new Array('/pages').concat(['services', service]));
+    }
   }
 
 }
