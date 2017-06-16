@@ -83,6 +83,8 @@ export class ServiceS3Component implements OnInit {
     protected systemGeneralService: SystemGeneralService) {
   }
 
+  ngOnInit() {
+  }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
