@@ -1,5 +1,5 @@
 export class Tooltip {
-    id: string,
+    id: string;
     body: string;
     created_at?: Date;
     updated_at?: Date;

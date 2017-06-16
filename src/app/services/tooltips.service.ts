@@ -8,7 +8,7 @@ import { TOOLTIPS } from '../pages/common/tooltips';
 
 @Injectable()
 export class TooltipsService {
-    getTooltips(): Promise{
+    getTooltips(): Promise<Tooltip[]> {
         return Promise.resolve(TOOLTIPS);
     }
 
