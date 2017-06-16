@@ -22,7 +22,7 @@ import { matchOtherValidator } from '../../../common/entity/entity-form/validato
 
 export class ServiceSNMPComponent {
   protected resource_name: string = 'services/snmp';
-  protected route_success: string[] = ['services','snmp'];
+  protected route_success: string[] = ['services'];
   private entityEdit: EntityConfigComponent;
   protected fieldConfig: FieldConfig[] = [
     {
