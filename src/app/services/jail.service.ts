@@ -1,4 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+import 'rxjs/add/operator/map';
+import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { EntityUtils } from '../pages/common/entity/utils'
+import { RestService, WebSocketService } from '../services/';
 
 @Injectable ()
 export class JailService {
@@ -75,6 +80,11 @@ export class JailService {
 	    { label: '/128', value: '128' },
   	];
 
+	protected jailsResource: string = 'jails/jails';
+
+	constructor(protected rest: RestService, protected ws: WebSocketService){
+	};
+
   	getIpv4Netmask() {
   		return this.ipv4_netmask_options;
   	}
@@ -82,4 +92,8 @@ export class JailService {
   	getIpv6Prefix() {
   		return this.ipv6_prefix_options;
   	}
+
+	listJails() {
+		return this.rest.get(this.jailsResource, {});
+	}
 }
