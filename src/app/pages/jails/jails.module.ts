@@ -7,6 +7,7 @@ import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { routing }       from './jails.routing';
+import { JailService } from '../../services';
 
 import { JailListComponent } from './jail-list/';
 import { JailAddComponent } from './jail-add/';
@@ -47,6 +48,7 @@ import { TemplateEditComponent } from './templates/template-edit/';
 		TemplateEditComponent,
 	],
 	providers: [
+		JailService,
 	]
 })
 export class JailsModule {}
