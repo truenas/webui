@@ -1,1 +1,0 @@
-export { StorageEditComponent } from './storage-edit.component';

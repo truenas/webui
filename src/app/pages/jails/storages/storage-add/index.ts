@@ -1,1 +1,0 @@
-export { StorageAddComponent } from './storage-add.component';
