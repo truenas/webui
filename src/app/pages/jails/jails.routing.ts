@@ -6,9 +6,8 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
-import { StorageAddComponent } from './storages/storage-add/';
+import { StorageFormComponent } from './storages/storage-form/';
 import { StorageDeleteComponent } from './storages/storage-delete/';
-import { StorageEditComponent } from './storages/storage-edit/';
 import { JailsConfigurationComponent } from './configuration/';
 import { TemplateListComponent } from './templates/template-list/';
 import { TemplateAddComponent } from './templates/template-add/';
@@ -21,9 +20,9 @@ export const routes: Routes = [
 	{ path: 'edit/:pk', component: JailEditComponent},
 	{ path: 'delete/:pk', component: JailDeleteComponent},
 	{ path: 'storage', component: StorageListComponent},
-	{ path: 'storage/add', component: StorageAddComponent},
+	{ path: 'storage/add', component: StorageFormComponent},
+	{ path: 'storage/edit/:pk', component: StorageFormComponent},
 	{ path: 'storage/delete/:pk', component: StorageDeleteComponent},
-	{ path: 'storage/edit/:pk', component: StorageEditComponent},
 	{ path: 'configuration', component: JailsConfigurationComponent},
 	{ path: 'templates', component: TemplateListComponent},
 	{ path: 'templates/add', component: TemplateAddComponent},

@@ -13,9 +13,8 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
-import { StorageAddComponent } from './storages/storage-add/';
+import { StorageFormComponent } from './storages/storage-form/';
 import { StorageDeleteComponent } from './storages/storage-delete/';
-import { StorageEditComponent } from './storages/storage-edit/';
 import { JailsConfigurationComponent } from './configuration/';
 import { TemplateListComponent } from './templates/template-list/';
 import { TemplateAddComponent } from './templates/template-add/';
@@ -39,9 +38,8 @@ import { TemplateEditComponent } from './templates/template-edit/';
 		JailEditComponent,
 		JailDeleteComponent,
 		StorageListComponent,
-		StorageAddComponent,
+		StorageFormComponent,
 		StorageDeleteComponent,
-		StorageEditComponent,
 		JailsConfigurationComponent,
 		TemplateListComponent,
 		TemplateAddComponent,
