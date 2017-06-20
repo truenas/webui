@@ -53,6 +53,17 @@ export class ServiceSNMPComponent {
       type: 'input',
       name: 'snmp_v3_username',
       placeholder: 'Username',
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'select',
@@ -62,6 +73,17 @@ export class ServiceSNMPComponent {
         { label: '---', value: null },
         { label: 'MD5', value: 'MD5' },
         { label: 'SHA', value: 'SHA' }
+      ],
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
       ]
     },
     {
@@ -72,6 +94,17 @@ export class ServiceSNMPComponent {
       validation: [
         Validators.minLength(8),
         matchOtherValidator('snmp_v3_password2')
+      ],
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
       ]
     },
     {
@@ -79,7 +112,17 @@ export class ServiceSNMPComponent {
       name: 'snmp_v3_password2',
       inputType: 'password',
       placeholder: 'Confirm password',
-
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'select',
@@ -89,6 +132,17 @@ export class ServiceSNMPComponent {
         { label: '---', value: null },
         { label: 'AES', value: 'AES' },
         { label: 'DES', value: 'DES' },
+      ],
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
       ]
     },
     {
@@ -99,6 +153,17 @@ export class ServiceSNMPComponent {
       validation: [
         Validators.minLength(8),
         matchOtherValidator('snmp_v3_privpassphrase2')
+      ],
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
       ]
     },
     {
@@ -106,6 +171,17 @@ export class ServiceSNMPComponent {
       name: 'snmp_v3_privpassphrase2',
       inputType: 'password',
       placeholder: 'Confirm Privacy Passphrase',
+      relation: [
+        {
+          action: 'DISABLE',
+          when: [
+            {
+              name: 'snmp_traps',
+              value: false
+            }
+          ]
+        }
+      ]
     },
     {
       type: 'textarea',
