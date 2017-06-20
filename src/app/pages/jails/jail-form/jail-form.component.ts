@@ -302,7 +302,7 @@ export class JailFormComponent {
     return true;
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: any) {
     let ipv4_netmask_options = this.jailService.getIpv4Netmask();
     let ipv6_prefix_options = this.jailService.getIpv6Prefix();
 
