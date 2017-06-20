@@ -10,9 +10,8 @@ import { StorageFormComponent } from './storages/storage-form/';
 import { StorageDeleteComponent } from './storages/storage-delete/';
 import { JailsConfigurationComponent } from './configuration/';
 import { TemplateListComponent } from './templates/template-list/';
-import { TemplateAddComponent } from './templates/template-add/';
+import { TemplateFormComponent } from './templates/template-form/';
 import { TemplateDeleteComponent } from './templates/template-delete/';
-import { TemplateEditComponent } from './templates/template-edit/';
 
 export const routes: Routes = [
   	{ path: 'jails', component: JailListComponent, pathMatch: 'full' },  
@@ -25,8 +24,8 @@ export const routes: Routes = [
 	{ path: 'storage/delete/:pk', component: StorageDeleteComponent},
 	{ path: 'configuration', component: JailsConfigurationComponent},
 	{ path: 'templates', component: TemplateListComponent},
-	{ path: 'templates/add', component: TemplateAddComponent},
+	{ path: 'templates/add', component: TemplateFormComponent},
 	{ path: 'templates/delete/:pk', component: TemplateDeleteComponent},
-	{ path: 'templates/edit/:pk', component: TemplateEditComponent},
+	{ path: 'templates/edit/:pk', component: TemplateFormComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
