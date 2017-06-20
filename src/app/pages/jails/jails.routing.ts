@@ -2,6 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { JailListComponent } from './jail-list/';
+import { JailFormComponent } from './jail-form/';
 import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
@@ -15,8 +16,8 @@ import { TemplateDeleteComponent } from './templates/template-delete/';
 
 export const routes: Routes = [
   	{ path: 'jails', component: JailListComponent, pathMatch: 'full' },  
-  	{ path: 'add', component: JailAddComponent},
-	{ path: 'edit/:pk', component: JailEditComponent},
+	{ path: 'add', component: JailFormComponent},
+	{ path: 'edit/:pk', component: JailFormComponent},
 	{ path: 'delete/:pk', component: JailDeleteComponent},
 	{ path: 'storage', component: StorageListComponent},
 	{ path: 'storage/add', component: StorageFormComponent},

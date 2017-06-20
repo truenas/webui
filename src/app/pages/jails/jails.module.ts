@@ -10,6 +10,7 @@ import { routing }       from './jails.routing';
 import { JailService } from '../../services';
 
 import { JailListComponent } from './jail-list/';
+import { JailFormComponent } from './jail-form/';
 import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
@@ -34,6 +35,7 @@ import { TemplateDeleteComponent } from './templates/template-delete/';
 	],
 	declarations: [
 		JailListComponent,
+		JailFormComponent,
 		JailAddComponent,
 		JailEditComponent,
 		JailDeleteComponent,
