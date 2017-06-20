@@ -1,1 +1,0 @@
-export { TemplateAddComponent } from './template-add.component';

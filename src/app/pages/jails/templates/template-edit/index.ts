@@ -1,1 +1,0 @@
-export { TemplateEditComponent } from './template-edit.component';
