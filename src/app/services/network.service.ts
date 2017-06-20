@@ -15,4 +15,12 @@ export class NetworkService {
     getVlanNicChoices() {
         return this.ws.call('notifier.choices', ['NICChoices', [false, true, false]]);
     }
+
+    getInterfaceNicChoices() {
+        return this.ws.call('notifier.choices', ['NICChoices', []]);
+    }
+
+    getV4Netmasks() {
+        return Array(32).fill(0).map((x, i) => { return { label: String(32 - i), value: String(32 - i) }; });
+    }
 }
