@@ -11,8 +11,6 @@ import { JailService } from '../../services';
 
 import { JailListComponent } from './jail-list/';
 import { JailFormComponent } from './jail-form/';
-import { JailAddComponent } from './jail-add/';
-import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
 import { StorageFormComponent } from './storages/storage-form/';
@@ -36,8 +34,6 @@ import { TemplateDeleteComponent } from './templates/template-delete/';
 	declarations: [
 		JailListComponent,
 		JailFormComponent,
-		JailAddComponent,
-		JailEditComponent,
 		JailDeleteComponent,
 		StorageListComponent,
 		StorageFormComponent,

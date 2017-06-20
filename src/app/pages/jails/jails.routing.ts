@@ -3,8 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { JailListComponent } from './jail-list/';
 import { JailFormComponent } from './jail-form/';
-import { JailAddComponent } from './jail-add/';
-import { JailEditComponent } from './jail-edit/';
 import { JailDeleteComponent } from './jail-delete/';
 import { StorageListComponent } from './storages/storage-list/';
 import { StorageFormComponent } from './storages/storage-form/';
