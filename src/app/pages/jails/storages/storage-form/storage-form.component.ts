@@ -61,5 +61,9 @@ export class StorageFormComponent {
         this.jail.options.push({ label: item.jail_host, value: item.jail_host});
       });
     });
+
+    if (!entityForm.isNew) {
+      entityForm.setDisabled('jail', true);
+    }
   }
 }

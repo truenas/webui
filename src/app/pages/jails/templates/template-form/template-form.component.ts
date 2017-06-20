@@ -62,7 +62,9 @@ export class TemplateFormComponent {
 
   }
 
-  afterInit(entityAdd: any) {
-    
+  afterInit(entityForm: any) {
+    if (!entityForm.isNew) {
+      entityForm.setDisabled('jt_name', true);
+    }
   }
 }

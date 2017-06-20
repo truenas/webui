@@ -332,5 +332,9 @@ export class JailFormComponent {
         }
       }
     });
+
+    if (!entityForm.isNew) {
+      entityForm.setDisabled('jail_host', true);
+    }
   }
 }
