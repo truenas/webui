@@ -25,7 +25,7 @@ export class UserListComponent {
   };
 
   isActionVisible(actionId: string, row: any) {
-    if(actionId == 'delete' && row.bsdusr_builtin === true) {
+    if (actionId === 'delete' && row.bsdusr_builtin === true) {
       return false;
     }
     return true;

@@ -11,6 +11,7 @@ import { routing }       from './users.routing';
 import { UserListComponent } from './user-list/';
 import { UserAddComponent } from './user-add/';
 import { UserEditComponent } from './user-edit/';
+import { UserFormComponent } from './user-form/';
 import { UserDeleteComponent } from './user-delete/';
 
 @NgModule({
@@ -26,8 +27,7 @@ import { UserDeleteComponent } from './user-delete/';
   ],
   declarations: [
     UserListComponent,
-    UserAddComponent,
-    UserEditComponent,
+    UserFormComponent,
     UserDeleteComponent,
   ],
   providers: [
