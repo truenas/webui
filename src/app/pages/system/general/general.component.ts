@@ -1,9 +1,15 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
-import { RestService } from '../../../services/rest.service';
+import { EntityConfigComponent } from '../../common/entity/entity-config/';
+import { GlobalState } from '../../../global.state';
+import { RestService, WebSocketService, UserService } from '../../../services/';
+import { FormGroup, FormArray, Validators, AbstractControl} from '@angular/forms';
 
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-general',
   template: `
@@ -13,130 +19,150 @@ import { RestService } from '../../../services/rest.service';
     <button class="btn btn-outline-danger" (click)="gotoResetConfig()">Reset Config</button>
     <button class="btn btn-outline-info" (click)="gotoNTPServers()">NTP Servers</button>
   </p>
-  <entity-config [conf]="this"></entity-config>`
+  <entity-form [conf]="this"></entity-form>`
 })
 export class GeneralComponent {
 
   protected resource_name: string = 'system/settings';
+  private entityEdit: EntityConfigComponent;
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicSelectModel({
-      id: 'stg_guiprotocol',
-      label: 'GUI Protocol',
-      options: [
-        { label: 'HTTP', value: 'http' },
-        { label: 'HTTPS', value: 'https' },
-        { label: 'HTTP+HTTPS', value: 'httphttps' },
-      ],
-    }),
-    new DynamicSelectModel({
-      id: 'stg_guiaddress',
-      label: 'GUI IPv4 Bind Address',
-    }),
-    new DynamicSelectModel({
-      id: 'stg_guiv6address',
-      label: 'GUI IPv6 Bind Address',
-    }),
-    new DynamicInputModel({
-      id: 'stg_guiport',
-      label: 'GUI HTTP Port',
-    }),
-    new DynamicInputModel({
-      id: 'stg_guihttpsport',
-      label: 'GUI HTTPS Port',
-    }),
-    new DynamicSelectModel({
-      id: 'stg_guicertificate',
-      label: 'GUI SSL Certificate',
-    }),
-    new DynamicCheckboxModel({
-      id: 'stg_guihttpsredirect',
-      label: 'GUI HTTP -> HTTPS Redirect',
-    }),
-    new DynamicSelectModel({
-      id: 'stg_language',
-      label: 'GUI Language',
-    }),
-    new DynamicSelectModel({
-      id: 'stg_kbdmap',
-      label: 'Console Keyboard map',
-    }),
-    new DynamicSelectModel({
-      id: 'stg_timezone',
-      label: 'Timezone',
-    }),
-    new DynamicSelectModel({
-      id: 'stg_sysloglevel',
-      label: 'Syslog Level',
-    }),
-    new DynamicInputModel({
-      id: 'stg_syslogserver',
-      label: 'Syslog Server',
-    }),
+  protected fieldConfig: FieldConfig[] = [
+    {
+        type: 'select',
+        name: 'stg_guiprotocol',
+        placeholder: 'GUI Protocol',
+        options: [
+          { label: 'HTTP', value: 'http' },
+          { label: 'HTTPS', value: 'https' },
+          { label: 'HTTP+HTTPS', value: 'httphttps' },
+        ],
+    },
+    {
+        type: 'select',
+        name: 'stg_guiaddress',
+        placeholder: 'GUI IPv4 Bind Address',
+        options: []
+    },
+    {
+        type: 'select',
+        name: 'stg_guiv6address',
+        placeholder: 'GUI IPv6 Bind Address',
+        options: []
+    },
+    {
+        type: 'input',
+        name: 'stg_guiport',
+        placeholder: 'GUI HTTP Port',
+    },
+    {
+        type: 'input',
+        name: 'stg_guihttpsport',
+        placeholder: 'GUI HTTPS Port',
+    },
+    {
+        type: 'select',
+        name: 'stg_guicertificate',
+        placeholder: 'GUI SSL Certificate',
+        options: []
+    },
+    {
+        type: 'checkbox',
+        name: 'stg_guihttpsredirect',
+        placeholder: 'GUI HTTP -> HTTPS Redirect',
+    },
+    {
+        type: 'select',
+        name: 'stg_language',
+        placeholder: 'GUI Language',
+        options: []
+    },
+    {
+        type: 'select',
+        name: 'stg_kbdmap',
+        placeholder: 'Console Keyboard map',
+        options: []
+    },
+    {
+        type: 'select',
+        name: 'stg_timezone',
+        placeholder: 'Timezone',
+        options: []
+    },
+    {
+        type: 'select',
+        name: 'stg_sysloglevel',
+        placeholder: 'Syslog Level',
+        options: []
+    },
+    {
+        type: 'input',
+        name: 'stg_syslogserver',
+        placeholder: 'Syslog Server',
+    },
   ];
 
-  private stg_guiaddress: DynamicSelectModel<string>;
-  private stg_guiv6address: DynamicSelectModel<string>;
-  private stg_guicertificate: DynamicSelectModel<string>;
-  private stg_language: DynamicSelectModel<string>;
-  private stg_kbdmap: DynamicSelectModel<string>;
-  private stg_timezone: DynamicSelectModel<string>;
-  private stg_sysloglevel: DynamicSelectModel<string>;
-  private stg_syslogserver: DynamicSelectModel<string>;
+  private stg_guiaddress: any;
+  private stg_guiv6address: any;
+  private stg_guicertificate: any;
+  private stg_language: any;
+  private stg_kbdmap: any;
+  private stg_timezone: any;
+  private stg_sysloglevel: any;
+  private stg_syslogserver: any;
 
-  constructor(protected rest: RestService, protected router: Router, protected formService: DynamicFormService) {
+  constructor(protected rest: RestService, protected router: Router) {
 
   }
 
   afterInit(entityEdit: any) {
     entityEdit.ws.call('certificate.query', [[['cert_CSR', '=', null]]]).subscribe((res) => {
-      this.stg_guicertificate = <DynamicSelectModel<string>>this.formService.findById('stg_guicertificate', this.formModel);
+      this.stg_guicertificate = _.find(this.fieldConfig, {'name': 'stg_guicertificate'});
       res.forEach((item) => {
-        this.stg_guicertificate.add({ label: item.cert_name, value: item.id });
+        this.stg_guicertificate.options.push({ label: item.cert_name, value: item.id });
       });
     });
 
     entityEdit.ws.call('notifier.choices', ['IPChoices', [true, false]]).subscribe((res) => {
-      this.stg_guiaddress = <DynamicSelectModel<string>>this.formService.findById('stg_guiaddress', this.formModel);
-      this.stg_guiaddress.add({ label: '0.0.0.0', value: '0.0.0.0' });
+      this.stg_guiaddress = _.find(this.fieldConfig, {'name': 'stg_guiaddress'});
+      this.stg_guiaddress.options.push({ label: '0.0.0.0', value: '0.0.0.0' });
       res.forEach((item) => {
-        this.stg_guiaddress.add({ label: item[1], value: item[0] });
+        this.stg_guiaddress.options.push({ label: item[1], value: item[0] });
       });
     });
 
     entityEdit.ws.call('notifier.choices', ['IPChoices', [false, true]]).subscribe((res) => {
-      this.stg_guiv6address = <DynamicSelectModel<string>>this.formService.findById('stg_guiv6address', this.formModel);
-      this.stg_guiv6address.add({ label: '::', value: '::' });
+      this.stg_guiv6address = _.find(this.fieldConfig, {'name': 'stg_guiv6address'});
+      this.stg_guiv6address.options.push({ label: '::', value: '::' });
       res.forEach((item) => {
-        this.stg_guiv6address.add({ label: item[1], value: item[0] });
+        this.stg_guiv6address.options.push({ label: item[1], value: item[0] });
       });
     });
 
     entityEdit.ws.call('notifier.gui_languages').subscribe((res) => {
-      this.stg_language = <DynamicSelectModel<string>>this.formService.findById('stg_language', this.formModel);
+      this.stg_language = _.find(this.fieldConfig, {'name': 'stg_language'});
       res.forEach((item) => {
-        this.stg_language.add({ label: item[1], value: item[0] });
+        this.stg_language.options.push({ label: item[1], value: item[0] });
       });
     });
 
     entityEdit.ws.call('notifier.choices', ['KBDMAP_CHOICES']).subscribe((res) => {
-      this.stg_kbdmap = <DynamicSelectModel<string>>this.formService.findById('stg_kbdmap', this.formModel);
+      this.stg_kbdmap = _.find(this.fieldConfig, {'name': 'stg_kbdmap'});
       res.forEach((item) => {
-        this.stg_kbdmap.add({ label: item[1], value: item[0] });
+        this.stg_kbdmap.options.push({ label: item[1], value: item[0] });
       });
     });
 
     entityEdit.ws.call('notifier.choices', ['TimeZoneChoices']).subscribe((res) => {
-      this.stg_timezone = <DynamicSelectModel<string>>this.formService.findById('stg_timezone', this.formModel);
+      this.stg_timezone = _.find(this.fieldConfig, {'name': 'stg_timezone'});
       res.forEach((item) => {
-        this.stg_timezone.add({ label: item[1], value: item[0] });
+        this.stg_timezone.options.push({ label: item[1], value: item[0] });
       });
     });
 
     entityEdit.ws.call('notifier.choices', ['SYS_LOG_LEVEL']).subscribe((res) => {
-      this.stg_sysloglevel = <DynamicSelectModel<string>>this.formService.findById('stg_sysloglevel', this.formModel);
+      this.stg_sysloglevel = _.find(this.fieldConfig, {'name': 'stg_sysloglevel'});
       res.forEach((item) => {
-        this.stg_sysloglevel.add({ label: item[1], value: item[0] });
+        this.stg_sysloglevel.options.push({ label: item[1], value: item[0] });
       });
     });
 
