@@ -29,6 +29,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   protected resourceName: string;
   private submitFunction = this.editSubmit;
   private isNew: boolean = false;
+  public hasConf: boolean = true;
 
   get controls() { return this.fieldConfig.filter(({type}) => type !== 'button'); }
   get changes() { return this.formGroup.valueChanges; }
@@ -203,6 +204,14 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       }
     }
     return true;
+  }
+
+  goConf() {
+    let route = this.conf.route_conf;
+    if(!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
   }
 
   createControl(config: FieldConfig) {
