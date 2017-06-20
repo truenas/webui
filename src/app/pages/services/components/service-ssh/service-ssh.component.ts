@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 
 import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService, SystemGeneralService} from '../../../../services/';
+import { RestService, WebSocketService, NetworkService} from '../../../../services/';
 import { FormGroup, FormArray, Validators, AbstractControl} from '@angular/forms';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -15,9 +15,10 @@ import { matchOtherValidator } from '../../../common/entity/entity-form/validato
 @Component ({
     selector: 'ssh-edit',
     template: `<entity-form [conf]="this"></entity-form>`,
+    providers: [NetworkService],
 })
 
-export class ServiceSSHComponent {
+export class ServiceSSHComponent implements OnInit{
   // Form Layout
   protected resource_name: string = 'services/ssh';
   protected isBasicMode: boolean = true;
@@ -144,11 +145,22 @@ protected advanced_field: Array<any> = [
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,
-    protected _state: GlobalState
+    protected _state: GlobalState,
+    protected networkService: NetworkService,
   ) {}
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+  }
+
+  protected ssh_bindiface: any;
+  ngOnInit() {
+    this.networkService.getAllNicChoices().subscribe( (res) => {
+      this.ssh_bindiface = _.find(this.fieldConfig, {'name': 'ssh_bindiface'});
+      res.forEach((item) => {
+        this.ssh_bindiface.options.push({ label: item[0], value: item[0]});
+      });
+    });
   }
 
 }
