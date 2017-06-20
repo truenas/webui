@@ -67,19 +67,6 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.conf.preInit) {
-      this.conf.preInit(this);
-    }
-    this.fieldConfig = this.conf.fieldConfig;
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-    for (let i in this.fieldConfig) {
-      let config = this.fieldConfig[i];
-      if(config.relation.length > 0) {
-        this.setRelation(config);
-      }
-    }
-
     this.sub = this.route.params.subscribe(params => {
       this.resourceName = this.conf.resource_name;
       if (!this.resourceName.endsWith('/')) {
@@ -94,6 +81,20 @@ export class EntityFormComponent implements OnInit, OnDestroy {
           this.isNew = true;
         }
       }
+
+      if (this.conf.preInit) {
+        this.conf.preInit(this);
+      }
+      this.fieldConfig = this.conf.fieldConfig;
+      this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+      for (let i in this.fieldConfig) {
+        let config = this.fieldConfig[i];
+        if(config.relation.length > 0) {
+          this.setRelation(config);
+        }
+      }
+
       let getQuery = this.resourceName;
       if (this.conf.custom_get_query) {
         getQuery = this.conf.custom_get_query;
