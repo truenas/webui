@@ -1,7 +1,7 @@
 <a *ngIf="conf.route_add" class="btn btn-success btn-fab" (click)="doAdd()"><i class="ion-plus"></i></a>
 <app-entity-list-add-actions [entity]="this"></app-entity-list-add-actions>
 
-<ba-card>
+<md-card>
 <table class="table table-striped table-bordered tree" style="width: 100%;" [ngBusy]="busy">
  <thead class="card-header">
    <tr role="row">
@@ -19,4 +19,4 @@
    </tr>
   </tbody>
 </table>
-</ba-card>
+</md-card>
