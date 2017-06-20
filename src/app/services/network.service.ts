@@ -20,6 +20,10 @@ export class NetworkService {
         return this.ws.call('notifier.choices', ['NICChoices', []]);
     }
 
+    getAllNicChoices() {
+        return this.ws.call('notifier.choices', ['NICChoices', [false, false, false]]);
+    }
+
     getV4Netmasks() {
         return Array(32).fill(0).map((x, i) => { return { label: String(32 - i), value: String(32 - i) }; });
     }
