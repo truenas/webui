@@ -81,6 +81,7 @@ export class JailService {
   	];
 
 	protected jailsResource: string = 'jails/jails';
+	protected jailsConfig: string = 'jails/configuration';
 
 	constructor(protected rest: RestService, protected ws: WebSocketService){
 	};
@@ -95,5 +96,9 @@ export class JailService {
 
 	listJails() {
 		return this.rest.get(this.jailsResource, {});
+	}
+
+	getJailsConfig() {
+		return this.rest.get(this.jailsConfig, {});
 	}
 }
