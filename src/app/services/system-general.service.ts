@@ -21,4 +21,8 @@ export class SystemGeneralService {
     getCertificates() {
         return this.rest.get(this.certificateList, {});
     }
+
+    getIPChoices() {
+        return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
+    }
 }

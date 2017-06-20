@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { RestService, WebSocketService } from '../../services/';
+import { RestService, WebSocketService, SystemGeneralService } from '../../services/';
 
 @Component({
   selector: 'dashboard',
   styleUrls: ['./dashboard.scss'],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  providers: [SystemGeneralService]
 })
 export class Dashboard implements OnInit {
 
@@ -45,7 +46,7 @@ export class Dashboard implements OnInit {
     },
   ];
 
-  constructor(private rest: RestService, private ws: WebSocketService) {
+  constructor(private rest: RestService, private ws: WebSocketService, protected systemGeneralService: SystemGeneralService) {
     rest.get('storage/volume/', {}).subscribe((res) => {
       res.data.forEach((vol) => {
         this.graphs.splice(0, 0, {
@@ -65,6 +66,9 @@ export class Dashboard implements OnInit {
       this.info.loadavg = this.info.loadavg.map((x, i) => { return x.toFixed(2); }).join(' ');
       this.info.physmem = Number(this.info.physmem / 1024 / 1024).toFixed(0) + ' MiB';
     });
+    this.systemGeneralService.getIPChoices().subscribe( (res) => {
+      this.info.IPAddress = _.uniq(res);
+    })
   }
 
 }
