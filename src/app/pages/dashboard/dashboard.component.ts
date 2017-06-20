@@ -69,7 +69,11 @@ export class Dashboard implements OnInit {
       this.info.physmem = Number(this.info.physmem / 1024 / 1024).toFixed(0) + ' MiB';
     });
     this.systemGeneralService.getIPChoices().subscribe( (res) => {
-      this.info.IPAddress = _.uniq(res);
+      if (res.length > 0) {
+        this.info.IPAddress = _.uniq(res[0]);
+      }else {
+        this.info.IPAddress = res;
+      }
     })
   }
 
