@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
   selector: 'system-tunable-edit',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class TunableEditComponent {
+export class TunableFormComponent {
 
   protected resource_name: string = 'system/tunable';
   protected route_success: string[] = ['system', 'tunable'];
