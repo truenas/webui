@@ -34,18 +34,18 @@ export class LaggListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-        label: "Delete",
-        onClick: (row) => {
-            this.router.navigate(new Array('/pages').concat(["network", "laggs", "delete", row.id]));
-        },
-    });
-    actions.push({
         label: "Edit Interface",
         onClick: (row) => {
             this.router.navigate(new Array('/pages').concat(
               ["network", "interfaces", "edit", this.editIds[row.lagg_interface]]));
         }
-    })
+    });
+    actions.push({
+        label: "Delete",
+        onClick: (row) => {
+            this.router.navigate(new Array('/pages').concat(["network", "laggs", "delete", row.id]));
+        },
+    });
     return actions;
   }
 
