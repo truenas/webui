@@ -176,6 +176,14 @@ export const PAGES_MENU = [
         selected: false,
         expanded: false,
         order: 0
+      },
+      {
+        path: ['network', 'laggs'],
+        title: 'Laggs',
+        icon: 'ion-android-hand',
+        selected: false,
+        expanded: false,
+        order: 0
       }
     ]
   },

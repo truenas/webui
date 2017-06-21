@@ -20,6 +20,14 @@ export class NetworkService {
         return this.ws.call('notifier.choices', ['NICChoices', []]);
     }
 
+    getLaggNicChoices() {
+        return this.ws.call('notifier.choices', ['NICChoices', [true, false, true]]);
+    }
+
+    getLaggProtocolTypes() {
+        return this.ws.call('notifier.choices', ['LAGGType']);
+    }
+
     getAllNicChoices() {
         return this.ws.call('notifier.choices', ['NICChoices', [false, false, false]]);
     }
