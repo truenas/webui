@@ -44,15 +44,15 @@ export class UserFormComponent {
    {    type: 'input',
         name: 'bsdusr_password',
         placeholder: 'Password',
-        inputType: 'password',
-        validation: [
-          matchOtherValidator('bsdusr_password_conf')
-          ]
+        inputType: 'password'
     },
     {   type: 'input',
         name: 'bsdusr_password_conf',
         placeholder: 'Confirm Password',
         inputType: 'password',
+        validation: [
+          matchOtherValidator('bsdusr_password')
+          ]
 
     },
     {
@@ -94,6 +94,7 @@ export class UserFormComponent {
     {   type: 'checkbox',
         name: 'bsdusr_creategroup',
         placeholder: 'Create Primary Group',
+        value: true,
     },
     {   type: 'select',
         name: 'bsdusr_shell',
@@ -139,10 +140,10 @@ export class UserFormComponent {
     this.rest.get(this.resource_name, {}).subscribe((res) => {
       let uid = 999;
       res.data.forEach((item, i) => {
-        if (item.bsdusr_uid > uid) uid = item.bsdusr_uid;
+                if (item.bsdusr_uid > uid) uid = item.bsdusr_uid;
       });
-      uid += 1;
-      entityAdd.formGroup.controls['bsdusr_uid'].setValue(uid);
+          uid += 1;
+          entityAdd.formGroup.controls['bsdusr_uid'].setValue(uid);
     });
     /* list shells */
     entityAdd.ws.call('notifier.choices', ['SHELL_CHOICES']).subscribe((res) => {
