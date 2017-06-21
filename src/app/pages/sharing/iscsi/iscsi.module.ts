@@ -18,9 +18,8 @@ import { InitiatorListComponent } from './initiator/initiator-list/';
 import { InitiatorFormComponent } from './initiator/initiator-form/';
 import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
-import { AuthorizedAccessAddComponent } from './authorizedaccess/authorizedaccess-add/';
+import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
-import { AuthorizedAccessEditComponent } from './authorizedaccess/authorizedaccess-edit/';
 import { TargetListComponent } from './target/target-list/';
 import { TargetDeleteComponent } from './target/target-delete/';
 import { TargetAddComponent } from './target/target-add/';
@@ -47,9 +46,8 @@ import { TargetAddComponent } from './target/target-add/';
     InitiatorFormComponent,
     InitiatorDeleteComponent,
     AuthorizedAccessListComponent,
-    AuthorizedAccessAddComponent,
+    AuthorizedAccessFormComponent,
     AuthorizedAccessDeleteComponent,
-    AuthorizedAccessEditComponent,
     TargetListComponent,
     TargetDeleteComponent,
     TargetAddComponent,
