@@ -82,6 +82,7 @@ export class JailService {
 
 	protected jailsResource: string = 'jails/jails';
 	protected jailsConfig: string = 'jails/configuration';
+	protected jailsTemplate: string = 'jails/templates';
 
 	constructor(protected rest: RestService, protected ws: WebSocketService){
 	};
@@ -100,5 +101,9 @@ export class JailService {
 
 	getJailsConfig() {
 		return this.rest.get(this.jailsConfig, {});
+	}
+
+	listTemplates() {
+		return this.rest.get(this.jailsTemplate, {});
 	}
 }

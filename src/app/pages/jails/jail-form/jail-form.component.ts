@@ -289,6 +289,8 @@ export class JailFormComponent {
   private jail_ipv6_prefix: any;
   private jail_bridge_ipv6_prefix: any;
 
+  private jail_type: any;
+
   constructor(protected router: Router, protected jailService: JailService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
 
   }
@@ -320,6 +322,13 @@ export class JailFormComponent {
         this.jail_bridge_ipv6_prefix.options.push({ label: item.label, value: item.value});
     });
   
+    this.jailService.listTemplates().subscribe((res) => {
+      this.jail_type = _.find(this.fieldConfig, {'name': 'jail_type'});
+      res.data.forEach((item) => {
+        this.jail_type.options.push({ label: item.jt_name, value: item.jt_name});
+      });
+    });
+
     this.jailService.getJailsConfig().subscribe((res) => {
       for(let i in res.data) {
         if (i == "jc_path" && res.data[i] == "") {
