@@ -88,6 +88,9 @@ export class CertificateInternalComponent {
         type: 'input',
         name: 'cert_email',
         placeholder: 'Email',
+        validation: [
+          Validators.email
+        ]
     },
     {
         type: 'input',

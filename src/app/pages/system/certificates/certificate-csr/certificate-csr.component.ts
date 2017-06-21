@@ -77,6 +77,9 @@ export class CertificateCSRComponent {
         type: 'input',
         name: 'cert_email',
         placeholder: 'Email',
+        validation: [
+          Validators.email
+        ]
     },
     {
         type: 'input',
