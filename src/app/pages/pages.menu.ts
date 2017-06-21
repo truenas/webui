@@ -184,6 +184,14 @@ export const PAGES_MENU = [
         selected: false,
         expanded: false,
         order: 0
+      },
+      {
+        path: ['network', 'staticroutes'],
+        title: 'Static Routes',
+        icon: 'ion-happy-outline',
+        selected: false,
+        expanded: false,
+        order: 0
       }
     ]
   },
