@@ -1,3 +1,4 @@
+import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -5,6 +6,8 @@ import { GlobalState } from '../../../global.state';
 import { RestService, WebSocketService, NetworkService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
+
+import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 
 @Component({
   selector: 'app-user-form',
@@ -42,6 +45,35 @@ export class UserFormComponent {
         name: 'bsdusr_password',
         placeholder: 'Password',
         inputType: 'password',
+        validation: [
+          matchOtherValidator('bsdusr_password_conf')
+          ]
+    },
+    {   type: 'input',
+        name: 'bsdusr_password_conf',
+        placeholder: 'Confirm Password',
+        inputType: 'password',
+
+    },
+    {
+      type: 'checkbox',
+      name: 'bsdusr_password_disabled',
+      placeholder: 'Disable password login',
+    },
+    {
+      type: 'checkbox',
+      name: 'bsdusr_locked',
+      placeholder: 'Lock user'
+    },
+    {
+      type: 'checkbox',
+      name: 'bsdusr_sudo',
+      placeholder: 'Permit Sudo'
+    },
+    {
+      type: 'checkbox',
+      name: 'bsdusr_microsoft_account',
+      placeholder: 'Microsoft Account'
     },
     {   type: 'select',
         name: 'bsdusr_group',
@@ -68,10 +100,23 @@ export class UserFormComponent {
         placeholder: 'Shell',
         options: [],
     },
+    {
+      type: 'input',
+      name: 'bsdusr_sshpubkey',
+      placeholder: 'SSH Public Key'
+    },
+    {
+      type: 'select',
+      name: 'bsdusr_aux_group',
+      placeholder: 'Auxilary group',
+      options: [],
+      multiple: true
+    }
   ];
   private shells: any;
   private bsdusr_shell: any;
   private bsdusr_group: any;
+  private bsdusr_aux_group: any;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
     protected _state: GlobalState) {
@@ -82,10 +127,13 @@ export class UserFormComponent {
       /* list groups */
     this.rest.get('account/groups/', {}).subscribe((res) => {
       this.bsdusr_group = _.find(this.fieldConfig, { name : "bsdusr_group" });
+       this.bsdusr_aux_group = _.find(this.fieldConfig, { name : "bsdusr_aux_group" });
       res.data.forEach((item) => {
         this.bsdusr_group.options.push({label: item.bsdgrp_group, value: item.id});
+        this.bsdusr_aux_group.options.push({label: item.bsdgrp_group, value: item.id});
       });
       this.bsdusr_group.valueUpdates.next();
+       this.bsdusr_aux_group.valueUpdates.next();
     });
     /* list users */
     this.rest.get(this.resource_name, {}).subscribe((res) => {
