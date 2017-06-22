@@ -19,18 +19,18 @@ export class GroupListComponent {
   protected route_edit: string[] = ['groups', 'edit'];
   protected route_delete: string[] = ['groups', 'delete'];
 
-  public columns:Array<any> = [
+  public columns: Array<any> = [
     {title: 'Group', name: 'bsdgrp_group'},
     {title: 'GID', name: 'bsdgrp_gid'},
     {title: 'Builtin', name: 'bsdgrp_builtin'},
   ];
-  public config:any = {
+  public config: any = {
     paging: true,
     sorting: {columns: this.columns},
   };
 
   isActionVisible(actionId: string, row: any) {
-    if(actionId == 'delete' && row.bsdgrp_builtin === true) {
+    if (actionId === 'delete' && row.bsdgrp_builtin === true) {
       return false;
     }
     return true;
