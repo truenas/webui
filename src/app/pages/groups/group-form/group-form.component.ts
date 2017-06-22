@@ -51,10 +51,10 @@ export class GroupFormComponent {
       this.users = res.data;
     });
 
-    this.rest.get(this.resource_name, {limit: 0, bsdgrp_builtin: false}).subscribe((res) => {
+    this.rest.get(this.resource_name, { limit: 0 }).subscribe((res) => {
       let gid = 999;
       this.bsdgrp_gid = _.find(this.fieldConfig, { name : "bsdgrp_gid" });
-      res.forEach((item, i) => {
+      res.data.forEach((item, i) => {
         if (item.bsdgrp_gid > gid) gid = item.bsdgrp_gid;
       });
       gid += 1;
