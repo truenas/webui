@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { IscsiNavComponent } from './navbar/navbar.component';
+import { GlobalconfigurationComponent } from './globalconfiguration/globalconfiguration.component';
 
 @Component({
   selector: 'iscsi',

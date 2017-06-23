@@ -2,8 +2,6 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UserListComponent } from './user-list/';
-import { UserAddComponent } from './user-add/';
-import { UserEditComponent } from './user-edit/index';
 import { UserFormComponent } from './user-form/';
 import { UserDeleteComponent } from './user-delete/index';
 

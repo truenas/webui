@@ -1,4 +1,3 @@
-import { lookup } from 'dns';
 import { ApplicationRef, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';

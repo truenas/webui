@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { RestService } from '../../../services/rest.service';
+import { RestService } from '../../../../services/rest.service';
 
 @Component({
   selector: 'app-jail-template-delete',

@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlobalState } from '../../../global.state';
+import { GlobalState } from '../../../../../global.state';
 import { RestService, WebSocketService } from '../../../../../services/';
 import { Subscription } from 'rxjs';
 

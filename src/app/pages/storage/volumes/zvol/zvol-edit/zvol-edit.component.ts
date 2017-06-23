@@ -4,11 +4,11 @@ import { FormGroup, } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
-import { GlobalState } from '../../../../global.state';
+import { GlobalState } from '../../../../../global.state';
 import { RestService, WebSocketService } from '../../../../../services/';
 
 import { Subscription } from 'rxjs';
-import { EntityUtils } from '../../../../common/entity/utils.ts';
+import { EntityUtils } from '../../../../common/entity/utils';
 import filesize from 'filesize';
 
 import * as _ from 'lodash';

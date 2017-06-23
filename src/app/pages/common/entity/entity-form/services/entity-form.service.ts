@@ -1,7 +1,6 @@
 import { Injectable, Inject, Optional } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from "@angular/forms";
 import { FieldConfig } from '../models/field-config.interface';
-import { isDefined } from '../utils';
 
 @Injectable()
 export class EntityFormService {

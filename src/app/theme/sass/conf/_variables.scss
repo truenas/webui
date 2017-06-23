@@ -1,5 +1,5 @@
-$font-family: 'Roboto', sans-serif;
-
+$font-family: 'Roboto',
+sans-serif;
 $resXXL: 1280px;
 $resXL: 1170px;
 $resL: 991px;
@@ -13,7 +13,6 @@ $screen-md-min: $resM;
 $screen-md-max: $resXXL;
 $grid-float-breakpoint: $screen-md-min;
 $grid-float-breakpoint-max: ($grid-float-breakpoint - 1);
-
 $top-height: 66px;
 $sidebar-width: 280px;
 $line-height-base: 1;
@@ -22,12 +21,11 @@ $xsmall-card-height: 187px;
 $medium-card-height: 400px;
 $extra-medium-card-height: 550px;
 $large-card-height: 974px;
-
 $default-animation-duration: 0.2s;
 $default-animation-style: ease-out;
-$assets-root: 'assets/';
-$images-root: $assets-root + 'img/';
-$fonts-root: $assets-root + 'fonts/';
+$assets-root: '/';
+$images-root: $assets-root+'img/';
+$fonts-root: $assets-root+'fonts/';
 $font-size-base: 14px;
 $font-thin: 100;
 $font-light: 300;
@@ -35,7 +33,6 @@ $font-normal: 400;
 $font-bold: 700;
 $font-bolder: 500;
 $font-ultraBold: 900;
-
 $link-color: $info;
 $facebook-color: #3b5998;
 $twitter-color: #55acee;

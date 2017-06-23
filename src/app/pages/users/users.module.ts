@@ -9,8 +9,6 @@ import { EntityModule } from '../common/entity/entity.module';
 import { routing }       from './users.routing';
 
 import { UserListComponent } from './user-list/';
-import { UserAddComponent } from './user-add/';
-import { UserEditComponent } from './user-edit/';
 import { UserFormComponent } from './user-form/';
 import { UserDeleteComponent } from './user-delete/';
 

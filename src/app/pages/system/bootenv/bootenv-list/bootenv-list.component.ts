@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { GlobalState } from '../../../../global.state';
 import { RestService } from '../../../../services/rest.service';
-import filesize from 'filesize.js';
+import filesize from 'filesize';
 
 @Component({
   selector: 'app-bootenv-list',
