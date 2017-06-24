@@ -14,6 +14,14 @@ let _decorateModuleRef = function identity<T>(value: T): T { return value; };
 
 // Sentry Error handling for production mode
 
+
+export const environment = {
+  host:  'localhost',
+  port: '',
+  remote: 'localhost',
+  production: true
+};
+
 export class RavenErrorHandler implements ErrorHandler {
     handleError(err: any): void {
         Raven.captureException(err.originalError);

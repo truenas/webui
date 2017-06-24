@@ -6,6 +6,8 @@ import { Observable, Subject, Subscription } from 'rxjs/Rx';
 import { Router } from '@angular/router';
 import { LocalStorage } from 'ng2-webstorage';
 
+import { environment } from '../../environments/environment';
+
 @Injectable()
 export class WebSocketService {
 
@@ -30,7 +32,7 @@ export class WebSocketService {
   }
 
   connect() {
-    this.socket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host + '/websocket');
+    this.socket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + environment.host + '/websocket');
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);

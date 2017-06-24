@@ -9,6 +9,7 @@
     width: 100%;
     min-width: $resMin;
     padding: 0;
+    top: 0;
     .dropdown-toggle::after {
         display: none;
     }
@@ -31,7 +32,7 @@ a.al-logo {
     float: left;
     outline: none !important;
     line-height: 66px;
-    @include bg('freenas-logo.png');
+    @include bg('../../../../assets/img/freenas-logo.png');
     span {
         color: $primary;
     }

@@ -4,9 +4,7 @@ import { LineChartService } from './lineChart.service';
 
 import 'style-loader!./lineChart.scss';
 import filesize from 'filesize';
-import * as Chartist from 'chartist';
-
-declare var ChartistLegend: any;
+import * as ChartistLegend from 'chartist-plugin-legend';
 
 @Component({
   selector: 'line-chart',

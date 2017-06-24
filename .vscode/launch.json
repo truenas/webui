@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "Attach to Chrome, with sourcemaps",
+        "type": "chrome",
+        "request": "attach",
+        "port": 9222,
+        "sourceMaps": true,
+        "webRoot": "${workspaceRoot}/src",
+        "url": "http://localhost:4200/*",
+        "sourceMapPathOverrides": {
+            "webpack:///*": "/*"
+        }
+    }]
+}
