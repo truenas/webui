@@ -11,14 +11,19 @@ export class EntityFormService {
     createFormGroup(controls: FieldConfig[]) {
     	let formGroup: { [id: string]: AbstractControl; } = {};
     	
-    	controls.forEach(controlModel => {
-            formGroup[controlModel.name] = new FormControl(
-                {
-                    value: controlModel.value,
-                    disabled: controlModel.disabled
-                },
-                controlModel.validation
-            );
+        controls.forEach(controlModel => {
+            if(controlModel.formarray) {
+                let subFormGroup = this.createFormGroup(controlModel.formarray);
+                formGroup[controlModel.name] = subFormGroup;
+            } else {
+                formGroup[controlModel.name] = new FormControl(
+                    {
+                        value: controlModel.value,
+                        disabled: controlModel.disabled
+                    },
+                    controlModel.validation
+                );
+            }
 
             controlModel.relation = Array.isArray(controlModel.relation) ? controlModel.relation : [];
         });

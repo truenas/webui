@@ -1,0 +1,6 @@
+<div class="dynamic-field form-array" [formGroup]="group.controls[config.name]">
+	<fieldset>
+		<ng-container *ngFor="let field of config.formarray;" dynamicField [config]="field" [group]="group.controls[config.name]">
+		</ng-container>
+	</fieldset>
+</div>
