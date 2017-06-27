@@ -9,7 +9,7 @@
         "ng": "ng",
         "rimraf": "rimraf",
         "changelog": "standard-changelog",
-        "start": "ng serve",
+        "start": "ng serve --proxy-config proxy.config.json",
         "start:hmr": "ng serve --hmr",
         "start:aot": "ng serve --aot",
         "start:prod": "ng serve --prod",
@@ -60,7 +60,7 @@
         "angular2-busy": "2.0.3",
         "angular2-uuid": "^1.1.1",
         "animate.css": "3.5.2",
-        "bootstrap": "4.0.0-alpha.4",
+        "bootstrap": "^4.0.0-alpha.6",
         "bootstrap-material-design": "^0.5.10",
         "chart.js": "1.1.1",
         "chartist": "^0.10.1",
@@ -134,5 +134,4 @@
         "ts-node": "~3.0.4",
         "tslint": "~5.3.2"
     }
-
 }

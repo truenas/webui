@@ -5,14 +5,15 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import { Observable } from 'rxjs/Observable';
-
+import { environment } from '../../environments/environment';
 import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class RestService {
 
   name: string;
-  private baseUrl: string = "/api/v1.0/";
+  //needs to be more dynamic this should be changed later to use http or https depending on if it is available
+  private baseUrl: string ="/api/v1.0/"; 
   public openapi: Observable<Object>;
 
   constructor(private http: Http, private ws: WebSocketService) {
