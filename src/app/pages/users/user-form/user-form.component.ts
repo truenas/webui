@@ -124,7 +124,7 @@ export class UserFormComponent {
 
   }
 
-  afterInit(entityAdd: any) {
+  afterInit(entityForm: any) {
       /* list groups */
     this.rest.get('account/groups/', {}).subscribe((res) => {
       this.bsdusr_group = _.find(this.fieldConfig, { name : "bsdusr_group" });
@@ -142,18 +142,23 @@ export class UserFormComponent {
       res.data.forEach((item, i) => {
                 if (item.bsdusr_uid > uid) uid = item.bsdusr_uid;
       });
+      if (!entityForm.isNew) {
+        entityForm.setDisabled('bsdusr_username', true);
+        entityForm.formGroup.controls['bsdusr_uid'].setValue(uid);
+      } else {
           uid += 1;
-          entityAdd.formGroup.controls['bsdusr_uid'].setValue(uid);
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(uid);
+        }
     });
     /* list shells */
-    entityAdd.ws.call('notifier.choices', ['SHELL_CHOICES']).subscribe((res) => {
+    entityForm.ws.call('notifier.choices', ['SHELL_CHOICES']).subscribe((res) => {
       this.bsdusr_shell = _.find(this.fieldConfig, { name : "bsdusr_shell" });
       this.shells = res;
       let bsduser_shell = this.bsdusr_shell
       res.forEach((item) => {
         this.bsdusr_shell.options.push({ label: item[1], value: item[0] });
       });
-      entityAdd.formGroup.controls['bsdusr_shell'].setValue(this.shells[1][0]);
+      entityForm.formGroup.controls['bsdusr_shell'].setValue(this.shells[1][0]);
     });
   }
 
