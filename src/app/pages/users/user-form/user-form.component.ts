@@ -132,15 +132,20 @@ export class UserFormComponent {
       res.data.forEach((item) => {
         this.bsdusr_group.options.push({label: item.bsdgrp_group, value: item.id});
         this.bsdusr_aux_group.options.push({label: item.bsdgrp_group, value: item.id});
+        /* if(item.bsdgrp_builtin === true) entityForm.setDisabled('bsdusr_group', true); */
       });
-      this.bsdusr_group.valueUpdates.next();
-       this.bsdusr_aux_group.valueUpdates.next();
     });
     /* list users */
     this.rest.get(this.resource_name, {}).subscribe((res) => {
       let uid = 999;
       res.data.forEach((item, i) => {
-                if (item.bsdusr_uid > uid) uid = item.bsdusr_uid;
+        if (item.bsdusr_uid > uid) uid = item.bsdusr_uid;
+        /*
+        if(item.bsdusr_builtin === true) {
+          entityForm.setDisabled('bsdusr_uid', true);
+          entityForm.setDisabled('bsdusr_home', true);
+        }
+        */
       });
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdusr_username', true);
