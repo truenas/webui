@@ -1,4 +1,4 @@
-<div class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow">
+<div class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <md-select [formControlName]="config.name"
       [multiple]="config.multiple"
       [placeholder]="config.placeholder"> 
