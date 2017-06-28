@@ -11,7 +11,7 @@ import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 
 @Component({
   selector: 'system-tunables-list',
-  template: `<entity-list [conf]="this"></entity-list>`
+  template: `<entity-table [conf]="this"></entity-table>`
 })
 
 export class TunableListComponent {
@@ -28,11 +28,11 @@ export class TunableListComponent {
   }
 
   public columns:Array<any> = [
-    {title: 'Variable', name: 'tun_var'},
-    {title: 'Value', name: 'tun_value'},
-    {title: 'Type', name: 'tun_type'},
-    {title: 'Comment', name: 'tun_comment'},
-    {title: 'Enable', name: 'tun_enabled'},
+    {name: 'Variable', prop: 'tun_var'},
+    {name: 'Value', prop: 'tun_value'},
+    {name: 'Type', prop: 'tun_type'},
+    {name: 'Comment', prop: 'tun_comment'},
+    {name: 'Enable', prop: 'tun_enabled'},
   ];
 
   public config: any = {
