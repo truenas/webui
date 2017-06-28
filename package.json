@@ -22,6 +22,7 @@
     "@angularclass/hmr-loader": "3.0.2",
     "@ng2-dynamic-forms/core": "1.4.0",
     "@ng2-dynamic-forms/ui-bootstrap": "1.4.0",
+    "@swimlane/ngx-datatable": "^9.3.0",
     "@types/lodash": "4.14.58",
     "amcharts3": "github:amcharts/amcharts3#3.20.20",
     "angular2-busy": "2.0.3",
