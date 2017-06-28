@@ -40,12 +40,18 @@ export class GroupFormComponent {
   ];
   public users: any[];
   private bsdgrp_gid: any;
+  private allow: any;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
     protected _state: GlobalState) {
 
   }
-
+  preInit(entityForm: any) {
+      if (!entityForm.isNew) {
+        this.allow = _.find(this.fieldConfig, { name : "allow" });
+        this.allow.isHidden = true;
+      }
+  }
   afterInit(entityForm: any) {
     this.rest.get('account/users/', {limit: 0}).subscribe((res) => {
       this.users = res.data;

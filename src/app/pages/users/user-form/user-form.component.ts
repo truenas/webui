@@ -118,10 +118,17 @@ export class UserFormComponent {
   private bsdusr_shell: any;
   private bsdusr_group: any;
   private bsdusr_aux_group: any;
+  private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
     protected _state: GlobalState) {
 
+  }
+  preInit(entityForm: any) {
+      if (!entityForm.isNew) {
+        this.bsdusr_creategroup = _.find(this.fieldConfig, { name : "bsdusr_creategroup" });
+        this.bsdusr_creategroup.isHidden = true;
+      }
   }
 
   afterInit(entityForm: any) {
