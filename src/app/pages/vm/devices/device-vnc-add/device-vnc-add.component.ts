@@ -15,8 +15,8 @@ export class DeviceVncAddComponent {
   protected resource_name: string = 'vm/device';
   protected pk: any;
   protected route_success: string[];
-  protected vm: string;
-  protected formModel: DynamicFormControlModel[] = [
+  public vm: string;
+  public formModel: DynamicFormControlModel[] = [
         new DynamicInputModel({
           id: 'VNC_port',
           label: 'port',

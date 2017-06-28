@@ -20,7 +20,7 @@ export class SnapshotAddComponent implements OnInit{
   protected route_success: string[] = ['storage', 'volumes'];
   protected pk: any;
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
       label: 'Snapshot Name'
@@ -34,7 +34,7 @@ export class SnapshotAddComponent implements OnInit{
   public formGroup: FormGroup;
   public error: string;
   public data: Object = {};
-  private busy: Subscription;
+  public busy: Subscription;
 
   @ViewChildren('component') components;
 

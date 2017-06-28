@@ -39,7 +39,7 @@ export class ServiceCIFSComponent {
   private ip: DynamicSelectModel<string>;
   protected ipChoice: any;
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'cifs_srv_netbiosname',
       label: 'NetBIOS Name',

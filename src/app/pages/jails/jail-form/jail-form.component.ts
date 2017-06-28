@@ -24,7 +24,7 @@ export class JailFormComponent {
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'jail_host',
@@ -267,7 +267,7 @@ export class JailFormComponent {
     'jail_nat',
   ];
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

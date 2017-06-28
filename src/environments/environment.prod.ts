@@ -16,9 +16,8 @@ let _decorateModuleRef = function identity<T>(value: T): T { return value; };
 
 
 export const environment = {
-  host:  'localhost',
+  remote: '127.0.0.1',
   port: '',
-  remote: 'localhost',
   production: true
 };
 

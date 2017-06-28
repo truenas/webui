@@ -21,9 +21,9 @@ import { Subscription } from 'rxjs';
 export class EmailComponent {
 
   protected resource_name: string = 'system/email';
-  private entityEdit: EntityConfigComponent;
-  private sendEmailBusy: Subscription;
-  protected fieldConfig: FieldConfig[] = [
+  public entityEdit: EntityConfigComponent;
+  public sendEmailBusy: Subscription;
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
         name: 'em_fromemail',

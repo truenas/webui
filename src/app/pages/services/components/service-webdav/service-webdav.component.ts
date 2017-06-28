@@ -24,7 +24,7 @@ export class ServiceWebdavComponent implements OnInit{
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'select',
         name: 'webdav_protocol',

@@ -14,7 +14,7 @@ export class InitiatorAddComponent {
 
   protected resource_name: string = 'services/iscsi/authorizedinitiator';
   protected route_success: string[] = ['sharing', 'iscsi'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicTextAreaModel({
       id: 'iscsi_target_initiator_initiators',
       label: 'Initiators',

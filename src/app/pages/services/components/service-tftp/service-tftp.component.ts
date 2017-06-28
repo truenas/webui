@@ -23,7 +23,7 @@ export class ServiceTFTPComponent {
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
         name: 'tftp_directory',

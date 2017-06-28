@@ -20,8 +20,8 @@ export class TunableListComponent {
   protected route_delete: string[] = ['system', 'tunable', 'delete'];
   protected route_edit: string[] = ['system', 'tunable', 'edit'];
 
-  private busy: Subscription;
-  private sub: Subscription;
+  public busy: Subscription;
+  public sub: Subscription;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
 

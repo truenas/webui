@@ -60,11 +60,11 @@ export class BaSidebar {
     this.menuHeight = this._elementRef.nativeElement.childNodes[0].clientHeight - 84;
   }
 
-  private _shouldMenuCollapse():boolean {
+  public _shouldMenuCollapse():boolean {
     return window.innerWidth <= layoutSizes.resWidthCollapseSidebar;
   }
 
-  private autoCollapse():void {
+  public autoCollapse():void {
     if (this._shouldMenuCollapse()) {
       this.menuCollapse();
     }

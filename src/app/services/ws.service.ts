@@ -22,7 +22,7 @@ export class WebSocketService {
   @LocalStorage() password;
   redirectUrl: string = '';
 
-  private subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
+  public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
   constructor(private _router: Router) {
     this.onOpenSubject = new Subject();
@@ -32,7 +32,7 @@ export class WebSocketService {
   }
 
   connect() {
-    this.socket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + environment.host + '/websocket');
+    this.socket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket');
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);

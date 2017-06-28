@@ -13,7 +13,7 @@ export class TunableEditComponent {
   protected resource_name: string = 'system/tunable';
   protected route_success: string[] = ['system', 'tunable'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
         id: 'tun_var',
         label: 'Variable',

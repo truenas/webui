@@ -12,12 +12,14 @@ import { Subscription, Observable, Observer } from 'rxjs';
 })
 export class ConfigUploadComponent {
 
-  private options: NgUploaderOptions;
-  private busy: Subscription[] = [];
-  private sub: Subscription;
-  private observer: Observer<any>;
-  private jobId: Number;
-
+  public options: NgUploaderOptions;
+  public busy: Subscription[] = [];
+  public sub: Subscription;
+  public observer: Observer<any>;
+  public jobId: Number;
+  //TODO add success/error messages
+  public error:any;
+  public success:any;
   @ViewChild(BaJob) baJob: BaJob;
   @ViewChild(NgFileSelectDirective) file: NgFileSelectDirective;
 

@@ -19,7 +19,7 @@ export class StorageFormComponent {
   protected route_success: string[] = ['jails', 'storage'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'select',
       name: 'jail',

@@ -14,7 +14,7 @@ export class GroupAddComponent {
   protected route_success: string[] = ['groups'];
   protected resource_name: string = 'account/groups/';
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
         id: 'bsdgrp_gid',
         label: 'GID',

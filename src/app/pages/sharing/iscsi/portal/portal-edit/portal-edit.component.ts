@@ -22,7 +22,7 @@ export class PortalEditComponent {
   private ip: DynamicSelectModel<string>;
   protected ipChoice: any;
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'iscsi_target_portal_comment',
       label: 'Comment',
@@ -82,7 +82,7 @@ export class PortalEditComponent {
     })
   ];
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'add_extra_portal_ip',
       name: 'Add Extra Portal IP',

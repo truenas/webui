@@ -11,8 +11,8 @@ export class DeviceDeleteComponent {
 
   protected resource_name: string = 'vm/device';
   protected route_success: string[];
-  protected vmid: any;
-  protected vm: string;
+  public vmid: any;
+  public vm: string;
   protected skipGet: boolean = true;
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService ) {

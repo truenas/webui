@@ -12,10 +12,13 @@ import { EntityUtils } from '../../../common/entity/utils';
 })
 export class SnapshotRollbackComponent implements OnInit{
 
-  protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = ['storage', 'snapshots'];
-  protected pk: string;
-
+  public resource_name: string = 'storage/snapshot';
+  public route_success: string[] = ['storage', 'snapshots'];
+  public pk: string;
+  //add success and error messages
+  public error:any;
+  public success:any;
+  public busy: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected _injector: Injector, protected _appRef: ApplicationRef) {
   }

@@ -30,10 +30,10 @@ export class CommonFormComponent implements OnInit, OnDestroy {
 
   @ViewChildren('component') components;
 
-  protected formGroup: FormGroup;
+  public formGroup: FormGroup;
   public error: string;
   public success: boolean = false;
-  private busy: Subscription;
+  public busy: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService) {
 

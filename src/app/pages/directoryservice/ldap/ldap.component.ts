@@ -18,7 +18,7 @@ export class LdapComponent {
   protected isBasicMode: boolean = true;
   protected entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     { type: 'input',
       name: 'ldap_hostname',
       placeholder: 'Hostname'
@@ -108,7 +108,7 @@ export class LdapComponent {
     return true;
   }
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

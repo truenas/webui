@@ -11,11 +11,11 @@ import { ProgressbarComponent } from 'ngx-bootstrap/progressbar';
 })
 export class BaJob {
 
-  private job: any = {};
-  private progressTotalPercent: number = 0;
-  private description: string;
-  private method: string;
-  private args: any[] = [];
+  public job: any = {};
+  public progressTotalPercent: number = 0;
+  public description: string;
+  public method: string;
+  public args: any[] = [];
   @Input() title: string = '';
   @Input() showCloseButton: boolean = true;
   @Input() jobId: Number;

@@ -14,7 +14,7 @@ export class NTPServerEditComponent {
   protected route_delete: string[] = ['system', 'ntpservers', 'delete'];
   protected route_success: string[] = ['system', 'ntpservers'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'ntp_address',
       label: 'Address',

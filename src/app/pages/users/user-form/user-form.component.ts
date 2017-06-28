@@ -19,7 +19,7 @@ export class UserFormComponent {
   protected route_success: string[] = ['users'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
         name: 'bsdusr_uid',

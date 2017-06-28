@@ -18,7 +18,7 @@ export class ActiveDirectoryComponent {
   protected isBasicMode: boolean = true;
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     { type: 'input',
       name: 'ad_domainname',
       placeholder: 'Domain Name'
@@ -115,7 +115,7 @@ export class ActiveDirectoryComponent {
     return true;
   }
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

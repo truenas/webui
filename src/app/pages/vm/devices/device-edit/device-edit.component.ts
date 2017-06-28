@@ -20,23 +20,23 @@ import * as _ from 'lodash';
 
 export class DeviceEditComponent implements OnInit{ 
 
-  protected resource_name: string = 'vm/device';
-  protected volume_resource_name: string = 'storage/volume'
-  protected route_cancel: string[] ;
-  protected route_success: string[] ;
-  protected vmid: any;
-  protected vm: string;
-  protected dtype: string;
-  protected formGroup: FormGroup;
-  private sub: any;
+  public resource_name: string = 'vm/device';
+  public volume_resource_name: string = 'storage/volume'
+  public route_cancel: string[] ;
+  public route_success: string[] ;
+  public vmid: any;
+  public vm: string;
+  public dtype: string;
+  public formGroup: FormGroup;
+  public sub: any;
   public error: string;
   public data: Object = {};
-  protected pk: any;
-  private busy: Subscription;
-  private DISK_zvol: DynamicSelectModel<string>;
-  protected formModel: DynamicFormControlModel[] = [];
+  public pk: any;
+  public busy: Subscription;
+  public DISK_zvol: DynamicSelectModel<string>;
+  public formModel: DynamicFormControlModel[] = [];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , protected VmService: VmService) {
+  constructor(protected router: Router, protected route: ActivatedRoute,protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef , public vmService: VmService) {
 
   }
   ngOnInit() {
@@ -113,7 +113,7 @@ export class DeviceEditComponent implements OnInit{
           ],
         }),
       ];
-      this.VmService.getStorageVolumes().subscribe((res) => {
+      this.vmService.getStorageVolumes().subscribe((res) => {
         let data = new EntityUtils().flattenData(res.data);
         this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById("DISK_zvol", this.formModel);;
         for (let dataset of data){

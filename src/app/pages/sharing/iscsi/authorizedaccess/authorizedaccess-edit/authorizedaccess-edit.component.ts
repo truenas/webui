@@ -14,7 +14,7 @@ export class AuthorizedAccessEditComponent {
 
   protected resource_name: string = 'services/iscsi/authcredential';
   protected route_success: string[] = ['sharing', 'iscsi'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'iscsi_target_auth_tag',
       label: 'Group ID',

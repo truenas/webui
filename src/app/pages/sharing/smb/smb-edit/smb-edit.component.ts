@@ -14,7 +14,7 @@ export class SMBEditComponent {
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   protected route_success: string[] = ['sharing', 'smb'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'cifs_name',
       label: 'Name',

@@ -16,7 +16,7 @@ export class GlobalconfigurationComponent {
 
   protected resource_name: string = 'services/iscsi/globalconfiguration/';
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'iscsi_basename',

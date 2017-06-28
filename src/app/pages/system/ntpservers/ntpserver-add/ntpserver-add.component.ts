@@ -14,7 +14,7 @@ export class NTPServerAddComponent {
 
   protected route_success: string[] = ['system', 'ntpservers'];
   protected resource_name: string = 'system/ntpserver';
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'ntp_address',
       label: 'Address',

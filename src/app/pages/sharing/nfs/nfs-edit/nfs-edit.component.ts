@@ -14,7 +14,7 @@ export class NFSEditComponent {
   protected route_delete: string[] = ['sharing', 'nfs', 'delete'];
   protected route_success: string[] = ['sharing', 'nfs'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'nfs_comment',
       label: 'Comment',

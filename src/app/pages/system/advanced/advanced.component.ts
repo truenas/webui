@@ -19,7 +19,7 @@ export class AdvancedComponent {
   protected resource_name: string = 'system/advanced';
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'checkbox',
         name: 'adv_consolemenu',

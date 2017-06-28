@@ -14,7 +14,7 @@ export class AFPEditComponent {
   protected route_delete: string[] = ['sharing', 'afp', 'delete'];
   protected route_success: string[] = ['sharing', 'afp'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'afp_name',
       label: 'Name',

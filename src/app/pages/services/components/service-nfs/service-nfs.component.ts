@@ -21,7 +21,7 @@ export class ServiceNFSComponent implements OnInit {
   protected resource_name: string = 'services/nfs';
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'nfs_srv_servers',

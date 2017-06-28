@@ -14,7 +14,7 @@ export class VmEditComponent {
   protected route_delete: string[] = ['vm', 'delete'];
   protected route_success: string[] = ['vm'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
       label: 'name',

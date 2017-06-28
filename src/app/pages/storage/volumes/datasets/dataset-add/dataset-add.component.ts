@@ -16,13 +16,13 @@ export class DatasetAddComponent {
 
   protected pk: any;
   protected path: string;
-  private sub: Subscription;
+  public sub: Subscription;
   protected route_success: string[] = ['storage', 'volumes'];
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/datasets/';
   }
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
       label: 'Name',

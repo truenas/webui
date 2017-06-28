@@ -15,12 +15,12 @@ export class DeviceNicAddComponent {
   protected resource_name: string = 'vm/device';
   protected pk: any;
   protected route_success: string[];
-  protected vm: string;
+  public vm: string;
   private nicType: DynamicSelectModel<string>;
 
   protected dtype: string = 'NIC';
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicSelectModel({
       id: 'NIC_type',
       label: 'Adapter Type:',

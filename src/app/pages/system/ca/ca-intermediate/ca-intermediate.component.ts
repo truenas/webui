@@ -16,7 +16,7 @@ export class CertificateAuthorityIntermediateComponent {
 
   protected resource_name: string = 'system/certificateauthority/intermediate';
   protected route_success: string[] = ['system','ca'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicSelectModel({
         id: 'cert_signedby',
         label: 'Signing Certificate Authority',

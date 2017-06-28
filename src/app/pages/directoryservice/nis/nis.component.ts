@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 export class NISComponent {
   protected resource_name: string = 'directoryservice/nis/';
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'nis_domain',

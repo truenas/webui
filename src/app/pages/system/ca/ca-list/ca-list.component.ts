@@ -17,8 +17,8 @@ import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 export class CertificateAuthorityListComponent {
   protected resource_name: string = 'system/certificateauthority';
 
-  private busy: Subscription;
-  private sub: Subscription;
+  public busy: Subscription;
+  public sub: Subscription;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState) {
 

@@ -13,7 +13,7 @@ export class CertificateEditComponent {
   protected resource_name: string = 'system/certificate';
   protected route_success: string[] = ['system','certificates'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
       label: 'name',

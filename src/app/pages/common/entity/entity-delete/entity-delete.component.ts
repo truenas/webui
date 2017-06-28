@@ -16,11 +16,11 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
   @Input('conf') conf: any;
 
   protected pk: any;
-  private sub: any;
+  public sub: any;
   public error: string;
   public data: Object = {};
 
-  private busy: Subscription;
+  public busy: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected _injector: Injector, protected _appRef: ApplicationRef) {
   }

@@ -27,7 +27,7 @@ export class ServiceFTPComponent implements OnInit {
 
   protected isBasicMode: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
         name: 'ftp_port',
@@ -275,7 +275,7 @@ export class ServiceFTPComponent implements OnInit {
     return true;
   }
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

@@ -16,7 +16,7 @@ export class PluginConfigurationComponent {
 
   protected resource_name: string = 'plugins/configuration/';
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'repourl',
       label: 'Repository URL',

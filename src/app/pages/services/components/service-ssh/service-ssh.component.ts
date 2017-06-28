@@ -25,7 +25,7 @@ export class ServiceSSHComponent implements OnInit{
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'select',
         name: 'ssh_bindiface',
@@ -122,7 +122,7 @@ protected advanced_field: Array<any> = [
     return true;
   }
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

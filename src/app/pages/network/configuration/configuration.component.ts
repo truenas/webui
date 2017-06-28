@@ -23,7 +23,7 @@ import { TOOLTIPS } from '../../common/tooltips';
 export class ConfigurationComponent implements OnInit {
 
   protected resource_name: string = 'network/globalconfiguration/';
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'gc_hostname',

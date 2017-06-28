@@ -17,7 +17,7 @@ export class TemplateFormComponent {
   protected route_success: string[] = ['jails', 'templates'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'jt_name',

@@ -12,9 +12,9 @@ import { Subscription } from 'rxjs';
 })
 export class Dashboard implements OnInit {
 
-  protected info: any = {};
+  public info: any = {};
 
-  protected graphs: any[] = [
+  public graphs: any[] = [
     {
       title: "Average Load",
       legends: ['Short Term', ' Mid Term', 'Long Term'],

@@ -20,7 +20,7 @@ export class SnapshotCloneComponent implements OnInit{
   protected pk: any;
   protected skipGet: boolean = true;
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
       label: 'Name'
@@ -30,7 +30,7 @@ export class SnapshotCloneComponent implements OnInit{
   public formGroup: FormGroup;
   public error: string;
   public data: Object = {};
-  private busy: Subscription;
+  public busy: Subscription;
 
   @ViewChildren('component') components;
 

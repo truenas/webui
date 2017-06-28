@@ -23,7 +23,7 @@ export class ServiceS3Component implements OnInit {
   protected route_success: string[] = ['services'];
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'select',
         name: 's3_bindip',

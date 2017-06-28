@@ -15,7 +15,7 @@ export class CertificateCSRComponent {
 
   protected resource_name: string = 'system/certificate/csr';
   protected route_success: string[] = ['system','certificates'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
         id: 'cert_name',
         label: 'Identifier',

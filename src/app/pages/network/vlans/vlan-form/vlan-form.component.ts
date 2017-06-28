@@ -17,7 +17,7 @@ export class VlanFormComponent {
   protected route_success: string[] = ['network', 'vlans'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'vlan_vint',

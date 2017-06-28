@@ -26,7 +26,7 @@ export class EntityAddComponent implements OnInit {
 
   @ViewChildren('component') components;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected location: Location) {
 

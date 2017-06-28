@@ -16,7 +16,7 @@ export class CertificateAuthorityInternalComponent {
 
   protected resource_name: string = 'system/certificateauthority/internal';
   protected route_success: string[] = ['system','ca'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
         id: 'cert_name',
         label: 'Identifier',

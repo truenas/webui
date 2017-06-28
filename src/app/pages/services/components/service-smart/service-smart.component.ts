@@ -23,7 +23,7 @@ export class ServiceSMARTComponent {
   protected route_success: string[] = ['services'];
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
         name: 'smart_interval',

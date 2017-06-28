@@ -16,7 +16,7 @@ export class CertificateInternalComponent {
 
   protected resource_name: string = 'system/certificate/internal';
   protected route_success: string[] = ['system','certificates'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicSelectModel({
         id: 'cert_signedby',
         label: 'Signing Certificate Authority',

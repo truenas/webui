@@ -12,21 +12,21 @@ import { Subscription } from 'rxjs';
 })
 export class UpdateComponent implements OnInit {
 
-  private packages: any[] = [];
-  private status: string;
-  private updating: boolean = false;
-  private updated: boolean = false;
-  private progress: Object = {};
-  private job: any = {};
-  private error: string;
-  private autoCheck = false;
-  private train: string;
-  private trains: any[];
+  public packages: any[] = [];
+  public status: string;
+  public updating: boolean = false;
+  public updated: boolean = false;
+  public progress: Object = {};
+  public job: any = {};
+  public error: string;
+  public autoCheck = false;
+  public train: string;
+  public trains: any[];
 
   @ViewChild(BaJob) baJob: BaJob;
 
-  private busy: Subscription;
-  private busy2: Subscription;
+  public busy: Subscription;
+  public busy2: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) { }
 

@@ -25,9 +25,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   protected pk: any;
   public formGroup: FormGroup;
-  protected fieldConfig: FieldConfig [];
+  public fieldConfig: FieldConfig [];
   protected resourceName: string;
-  private submitFunction = this.editSubmit;
+  public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public hasConf: boolean = true;
 
@@ -41,9 +41,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   @ViewChildren('component') components;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
-  private sub: any;
+  public sub: any;
   public error: string;
   public success: boolean = false;
   public data: Object = {};

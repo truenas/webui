@@ -20,7 +20,7 @@ export class CertificateImportComponent {
   protected resource_name: string = 'system/certificate/import/';
   protected route_success: string[] = ['system','certificates'];
   protected isEntity: boolean = true;
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
         name: 'cert_name',

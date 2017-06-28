@@ -23,14 +23,14 @@ export class DeviceAddComponent implements OnInit {
   public formGroup: FormGroup;
   public error: string;
   public data: Object = {};
-  protected vm: string;
-  protected vmid: any;
+  public vm: string;
+  public vmid: any;
   protected route_cancel: string[] ;
   protected route_success: string[] ;
 
   @ViewChildren('component') components;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
    protected formService: DynamicFormService, protected _injector: Injector,

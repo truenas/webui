@@ -16,18 +16,18 @@ import { EntityUtils } from '../../../../common/entity/utils';
 })
 export class TargetAddComponent implements OnInit{
 
-  protected target_resource_name: string = 'services/iscsi/target';
-  protected targetgroup_resource_name: string = 'services/iscsi/targetgroup';
-  protected route_success: string[] = ['sharing', 'iscsi'];
-  protected pk: any;
-  protected iscsi_group_count: number = 1;
+  public target_resource_name: string = 'services/iscsi/target';
+  public targetgroup_resource_name: string = 'services/iscsi/targetgroup';
+  public route_success: string[] = ['sharing', 'iscsi'];
+  public pk: any;
+  public iscsi_group_count: number = 1;
   public formGroup: FormGroup;
-  protected arrayControl: FormArray;
-  protected arrayModel: DynamicFormArrayModel;
+  public arrayControl: FormArray;
+  public arrayModel: DynamicFormArrayModel;
   public error: string;
-  private busy: Subscription;
+  public busy: Subscription;
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'iscsi_target_name',
       label: 'Target Name',
@@ -80,7 +80,7 @@ export class TargetAddComponent implements OnInit{
     })
   ];
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'add_extra_iscsi_group',
       name: 'Add Extra ISCSI Group',

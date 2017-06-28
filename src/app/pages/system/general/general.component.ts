@@ -26,7 +26,7 @@ export class GeneralComponent {
   protected resource_name: string = 'system/settings';
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
         type: 'select',
         name: 'stg_guiprotocol',

@@ -41,7 +41,7 @@ export class LineChart implements OnInit {
     axisY: {},
     plugins: []
   };
-  reverseOptions = {};
+  responsiveOptions = {};
 
   constructor(private _lineChartService: LineChartService) {
   }

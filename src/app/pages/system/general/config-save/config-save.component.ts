@@ -14,9 +14,9 @@ import { Subscription } from 'rxjs';
 })
 export class ConfigSaveComponent {
 
-  private sub: Subscription;
+  public sub: Subscription;
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicCheckboxModel({
       id: 'secretseed',
       label: 'Export Password Secret Seed',

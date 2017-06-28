@@ -20,9 +20,9 @@ export class Login {
   public submitted:boolean = false;
   public failed:boolean = false;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
-  constructor(fb:FormBuilder, private _ws: WebSocketService, private _router: Router) {
+  constructor(fb:FormBuilder, public _ws: WebSocketService, private _router: Router) {
     this._ws = _ws;
     this.form = fb.group({
       'username': ['', Validators.compose([Validators.required])],

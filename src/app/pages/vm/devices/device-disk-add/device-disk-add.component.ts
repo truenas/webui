@@ -17,11 +17,11 @@ export class DeviceDiskAddComponent {
 
   protected resource_name: string = 'vm/device';
   protected pk: any;
-  protected vm: string;
+  public vm: string;
   protected route_success: string[];
   protected dtype: string = 'DISK';
   private DISK_zvol: DynamicSelectModel<string>;
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
         new DynamicSelectModel({
           id: 'DISK_zvol',
           label: 'ZVol',
@@ -42,7 +42,7 @@ export class DeviceDiskAddComponent {
         this.vm = params['name'];
         this.route_success = ['vm', this.pk, 'devices', this.vm];
     });
-    this.VmService.getStorageVolumes().subscribe((res) => {
+    this.vmService.getStorageVolumes().subscribe((res) => {
       let data = new EntityUtils().flattenData(res.data);
       this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById("DISK_zvol", this.formModel);
       for (let dataset of data){
@@ -53,7 +53,7 @@ export class DeviceDiskAddComponent {
     });
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected VmService: VmService,) {
+  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, public vmService: VmService,) {
 
   }
 

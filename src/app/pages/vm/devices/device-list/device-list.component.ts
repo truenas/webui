@@ -17,8 +17,8 @@ export class DeviceListComponent {
   protected route_edit: string[];
   protected route_delete: string[];
   protected pk: any;
-  protected vm: string;
-  private sub: Subscription;
+  public vm: string;
+  public sub: Subscription;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) {}
 

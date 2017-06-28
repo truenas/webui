@@ -23,7 +23,7 @@ export class ServiceLLDPComponent {
 
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'lldp_intdesc',

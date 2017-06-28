@@ -26,9 +26,9 @@ export class EntityConfigComponent implements OnInit, OnDestroy {
 
   @ViewChildren('component') components;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
-  private sub: any;
+  public sub: any;
   public error: string;
   public success: boolean = false;
   public data: Object = {};

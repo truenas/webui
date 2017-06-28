@@ -18,7 +18,7 @@ import filesize from 'filesize';
 export class DiskComponent implements OnInit {
 
   @Input() data: any;
-  private capacity: string;
+  public capacity: string;
 
   constructor(public elementRef:ElementRef) {
   }

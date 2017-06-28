@@ -9,10 +9,8 @@ let PROVIDERS: any[] = [
 ];
 
 export const environment = {
-  host: '192.168.254.130',
+  remote:"192.168.254.130",
   port:  4200,
-  server: '192.168.254.130',
-  remote: '192.168.254.130',
   production: false
 };
 

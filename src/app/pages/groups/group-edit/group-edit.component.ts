@@ -10,11 +10,11 @@ import { RestService } from '../../../services/rest.service';
 })
 export class GroupEditComponent {
 
-  protected resource_name: string = 'account/groups/';
-  protected route_delete: string[] = ['groups', 'delete'];
-  protected route_success: string[] = ['groups'];
+  public resource_name: string = 'account/groups/';
+  public route_delete: string[] = ['groups', 'delete'];
+  public route_success: string[] = ['groups'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
         id: 'bsdgrp_gid',
         label: 'GID',

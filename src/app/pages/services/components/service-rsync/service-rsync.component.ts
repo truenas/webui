@@ -20,7 +20,7 @@ export class ServiceRSYNCComponent {
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'rsyncd_port',

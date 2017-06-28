@@ -20,7 +20,7 @@ export class NT4Component {
   protected resource_name: string = 'directoryservice/nis/';
   private entityEdit: EntityConfigComponent;
   protected isBasicMode: boolean = true;
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'nt4_dcname',
@@ -75,7 +75,7 @@ export class NT4Component {
     }
     return true;
   }
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

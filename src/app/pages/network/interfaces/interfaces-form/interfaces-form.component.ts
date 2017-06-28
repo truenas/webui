@@ -16,7 +16,7 @@ export class InterfacesFormComponent {
   protected route_success: string[] = ['network', 'interfaces'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'int_interface',

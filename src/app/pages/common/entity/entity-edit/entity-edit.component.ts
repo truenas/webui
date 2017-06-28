@@ -25,9 +25,9 @@ export class EntityEditComponent implements OnInit, OnDestroy {
 
   @ViewChildren('component') components;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
-  private sub: any;
+  public sub: any;
   public error: string;
   public data: Object = {};
   public ip_arr_count: number = 0;

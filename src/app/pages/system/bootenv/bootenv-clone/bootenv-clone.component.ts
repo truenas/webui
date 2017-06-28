@@ -15,7 +15,7 @@ export class BootEnvironmentCloneComponent {
   protected route_success: string[] = ['system', 'bootenv'];
   protected resource_name: string = 'system/bootenv';
   protected pk: any;
-  protected formModel: DynamicFormControlModel[];
+  public formModel: DynamicFormControlModel[];
 
   constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _state: GlobalState) {
   }

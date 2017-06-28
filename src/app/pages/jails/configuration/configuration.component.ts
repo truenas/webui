@@ -18,7 +18,7 @@ export class JailsConfigurationComponent {
   protected resource_name: string = 'jails/configuration/';
   protected isBasicMode: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'jc_path',
@@ -156,7 +156,7 @@ export class JailsConfigurationComponent {
     return true;
   }
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

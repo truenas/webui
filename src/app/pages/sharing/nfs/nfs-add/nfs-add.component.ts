@@ -14,7 +14,7 @@ export class NFSAddComponent {
   protected route_success: string[] = ['sharing', 'nfs'];
   protected resource_name: string = 'sharing/nfs/';
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'nfs_comment',
       label: 'Comment',

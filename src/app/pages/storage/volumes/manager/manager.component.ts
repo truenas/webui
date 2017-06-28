@@ -33,9 +33,9 @@ export class ManagerComponent implements OnInit {
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
   @ViewChildren(DiskComponent) diskComponents: QueryList<DiskComponent>;
 
-  private name: string;
+  public name: string;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
   constructor(private rest: RestService, private ws: WebSocketService, private router: Router, private dragulaService: DragulaService) {
     dragulaService.setOptions('pool-vdev', {

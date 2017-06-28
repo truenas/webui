@@ -23,7 +23,7 @@ export class ServiceDDNSComponent {
 
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     { 
       type: 'select',
       name: 'ddns_provider',

@@ -15,10 +15,10 @@ import { Subscription } from 'rxjs';
 })
 export class ConfigResetComponent {
 
-  private sub: Subscription;
+  public sub: Subscription;
 
   public resource_name: string = 'system/config/factory_restore';
-  protected formModel: DynamicFormControlModel[] = [];
+  public formModel: DynamicFormControlModel[] = [];
 
   constructor(protected ws: WebSocketService) {
 

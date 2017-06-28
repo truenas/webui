@@ -22,11 +22,11 @@ export class ZvolEditComponent {
   protected pk: any;
   protected path: string;
   protected zvol: string;
-  private sub: Subscription;
-  protected formGroup: FormGroup;
+  public sub: Subscription;
+  public formGroup: FormGroup;
   public data: Object = {};
   public error: string;
-  private busy: Subscription;
+  public busy: Subscription;
   protected fs: any = filesize;
   protected route_success: string[] = ['storage', 'volumes'];
 
@@ -42,7 +42,7 @@ export class ZvolEditComponent {
     return this.resource_name + this.zvol + '/';
   }
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'name',
       label: 'zvol name:',

@@ -14,7 +14,7 @@ export class AFPAddComponent {
   protected route_success: string[] = ['sharing', 'afp'];
   protected resource_name: string = 'sharing/afp/';
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'afp_name',
       label: 'Name',

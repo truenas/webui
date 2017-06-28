@@ -17,7 +17,7 @@ export class LaggFormComponent {
   protected route_success: string[] = ['network', 'laggs'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'lagg_interface',

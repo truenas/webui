@@ -19,7 +19,7 @@ export class EntityListAddActionsComponent implements OnInit {
 
   @Input('entity') entity: EntityListComponent;
 
-  private actions: any[];
+  public actions: any[];
 
   ngOnInit() {
     this.actions = this.entity.getAddActions();

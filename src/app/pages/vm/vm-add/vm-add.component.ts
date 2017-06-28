@@ -14,7 +14,7 @@ export class VmAddComponent {
 
   protected resource_name: string = 'vm/vm';
   protected route_success: string[] = ['vm'];
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
         id: 'name',
         label: 'Name',

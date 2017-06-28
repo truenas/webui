@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs';
 })
 export class Services implements OnInit {
 
-  protected services: any[];
-  private busy: Subscription;
+  public services: any[];
+  public busy: Subscription;
 
-  private NAME_MAP: Object = {
+  public name_MAP: Object = {
     'afp': 'AFP',
     'domaincontroller': 'Domain Controller',
     'dynamicdns': 'Dynamic DNS',
@@ -41,8 +41,8 @@ export class Services implements OnInit {
     this.busy = this.ws.call('service.query', [[], {"order_by": ["service"]}]).subscribe((res) => {
       this.services = res;
       this.services.forEach((item) => {
-        if(this.NAME_MAP[item.service]) {
-          item.label = this.NAME_MAP[item.service];
+        if(this.name_MAP[item.service]) {
+          item.label = this.name_MAP[item.service];
         } else {
           item.label = item.service;
         }

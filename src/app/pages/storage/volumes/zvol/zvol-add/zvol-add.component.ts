@@ -16,7 +16,7 @@ export class ZvolAddComponent {
 
   protected pk: any;
   protected path: string;
-  private sub: Subscription;
+  public sub: Subscription;
   protected route_success: string[] = ['storage', 'volumes'];
   protected compression: any;
   protected advanced_field: Array<any> = ['blocksize'];
@@ -26,7 +26,7 @@ export class ZvolAddComponent {
     return 'storage/volume/' + this.pk + '/zvols';
   }
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'comments',
       label: 'Comments:',
@@ -89,7 +89,7 @@ export class ZvolAddComponent {
     return true;
   }
 
-  protected custActions: Array<any> = [
+  public custActions: Array<any> = [
     {
       id: 'basic_mode',
       name: 'Basic Mode',

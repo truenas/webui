@@ -14,7 +14,7 @@ export class SMBAddComponent {
   protected resource_name: string = 'sharing/cifs/';
   protected route_success: string[] = ['sharing', 'smb'];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
       id: 'cifs_name',
       label: 'Name',

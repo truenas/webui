@@ -38,7 +38,7 @@ export class Service {
 
   @Input('status') status: any;
 
-  private busy: Subscription;
+  public busy: Subscription;
 
   constructor(protected router: Router, private rest: RestService, private ws: WebSocketService) {
   }

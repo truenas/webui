@@ -24,7 +24,7 @@ export class ServiceDCComponent {
   private entityEdit: EntityConfigComponent;
   protected route_success: string[] = ['services'];
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'dc_realm',

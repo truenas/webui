@@ -24,7 +24,7 @@ export class ServiceAFPComponent {
 
   private entityEdit: EntityConfigComponent;
 
-  protected fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'afp_srv_guest',
