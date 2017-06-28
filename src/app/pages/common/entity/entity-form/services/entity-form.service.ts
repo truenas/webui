@@ -1,5 +1,5 @@
 import { Injectable, Inject, Optional } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, FormArray, Validators, AbstractControl } from "@angular/forms";
 import { FieldConfig } from '../models/field-config.interface';
 import { isDefined } from '../utils';
 
@@ -13,8 +13,12 @@ export class EntityFormService {
     	
         controls.forEach(controlModel => {
             if(controlModel.formarray) {
-                let subFormGroup = this.createFormGroup(controlModel.formarray);
-                formGroup[controlModel.name] = subFormGroup;
+                if(controlModel.initialCount == null) {
+                    controlModel.initialCount = 1;
+                }
+
+                let formArray = this.createFormArray(controlModel.formarray, controlModel.initialCount);
+                formGroup[controlModel.name] = formArray;
             } else {
                 formGroup[controlModel.name] = new FormControl(
                     {
@@ -29,5 +33,15 @@ export class EntityFormService {
         });
     	
         return this.formBuilder.group(formGroup);
+    }
+
+    createFormArray(controls: FieldConfig[], initialCount: number) {
+        let formArray = this.formBuilder.array([]);
+        let subFormGroup = this.createFormGroup(controls);
+
+        for(let i = 0; i < initialCount; i++) {
+            formArray.push(subFormGroup);
+        }
+        return formArray;
     }
 }
