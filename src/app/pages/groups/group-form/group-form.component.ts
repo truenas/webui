@@ -46,7 +46,7 @@ export class GroupFormComponent {
 
   }
 
-  afterInit(entityAdd: any) {
+  afterInit(entityForm: any) {
     this.rest.get('account/users/', {limit: 0}).subscribe((res) => {
       this.users = res.data;
     });
@@ -57,8 +57,13 @@ export class GroupFormComponent {
       res.data.forEach((item, i) => {
         if (item.bsdgrp_gid > gid) gid = item.bsdgrp_gid;
       });
+      if (!entityForm.isNew) {
+        entityForm.setDisabled('bsdgrp_gid', true);
+        entityForm.formGroup.controls['bsdusr_uid'].setValue(gid);
+      } else {
       gid += 1;
-      entityAdd.formGroup.controls['bsdgrp_gid'].setValue(gid);
+      entityForm.formGroup.controls['bsdgrp_gid'].setValue(gid);
+      }
     });
 
   }
