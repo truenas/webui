@@ -156,7 +156,13 @@ export class UserFormComponent {
       });
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdusr_username', true);
-        entityForm.formGroup.controls['bsdusr_uid'].setValue(uid);
+        if (entityForm.data.bsdusr_builtin === true){
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(entityForm.data.bsdusr_uid);
+          entityForm.setDisabled('bsdusr_uid', true);
+          entityForm.setDisabled('bsdusr_home', true);
+        } else {
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(entityForm.data.bsdusr_uid);
+        }
       } else {
           uid += 1;
           entityForm.formGroup.controls['bsdusr_uid'].setValue(uid);
