@@ -19,16 +19,6 @@ export class CertificateCSRComponent {
 
   protected resource_name: string = 'system/certificate/csr';
   protected route_success: string[] = ['system','certificates'];
-<<<<<<< HEAD
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-        id: 'cert_name',
-        label: 'Identifier',
-    }),
-    new DynamicSelectModel({
-        id: 'cert_key_length',
-        label: 'Key Length',
-=======
   protected isEntity: boolean = true;
   protected fieldConfig: FieldConfig[] = [
     {
@@ -40,7 +30,6 @@ export class CertificateCSRComponent {
         type: 'select',
         name: 'cert_key_length',
         placeholder: 'Key Length',
->>>>>>> cc462787f7bb9fefc93823f47db32f6623176ade
         options: [
           { label: '1024', value: 1024 },
           { label: '2048', value: 2048 },

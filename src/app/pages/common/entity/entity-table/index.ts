@@ -1,1 +1,1 @@
-export { EntityTableComponent } from './entity-list.component';
+export { EntityTableComponent } from './entity-table.component';

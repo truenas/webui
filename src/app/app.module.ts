@@ -5,11 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-<<<<<<< HEAD
-=======
-import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
->>>>>>> cc462787f7bb9fefc93823f47db32f6623176ade
 
 /*
  * Platform and Environment providers/directives/pipes

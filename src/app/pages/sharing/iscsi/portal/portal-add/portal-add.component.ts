@@ -26,19 +26,6 @@ export class PortalAddComponent {
   protected arrayModel: any;
   protected formArray: FormArray;
 
-<<<<<<< HEAD
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'iscsi_target_portal_comment',
-      label: 'Comment',
-      validators: {
-        required: null,
-      },
-    }),
-    new DynamicSelectModel({
-      id: 'iscsi_target_portal_discoveryauthmethod',
-      label: 'Discovery Auth Method',
-=======
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -49,7 +36,6 @@ export class PortalAddComponent {
       type: 'select',
       name: 'iscsi_target_portal_discoveryauthmethod',
       placeholder: 'Discovery Auth Method',
->>>>>>> cc462787f7bb9fefc93823f47db32f6623176ade
       options: [
         {
           label: 'NONE',

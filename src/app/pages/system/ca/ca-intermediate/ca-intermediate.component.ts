@@ -19,20 +19,6 @@ export class CertificateAuthorityIntermediateComponent {
 
   protected resource_name: string = 'system/certificateauthority/intermediate';
   protected route_success: string[] = ['system','ca'];
-<<<<<<< HEAD
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicSelectModel({
-        id: 'cert_signedby',
-        label: 'Signing Certificate Authority',
-    }),
-    new DynamicInputModel({
-        id: 'cert_name',
-        label: 'Identifier',
-    }),
-    new DynamicSelectModel({
-        id: 'cert_key_length',
-        label: 'Key Length',
-=======
   protected isEntity: boolean = true;
   protected fieldConfig: FieldConfig[] = [
     {
@@ -50,7 +36,6 @@ export class CertificateAuthorityIntermediateComponent {
         type: 'select',
         name: 'cert_key_length',
         placeholder: 'Key Length',
->>>>>>> cc462787f7bb9fefc93823f47db32f6623176ade
         options: [
           { label: '1024', value: 1024 },
           { label: '2048', value: 2048 },

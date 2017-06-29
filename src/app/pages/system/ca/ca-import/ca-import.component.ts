@@ -19,41 +19,7 @@ export class CertificateAuthorityImportComponent {
 
   protected resource_name: string = 'system/certificateauthority/import';
   protected route_success: string[] = ['system','ca'];
-<<<<<<< HEAD
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-        id: 'cert_name',
-        label: 'Identifier',
-    }),
-    new DynamicTextAreaModel({
-        id: 'cert_certificate',
-        label: 'Certificate',
-    }),
-    new DynamicTextAreaModel({
-        id: 'cert_privatekey',
-        label: 'Private Key',
-    }),
-    new DynamicInputModel({
-        id: 'Passphrase',
-        label: 'Passphrase',
-    }),
-    new DynamicInputModel({
-        id: 'Passphrase2',
-        label: 'Confirm Passphrase',
-    }),
-    new DynamicInputModel({
-        id: 'cert_serial',
-        label: 'Serial',
-    }),
-  ];
-
-  afterInit() {
-    this.route.params.subscribe(params => {
-    });
-  }
-=======
   protected isEntity: boolean = true;
->>>>>>> cc462787f7bb9fefc93823f47db32f6623176ade
 
   protected fieldConfig: FieldConfig[] = [
     {
