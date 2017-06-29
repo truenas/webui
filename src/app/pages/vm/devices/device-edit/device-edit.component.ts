@@ -31,8 +31,8 @@ import {EntityUtils} from '../../../common/entity/utils';
 export class DeviceEditComponent implements OnInit {
 
   public resource_name: string = 'vm/device';
-  public volume_resource_name: string =
-      'storage/volume' public route_cancel: string[];
+  public volume_resource_name: string = 'storage/volume';
+  public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
   public vm: string;
@@ -205,7 +205,8 @@ export class DeviceEditComponent implements OnInit {
       let self = this;
       this.error = null;
       let payload = {};
-      let devices = [] let formvalue = _.cloneDeep(this.formGroup.value);
+      let devices = [];
+      let formvalue = _.cloneDeep(this.formGroup.value);
       for (let vm of res) {
         if (vm.name === this.vm) {
           for (let device of vm.devices) {

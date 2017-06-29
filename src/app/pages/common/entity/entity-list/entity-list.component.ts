@@ -43,8 +43,8 @@ export class EntityListComponent implements OnInit {
   }
 
   getData() {
-    let offset = this.itemsPerPage * (this.page - 1) let sort: Array<String> =
-                     [];
+    let offset = this.itemsPerPage * (this.page - 1);
+     let sort: Array<String> = [];
     let options: Object = new Object();
 
     for (let i in this.config.sorting.columns) {

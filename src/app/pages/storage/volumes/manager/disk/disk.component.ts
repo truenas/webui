@@ -6,7 +6,7 @@ import filesize from 'filesize';
   selector : 'app-disk',
   template : `
   <span>
-	<i class="fa fa-hdd-o fa-25">  
+	<i class="fa fa-hdd-o fa-25">
 	</i>
 	<br>
 	{{ data.devname }} ({{ capacity }})
@@ -25,7 +25,8 @@ export class DiskComponent implements OnInit {
   constructor(public elementRef: ElementRef) {}
 
   ngOnInit() {
-    console.log() this.capacity =
+    console.log();
+     this.capacity =
         filesize(this.data.capacity, {standard : "iec"});
   }
 }

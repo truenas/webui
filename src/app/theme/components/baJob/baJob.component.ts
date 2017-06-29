@@ -67,7 +67,8 @@ export class BaJob {
           if (res.length > 0) {
             this.jobUpdate(res[0]);
           }
-        }) this.ws.subscribe("core.get_jobs")
+        });
+   this.ws.subscribe("core.get_jobs")
         .subscribe((res) => {
           if (res.id == this.jobId) {
             this.jobUpdate(res);

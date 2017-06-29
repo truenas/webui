@@ -32,7 +32,8 @@ export class ManagerComponent implements OnInit {
     cache : [ {} ],
     spare : [ {} ],
     log : [ {} ]
-  } public error: string;
+  };
+  public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
   @ViewChildren(DiskComponent) diskComponents: QueryList<DiskComponent>;
@@ -75,7 +76,8 @@ export class ManagerComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call("notifier.get_disks", [ true ]).subscribe((res) => {
-      this.disks = [] for (let i in res) { this.disks.push(res[i]); }
+      this.disks = [];
+      for (let i in res) { this.disks.push(res[i]); }
     });
   }
 
@@ -101,7 +103,8 @@ export class ManagerComponent implements OnInit {
   doSubmit() {
     this.error = null;
 
-    let layout = [] this.vdevComponents.forEach((vdev) => {
+    let layout = [];
+    this.vdevComponents.forEach((vdev) => {
       let disks = [];
       vdev.getDisks().forEach((disk) => { disks.push(disk.data.devname); });
       if (disks.length > 0) {

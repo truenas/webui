@@ -9,8 +9,8 @@ import {RestService, WebSocketService} from '../services/';
 
 @Injectable()
 export class UserService {
-  protected accountUserResource: string =
-      'account/users' protected accountGroupResource: string = 'account/groups'
+  protected accountUserResource: string = 'account/users';
+  protected accountGroupResource: string = 'account/groups';
 
   constructor(protected rest: RestService) {};
 
