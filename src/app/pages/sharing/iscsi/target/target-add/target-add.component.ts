@@ -105,8 +105,8 @@ export class TargetAddComponent implements OnInit {
       name : 'Add Extra ISCSI Group',
       function : () => {
         this.iscsi_group_count += 1;
-        this.formService.insertFormArrayGroup(this.iscsi_group_count, this.arrayControl,
-                                  this.arrayModel);
+        this.formService.insertFormArrayGroup(
+            this.iscsi_group_count, this.arrayControl, this.arrayModel);
         this.setFormArray(this.arrayModel.groups[this.iscsi_group_count - 1],
                           0);
         this.setFormArray(this.arrayModel.groups[this.iscsi_group_count - 1],

@@ -64,7 +64,7 @@ export class DeviceAddComponent implements OnInit {
       this.error = null;
       let payload = {};
       let devices = [];
-       for (let vm of res) {
+      for (let vm of res) {
         if (vm.name === self.conf.vm) {
           if (self.conf.dtype === 'NIC') {
             devices.push({

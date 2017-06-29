@@ -27,12 +27,8 @@ import {VdevComponent} from './vdev/';
 export class ManagerComponent implements OnInit {
 
   public disks: Array<any>;
-  public vdevs: any = {
-    data : [ {} ],
-    cache : [ {} ],
-    spare : [ {} ],
-    log : [ {} ]
-  };
+  public vdevs:
+      any = {data : [ {} ], cache : [ {} ], spare : [ {} ], log : [ {} ]};
   public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
@@ -77,7 +73,9 @@ export class ManagerComponent implements OnInit {
   ngOnInit() {
     this.ws.call("notifier.get_disks", [ true ]).subscribe((res) => {
       this.disks = [];
-      for (let i in res) { this.disks.push(res[i]); }
+      for (let i in res) {
+        this.disks.push(res[i]);
+      }
     });
   }
 

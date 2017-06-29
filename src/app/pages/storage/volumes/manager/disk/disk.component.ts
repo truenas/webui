@@ -26,7 +26,6 @@ export class DiskComponent implements OnInit {
 
   ngOnInit() {
     console.log();
-     this.capacity =
-        filesize(this.data.capacity, {standard : "iec"});
+    this.capacity = filesize(this.data.capacity, {standard : "iec"});
   }
 }

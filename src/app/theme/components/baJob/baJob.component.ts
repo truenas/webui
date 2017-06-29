@@ -68,12 +68,11 @@ export class BaJob {
             this.jobUpdate(res[0]);
           }
         });
-   this.ws.subscribe("core.get_jobs")
-        .subscribe((res) => {
-          if (res.id == this.jobId) {
-            this.jobUpdate(res);
-          }
-        });
+    this.ws.subscribe("core.get_jobs").subscribe((res) => {
+      if (res.id == this.jobId) {
+        this.jobUpdate(res);
+      }
+    });
   }
 
   jobUpdate(job) {
