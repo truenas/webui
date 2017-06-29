@@ -178,6 +178,10 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       value = this.conf.clean.bind(this.conf)(value);
     }
 
+    if (this.conf.beforeSubmit) {
+      this.conf.beforeSubmit(value);
+    }
+
     this.busy = this.submitFunction(
       {body: JSON.stringify(value)}).subscribe((res) => {
       if (this.conf.route_success) {
