@@ -1,1 +1,1 @@
-export { TemplateFormComponent } from './template-form.component';
+export {TemplateFormComponent} from './template-form.component';

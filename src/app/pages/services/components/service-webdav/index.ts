@@ -1,1 +1,1 @@
-export { ServiceWebdavComponent } from './service-webdav.component';
+export {ServiceWebdavComponent} from './service-webdav.component';

@@ -1,1 +1,1 @@
-export { SnapshotDeleteComponent } from './snapshot-delete.component';
+export {SnapshotDeleteComponent} from './snapshot-delete.component';

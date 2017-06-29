@@ -1,28 +1,24 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { AlertModule } from 'ngx-bootstrap/alert';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
-import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
-import { BusyModule } from 'angular2-busy';
-import { NgaModule } from '../../theme/nga.module';
-import { MaterialModule } from '@angular/material';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MaterialModule} from '@angular/material';
+import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
+import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
+import {BusyModule} from 'angular2-busy';
+import {AlertModule} from 'ngx-bootstrap/alert';
 
-import { CommonFormComponent } from './form';
+import {NgaModule} from '../../theme/nga.module';
+
+import {CommonFormComponent} from './form';
 
 @NgModule({
-  imports: [
-    AlertModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    DynamicFormsCoreModule.forRoot(),
-    DynamicFormsBootstrapUIModule,
-    BusyModule,
-    NgaModule,
-    MaterialModule
+  imports : [
+    AlertModule, CommonModule, FormsModule, ReactiveFormsModule,
+    DynamicFormsCoreModule.forRoot(), DynamicFormsBootstrapUIModule, BusyModule,
+    NgaModule, MaterialModule
   ],
-  declarations: [CommonFormComponent],
-  exports: [CommonFormComponent]
+  declarations : [ CommonFormComponent ],
+  exports : [ CommonFormComponent ]
 })
-export class FnCommonModule { }
+export class FnCommonModule {
+}

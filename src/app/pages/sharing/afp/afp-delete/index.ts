@@ -1,1 +1,1 @@
-export { AFPDeleteComponent } from './afp-delete.component';
+export {AFPDeleteComponent} from './afp-delete.component';

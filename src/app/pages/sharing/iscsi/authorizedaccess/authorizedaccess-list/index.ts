@@ -1,1 +1,1 @@
-export { AuthorizedAccessListComponent } from './authorizedaccess-list.component';
+export {AuthorizedAccessListComponent} from './authorizedaccess-list.component';

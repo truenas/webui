@@ -1,1 +1,1 @@
-export { DeviceDeleteComponent } from './device-delete.component';
+export {DeviceDeleteComponent} from './device-delete.component';

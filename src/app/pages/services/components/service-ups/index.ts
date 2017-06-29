@@ -1,1 +1,1 @@
-export { ServiceUPSComponent } from './service-ups.component';
+export {ServiceUPSComponent} from './service-ups.component';

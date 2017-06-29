@@ -1,1 +1,1 @@
-export { GroupDeleteComponent } from './group-delete.component';
+export {GroupDeleteComponent} from './group-delete.component';

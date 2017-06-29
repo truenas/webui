@@ -1,1 +1,1 @@
-export { ServiceDDNSComponent } from './service-dynamicdns.component';
+export {ServiceDDNSComponent} from './service-dynamicdns.component';

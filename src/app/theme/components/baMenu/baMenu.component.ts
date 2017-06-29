@@ -1,18 +1,14 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-
-import { BaMenuService } from '../../services';
-import { GlobalState } from '../../../global.state';
-
-import { WebSocketService } from '../../../services';
-
 import 'style-loader!./baMenu.scss';
 
-@Component({
-  selector: 'ba-menu',
-  templateUrl: './baMenu.html'
-})
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {Subscription} from 'rxjs/Rx';
+
+import {GlobalState} from '../../../global.state';
+import {WebSocketService} from '../../../services';
+import {BaMenuService} from '../../services';
+
+@Component({selector : 'ba-menu', templateUrl : './baMenu.html'})
 export class BaMenu {
 
   @Input() sidebarCollapsed: boolean = false;
@@ -28,8 +24,8 @@ export class BaMenu {
   protected _onRouteChange: Subscription;
   public outOfArea: number = -200;
 
-  constructor(private _router: Router, private _service: BaMenuService, private _state: GlobalState, protected ws: WebSocketService) {
-  }
+  constructor(private _router: Router, private _service: BaMenuService,
+              private _state: GlobalState, protected ws: WebSocketService) {}
 
   public updateMenu(newMenuItems) {
     this.menuItems = newMenuItems;
@@ -41,8 +37,10 @@ export class BaMenu {
       this.menuItems = this._service.selectMenuItem(this.menuItems);
       let current = this._service.getCurrentItem();
       let url = new Array('/pages').concat(current.path);
-      if (this._router.isActive(this._router.serializeUrl(this._router.createUrlTree(url)), true)) {
-        this._state.notifyDataChanged('menu.activeLink', { links: [current] });
+      if (this._router.isActive(
+              this._router.serializeUrl(this._router.createUrlTree(url)),
+              true)) {
+        this._state.notifyDataChanged('menu.activeLink', {links : [ current ]});
       }
     }
   }
@@ -54,13 +52,15 @@ export class BaMenu {
         if (this.menuItems) {
           this.selectMenuAndNotify();
         } else {
-          // on page load we have to wait as event is fired before menu elements are prepared
+          // on page load we have to wait as event is fired before menu elements
+          // are prepared
           setTimeout(() => this.selectMenuAndNotify());
         }
       }
     });
 
-    this._menuItemsSub = this._service.menuItems.subscribe(this.updateMenu.bind(this));
+    this._menuItemsSub =
+        this._service.menuItems.subscribe(this.updateMenu.bind(this));
   }
 
   public ngOnDestroy(): void {
@@ -92,16 +92,16 @@ export class BaMenu {
   }
 
   public onShutdown(): void {
-    if(confirm("Are you sure to shutdown?")) {
-      this.ws.call('system.shutdown', {}).subscribe((res)=>{
+    if (confirm("Are you sure to shutdown?")) {
+      this.ws.call('system.shutdown', {}).subscribe((res) => {
         alert('system is shutting down...');
       });
     }
   }
 
   public onReboot(): void {
-    if(confirm("Are you sure to reboot?")) {
-      this.ws.call('system.reboot', {}).subscribe((res)=>{
+    if (confirm("Are you sure to reboot?")) {
+      this.ws.call('system.reboot', {}).subscribe((res) => {
         alert('system is rebooting...');
       });
     }

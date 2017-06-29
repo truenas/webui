@@ -1,33 +1,27 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgaModule } from '../../../theme/nga.module';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import { EntityModule } from '../../common/entity/entity.module';
-import { routing }       from './staticroute.routing';
+import {NetworkService} from '../../../services';
+import {NgaModule} from '../../../theme/nga.module';
+import {EntityModule} from '../../common/entity/entity.module';
 
-import { StaticRouteListComponent } from './staticroute-list/';
-import { StaticRouteFormComponent } from './staticroute-form/';
-import { StaticRouteDeleteComponent } from './staticroute-delete/';
-
-import { NetworkService } from '../../../services';
+import {StaticRouteDeleteComponent} from './staticroute-delete/';
+import {StaticRouteFormComponent} from './staticroute-form/';
+import {StaticRouteListComponent} from './staticroute-list/';
+import {routing} from './staticroute.routing';
 
 @NgModule({
-  imports: [
-    EntityModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule,
+  imports : [
+    EntityModule, CommonModule, FormsModule, ReactiveFormsModule, NgaModule,
     routing
   ],
-  declarations: [
+  declarations : [
     StaticRouteListComponent,
     StaticRouteFormComponent,
     StaticRouteDeleteComponent,
   ],
-  providers: [
-    NetworkService
-  ]
+  providers : [ NetworkService ]
 })
-export class StaticRouteModule {}
+export class StaticRouteModule {
+}

@@ -1,1 +1,1 @@
-export { GroupAddComponent } from './group-add.component';
+export {GroupAddComponent} from './group-add.component';

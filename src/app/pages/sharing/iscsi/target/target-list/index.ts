@@ -1,1 +1,1 @@
-export { TargetListComponent } from './target-list.component';
+export {TargetListComponent} from './target-list.component';

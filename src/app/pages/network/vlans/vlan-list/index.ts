@@ -1,1 +1,1 @@
-export { VlanListComponent } from './vlan-list.component';
+export {VlanListComponent} from './vlan-list.component';

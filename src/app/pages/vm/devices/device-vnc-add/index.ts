@@ -1,1 +1,1 @@
-export { DeviceVncAddComponent } from './device-vnc-add.component';
+export {DeviceVncAddComponent} from './device-vnc-add.component';

@@ -1,23 +1,32 @@
-import { Component, ContentChildren, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChildren } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { FieldConfig } from './models/field-config.interface';
-import { EntityFormService } from './services/entity-form.service';
-import { FieldRelationService } from './services/field-relation.service';
-
-import { RestService, WebSocketService } from '../../../../services/';
-import { Subscription } from 'rxjs';
-import { EntityUtils } from '../utils';
-import { EntityTemplateDirective } from '../entity-template.directive';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
+import {
+  Component,
+  ContentChildren,
+  Input,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  TemplateRef,
+  ViewChildren
+} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
+import {Subscription} from 'rxjs';
+
+import {RestService, WebSocketService} from '../../../../services/';
+import {EntityTemplateDirective} from '../entity-template.directive';
+import {EntityUtils} from '../utils';
+
+import {FieldConfig} from './models/field-config.interface';
+import {EntityFormService} from './services/entity-form.service';
+import {FieldRelationService} from './services/field-relation.service';
 
 @Component({
-  selector: 'entity-form',
-  templateUrl: './entity-form.component.html',
-  styleUrls: ['./entity-form.component.css'],
-  providers: [EntityFormService, FieldRelationService]
+  selector : 'entity-form',
+  templateUrl : './entity-form.component.html',
+  styleUrls : [ './entity-form.component.css' ],
+  providers : [ EntityFormService, FieldRelationService ]
 })
 export class EntityFormComponent implements OnInit, OnDestroy {
 
@@ -25,19 +34,22 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   protected pk: any;
   public formGroup: FormGroup;
-  public fieldConfig: FieldConfig [];
+  public fieldConfig: FieldConfig[];
   protected resourceName: string;
   public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public hasConf: boolean = true;
 
-  get controls() { return this.fieldConfig.filter(({type}) => type !== 'button'); }
+  get controls() {
+    return this.fieldConfig.filter(({type}) => type !== 'button');
+  }
   get changes() { return this.formGroup.valueChanges; }
   get valid() { return this.formGroup.valid; }
   get value() { return this.formGroup.value; }
 
   templateTop: TemplateRef<any>;
-  @ContentChildren(EntityTemplateDirective) templates: QueryList<EntityTemplateDirective>;
+  @ContentChildren(EntityTemplateDirective)
+  templates: QueryList<EntityTemplateDirective>;
 
   @ViewChildren('component') components;
 
@@ -48,20 +60,15 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public success: boolean = false;
   public data: Object = {};
 
-
-  constructor(protected router: Router,
-              protected route: ActivatedRoute,
-              protected rest: RestService,
-              protected ws: WebSocketService,
-              protected location: Location,
-              private fb: FormBuilder,
+  constructor(protected router: Router, protected route: ActivatedRoute,
+              protected rest: RestService, protected ws: WebSocketService,
+              protected location: Location, private fb: FormBuilder,
               protected entityFormService: EntityFormService,
-              protected fieldRelationService: FieldRelationService) {
-  }
+              protected fieldRelationService: FieldRelationService) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
-      if(item.type == 'TOP') {
+      if (item.type == 'TOP') {
         this.templateTop = item.templateRef;
       }
     });
@@ -91,7 +98,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
       for (let i in this.fieldConfig) {
         let config = this.fieldConfig[i];
-        if(config.relation.length > 0) {
+        if (config.relation.length > 0) {
           this.setRelation(config);
         }
       }
@@ -103,13 +110,13 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       if (!this.isNew) {
         this.rest.get(getQuery, {}).subscribe((res) => {
           this.data = res.data;
-          for(let i in this.data) {
+          for (let i in this.data) {
             let fg = this.formGroup.controls[i];
-            if(fg) {
+            if (fg) {
               fg.setValue(this.data[i]);
             }
           }
-          if(this.conf.initial) {
+          if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
         });
@@ -125,35 +132,29 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
 
-      controls
-        .filter((control) => !configControls.includes(control))
-        .forEach((control) => this.formGroup.removeControl(control));
+      controls.filter((control) => !configControls.includes(control))
+          .forEach((control) => this.formGroup.removeControl(control));
 
-      configControls
-        .filter((control) => !controls.includes(control))
-        .forEach((name) => {
-          const config = this.fieldConfig.find((control) => control.name === name);
-          this.formGroup.addControl(name, this.createControl(config));
-        });
-
+      configControls.filter((control) => !controls.includes(control))
+          .forEach((name) => {
+            const config =
+                this.fieldConfig.find((control) => control.name === name);
+            this.formGroup.addControl(name, this.createControl(config));
+          });
     }
   }
 
   goBack() {
-     let route = this.conf.route_cancel;
-     if(!route) {
-       route = this.conf.route_success;
-     }
-     this.router.navigate(new Array('/pages').concat(route));
+    let route = this.conf.route_cancel;
+    if (!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/pages').concat(route));
   }
 
-  editSubmit(body: any) {
-     return this.rest.put(this.resourceName, body);
-  }
+  editSubmit(body: any) { return this.rest.put(this.resourceName, body); }
 
-  addSubmit(body: any) {
-     return this.rest.post(this.resourceName, body);
-  }
+  addSubmit(body: any) { return this.rest.post(this.resourceName, body); }
 
   onSubmit(event: Event) {
     event.preventDefault();
@@ -182,16 +183,17 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.beforeSubmit(value);
     }
 
-    this.busy = this.submitFunction(
-      {body: JSON.stringify(value)}).subscribe((res) => {
-      if (this.conf.route_success) {
-        this.router.navigate(new Array('/pages').concat(this.conf.route_success));
-      } else {
-        this.success = true;
-      }
-    }, (res) => {
-      new EntityUtils().handleError(this, res);
-    });
+    this.busy = this.submitFunction({body : JSON.stringify(value)})
+                    .subscribe(
+                        (res) => {
+                          if (this.conf.route_success) {
+                            this.router.navigate(new Array('/pages').concat(
+                                this.conf.route_success));
+                          } else {
+                            this.success = true;
+                          }
+                        },
+                        (res) => { new EntityUtils().handleError(this, res); });
   }
 
   clearErrors() {
@@ -212,20 +214,20 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   goConf() {
     let route = this.conf.route_conf;
-    if(!route) {
+    if (!route) {
       route = this.conf.route_success;
     }
     this.router.navigate(new Array('/pages').concat(route));
   }
 
   createControl(config: FieldConfig) {
-    const { disabled, validation, value } = config;
-    return this.fb.control({ disabled, value }, validation);
+    const {disabled, validation, value} = config;
+    return this.fb.control({disabled, value}, validation);
   }
 
   setDisabled(name: string, disable: boolean) {
     if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable': 'enable';
+      const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
       return;
     }
@@ -239,29 +241,30 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   setValue(name: string, value: any) {
-    this.formGroup.controls[name].setValue(value, {emitEvent: true});
+    this.formGroup.controls[name].setValue(value, {emitEvent : true});
   }
 
   setRelation(config: FieldConfig) {
-    let activations = this.fieldRelationService.findActivationRelation(config.relation);
+    let activations =
+        this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
-      let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+      let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+          activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled);
 
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach(control => {
-        control.valueChanges.subscribe(() => {
-          this.relationUpdate(config, activations);
-        });
-      });
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
+          .forEach(control => {
+            control.valueChanges.subscribe(
+                () => { this.relationUpdate(config, activations); });
+          });
     }
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+    let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+        activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
+  ngOnDestroy() { this.sub.unsubscribe(); }
 }

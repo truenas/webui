@@ -1,1 +1,1 @@
-export { PluginDeleteComponent } from './plugin-delete.component';
+export {PluginDeleteComponent} from './plugin-delete.component';

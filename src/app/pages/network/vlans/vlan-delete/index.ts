@@ -1,1 +1,1 @@
-export { VlanDeleteComponent } from './vlan-delete.component';
+export {VlanDeleteComponent} from './vlan-delete.component';

@@ -1,1 +1,1 @@
-export { NFSListComponent } from './nfs-list.component';
+export {NFSListComponent} from './nfs-list.component';

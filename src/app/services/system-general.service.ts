@@ -1,28 +1,23 @@
-import { Injectable } from '@angular/core';
-
-import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
 
-import { RestService, WebSocketService } from '../services/';
+import {Injectable} from '@angular/core';
+import {Http} from '@angular/http';
+import {Observable, Subject, Subscription} from 'rxjs/Rx';
+
+import {RestService, WebSocketService} from '../services/';
 
 @Injectable()
 export class SystemGeneralService {
 
-    protected certificateList: string = 'system/certificate';
+  protected certificateList: string = 'system/certificate';
 
-    constructor(protected rest: RestService, protected ws: WebSocketService){
-    };
+  constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
-    getCA() {
-        return this.ws.call('certificateauthority.query', []);
-    }
+  getCA() { return this.ws.call('certificateauthority.query', []); }
 
-    getCertificates() {
-        return this.rest.get(this.certificateList, {});
-    }
+  getCertificates() { return this.rest.get(this.certificateList, {}); }
 
-    getIPChoices() {
-        return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
-    }
+  getIPChoices() {
+    return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
+  }
 }

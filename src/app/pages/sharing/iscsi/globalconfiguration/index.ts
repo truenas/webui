@@ -1,1 +1,1 @@
-export { GlobalconfigurationComponent } from './globalconfiguration.component';
+export {GlobalconfigurationComponent} from './globalconfiguration.component';

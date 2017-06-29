@@ -1,1 +1,1 @@
-export { PortalListComponent } from './portal-list.component';
+export {PortalListComponent} from './portal-list.component';

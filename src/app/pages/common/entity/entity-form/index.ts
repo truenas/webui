@@ -1,1 +1,1 @@
-export { EntityFormComponent } from './entity-form.component';
+export {EntityFormComponent} from './entity-form.component';

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router, Routes} from '@angular/router';
 import * as _ from 'lodash';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class BaMenuService {
@@ -10,7 +10,7 @@ export class BaMenuService {
 
   protected _currentMenuItem = {};
 
-  constructor(private _router:Router) { }
+  constructor(private _router: Router) {}
 
   /**
    * Updates the routes in the menu
@@ -21,11 +21,9 @@ export class BaMenuService {
     this.menuItems.next(items);
   }
 
-  public getCurrentItem():any {
-    return this._currentMenuItem;
-  }
+  public getCurrentItem(): any { return this._currentMenuItem; }
 
-  public selectMenuItem(menuItems:any[], parent?: any):any[] {
+  public selectMenuItem(menuItems: any[], parent?: any): any[] {
     let items = [];
     menuItems.forEach((item) => {
       this._selectItem(item, parent);
@@ -42,7 +40,7 @@ export class BaMenuService {
     return items;
   }
 
-  protected _skipEmpty(items:any[]):any[] {
+  protected _skipEmpty(items: any[]): any[] {
     let menu = [];
     items.forEach((item) => {
       let menuItem;
@@ -62,16 +60,15 @@ export class BaMenuService {
     return [].concat.apply([], menu);
   }
 
-  protected _convertArrayToItems(array:any[], parent?:any):any[] {
+  protected _convertArrayToItems(array: any[], parent?: any): any[] {
     let items = [];
-    array.forEach((item) => {
-      items.push(this._convertObjectToItem(item, parent));
-    });
+    array.forEach(
+        (item) => { items.push(this._convertObjectToItem(item, parent)); });
     return items;
   }
 
-  protected _convertObjectToItem(object, parent?:any):any {
-    let item:any = {};
+  protected _convertObjectToItem(object, parent?: any): any {
+    let item: any = {};
     item = object;
 
     if (object.children && object.children.length > 0) {
@@ -88,10 +85,12 @@ export class BaMenuService {
     return prepared;
   }
 
-  protected _selectItem(object:any, parent?: any):any {
+  protected _selectItem(object: any, parent?: any): any {
     let url = new Array('/pages').concat(object.path);
-    object.selected = this._router.isActive(this._router.serializeUrl(this._router.createUrlTree(url)), object.pathMatch === 'full');
-    if(object.selected && parent !== undefined) {
+    object.selected = this._router.isActive(
+        this._router.serializeUrl(this._router.createUrlTree(url)),
+        object.pathMatch === 'full');
+    if (object.selected && parent !== undefined) {
       parent.expanded = true;
     }
     return object;

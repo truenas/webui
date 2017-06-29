@@ -1,1 +1,1 @@
-export { UpdateComponent } from './update.component';
+export {UpdateComponent} from './update.component';

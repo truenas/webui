@@ -1,1 +1,1 @@
-export { JailDeleteComponent } from './jail-delete.component';
+export {JailDeleteComponent} from './jail-delete.component';

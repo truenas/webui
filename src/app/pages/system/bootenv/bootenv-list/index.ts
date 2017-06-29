@@ -1,1 +1,1 @@
-export { BootEnvironmentListComponent } from './bootenv-list.component';
+export {BootEnvironmentListComponent} from './bootenv-list.component';

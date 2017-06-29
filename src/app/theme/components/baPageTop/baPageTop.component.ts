@@ -1,21 +1,20 @@
+import 'style-loader!./baPageTop.scss';
+
 import {Component} from '@angular/core';
 
 import {GlobalState} from '../../../global.state';
-
-import 'style-loader!./baPageTop.scss';
-
-import { WebSocketService } from '../../../services/index';
+import {WebSocketService} from '../../../services/index';
 
 @Component({
-  selector: 'ba-page-top',
-  templateUrl: './baPageTop.html',
+  selector : 'ba-page-top',
+  templateUrl : './baPageTop.html',
 })
 export class BaPageTop {
 
-  public isScrolled:boolean = false;
-  public isMenuCollapsed:boolean = false;
+  public isScrolled: boolean = false;
+  public isMenuCollapsed: boolean = false;
 
-  constructor(private _state:GlobalState, public _ws: WebSocketService) {
+  constructor(private _state: GlobalState, public _ws: WebSocketService) {
     this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
       this.isMenuCollapsed = isCollapsed;
     });
@@ -27,11 +26,7 @@ export class BaPageTop {
     return false;
   }
 
-  public scrolledChanged(isScrolled) {
-    this.isScrolled = isScrolled;
-  }
+  public scrolledChanged(isScrolled) { this.isScrolled = isScrolled; }
 
-  public logOut() {
-    this._ws.logout();
-  }
+  public logOut() { this._ws.logout(); }
 }

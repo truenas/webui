@@ -1,1 +1,1 @@
-export { VolumeDeleteComponent } from './volume-delete.component';
+export {VolumeDeleteComponent} from './volume-delete.component';

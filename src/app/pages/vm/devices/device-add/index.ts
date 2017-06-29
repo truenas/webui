@@ -1,1 +1,1 @@
-export { DeviceAddComponent } from './device-add.component';
+export {DeviceAddComponent} from './device-add.component';

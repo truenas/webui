@@ -1,1 +1,1 @@
-export { NISComponent } from './nis.component';
+export {NISComponent} from './nis.component';

@@ -1,1 +1,1 @@
-export { ServiceRSYNCComponent } from './service-rsync.component';
+export {ServiceRSYNCComponent} from './service-rsync.component';

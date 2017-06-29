@@ -1,1 +1,1 @@
-export { PluginConfigurationComponent } from './configuration.component';
+export {PluginConfigurationComponent} from './configuration.component';

@@ -1,1 +1,1 @@
-export { SMBEditComponent } from './smb-edit.component';
+export {SMBEditComponent} from './smb-edit.component';

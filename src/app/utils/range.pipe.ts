@@ -1,8 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 
-@Pipe({name: 'range'})
+@Pipe({name : 'range'})
 export class RangePipe implements PipeTransform {
   transform(value: number): number[] {
-    return Array<number>(value).fill(0).map((x,i)=>i);
+    return Array<number>(value).fill(0).map((x, i) => i);
   }
 }

@@ -1,1 +1,1 @@
-export { PortalEditComponent } from './portal-edit.component';
+export {PortalEditComponent} from './portal-edit.component';

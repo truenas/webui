@@ -1,1 +1,1 @@
-export { ConfigUploadComponent } from './config-upload.component';
+export {ConfigUploadComponent} from './config-upload.component';

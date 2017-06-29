@@ -1,12 +1,13 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService } from '../../../../services/';
-import { Subscription } from 'rxjs';
+import {Component, ElementRef, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Subscription} from 'rxjs';
+
+import {GlobalState} from '../../../../global.state';
+import {RestService, WebSocketService} from '../../../../services/';
 
 @Component({
-  selector: 'app-device-list',
-  template: `
+  selector : 'app-device-list',
+  template : `
   <h1> VM: {{ this.vm }} Devices </h1>
   <entity-list [conf]="this"></entity-list>
   `
@@ -20,18 +21,19 @@ export class DeviceListComponent {
   public vm: string;
   public sub: Subscription;
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute,
+              protected rest: RestService, protected ws: WebSocketService) {}
 
-  public columns:Array<any> = [
-    {title: 'Type', name: 'dtype'},
+  public columns: Array<any> = [
+    {title : 'Type', name : 'dtype'},
   ];
-  public config:any = {
-    paging: true,
-    sorting: {columns: this.columns},
+  public config: any = {
+    paging : true,
+    sorting : {columns : this.columns},
   };
 
   isActionVisible(actionId: string, row: any) {
-    if(actionId == 'delete' && row.id === true) {
+    if (actionId == 'delete' && row.id === true) {
       return false;
     }
     return true;
@@ -40,28 +42,32 @@ export class DeviceListComponent {
   getAddActions() {
     let actions = [];
     actions.push({
-        label: "Add CDROM",
-        onClick: () => {
-            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm , "cdrom", "add" ]));
-        }
+      label : "Add CDROM",
+      onClick : () => {
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "cdrom", "add" ]));
+      }
     });
     actions.push({
-        label: "Add NIC",
-        onClick: () => {
-            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm , "nic", "add" ]));
-        }
+      label : "Add NIC",
+      onClick : () => {
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "nic", "add" ]));
+      }
     });
     actions.push({
-        label: "Add Disk",
-        onClick: () => {
-            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm ,"disk", "add" ]));
-        }
+      label : "Add Disk",
+      onClick : () => {
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "disk", "add" ]));
+      }
     });
     actions.push({
-        label: "Add VNC",
-        onClick: () => {
-            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm , "vnc", "add" ]));
-        }
+      label : "Add VNC",
+      onClick : () => {
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "vnc", "add" ]));
+      }
     });
     return actions;
   }
@@ -69,17 +75,19 @@ export class DeviceListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-        label: "Edit",
-        onClick: (row) => {
-            //console.log(row);
-            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm, "edit", row.id, row.dtype]));
-        }
+      label : "Edit",
+      onClick : (row) => {
+        // console.log(row);
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "edit", row.id, row.dtype ]));
+      }
     });
     actions.push({
-        label: "Delete",
-        onClick: (row) => {
-            this.router.navigate(new Array('/pages').concat(["vm", this.pk, "devices", this.vm, "delete", row.id]));
-        },
+      label : "Delete",
+      onClick : (row) => {
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "delete", row.id ]));
+      },
     });
     return actions;
   }
@@ -87,8 +95,8 @@ export class DeviceListComponent {
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.vm = params['name'];
-      this.route_edit = ['vm', this.pk, 'devices', this.vm, 'edit'];
-      this.route_delete = ['vm', this.pk, 'devices', this.vm, 'delete'];
+      this.route_edit = [ 'vm', this.pk, 'devices', this.vm, 'edit' ];
+      this.route_delete = [ 'vm', this.pk, 'devices', this.vm, 'delete' ];
       // this is filter by vm's id to show devices belonging to that VM
       this.resource_name = 'vm/device/?vm__id=' + this.pk;
     });

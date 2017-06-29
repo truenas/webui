@@ -1,1 +1,1 @@
-export { ZvolEditComponent } from './zvol-edit.component';
+export {ZvolEditComponent} from './zvol-edit.component';

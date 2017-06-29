@@ -1,54 +1,60 @@
-import { Component, ViewContainerRef } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, ViewContainerRef} from '@angular/core';
+import {Router} from '@angular/router';
+import {
+  DynamicCheckboxModel,
+  DynamicFormControlModel,
+  DynamicFormService,
+  DynamicInputModel,
+  DynamicRadioGroupModel,
+  DynamicSelectModel,
+  DynamicTextAreaModel
+} from '@ng2-dynamic-forms/core';
 
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicTextAreaModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
-import { GlobalState } from '../../../../global.state';
-import { RestService, WebSocketService } from '../../../../services/';
+import {GlobalState} from '../../../../global.state';
+import {RestService, WebSocketService} from '../../../../services/';
 
 @Component({
-  selector: 'app-nfs-add',
-  template: `<entity-add [conf]="this"></entity-add>`
+  selector : 'app-nfs-add',
+  template : `<entity-add [conf]="this"></entity-add>`
 })
 export class NFSAddComponent {
 
-  protected route_success: string[] = ['sharing', 'nfs'];
+  protected route_success: string[] = [ 'sharing', 'nfs' ];
   protected resource_name: string = 'sharing/nfs/';
 
   public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
-      id: 'nfs_comment',
-      label: 'Comment',
+      id : 'nfs_comment',
+      label : 'Comment',
     }),
     new DynamicInputModel({
-      id: 'path',
-      label: 'Path',
+      id : 'path',
+      label : 'Path',
     }),
     new DynamicTextAreaModel({
-      id: 'nfs_network',
-      label: 'Network',
+      id : 'nfs_network',
+      label : 'Network',
     }),
     new DynamicTextAreaModel({
-      id: 'nfs_hosts',
-      label: 'Hosts',
+      id : 'nfs_hosts',
+      label : 'Hosts',
     }),
     new DynamicCheckboxModel({
-      id: 'nfs_alldirs',
-      label: 'All dirs',
+      id : 'nfs_alldirs',
+      label : 'All dirs',
     }),
   ];
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _state: GlobalState) {
+  constructor(protected router: Router, protected rest: RestService,
+              protected ws: WebSocketService,
+              protected formService: DynamicFormService,
+              protected _state: GlobalState) {}
 
-  }
-
-  afterInit(entityAdd: any) {
-
-  }
+  afterInit(entityAdd: any) {}
 
   clean(data) {
-    data.nfs_paths = [data.path];
+    data.nfs_paths = [ data.path ];
     delete data.path;
     return data;
   }
-
 }

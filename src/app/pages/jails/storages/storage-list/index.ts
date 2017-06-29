@@ -1,1 +1,1 @@
-export { StorageListComponent } from './storage-list.component';
+export {StorageListComponent} from './storage-list.component';

@@ -1,20 +1,23 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule }   from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 
-import { routing }       from './pages.routing';
-import { NgaModule } from '../theme/nga.module';
+import {RestService, WebSocketService} from '../services/index';
+import {NgaModule} from '../theme/nga.module';
 
-import { AuthGuard }     from './login/auth-guard.service';
-import { Pages } from './pages.component';
-
-import { RestService, WebSocketService } from '../services/index';
+import {AuthGuard} from './login/auth-guard.service';
+import {Pages} from './pages.component';
+import {routing} from './pages.routing';
 
 @NgModule({
-  imports: [
-    CommonModule, NgaModule, FormsModule, routing,
+  imports : [
+    CommonModule,
+    NgaModule,
+    FormsModule,
+    routing,
   ],
-  declarations: [Pages],
-  providers: [AuthGuard, WebSocketService, RestService]
+  declarations : [ Pages ],
+  providers : [ AuthGuard, WebSocketService, RestService ]
 })
-export class PagesModule { }
+export class PagesModule {
+}

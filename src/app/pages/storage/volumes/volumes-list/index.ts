@@ -1,1 +1,1 @@
-export { VolumesListComponent } from './volumes-list.component';
+export {VolumesListComponent} from './volumes-list.component';

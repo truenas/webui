@@ -1,20 +1,25 @@
-import { Component, ViewContainerRef } from '@angular/core';
-
-import { GlobalState } from './global.state';
-import { BaImageLoaderService, BaThemePreloader, BaThemeSpinner } from './theme/services';
-import { BaThemeConfig } from './theme/theme.config';
-import { layoutPaths } from './theme/theme.constants';
-
 import 'style-loader!./app.scss';
 import 'style-loader!./theme/initial.scss';
+
+import {Component, ViewContainerRef} from '@angular/core';
 import * as $ from 'jquery';
+
+import {GlobalState} from './global.state';
+import {
+  BaImageLoaderService,
+  BaThemePreloader,
+  BaThemeSpinner
+} from './theme/services';
+import {BaThemeConfig} from './theme/theme.config';
+import {layoutPaths} from './theme/theme.constants';
+
 /*
  * App Component
  * Top Level Component
  */
 @Component({
-  selector: 'app',
-  template: `
+  selector : 'app',
+  template : `
     <main [ngClass]="{'menu-collapsed': isMenuCollapsed}" baThemeRun>
       <div class="additional-bg"></div>
       <router-outlet></router-outlet>
@@ -42,14 +47,12 @@ export class App {
 
   public ngAfterViewInit(): void {
     // hide spinner once all loaders are completed
-    BaThemePreloader.load().then((values) => {
-      this._spinner.hide();
-    });
+    BaThemePreloader.load().then((values) => { this._spinner.hide(); });
   }
 
   private _loadImages(): void {
     // register some loaders
-    BaThemePreloader.registerLoader(this._imageLoader.load(layoutPaths.images.root + 'sky-bg.jpg'));
+    BaThemePreloader.registerLoader(
+        this._imageLoader.load(layoutPaths.images.root + 'sky-bg.jpg'));
   }
-
 }

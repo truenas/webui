@@ -1,1 +1,3 @@
-export { CertificateAuthorityIntermediateComponent } from './ca-intermediate.component';
+export {
+  CertificateAuthorityIntermediateComponent
+} from './ca-intermediate.component';

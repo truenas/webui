@@ -1,1 +1,3 @@
-export { AuthorizedAccessDeleteComponent } from './authorizedaccess-delete.component';
+export {
+  AuthorizedAccessDeleteComponent
+} from './authorizedaccess-delete.component';

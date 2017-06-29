@@ -1,1 +1,1 @@
-export { TemplateDeleteComponent } from './template-delete.component';
+export {TemplateDeleteComponent} from './template-delete.component';

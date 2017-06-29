@@ -1,1 +1,1 @@
-export { SMBDeleteComponent } from './smb-delete.component';
+export {SMBDeleteComponent} from './smb-delete.component';

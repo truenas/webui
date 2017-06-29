@@ -1,1 +1,1 @@
-export { EntityListComponent } from './entity-list.component';
+export {EntityListComponent} from './entity-list.component';

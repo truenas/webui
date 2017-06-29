@@ -1,1 +1,1 @@
-export { InitiatorListComponent } from './initiator-list.component';
+export {InitiatorListComponent} from './initiator-list.component';

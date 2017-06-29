@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { GlobalconfigurationComponent } from './globalconfiguration/globalconfiguration.component';
+import {
+  GlobalconfigurationComponent
+} from './globalconfiguration/globalconfiguration.component';
 
 @Component({
-  selector: 'iscsi',
-  template: `
+  selector : 'iscsi',
+  template : `
     <h2>Global Configuration</h2>
     <app-iscsi-globalconfiguration></app-iscsi-globalconfiguration>
     
@@ -24,11 +26,9 @@ import { GlobalconfigurationComponent } from './globalconfiguration/globalconfig
 })
 export class ISCSI {
 
-  constructor(protected router: Router,) {
-  }
+  constructor(
+      protected router: Router,
+  ) {}
 
-  ngOnInit() {
-    
-  }
-
+  ngOnInit() {}
 }

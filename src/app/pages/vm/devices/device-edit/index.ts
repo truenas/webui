@@ -1,1 +1,1 @@
-export { DeviceEditComponent } from './device-edit.component';
+export {DeviceEditComponent} from './device-edit.component';

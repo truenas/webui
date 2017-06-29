@@ -1,1 +1,1 @@
-export { CertificateListComponent } from './certificate-list.component';
+export {CertificateListComponent} from './certificate-list.component';

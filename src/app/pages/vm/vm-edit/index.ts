@@ -1,1 +1,1 @@
-export { VmEditComponent } from './vm-edit.component';
+export {VmEditComponent} from './vm-edit.component';

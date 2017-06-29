@@ -1,1 +1,1 @@
-export { SnapshotCloneComponent } from './snapshot-clone.component';
+export {SnapshotCloneComponent} from './snapshot-clone.component';

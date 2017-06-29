@@ -1,1 +1,1 @@
-export { EntityDeleteComponent } from './entity-delete.component';
+export {EntityDeleteComponent} from './entity-delete.component';

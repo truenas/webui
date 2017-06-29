@@ -1,1 +1,1 @@
-export { StaticRouteDeleteComponent } from './staticroute-delete.component';
+export {StaticRouteDeleteComponent} from './staticroute-delete.component';

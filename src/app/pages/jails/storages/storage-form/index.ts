@@ -1,1 +1,1 @@
-export { StorageFormComponent } from './storage-form.component';
+export {StorageFormComponent} from './storage-form.component';

@@ -1,1 +1,1 @@
-export { CertificateAuthorityInternalComponent } from './ca-internal.component';
+export {CertificateAuthorityInternalComponent} from './ca-internal.component';

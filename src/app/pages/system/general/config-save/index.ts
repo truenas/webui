@@ -1,1 +1,1 @@
-export { ConfigSaveComponent } from './config-save.component';
+export {ConfigSaveComponent} from './config-save.component';

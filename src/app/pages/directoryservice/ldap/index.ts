@@ -1,1 +1,1 @@
-export { LdapComponent } from './ldap.component';
+export {LdapComponent} from './ldap.component';

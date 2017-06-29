@@ -1,1 +1,1 @@
-export { TemplateListComponent } from './template-list.component';
+export {TemplateListComponent} from './template-list.component';

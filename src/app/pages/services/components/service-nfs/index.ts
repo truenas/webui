@@ -1,1 +1,1 @@
-export { ServiceNFSComponent } from './service-nfs.component';
+export {ServiceNFSComponent} from './service-nfs.component';

@@ -1,1 +1,1 @@
-export { TargetAddComponent } from './target-add.component';
+export {TargetAddComponent} from './target-add.component';

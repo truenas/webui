@@ -1,1 +1,1 @@
-export { LaggFormComponent } from './lagg-form.component';
+export {LaggFormComponent} from './lagg-form.component';

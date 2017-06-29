@@ -1,1 +1,1 @@
-export { EntityEditComponent } from './entity-edit.component';
+export {EntityEditComponent} from './entity-edit.component';

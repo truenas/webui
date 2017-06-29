@@ -1,1 +1,1 @@
-export { ServiceSSHComponent } from './service-ssh.component';
+export {ServiceSSHComponent} from './service-ssh.component';

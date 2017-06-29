@@ -1,19 +1,26 @@
-import {  ApplicationRef, Component, Injector, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { EntityConfigComponent } from '../../common/entity/entity-config/';
-import { GlobalState } from '../../../global.state';
-import { RestService, WebSocketService, SystemGeneralService } from '../../../services/';
-import { EntityFormComponent } from '../../common/entity/entity-form';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { MdInputModule } from '@angular/material';
+import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {MdInputModule} from '@angular/material';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {Subscription} from 'rxjs';
 
-import { Subscription } from 'rxjs';
+import {GlobalState} from '../../../global.state';
+import {
+  RestService,
+  SystemGeneralService,
+  WebSocketService
+} from '../../../services/';
+import {EntityConfigComponent} from '../../common/entity/entity-config/';
+import {EntityFormComponent} from '../../common/entity/entity-form';
+import {
+  FieldConfig
+} from '../../common/entity/entity-form/models/field-config.interface';
+import {
+  matchOtherValidator
+} from '../../common/entity/entity-form/validators/password-validation';
 
-import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
-
-@Component ({
-    selector: 'nt4',
-    template: ` <entity-form [conf]="this"></entity-form>`,
+@Component({
+  selector : 'nt4',
+  template : ` <entity-form [conf]="this"></entity-form>`,
 })
 
 export class NT4Component {
@@ -22,44 +29,42 @@ export class NT4Component {
   protected isBasicMode: boolean = true;
   public fieldConfig: FieldConfig[] = [
     {
-      type: 'input',
-      name: 'nt4_dcname',
-      placeholder: 'Domain Contoller',
+      type : 'input',
+      name : 'nt4_dcname',
+      placeholder : 'Domain Contoller',
     },
     {
-      type: 'input',
-      name: 'nt4_workgroup',
-      placeholder: 'Workgroup Name',
+      type : 'input',
+      name : 'nt4_workgroup',
+      placeholder : 'Workgroup Name',
     },
     {
-      type: 'input',
-      name: 'nt4_adminname',
-      placeholder: 'Administrator Name',
+      type : 'input',
+      name : 'nt4_adminname',
+      placeholder : 'Administrator Name',
     },
     {
-      type: 'input',
-      name: 'nt4_adminpw',
-      placeholder: 'Administrator Password',
-      inputType: 'password',
-      validation: [
-        matchOtherValidator('nt4_conf_adminpw')
-      ]
+      type : 'input',
+      name : 'nt4_adminpw',
+      placeholder : 'Administrator Password',
+      inputType : 'password',
+      validation : [ matchOtherValidator('nt4_conf_adminpw') ]
     },
     {
-      type: 'input',
-      name: 'nt4_conf_adminpw',
-      placeholder: 'Confirm Administrator Password',
-      inputType: 'password',
+      type : 'input',
+      name : 'nt4_conf_adminpw',
+      placeholder : 'Confirm Administrator Password',
+      inputType : 'password',
     },
     {
-      type: 'checkbox',
-      name: 'nt4_enable',
-      placeholder: 'Enable',
+      type : 'checkbox',
+      name : 'nt4_enable',
+      placeholder : 'Enable',
     },
     {
-      type: 'checkbox',
-      name: 'nt4_default_domain',
-      placeholder: 'Use Default Domain',
+      type : 'checkbox',
+      name : 'nt4_default_domain',
+      placeholder : 'Use Default Domain',
     },
   ];
 
@@ -77,34 +82,22 @@ export class NT4Component {
   }
   public custActions: Array<any> = [
     {
-      id: 'basic_mode',
-      name: 'Basic Mode',
-      function: () => {
-        this.isBasicMode = !this.isBasicMode;
-      }
+      id : 'basic_mode',
+      name : 'Basic Mode',
+      function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      'id': 'advanced_mode',
-      name: 'Advanced Mode',
-      function: () => {
-        this.isBasicMode = !this.isBasicMode;
-      }
+      'id' : 'advanced_mode',
+      name : 'Advanced Mode',
+      function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
 
+  constructor(protected router: Router, protected route: ActivatedRoute,
+              protected rest: RestService, protected ws: WebSocketService,
+              protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected _state: GlobalState,
+              protected systemGeneralService: SystemGeneralService) {}
 
-
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService,
-              protected ws: WebSocketService,protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected _state: GlobalState, protected systemGeneralService: SystemGeneralService) {
-
-              }
-
-  afterInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
-  }
-
+  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
 }
-
-
-

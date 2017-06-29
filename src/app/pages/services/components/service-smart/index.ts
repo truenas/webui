@@ -1,1 +1,1 @@
-export { ServiceSMARTComponent } from './service-smart.component';
+export {ServiceSMARTComponent} from './service-smart.component';

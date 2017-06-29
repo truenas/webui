@@ -1,1 +1,1 @@
-export { InterfacesFormComponent } from './interfaces-form.component';
+export {InterfacesFormComponent} from './interfaces-form.component';

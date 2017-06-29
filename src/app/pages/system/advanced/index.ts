@@ -1,1 +1,1 @@
-export { AdvancedComponent } from './advanced.component';
+export {AdvancedComponent} from './advanced.component';
