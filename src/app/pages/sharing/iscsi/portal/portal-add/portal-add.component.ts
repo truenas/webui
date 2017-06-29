@@ -2,39 +2,40 @@ import { ApplicationRef, Component, Injector, OnInit, ViewContainerRef } from '@
 import { FormGroup, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicRadioGroupModel, DynamicFormGroupModel, DynamicFormArrayModel, DynamicFormArrayGroupModel } from '@ng2-dynamic-forms/core';
+import * as _ from 'lodash';
 import { GlobalState } from '../../../../../global.state';
-import { RestService, WebSocketService, IscsiService } from '../../../../../services/';
+import { IscsiService } from '../../../../../services/';
 
-import { EntityAddComponent } from '../../../../common/entity/entity-add/';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 
 @Component({
 	selector: 'app-iscsi-portal-add',
-	template: `<entity-add [conf]="this"></entity-add>`,
-  providers: [IscsiService],
+	template: `<entity-form [conf]="this"></entity-form>`,
+  providers: [IscsiService, EntityFormService],
 })
 export class PortalAddComponent {
 
-	protected resource_name: string = 'services/iscsi/portal';
+	protected resource_name: string = 'services/iscsi/portal/';
   protected route_success: string[] = ['sharing', 'iscsi'];
-  protected portal_ip_count: number = 1;
-  public entityAdd: EntityAddComponent;
-  protected arrayControl: FormArray;
-  protected arrayModel: DynamicFormArrayModel;
-  private ip: DynamicSelectModel<string>;
-  protected ipChoice: any;
+  protected isEntity: boolean = true;
 
-  protected formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id: 'iscsi_target_portal_comment',
-      label: 'Comment',
-      validators: {
-        required: null,
-      },
-    }),
-    new DynamicSelectModel({
-      id: 'iscsi_target_portal_discoveryauthmethod',
-      label: 'Discovery Auth Method',
+  protected portal_ip_count: number = 1;
+  protected arrayControl: any;
+  protected arrayModel: any;
+  protected formArray: FormArray;
+
+  protected fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'iscsi_target_portal_comment',
+      placeholder: 'Comment',
+    },
+    {
+      type: 'select',
+      name: 'iscsi_target_portal_discoveryauthmethod',
+      placeholder: 'Discovery Auth Method',
       options: [
         {
           label: 'NONE',
@@ -49,35 +50,38 @@ export class PortalAddComponent {
           value: 'mutual_chap',
         }
       ]
-    }),
-    new DynamicSelectModel({
-      id: 'iscsi_target_portal_discoveryauthgroup',
-      label: 'Discovery Auth Group',
+    },
+    {
+      type: 'select',
+      name: 'iscsi_target_portal_discoveryauthgroup',
+      placeholder: 'Discovery Auth Group',
       options: [
         {
           label: 'NONE',
           value: '',
         }
       ]
-    }),
-    new DynamicFormArrayModel({
-      id: "iscsi_target_portal_ips",
+    },
+    {
+      type: 'array',
+      name: "iscsi_target_portal_ips",
       initialCount: 1,
-      createGroup: () => {
-        return [
-          new DynamicSelectModel({
-              id: "ip",
-              label: "IP Address",
-              value: '0.0.0.0',
-          }),
-          new DynamicInputModel({
-              id: "port",
-              label: "Port",
-              value: '2306',
-          })
-        ];
-      }
-    })
+      formarray: [
+        {
+          type: 'select',
+          name: "ip",
+          placeholder: "IP Address",
+          value: '0.0.0.0',
+          options: [],
+        },
+        {
+          type: 'input',
+          name: "port",
+          placeholder: "Port",
+          value: '2306',
+        }
+      ]
+    }
   ];
 
   protected custActions: Array<any> = [
@@ -86,8 +90,7 @@ export class PortalAddComponent {
       name: 'Add Extra Portal IP',
       function: () => {
         this.portal_ip_count += 1;
-        this.formService.insertFormArrayGroup(this.portal_ip_count, this.arrayControl ,this.arrayModel)
-        this.setIpFormArray(this.arrayModel.groups[this.portal_ip_count-1]);
+        this.entityFormService.insertFormArrayGroup(this.portal_ip_count, this.formArray, this.arrayControl.formarray);
       }
     },
     {
@@ -95,12 +98,12 @@ export class PortalAddComponent {
       name: 'Remove Extra Portal IP',
       function: () => {
         this.portal_ip_count -= 1;
-        this.formService.removeFormArrayGroup(this.portal_ip_count, this.arrayControl ,this.arrayModel)
+        this.entityFormService.removeFormArrayGroup(this.portal_ip_count, this.formArray);
       }
     },
   ];
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected formService: DynamicFormService, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected iscsiService: IscsiService) {
+  constructor(protected router: Router, protected _injector: Injector, protected _appRef: ApplicationRef, protected _state: GlobalState, protected iscsiService: IscsiService, protected entityFormService: EntityFormService) {
 
   }
 
@@ -111,22 +114,36 @@ export class PortalAddComponent {
     return true;
   }
 
-  setIpFormArray(groupModel: DynamicFormArrayGroupModel) {
-    this.ip = <DynamicSelectModel<string>>groupModel.group[0];
-    this.ip.add({ label: '0.0.0.0', value: '0.0.0.0' });
-    this.ipChoice.forEach((item) => {
-      this.ip.add({ label: item[1], value: item[0] });
+  afterInit(entityForm: any) {
+    this.formArray = entityForm.formGroup.controls['iscsi_target_portal_ips'] as FormArray;
+    this.arrayControl = _.find(this.fieldConfig, {'name': 'iscsi_target_portal_ips'});
+    this.arrayModel = _.find(this.arrayControl.formarray, {'name': 'ip'});
+    this.portal_ip_count = this.arrayControl.initialCount;
+
+    this.iscsiService.getIpChoices().subscribe((res) => {
+      this.arrayModel.options.push({ label: '0.0.0.0', value: '0.0.0.0' });
+      res.forEach((item) => {
+        this.arrayModel.options.push({ label: item[1], value: item[0] });
+      });
     });
   }
 
-  afterInit(entityAdd: EntityAddComponent) {
-    this.arrayControl = <FormArray> entityAdd.formGroup.get("iscsi_target_portal_ips");
-    this.arrayModel = <DynamicFormArrayModel> this.formService.findById("iscsi_target_portal_ips", this.formModel);
-    this.iscsiService.getIpChoices().subscribe((res) => {
-      this.ipChoice = res;
-      for(let i in this.arrayModel.groups) {
-        this.setIpFormArray(this.arrayModel.groups[i]);
+  getIPs(data: any[]):any[] {
+    var IPs = new Array();
+    for(let i in data) {
+      if('ip' in data[i] && 'port' in data[i]) {
+        let ip = data[i]['ip'] + ':' + data[i]['port'];
+        IPs.push(ip);
       }
-    });
+    }
+    return IPs;
+  }
+
+  beforeSubmit(value: any) {
+    for(let i in value) {
+      if(Array.isArray(value[i])) {
+          value[i] = this.getIPs(value[i]);
+      }
+    }
   }
 }
