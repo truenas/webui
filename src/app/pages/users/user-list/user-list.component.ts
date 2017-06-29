@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-user-list',
-  template: `<entity-list [conf]="this"></entity-list>`
+  template: `<entity-table [conf]="this"></entity-table>`
 })
 export class UserListComponent {
 
@@ -12,12 +12,12 @@ export class UserListComponent {
   protected route_delete: string[] = ['users', 'delete'];
 
   public columns:Array<any> = [
-    {title: 'Username', name: 'bsdusr_username'},
-    {title: 'UID', name: 'bsdusr_uid'},
-    {title: 'GID', name: 'bsdusr_group'},
-    {title: 'Home directory', name: 'bsdusr_home'},
-    {title: 'Shell', name: 'bsdusr_shell'},
-    {title: 'Builtin', name: 'bsdusr_builtin'},
+    {name: 'Username', prop: 'bsdusr_username'},
+    {name: 'UID', prop: 'bsdusr_uid'},
+    {name: 'GID', prop: 'bsdusr_group'},
+    {name: 'Home directory', prop: 'bsdusr_home'},
+    {name: 'Shell', prop: 'bsdusr_shell'},
+    {name: 'Builtin', prop: 'bsdusr_builtin'},
   ];
   public config:any = {
     paging: true,

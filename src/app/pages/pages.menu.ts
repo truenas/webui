@@ -136,14 +136,6 @@ export const PAGES_MENU = [
         expanded: false,
         order: 0
       },
-      {
-        path: ['directoryservice', 'nt4'],
-        title: 'NT4',
-        icon: 'ion-ios-nutrition',
-        selected: false,
-        expanded: false,
-        order: 0
-      },
     ]
   },
   {
@@ -181,6 +173,14 @@ export const PAGES_MENU = [
         path: ['network', 'laggs'],
         title: 'Laggs',
         icon: 'ion-android-hand',
+        selected: false,
+        expanded: false,
+        order: 0
+      },
+      {
+        path: ['network', 'staticroutes'],
+        title: 'Static Routes',
+        icon: 'ion-happy-outline',
         selected: false,
         expanded: false,
         order: 0

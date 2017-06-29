@@ -9,7 +9,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { routing }       from './groups.routing';
 
 import { GroupListComponent } from './group-list/';
-import { GroupAddComponent } from './group-add/';
+import { GroupFormComponent } from './group-form/';
 import { GroupEditComponent } from './group-edit/';
 import { GroupDeleteComponent } from './group-delete/';
 
@@ -26,8 +26,7 @@ import { GroupDeleteComponent } from './group-delete/';
   ],
   declarations: [
     GroupListComponent,
-    GroupAddComponent,
-    GroupEditComponent,
+    GroupFormComponent,
     GroupDeleteComponent,
   ],
   providers: [

@@ -2,15 +2,12 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { TunableListComponent } from './tunable-list/';
-import { TunableAddComponent } from './tunable-add/';
 import { TunableDeleteComponent } from './tunable-delete/';
-import { TunableEditComponent } from './tunable-edit/';
+import { TunableFormComponent } from './tunable-form/';
 
 export const routes: Routes = [
-  { path: 'add', component: TunableAddComponent },
-  // { path: 'internal', component: CertificateInternalComponent },
-  // { path: 'csr', component: CertificateCSRComponent },
-  { path: 'edit/:pk', component: TunableEditComponent },
+  { path: 'add', component: TunableFormComponent },
+  { path: 'edit/:pk', component: TunableFormComponent },
   { path: 'delete/:pk', component: TunableDeleteComponent },
   { path: '', component: TunableListComponent, pathMatch: 'full' },
 ];

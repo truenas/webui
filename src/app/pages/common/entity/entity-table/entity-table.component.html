@@ -1,0 +1,24 @@
+<a *ngIf="conf.route_add" class="btn btn-success btn-fab" (click)="doAdd()"><i class="ion-plus"></i></a>
+<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+<md-card>
+  <ngx-datatable
+    class="material" 
+    [rows]="rows" 
+    [columns]="conf.columns" 
+    [headerHeight]="50" 
+    [footerHeight]="50" 
+    [columnMode]="'force'" 
+    [limit]="conf.pageLimit ? conf.pageLimit : 20"
+  >
+  <div *ngFor="let col of conf.columns">
+    <ngx-datatable-column prop="{{col.prop}}" name="{{col.name}}"></ngx-datatable-column>
+  </div>
+  <ngx-datatable-column prop="action">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</md-card>

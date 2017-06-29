@@ -10,8 +10,7 @@ import { EntityConfigComponent } from '../../../common/entity/entity-config/';
 
 @Component({
     selector: 'ca-list',
-    template: `
-    <entity-list [conf]="this"></entity-list>`
+    template: `<entity-table [conf]="this"></entity-table>`
 })
 
 export class CertificateAuthorityListComponent {
@@ -25,13 +24,13 @@ export class CertificateAuthorityListComponent {
   }
 
   public columns:Array<any> = [
-    {title: 'Name', name: 'cert_name'},
-    {title: 'Internal', name: 'cert_internal'},
-    {title: 'Issuer', name: 'cert_issuer'},
-    {title: 'Lifetime', name: 'cert_lifetime'},
-    {title: 'Common Name', name: 'cert_common'},
-    {title: 'From', name: 'cert_from'},
-    {title: 'Until', name: 'cert_from'},
+    {name: 'Name', prop: 'cert_name'},
+    {name: 'Internal', prop: 'cert_internal'},
+    {name: 'Issuer', prop: 'cert_issuer'},
+    {name: 'Lifetime', prop: 'cert_lifetime'},
+    {name: 'Common Name', prop: 'cert_common'},
+    {name: 'From', prop: 'cert_from'},
+    {name: 'Until', prop: 'cert_from'},
   ];
 
   public config: any = {

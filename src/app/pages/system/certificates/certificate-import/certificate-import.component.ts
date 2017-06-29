@@ -39,7 +39,7 @@ export class CertificateImportComponent {
     {
         type: 'input',
         name: 'Passphrase',
-        placeholder: '',
+        placeholder: 'Passphrase',
         inputType: 'password',
         validation: [
           matchOtherValidator('Passphrase2')

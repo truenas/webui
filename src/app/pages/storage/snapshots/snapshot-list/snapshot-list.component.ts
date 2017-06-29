@@ -7,7 +7,7 @@ import filesize from 'filesize';
 
 @Component({
   selector: 'app-snapshot-list',
-  template: `<entity-list [conf]="this"></entity-list>`
+  template: `<entity-table [conf]="this"></entity-table>`
 })
 export class SnapshotListComponent {
 
@@ -15,9 +15,9 @@ export class SnapshotListComponent {
   protected route_delete: string[] = ['storage', 'snapshots', 'delete'];
 
   public columns:Array<any> = [
-    {title: 'Fullname', name: 'fullname'},
-    {title: 'Used', name: 'used'},
-    {title: 'Refer', name: 'refer'}
+    {name: 'Fullname', prop: 'fullname'},
+    {name: 'Used', prop: 'used'},
+    {name: 'Refer', prop: 'refer'}
   ];
   public config:any = {
     paging: true,

@@ -44,15 +44,15 @@ export class UserFormComponent {
    {    type: 'input',
         name: 'bsdusr_password',
         placeholder: 'Password',
-        inputType: 'password',
-        validation: [
-          matchOtherValidator('bsdusr_password_conf')
-          ]
+        inputType: 'password'
     },
     {   type: 'input',
         name: 'bsdusr_password_conf',
         placeholder: 'Confirm Password',
         inputType: 'password',
+        validation: [
+          matchOtherValidator('bsdusr_password')
+          ]
 
     },
     {
@@ -94,6 +94,7 @@ export class UserFormComponent {
     {   type: 'checkbox',
         name: 'bsdusr_creategroup',
         placeholder: 'Create Primary Group',
+        value: true,
     },
     {   type: 'select',
         name: 'bsdusr_shell',
@@ -117,13 +118,20 @@ export class UserFormComponent {
   private bsdusr_shell: any;
   private bsdusr_group: any;
   private bsdusr_aux_group: any;
+  private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
     protected _state: GlobalState) {
 
   }
+  preInit(entityForm: any) {
+      if (!entityForm.isNew) {
+        this.bsdusr_creategroup = _.find(this.fieldConfig, { name : "bsdusr_creategroup" });
+        this.bsdusr_creategroup.isHidden = true;
+      }
+  }
 
-  afterInit(entityAdd: any) {
+  afterInit(entityForm: any) {
       /* list groups */
     this.rest.get('account/groups/', {}).subscribe((res) => {
       this.bsdusr_group = _.find(this.fieldConfig, { name : "bsdusr_group" });
@@ -131,28 +139,44 @@ export class UserFormComponent {
       res.data.forEach((item) => {
         this.bsdusr_group.options.push({label: item.bsdgrp_group, value: item.id});
         this.bsdusr_aux_group.options.push({label: item.bsdgrp_group, value: item.id});
+        /* if(item.bsdgrp_builtin === true) entityForm.setDisabled('bsdusr_group', true); */
       });
-      this.bsdusr_group.valueUpdates.next();
-       this.bsdusr_aux_group.valueUpdates.next();
     });
     /* list users */
     this.rest.get(this.resource_name, {}).subscribe((res) => {
       let uid = 999;
       res.data.forEach((item, i) => {
         if (item.bsdusr_uid > uid) uid = item.bsdusr_uid;
+        /*
+        if(item.bsdusr_builtin === true) {
+          entityForm.setDisabled('bsdusr_uid', true);
+          entityForm.setDisabled('bsdusr_home', true);
+        }
+        */
       });
-      uid += 1;
-      entityAdd.formGroup.controls['bsdusr_uid'].setValue(uid);
+      if (!entityForm.isNew) {
+        entityForm.setDisabled('bsdusr_username', true);
+        if (entityForm.data.bsdusr_builtin === true){
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(entityForm.data.bsdusr_uid);
+          entityForm.setDisabled('bsdusr_uid', true);
+          entityForm.setDisabled('bsdusr_home', true);
+        } else {
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(entityForm.data.bsdusr_uid);
+        }
+      } else {
+          uid += 1;
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(uid);
+        }
     });
     /* list shells */
-    entityAdd.ws.call('notifier.choices', ['SHELL_CHOICES']).subscribe((res) => {
+    entityForm.ws.call('notifier.choices', ['SHELL_CHOICES']).subscribe((res) => {
       this.bsdusr_shell = _.find(this.fieldConfig, { name : "bsdusr_shell" });
       this.shells = res;
       let bsduser_shell = this.bsdusr_shell
       res.forEach((item) => {
         this.bsdusr_shell.options.push({ label: item[1], value: item[0] });
       });
-      entityAdd.formGroup.controls['bsdusr_shell'].setValue(this.shells[1][0]);
+      entityForm.formGroup.controls['bsdusr_shell'].setValue(this.shells[1][0]);
     });
   }
 
