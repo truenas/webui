@@ -8,8 +8,17 @@
     [headerHeight]="50" 
     [footerHeight]="50" 
     [columnMode]="'force'" 
-    [limit]="conf.pageLimit ? conf.pageLimit : 20"
+    [limit]="conf.config.pageLimit ? conf.config.pageLimit : 20" 
+    [selectionType]="conf.config.selectionType ? conf.config.selectionType : ''"
   >
+  <ngx-datatable-column
+    [width]="30"
+    [sortable]="false"
+    [canAutoResize]="false"
+    [draggable]="false"
+    [resizeable]="false"
+    [checkboxable]="conf.config.selectionType ? true : false">
+  </ngx-datatable-column>
   <div *ngFor="let col of conf.columns">
     <ngx-datatable-column prop="{{col.prop}}" name="{{col.name}}"></ngx-datatable-column>
   </div>
