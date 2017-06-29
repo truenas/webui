@@ -17,4 +17,6 @@ export interface FieldConfig {
   tooltip?: string,
   relation?: RelationGroup[],
   isHidden?: boolean,
+  formarray?: any,
+  initialCount?: number,
 }

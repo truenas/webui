@@ -14,6 +14,7 @@ import { FormSelectComponent } from './entity-form/components/form-select/form-s
 import { FormCheckboxComponent } from './entity-form/components/form-checkbox/form-checkbox.component';
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
+import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
 
 import { EntityAddComponent } from './entity-add/entity-add.component';
 import { EntityConfigComponent } from './entity-config/entity-config.component';
@@ -65,6 +66,7 @@ import { RestService, WebSocketService } from '../../../services/index';
     FormTextareaComponent,
     FormPermissionsComponent,
     TooltipComponent
+    FormArrayComponent,
   ],
   exports: [
     EntityAddComponent,
@@ -83,6 +85,7 @@ import { RestService, WebSocketService } from '../../../services/index';
     FormCheckboxComponent,
     FormTextareaComponent,
     FormPermissionsComponent
+    FormArrayComponent,
   ]
 })
 export class EntityModule { }
