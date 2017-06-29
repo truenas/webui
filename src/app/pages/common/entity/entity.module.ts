@@ -65,7 +65,7 @@ import { RestService, WebSocketService } from '../../../services/index';
     FormCheckboxComponent,
     FormTextareaComponent,
     FormPermissionsComponent,
-    TooltipComponent
+    TooltipComponent,
     FormArrayComponent,
   ],
   exports: [
@@ -84,7 +84,7 @@ import { RestService, WebSocketService } from '../../../services/index';
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
-    FormPermissionsComponent
+    FormPermissionsComponent,
     FormArrayComponent,
   ]
 })

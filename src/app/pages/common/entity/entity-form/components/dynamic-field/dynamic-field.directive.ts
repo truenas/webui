@@ -18,7 +18,7 @@ const components: {[type: string]: Type<Field>} = {
   select: FormSelectComponent,
   checkbox: FormCheckboxComponent,
   textarea: FormTextareaComponent,
-  permissions: FormPermissionsComponent
+  permissions: FormPermissionsComponent,
   array: FormArrayComponent,
 };
 
