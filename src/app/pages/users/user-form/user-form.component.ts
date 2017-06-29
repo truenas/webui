@@ -112,6 +112,11 @@ export class UserFormComponent {
       placeholder: 'Auxilary group',
       options: [],
       multiple: true
+    },
+    {
+      type: 'permissions',
+      name: 'bsdusr_mode',
+      placeholder: 'Home Directory Mode',
     }
   ];
   private shells: any;
@@ -122,7 +127,7 @@ export class UserFormComponent {
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
     protected _state: GlobalState) {
-
+      
   }
   preInit(entityForm: any) {
       if (!entityForm.isNew) {
