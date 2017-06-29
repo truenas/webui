@@ -1,6 +1,6 @@
 <div class="dynamic-field form-array" [formGroup]="group.controls[config.name]">
-	<fieldset *ngFor="let i of group.controls[config.name].controls">
-		<ng-container *ngFor="let field of config.formarray;" dynamicField [config]="field" [group]="group.controls[config.name].controls[0]">
+	<fieldset *ngFor="let array of group.controls[config.name].controls; let i = index ">
+		<ng-container *ngFor="let field of config.formarray" dynamicField [config]="field" [group]="group.controls[config.name].controls[i]">
 		</ng-container>
 	</fieldset>
 </div>

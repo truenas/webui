@@ -37,11 +37,20 @@ export class EntityFormService {
 
     createFormArray(controls: FieldConfig[], initialCount: number) {
         let formArray = this.formBuilder.array([]);
-        let subFormGroup = this.createFormGroup(controls);
 
         for(let i = 0; i < initialCount; i++) {
+            let subFormGroup = this.createFormGroup(controls);
             formArray.push(subFormGroup);
         }
         return formArray;
+    }
+
+    insertFormArrayGroup(index: number, formArray: FormArray, controls: FieldConfig[]) {
+         let formGroup = this.createFormGroup(controls);
+         formArray.insert(index, formGroup);
+    }
+
+    removeFormArrayGroup(index: number, formArray: FormArray) {
+        formArray.removeAt(index);
     }
 }
