@@ -13,17 +13,16 @@ import {EntityModule} from '../common/entity/entity.module';
 import {ActiveDirectoryComponent} from './activedirectory/';
 import {routing} from './directoryservice.routing';
 import {LdapComponent} from './ldap/';
-import {
-  NISComponent
-} from './nis/'
+import {NISComponent} from './nis/';
+import {NT4Component} from './nt4/nt4.component';
 
-    @NgModule({
-      imports : [
-        EntityModule, DynamicFormsCoreModule.forRoot(),
-        DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
-        ReactiveFormsModule, NgaModule, NgUploaderModule, FnCommonModule,
-        routing
-      ],
-      declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent ],
-      providers : [ SystemGeneralService ]
-    }) export class DirectoryServiceModule {}
+@NgModule({
+  imports : [
+    EntityModule, DynamicFormsCoreModule.forRoot(),
+    DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
+    ReactiveFormsModule, NgaModule, NgUploaderModule, FnCommonModule,
+    routing
+  ],
+  declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent,NT4Component ],
+  providers : [ SystemGeneralService ]
+}) export class DirectoryServiceModule {}

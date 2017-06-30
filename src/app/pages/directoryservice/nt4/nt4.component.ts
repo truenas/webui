@@ -11,12 +11,8 @@ import {
 } from '../../../services/';
 import {EntityConfigComponent} from '../../common/entity/entity-config/';
 import {EntityFormComponent} from '../../common/entity/entity-form';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../common/entity/entity-form/validators/password-validation';
+import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
+import {matchOtherValidator} from '../../common/entity/entity-form/validators/password-validation';
 
 @Component({
   selector : 'nt4',

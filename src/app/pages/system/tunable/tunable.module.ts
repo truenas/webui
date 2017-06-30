@@ -9,7 +9,9 @@ import {NgaModule} from '../../../theme/nga.module';
 import {EntityModule} from '../../common/entity/entity.module';
 import {CommonFormComponent} from '../../common/form/';
 
+import {TunableAddComponent} from './tunable-add';
 import {TunableDeleteComponent} from './tunable-delete/';
+import {TunableEditComponent} from './tunable-edit';
 import {TunableFormComponent} from './tunable-form/';
 import {TunableListComponent} from './tunable-list/';
 import {routing} from './tunable.routing';
@@ -21,7 +23,7 @@ import {routing} from './tunable.routing';
     ReactiveFormsModule, NgaModule, NgUploaderModule, routing
   ],
   declarations :
-      [ TunableListComponent, TunableDeleteComponent, TunableFormComponent ],
+      [ TunableAddComponent, TunableListComponent,TunableEditComponent, TunableDeleteComponent, TunableFormComponent ],
   providers : []
 })
 export class TunableModule {

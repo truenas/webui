@@ -7,6 +7,7 @@ import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 import {NgaModule} from '../../theme/nga.module';
 import {EntityModule} from '../common/entity/entity.module';
 
+import {GroupAddComponent} from './group-add/';
 import {GroupDeleteComponent} from './group-delete/';
 import {GroupEditComponent} from './group-edit/';
 import {GroupFormComponent} from './group-form/';
@@ -20,7 +21,9 @@ import {routing} from './groups.routing';
     ReactiveFormsModule, NgaModule, routing
   ],
   declarations : [
+    GroupAddComponent,
     GroupListComponent,
+    GroupEditComponent,
     GroupFormComponent,
     GroupDeleteComponent,
   ],
