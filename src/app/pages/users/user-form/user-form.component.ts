@@ -111,6 +111,11 @@ export class UserFormComponent {
       placeholder : 'Auxilary group',
       options : [],
       multiple : true
+    },
+    {
+      type : 'permissions',
+      name : 'bsdusr_mode',
+      placeholder : 'Home Directory Mode',
     }
   ];
   private shells: any;

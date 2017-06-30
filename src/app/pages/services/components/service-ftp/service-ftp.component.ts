@@ -115,12 +115,12 @@ export class ServiceFTPComponent implements OnInit {
       options : [],
     },
     {
-      type : 'input',
+      type : 'permissions',
       name : 'ftp_filemask',
       placeholder : 'File Permission',
     },
     {
-      type : 'input',
+      type : 'permissions',
       name : 'ftp_dirmask',
       placeholder : 'Directory Permission',
     },

@@ -1,0 +1,73 @@
+<div class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
+	<label>{{ config.placeholder }}</label>
+	<md-input-container class="full-width" style="display:none">
+		<input mdInput [type]="config.inputType ? config.inputType : 'text'" 
+			[placeholder]="config.placeholder"
+			[(ngModel)]="config.value"
+			[attr.value]="config.value"
+			[formControlName]="config.name"
+			(ngModelChange)="setValue()"
+			>
+	</md-input-container>
+		<table>
+			<tr>
+				<td></td>
+				<td>Owner</td>
+				<td>Group</td>
+				<td>Other</td>
+			</tr>
+			<tr>
+				<td>
+					Read
+				</td>
+				<td>
+					<md-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()">
+					</md-checkbox>
+				</td>
+				<td>
+					<md-checkbox [checked]="groupRead" (change)="toggleGroupRead()">
+					</md-checkbox>
+				</td>
+				<td>
+					<md-checkbox [checked]="otherRead" (change)="toggleOtherRead()">
+					</md-checkbox><br/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Write
+				</td>
+				<td>
+					<md-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()">
+					</md-checkbox>
+				</td>
+				<td>
+					<md-checkbox [checked]="groupWrite" (change)="toggleGroupWrite()">
+					</md-checkbox>
+				</td>
+				<td>
+					<md-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()">
+					</md-checkbox><br/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Execute
+				</td>
+				<td>
+					<md-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()">
+					</md-checkbox>
+				</td>
+				<td>
+					<md-checkbox [checked]="groupExec" (change)="toggleGroupExec()">
+					</md-checkbox>
+				</td>
+				<td>
+					<md-checkbox [checked]="otherExec" (change)="toggleOtherExec()">
+					</md-checkbox>
+				</td>
+			</tr>
+		</table>
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+</div>

@@ -16,6 +16,7 @@ import {FormArrayComponent} from '../form-array/form-array.component';
 import {FormButtonComponent} from '../form-button/form-button.component';
 import {FormCheckboxComponent} from '../form-checkbox/form-checkbox.component';
 import {FormInputComponent} from '../form-input/form-input.component';
+import {FormPermissionsComponent} from '../form-permissions/form-permissions.component';
 import {FormSelectComponent} from '../form-select/form-select.component';
 import {FormTextareaComponent} from '../form-textarea/form-textarea.component';
 
@@ -25,7 +26,8 @@ const components: {[type: string] : Type<Field>} = {
   select : FormSelectComponent,
   checkbox : FormCheckboxComponent,
   textarea : FormTextareaComponent,
-  array : FormArrayComponent,
+  permissions : FormPermissionsComponent,
+  array : FormArrayComponent
 };
 
 @Directive({selector : '[dynamicField]'})
@@ -58,8 +60,7 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
       throw new Error(`Trying to use an unsupported type (${this.config.type}).
         Supported types: ${supportedTypes}`);
     }
-    const component = this.resolver.resolveComponentFactory<Field>(
-        components[this.config.type]);
+    const component = this.resolver.resolveComponentFactory<Field>(components[this.config.type]);
     this.component = this.container.createComponent(component);
     this.component.instance.config = this.config;
     this.component.instance.group = this.group;
