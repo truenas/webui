@@ -1,14 +1,14 @@
-import { Component, ViewContainerRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {Component, ViewContainerRef} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
-import { Field } from '../../models/field.interface';
-import { FieldConfig } from '../../models/field-config.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
+import {FieldConfig} from '../../models/field-config.interface';
+import {Field} from '../../models/field.interface';
+import {TooltipComponent} from '../tooltip/tooltip.component';
 
 @Component({
-  selector: 'form-permissions',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
-  templateUrl: './form-permissions.component.html',
+  selector : 'form-permissions',
+  styleUrls : [ '../dynamic-field/dynamic-field.css' ],
+  templateUrl : './form-permissions.component.html',
 })
 export class FormPermissionsComponent implements Field {
   config: FieldConfig;
@@ -131,7 +131,8 @@ export class FormPermissionsComponent implements Field {
   }
 
   refreshPermissions() {
-    this.config.value = this.owner.toString() + this.grp.toString() + this.other.toString();
+    this.config.value =
+        this.owner.toString() + this.grp.toString() + this.other.toString();
   }
 
   setValue() {
@@ -160,7 +161,7 @@ export class FormPermissionsComponent implements Field {
         grp -= 4;
         this.groupRead = true;
       }
-        if (grp - 2 >= 0) {
+      if (grp - 2 >= 0) {
         grp -= 2;
         this.groupWrite = true;
       }
