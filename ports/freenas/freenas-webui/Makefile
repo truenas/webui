@@ -12,10 +12,10 @@ COMMENT=	Angular 2 Web User Interface for FreeNAS
 
 EXTRACT_ONLY=
 
-FETCH_DEPENDS=	npm3>0:www/npm3 \
+FETCH_DEPENDS=	npm>0:www/npm \
 		git>0:devel/git
 BUILD_DEPENDS=	rsync>0:net/rsync \
-		npm3>0:www/npm3
+		npm>0:www/npm
 
 NO_BUILD=	yes
 WRKSRC=		/usr/webui
@@ -25,7 +25,7 @@ checksum:
 
 fetch:
 	${MKDIR} ${WRKDIR}
-	(cd ${WRKSRC} && ${LOCALBASE}/bin/npm install && ${LOCALBASE}/bin/npm run build:prod)
+	(cd ${WRKSRC} && ${LOCALBASE}/bin/npm install && ${LOCALBASE}/bin/npm run build:prod:aot)
 
 extract:
 	:
