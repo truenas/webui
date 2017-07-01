@@ -1,1 +1,1 @@
-export { SnapshotAddComponent } from './snapshot-add.component';
+export {SnapshotAddComponent} from './snapshot-add.component';

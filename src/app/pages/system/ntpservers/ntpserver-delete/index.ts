@@ -1,1 +1,1 @@
-export { NTPServerDeleteComponent } from './ntpserver-delete.component';
+export {NTPServerDeleteComponent} from './ntpserver-delete.component';

@@ -1,1 +1,1 @@
-export { VmListComponent } from './vm-list.component';
+export {VmListComponent} from './vm-list.component';

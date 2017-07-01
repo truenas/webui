@@ -1,1 +1,1 @@
-export { VmAddComponent } from './vm-add.component';
+export {VmAddComponent} from './vm-add.component';

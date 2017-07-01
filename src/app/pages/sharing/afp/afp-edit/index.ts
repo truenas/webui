@@ -1,1 +1,1 @@
-export { AFPEditComponent } from './afp-edit.component';
+export {AFPEditComponent} from './afp-edit.component';

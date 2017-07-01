@@ -1,1 +1,1 @@
-export { InterfacesListComponent } from './interfaces-list.component';
+export {InterfacesListComponent} from './interfaces-list.component';

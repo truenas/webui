@@ -1,1 +1,1 @@
-export { UserDeleteComponent } from './user-delete.component';
+export {UserDeleteComponent} from './user-delete.component';

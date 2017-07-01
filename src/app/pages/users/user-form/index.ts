@@ -1,1 +1,1 @@
-export { UserFormComponent } from './user-form.component';
+export {UserFormComponent} from './user-form.component';

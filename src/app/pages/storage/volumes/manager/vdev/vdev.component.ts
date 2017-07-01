@@ -1,12 +1,19 @@
-import { Component, ElementRef, Input, OnInit, QueryList, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChild
+} from '@angular/core';
 
-import { DiskComponent } from '../disk/';
-import { ManagerComponent } from '../manager.component';
+import {DiskComponent} from '../disk/';
+import {ManagerComponent} from '../manager.component';
 
 @Component({
-  selector: 'app-vdev',
-  templateUrl: 'vdev.component.html',
-  styleUrls: ['vdev.component.css'],
+  selector : 'app-vdev',
+  templateUrl : 'vdev.component.html',
+  styleUrls : [ 'vdev.component.css' ],
 })
 export class VdevComponent implements OnInit {
 
@@ -19,27 +26,17 @@ export class VdevComponent implements OnInit {
 
   constructor(public elementRef: ElementRef) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  addDisk(disk: DiskComponent) {
-    this.diskComponents.push(disk);
-  }
+  addDisk(disk: DiskComponent) { this.diskComponents.push(disk); }
 
   removeDisk(disk: DiskComponent) {
     this.diskComponents.splice(this.diskComponents.indexOf(disk), 1);
   }
 
-  getDisks() {
-    return this.diskComponents;
-  }
+  getDisks() { return this.diskComponents; }
 
-  onTypeChange(e) {
-    console.log(e, this.group);
-  }
+  onTypeChange(e) { console.log(e, this.group); }
 
-  remove() {
-    this.manager.removeVdev(this);
-  }
-
+  remove() { this.manager.removeVdev(this); }
 }

@@ -1,1 +1,1 @@
-export { AFPAddComponent } from './afp-add.component';
+export {AFPAddComponent} from './afp-add.component';

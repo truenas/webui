@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Subject }    from 'rxjs/Subject';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class GlobalState {
@@ -7,11 +7,10 @@ export class GlobalState {
   private _data = new Subject<Object>();
   private _dataStream$ = this._data.asObservable();
 
-  private _subscriptions: Map<string, Array<Function>> = new Map<string, Array<Function>>();
+  private _subscriptions: Map<string, Array<Function>> =
+      new Map<string, Array<Function>>();
 
-  constructor() {
-    this._dataStream$.subscribe((data) => this._onEvent(data));
-  }
+  constructor() { this._dataStream$.subscribe((data) => this._onEvent(data)); }
 
   notifyDataChanged(event, value) {
 
@@ -19,10 +18,7 @@ export class GlobalState {
     if (current !== value) {
       this._data[event] = value;
 
-      this._data.next({
-        event: event,
-        data: this._data[event]
-      });
+      this._data.next({event : event, data : this._data[event]});
     }
   }
 
@@ -36,8 +32,6 @@ export class GlobalState {
   _onEvent(data: any) {
     let subscribers = this._subscriptions.get(data['event']) || [];
 
-    subscribers.forEach((callback) => {
-      callback.call(null, data['data']);
-    });
+    subscribers.forEach((callback) => { callback.call(null, data['data']); });
   }
 }

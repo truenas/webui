@@ -1,1 +1,1 @@
-export { SnapshotRollbackComponent } from './snapshot-rollback.component';
+export {SnapshotRollbackComponent} from './snapshot-rollback.component';

@@ -1,1 +1,1 @@
-export { TunableFormComponent } from './tunable-form.component';
+export {TunableFormComponent} from './tunable-form.component';

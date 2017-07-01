@@ -1,1 +1,1 @@
-export { SnapshotListComponent } from './snapshot-list.component';
+export {SnapshotListComponent} from './snapshot-list.component';

@@ -1,1 +1,1 @@
-export { VlanFormComponent } from './vlan-form.component';
+export {VlanFormComponent} from './vlan-form.component';

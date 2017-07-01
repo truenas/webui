@@ -1,1 +1,1 @@
-export { CertificateImportComponent } from './certificate-import.component';
+export {CertificateImportComponent} from './certificate-import.component';

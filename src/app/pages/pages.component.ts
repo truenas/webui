@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import { Routes } from '@angular/router';
+import {Component} from '@angular/core';
+import {Routes} from '@angular/router';
 
-import { BaMenuService } from '../theme';
-import { PAGES_MENU } from './pages.menu';
+import {BaMenuService} from '../theme';
+import {PAGES_MENU} from './pages.menu';
 
 @Component({
-  selector: 'pages',
-  template: `
+  selector : 'pages',
+  template : `
     <ba-sidebar></ba-sidebar>
     <ba-page-top></ba-page-top>
     <div class="al-main">
@@ -28,10 +28,9 @@ import { PAGES_MENU } from './pages.menu';
 })
 export class Pages {
 
-  constructor(private _menuService: BaMenuService,) {
-  }
+  constructor(
+      private _menuService: BaMenuService,
+  ) {}
 
-  ngOnInit() {
-    this._menuService.updateMenu(PAGES_MENU);
-  }
+  ngOnInit() { this._menuService.updateMenu(PAGES_MENU); }
 }

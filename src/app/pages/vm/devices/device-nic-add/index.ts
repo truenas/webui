@@ -1,1 +1,1 @@
-export { DeviceNicAddComponent } from './device-nic-add.component';
+export {DeviceNicAddComponent} from './device-nic-add.component';

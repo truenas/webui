@@ -1,1 +1,1 @@
-export { NFSDeleteComponent } from './nfs-delete.component';
+export {NFSDeleteComponent} from './nfs-delete.component';

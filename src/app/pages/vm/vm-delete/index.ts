@@ -1,1 +1,1 @@
-export { VmDeleteComponent } from './vm-delete.component';
+export {VmDeleteComponent} from './vm-delete.component';

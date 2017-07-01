@@ -1,1 +1,1 @@
-export { TunableListComponent } from './tunable-list.component';
+export {TunableListComponent} from './tunable-list.component';

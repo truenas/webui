@@ -1,1 +1,1 @@
-export { PluginListComponent } from './plugin-list.component';
+export {PluginListComponent} from './plugin-list.component';

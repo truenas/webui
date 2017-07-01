@@ -1,0 +1,4 @@
+{
+    "tslint.enable": true,
+    "vsicons.presets.angular": true
+}

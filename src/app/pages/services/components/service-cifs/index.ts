@@ -1,1 +1,1 @@
-export { ServiceCIFSComponent } from './service-cifs.component';
+export {ServiceCIFSComponent} from './service-cifs.component';

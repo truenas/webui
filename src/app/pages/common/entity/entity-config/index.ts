@@ -1,1 +1,1 @@
-export { EntityConfigComponent } from './entity-config.component';
+export {EntityConfigComponent} from './entity-config.component';

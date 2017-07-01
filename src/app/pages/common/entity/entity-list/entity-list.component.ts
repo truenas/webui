@@ -1,16 +1,15 @@
-import { Component, Input, OnInit, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {Subscription} from 'rxjs';
 
-import { GlobalState } from '../../../../global.state';
-import { RestService } from '../../../../services/rest.service';
-import { EntityUtils } from '../utils';
-
-import { Subscription } from 'rxjs';
+import {GlobalState} from '../../../../global.state';
+import {RestService} from '../../../../services/rest.service';
+import {EntityUtils} from '../utils';
 
 @Component({
-  selector: 'entity-list',
-  templateUrl: './entity-list.component.html',
-  styleUrls: ['./entity-list.component.css']
+  selector : 'entity-list',
+  templateUrl : './entity-list.component.html',
+  styleUrls : [ './entity-list.component.css' ]
 })
 export class EntityListComponent implements OnInit {
 
@@ -26,24 +25,25 @@ export class EntityListComponent implements OnInit {
   public numPages: number = 1;
   public length: number = 0;
   public config: any = {
-    paging: true,
-    sorting: { columns: this.columns },
+    paging : true,
+    sorting : {columns : this.columns},
   };
 
-  constructor(protected rest: RestService, protected router: Router, protected _state: GlobalState, protected _eRef: ElementRef) { }
+  constructor(protected rest: RestService, protected router: Router,
+              protected _state: GlobalState, protected _eRef: ElementRef) {}
 
   ngOnInit() {
     if (this.conf.preInit) {
-        this.conf.preInit(this);
+      this.conf.preInit(this);
     }
     this.getData();
     if (this.conf.afterInit) {
-        this.conf.afterInit(this);
+      this.conf.afterInit(this);
     }
   }
 
   getData() {
-    let offset = this.itemsPerPage * (this.page - 1)
+    let offset = this.itemsPerPage * (this.page - 1);
     let sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -56,19 +56,22 @@ export class EntityListComponent implements OnInit {
       }
     }
 
-    //options = {limit: this.itemsPerPage, offset: offset};
-    options = { limit: 0 };
+    // options = {limit: this.itemsPerPage, offset: offset};
+    options = {limit : 0};
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
 
-    this.busy = this.rest.get(this.conf.resource_name, options).subscribe((res) => {
-      this.length = res.total;
-      this.rows = new EntityUtils().flattenData(res.data);
-    });
+    this.busy =
+        this.rest.get(this.conf.resource_name, options).subscribe((res) => {
+          this.length = res.total;
+          this.rows = new EntityUtils().flattenData(res.data);
+        });
   }
 
-  onChangeTable(config, page: any = { page: this.page, itemsPerPage: this.itemsPerPage }) {
+  onChangeTable(
+      config,
+      page: any = {page : this.page, itemsPerPage : this.itemsPerPage}) {
     if (config.filtering) {
       Object.assign(this.config.filtering, config.filtering);
     }
@@ -94,18 +97,14 @@ export class EntityListComponent implements OnInit {
     } else {
       return [
         {
-          id: "edit",
-          label: "Edit",
-          onClick: (row) => {
-            this.doEdit(row.id);
-          },
+          id : "edit",
+          label : "Edit",
+          onClick : (row) => { this.doEdit(row.id); },
         },
         {
-          id: "delete",
-          label: "Delete",
-          onClick: (row) => {
-            this.doDelete(row.id);
-          },
+          id : "delete",
+          label : "Delete",
+          onClick : (row) => { this.doDelete(row.id); },
         },
       ]
     }
@@ -131,11 +130,12 @@ export class EntityListComponent implements OnInit {
   }
 
   doEdit(id) {
-    this.router.navigate(new Array('/pages').concat(this.conf.route_edit).concat(id));
+    this.router.navigate(
+        new Array('/pages').concat(this.conf.route_edit).concat(id));
   }
 
   doDelete(id) {
-    this.router.navigate(new Array('/pages').concat(this.conf.route_delete).concat(id));
+    this.router.navigate(
+        new Array('/pages').concat(this.conf.route_delete).concat(id));
   }
-
 }

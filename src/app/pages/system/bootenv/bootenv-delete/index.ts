@@ -1,1 +1,1 @@
-export { BootEnvironmentDeleteComponent } from './bootenv-delete.component';
+export {BootEnvironmentDeleteComponent} from './bootenv-delete.component';

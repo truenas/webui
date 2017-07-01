@@ -1,36 +1,29 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgaModule } from '../../theme/nga.module';
-import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
-import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
+import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 
-import { EntityModule } from '../common/entity/entity.module';
-import { routing }       from './users.routing';
+import {NgaModule} from '../../theme/nga.module';
+import {EntityModule} from '../common/entity/entity.module';
 
-import { UserListComponent } from './user-list/';
-import { UserAddComponent } from './user-add/';
-import { UserEditComponent } from './user-edit/';
-import { UserFormComponent } from './user-form/';
-import { UserDeleteComponent } from './user-delete/';
+import {UserDeleteComponent} from './user-delete/';
+import {UserFormComponent} from './user-form/';
+import {UserListComponent} from './user-list/';
+import {routing} from './users.routing';
 
 @NgModule({
-  imports: [
-    EntityModule,
-    DynamicFormsCoreModule.forRoot(),
-    DynamicFormsBootstrapUIModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule,
-    routing
+  imports : [
+    EntityModule, DynamicFormsCoreModule.forRoot(),
+    DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
+    ReactiveFormsModule, NgaModule, routing
   ],
-  declarations: [
+  declarations : [
     UserListComponent,
     UserFormComponent,
     UserDeleteComponent,
   ],
-  providers: [
-  ]
+  providers : []
 })
-export class UsersModule {}
+export class UsersModule {
+}

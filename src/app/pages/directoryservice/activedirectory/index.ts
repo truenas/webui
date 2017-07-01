@@ -1,1 +1,1 @@
-export { ActiveDirectoryComponent } from './activedirectory.component';
+export {ActiveDirectoryComponent} from './activedirectory.component';

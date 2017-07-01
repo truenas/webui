@@ -1,1 +1,1 @@
-export { ConfigurationComponent } from './configuration.component';
+export {ConfigurationComponent} from './configuration.component';

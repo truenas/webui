@@ -1,1 +1,1 @@
-export { StaticRouteFormComponent } from './staticroute-form.component';
+export {StaticRouteFormComponent} from './staticroute-form.component';

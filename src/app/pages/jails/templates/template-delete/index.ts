@@ -1,1 +1,1 @@
-export { TemplateDeleteComponent } from './template-delete.component.ts';
+export {TemplateDeleteComponent} from './template-delete.component';

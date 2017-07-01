@@ -1,1 +1,1 @@
-export { InterfacesDeleteComponent } from './interfaces-delete.component';
+export {InterfacesDeleteComponent} from './interfaces-delete.component';

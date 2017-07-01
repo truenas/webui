@@ -1,51 +1,59 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {
+  DynamicCheckboxModel,
+  DynamicFormControlModel,
+  DynamicFormService,
+  DynamicInputModel,
+  DynamicRadioGroupModel,
+  DynamicSelectModel,
+  DynamicTextAreaModel
+} from '@ng2-dynamic-forms/core';
 
-import { DynamicFormControlModel, DynamicFormService, DynamicCheckboxModel, DynamicInputModel, DynamicSelectModel, DynamicTextAreaModel, DynamicRadioGroupModel } from '@ng2-dynamic-forms/core';
-import { RestService } from '../../../../services/';
+import {RestService} from '../../../../services/';
 
 @Component({
-  selector: 'app-nfs-edit',
-  template: `<entity-edit [conf]="this"></entity-edit>`
+  selector : 'app-nfs-edit',
+  template : `<entity-edit [conf]="this"></entity-edit>`
 })
 export class NFSEditComponent {
 
   protected resource_name: string = 'sharing/nfs/';
-  protected route_delete: string[] = ['sharing', 'nfs', 'delete'];
-  protected route_success: string[] = ['sharing', 'nfs'];
+  protected route_delete: string[] = [ 'sharing', 'nfs', 'delete' ];
+  protected route_success: string[] = [ 'sharing', 'nfs' ];
 
-  protected formModel: DynamicFormControlModel[] = [
+  public formModel: DynamicFormControlModel[] = [
     new DynamicInputModel({
-      id: 'nfs_comment',
-      label: 'Comment',
+      id : 'nfs_comment',
+      label : 'Comment',
     }),
     new DynamicInputModel({
-      id: 'path',
-      label: 'Path',
+      id : 'path',
+      label : 'Path',
     }),
     new DynamicTextAreaModel({
-      id: 'nfs_network',
-      label: 'Network',
+      id : 'nfs_network',
+      label : 'Network',
     }),
     new DynamicTextAreaModel({
-      id: 'nfs_hosts',
-      label: 'Hosts',
+      id : 'nfs_hosts',
+      label : 'Hosts',
     }),
     new DynamicCheckboxModel({
-      id: 'nfs_alldirs',
-      label: 'All dirs',
+      id : 'nfs_alldirs',
+      label : 'All dirs',
     }),
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected formService: DynamicFormService) {
+  constructor(protected router: Router, protected route: ActivatedRoute,
+              protected rest: RestService,
+              protected formService: DynamicFormService) {}
 
-  }
-
-  afterInit(entityEdit: any) {
-  }
+  afterInit(entityEdit: any) {}
 
   initial(entityEdit) {
-    entityEdit.formGroup.controls.path.setValue(entityEdit.data.nfs_paths.join(' '));
+    entityEdit.formGroup.controls.path.setValue(
+        entityEdit.data.nfs_paths.join(' '));
   }
 
   clean(data) {
@@ -53,5 +61,4 @@ export class NFSEditComponent {
     delete data.path;
     return data;
   }
-
 }

@@ -1,1 +1,1 @@
-export { GroupEditComponent } from './group-edit.component';
+export {GroupEditComponent} from './group-edit.component';

@@ -1,1 +1,1 @@
-export { ServiceAFPComponent } from './service-afp.component';
+export {ServiceAFPComponent} from './service-afp.component';

@@ -1,1 +1,1 @@
-export { ServiceSNMPComponent } from './service-snmp.component';
+export {ServiceSNMPComponent} from './service-snmp.component';

@@ -1,1 +1,1 @@
-export { LaggListComponent } from './lagg-list.component';
+export {LaggListComponent} from './lagg-list.component';

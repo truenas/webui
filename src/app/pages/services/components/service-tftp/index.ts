@@ -1,1 +1,1 @@
-export { ServiceTFTPComponent } from './service-tftp.component';
+export {ServiceTFTPComponent} from './service-tftp.component';

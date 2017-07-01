@@ -1,1 +1,1 @@
-export { ServiceFTPComponent } from './service-ftp.component';
+export {ServiceFTPComponent} from './service-ftp.component';

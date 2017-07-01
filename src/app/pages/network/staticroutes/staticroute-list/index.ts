@@ -1,1 +1,1 @@
-export { StaticRouteListComponent } from './staticroute-list.component';
+export {StaticRouteListComponent} from './staticroute-list.component';

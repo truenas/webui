@@ -1,1 +1,1 @@
-export { CommonFormComponent } from './form.component';
+export {CommonFormComponent} from './form.component';

@@ -1,1 +1,1 @@
-export { InitiatorFormComponent } from './initiator-form.component';
+export {InitiatorFormComponent} from './initiator-form.component';

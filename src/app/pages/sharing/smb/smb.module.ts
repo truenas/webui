@@ -1,36 +1,31 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgaModule } from '../../../theme/nga.module';
-import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
-import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
+import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 
-import { EntityModule } from '../../common/entity/entity.module';
-import { routing } from './smb.routing';
+import {NgaModule} from '../../../theme/nga.module';
+import {EntityModule} from '../../common/entity/entity.module';
 
-import { SMBListComponent } from './smb-list/';
-import { SMBAddComponent } from './smb-add/';
-import { SMBEditComponent } from './smb-edit/';
-import { SMBDeleteComponent } from './smb-delete/';
+import {SMBAddComponent} from './smb-add/';
+import {SMBDeleteComponent} from './smb-delete/';
+import {SMBEditComponent} from './smb-edit/';
+import {SMBListComponent} from './smb-list/';
+import {routing} from './smb.routing';
 
 @NgModule({
-  imports: [
-    EntityModule,
-    DynamicFormsCoreModule.forRoot(),
-    DynamicFormsBootstrapUIModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule,
-    routing
+  imports : [
+    EntityModule, DynamicFormsCoreModule.forRoot(),
+    DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
+    ReactiveFormsModule, NgaModule, routing
   ],
-  declarations: [
+  declarations : [
     SMBListComponent,
     SMBAddComponent,
     SMBEditComponent,
     SMBDeleteComponent,
   ],
-  providers: [
-  ]
+  providers : []
 })
-export class SMBModule { }
+export class SMBModule {
+}

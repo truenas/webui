@@ -1,1 +1,1 @@
-export { CertificateEditComponent } from './certificate-edit.component';
+export {CertificateEditComponent} from './certificate-edit.component';

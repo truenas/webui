@@ -1,41 +1,52 @@
-import { ApplicationRef, Component, Input, Injector, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ApplicationRef,
+  Component,
+  Injector,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Subscription} from 'rxjs';
 
-import { RestService, WebSocketService } from '../../../../services/';
-
-import { Subscription } from 'rxjs';
-import { EntityUtils } from '../../../common/entity/utils';
+import {RestService, WebSocketService} from '../../../../services/';
+import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({
-  selector: 'snapshot-rollback',
-  templateUrl: './snapshot-rollback.component.html'
+  selector : 'snapshot-rollback',
+  templateUrl : './snapshot-rollback.component.html'
 })
-export class SnapshotRollbackComponent implements OnInit{
+export class SnapshotRollbackComponent implements OnInit {
 
-  protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = ['storage', 'snapshots'];
-  protected pk: string;
+  public resource_name: string = 'storage/snapshot';
+  public route_success: string[] = [ 'storage', 'snapshots' ];
+  public pk: string;
+  // add success and error messages
+  public error: any;
+  public success: any;
+  public busy: Subscription;
 
-
-  constructor(protected router: Router, protected route: ActivatedRoute, protected rest: RestService, protected _injector: Injector, protected _appRef: ApplicationRef) {
-  }
+  constructor(protected router: Router, protected route: ActivatedRoute,
+              protected rest: RestService, protected _injector: Injector,
+              protected _appRef: ApplicationRef) {}
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-        this.pk = params['pk'];
-    });
+    this.route.params.subscribe(params => { this.pk = params['pk']; });
   }
 
   doSubmit() {
-    let data = {"force": true};
+    let data = {"force" : true};
 
-    this.rest.post(this.resource_name + '/' + this.pk + '/rollback/', {
-      body: JSON.stringify(data),
-    }).subscribe((res) => {
-      this.router.navigate(new Array('/pages').concat(this.route_success));
-    }, (res) => {
-      new EntityUtils().handleError(this, res);
-    });
+    this.rest
+        .post(this.resource_name + '/' + this.pk + '/rollback/', {
+          body : JSON.stringify(data),
+        })
+        .subscribe(
+            (res) => {
+              this.router.navigate(
+                  new Array('/pages').concat(this.route_success));
+            },
+            (res) => { new EntityUtils().handleError(this, res); });
   }
 
   doCancel() {

@@ -1,1 +1,1 @@
-export { JailListComponent } from './jail-list.component';
+export {JailListComponent} from './jail-list.component';

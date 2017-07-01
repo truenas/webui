@@ -1,1 +1,1 @@
-export { LaggDeleteComponent } from './lagg-delete.component';
+export {LaggDeleteComponent} from './lagg-delete.component';

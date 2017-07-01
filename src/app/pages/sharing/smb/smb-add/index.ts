@@ -1,1 +1,1 @@
-export { SMBAddComponent } from './smb-add.component';
+export {SMBAddComponent} from './smb-add.component';

@@ -1,1 +1,1 @@
-export { ConfigResetComponent } from './config-reset.component';
+export {ConfigResetComponent} from './config-reset.component';

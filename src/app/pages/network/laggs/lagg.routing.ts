@@ -1,14 +1,13 @@
-import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {ModuleWithProviders} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 
-import { LaggListComponent } from './lagg-list/';
-import { LaggFormComponent } from './lagg-form/';
-import { LaggDeleteComponent } from './lagg-delete/';
-
+import {LaggDeleteComponent} from './lagg-delete/';
+import {LaggFormComponent} from './lagg-form/';
+import {LaggListComponent} from './lagg-list/';
 
 export const routes: Routes = [
-  { path: '', component: LaggListComponent },
-  { path: 'add', component: LaggFormComponent },
-  { path: 'delete/:pk', component: LaggDeleteComponent },
+  {path : '', component : LaggListComponent},
+  {path : 'add', component : LaggFormComponent},
+  {path : 'delete/:pk', component : LaggDeleteComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

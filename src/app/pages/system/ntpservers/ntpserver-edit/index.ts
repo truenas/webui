@@ -1,1 +1,1 @@
-export { NTPServerEditComponent } from './ntpserver-edit.component';
+export {NTPServerEditComponent} from './ntpserver-edit.component';

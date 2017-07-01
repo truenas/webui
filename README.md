@@ -6,7 +6,7 @@ This is the project for the new angular.io (4.x) WebUI for FreeNAS 11. It is mea
 # Development requirements
 
   - npm 3
-  - Node.js >= 5, < 7
+  - Node.js >= 5
   - Running FreeNAS 11 Nightly (Virtual?) Machine
 
 
@@ -38,22 +38,33 @@ Install npm packages:
 $ npm install
 ```
 
-or (if you installed npm3 with npm4 or later)
-
-```sh
-$ npm3 install
-```
-
 Start development server pointing to your FreeNAS machine (in this example, address is 192.168.0.50):
 
-```sh
-$ env REMOTE=192.168.0.50 npm run server:dev
+Edit the environment file 
+```
+src/environments/environment.ts
+export const environment = {
+  host: '192.168.0.50',
+  port:  4200,
+  server: '192.168.0.50',
+  remote: '192.168.0.50',
+  production: false
+};
+```
+then edit the ip address in the proxy.config.json
+```
+proxy.config.json
+{
+    "/api/*": {
+        "target": "http://192.168.0.50",
+        "secure": false,
+        "loglevel": "debug"
+    }
+}
 ```
 
-or
+To start run 
+```npm start```
 
-```sh
-$ env REMOTE=192.168.0.50 npm3 run server:dev
-```
 
-This should open the browser with the WebUI, by default http://localhost:3000.
+This should open the browser with the WebUI, by default http://localhost:4200.

@@ -1,1 +1,1 @@
-export { NTPServerAddComponent } from './ntpserver-add.component';
+export {NTPServerAddComponent} from './ntpserver-add.component';

@@ -1,1 +1,1 @@
-export { ServiceS3Component } from './service-s3.component';
+export {ServiceS3Component} from './service-s3.component';

@@ -1,55 +1,49 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgaModule } from '../../theme/nga.module';
-import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
-import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
+import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 
-import { EntityModule } from '../common/entity/entity.module';
-import { routing }       from './vm.routing';
+import {
+  VmService
+} from '../../services'
 
-import { DeviceAddComponent } from './devices/device-add/device-add.component';
+    @NgModule({
+      imports : [
+        EntityModule, DynamicFormsCoreModule.forRoot(),
+        DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
+        ReactiveFormsModule, NgaModule, routing
+      ],
+      declarations : [
+        VmListComponent,
+        VmAddComponent,
+        VmEditComponent,
+        VmDeleteComponent,
+        DeviceListComponent,
+        DeviceCdromAddComponent,
+        DeviceAddComponent,
+        DeviceNicAddComponent,
+        DeviceDiskAddComponent,
+        DeviceVncAddComponent,
+        DeviceDeleteComponent,
+        DeviceEditComponent,
+      ],
+      providers : [ VmService ]
+    }) export class VmModule {} import {
+      NgaModule
+    } from '../../theme/nga.module';
+import {EntityModule} from '../common/entity/entity.module';
 
-import { VmListComponent } from './vm-list/';
-import { VmAddComponent } from './vm-add/';
-import { VmEditComponent } from './vm-edit/';
-import { VmDeleteComponent } from './vm-delete/';
-import { DeviceListComponent } from './devices/device-list';
-import { DeviceCdromAddComponent } from './devices/device-cdrom-add/';
-import { DeviceNicAddComponent } from './devices/device-nic-add/';
-import { DeviceDiskAddComponent } from './devices/device-disk-add/';
-import { DeviceVncAddComponent } from './devices/device-vnc-add/';
-import { DeviceDeleteComponent } from './devices/device-delete/';
-import { DeviceEditComponent } from './devices/device-edit/';
-import { VmService } from '../../services'
-
-@NgModule({
-  imports: [
-    EntityModule,
-    DynamicFormsCoreModule.forRoot(),
-    DynamicFormsBootstrapUIModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule,
-    routing
-  ],
-  declarations: [
-    VmListComponent,
-    VmAddComponent,
-    VmEditComponent,
-    VmDeleteComponent,
-    DeviceListComponent,
-    DeviceCdromAddComponent,
-    DeviceAddComponent,
-    DeviceNicAddComponent,
-    DeviceDiskAddComponent,
-    DeviceVncAddComponent,
-    DeviceDeleteComponent,
-    DeviceEditComponent,
-  ],
-  providers: [
-    VmService
-  ]
-})
-export class VmModule {}
+import {DeviceAddComponent} from './devices/device-add/device-add.component';
+import {DeviceCdromAddComponent} from './devices/device-cdrom-add/';
+import {DeviceDeleteComponent} from './devices/device-delete/';
+import {DeviceDiskAddComponent} from './devices/device-disk-add/';
+import {DeviceEditComponent} from './devices/device-edit/';
+import {DeviceListComponent} from './devices/device-list';
+import {DeviceNicAddComponent} from './devices/device-nic-add/';
+import {DeviceVncAddComponent} from './devices/device-vnc-add/';
+import {VmAddComponent} from './vm-add/';
+import {VmDeleteComponent} from './vm-delete/';
+import {VmEditComponent} from './vm-edit/';
+import {VmListComponent} from './vm-list/';
+import {routing} from './vm.routing';

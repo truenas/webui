@@ -1,1 +1,1 @@
-export { CertificateCSRComponent } from './certificate-csr.component';
+export {CertificateCSRComponent} from './certificate-csr.component';

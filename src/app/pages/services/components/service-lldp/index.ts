@@ -1,1 +1,1 @@
-export { ServiceLLDPComponent } from './service-lldp.component';
+export {ServiceLLDPComponent} from './service-lldp.component';

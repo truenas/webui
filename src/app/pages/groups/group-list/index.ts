@@ -1,1 +1,1 @@
-export { GroupListComponent } from './group-list.component';
+export {GroupListComponent} from './group-list.component';

@@ -1,53 +1,45 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { NgaModule } from '../../../theme/nga.module';
-import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
-import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
+import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
+import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
+import {DragulaModule} from 'ng2-dragula';
 
-import { EntityModule } from '../../common/entity/entity.module';
-import { routing }       from './volumes.routing';
+import {NgaModule} from '../../../theme/nga.module';
+import {EntityModule} from '../../common/entity/entity.module';
 
-import { DragulaModule } from 'ng2-dragula';
-
-import { DatasetAddComponent } from './datasets/dataset-add/';
-import { ZvolAddComponent } from './zvol/zvol-add/';
-import { ZvolEditComponent } from './zvol/zvol-edit/';
-import { ZvolDeleteComponent } from './zvol/zvol-delete/';
-import { DatasetDeleteComponent } from './datasets/dataset-delete/';
-import { VolumesListComponent } from './volumes-list/';
-import { ManagerComponent, DiskComponent, VdevComponent } from './manager/';
-//import { VolumesEditComponent } from './volumes-edit/';
-import { VolumeDeleteComponent } from './volume-delete/';
+import {DatasetAddComponent} from './datasets/dataset-add/';
+import {DatasetDeleteComponent} from './datasets/dataset-delete/';
+import {DiskComponent, ManagerComponent, VdevComponent} from './manager/';
+// import { VolumesEditComponent } from './volumes-edit/';
+import {VolumeDeleteComponent} from './volume-delete/';
+import {VolumesListComponent} from './volumes-list/';
+import {routing} from './volumes.routing';
+import {ZvolAddComponent} from './zvol/zvol-add/';
+import {ZvolDeleteComponent} from './zvol/zvol-delete/';
+import {ZvolEditComponent} from './zvol/zvol-edit/';
 
 @NgModule({
-  imports: [
-    RouterModule,
-    DragulaModule,
-    EntityModule,
-    DynamicFormsCoreModule.forRoot(),
-    DynamicFormsBootstrapUIModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule,
-    routing
+  imports : [
+    RouterModule, DragulaModule, EntityModule, DynamicFormsCoreModule.forRoot(),
+    DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
+    ReactiveFormsModule, NgaModule, routing
   ],
-  declarations: [
+  declarations : [
     VolumesListComponent,
     ManagerComponent,
     DiskComponent,
     VdevComponent,
     DatasetAddComponent,
     DatasetDeleteComponent,
-    //VolumesEditComponent,
+    // VolumesEditComponent,
     VolumeDeleteComponent,
     ZvolAddComponent,
     ZvolDeleteComponent,
     ZvolEditComponent,
   ],
-  providers: [
-  ]
+  providers : []
 })
-export class VolumesModule {}
+export class VolumesModule {
+}

@@ -1,1 +1,1 @@
-export { ZvolDeleteComponent } from './zvol-delete.component';
+export {ZvolDeleteComponent} from './zvol-delete.component';

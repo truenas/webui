@@ -1,1 +1,1 @@
-export { BootEnvironmentCloneComponent } from './bootenv-clone.component';
+export {BootEnvironmentCloneComponent} from './bootenv-clone.component';

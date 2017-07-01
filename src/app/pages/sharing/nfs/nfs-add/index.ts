@@ -1,1 +1,1 @@
-export { NFSAddComponent } from './nfs-add.component';
+export {NFSAddComponent} from './nfs-add.component';

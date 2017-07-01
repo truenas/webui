@@ -1,1 +1,1 @@
-export { CertificateAuthorityDeleteComponent } from './ca-delete.component';
+export {CertificateAuthorityDeleteComponent} from './ca-delete.component';

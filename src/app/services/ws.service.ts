@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { UUID } from 'angular2-uuid';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {UUID} from 'angular2-uuid';
+import {LocalStorage} from 'ng2-webstorage';
+import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
-
-import { Router } from '@angular/router';
-import { LocalStorage } from 'ng2-webstorage';
+import {environment} from '../../environments/environment';
 
 @Injectable()
 export class WebSocketService {
@@ -20,7 +20,7 @@ export class WebSocketService {
   @LocalStorage() password;
   redirectUrl: string = '';
 
-  private subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
+  public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
   constructor(private _router: Router) {
     this.onOpenSubject = new Subject();
@@ -30,7 +30,9 @@ export class WebSocketService {
   }
 
   connect() {
-    this.socket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host + '/websocket');
+    this.socket = new WebSocket(
+        (window.location.protocol == 'https:' ? 'wss://' : 'ws://') +
+        environment.remote + '/websocket');
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);
@@ -38,15 +40,11 @@ export class WebSocketService {
 
   onopen(event) {
     this.onOpenSubject.next(true);
-    this.send({
-      "msg": "connect",
-      "version": "1",
-      "support": ["1"]
-    });
+    this.send({"msg" : "connect", "version" : "1", "support" : [ "1" ]});
   }
 
   onconnect() {
-    while(this.pendingMessages.length > 0) {
+    while (this.pendingMessages.length > 0) {
       let payload = this.pendingMessages.pop();
       this.send(payload);
     }
@@ -56,12 +54,12 @@ export class WebSocketService {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
-    this._router.navigate(['/login']);
+    this._router.navigate([ '/login' ]);
   }
 
   ping() {
-    if(this.connected) {
-      this.socket.send(JSON.stringify({"msg": "ping", "id": UUID.UUID()}));
+    if (this.connected) {
+      this.socket.send(JSON.stringify({"msg" : "ping", "id" : UUID.UUID()}));
       setTimeout(this.ping.bind(this), 20000);
     }
   }
@@ -69,47 +67,44 @@ export class WebSocketService {
   onmessage(msg) {
 
     try {
-        var data = JSON.parse(msg.data);
+      var data = JSON.parse(msg.data);
     } catch (e) {
-        console.warn(`Malformed response: "${msg.data}"`);
-        return;
+      console.warn(`Malformed response: "${msg.data}"`);
+      return;
     }
 
-    if(data.msg == "result") {
+    if (data.msg == "result") {
       let call = this.pendingCalls.get(data.id);
       this.pendingCalls.delete(data.id);
-      if(data.error) {
+      if (data.error) {
         console.log("Error: ", data.error);
         call.observer.error(data.error);
       }
-      if(call.observer) {
+      if (call.observer) {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if(data.msg == "connected") {
+    } else if (data.msg == "connected") {
       this.connected = true;
       setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
-    } else if(data.msg == "added") {
+    } else if (data.msg == "added") {
       // pass
-    } else if(data.msg == "changed") {
+    } else if (data.msg == "changed") {
       this.subscriptions.forEach((v, k) => {
-        if(k == '*' || k == data.collection) {
-          v.forEach((item) => {
-            item.next(data);
-          });
+        if (k == '*' || k == data.collection) {
+          v.forEach((item) => { item.next(data); });
         }
       });
-    } else if(data.msg == "pong") {
+    } else if (data.msg == "pong") {
       // pass
     } else {
       console.log("Unknown message: ", data);
     }
-
   }
 
   send(payload) {
-    if(this.socket.readyState == WebSocket.OPEN) {
+    if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
     } else {
       this.pendingMessages.push(payload);
@@ -118,10 +113,10 @@ export class WebSocketService {
 
   subscribe(name): Observable<any> {
     let source = Observable.create((observer) => {
-      if(this.subscriptions.has(name)) {
+      if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
-        this.subscriptions.set(name, [observer]);
+        this.subscriptions.set(name, [ observer ]);
       }
     });
     return source;
@@ -131,7 +126,7 @@ export class WebSocketService {
     // FIXME: just does not have a good performance :)
     this.subscriptions.forEach((v, k) => {
       v.forEach((item) => {
-        if(item === observer) {
+        if (item === observer) {
           v.splice(v.indexOf(item), 1);
         }
       });
@@ -141,34 +136,29 @@ export class WebSocketService {
   call(method, params?: any): Observable<any> {
 
     let uuid = UUID.UUID();
-    let payload = {
-      "id": uuid,
-      "msg": "method",
-      "method": method,
-      "params": params
-    };
+    let payload =
+        {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
 
     let source = Observable.create((observer) => {
       this.pendingCalls.set(uuid, {
-        "method": method,
-        "args": params,
-        "observer": observer,
+        "method" : method,
+        "args" : params,
+        "observer" : observer,
       });
 
       this.send(payload);
     });
 
     return source;
-
   }
 
   job(method, params?: any): Observable<any> {
     let source = Observable.create((observer) => {
       this.call(method, params).subscribe((job_id) => {
         this.subscribe("core.get_jobs").subscribe((res) => {
-          if(res.id == job_id) {
+          if (res.id == job_id) {
             observer.next(res.fields);
-            if(res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
+            if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
               observer.complete();
             }
           }
@@ -182,15 +172,15 @@ export class WebSocketService {
     this.username = username;
     this.password = password;
     return Observable.create((observer) => {
-      this.call('auth.login', [username, password]).subscribe((result) => {
-        if(result === true) {
+      this.call('auth.login', [ username, password ]).subscribe((result) => {
+        if (result === true) {
           this.loggedIn = true;
 
           // Subscribe to all events by default
           this.send({
-            "id": UUID.UUID(),
-            "name": "*",
-            "msg": "sub",
+            "id" : UUID.UUID(),
+            "name" : "*",
+            "msg" : "sub",
           });
         } else {
           this.loggedIn = false;
@@ -205,7 +195,6 @@ export class WebSocketService {
     this.loggedIn = false;
     this.username = '';
     this.password = '';
-    this._router.navigate(['/login']);
+    this._router.navigate([ '/login' ]);
   }
-
 }

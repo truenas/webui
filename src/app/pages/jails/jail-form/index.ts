@@ -1,1 +1,1 @@
-export { JailFormComponent } from './jail-form.component';
+export {JailFormComponent} from './jail-form.component';

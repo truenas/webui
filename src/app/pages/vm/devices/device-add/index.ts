@@ -1,1 +1,1 @@
-export { EntityAddComponent } from './entity-add.component';
+export {DeviceAddComponent} from './device-add.component';

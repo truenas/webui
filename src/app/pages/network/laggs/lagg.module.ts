@@ -1,33 +1,27 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgaModule } from '../../../theme/nga.module';
+import {CommonModule} from '@angular/common';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import { EntityModule } from '../../common/entity/entity.module';
-import { routing }       from './lagg.routing';
+import {NetworkService} from '../../../services';
+import {NgaModule} from '../../../theme/nga.module';
+import {EntityModule} from '../../common/entity/entity.module';
 
-import { LaggListComponent } from './lagg-list/';
-import { LaggFormComponent } from './lagg-form/';
-import { LaggDeleteComponent } from './lagg-delete/';
-
-import { NetworkService } from '../../../services';
+import {LaggDeleteComponent} from './lagg-delete/';
+import {LaggFormComponent} from './lagg-form/';
+import {LaggListComponent} from './lagg-list/';
+import {routing} from './lagg.routing';
 
 @NgModule({
-  imports: [
-    EntityModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule,
+  imports : [
+    EntityModule, CommonModule, FormsModule, ReactiveFormsModule, NgaModule,
     routing
   ],
-  declarations: [
+  declarations : [
     LaggListComponent,
     LaggFormComponent,
     LaggDeleteComponent,
   ],
-  providers: [
-    NetworkService
-  ]
+  providers : [ NetworkService ]
 })
-export class LaggModule {}
+export class LaggModule {
+}

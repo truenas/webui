@@ -1,1 +1,1 @@
-export { JailsConfigurationComponent } from './configuration.component';
+export {JailsConfigurationComponent} from './configuration.component';

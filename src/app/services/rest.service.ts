@@ -1,17 +1,29 @@
-import { Injectable } from '@angular/core';
-import { Http, Headers, Request, RequestMethod, RequestOptions, Response } from '@angular/http';
 import 'rxjs/Rx';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { Observable } from 'rxjs/Observable';
 
-import { WebSocketService } from './ws.service';
+import {Injectable} from '@angular/core';
+import {
+  Headers,
+  Http,
+  Request,
+  RequestMethod,
+  RequestOptions,
+  Response
+} from '@angular/http';
+import {Observable} from 'rxjs/Observable';
+
+import {environment} from '../../environments/environment';
+
+import {WebSocketService} from './ws.service';
 
 @Injectable()
 export class RestService {
 
   name: string;
+  // needs to be more dynamic this should be changed later to use http or https
+  // depending on if it is available
   private baseUrl: string = "/api/v1.0/";
   public openapi: Observable<Object>;
 
@@ -30,57 +42,57 @@ export class RestService {
     let total = null;
     let data = null;
 
-    if(range) {
+    if (range) {
       total = range.split('/');
       total = new Number(total[total.length - 1]);
     }
-    if(res.status !== 204) {
+    if (res.status !== 204) {
       try {
         data = res.json();
-      } catch(e) {
+      } catch (e) {
         data = res.text();
       }
     }
 
     return {
-      data: data,
-      code: res.status,
-      total: total,
+      data : data,
+      code : res.status,
+      total : total,
     };
   }
 
   handleError(error: any) {
     return Observable.throw({
-      error: error.json(),
-      code: error.status,
+      error : error.json(),
+      code : error.status,
     });
   }
 
   request(method: RequestMethod, path: string, options: Object) {
     let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + btoa(this.ws.username + ':' + this.ws.password)
+      'Content-Type' : 'application/json',
+      'Authorization' :
+          'Basic ' + btoa(this.ws.username + ':' + this.ws.password)
     });
-    let requestOptions:Object = Object.assign({
-      method: method,
-      url: this.baseUrl + path,
-      headers: headers
-    }, options);
+    let requestOptions: Object = Object.assign(
+        {method : method, url : this.baseUrl + path, headers : headers},
+        options);
     return this.http.request(new Request(new RequestOptions(requestOptions)))
-      .map(this.handleResponse).catch(this.handleError);
+        .map(this.handleResponse)
+        .catch(this.handleError);
   }
 
   buildOptions(options) {
-    let result:Object = new Object();
-    let search:Array<String> = [];
-    for(let i in options) {
-       if(i == 'offset') {
-         search.push("offset(" + options[i] + ")=");
-       } else if(i == 'sort') {
-         search.push("sort(" + options[i] + ")=");
-       } else {
-         search.push(i + "=" + options[i]);
-       }
+    let result: Object = new Object();
+    let search: Array<String> = [];
+    for (let i in options) {
+      if (i == 'offset') {
+        search.push("offset(" + options[i] + ")=");
+      } else if (i == 'sort') {
+        search.push("sort(" + options[i] + ")=");
+      } else {
+        search.push(i + "=" + options[i]);
+      }
     }
     result['search'] = search.join("&");
     return result;
@@ -101,5 +113,4 @@ export class RestService {
   delete(path: string, options: Object) {
     return this.request(RequestMethod.Delete, path, options);
   }
-
 }

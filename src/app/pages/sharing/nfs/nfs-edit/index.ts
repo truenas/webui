@@ -1,1 +1,1 @@
-export { NFSEditComponent } from './nfs-edit.component';
+export {NFSEditComponent} from './nfs-edit.component';
