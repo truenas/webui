@@ -5,7 +5,7 @@ This is the project for the new angular.io (4.x) WebUI for FreeNAS 11. It is mea
 
 # Development requirements
 
-  - npm 3
+  - npm >= 5
   - Node.js >= 5
   - Running FreeNAS 11 Nightly (Virtual?) Machine
 
@@ -16,13 +16,13 @@ Install the development requirements (FreeBSD):
 
 ```sh
 # pkg install node6
-# pkg install npm3
+# pkg install npm
 ```
 
 On some Operating Systems it is quickest to install npm > 3 first then install npm:
 
 ```sh
-# npm install -g npm3
+# npm install -g npm5
 ```
 
 Checkout FreeNAS git repository:
@@ -40,7 +40,7 @@ $ npm install
 
 Start development server pointing to your FreeNAS machine (in this example, address is 192.168.0.50):
 
-Edit the environment file 
+Edit the environment file
 ```
 src/environments/environment.ts
 export const environment = {
@@ -63,7 +63,7 @@ proxy.config.json
 }
 ```
 
-To start run 
+To start run
 ```npm start```
 
 
