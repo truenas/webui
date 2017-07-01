@@ -30,9 +30,17 @@ export class WebSocketService {
   }
 
   connect() {
+    let url ="";
+    if (environment.production){
+      url = window.location.origin
+    }
+    else{
+      url = environment.remote
+    }
+
     this.socket = new WebSocket(
         (window.location.protocol == 'https:' ? 'wss://' : 'ws://') +
-        environment.remote + '/websocket');
+        url + '/websocket');
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);
