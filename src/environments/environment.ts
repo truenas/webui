@@ -10,10 +10,9 @@ let PROVIDERS: any[] = [
 ];
 
 export const environment = {
-  remote : document.location.host,
-  // "192.168.254.179",
+  remote : "192.168.254.179",
   port : 4200,
-  production : true
+  production : false
 };
 
 // Angular debug tools in the dev console
