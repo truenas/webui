@@ -38,31 +38,15 @@ Install npm packages:
 $ npm install
 ```
 
-Start development server pointing to your FreeNAS machine (in this example, address is 192.168.0.50):
+Run the environment configuration script
+(if your ip address changes later you may repeat this step)
 
-Edit the environment file
-```
-src/environments/environment.ts
-export const environment = {
-  remote: '192.168.0.50',
-  port:  4200,
-  production: false
-};
-```
-then edit the ip address in the proxy.config.json
-```
-proxy.config.json
-{
-    "/api/*": {
-        "target": "http://192.168.0.50",
-        "secure": false,
-        "loglevel": "debug"
-    }
-}
+```sh
+$ ./setup_env.py -i <ip address>
 ```
 
 To start run
 ```npm start```
 
 
-This should open the browser with the WebUI, by default http://localhost:4200.
+This should open the browser with the WebUI, by default http://localhost:3000.
