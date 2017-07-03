@@ -44,10 +44,8 @@ Edit the environment file
 ```
 src/environments/environment.ts
 export const environment = {
-  host: '192.168.0.50',
-  port:  4200,
-  server: '192.168.0.50',
   remote: '192.168.0.50',
+  port:  4200,
   production: false
 };
 ```
