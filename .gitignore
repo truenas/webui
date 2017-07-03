@@ -41,3 +41,7 @@ package-lock.json
 # System Files
 .DS_Store
 Thumbs.db
+
+#ip/port config
+proxy.config.json
+src/environments/environment.ts
