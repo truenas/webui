@@ -42,7 +42,7 @@ Run the environment configuration script
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.py -i <ip address>
+$ ./setup_env.js -i <ip address>
 ```
 
 To start run
