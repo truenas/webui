@@ -8,9 +8,7 @@ import {EntityListComponent} from '../../common/entity/entity-list/';
 
 @Component({
   selector : 'app-vm-list',
-  template : `
-  <entity-list [conf]="this"></entity-list>
-  `
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class VmListComponent {
 
@@ -25,13 +23,13 @@ export class VmListComponent {
               protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Name', name : 'name'},
-    {title : 'Description', name : 'description'},
-    {title : 'Info', name : 'info'},
-    {title : 'Virtual CPUs', name : 'vcpus'},
-    {title : 'Memory Size (MiB)', name : 'memory'},
-    {title : 'Boot Loader Type', name : 'bootloader'},
-    {title : 'State', name : 'state'},
+    {name : 'Name', prop : 'name'},
+    {name : 'Description', prop : 'description'},
+    {name : 'Info', prop : 'info'},
+    {name : 'Virtual CPUs', prop : 'vcpus'},
+    {name : 'Memory Size (MiB)', prop : 'memory'},
+    {name : 'Boot Loader Type', prop : 'bootloader'},
+    {name : 'State', prop : 'state'},
   ];
   public config: any = {
     paging : true,
