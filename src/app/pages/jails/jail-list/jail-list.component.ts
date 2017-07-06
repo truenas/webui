@@ -8,9 +8,7 @@ import {EntityListComponent} from '../../common/entity/entity-list/';
 
 @Component({
   selector : 'app-jail-list',
-  template : `
-  <entity-list [conf]="this"></entity-list>
-  `
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class JailListComponent {
 
@@ -22,10 +20,10 @@ export class JailListComponent {
               protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Jail', name : 'jail_host'},
-    {title : 'IPv4 Address', name : 'jail_ipv4'},
-    {title : 'Autostart', name : 'jail_autostart'},
-    {title : 'Status', name : 'jail_status'},
+    {name : 'Jail', prop : 'jail_host'},
+    {name : 'IPv4 Address', prop : 'jail_ipv4'},
+    {name : 'Autostart', prop : 'jail_autostart'},
+    {name : 'Status', prop : 'jail_status'},
   ];
   public config: any = {
     paging : true,
