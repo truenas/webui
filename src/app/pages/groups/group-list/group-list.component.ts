@@ -8,9 +8,7 @@ import {EntityListComponent} from '../../common/entity/entity-list/index';
 
 @Component({
   selector : 'app-group-list',
-  template : `
-    <entity-list [conf]="this"></entity-list>
-  `,
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class GroupListComponent {
 
@@ -20,9 +18,9 @@ export class GroupListComponent {
   protected route_delete: string[] = [ 'groups', 'delete' ];
 
   public columns: Array<any> = [
-    {title : 'Group', name : 'bsdgrp_group'},
-    {title : 'GID', name : 'bsdgrp_gid'},
-    {title : 'Builtin', name : 'bsdgrp_builtin'},
+    {name : 'Group', prop : 'bsdgrp_group'},
+    {name : 'GID', prop : 'bsdgrp_gid'},
+    {name : 'Builtin', prop : 'bsdgrp_builtin'},
   ];
   public config: any = {
     paging : true,
