@@ -7,9 +7,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 
 @Component({
   selector : 'app-storage-list',
-  template : `
-  <entity-list [conf]="this"></entity-list>
-  `
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class StorageListComponent {
 
@@ -22,11 +20,11 @@ export class StorageListComponent {
               protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Jail', name : 'jail'},
-    {title : 'Source', name : 'source'},
-    {title : 'Destination', name : 'destination'},
-    {title : 'Mounted', name : 'mounted'},
-    {title : 'Read-Only', name : 'readonly'},
+    {name : 'Jail', prop : 'jail'},
+    {name : 'Source', prop : 'source'},
+    {name : 'Destination', prop : 'destination'},
+    {name : 'Mounted', prop : 'mounted'},
+    {name : 'Read-Only', prop : 'readonly'},
   ];
   public config: any = {
     paging : true,
