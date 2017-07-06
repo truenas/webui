@@ -9,7 +9,7 @@ import {
   TemplateRef,
   ViewChildren
 } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -113,7 +113,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
           for (let i in this.data) {
             let fg = this.formGroup.controls[i];
             if (fg) {
-              fg.setValue(this.data[i]);
+              if(Array.isArray(this.data[i])){
+                this.setArrayValue(this.data[i], fg, i);
+              } else {
+                fg.setValue(this.data[i]);
+              }
             }
           }
           if (this.conf.initial) {
@@ -242,6 +246,32 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   setValue(name: string, value: any) {
     this.formGroup.controls[name].setValue(value, {emitEvent : true});
+  }
+
+  setArrayValue(data: any[], formArray: any, name: string) {
+    let array_controls: any;
+    for (let i in this.fieldConfig) {
+      let config = this.fieldConfig[i];
+      if (config.name == name) {
+        array_controls = config.formarray;
+      }
+    }
+
+    if(this.conf.preHandler) {
+      data = this.conf.preHandler(data, formArray);
+    }
+
+    data.forEach((value, index) => {
+      this.conf.initialCount += 1;
+      this.conf.initialCount_default += 1;
+
+      let formGroup = this.entityFormService.createFormGroup(array_controls);
+      for (let i in value) {
+        let formControl = formGroup.controls[i];
+        formControl.setValue(value[i]);
+      }
+      formArray.insert(index, formGroup);
+    });
   }
 
   setRelation(config: FieldConfig) {
