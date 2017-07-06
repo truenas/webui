@@ -6,7 +6,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-staticroute-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class StaticRouteListComponent {
 
@@ -19,9 +19,9 @@ export class StaticRouteListComponent {
               protected state: GlobalState) {}
 
   public columns: Array<any> = [
-    {title : 'Destination', name : 'sr_destination'},
-    {title : 'Gateway', name : 'sr_gateway'},
-    {title : 'Description', name : 'sr_description'}
+    {name : 'Destination', prop : 'sr_destination'},
+    {name : 'Gateway', prop : 'sr_gateway'},
+    {name : 'Description', prop : 'sr_description'}
   ];
   public config: any = {
     paging : true,

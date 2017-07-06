@@ -8,7 +8,7 @@ import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-lagg-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class LaggListComponent {
 
@@ -21,8 +21,8 @@ export class LaggListComponent {
               protected state: GlobalState) {}
 
   public columns: Array<any> = [
-    {title : 'Lagg Interface', name : 'lagg_interface'},
-    {title : 'Lagg Protocol', name : 'lagg_protocol'},
+    {name : 'Lagg Interface', prop : 'lagg_interface'},
+    {name : 'Lagg Protocol', prop : 'lagg_protocol'},
   ];
   public config: any = {
     paging : true,

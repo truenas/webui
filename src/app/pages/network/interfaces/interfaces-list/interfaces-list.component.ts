@@ -6,7 +6,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-interfaces-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class InterfacesListComponent {
 
@@ -18,12 +18,12 @@ export class InterfacesListComponent {
   constructor(_rest: RestService, _router: Router, _state: GlobalState) {}
 
   public columns: Array<any> = [
-    {title : 'Interface', name : 'int_interface'},
-    {title : 'Name', name : 'int_name'},
-    {title : 'Media Status', name : 'int_media_status'},
-    {title : 'DHCP', name : 'int_dhcp'},
-    {title : 'IPv4 Addresses', name : 'ipv4_addresses'},
-    {title : 'IPv6 Addresses', name : 'ipv6_addresses'},
+    {name : 'Interface', prop : 'int_interface'},
+    {name : 'Name', prop : 'int_name'},
+    {name : 'Media Status', prop : 'int_media_status'},
+    {name : 'DHCP', prop : 'int_dhcp'},
+    {name : 'IPv4 Addresses', prop : 'ipv4_addresses'},
+    {name : 'IPv6 Addresses', prop : 'ipv6_addresses'},
   ];
   public config: any = {
     paging : true,

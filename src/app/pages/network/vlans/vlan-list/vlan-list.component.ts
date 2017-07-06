@@ -6,7 +6,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-vlan-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class VlanListComponent {
 
@@ -18,10 +18,10 @@ export class VlanListComponent {
   constructor(_rest: RestService, _router: Router, _state: GlobalState) {}
 
   public columns: Array<any> = [
-    {title : 'Vlan Interface', name : 'vlan_vint'},
-    {title : 'Parent Interface', name : 'vlan_pint'},
-    {title : 'Vlan Tag', name : 'vlan_tag'},
-    {title : 'Description', name : 'vlan_description'},
+    {name : 'Vlan Interface', prop : 'vlan_vint'},
+    {name : 'Parent Interface', prop : 'vlan_pint'},
+    {name : 'Vlan Tag', prop : 'vlan_tag'},
+    {name : 'Description', prop : 'vlan_description'},
   ];
   public config: any = {
     paging : true,
