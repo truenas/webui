@@ -7,7 +7,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-volumes-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class VolumesListComponent {
 
@@ -18,10 +18,10 @@ export class VolumesListComponent {
               _eRef: ElementRef) {}
 
   public columns: Array<any> = [
-    {title : 'Name', name : 'name'},
-    {title : 'Status', name : 'status'},
-    {title : 'Available', name : 'avail'},
-    {title : 'Used', name : 'used'},
+    {name : 'Name', prop : 'name'},
+    {name : 'Status', prop : 'status'},
+    {name : 'Available', prop : 'avail'},
+    {name : 'Used', prop : 'used'},
   ];
   public config: any = {
     paging : true,
