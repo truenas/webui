@@ -7,9 +7,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 
 @Component({
   selector : 'app-jail-template-list',
-  template : `
-  <entity-list [conf]="this"></entity-list>
-  `
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class TemplateListComponent {
 
@@ -22,8 +20,9 @@ export class TemplateListComponent {
               protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Name', name : 'jt_name'}, {title : 'URL', name : 'jt_url'},
-    {title : 'Instances', name : 'jt_instances'}
+    {name : 'Name', prop : 'jt_name'}, 
+    {name : 'URL', prop : 'jt_url'},
+    {name : 'Instances', prop : 'jt_instances'}
   ];
 
   public config: any = {
