@@ -1,3 +1,4 @@
+import { SupportComponent } from './support';
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
@@ -19,6 +20,7 @@ export const routes: Routes = [
   {path : 'email', component : EmailComponent},
   {path : 'advanced', component : AdvancedComponent},
   {path : 'update', component : UpdateComponent},
+  {path : 'support', component : SupportComponent},
   {
     path : 'ca',
     loadChildren : 'app/pages/system/ca/ca.module#CertificateAuthorityModule'

@@ -77,6 +77,14 @@ export const PAGES_MENU = [
         selected : false,
         expanded : false,
         order : 0
+      },
+      {
+        path : [ 'system', 'support' ],
+        title : 'Support',
+        icon : 'ion-beer',
+        selected : false,
+        expanded : false,
+        order : 0
       }
     ]
   },

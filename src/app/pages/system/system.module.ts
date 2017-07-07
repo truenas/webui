@@ -11,6 +11,7 @@ import {EntityModule} from '../common/entity/entity.module';
 
 import {AdvancedComponent} from './advanced/';
 import {EmailComponent} from './email/';
+import {SupportComponent} from './support';
 import {
   ConfigResetComponent,
   ConfigSaveComponent,
@@ -34,6 +35,7 @@ import {UpdateComponent} from './update/';
     ConfigUploadComponent,
     ConfigResetComponent,
     UpdateComponent,
+    SupportComponent
   ],
   providers : []
 })
