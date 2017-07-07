@@ -19,6 +19,7 @@ import {FormInputComponent} from '../form-input/form-input.component';
 import {FormPermissionsComponent} from '../form-permissions/form-permissions.component';
 import {FormSelectComponent} from '../form-select/form-select.component';
 import {FormTextareaComponent} from '../form-textarea/form-textarea.component';
+import {FormUploadComponent} from '../form-upload/form-upload.component'
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -27,7 +28,8 @@ const components: {[type: string] : Type<Field>} = {
   checkbox : FormCheckboxComponent,
   textarea : FormTextareaComponent,
   permissions : FormPermissionsComponent,
-  array : FormArrayComponent
+  array : FormArrayComponent,
+  upload : FormUploadComponent
 };
 
 @Directive({selector : '[dynamicField]'})

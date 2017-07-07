@@ -19,6 +19,7 @@ import {FormArrayComponent} from './entity-form/components/form-array/form-array
 import {FormButtonComponent} from './entity-form/components/form-button/form-button.component';
 import {FormCheckboxComponent} from './entity-form/components/form-checkbox/form-checkbox.component';
 import {FormInputComponent} from './entity-form/components/form-input/form-input.component';
+import {FormUploadComponent} from './entity-form/components/form-upload/form-upload.component';
 import {FormSelectComponent} from './entity-form/components/form-select/form-select.component';
 import {FormTextareaComponent} from './entity-form/components/form-textarea/form-textarea.component';
 import {TooltipComponent} from './entity-form/components/tooltip/tooltip.component';
@@ -63,6 +64,7 @@ import {FormPermissionsComponent} from './entity-form/components/form-permission
     FormPermissionsComponent,
     TooltipComponent,
     FormArrayComponent,
+    FormUploadComponent
   ],
   exports : [
     EntityAddComponent,
@@ -82,6 +84,7 @@ import {FormPermissionsComponent} from './entity-form/components/form-permission
     FormTextareaComponent,
     FormPermissionsComponent,
     FormArrayComponent,
+    FormUploadComponent
   ]
 })
 export class EntityModule {
