@@ -1,12 +1,4 @@
-import {ApplicationRef, Component, Injector, Inject,OnInit, NgZone, ViewChild
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-
+import {ApplicationRef, Component, OnInit, Injector} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -14,68 +6,41 @@ import {Subscription} from 'rxjs';
 import {GlobalState} from '../../../global.state';
 import {RestService, UserService, WebSocketService} from '../../../services/';
 import {EntityConfigComponent} from '../../common/entity/entity-config/';
-import {
-  FieldConfig
+import {FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import {BaJob} from '../../../theme/components';
-const URL = '/tmp/';
-
+import { FileUploader } from 'ng2-file-upload';
 @Component({
   selector : 'app-support',
-  template : `
-  <entity-form [conf]="this"></entity-form>
-  `
+  templateUrl : './support.component.html',
+  styleUrls : [ './support.component.css' ],
 })
-export class SupportComponent {
-  protected resource_name: string = 'network/globalconfiguration/';
-  public fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : 'username',
-      placeholder : 'Username',
-    },
-    {
-      type : 'input',
-      name : 'password',
-      placeholder : 'Password',
-    },
-    {
-      type : 'select',
-      name : 'type',
-      placeholder : 'Type',
-      options : [
-        {label : 'Bug', value : 'bug'},
-        {label : 'Feature', value : 'feature'},
-      ],
-    },
-    {
-      type : 'select',
-      name : 'category',
-      placeholder : 'Category',
-      options: [
 
-      ]
-    },
-    {
-      type : 'checkbox',
-      name : 'attach_debug_info',
-      placeholder : 'Attach Debug Info',
-    },
-    {
-      type : 'input',
-      name : 'subject',
-      placeholder : 'subject',
-    },
-    {
-      type : 'textarea',
-      name : 'description',
-      placeholder : 'Description',
-      inputType : 'password',
-    },
-    {
-      type: 'upload',
-      name : 'file',
-      placeholder: 'File Upload',
-    }
-  ];
+export class SupportComponent {
+  username: any;
+  password: any;
+  categories: any;
+  constructor(protected router: Router, protected rest: RestService,
+              protected ws: WebSocketService, protected _injector: Injector,
+              protected _appRef: ApplicationRef, protected _state: GlobalState,)
+              {
+              }
+  private category: any;
+  onSubmit(): void{
+  };
+   onBlurMethod(){
+     if (this.username !== '' && this.password !== '') { 
+       this.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res) => {
+          this.categories = [];
+          for (let property in res) {
+            if (res.hasOwnProperty(property)) {
+              this.categories.push({label : property, value : res[property]});
+            }
+          }
+        });
+      } else {
+        console.log("please enter valid email address");
+      }
+     
+     
+  }
 }

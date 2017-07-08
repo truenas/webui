@@ -12,6 +12,7 @@ import {EntityModule} from '../common/entity/entity.module';
 import {AdvancedComponent} from './advanced/';
 import {EmailComponent} from './email/';
 import {SupportComponent} from './support';
+import {MaterialModule} from '@angular/material';
 import {
   ConfigResetComponent,
   ConfigSaveComponent,
@@ -25,7 +26,8 @@ import {UpdateComponent} from './update/';
   imports : [
     EntityModule, FnCommonModule, DynamicFormsCoreModule.forRoot(),
     DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgaModule, NgUploaderModule, routing
+    ReactiveFormsModule, NgaModule, NgUploaderModule, routing,
+    MaterialModule
   ],
   declarations : [
     AdvancedComponent,
