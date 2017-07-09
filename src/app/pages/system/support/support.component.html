@@ -17,27 +17,27 @@
       <input mdInput placeholder="password" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name ="password">
     </md-input-container>
     <br>
-    <md-select name="Type" placeholder="Type" class="full-width">
-        <md-option value="Bug">Bug</md-option>
-        <md-option value="Feature">Feature</md-option>
+    <md-select name="type" placeholder="Type" class="full-width" [(ngModel)]="type">
+        <md-option value="BUG">Bug</md-option>
+        <md-option value="FEATURE">Feature</md-option>
     </md-select>
     <br>
-    <md-select name="Category" placeholder="Category" class="full-width">
-      <md-option *ngFor="let category of categories" [value]="category.value">
+    <md-select name="category" placeholder="Category" class="full-width" [(ngModel)]="category">
+      <md-option *ngFor="let category of categories" [value]="category.value" >
         {{ category.label }}
       </md-option>
     </md-select>
     <br>
-    <md-checkbox name="attach-debug" class="full-width">
+    <md-checkbox name="attach_debug" class="full-width" [(ngModel)]="attach_debug">
         Attach Debug
     </md-checkbox>
     <br>
     <md-input-container class="full-width">
-      <input mdInput placeholder="Subject">
+      <input mdInput placeholder="Subject" name="title" [(ngModel)]="title">
     </md-input-container>
     <br>
     <md-input-container class="full-width">
-      <textarea mdInput  mdAutosizeMinRows  minRows="6" placeholder="Description"></textarea>
+      <textarea mdInput  mdAutosizeMinRows  minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
     </md-input-container>
     <br>
     <input type="file" ng2FileSelect multiple />

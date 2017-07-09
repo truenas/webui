@@ -19,13 +19,29 @@ export class SupportComponent {
   username: any;
   password: any;
   categories: any;
+  attach_debug: any;
+  title: any;
+  body: any;
+  type: any;
+  category: any;
+  payload = {};
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected _state: GlobalState,)
               {
               }
-  private category: any;
+  
   onSubmit(): void{
+    this.payload['username'] = this.username;
+    this.payload['password'] = this.password;
+    this.payload['category'] = this.category;
+    this.payload['attach_debug'] = this.attach_debug;
+    this.payload['title'] = this.title;
+    this.payload['body'] = this.body;
+    this.payload['type'] = this.type;
+    this.ws.call('support.new_ticket', [this.payload]).subscribe((res) => {
+
+      });
   };
    onBlurMethod(){
      if (this.username !== '' && this.password !== '') { 
