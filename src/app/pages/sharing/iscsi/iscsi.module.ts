@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
 import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
+import {MaterialModule} from '@angular/material';
 
 import {NgaModule} from '../../../theme/nga.module';
 import {EntityModule} from '../../common/entity/entity.module';
@@ -31,7 +32,7 @@ import {TargetListComponent} from './target/target-list/';
   imports : [
     EntityModule, DynamicFormsCoreModule.forRoot(),
     DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgaModule, routing
+    ReactiveFormsModule, NgaModule, routing, MaterialModule
   ],
   declarations : [
     ISCSI,
