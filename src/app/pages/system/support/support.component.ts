@@ -25,6 +25,7 @@ export class SupportComponent {
   type: any;
   category: any;
   payload = {};
+  busy: Subscription;
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected _state: GlobalState,)
@@ -39,7 +40,7 @@ export class SupportComponent {
     this.payload['title'] = this.title;
     this.payload['body'] = this.body;
     this.payload['type'] = this.type;
-    this.ws.call('support.new_ticket', [this.payload]).subscribe((res) => {
+    this.busy = this.ws.call('support.new_ticket', [this.payload]).subscribe((res) => {
 
       });
   };
