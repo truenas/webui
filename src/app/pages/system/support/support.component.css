@@ -1,6 +1,7 @@
 .dynamic-field.hide {
     display: none;
 }
-.full-width {
-	width: 100%;
+
+.btn {
+	width: 15%;
 }
