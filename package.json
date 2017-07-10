@@ -15,7 +15,7 @@
     "start:prod": "ng serve --prod",
     "start:prod:aot": "ng serve --prod --aot",
     "build": "npm run clean:dist && ng build",
-    "build:prod": "npm run build -- --prod --aot=false",
+    "build:prod": "npm run build -- --prod",
     "build:prod:aot": "npm run build:prod -- --aot",
     "build:ci": "npm run build:prod && npm run build:prod:aot",
     "test": "ng test -sr --sourcemap=false",
