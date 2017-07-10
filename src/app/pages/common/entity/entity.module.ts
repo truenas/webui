@@ -75,6 +75,7 @@ import {FormPermissionsComponent} from './entity-form/components/form-permission
     EntityTemplateDirective,
     EntityFormComponent,
     EntityTableComponent,
+    DynamicFieldDirective,
   ],
   entryComponents : [
     FormButtonComponent,
