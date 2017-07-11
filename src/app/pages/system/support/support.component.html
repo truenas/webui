@@ -1,5 +1,5 @@
 <md-card>
-  <form class="form" (ngSubmit)="onSubmit($event)" [ngBusy]="busy">
+  <div [ngBusy]="[busy]">
   <p>
     Before filing a bug report or feature request, search <a href="http://bugs.freenas.org"> http://bugs.freenas.org </a>to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new one.
     For enterprise-grade storage solutions and support, please visit <a href="http://www.ixsystems.com/storage/">http://www.ixsystems.com/storage/</a>.
@@ -42,6 +42,7 @@
       <br>
       <input type="file" ng2FileSelect multiple />
       <br>
-      <button md-raised-button class="btn btn-block" type="submit">Submit Ticket</button>
-  </form>
+      <button md-raised-button class="btn btn-block"  (click)="onSubmit()" type="submit">Submit Ticket</button>
+  </div>
 </md-card>
+<ba-job [title]="'Submit Ticket'" [showCloseButton]="false" (progress)="onProgress($event)" (failure)="onFailure($event)" (success)="onSuccess($event)"></ba-job>

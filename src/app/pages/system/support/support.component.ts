@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, OnInit, Injector} from '@angular/core';
+import {ApplicationRef, Component, OnInit, Injector, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -9,6 +9,8 @@ import {EntityConfigComponent} from '../../common/entity/entity-config/';
 import {FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FileUploader } from 'ng2-file-upload';
+import {BaJob} from '../../../theme/components';
+
 @Component({
   selector : 'app-support',
   templateUrl : './support.component.html',
@@ -25,6 +27,7 @@ export class SupportComponent {
   type: any;
   category: any;
   payload = {};
+  @ViewChild(BaJob) baJob: BaJob;
   busy: Subscription;
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
@@ -40,9 +43,9 @@ export class SupportComponent {
     this.payload['title'] = this.title;
     this.payload['body'] = this.body;
     this.payload['type'] = this.type;
-    this.busy = this.ws.call('support.new_ticket', [this.payload]).subscribe((res) => {
-
-      });
+    this.baJob.setCall('support.new_ticket', [this.payload]);
+    this.baJob.submit();
+    
   };
    onBlurMethod(){
      if (this.username !== '' && this.password !== '') { 
@@ -57,7 +60,13 @@ export class SupportComponent {
       } else {
         console.log("please enter valid email address");
       }
-     
-     
   }
+
+  onProgress(progress) {}
+
+  onSuccess(job) {
+    this.baJob.setDescription('Your ticket has been submitted.');
+  }
+
+  onFailure(job) {}
 }
