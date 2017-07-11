@@ -1,78 +1,69 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
-} from '@angular/core';
-import {FormArray, FormGroup} from '@angular/forms';
-import {Router} from '@angular/router';
-import {
-  DynamicCheckboxModel,
-  DynamicFormArrayGroupModel,
-  DynamicFormArrayModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel,
-  DynamicTextAreaModel
-} from '@ng2-dynamic-forms/core';
-import {Subscription} from 'rxjs';
+import { ApplicationRef, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { FormArray, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
-import {GlobalState} from '../../../../../global.state';
-import {
-  IscsiService,
-  RestService,
-  WebSocketService
-} from '../../../../../services/';
-import {EntityUtils} from '../../../../common/entity/utils';
+import { GlobalState } from '../../../../../global.state';
+import { IscsiService, RestService, WebSocketService } from '../../../../../services/';
+import { EntityUtils } from '../../../../common/entity/utils';
+
+import {DynamicFieldDirective} from '../../../../common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 
 @Component({
   selector : 'app-iscsi-target-add',
   templateUrl : './target-add.component.html',
-  providers : [ IscsiService ],
+  providers : [ IscsiService, EntityFormService ],
 })
 export class TargetAddComponent implements OnInit {
 
   public target_resource_name: string = 'services/iscsi/target';
   public targetgroup_resource_name: string = 'services/iscsi/targetgroup';
   public route_success: string[] = [ 'sharing', 'iscsi' ];
-  public pk: any;
+
   public iscsi_group_count: number = 1;
-  public formGroup: FormGroup;
-  public arrayControl: FormArray;
-  public arrayModel: DynamicFormArrayModel;
+  public formGroup: any;
+  public arrayControl: any;
+  public arrayModel: any;
   public error: string;
   public busy: Subscription;
 
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id : 'iscsi_target_name',
-      label : 'Target Name',
-    }),
-    new DynamicInputModel({
-      id : 'iscsi_target_alias',
-      label : 'Target Alias',
-    }),
-    new DynamicFormArrayModel({
-      id : "iscsi_target_group",
+  public fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name : 'iscsi_target_name',
+      placeholder : 'Target Name',
+    },
+    {
+      type: 'input',
+      name : 'iscsi_target_alias',
+      placeholder : 'Target Alias',
+    },
+    {
+      type: 'array',
+      name : "iscsi_target_group",
       initialCount : 1,
-      createGroup : () => {
-        return [
-          new DynamicSelectModel({
-            id : 'iscsi_target_portalgroup',
-            label : 'Portal Group ID',
+      formarray : [
+          {
+            type: 'select',
+            name : 'iscsi_target_portalgroup',
+            placeholder : 'Portal Group ID',
             value : '',
-          }),
-          new DynamicSelectModel({
-            id : 'iscsi_target_initiatorgroup',
-            label : 'Initiator Group ID',
+            options: [],
+          },
+          {
+            type: 'select',
+            name : 'iscsi_target_initiatorgroup',
+            placeholder : 'Initiator Group ID',
             value : '',
-          }),
-          new DynamicSelectModel({
-            id : 'iscsi_target_authtype',
-            label : 'Auth Method',
+            options: [],
+          },
+          {
+            type: 'select',
+            name : 'iscsi_target_authtype',
+            placeholder : 'Auth Method',
             value : 'None',
             options : [
               {
@@ -87,16 +78,17 @@ export class TargetAddComponent implements OnInit {
                 label : 'Mutual CHAP',
                 value : 'CHAP Mutual',
               }
-            ]
-          }),
-          new DynamicSelectModel({
-            id : 'iscsi_target_authgroup',
-            label : 'Authentication Group number',
+            ],
+          },
+          {
+            type: 'select',
+            name : 'iscsi_target_authgroup',
+            placeholder : 'Authentication Group number',
             value : '',
-          }),
-        ];
-      }
-    })
+            options: [],
+          },
+        ]
+    }
   ];
 
   public custActions: Array<any> = [
@@ -105,14 +97,7 @@ export class TargetAddComponent implements OnInit {
       name : 'Add Extra ISCSI Group',
       function : () => {
         this.iscsi_group_count += 1;
-        this.formService.insertFormArrayGroup(
-            this.iscsi_group_count, this.arrayControl, this.arrayModel);
-        this.setFormArray(this.arrayModel.groups[this.iscsi_group_count - 1],
-                          0);
-        this.setFormArray(this.arrayModel.groups[this.iscsi_group_count - 1],
-                          1);
-        this.setFormArray(this.arrayModel.groups[this.iscsi_group_count - 1],
-                          3);
+        this.entityFormService.insertFormArrayGroup(this.iscsi_group_count, this.formArray, this.arrayControl.formarray);
       }
     },
     {
@@ -120,48 +105,40 @@ export class TargetAddComponent implements OnInit {
       name : 'Remove Extra ISCSI Group',
       function : () => {
         this.iscsi_group_count -= 1;
-        this.formService.removeFormArrayGroup(
-            this.iscsi_group_count, this.arrayControl, this.arrayModel)
+        this.entityFormService.removeFormArrayGroup(this.iscsi_group_count, this.formArray);
       }
     },
   ];
 
-  private portalGroupID: DynamicSelectModel<string>;
   protected portals: any;
-  private initiatorGroupID: DynamicSelectModel<string>;
   protected initiators: any;
-  private authGroupID: DynamicSelectModel<string>;
   protected auths: any;
-  constructor(protected router: Router, protected rest: RestService,
+  protected formArray: any;
+  constructor(protected router: Router,
+              protected rest: RestService,
               protected ws: WebSocketService,
-              protected formService: DynamicFormService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected _injector: Injector,
+              protected _appRef: ApplicationRef,
               protected _state: GlobalState,
-              protected iscsiService: IscsiService) {}
+              protected iscsiService: IscsiService,
+              protected entityFormService: EntityFormService) {}
 
   ngOnInit() {
-    this.formGroup = this.formService.createFormGroup(this.formModel);
-    this.arrayControl = <FormArray>this.formGroup.get("iscsi_target_group");
-    this.arrayModel = <DynamicFormArrayModel>this.formService.findById(
-        "iscsi_target_group", this.formModel);
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+    this.formArray = this.formGroup.controls['iscsi_target_group'];
+    this.arrayControl = _.find(this.fieldConfig,{'name' : 'iscsi_target_group'});
 
     this.iscsiService.listPortals().subscribe((res) => {
       this.portals = res.data;
-      for (let i in this.arrayModel.groups) {
-        this.setFormArray(this.arrayModel.groups[i], 0);
-      }
+      this.setFormArray(this.arrayControl.formarray[0]);
     });
     this.iscsiService.listInitiators().subscribe((res) => {
       this.initiators = res.data;
-      for (let i in this.arrayModel.groups) {
-        this.setFormArray(this.arrayModel.groups[i], 1);
-      }
+      this.setFormArray(this.arrayControl.formarray[1]);
     });
     this.iscsiService.listAuthCredential().subscribe((res) => {
       this.auths = res.data;
-      for (let i in this.arrayModel.groups) {
-        this.setFormArray(this.arrayModel.groups[i], 3);
-      }
+      this.setFormArray(this.arrayControl.formarray[3]);
     });
   }
 
@@ -172,31 +149,31 @@ export class TargetAddComponent implements OnInit {
     return true;
   }
 
-  setFormArray(groupModel: DynamicFormArrayGroupModel, index: number) {
-    if (index == 0) {
-      this.portalGroupID = <DynamicSelectModel<string>>groupModel.group[index];
-      this.portalGroupID.add({label : 'None', value : ''});
+  setFormArray(groupModel: any) {
+    if(groupModel.name == 'iscsi_target_portalgroup') {
+      groupModel.options.push({label : 'None', value : ''});
       this.portals.forEach((item, i) => {
         var label = item.iscsi_target_portal_tag + ' (' +
                     item.iscsi_target_portal_comment + ')';
-        this.portalGroupID.add({label : label, value : i + 1})
+        groupModel.options.push({label : label, value : i + 1})
       });
-    } else if (index == 1) {
-      this.initiatorGroupID =
-          <DynamicSelectModel<string>>groupModel.group[index];
-      this.initiatorGroupID.add({label : 'None', value : ''});
+    } else if (groupModel.name == 'iscsi_target_initiatorgroup') {
+      groupModel.options.push({label : 'None', value : ''});
       this.initiators.forEach((item, i) => {
         var label = item.iscsi_target_initiator_tag + ' (' +
                     item.iscsi_target_initiator_comment + ')';
-        this.initiatorGroupID.add({label : label, value : i + 1})
+        groupModel.options.push({label : label, value : i + 1})
       });
-    } else if (index == 3) {
-      this.authGroupID = <DynamicSelectModel<string>>groupModel.group[index];
-      this.authGroupID.add({label : 'None', value : ''});
-      this.auths.forEach((item) => {this.authGroupID.add({
-                           label : item.iscsi_target_auth_tag,
-                           value : item.iscsi_target_auth_tag
-                         })});
+    } else if (groupModel.name == 'iscsi_target_authgroup') {
+      groupModel.options.push({label : 'None', value : ''});
+      this.auths.forEach((item) => {
+        groupModel.options.push(
+          {
+            label : item.iscsi_target_auth_tag,
+            value : item.iscsi_target_auth_tag
+          }
+        )
+      });
     }
   }
 
@@ -213,47 +190,44 @@ export class TargetAddComponent implements OnInit {
 
     iscsi_group_value = this.formGroup.value['iscsi_target_group'];
     target_value.iscsi_target_name = this.formGroup.value['iscsi_target_name'];
-    target_value.iscsi_target_alias =
-        this.formGroup.value['iscsi_target_alias'];
+    target_value.iscsi_target_alias = this.formGroup.value['iscsi_target_alias'];
 
-    this.busy =
-        this.rest
-            .post(this.target_resource_name + '/', {
-              body : JSON.stringify(target_value),
-            })
-            .subscribe(
-                (res) => {
-                  let target_id = res.data.id;
+    this.busy = this.rest
+        .post(this.target_resource_name + '/', {
+          body : JSON.stringify(target_value),
+        })
+        .subscribe(
+          (res) => {
+            let target_id = res.data.id;
 
-                  for (let i in iscsi_group_value) {
-                    iscsi_group_value[i].iscsi_target = target_id;
-                    this.rest
-                        .post(this.targetgroup_resource_name + '/', {
-                          body : JSON.stringify(iscsi_group_value[i]),
-                        })
-                        .subscribe((res) => { console.log(res.data); },
-                                   (res) => {
-                                     let data = {};
-                                     this.rest
-                                         .delete(this.target_resource_name +
-                                                     '/' + target_id,
-                                                 data)
-                                         .subscribe(
-                                             (res) => {
-                                               this.error =
-                                                   'Create Target failed';
-                                             },
-                                             (res) => {
-                                               new EntityUtils().handleError(
-                                                   this, res);
-                                             });
-                                     new EntityUtils().handleError(this, res);
-                                   });
-                  }
+            for (let i in iscsi_group_value) {
+              iscsi_group_value[i].iscsi_target = target_id;
+              this.rest
+                  .post(this.targetgroup_resource_name + '/', {
+                    body : JSON.stringify(iscsi_group_value[i]),
+                  })
+                  .subscribe(
+                    (res) => { console.log(res.data); },
+                    (res) => {
+                     let data = {};
+                     this.rest
+                         .delete(this.target_resource_name + '/' + target_id, data)
+                         .subscribe(
+                             (res) => {
+                               this.error = 'Create Target failed';
+                             },
+                             (res) => {
+                               new EntityUtils().handleError(this, res);
+                             });
+                     new EntityUtils().handleError(this, res);
+                    });
+            }
 
-                  this.router.navigate(
-                      new Array('/pages').concat(this.route_success));
-                },
-                (res) => { new EntityUtils().handleError(this, res); });
+            this.router.navigate(new Array('/pages').concat(this.route_success));
+          },
+          (res) => {
+            new EntityUtils().handleError(this, res);
+          }
+        );
   }
 }
