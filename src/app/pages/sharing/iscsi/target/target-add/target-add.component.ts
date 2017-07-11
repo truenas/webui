@@ -153,15 +153,19 @@ export class TargetAddComponent implements OnInit {
     if(groupModel.name == 'iscsi_target_portalgroup') {
       groupModel.options.push({label : 'None', value : ''});
       this.portals.forEach((item, i) => {
-        var label = item.iscsi_target_portal_tag + ' (' +
-                    item.iscsi_target_portal_comment + ')';
+        var label = item.iscsi_target_portal_tag;
+        if (item.iscsi_target_portal_comment) {
+          label = item.iscsi_target_portal_tag + ' (' + item.iscsi_target_portal_comment + ')';
+        }
         groupModel.options.push({label : label, value : i + 1})
       });
     } else if (groupModel.name == 'iscsi_target_initiatorgroup') {
       groupModel.options.push({label : 'None', value : ''});
       this.initiators.forEach((item, i) => {
-        var label = item.iscsi_target_initiator_tag + ' (' +
-                    item.iscsi_target_initiator_comment + ')';
+        var label = item.iscsi_target_initiator_tag;
+        if (item.iscsi_target_initiator_comment) {
+          label = item.iscsi_target_initiator_tag + ' (' + item.iscsi_target_initiator_comment + ')';
+        }
         groupModel.options.push({label : label, value : i + 1})
       });
     } else if (groupModel.name == 'iscsi_target_authgroup') {
