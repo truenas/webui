@@ -14,6 +14,7 @@ export class IscsiService {
       'services/iscsi/authorizedinitiator';
   protected iscsiAuthCredentialResource: string =
       'services/iscsi/authcredential';
+  protected iscsiTargetGroupsResource: string = 'services/iscsi/targetgroup';
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -28,4 +29,6 @@ export class IscsiService {
   listAuthCredential() {
     return this.rest.get(this.iscsiAuthCredentialResource, {});
   };
+
+  listTargetGroups() { return this.rest.get(this.iscsiTargetGroupsResource, {}); };
 }
