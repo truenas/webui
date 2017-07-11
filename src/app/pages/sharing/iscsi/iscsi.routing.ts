@@ -16,6 +16,7 @@ import {PortalDeleteComponent} from './portal/portal-delete/';
 import {PortalEditComponent} from './portal/portal-edit/';
 import {PortalListComponent} from './portal/portal-list/';
 import {TargetAddComponent} from './target/target-add/';
+import {TargetEditComponent} from './target/target-edit/';
 import {TargetDeleteComponent} from './target/target-delete/';
 
 export const routes: Routes = [
@@ -31,5 +32,6 @@ export const routes: Routes = [
   {path : 'auth/edit/:pk', component : AuthorizedAccessFormComponent},
   {path : 'target/delete/:pk', component : TargetDeleteComponent},
   {path : 'target/add', component : TargetAddComponent},
+  {path : 'target/edit/:pk', component: TargetEditComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
