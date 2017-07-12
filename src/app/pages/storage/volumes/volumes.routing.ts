@@ -10,6 +10,7 @@ import {VolumesListComponent} from './volumes-list/';
 import {ZvolAddComponent} from './zvol/zvol-add/';
 import {ZvolDeleteComponent} from './zvol/zvol-delete/';
 import {ZvolEditComponent} from './zvol/zvol-edit/';
+import {VolumeImportListComponent} from './import-list/';
 
 export const routes: Routes = [
   {path : '', component : VolumesListComponent},
@@ -19,6 +20,7 @@ export const routes: Routes = [
   {path : 'id/:pk/dataset/delete/:path', component : DatasetDeleteComponent},
   {path : 'id/:pk/zvol/delete/:path', component : ZvolDeleteComponent},
   {path : 'manager', component : ManagerComponent},
+  {path : 'import_list', component: VolumeImportListComponent},
   //{ path: 'edit/:pk', component: VolumesEditComponent },
   {path : 'delete/:pk', component : VolumeDeleteComponent},
 ];

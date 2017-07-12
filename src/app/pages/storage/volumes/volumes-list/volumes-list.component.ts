@@ -14,8 +14,12 @@ export class VolumesListComponent {
   protected resource_name: string = 'storage/volume/';
   protected route_add: string[] = [ 'storage', 'volumes', 'manager' ];
 
-  constructor(_rest: RestService, private _router: Router, _state: GlobalState,
-              _eRef: ElementRef) {}
+  constructor(
+    protected _rest: RestService, 
+    private _router: Router,
+    protected _state: GlobalState,
+    protected _eRef: ElementRef
+  ) {}
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name'},
@@ -38,6 +42,18 @@ export class VolumesListComponent {
     default:
       return row[attr];
     }
+  }
+
+  getAddActions() {
+    let actions = [];
+    actions.push({
+      label : "Import Volumes",
+      onClick : () => {
+        this._router.navigate(new Array('/pages').concat(
+            [ "storage", "volumes", "import_list" ]));
+      }
+    });
+    return actions;
   }
 
   getActions(row) {
