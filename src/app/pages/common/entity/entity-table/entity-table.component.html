@@ -1,6 +1,6 @@
 <a *ngIf="conf.route_add" class="btn btn-success btn-fab" (click)="doAdd()"><i class="ion-plus"></i></a>
 <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
-<md-card>
+<md-card [ngBusy]="busy">
   <ngx-datatable
     class="material" 
     [rows]="rows" 
