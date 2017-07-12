@@ -1,6 +1,6 @@
 <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
 <alert *ngIf="!hasConf" type="danger">
-  Please click<button class="btn btn-link" type="button" (click)="goConf()">here</button>to configure jail first.
+  Please click<button class="btn btn-link" type="button" (click)="goConf()">here</button>to setup configuration first.
 </alert>
 <alert *ngIf="success" type="success">Successfully updated.</alert>
 <alert *ngIf="error" type="danger"><span [innerHTML]="error"></span></alert>
