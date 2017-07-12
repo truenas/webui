@@ -1,5 +1,5 @@
 <md-card>
-  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" [ngBusy]="busy">
+  <form (ngSubmit)="onSubmit()" [formGroup]="formGroup" [ngBusy]="busy">
     <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup">
     </ng-container>
     <div class="btn-group btn-group-justified btn-group-raised">
