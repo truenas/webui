@@ -14,6 +14,7 @@ const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplaceme
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const OptimizeJsPlugin = require('optimize-js-plugin');
+const aotLoader = require('@ultimate/aot-loader');
 /**
  * Webpack Constants
  */
@@ -78,13 +79,26 @@ module.exports = function (env) {
 
     },
 
+    module: {
+      rules: [
+        {
+          test: /\.ts$/,
+          loaders: ['@ultimate/aot-loader']
+        }
+      ]
+    },
+    resolve: {
+      extensions: ['.ts', '.js']
+    },
     /**
      * Add additional plugins to the compiler.
      *
      * See: http://webpack.github.io/docs/configuration.html#plugins
      */
     plugins: [
-
+      new aotLoader.AotPlugin({
+        tsConfig: './tsconfig.json'
+      }),
       /**
        * Webpack plugin to optimize a JavaScript file for faster initial load
        * by wrapping eagerly-invoked functions.
