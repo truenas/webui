@@ -9,7 +9,7 @@
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
-    "start": "ng serve --proxy-config proxy.config.json",
+    "start": "ng serve --proxy-config proxy.config.json --aot",
     "start:hmr": "ng serve --hmr",
     "start:aot": "ng serve --aot",
     "start:dev:aot": "ng serve --proxy-config proxy.config.json --aot",
