@@ -4,7 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
 import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
-import {BusyModule} from 'angular2-busy';
+import {BusyModule} from 'angular2-busy-aot';
 import {AlertModule} from 'ngx-bootstrap/alert';
 
 import {NgaModule} from '../../theme/nga.module';
