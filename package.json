@@ -94,9 +94,9 @@
     "raven-js": "^3.15.0",
     "reflect-metadata": "0.1.9",
     "resolve-url-loader": "^2.1.0",
-    "rxjs": "5.1.1",
+    "rxjs": "^5.4.2",
     "tether": "1.4.0",
-    "typescript": "2.2.2",
+    "typescript": "^2.4.1",
     "zone.js": "^0.8.11"
   },
   "devDependencies": {
