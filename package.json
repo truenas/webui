@@ -128,7 +128,7 @@
     "gulp": "^3.9.1",
     "gulp-clang-format": "^1.0.23",
     "gulp-tslint": "^8.1.1",
-    "http-server": "0.9.0",
+    "http-server": "^0.10.0",
     "imports-loader": "0.7.0",
     "json-loader": "0.5.4",
     "karma": "~1.4.1",
@@ -138,12 +138,12 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ng-router-loader": "2.1.0",
-    "node-sass": "4.3.0",
-    "npm-run-all": "4.0.1",
+    "node-sass": "^4.5.3",
+    "npm-run-all": "^4.0.2",
     "protractor": "~5.1.2",
-    "rimraf": "2.5.4",
+    "rimraf": "^2.5.4",
     "run-sequence": "^1.2.2",
-    "ts-node": "~3.0.4",
+    "ts-node": "^3.2.0",
     "tslint": "~5.3.2"
   }
 }
