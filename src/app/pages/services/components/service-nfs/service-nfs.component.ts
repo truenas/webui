@@ -107,10 +107,9 @@ export class ServiceNFSComponent{
   afterInit(entityForm: any) {
     this.ws.call('notifier.choices', [ 'IPChoices' ]).subscribe((res) => {
       this.nfs_srv_bindip = _.find(this.fieldConfig, {name : 'nfs_srv_bindip'});
-      res.forEach((item) => {
-        //* this becomes undefined here, any ideas why ?? *//
-        this.nfs_srv_bindip.options.push({label : item[0], value : item[0]});
-      });
+      for (let item of res) {
+        this.nfs_srv_bindip.options.push({label: item[0], value: item[1]});
+      }
     });
   }
 
