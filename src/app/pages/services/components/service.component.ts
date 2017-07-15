@@ -8,7 +8,7 @@ import {RestService, WebSocketService} from '../../../services/';
   selector : 'service',
   styleUrls : [ './service.component.scss' ],
   template : `
-  <ba-card class=" col-xlg-4 col-xl-4 col-lg-6 col-sm-12 col-xs-12" title="{{status.label}} is {{status.state}}">
+  <md-card class=" col-xlg-4 col-xl-4 col-lg-6 col-sm-12 col-xs-12" title="{{status.label}} is {{status.state}}">
     <div [ngBusy]="busy" class="row">
       <div class="col-md-12">
 	<span [ngClass]="status.state == 'RUNNING' ? 'state-label-running' : 'state-label-stopped'" class="v-center">
@@ -30,7 +30,7 @@ import {RestService, WebSocketService} from '../../../services/';
         </a>
       </div>
     </div>
-  </ba-card>
+  </md-card>
   `,
 })
 export class Service {
