@@ -7,7 +7,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-bootenv-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class BootEnvironmentListComponent {
 
