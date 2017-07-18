@@ -82,7 +82,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       }
       if (this.conf.isEntity) {
         this.pk = params['pk'];
-        if (this.pk) {
+        if (this.pk && !this.conf.isNew) {
           this.resourceName = this.resourceName + this.pk + '/';
         } else {
           this.submitFunction = this.addSubmit;

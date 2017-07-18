@@ -3,7 +3,8 @@
 		<input mdInput [type]="config.inputType ? config.inputType : 'text'" 
 			[placeholder]="config.placeholder"
 			[attr.value]="config.value"
-			[formControlName]="config.name">
+			[formControlName]="config.name"
+			[readonly]="config.readonly">
 	</md-input-container>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
 	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
