@@ -1,12 +1,11 @@
-<div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)"
-     [ngClass]="{scrolled: isScrolled}">
-  <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
-  <a routerLink="/pages/dashboard" class="al-logo clearfix"> </a>
+<div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)" [ngClass]="{scrolled: isScrolled}">
+    <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
+    <a routerLink="/pages/dashboard" class="al-logo clearfix"> </a>
 
-  <div class="user-profile clearfix">
-    <div class="dropdown al-user-profile">
-       <a (click)="logOut()" class="signout" alt="Sign Off"><i class="fa fa-sign-out profile-toggle-link"></i></a>
+    <div class="user-profile clearfix">
+        <div class="dropdown al-user-profile">
+            <a (click)="logOut()" class="signout" alt="Sign Off"><i class="fa fa-sign-out profile-toggle-link"></i></a>
+        </div>
+        <ba-msg-center></ba-msg-center>
     </div>
-    <!--<ba-msg-center></ba-msg-center>-->
-  </div>
 </div>
