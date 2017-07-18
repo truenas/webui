@@ -1,1 +1,7 @@
-<service *ngFor="let service of services" [status]="service"></service>
+<md-card class="mat-card card-body">
+    <table [ngBusy]="busy" class="table table-striped">
+    		<tr role="row">
+  				<service *ngFor="let service of services" [status]="service"></service>
+  			</tr>
+	</table>
+</md-card>

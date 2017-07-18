@@ -15,7 +15,7 @@ $text-color: #ffffff;
   width: 540px;
   margin: 0 auto;
   border-radius: 5px;
-  @include bg-translucent-dark(0.55);
+  background: $primary-dark;
   color: #fff;
   padding: 32px;
   h1 {
@@ -30,9 +30,9 @@ $text-color: #ffffff;
     text-decoration: none;
     outline: none;
     transition: all 0.2s ease;
-    color: $primary;
+    color: $accent-color;
     &:hover {
-      color: $primary-dark;
+      color: $label-text;
     }
   }
 

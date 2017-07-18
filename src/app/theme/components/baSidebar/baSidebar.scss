@@ -11,7 +11,7 @@ $angle-right: "\f101";
   z-index: 1001;
   display: block;
   min-height: 100%;
-  background-color: rgba(#000000, 0.4) !important; 
+  background-color: $primary-dark !important; 
   height: 100%;
   position: fixed;
 }
@@ -41,9 +41,9 @@ $angle-right: "\f101";
   &.selected:not(.with-sub-menu) {
     background-color: $primary-bg;
     a.al-sidebar-list-link {
-      color: $dark-text;
+      color: $accent-color;
       b {
-        color: $content-text;
+        color: $label-text;
       }
     }
   }
@@ -77,7 +77,7 @@ a.al-sidebar-list-link {
   text-shadow: none;
   text-decoration: none;
   margin-left: .7em;
-  color: $primary;
+  color: $accent-color;
   line-height: 1.6em;
   white-space: nowrap;
   overflow: hidden;

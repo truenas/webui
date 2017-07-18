@@ -1,0 +1,69 @@
+$default: rgba(0, 0, 0, .8);
+$body-bg: #C5CAE9;
+$default-text: #212121;
+$content-text: #212121;
+$dark-text: #212121;
+$help-text: #757575;
+$disabled: #bdbdbd;
+$disabled-bg: transparent;
+$border: #fafafa;
+$border-light: rgba(0, 0, 0, 0.2);
+$input-border: transparent;
+$input-background: #f1f1f1;
+$dropdown-text: #212121;
+$sidebar: #303F9F;
+$sidebar-text: #f1f1f1;
+$mail-box: whitesmoke;
+$auth-panel-background: #303F9F;
+$progress-background: #303F9F;
+$progress-default: #C5CAE9;
+$bootstrap-panel-radius: 5px;
+$bootstrap-panel-text: #212121;
+$bootstrap-panel-bg: #f1f1f1;
+$bootstrap-panel-header-bg: #3F51B5;
+$bootstrap-panel-header-border: 1px solid rgba(#3F51B5, 0.12);
+$bootstrap-panel-shadow: 0 5px 5px 0 rgba(#000000, 0.25);
+$primary: #3F51B5 !default;
+$accent-color: #03A9F4 !default;
+$info: #03A9F4 !default;
+$success: #16a085 !default;
+$warning: #f39c12 !default;
+$danger: #c0392b !default;
+$primary-light: #C5CAE9;
+$info-light: tint($info, 30%);
+$success-light: tint($success, 30%);
+$warning-light: tint($warning, 30%);
+$danger-light: tint($danger, 30%);
+$primary-dark: shade($primary, 15%);
+$info-dark: shade($info, 15%);
+$success-dark: shade($success, 15%);
+$warning-dark: shade($warning, 15%);
+$danger-dark: shade($danger, 15%);
+$primary-bg: tint($primary, 20%);
+$info-bg: tint($info, 20%);
+$success-bg: tint($success, 20%);
+$warning-bg: tint($warning, 20%);
+$danger-bg: tint($danger, 20%);
+$label-text: #fafafa;
+$activelink: $help-text;
+$hoverlink: $default-text;
+@mixin body-bg() {
+    background-color: $body-bg;
+    $mainBgUrl: $images-root + '';
+    &::before {
+        content: '';
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: #f1f1f1;
+        background-size: cover;
+        will-change: transform;
+        z-index: 0;
+    }
+}
+
+@mixin additional-bg() {
+    //display: block; // additional background layer, hidden by default
+}
