@@ -18,24 +18,26 @@ export class EntityFormService {
   createFormGroup(controls: FieldConfig[]) {
     let formGroup: {[id: string] : AbstractControl;} = {};
 
-    controls.forEach(controlModel => {
-      if (controlModel.formarray) {
-        if (controlModel.initialCount == null) {
-          controlModel.initialCount = 1;
+    if (controls) {
+      for (let i = 0; i < controls.length; i++) {
+        if (controls[i].formarray) {
+          if (controls[i].initialCount == null) {
+            controls[i].initialCount = 1;
+          }
+
+          let formArray = this.createFormArray(controls[i].formarray,
+                                               controls[i].initialCount);
+          formGroup[controls[i].name] = formArray;
+        } else {
+          formGroup[controls[i].name] = new FormControl(
+              {value : controls[i].value, disabled : controls[i].disabled},
+              controls[i].validation);
         }
 
-        let formArray = this.createFormArray(controlModel.formarray,
-                                             controlModel.initialCount);
-        formGroup[controlModel.name] = formArray;
-      } else {
-        formGroup[controlModel.name] = new FormControl(
-            {value : controlModel.value, disabled : controlModel.disabled},
-            controlModel.validation);
+        controls[i].relation =
+            Array.isArray(controls[i].relation) ? controls[i].relation : [];
       }
-
-      controlModel.relation =
-          Array.isArray(controlModel.relation) ? controlModel.relation : [];
-    });
+    }
 
     return this.formBuilder.group(formGroup);
   }
