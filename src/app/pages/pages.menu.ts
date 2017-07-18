@@ -262,7 +262,7 @@ export const PAGES_MENU = [
       },
       {
         path : [ 'sharing', 'webdav'],
-        title : 'WebDav',
+        title : 'WebDAV',
         icon: 'ion-ios-home',
         selected: false,
         expanded: false,
