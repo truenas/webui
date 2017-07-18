@@ -6,7 +6,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-nfs-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class NFSListComponent {
 
@@ -18,8 +18,8 @@ export class NFSListComponent {
   constructor(_rest: RestService, _router: Router, _state: GlobalState) {}
 
   public columns: any[] = [
-    {title : 'Comment', name : 'nfs_comment'},
-    {title : 'Path', name : 'nfs_paths'},
+    {name: 'Comment', prop: 'nfs_comment'},
+    {name: 'Path', prop: 'nfs_paths'},
   ];
   public config: any = {
     paging : true,

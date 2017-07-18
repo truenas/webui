@@ -7,9 +7,8 @@ import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 import {NgaModule} from '../../../theme/nga.module';
 import {EntityModule} from '../../common/entity/entity.module';
 
-import {NFSAddComponent} from './nfs-add/';
+import {NFSFormComponent} from './nfs-form/';
 import {NFSDeleteComponent} from './nfs-delete/';
-import {NFSEditComponent} from './nfs-edit/';
 import {NFSListComponent} from './nfs-list/';
 import {routing} from './nfs.routing';
 
@@ -21,8 +20,7 @@ import {routing} from './nfs.routing';
   ],
   declarations : [
     NFSListComponent,
-    NFSAddComponent,
-    NFSEditComponent,
+    NFSFormComponent,
     NFSDeleteComponent,
   ],
   providers : []
