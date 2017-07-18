@@ -8,12 +8,6 @@ BaMsgCenterService {
 
   constructor(private rest: RestService) {
     this.rest.get( "system/alert/", {}).subscribe((res) => {
-      // for(let item in res.data){
-      //   res.data[item].level;
-      //   res.data[item].message;
-      //   debugger;
-      // };
-      debugger;
       this.notifications = res.data;
     });
   }
