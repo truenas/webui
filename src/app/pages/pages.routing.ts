@@ -53,6 +53,10 @@ export const routes: Routes = [
             'app/pages/storage/snapshots/snapshots.module#SnapshotsModule'
       },
       {
+        path : 'sharing/webdav',
+        loadChildren : 'app/pages/sharing/webdav/webdav.module#WebdavModule'
+      },
+      {
         path : 'sharing/afp',
         loadChildren : 'app/pages/sharing/afp/afp.module#AFPModule'
       },
