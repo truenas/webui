@@ -9,11 +9,11 @@ import {CertificateInternalComponent} from './certificate-internal/';
 import {CertificateListComponent} from './certificate-list/';
 
 export const routes: Routes = [
-  {path : 'import', component : CertificateImportComponent},
-  {path : 'internal', component : CertificateInternalComponent},
-  {path : 'csr', component : CertificateCSRComponent},
-  {path : 'edit/:pk', component : CertificateEditComponent},
-  {path : 'delete/:pk', component : CertificateDeleteComponent},
-  {path : '', component : CertificateListComponent, pathMatch : 'full'},
+  { path : 'import', component : CertificateImportComponent },
+  { path : 'internal', component : CertificateInternalComponent },
+  { path : 'csr', component : CertificateCSRComponent },
+  { path : 'edit/:pk', component : CertificateEditComponent },
+  { path : 'delete/:pk', component : CertificateDeleteComponent },
+  { path : '', component : CertificateListComponent, pathMatch : 'full' },
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
