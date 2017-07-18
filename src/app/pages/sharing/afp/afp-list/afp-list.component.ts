@@ -6,7 +6,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-afp-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class AFPListComponent {
 
@@ -18,8 +18,8 @@ export class AFPListComponent {
   constructor(_rest: RestService, _router: Router, _state: GlobalState) {}
 
   public columns: any[] = [
-    {title : 'Name', name : 'afp_name'},
-    {title : 'Path', name : 'afp_path'},
+    {name : 'Name', prop : 'afp_name'},
+    {name : 'Path', prop : 'afp_path'},
   ];
   public config: any = {
     paging : true,
