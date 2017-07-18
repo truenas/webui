@@ -18,9 +18,7 @@ import {Subscription} from 'rxjs';
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityConfigComponent} from '../../../common/entity/entity-config/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
