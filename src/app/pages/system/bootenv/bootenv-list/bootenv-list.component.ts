@@ -15,11 +15,11 @@ export class BootEnvironmentListComponent {
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
 
   public columns: Array<any> = [
-    {title : 'Name', name : 'name'},
-    {title : 'Active', name : 'active'},
-    {title : 'Created', name : 'created'},
-    {title : 'Space', name : 'space'},
-    {title : 'Keep', name : 'keep'},
+    {name: 'Name', prop: 'name'},
+    {name: 'Active', prop: 'active'},
+    {name: 'Created', prop: 'created'},
+    {name: 'Space', prop: 'space'},
+    {name: 'Keep', prop: 'keep'},
   ];
   public config: any = {
     paging : true,
