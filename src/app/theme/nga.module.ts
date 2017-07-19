@@ -21,7 +21,8 @@ import {
   BaMultiCheckbox,
   BaPageTop,
   BaPictureUploader,
-  BaSidebar
+  BaSidebar,
+  BaBackTop
 } from './components';
 import {BaCardBlur} from './components/baCard/baCardBlur.directive';
 import {BaScrollPosition, BaSlimScroll, BaThemeRun} from './directives';
@@ -43,7 +44,7 @@ import {EmailValidator, EqualPasswordsValidator} from './validators';
 const NGA_COMPONENTS = [
   BaCard, BaChartistChart, BaCheckbox, BaContentTop, BaJob,
   BaMenuItem, BaMenu, BaMsgCenter, BaMultiCheckbox, BaPageTop,
-  BaPictureUploader, BaSidebar
+  BaPictureUploader, BaSidebar, BaBackTop
 ];
 
 const NGA_DIRECTIVES =
