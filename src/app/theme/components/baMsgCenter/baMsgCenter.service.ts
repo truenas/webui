@@ -7,9 +7,6 @@ BaMsgCenterService {
   private messages: Array<Object> = [];
 
   constructor(private rest: RestService) {
-    this.rest.get( "system/alert/", {}).subscribe((res) => {
-      this.notifications = res.data;
-    });
   }
 
   public getMessages() : Array<Object> {
@@ -17,6 +14,9 @@ BaMsgCenterService {
   }
 
   public getNotifications() : Array<Object> {
+    this.rest.get( "system/alert/", {}).subscribe((res) => {
+      this.notifications = res.data;
+    });
     return this.notifications;
   }
 
