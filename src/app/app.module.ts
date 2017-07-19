@@ -9,6 +9,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
+import {ConfirmDialog} from './pages/common/confirm-dialog/confirm-dialog.component';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -22,6 +23,7 @@ import {AppState, InternalStateType} from './app.service';
 import {GlobalState} from './global.state';
 import {PagesModule} from './pages/pages.module';
 import {NgaModule} from './theme/nga.module';
+
 
 // Application wide providers
 const APP_PROVIDERS = [ AppState, GlobalState ];
@@ -39,6 +41,7 @@ export type StoreType = {
   bootstrap: [App],
   declarations: [
     App,
+    ConfirmDialog
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -56,7 +59,10 @@ export type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS
-  ]
+  ],
+  entryComponents: [
+    ConfirmDialog,
+  ],
 })
 
 export class AppModule {
