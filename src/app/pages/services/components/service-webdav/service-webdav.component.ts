@@ -15,7 +15,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -32,7 +31,6 @@ import {
 export class ServiceWebdavComponent implements OnInit {
 
   protected resource_name: string = 'services/webdav';
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -110,5 +108,5 @@ export class ServiceWebdavComponent implements OnInit {
     });
   }
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 }

@@ -15,7 +15,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -32,7 +31,6 @@ import {
 export class ServiceS3Component implements OnInit {
   protected resource_name: string = 'services/s3';
   protected route_success: string[] = [ 'services' ];
-  private entityEdit: EntityConfigComponent;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -91,5 +89,5 @@ export class ServiceS3Component implements OnInit {
 
   ngOnInit() {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 }

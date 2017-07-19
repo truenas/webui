@@ -15,7 +15,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -31,7 +30,6 @@ import {
 export class ServiceTFTPComponent {
 
   protected resource_name: string = 'services/tftp';
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -76,5 +74,5 @@ export class ServiceTFTPComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 }

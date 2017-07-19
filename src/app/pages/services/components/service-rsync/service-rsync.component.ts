@@ -6,7 +6,6 @@ import {Subscription} from 'rxjs';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -18,7 +17,6 @@ import {
 
 export class ServiceRSYNCComponent {
   protected resource_name: string = 'services/rsyncd';
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -39,5 +37,5 @@ export class ServiceRSYNCComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 }

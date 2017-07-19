@@ -16,7 +16,6 @@ import {
   RestService,
   WebSocketService
 } from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -31,7 +30,6 @@ import {
 
 export class ServiceDCComponent {
   protected resource_name: string = 'services/domaincontroller';
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -108,5 +106,5 @@ export class ServiceDCComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 }

@@ -15,7 +15,6 @@ import {
   RestService,
   WebSocketService
 } from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -33,7 +32,6 @@ export class ServiceSSHComponent implements OnInit {
   // Form Layout
   protected resource_name: string = 'services/ssh';
   protected isBasicMode: boolean = true;
-  private entityEdit: EntityConfigComponent;
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
@@ -155,7 +153,7 @@ export class ServiceSSHComponent implements OnInit {
       protected networkService: NetworkService,
   ) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 
   protected ssh_bindiface: any;
   ngOnInit() {

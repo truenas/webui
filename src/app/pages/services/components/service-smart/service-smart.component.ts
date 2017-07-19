@@ -15,7 +15,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -32,7 +31,6 @@ export class ServiceSMARTComponent {
 
   protected resource_name: string = 'services/smart';
   protected route_success: string[] = [ 'services' ];
-  private entityEdit: EntityConfigComponent;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -78,5 +76,5 @@ export class ServiceSMARTComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) {  }
 }
