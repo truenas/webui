@@ -33,7 +33,7 @@ import {EntityTableComponent} from './entity-table/entity-table.component';
 import {EntityTemplateDirective} from './entity-template.directive';
 
 import {FormPermissionsComponent} from './entity-form/components/form-permissions/form-permissions.component';
-
+import {EntityJobComponent} from './entity-job/entity-job.component';
 
 @NgModule({
   imports : [
@@ -64,7 +64,8 @@ import {FormPermissionsComponent} from './entity-form/components/form-permission
     FormPermissionsComponent,
     TooltipComponent,
     FormArrayComponent,
-    FormUploadComponent
+    FormUploadComponent,
+    EntityJobComponent
   ],
   exports : [
     EntityAddComponent,
@@ -85,7 +86,8 @@ import {FormPermissionsComponent} from './entity-form/components/form-permission
     FormTextareaComponent,
     FormPermissionsComponent,
     FormArrayComponent,
-    FormUploadComponent
+    FormUploadComponent,
+    EntityJobComponent
   ]
 })
 export class EntityModule {
