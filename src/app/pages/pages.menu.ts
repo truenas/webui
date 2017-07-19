@@ -79,6 +79,14 @@ export const PAGES_MENU = [
         order : 0
       },
       {
+        path : [ 'system', 'ntpservers' ],
+        title : 'NTP Servers',
+        icon : 'ion-android-time',
+        selected: false,
+        expanded : false,
+        order : 0
+      },
+      {
         path : [ 'system', 'support' ],
         title : 'Support',
         icon : 'ion-beer',
