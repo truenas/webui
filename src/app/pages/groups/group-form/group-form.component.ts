@@ -58,7 +58,6 @@ export class GroupFormComponent {
       });
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdgrp_gid', true);
-        entityForm.formGroup.controls['bsdusr_uid'].setValue(gid);
       } else {
         gid += 1;
         entityForm.formGroup.controls['bsdgrp_gid'].setValue(gid);

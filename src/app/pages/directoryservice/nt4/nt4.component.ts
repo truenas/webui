@@ -9,8 +9,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../services/';
-import {EntityConfigComponent} from '../../common/entity/entity-config/';
-import {EntityFormComponent} from '../../common/entity/entity-form';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {matchOtherValidator} from '../../common/entity/entity-form/validators/password-validation';
 
@@ -21,7 +19,6 @@ import {matchOtherValidator} from '../../common/entity/entity-form/validators/pa
 
 export class NT4Component {
   protected resource_name: string = 'directoryservice/nis/';
-  private entityEdit: EntityConfigComponent;
   protected isBasicMode: boolean = true;
   public fieldConfig: FieldConfig[] = [
     {
@@ -95,5 +92,5 @@ export class NT4Component {
               protected _state: GlobalState,
               protected systemGeneralService: SystemGeneralService) {}
 
-  afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
+  afterInit(entityEdit: any) { }
 }

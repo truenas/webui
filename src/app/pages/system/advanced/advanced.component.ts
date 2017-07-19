@@ -11,7 +11,6 @@ import {Subscription} from 'rxjs';
 
 import {GlobalState} from '../../../global.state';
 import {RestService, UserService, WebSocketService} from '../../../services/';
-import {EntityConfigComponent} from '../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -22,7 +21,6 @@ import {
 })
 export class AdvancedComponent {
   protected resource_name: string = 'system/advanced';
-  private entityEdit: EntityConfigComponent;
 
   public fieldConfig: FieldConfig[] = [
     {

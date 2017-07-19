@@ -7,23 +7,18 @@ import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 import {NgaModule} from '../../theme/nga.module';
 import {EntityModule} from '../common/entity/entity.module';
 
-import {GroupAddComponent} from './group-add/';
 import {GroupDeleteComponent} from './group-delete/';
-import {GroupEditComponent} from './group-edit/';
 import {GroupFormComponent} from './group-form/';
 import {GroupListComponent} from './group-list/';
 import {routing} from './groups.routing';
 
 @NgModule({
   imports : [
-    EntityModule, DynamicFormsCoreModule.forRoot(),
-    DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
+    EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgaModule, routing
   ],
   declarations : [
-    GroupAddComponent,
     GroupListComponent,
-    GroupEditComponent,
     GroupFormComponent,
     GroupDeleteComponent,
   ],

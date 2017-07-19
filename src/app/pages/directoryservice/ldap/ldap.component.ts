@@ -9,7 +9,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../services/';
-import {EntityConfigComponent} from '../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -22,7 +21,6 @@ import {
 export class LdapComponent {
   protected resource_name: string = 'directoryservice/ldap';
   protected isBasicMode: boolean = true;
-  protected entityEdit: EntityConfigComponent;
 
   public fieldConfig: FieldConfig[] = [
     {type : 'input', name : 'ldap_hostname', placeholder : 'Hostname'},
@@ -116,7 +114,6 @@ export class LdapComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
     this.systemGeneralService.getCA().subscribe((res) => {
       this.ldapCertificate =
           _.find(this.fieldConfig, {name : 'ldap_certificate'});

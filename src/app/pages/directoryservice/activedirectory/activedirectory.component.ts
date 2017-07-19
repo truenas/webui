@@ -9,7 +9,6 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../../services/';
-import {EntityConfigComponent} from '../../common/entity/entity-config/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -22,7 +21,6 @@ import {
 export class ActiveDirectoryComponent {
   protected resource_name: string = 'directoryservice/activedirectory';
   protected isBasicMode: boolean = true;
-  private entityEdit: EntityConfigComponent;
 
   public fieldConfig: FieldConfig[] = [
     {type : 'input', name : 'ad_domainname', placeholder : 'Domain Name'},
@@ -129,7 +127,6 @@ export class ActiveDirectoryComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
     this.systemGeneralService.getCA().subscribe((res) => {
       this.ad_certificate = _.find(this.fieldConfig, {name : 'ad_certificate'});
       res.forEach((item) => {
