@@ -9,6 +9,8 @@ import {FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FileUploader } from 'ng2-file-upload';
 import {BaJob} from '../../../theme/components';
+import {EntityJobComponent} from '../../common/entity/entity-job/entity-job.component';
+import {MdDialog, MdDialogRef} from '@angular/material';
 
 @Component({
   selector : 'app-support',
@@ -28,9 +30,11 @@ export class SupportComponent {
   payload = {};
   @ViewChild(BaJob) baJob: BaJob;
   busy: Subscription;
+
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
-              protected _appRef: ApplicationRef, protected _state: GlobalState,)
+              protected _appRef: ApplicationRef, protected _state: GlobalState,
+              protected dialog: MdDialog)
               {
               }
   
@@ -42,10 +46,16 @@ export class SupportComponent {
     this.payload['title'] = this.title;
     this.payload['body'] = this.body;
     this.payload['type'] = this.type;
-    this.baJob.setCall('support.new_ticket', [this.payload]);
-    this.baJob.submit();
-    
+
+    this.openDialog();
   };
+
+    openDialog() {
+      let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
+      dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+      dialogRef.componentInstance.submit();
+    }
+
    onBlurMethod(){
      if (this.username !== '' && this.password !== '') { 
        this.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res) => {
