@@ -1,20 +1,29 @@
 import {Component} from '@angular/core';
+import { RestService } from '../../../services';
 
-import {BaMsgCenterService} from './baMsgCenter.service';
 
 @Component({
   selector : 'ba-msg-center',
-  providers : [ BaMsgCenterService ],
   styleUrls : [ './baMsgCenter.scss' ],
   templateUrl : './baMsgCenter.html'
 })
 export class BaMsgCenter {
-
   public notifications: Array<Object>;
   public messages: Array<Object>;
+  public notification_count: number = 0;
 
-  constructor(private _baMsgCenterService: BaMsgCenterService) {
-    this.notifications = this._baMsgCenterService.getNotifications();
-    this.messages = this._baMsgCenterService.getMessages();
+   constructor(private rest: RestService) {
   }
+
+  public getMessages() : Array<Object> {
+    return this.messages;
+  }
+
+  public getNotifications() : Array<Object> {
+    this.rest.get( "system/alert/", {}).subscribe((res) => {
+      this.notifications = res.data;
+    });
+    this.notification_count = this.notifications.length;
+    return this.notifications; 
+  };
 }

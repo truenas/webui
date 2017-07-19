@@ -1,8 +1,8 @@
 <ul class="al-msg-center clearfix">
     <li class="dropdown">
         <a href class="dropdown-toggle" id="msg-dd1" data-toggle="dropdown" aria-expanded="false">
-            <i class="fa fa-bell-o"></i>
-            <!--<span>2</span>-->
+            <i (click)="getNotifications()" class="fa fa-bell-o"></i>
+            <span *ngIf="notification_count>0">{{notification_count}} </span>
 
             <div class="notification-ring"></div>
         </a>
