@@ -93,17 +93,14 @@ export class EntityJobComponent implements OnInit{
             (res) => {
               this.job = res;
               if (res.progress) {
-                console.log("job on progress", res.progress);
                 this.progress.emit(res.progress);
               }
             },
             () => {},
             () => {
               if (this.job.state == 'SUCCESS') {
-                console.log("job success");
                 this.success.emit(this.job);
               } else if (this.job.state == 'FAILED') {
-                console.log("job failed");
                 this.failure.emit(this.job);
               }
             });
