@@ -6,7 +6,7 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-smb-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template : `<entity-table [conf]="this"></entity-table>`
 })
 export class SMBListComponent {
 
@@ -18,8 +18,8 @@ export class SMBListComponent {
   constructor(_rest: RestService, _router: Router, _state: GlobalState) {}
 
   public columns: any[] = [
-    {title : 'Name', name : 'cifs_name'},
-    {title : 'Path', name : 'cifs_path'},
+    {name: 'Name', prop: 'cifs_name'},
+    {name: 'Path', prop: 'cifs_path'},
   ];
   public config: any = {
     paging : true,
