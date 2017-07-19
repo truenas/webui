@@ -25,7 +25,7 @@ import {FieldRelationService} from './services/field-relation.service';
 @Component({
   selector : 'entity-form',
   templateUrl : './entity-form.component.html',
-  styleUrls : [ './entity-form.component.css' ],
+  styleUrls : [ './entity-form.component.scss' ],
   providers : [ EntityFormService, FieldRelationService ]
 })
 export class EntityFormComponent implements OnInit, OnDestroy {

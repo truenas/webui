@@ -11,7 +11,7 @@ $angle-right: "\f101";
   z-index: 1001;
   display: block;
   min-height: 100%;
-  background-color: $primary-dark !important; 
+  background-color:  #283593  !important; 
   height: 100%;
   position: fixed;
 }
@@ -39,9 +39,9 @@ $angle-right: "\f101";
   float: none;
   padding: 0;
   &.selected:not(.with-sub-menu) {
-    background-color: $primary-bg;
+    background-color: $primary;
     a.al-sidebar-list-link {
-      color: $accent-color;
+      color: $label-text;
       b {
         color: $label-text;
       }
@@ -76,16 +76,16 @@ a.al-sidebar-list-link {
   height: 1.6em;
   text-shadow: none;
   text-decoration: none;
-  margin-left: .7em;
-  color: $accent-color;
+  padding-left: .7em;
+  color: $label-text;
   line-height: 1.6em;
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
   &:hover {
-    color: $help-text;
+    color: $label-text;
     b {
-      color: $info-dark;
+      color: $label-text;
     }
   }
   i {
@@ -106,7 +106,7 @@ a.al-sidebar-list-link {
     top: 12px;
     padding: 0;
     text-align: center;
-    color: $sidebar-text;
+    color: $label-text;
     transition: transform 0.2s linear;
   }
 }
@@ -140,7 +140,7 @@ a.al-sidebar-list-link {
     padding: 0;
     border-bottom: none;
     position: relative;
-    color: $info-dark;
+    color: $label-text;
     a {
       display: block;
       text-shadow: none;
@@ -150,14 +150,14 @@ a.al-sidebar-list-link {
       height: auto;
       line-height: 1.4em;
       &:hover {
-        color: $help-text;
+        color: $label-text;
       }
     }
     &.selected:not(.with-sub-menu) > a {
       border: none;
-      background-color: $body-bg;
+      background-color: $primary;
       &:hover {
-        color: $info-dark;
+        color: $label-text;
       }
     }
 
@@ -170,7 +170,7 @@ a.al-sidebar-list-link {
 
 .sidebar-hover-elem{
   width: $sidebar-scroll-width;
-  background: $primary;
+  background: $accent-color;
   position: absolute;
   top: -150px;
   left: $sidebar-width - $sidebar-scroll-width;
@@ -187,7 +187,7 @@ a.al-sidebar-list-link {
 
 @mixin sidebar-collapsed() {
   .al-sidebar {
-    width: 52px;
+    width: 40px;
 
     .fa-angle-down, .fa-angle-up {
       opacity: 0;
@@ -196,7 +196,7 @@ a.al-sidebar-list-link {
     .al-sidebar-sublist {
       position: absolute;
       top: -1px;
-      left: 52px;
+      left: 48px;
       @include bg-translucent-dark(0.8);
       width: 0;
       display: block;

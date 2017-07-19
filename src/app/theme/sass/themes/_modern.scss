@@ -2,7 +2,7 @@
 @include mat-core();
 
 $modern-primary: mat-palette($mat-indigo);
-$modern-accent:  mat-palette($mat-light-blue, A200, A100, A400);
+$modern-accent:  mat-palette($mat-light-blue);
 
 $modern-warn:    mat-palette($mat-red);
 

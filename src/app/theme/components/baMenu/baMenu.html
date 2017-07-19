@@ -8,16 +8,6 @@
   </ul>
 
 
-  <div class="dropdown" class="reboot-button">
-	<i class="fa fa-rotate-left" (click)="onReboot()">
-		<span>Reboot</span>
-	</i>
-  </div>
-  <div class="dropdown" class="power-button">
-	<i class="fa fa-power-off" (click)="onShutdown()">
-		<span>Shutdown</span>
-	</i>
-  </div>
   <div class="sidebar-hover-elem" [ngStyle]="{top: hoverElemTop + 'px', height: hoverElemHeight + 'px'}"
        [ngClass]="{'show-hover-elem': showHoverElem }"></div>
 </aside>

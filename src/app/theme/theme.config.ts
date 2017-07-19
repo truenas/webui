@@ -9,7 +9,7 @@ export class BaThemeConfig {
   constructor(private _baConfig: BaThemeConfigProvider) {}
 
   config() {
-    this._baConfig.changeTheme({name : 'murky'});
+    this._baConfig.changeTheme({name : 'modern'});
     //
     let colorScheme = {
       primary : '#209e91',

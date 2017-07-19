@@ -39,7 +39,7 @@ export class BaThemeConfigProvider {
 
     this.conf = {
       theme : {
-        name : 'murky',
+        name : 'modern',
       },
       colors : {
         default : this.basic.default,
