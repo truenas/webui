@@ -13,7 +13,6 @@ import {Subscription} from 'rxjs';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 
 @Component({
   selector : 'system-tunables-list',

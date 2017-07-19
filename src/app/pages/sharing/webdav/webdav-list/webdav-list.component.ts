@@ -5,7 +5,6 @@ import {Subscription} from 'rxjs';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService} from '../../../../services/rest.service';
-import {EntityConfigComponent} from '../../../common/entity/entity-config/';
 
 @Component({
   selector : 'webdav-list',
