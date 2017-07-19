@@ -3,18 +3,20 @@ import 'style-loader!./baPageTop.scss';
 import {Component} from '@angular/core';
 
 import {GlobalState} from '../../../global.state';
-import {WebSocketService} from '../../../services/index';
+import {WebSocketService, DialogService} from '../../../services/index';
+import {Router} from '@angular/router';
 
 @Component({
   selector : 'ba-page-top',
   templateUrl : './baPageTop.html',
+  providers: [WebSocketService, DialogService]
 })
 export class BaPageTop {
 
   public isScrolled: boolean = false;
   public isMenuCollapsed: boolean = false;
 
-  constructor(private _state: GlobalState, public _ws: WebSocketService) {
+  constructor(protected router: Router, private _state: GlobalState, public _ws: WebSocketService, private dialogService: DialogService) {
     this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
       this.isMenuCollapsed = isCollapsed;
     });
@@ -28,21 +30,27 @@ export class BaPageTop {
 
   public scrolledChanged(isScrolled) { this.isScrolled = isScrolled; }
 
-  public logOut() { this._ws.logout(); }
+  public logOut() {
+    this.dialogService.confirm("Logout", "You are about to LOGOUT the system, are you sure?").subscribe((res) => {
+      if (res) {
+        this._ws.logout();
+      }
+    });
+  }
 
   public onShutdown(): void {
-    if (confirm("Are you sure to shutdown?")) {
-      this._ws.call('system.shutdown', {}).subscribe((res) => {
-        alert('system is shutting down...');
-      });
-    }
+    this.dialogService.confirm("Reboot", "You are about to SHUTDOWN the system, are you sure?").subscribe((res) => {
+      if (res) {
+        this._ws.call('system.shutdown', {});
+      }
+    })
   }
 
   public onReboot(): void {
-    if (confirm("Are you sure to reboot?")) {
-      this._ws.call('system.reboot', {}).subscribe((res) => {
-        alert('system is rebooting...');
-      });
-    }
+    this.dialogService.confirm("Reboot", "You are about to REBOOT the system, are you sure?").subscribe((res) => {
+      if (res) {
+        this._ws.call('system.reboot', {});
+      }
+    })
   }
 }
