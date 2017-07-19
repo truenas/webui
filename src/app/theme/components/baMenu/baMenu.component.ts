@@ -90,20 +90,4 @@ export class BaMenu {
 
     return false;
   }
-
-  public onShutdown(): void {
-    if (confirm("Are you sure to shutdown?")) {
-      this.ws.call('system.shutdown', {}).subscribe((res) => {
-        alert('system is shutting down...');
-      });
-    }
-  }
-
-  public onReboot(): void {
-    if (confirm("Are you sure to reboot?")) {
-      this.ws.call('system.reboot', {}).subscribe((res) => {
-        alert('system is rebooting...');
-      });
-    }
-  }
 }

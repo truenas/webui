@@ -118,7 +118,7 @@ a.al-sidebar-list-link {
 }
 @mixin layout-collapsed() {
   .al-main {
-    margin-left: 50px;
+    margin-left: 40px;
   }
 
   .al-footer {
@@ -196,7 +196,7 @@ a.al-sidebar-list-link {
     .al-sidebar-sublist {
       position: absolute;
       top: -1px;
-      left: 48px;
+      left: 40px;
       @include bg-translucent-dark(0.8);
       width: 0;
       display: block;
@@ -222,7 +222,7 @@ a.al-sidebar-list-link {
     }
 
     .sidebar-hover-elem, .sidebar-select-elem {
-      left: 48px;
+      left: 40px;
     }
   }
 }

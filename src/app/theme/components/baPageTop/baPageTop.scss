@@ -185,3 +185,15 @@ a.collapse-menu-link {
     color: $accent-color;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
 }
+.fa-rotate-left {
+    padding: .2em;
+    font-size: 2em;
+    color: $warning !important;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}
+.fa-power-off {
+    padding: .2em;
+    font-size: 2em;
+    color: $danger !important;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}

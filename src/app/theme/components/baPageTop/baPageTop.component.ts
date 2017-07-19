@@ -29,4 +29,20 @@ export class BaPageTop {
   public scrolledChanged(isScrolled) { this.isScrolled = isScrolled; }
 
   public logOut() { this._ws.logout(); }
+
+  public onShutdown(): void {
+    if (confirm("Are you sure to shutdown?")) {
+      this._ws.call('system.shutdown', {}).subscribe((res) => {
+        alert('system is shutting down...');
+      });
+    }
+  }
+
+  public onReboot(): void {
+    if (confirm("Are you sure to reboot?")) {
+      this._ws.call('system.reboot', {}).subscribe((res) => {
+        alert('system is rebooting...');
+      });
+    }
+  }
 }

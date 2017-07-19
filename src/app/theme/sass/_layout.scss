@@ -47,6 +47,7 @@ a {
 
 .body-bg {
   display: none;
+  background: $primary-light;
 }
 
 .al-header {
@@ -62,14 +63,14 @@ a {
 .al-main {
   margin-left: $left-space;
   padding: 66px 0 34px 0;
-  min-height: 500px;
+  min-height: 100%;
   position: relative;
   background: $primary-light;
 }
 
 .al-footer {
   height: 34px;
-  padding: 0 18px 0 ($left-space + 20px);
+  padding: 10px 18px 0 300px ($left-space + 20px);
   width: 100%;
   position: absolute;
   display: block;
@@ -77,6 +78,7 @@ a {
   font-size: 13px;
   color: $default-text;
   transition: padding-left 0.5s ease;
+  background: $primary-light;
 }
 
 .al-footer-main {
@@ -195,3 +197,4 @@ a {
 .text-center {
   text-align: center;
 }
+.cdk-overlay-container { background: $primary-light;}
