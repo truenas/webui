@@ -7,9 +7,9 @@ import {AlertModule} from 'ngx-bootstrap/alert';
 import {ModalModule} from 'ngx-bootstrap/modal';
 import {ProgressbarModule} from 'ngx-bootstrap/progressbar';
 import {NgUploaderModule} from 'ngx-uploader';
+import { Ng2DropdownModule } from 'ng2-material-dropdown';
 
 import {
-  BaBackTop,
   BaCard,
   BaChartistChart,
   BaCheckbox,
@@ -41,7 +41,7 @@ import {BaThemeConfigProvider} from './theme.configProvider';
 import {EmailValidator, EqualPasswordsValidator} from './validators';
 
 const NGA_COMPONENTS = [
-  BaBackTop, BaCard, BaChartistChart, BaCheckbox, BaContentTop, BaJob,
+  BaCard, BaChartistChart, BaCheckbox, BaContentTop, BaJob,
   BaMenuItem, BaMenu, BaMsgCenter, BaMultiCheckbox, BaPageTop,
   BaPictureUploader, BaSidebar
 ];
@@ -62,6 +62,7 @@ const NGA_VALIDATORS = [ EmailValidator, EqualPasswordsValidator ];
   imports : [
     CommonModule,
     RouterModule,
+    Ng2DropdownModule,
     FormsModule,
     ReactiveFormsModule,
     NgUploaderModule,

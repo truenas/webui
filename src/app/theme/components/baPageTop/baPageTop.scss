@@ -44,8 +44,9 @@ a.al-logo:hover {
 
 .user-profile {
     float: right;
-    min-width: 230px;
-    margin-top: 10px;
+    min-width: 40px;
+    margin-top: 12px;
+    margin-right: 40px;
 }
 
 .al-user-profile {
@@ -82,14 +83,14 @@ a.refresh-data {
 }
 
 a.collapse-menu-link {
-    font-size: 2em;
+    font-size: 1.5em;
     cursor: pointer;
     display: block;
     text-decoration: none;
-    line-height: 2em;
+    line-height: 2.5em;
     padding: 0;
     float: left;
-    margin: 0 0 0 15px;
+    margin: 0 0 0 8px;
     &:hover {
         text-decoration: none;
         color: $info;
@@ -196,4 +197,11 @@ a.collapse-menu-link {
     font-size: 2em;
     color: $danger !important;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}
+
+
+button.ng2-dropdown-button {
+    font-size: 2em !important;
+    color: $label-text !important;
+    background: transparent !important;
 }

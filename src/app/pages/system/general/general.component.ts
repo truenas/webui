@@ -18,13 +18,62 @@ import {
 @Component({
   selector : 'app-general',
   template : `
-  <p>
-    <button class="btn btn-outline-primary" (click)="gotoSaveConfig()">Save Config</button>
-    <button class="btn btn-outline-warning" (click)="gotoUploadConfig()">Upload Config</button>
-    <button class="btn btn-outline-danger" (click)="gotoResetConfig()">Reset Config</button>
-    <button class="btn btn-outline-info" (click)="gotoNTPServers()">NTP Servers</button>
-  </p>
-  <entity-form [conf]="this"></entity-form>`
+  <style>
+  .md-fab-bottom-right-1 {
+    top: auto !important;
+    right: 30px !important;
+    bottom: 48px !important;
+    left: auto !important;
+    position: fixed !important;
+    z-index: 1;
+  }
+    .md-fab-bottom-right-2 {
+    top: auto !important;
+    right: 90px !important;
+    bottom: 48px !important;
+    left: auto !important;
+    position: fixed !important;
+    z-index: 1;
+  }
+    .md-fab-bottom-right-3 {
+    top: auto !important;
+    right: 150px !important;
+    bottom: 48px !important;
+    left: auto !important;
+    position: fixed !important;
+    z-index: 1;
+  }
+    .md-fab-bottom-right-4 {
+    top: auto !important;
+    right: 210px !important;
+    bottom: 48px !important;
+    left: auto !important;
+    position: fixed !important;
+    z-index: 1;
+  }
+</style>
+
+
+
+  <entity-form [conf]="this"></entity-form>
+
+    <section class="fab">
+    <button md-fab class="md-fab-bottom-right-1" color="primary" (click)="gotoSaveConfig()">
+      <md-icon class="md-16 ">save</md-icon>
+    </button>
+    <button md-fab class="md-fab-bottom-right-2"  color="primary" (click)="gotoUploadConfig()">
+      <md-icon class="md-16">file_upload</md-icon>
+    </button>
+
+    <button md-fab class="md-fab-bottom-right-3"  color="primary" (click)="gotoResetConfig()">
+      <md-icon class="md-16">clear</md-icon>
+    </button>
+
+    <button md-fab class="md-fab-bottom-right-4"  color="primary" (click)="gotoNTPServers()">
+      <md-icon class="md-16">access_alarm</md-icon>
+    </button>
+    </section>
+  `
 })
 export class GeneralComponent {
 

@@ -1,17 +1,22 @@
 <div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)" [ngClass]="{scrolled: isScrolled}">
-    <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
-    <a routerLink="/pages/dashboard" class="al-logo clearfix"> </a>
 
-    <div class="user-profile clearfix">
-        <div class="dropdown al-user-profile">
-            <a (click)="logOut()" class="signout" alt="Sign Off"><i class="fa fa-sign-out profile-toggle-link"></i></a>
-        </div>
-  	<div class="dropdown al-user-profile">
-  		<a  (click)="onReboot()" class="" alt="Reboot"><i class="fa fa-rotate-left profile-toggle-link"></i></a>
-	</div>
-  	<div class="dropdown al-user-profile">
-		<a  (click)="onShutdown()" class="" alt="Shutdown"><i class="fa fa-power-off profile-toggle-link"></i></a>
-	</div>
-        <ba-msg-center></ba-msg-center>
+    <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon-round"></a>
+    <a routerLink="/pages/dashboard" class="al-logo clearfix"> </a>
+         <ng2-dropdown style="float: right;margin-right: 8px;">
+          <ng2-dropdown-button class="ng2-dropdown-button--icon"  [showCaret]="false">
+              <a class="ion-android-more-vertical" ng2-menu-item-icon></a>
+          </ng2-dropdown-button>
+          <ng2-dropdown-menu [width]="1" [offset]="'74 -205'">
+
+              <ng2-menu-item (click)="logOut()">
+                <span> Logout </span>
+              </ng2-menu-item>
+              <ng2-menu-item (click)="onReboot()">
+              <span> Reboot </span>
+              </ng2-menu-item>
+              <ng2-menu-item (click)="onShutdown()">
+                <span> Shutdown </span>
+              </ng2-menu-item>
+          </ng2-dropdown-menu>
+      </ng2-dropdown>
     </div>
-</div>
