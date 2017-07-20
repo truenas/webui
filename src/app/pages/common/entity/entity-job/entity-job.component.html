@@ -9,8 +9,12 @@
     	</md-progress-bar>
     	{{ progressTotalPercent }}%
     </div>
-    <span *ngIf="description">{{ description }}</span>
-    <span *ngIf="!description">Starting job...</span>
+    <div>
+		<span *ngIf="description">{{ description }}</span>
+    </div>
+    <div>
+		<span *ngIf="!description">Starting job...</span>
+    </div>
 </div>
 <div md-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
     <button md-button md-dialog-close="close">Close</button>
