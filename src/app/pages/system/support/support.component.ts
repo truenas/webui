@@ -50,25 +50,25 @@ export class SupportComponent {
     this.openDialog();
   };
 
-    openDialog() {
-      let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
-      dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
-      dialogRef.componentInstance.submit();
-    }
+  openDialog() {
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
+    dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+    dialogRef.componentInstance.submit();
+  }
 
-   onBlurMethod(){
-     if (this.username !== '' && this.password !== '') { 
-       this.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res) => {
-          this.categories = [];
-          for (let property in res) {
-            if (res.hasOwnProperty(property)) {
-              this.categories.push({label : property, value : res[property]});
-            }
+  onBlurMethod(){
+    if (this.username !== '' && this.password !== '') {
+      this.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res) => {
+        this.categories = [];
+        for (let property in res) {
+          if (res.hasOwnProperty(property)) {
+            this.categories.push({label : property, value : res[property]});
           }
-        });
-      } else {
-        console.log("please enter valid email address");
-      }
+        }
+      });
+    } else {
+      console.log("please enter valid email address");
+    }
   }
 
   onProgress(progress) {}
