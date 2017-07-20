@@ -8,6 +8,9 @@ BaMsgCenterService {
   @Output() onAlert = new EventEmitter<boolean>();
 
   constructor(private rest: RestService) {
+    this.fetchAlerts()
+    // check for new alerts every 30 secs.
+    setInterval(() => { this.fetchAlerts() }, 1000*30);
   }
 
   public getMessages() : Array<Object> {
