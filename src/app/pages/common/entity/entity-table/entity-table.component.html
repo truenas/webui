@@ -1,4 +1,3 @@
-<a *ngIf="conf.route_add" class="btn btn-info " (click)="doAdd()"><i class="ion-plus"></i></a>
 <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 <md-card [ngBusy]="busy">
   <ngx-datatable
@@ -6,6 +5,7 @@
     [rows]="rows" 
     [columns]="conf.columns" 
     [headerHeight]="50" 
+    [rowHeight]="50"
     [footerHeight]="50" 
     [columnMode]="'force'" 
     [limit]="conf.config.pageLimit ? conf.config.pageLimit : 20" 
@@ -27,7 +27,8 @@
       <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>
     </ng-template>
   </ngx-datatable-column>
-
   </ngx-datatable>
-
 </md-card>
+<a *ngIf="conf.route_add"  md-fab class="md-fab-bottom-right-1" color="accent" (click)="doAdd()">
+            <md-icon class="md-16">star</md-icon>
+</a>

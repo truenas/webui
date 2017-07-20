@@ -10,8 +10,8 @@ import {EntityTableComponent} from './entity-table.component';
 @Component({
   selector : 'app-entity-table-actions',
   template : `
-    <span *ngFor="let action of entity.getActions(row)" class="btn-group">
-      <button *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" class="btn btn-lg btn-block btn-raised btn-primary" (click)="action.onClick(this.row)">{{ action?.label }}</button>
+    <span *ngFor="let action of entity.getActions(row)">
+      <button *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" md-mini-fab color="primary" (click)="action.onClick(this.row)">{{ action?.label }}</button>
     </span>
   `
 })
