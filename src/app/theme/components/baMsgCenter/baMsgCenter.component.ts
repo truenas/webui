@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { RestService } from '../../../services';
 import { BaMsgCenterService } from './baMsgCenter.service'
 
@@ -9,12 +9,13 @@ import { BaMsgCenterService } from './baMsgCenter.service'
   styleUrls : [ './baMsgCenter.scss' ],
   templateUrl : './baMsgCenter.html'
 })
-export class BaMsgCenter {
+export class BaMsgCenter implements OnDestroy{
   public alerts: Array<Object> = [];
   public messages: Array<Object> = [];
+  private subscription: any;
 
   constructor(private rest: RestService, private msgService: BaMsgCenterService) {
-    msgService.onAlert.subscribe((value) => {
+    this.subscription = msgService.onAlert.subscribe((value) => {
     console.log("got event");
       this.getAlerts();
     })
@@ -31,6 +32,10 @@ export class BaMsgCenter {
   public refreshAlerts() : void {
     console.log("in refreshAlert");
     this.msgService.fetchAlerts(); 
+  };
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   };
 
 
