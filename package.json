@@ -13,6 +13,7 @@
         "start:hmr": "ng serve --hmr",
         "start:aot": "ng serve --aot",
         "start:dev:aot": "ng serve --proxy-config proxy.config.json --aot",
+        "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
         "start:prod": "ng serve --prod",
         "start:prod:aot": "ng serve --prod --aot",
         "build": "npm run clean:dist && ng build",
