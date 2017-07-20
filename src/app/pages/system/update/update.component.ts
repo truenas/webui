@@ -10,6 +10,8 @@ import {Subscription} from 'rxjs';
 
 import {RestService, WebSocketService} from '../../../services/';
 import {BaJob} from '../../../theme/components';
+import {EntityJobComponent} from '../../common/entity/entity-job/entity-job.component';
+import {MdDialog, MdDialogRef} from '@angular/material';
 
 @Component({
   selector : 'app-update',
@@ -34,7 +36,7 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService) {}
+              protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {}
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
@@ -106,9 +108,9 @@ export class UpdateComponent implements OnInit {
   }
 
   update() {
-    this.baJob.setCall('update.update',
-                       [ {train : this.train, reboot : true} ]);
-    this.baJob.submit();
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
+    dialogRef.componentInstance.setCall('update.update', [{train : this.train, reboot : true}]);
+    dialogRef.componentInstance.submit();
   }
 
   onProgress(progress) {}
