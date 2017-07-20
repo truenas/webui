@@ -16,7 +16,6 @@ export class BaMsgCenter implements OnDestroy{
 
   constructor(private rest: RestService, private msgService: BaMsgCenterService) {
     this.subscription = msgService.onAlert.subscribe((value) => {
-    console.log("got event");
       this.getAlerts();
     })
   }
@@ -30,7 +29,6 @@ export class BaMsgCenter implements OnDestroy{
   }
 
   public refreshAlerts() : void {
-    console.log("in refreshAlert");
     this.msgService.fetchAlerts(); 
   };
 
