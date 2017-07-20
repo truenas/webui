@@ -10,12 +10,19 @@
         <div class="top-dropdown-menu dropdown-menu" aria-labelledby="msg-dd1">
             <i class="dropdown-arr"></i>
             <div class="msg-list">
-                <a *ngFor="let msg of alerts" href class="clearfix">
+                <div *ngIf="alerts?.length; else noAlerts">
+                    <a *ngFor="let msg of alerts" href class="clearfix">
+                        <div class="msg-area">
+                            <div>{{ msg.message }}</div>
+                            <span>{{ msg.level }}</span>
+                        </div>
+                    </a>
+                </div>
+                <ng-template #noAlerts>
                     <div class="msg-area">
-                        <div>{{ msg.message }}</div>
-                        <span>{{ msg.level }}</span>
+                        <div>The system has no alerts</div>
                     </div>
-                </a>
+                </ng-template>
             </div>
         </div>
     </li>
