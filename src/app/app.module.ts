@@ -1,4 +1,4 @@
-import 'style-loader!angular2-busy/build/style/busy.css';
+import 'style-loader!tixif-ngx-busy/build/style/busy.css';
 import 'hammerjs';
 
 import {ApplicationRef, NgModule} from '@angular/core';
