@@ -2,22 +2,22 @@
 
     <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon-round"></a>
     <a routerLink="/pages/dashboard" class="al-logo clearfix"> </a>
-	<ba-msg-center></ba-msg-center>
-         <ng2-dropdown style="float: right;margin-right: 8px;">
-          <ng2-dropdown-button class="ng2-dropdown-button--icon"  [showCaret]="false">
-              <a class="ion-android-more-vertical" ng2-menu-item-icon></a>
-          </ng2-dropdown-button>
-          <ng2-dropdown-menu [width]="1" [offset]="'74 -205'">
+    <ba-msg-center></ba-msg-center>
+    <ng2-dropdown style="float: right;margin-right: 8px;">
+        <ng2-dropdown-button class="ng2-dropdown-button--icon" [showCaret]="false">
+            <a class="ion-android-more-vertical" ng2-menu-item-icon></a>
+        </ng2-dropdown-button>
+        <ng2-dropdown-menu [width]="1" [offset]="'74 -205'">
 
-              <ng2-menu-item (click)="logOut()">
+            <ng2-menu-item (click)="logOut()">
                 <span> Logout </span>
-              </ng2-menu-item>
-              <ng2-menu-item (click)="onReboot()">
-              <span> Reboot </span>
-              </ng2-menu-item>
-              <ng2-menu-item (click)="onShutdown()">
+            </ng2-menu-item>
+            <ng2-menu-item (click)="onReboot()">
+                <span> Reboot </span>
+            </ng2-menu-item>
+            <ng2-menu-item (click)="onShutdown()">
                 <span> Shutdown </span>
-              </ng2-menu-item>
-          </ng2-dropdown-menu>
-      </ng2-dropdown>
-    </div>
+            </ng2-menu-item>
+        </ng2-dropdown-menu>
+    </ng2-dropdown>
+</div>

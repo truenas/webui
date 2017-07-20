@@ -10,18 +10,27 @@ import { BaMsgCenterService } from './baMsgCenter.service'
   templateUrl : './baMsgCenter.html'
 })
 export class BaMsgCenter {
-  public alerts: Array<Object>;
-  public messages: Array<Object>;
+  public alerts: Array<Object> = [];
+  public messages: Array<Object> = [];
 
-  constructor(private rest: RestService, public msgService: BaMsgCenterService) {
+  constructor(private rest: RestService, private msgService: BaMsgCenterService) {
+    msgService.onAlert.subscribe((value) => {
+    console.log("got event");
+      this.getAlerts();
+    })
   }
 
   public getMessages() : Array<Object> {
-    return this.messages;
+    return this.messages = this.msgService.getMessages();
   }
 
-  public refreshAlerts() : Array<Object> {
-    return this.msgService.fetchAlerts(); 
+  public getAlerts() : Array<Object> {
+    return this.alerts = this.msgService.getAlerts();
+  }
+
+  public refreshAlerts() : void {
+    console.log("in refreshAlert");
+    this.msgService.fetchAlerts(); 
   };
 
 
