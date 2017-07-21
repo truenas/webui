@@ -112,11 +112,4 @@ export class UpdateComponent implements OnInit {
     dialogRef.componentInstance.submit();
   }
 
-  onProgress(progress) {}
-
-  onSuccess(job) {
-    this.baJob.setDescription('Update has completed. Rebooting...')
-  }
-
-  onFailure(job) {}
 }
