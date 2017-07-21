@@ -1,14 +1,14 @@
 import 'style-loader!./baPageTop.scss';
 
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {GlobalState} from '../../../global.state';
-import {WebSocketService, DialogService} from '../../../services/index';
-import {Router} from '@angular/router';
+import { GlobalState } from '../../../global.state';
+import { WebSocketService, DialogService } from '../../../services/index';
+import { Router } from '@angular/router';
 
 @Component({
-  selector : 'ba-page-top',
-  templateUrl : './baPageTop.html',
+  selector: 'ba-page-top',
+  templateUrl: './baPageTop.html',
   providers: [WebSocketService, DialogService]
 })
 export class BaPageTop {
