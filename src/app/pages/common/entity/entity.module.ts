@@ -1,7 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MaterialModule} from '@angular/material';
+import {MaterialModule, MdTableModule} from '@angular/material';
 import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
 import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
@@ -34,12 +34,13 @@ import {EntityTemplateDirective} from './entity-template.directive';
 
 import {FormPermissionsComponent} from './entity-form/components/form-permissions/form-permissions.component';
 import {EntityJobComponent} from './entity-job/entity-job.component';
+import { CdkTableModule } from '@angular/cdk';
 
 @NgModule({
   imports : [
     CommonModule, FormsModule, ReactiveFormsModule,
     DynamicFormsCoreModule.forRoot(), DynamicFormsBootstrapUIModule, NgaModule,
-    MaterialModule, NgxDatatableModule
+    MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule
   ],
   declarations : [
     EntityAddComponent,
