@@ -1,16 +1,14 @@
-import {ApplicationRef, Component, OnInit, Injector, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ApplicationRef, Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import {GlobalState} from '../../../global.state';
-import {RestService, UserService, WebSocketService} from '../../../services/';
-import {FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
+import { GlobalState } from '../../../global.state';
+import { RestService, UserService, WebSocketService } from '../../../services/';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FileUploader } from 'ng2-file-upload';
-import {BaJob} from '../../../theme/components';
-import {EntityJobComponent} from '../../common/entity/entity-job/entity-job.component';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { MdDialog, MdDialogRef } from '@angular/material';
 
 @Component({
   selector : 'app-support',
@@ -28,7 +26,6 @@ export class SupportComponent {
   type: any;
   category: any;
   payload = {};
-  @ViewChild(BaJob) baJob: BaJob;
   busy: Subscription;
 
   constructor(protected router: Router, protected rest: RestService,
