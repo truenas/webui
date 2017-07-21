@@ -71,11 +71,4 @@ export class SupportComponent {
     }
   }
 
-  onProgress(progress) {}
-
-  onSuccess(job) {
-    this.baJob.setDescription('Your ticket has been submitted.');
-  }
-
-  onFailure(job) {}
 }
