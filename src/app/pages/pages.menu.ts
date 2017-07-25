@@ -287,6 +287,14 @@ export const PAGES_MENU = [
     order : 0
   },
   {
+    path : [ 'shell' ],
+    title : 'Shell',
+    icon : 'ion-ios-monitor',
+    selected : false,
+    expanded : false,
+    order : 0
+  },
+  {
     title : 'Jails',
     icon : 'ion-social-freebsd-devil',
     selected : false,
