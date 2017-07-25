@@ -43,7 +43,8 @@ export class UserFormComponent {
       placeholder : 'Full Name',
     },
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'bsdusr_home',
       placeholder : 'Home Directory',
     },
