@@ -7,5 +7,5 @@ export interface FieldConfig {
       inputType?: string, validation?: any[]|ValidatorFn|ValidatorFn[],
       value?: any, multiple?: boolean, tooltip?: string,
       relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
-      initialCount?: number, readonly?: boolean
+      initialCount?: number, readonly?: boolean, initial?: string
 }

@@ -5,6 +5,7 @@ import { MaterialModule, MdTableModule } from '@angular/material';
 import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
 import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { TreeModule } from 'ng2-tree';
 
 import { RestService, WebSocketService } from '../../../services/index';
 import { NgaModule } from '../../../theme/nga.module';
@@ -22,6 +23,7 @@ import { FormInputComponent } from './entity-form/components/form-input/form-inp
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
+import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityListActionsComponent } from './entity-list/entity-list-actions.component';
@@ -40,7 +42,7 @@ import { CdkTableModule } from '@angular/cdk';
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     DynamicFormsCoreModule.forRoot(), DynamicFormsBootstrapUIModule, NgaModule,
-    MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule
+    MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule
   ],
   declarations: [
     EntityAddComponent,
@@ -62,11 +64,12 @@ import { CdkTableModule } from '@angular/cdk';
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
+    FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
     FormArrayComponent,
     FormUploadComponent,
-    EntityJobComponent
+    EntityJobComponent,
   ],
   exports: [
     EntityAddComponent,
@@ -88,6 +91,7 @@ import { CdkTableModule } from '@angular/cdk';
     FormPermissionsComponent,
     FormArrayComponent,
     FormUploadComponent,
+    FormExplorerComponent,
     EntityJobComponent
   ]
 })

@@ -1,6 +1,7 @@
 import {Component, ViewContainerRef, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { TreeModel } from 'ng2-tree';
+import {EntityFormService} from '../../services/entity-form.service';
+import {TreeModel, NodeEvent} from 'ng2-tree';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -17,11 +18,17 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
 
   private tree: TreeModel;
-  
+
+constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
-
+    this.tree ={ value: this.config.initial,
+    children: this.entityFormService.getFilesystemListdir(this.config.initial)
+    }
   };
+  private onNodeSelected(e: NodeEvent): void {
+    console.log(e);
+  }
 }
 
 
