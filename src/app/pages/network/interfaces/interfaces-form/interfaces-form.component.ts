@@ -63,18 +63,20 @@ export class InterfacesFormComponent {
 
   preInit(entityForm: any) {
     this.int_interface = _.find(this.fieldConfig, {'name' : 'int_interface'});
-    if (entityForm.isNew) {
-      this.int_interface.type = 'select';
-      this.int_interface.options = [];
-    }
+    this.route.params.subscribe(params => {
+      if(!params['pk']) {
+        this.int_interface.type = 'select';
+        this.int_interface.options = [];
+      }
+    });
   }
 
   afterInit(entityForm: any) {
     this.int_v4netmaskbit =
         _.find(this.fieldConfig, {'name' : 'int_v4netmaskbit'});
-    this.int_v4netmaskbit.options = this.networkService.getV4Netmasks()
+    this.int_v4netmaskbit.options = this.networkService.getV4Netmasks();
 
-                                        if (!entityForm.isNew) {
+    if (!entityForm.isNew) {
       entityForm.setDisabled('int_interface', true);
     }
     else {
