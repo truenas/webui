@@ -75,6 +75,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.conf.preInit) {
+      this.conf.preInit(this);
+    }
     this.sub = this.route.params.subscribe(params => {
       this.resourceName = this.conf.resource_name;
       if (!this.resourceName.endsWith('/')) {
@@ -90,9 +93,6 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         }
       }
 
-      if (this.conf.preInit) {
-        this.conf.preInit(this);
-      }
       this.fieldConfig = this.conf.fieldConfig;
       this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
