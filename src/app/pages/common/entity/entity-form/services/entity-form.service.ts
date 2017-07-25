@@ -7,13 +7,15 @@ import {
   FormGroup,
   Validators
 } from "@angular/forms";
+import { WebSocketService } from '../../../../../services/';
 
 import {FieldConfig} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
 
-  constructor(@Inject(FormBuilder) private formBuilder: FormBuilder) {}
+  constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
+              protected ws: WebSocketService) {}
 
   createFormGroup(controls: FieldConfig[]) {
     let formGroup: {[id: string] : AbstractControl;} = {};
@@ -60,5 +62,21 @@ export class EntityFormService {
 
   removeFormArrayGroup(index: number, formArray: FormArray) {
     formArray.removeAt(index);
+  }
+
+  getFilesystemListdir(dir: string) {
+    let children = [];
+    this.ws.call('filesystem.listdir',[dir]).subscribe((res) => {
+      for (let i = 0; i <= res.length; i++) {
+        let child = {};
+        child['name'] = res[i].value;
+        if(res[i].type === 'DIRECTORY') {
+          child['loadChildren'] = this.getFilesystemListdir(res[i].name);
+        }
+        child['path'] = res[i].path;
+        children.push(child);
+      }
+    });
+    return children;
   }
 }
