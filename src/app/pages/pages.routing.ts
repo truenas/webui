@@ -77,6 +77,10 @@ export const routes: Routes = [
         loadChildren : 'app/pages/services/services.module#ServicesModule'
       },
       {
+        path : 'shell',
+        loadChildren : 'app/pages/shell/shell.module#ShellModule'
+      },
+      {
         path : 'vm', 
         loadChildren : 'app/pages/vm/vm.module#VmModule'
       },
