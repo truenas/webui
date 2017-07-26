@@ -10,6 +10,7 @@ import {NgaModule} from '../../../theme/nga.module';
 import {EntityModule} from '../../common/entity/entity.module';
 
 import {DatasetAddComponent} from './datasets/dataset-add/';
+import {DatasetFormComponent} from './datasets/dataset-form/';
 import {DatasetDeleteComponent} from './datasets/dataset-delete/';
 import {DiskComponent, ManagerComponent, VdevComponent} from './manager/';
 // import { VolumesEditComponent } from './volumes-edit/';
@@ -33,6 +34,7 @@ import {ZvolEditComponent} from './zvol/zvol-edit/';
     DiskComponent,
     VdevComponent,
     DatasetAddComponent,
+    DatasetFormComponent,
     DatasetDeleteComponent,
     // VolumesEditComponent,
     VolumeDeleteComponent,

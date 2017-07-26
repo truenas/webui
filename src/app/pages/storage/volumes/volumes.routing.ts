@@ -2,6 +2,7 @@ import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {DatasetAddComponent} from './datasets/dataset-add/';
+import {DatasetFormComponent} from './datasets/dataset-form/';
 import {DatasetDeleteComponent} from './datasets/dataset-delete/';
 import {ManagerComponent} from './manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
@@ -14,7 +15,8 @@ import {VolumeImportListComponent} from './import-list/';
 
 export const routes: Routes = [
   {path : '', component : VolumesListComponent},
-  {path : 'id/:pk/dataset/add/:path', component : DatasetAddComponent},
+  {path : 'id/:volid/dataset/add/:parent', component : DatasetFormComponent},
+  {path : 'id/:volid/dataset/edit/:pk', component : DatasetFormComponent},
   {path : 'id/:pk/zvol/add/:path', component : ZvolAddComponent},
   {path : 'id/:pk/zvol/edit/:path', component : ZvolEditComponent},
   {path : 'id/:pk/dataset/delete/:path', component : DatasetDeleteComponent},
