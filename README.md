@@ -1,6 +1,9 @@
 FreeNAS 11 WebUI
 ================
-![Build Status](https://builds.ixsystems.com/jenkins/buildStatus/icon?job=FreeNAS-WebUI-CI)
+![Build Status][buildimage]
+
+[buildimage]: https://builds.ixsystems.com/jenkins/job/FreeNAS-WebUI-CI/badge/icon "Build Status"
+
 
 This is the project for the new angular.io (4.x) WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
 
