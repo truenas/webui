@@ -1,7 +1,6 @@
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {DatasetAddComponent} from './datasets/dataset-add/';
 import {DatasetFormComponent} from './datasets/dataset-form/';
 import {DatasetDeleteComponent} from './datasets/dataset-delete/';
 import {ManagerComponent} from './manager/';

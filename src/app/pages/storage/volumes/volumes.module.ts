@@ -9,7 +9,6 @@ import {DragulaModule} from 'ng2-dragula';
 import {NgaModule} from '../../../theme/nga.module';
 import {EntityModule} from '../../common/entity/entity.module';
 
-import {DatasetAddComponent} from './datasets/dataset-add/';
 import {DatasetFormComponent} from './datasets/dataset-form/';
 import {DatasetDeleteComponent} from './datasets/dataset-delete/';
 import {DiskComponent, ManagerComponent, VdevComponent} from './manager/';
@@ -33,7 +32,6 @@ import {ZvolEditComponent} from './zvol/zvol-edit/';
     ManagerComponent,
     DiskComponent,
     VdevComponent,
-    DatasetAddComponent,
     DatasetFormComponent,
     DatasetDeleteComponent,
     // VolumesEditComponent,
