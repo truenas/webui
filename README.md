@@ -1,7 +1,7 @@
 FreeNAS 11 WebUI
 ================
 <p align="center">
-  <a href='https://builds.ixsystems.com/jenkins/job/FreeNAS%20-%20CI%20Test%20(WebUI)/'><img src='https://builds.ixsystems.com/jenkins/buildStatus/icon?job=FreeNAS - CI Test (WebUI)'></a>
+  <a href='https://builds.ixsystems.com/jenkins/job/FreeNAS - CI Test (WebUI)'><img src='https://builds.ixsystems.com/jenkins/buildStatus/icon?job=FreeNAS - CI Test (WebUI)'></a>
 </p>
 
 This is the project for the new angular.io (4.x) WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
