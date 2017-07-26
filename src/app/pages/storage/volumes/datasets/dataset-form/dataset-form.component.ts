@@ -62,6 +62,12 @@ export class DatasetFormComponent {
       name: 'dedup',
       placeholder: 'ZFS Deduplication',
       options: [],
+    },
+    {
+      type: 'select',
+      name: 'case_sensitivity',
+      placeholder: 'Case Sensitivity',
+      options: [],
     }
   ];
 
@@ -69,6 +75,7 @@ export class DatasetFormComponent {
   protected share_type_control: any;
   protected atime_field: any;
   protected dedup_field: any;
+  protected case_sensitivity_field: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService) {}
@@ -100,7 +107,7 @@ export class DatasetFormComponent {
     });
   }
 
-  afterInit(entityAdd: any) {
+  afterInit(entityForm: any) {
     this.ws.call('notifier.choices', [ 'ZFS_CompressionChoices' ]).subscribe((res) => {
       this.compression_field = _.find(this.fieldConfig, {name: 'compression'});
       for (let item of res) {
@@ -128,5 +135,16 @@ export class DatasetFormComponent {
         this.dedup_field.options.push({label: item[1], value: item[0]});
       }
     });
+
+    this.ws.call('notifier.choices', [ 'CASE_SENSITIVITY_CHOICES' ]).subscribe((res) => {
+      this.case_sensitivity_field = _.find(this.fieldConfig, {name: 'case_sensitivity'});
+      for (let item of res) {
+        this.case_sensitivity_field.options.push({label: item[1], value: item[0]});
+      }
+    });
+
+    if (!entityForm.isNew) {
+      entityForm.setDisabled('name', true);
+    }
   }
 }
