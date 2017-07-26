@@ -93,6 +93,15 @@ export class VolumesListComponent {
               [ "storage", "snapshots", "id", row.path.split('/')[0], "add" ]));
         }
       });
+       actions.push({
+        label : "Edit Options",
+        onClick : (row) => {
+          this._router.navigate(new Array('/pages').concat([
+            "storage", "volumes", "id", row.path.split('/')[0], "dataset",
+            "edit", row.path
+          ]));
+        }
+      });
 
       if (row.path.indexOf('/') != -1) {
         actions.push({
