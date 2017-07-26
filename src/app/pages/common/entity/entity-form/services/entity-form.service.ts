@@ -67,13 +67,13 @@ export class EntityFormService {
   getFilesystemListdir(dir: string) {
     let children = [];
     this.ws.call('filesystem.listdir', [dir]).subscribe((res) => {
-      for (let i = 0; i <= res.length; i++) {
+      for (let i = 0; i < res.length; i++) {
         let child = {};
-        if (res[i].name) {
+        if (res[i].hasOwnProperty('name')) {
           child['value'] = res[i].name;
-          if(res[i].type === 'DIRECTORY') {
-            //child['loadChildren'] = this.getFilesystemListdir(res[i].path);
-          }
+          //if(res[i].type === 'DIRECTORY') {
+          //  child['children'] = this.getFilesystemListdir(res[i].path);
+          //}
           child['path'] = res[i].path;
           children.push(child);
         }
