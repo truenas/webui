@@ -18,6 +18,7 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
 
   private tree: TreeModel;
+  private treeVisible: boolean = false;
 
 constructor (private entityFormService : EntityFormService){}
 
@@ -26,8 +27,13 @@ constructor (private entityFormService : EntityFormService){}
     children: this.entityFormService.getFilesystemListdir(this.config.initial)
     }
   };
+
   private onNodeSelected(e: NodeEvent): void {
     console.log(e);
+  }
+  
+  private toggleTree() {
+    this.treeVisible = !this.treeVisible;
   }
 }
 

@@ -1,6 +1,12 @@
 <div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
-    <label> {{config.placeholder}} </label>
-    <tree [tree]="tree" [formControlName]="config.name" (nodeSelected)="onNodeSelected($event)">
+    <md-input-container class="full-width">
+		<input mdInput [type]="'text'" 
+			[placeholder]="config.placeholder"
+			[attr.value]="config.value"
+			[formControlName]="config.name">
+    </md-input-container>
+    <button md-button (click)="toggleTree()" type="button">Browse</button>
+    <tree *ngIf="treeVisible" [tree]="tree" (nodeSelected)="onNodeSelected($event)">
     </tree>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
     <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
