@@ -29,7 +29,7 @@ constructor (private entityFormService : EntityFormService){}
   };
 
   private onNodeSelected(e: NodeEvent): void {
-    console.log(e);
+    this.config.value = e.node.node['path'];
   }
   
   private toggleTree() {
