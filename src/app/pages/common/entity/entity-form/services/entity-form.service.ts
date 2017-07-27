@@ -71,9 +71,9 @@ export class EntityFormService {
         let child = {};
         if (res[i].hasOwnProperty('name')) {
           child['value'] = res[i].name;
-          //if(res[i].type === 'DIRECTORY') {
-          //  child['children'] = this.getFilesystemListdir(res[i].path);
-          //}
+          if(res[i].type === 'DIRECTORY') {
+            child['children'] = this.getFilesystemListdir(res[i].path);
+          }
           child['path'] = res[i].path;
           children.push(child);
         }

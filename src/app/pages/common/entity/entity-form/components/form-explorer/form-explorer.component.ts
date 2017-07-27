@@ -23,14 +23,12 @@ export class FormExplorerComponent implements Field, OnInit {
 constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
-    debugger;
     this.tree = {
       value: this.config.initial,
-      // children: this.entityFormService.getFilesystemListdir(this.config.initial)
-      loadChildren: (callback) => {
-        debugger;
-        this.entityFormService.getChildren(callback, this.config.initial)
-      }
+      children: this.entityFormService.getFilesystemListdir(this.config.initial),
+      //loadChildren: (callback) => {
+      //  this.entityFormService.getChildren(callback, this.config.initial)
+      //}
     }
   };
 
