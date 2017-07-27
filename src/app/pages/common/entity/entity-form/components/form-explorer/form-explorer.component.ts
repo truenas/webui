@@ -23,13 +23,21 @@ export class FormExplorerComponent implements Field, OnInit {
 constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
-    this.tree ={ value: this.config.initial,
-    children: this.entityFormService.getFilesystemListdir(this.config.initial)
+    this.tree = {
+      value: this.config.initial,
+      children: [],
+      // children: this.entityFormService.getFilesystemListdir(this.config.initial)
+      loadChildren: (callback) => this.entityFormService.getChildrenYo(callback, this.config.initial)
     }
   };
 
   private onNodeSelected(e: NodeEvent): void {
     this.config.value = e.node.node['path'];
+  }
+
+  private handleExpanded(e: NodeEvent): void {
+    this.config.value = e.node.node['path'];
+    debugger;
   }
   
   private toggleTree() {

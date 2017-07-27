@@ -71,14 +71,33 @@ export class EntityFormService {
         let child = {};
         if (res[i].hasOwnProperty('name')) {
           child['value'] = res[i].name;
-          if(res[i].type === 'DIRECTORY') {
-            child['children'] = this.getFilesystemListdir(res[i].path);
-          }
+          //if(res[i].type === 'DIRECTORY') {
+          //  child['children'] = this.getFilesystemListdir(res[i].path);
+          //}
           child['path'] = res[i].path;
           children.push(child);
         }
       }
     });
     return children;
+  }
+
+  getChildrenYo(callback: Function, dir: string): void {
+    debugger;
+    this.ws.call('filesystem.listdir', [dir]).subscribe((res) => {
+      let children = []
+      for (let i = 0; i < res.length; i++) {
+        let child = {};
+        if (res[i].hasOwnProperty('name')) {
+          child['value'] = res[i].name;
+          // child['path'] = res[i].path;
+          if(res[i].type === 'DIRECTORY') {
+            child['loadChildren'] = (nextCallback) => this.getChildrenYo(nextCallback, res[i].path);
+          }
+          children.push(child);
+        }
+      }
+      callback(children);
+    });
   }
 }
