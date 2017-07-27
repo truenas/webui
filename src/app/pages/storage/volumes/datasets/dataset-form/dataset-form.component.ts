@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 import { GlobalState } from '../../../../../global.state';
 import { RestService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 
@@ -22,7 +21,7 @@ export class DatasetFormComponent implements OnInit{
   protected volid: string;
   protected parent: string;
   public sub: Subscription;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  public route_success: string[] = [ 'storage', 'volumes' ];
   protected isBasicMode: boolean = true;
 
   protected resourceName: string = 'storage/dataset/';

@@ -1,5 +1,3 @@
-<ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
-
 <alert *ngIf="success" type="success">Successfully updated.</alert>
 <alert *ngIf="error" type="danger"><span [innerHTML]="error"></span></alert>
 <md-card>
@@ -15,7 +13,6 @@
     <span *ngFor="let custBtn of custActions">
       <button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" class="btn  btn-block btn-default" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
     </span>
-    <button *ngIf="route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">Delete</button>
     </div>
   </form>
 </md-card>
