@@ -23,11 +23,14 @@ export class FormExplorerComponent implements Field, OnInit {
 constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
+    debugger;
     this.tree = {
       value: this.config.initial,
-      children: [],
       // children: this.entityFormService.getFilesystemListdir(this.config.initial)
-      loadChildren: (callback) => this.entityFormService.getChildrenYo(callback, this.config.initial)
+      loadChildren: (callback) => {
+        debugger;
+        this.entityFormService.getChildren(callback, this.config.initial)
+      }
     }
   };
 
@@ -37,7 +40,6 @@ constructor (private entityFormService : EntityFormService){}
 
   private handleExpanded(e: NodeEvent): void {
     this.config.value = e.node.node['path'];
-    debugger;
   }
   
   private toggleTree() {

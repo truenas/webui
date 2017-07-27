@@ -82,8 +82,7 @@ export class EntityFormService {
     return children;
   }
 
-  getChildrenYo(callback: Function, dir: string): void {
-    debugger;
+  getChildren(callback: Function, dir: string): void {
     this.ws.call('filesystem.listdir', [dir]).subscribe((res) => {
       let children = []
       for (let i = 0; i < res.length; i++) {
@@ -92,7 +91,7 @@ export class EntityFormService {
           child['value'] = res[i].name;
           // child['path'] = res[i].path;
           if(res[i].type === 'DIRECTORY') {
-            child['loadChildren'] = (nextCallback) => this.getChildrenYo(nextCallback, res[i].path);
+            child['loadChildren'] = (nextCallback) => this.getChildren(nextCallback, res[i].path);
           }
           children.push(child);
         }
