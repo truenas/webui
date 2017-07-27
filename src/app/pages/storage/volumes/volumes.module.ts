@@ -5,6 +5,7 @@ import {RouterModule} from '@angular/router';
 import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
 import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 import {DragulaModule} from 'ng2-dragula';
+import { MaterialModule, MdTableModule } from '@angular/material';
 
 import {NgaModule} from '../../../theme/nga.module';
 import {EntityModule} from '../../common/entity/entity.module';
@@ -25,7 +26,7 @@ import {ZvolEditComponent} from './zvol/zvol-edit/';
   imports : [
     RouterModule, DragulaModule, EntityModule, DynamicFormsCoreModule.forRoot(),
     DynamicFormsBootstrapUIModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgaModule, routing
+    ReactiveFormsModule, NgaModule, routing, MaterialModule, MdTableModule
   ],
   declarations : [
     VolumesListComponent,
