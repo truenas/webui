@@ -29,6 +29,7 @@ export class DatasetFormComponent implements OnInit{
   private isNew: boolean = false;
   public formGroup: FormGroup;
   protected data: any;
+  protected parent_data: any;
 
   public error: string;
   public success: boolean = false;
@@ -149,7 +150,6 @@ export class DatasetFormComponent implements OnInit{
     '1048576': '1024K',
   };
 
-  protected inherit_field: any;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected entityFormService: EntityFormService) {}
 
@@ -165,12 +165,16 @@ export class DatasetFormComponent implements OnInit{
   preInit() {
     this.sub = this.aroute.params.subscribe(params => {
       this.volid = params['volid'];
+      // edit dataset
       if(params['pk']) {
         this.pk = params['pk'];
+        let pk_parent = this.pk.split('/');
+        this.parent = this.resourceName + pk_parent.splice(0, pk_parent.length - 1).join('/');
+
         this.resourceName = this.resourceName + this.pk + '/';
         this.fieldConfig.pop();
       }
-
+      // add new dataset
       if (params['parent']) {
         this.parent = params['parent'];
         this.resourceName = this.resourceName + this.parent + '/';
@@ -184,22 +188,30 @@ export class DatasetFormComponent implements OnInit{
     this.ws.call('notifier.choices', [ endpoint ]).subscribe((res) => {
       let target_field = _.find(this.fieldConfig, {name: field});
       if (target_field) {
-        let inherit_value = '';
+        if (field == 'recordsize') {
+          target_field.options.push({label: 'inherit (' + this.RecordSizeMap[this.parent_data['recordsize']] + ' )', value: 'inherit'});
+        }
+
         for (let item of res) {
           let label = item[1];
           let value = item[0];
           if (value == 'inherit') {
-            label = label + '( ' + this.data[field] + ' )';
-            value = this.data[field];
-            inherit_value = value;
+            label = label + '( ' + this.parent_data[field] + ' )';
           }
           target_field.options.push({label: label, value: value});
         }
 
         // set default value
-        let fg = this.formGroup.controls[field]
-        if (fg) {
-          fg.setValue(inherit_value);
+        if (this.isNew) {
+          let default_value = 'inherit';
+          let fg = this.formGroup.controls[field];
+          if (field == 'case_sensitivity') {
+            default_value = 'sensitive';
+          }
+
+          if (fg) {
+            fg.setValue(default_value);
+          }
         }
       }
     });
@@ -211,22 +223,7 @@ export class DatasetFormComponent implements OnInit{
     this.setFieldValue('ZFS_DEDUP_INHERIT', 'dedup');
     this.setFieldValue('CASE_SENSITIVITY_CHOICES', 'case_sensitivity');
     this.setFieldValue('ZFS_ReadonlyChoices', 'readonly');
-
-    this.ws.call('notifier.choices', [ 'ZFS_RECORDSIZE' ]).subscribe((res) => {
-      let recordsize_field = _.find(this.fieldConfig, {name: 'recordsize'});
-      recordsize_field.options.push({label: 'inherit (' + this.RecordSizeMap[this.data['recordsize']] + ' )', value: this.RecordSizeMap[this.data['recordsize']]});
-      for (let item of res) {
-        let label = item[1];
-        let value = item[0];
-        recordsize_field.options.push({label: label, value: value});
-      }
-
-      // set default value
-      let fg = this.formGroup.controls['recordsize']
-      if (fg) {
-        fg.setValue(this.RecordSizeMap[this.data['recordsize']]);
-      }
-    });
+    this.setFieldValue('ZFS_RECORDSIZE', 'recordsize');
 
     if (!this.isNew) {
       this.setDisabled('name', true);
@@ -239,7 +236,7 @@ export class DatasetFormComponent implements OnInit{
 
     this.rest.get(this.resourceName, {}).subscribe((res) => {
       this.data = res.data;
-      this.inherit_field = this.data['inherit_props'];
+      this.parent_data = res.data;
       for (let i in this.data) {
         let fg = this.formGroup.controls[i];
         if (fg && !this.isNew) {
@@ -247,10 +244,26 @@ export class DatasetFormComponent implements OnInit{
           if (i == 'recordsize') {
             value = this.RecordSizeMap[value];
           }
+
+          if (_.indexOf(this.data['inherit_props'], i) > -1) {
+            value = 'inherit';
+          }
+          if (i == 'comments' && _.indexOf(this.data['inherit_props'], 'org.freenas:description') > -1) {
+            value = '';
+          }
+
           fg.setValue(value);
         }
       }
-      this.afterInit();
+
+      if (!this.isNew) {
+        this.rest.get(this.parent, {}).subscribe((res) => {
+          this.parent_data = res.data;
+          this.afterInit();
+        });
+      } else {
+        this.afterInit();
+      }
     });
   }
 
