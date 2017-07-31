@@ -5,7 +5,7 @@ import { MaterialModule, MdTableModule } from '@angular/material';
 import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
 import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { TreeModule } from 'ng2-tree';
+import { TreeModule } from 'angular-tree-component';
 
 import { RestService, WebSocketService } from '../../../services/index';
 import { NgaModule } from '../../../theme/nga.module';
