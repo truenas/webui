@@ -122,6 +122,12 @@ export class ShellComponent implements OnInit, OnChanges {
     });
   }
 
+  // resets the terminal
+  clear() {
+    this.xterm.reset();
+    this.writePrompt();
+  }
+
 
   constructor(private ws: WebSocketService, public ss: ShellService) {}
 }
