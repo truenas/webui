@@ -54,6 +54,7 @@ export class ShellComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.initializeTerminal();
     this.initializeWebShell();
+    // disabled from demo code
     // this.xterm.on('key', (key, ev) => {
     //   this.xterm.write(key);
     // });
@@ -192,7 +193,6 @@ export class ShellComponent implements OnInit, OnChanges {
     // this forces xterm not to handle the key events with its own event handler
     return false;
   }
-
 
   constructor(private ws: WebSocketService, public ss: ShellService) {}
 }
