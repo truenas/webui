@@ -39,9 +39,8 @@ export class ShellService {
     console.log(user_input);
     this.call(user_input).subscribe((res) => {
       this.shellOutput.emit(res);
-    }
+    });
   }
-
 
   connect() {
     this.socket = new WebSocket(
