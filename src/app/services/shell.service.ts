@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, EventEmitter, Output, Input} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
 import {LocalStorage} from 'ng2-webstorage';
@@ -21,6 +21,11 @@ export class ShellService {
   redirectUrl: string = '';
   public token: string;
 
+  //input and output and eventEmmitter
+  // private userCmd = '';
+  private shellCmdOutput: any;
+  @Output() shellOutput = new EventEmitter<any>();
+
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
   constructor(private _router: Router) {
@@ -29,6 +34,14 @@ export class ShellService {
     this.pendingCalls = new Map();
     // this.connect();
   }
+
+  public runCmd(user_input) {
+    console.log(user_input);
+    this.call(user_input).subscribe((res) => {
+      this.shellOutput.emit(res);
+    }
+  }
+
 
   connect() {
     this.socket = new WebSocket(
