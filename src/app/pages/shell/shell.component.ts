@@ -52,7 +52,7 @@ export class ShellComponent implements OnInit, OnChanges {
   clearLine = "\u001b[2K\r"
 
   ngOnInit() {
-  	this.initializeTerminal();
+    this.initializeTerminal();
     this.initializeWebShell();
     // this.xterm.on('key', (key, ev) => {
     //   this.xterm.write(key);
@@ -60,7 +60,8 @@ export class ShellComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: {
-    [propKey: string]: SimpleChange }) {
+    [propKey: string]: SimpleChange
+  }) {
     let log: string[] = [];
     for (let propName in changes) {
       let changedProp = changes[propName];
@@ -86,7 +87,7 @@ export class ShellComponent implements OnInit, OnChanges {
     this.writePrompt();
     let self = this;
     // raw data
-    this.xterm.on('data', function(data){
+    this.xterm.on('data', function(data) {
       self.writeBuffer(data)
     });
   }
@@ -110,9 +111,15 @@ export class ShellComponent implements OnInit, OnChanges {
   // stores a command in commmand history
   storeInHistory(cmd) {
     // remove cariage returns from history commands
-    cmd = cmd.replace(/\r/,'');
+    cmd = cmd.replace(/\r/, '');
     this.history.push(cmd);
     this.historyIndex = this.history.length;
+  }
+
+  // prints the current selected command at history index
+  historyCmdtoStdout() {
+    this.buffer = this.history[this.historyIndex];
+    this.reprintCommand(this.buffer);
   }
 
   initializeWebShell() {
@@ -126,6 +133,64 @@ export class ShellComponent implements OnInit, OnChanges {
   clear() {
     this.xterm.reset();
     this.writePrompt();
+  }
+
+  // reprint a command in the current line
+  reprintCommand(cmd) {
+    // strip out any extra \r characters
+    cmd = cmd.replace(/\r/g, '');
+    this.xterm.write(this.clearLine + this.prompt + cmd);
+  }
+
+  keydown(ev) {
+    let self = this
+    if (ev.keyCode === 13) {
+      let cmd = self.buffer
+      // special handling for clear and cls
+      if (/^\s*clear|cls\s*/.exec(cmd) != null) {
+        // reset terminal
+        setTimeout(function() {
+          self.clear()
+        }, 0);
+      } else {
+        // decouple from event loop, write a new line
+        setTimeout(function() {
+          self.xterm.writeln('')
+          self.stdin.emit(cmd);
+          self.storeInHistory(cmd)
+        }, 0);
+      }
+      // reset index to last item +1
+      self.resetBuffer()
+    }
+    // on backspace, pop characters from buffer
+    else if (ev.keyCode == 8) {
+      self.buffer = self.buffer.substr(0, self.buffer.length - 1);
+      setTimeout(function() {
+        self.reprintCommand(self.buffer)
+      }, 0);
+    }
+    // press the up key, find previous item in cmd history
+    else if (ev.keyCode === 40) {
+      setTimeout(function() {
+        if (self.historyIndex < self.history.length - 1) {
+          self.historyIndex += 1
+          self.historyCmdtoStdout()
+        }
+      }, 0);
+
+    }
+    // press the down key, find next item in cmd history
+    else if (ev.keyCode === 38) {
+      setTimeout(function() {
+        if (self.historyIndex >= 1) {
+          self.historyIndex -= 1
+          self.historyCmdtoStdout()
+        }
+      }, 0);
+    }
+    // this forces xterm not to handle the key events with its own event handler
+    return false;
   }
 
 
