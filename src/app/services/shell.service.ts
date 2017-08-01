@@ -63,6 +63,9 @@ export class ShellService {
     }
   }
 
+  //empty eventListener for attach socket
+  addEventListener() {}
+
   onclose(event) {
     this.connected = false;
     this.onCloseSubject.next(true);
