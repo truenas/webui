@@ -45,7 +45,8 @@ constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
     this.nodes = [{
-        name: '/mnt',
+        name: this.config.initial,
+        subTitle: this.config.initial,
         hasChildren: true
       }];
   }
@@ -61,16 +62,12 @@ constructor (private entityFormService : EntityFormService){}
 
   getChildren(node:any) {
     return new Promise((resolve, reject) => {
-      resolve(this.asyncChildren.map((c) => {
-        return Object.assign({}, c, {
-          hasChildren: node.level < 5
-        });
-      }));
+      resolve(this.entityFormService.getFilesystemListdirChildren(node));
     });
   }
 
   customTemplateStringOptions = {
-    // displayField: 'subTitle',
+    displayField: 'subTitle',
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),

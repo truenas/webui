@@ -8,6 +8,7 @@ import {
   Validators
 } from "@angular/forms";
 import { WebSocketService } from '../../../../../services/';
+import 'rxjs/add/operator/toPromise';
 
 import {FieldConfig} from '../models/field-config.interface';
 
@@ -64,39 +65,21 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
-  getFilesystemListdir(dir: string) {
+  getFilesystemListdirChildren(node: any) {
     let children = [];
-    this.ws.call('filesystem.listdir', [dir]).subscribe((res) => {
+    return this.ws.call('filesystem.listdir', [node.data.name]).toPromise().then(res => {
       for (let i = 0; i < res.length; i++) {
         let child = {};
         if (res[i].hasOwnProperty('name')) {
-          child['value'] = res[i].name;
+          child['name'] = res[i].path;
           if(res[i].type === 'DIRECTORY') {
-            child['children'] = this.getFilesystemListdir(res[i].path);
+            child['hasChildren'] = true;
           }
-          child['path'] = res[i].path;
+          child['subTitle'] = res[i].name;
           children.push(child);
         }
       }
-    });
-    return children;
-  }
-
-  getChildren(callback: Function, dir: string): void {
-    this.ws.call('filesystem.listdir', [dir]).subscribe((res) => {
-      let children = []
-      for (let i = 0; i < res.length; i++) {
-        let child = {};
-        if (res[i].hasOwnProperty('name')) {
-          child['value'] = res[i].name;
-          // child['path'] = res[i].path;
-          if(res[i].type === 'DIRECTORY') {
-            child['loadChildren'] = (nextCallback) => this.getChildren(nextCallback, res[i].path);
-          }
-          children.push(child);
-        }
-      }
-      callback(children);
+      return children;
     });
   }
 }
