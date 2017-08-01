@@ -32,7 +32,6 @@ export class ShellService {
     this.onOpenSubject = new Subject();
     this.onCloseSubject = new Subject();
     this.pendingCalls = new Map();
-    // this.connect();
   }
 
   public runCmd(user_input) {
@@ -81,14 +80,12 @@ export class ShellService {
   }
 
   onmessage(msg) {
-
     try {
       var data = JSON.parse(msg.data);
     } catch (e) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
     }
-
     if (data.msg == "result") {
       let call = this.pendingCalls.get(data.id);
       this.pendingCalls.delete(data.id);
