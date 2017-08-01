@@ -49,17 +49,23 @@ export class ShellComponent implements OnInit, OnChanges {
   rows: string;
   public token: any;
   public xterm: any;
+  private shellSubscription: any;
 
   clearLine = "\u001b[2K\r"
 
   ngOnInit() {
-    this.initializeTerminal();
-    this.initializeWebShell();
-    // disabled from demo code
-    // this.xterm.on('key', (key, ev) => {
-    //   this.xterm.write(key);
-    // });
+    this.getAuthToken().subscribe((res) => {
+      this.initializeWebShell(res);
+      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+        this.xterm.writeln(value);
+      });
+      this.initializeTerminal();
+    });
   }
+
+  ngOnDestroy() {
+    this.shellSubscription.unsubscribe();
+  };
 
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
@@ -126,11 +132,13 @@ export class ShellComponent implements OnInit, OnChanges {
     this.reprintCommand(this.buffer);
   }
 
-  initializeWebShell() {
-    this.ws.call('auth.generate_token').subscribe((res) => {
-      this.ss.token = res;
-      this.ss.connect();
-    });
+  initializeWebShell(res: string) {
+    this.ss.token = res;
+    this.ss.connect();
+  }
+
+  getAuthToken() {
+    return this.ws.call('auth.generate_token');
   }
 
   // resets the terminal
