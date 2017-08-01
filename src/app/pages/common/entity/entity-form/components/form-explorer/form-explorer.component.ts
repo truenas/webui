@@ -8,25 +8,7 @@ import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
 
-const actionMapping:IActionMapping = {
-  mouse: {
-    contextMenu: (tree, node, $event) => {
-      $event.preventDefault();
-      alert(`context menu for ${node.data.name}`);
-    },
-    dblClick: (tree, node, $event) => {
-      if (node.hasChildren) TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
-    },
-    click: (tree, node, $event) => {
-      $event.shiftKey
-        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(tree, node, $event)
-        : TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event)
-    }
-  },
-  keys: {
-    [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
-  }
-}
+
 
 @Component({
   selector : 'form-explorer',
@@ -40,6 +22,23 @@ export class FormExplorerComponent implements Field, OnInit {
   nodes: any[];
 
   private treeVisible: boolean = false;
+  private actionMapping:IActionMapping = {
+    mouse: {
+      contextMenu: (tree, node, $event) => {
+        $event.preventDefault();
+      },
+      dblClick: (tree, node, $event) => {
+        if (node.hasChildren) TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
+      },
+      click: (tree, node, $event) => {
+        this.setPath(node);
+        TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event)
+      }
+    },
+    keys: {
+      [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
+    }
+  }
 
 constructor (private entityFormService : EntityFormService){}
 
@@ -50,15 +49,6 @@ constructor (private entityFormService : EntityFormService){}
         hasChildren: true
       }];
   }
-  asyncChildren = [
-    {
-      name: 'child2.1',
-      subTitle: 'new and improved'
-    }, {
-      name: 'child2.2',
-      subTitle: 'new and improved2'
-    }
-  ];
 
   getChildren(node:any) {
     return new Promise((resolve, reject) => {
@@ -71,7 +61,7 @@ constructor (private entityFormService : EntityFormService){}
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),
-    actionMapping,
+    actionMapping: this.actionMapping,
     nodeHeight: 23,
     allowDrag: true,
     useVirtualScroll: false
@@ -79,6 +69,10 @@ constructor (private entityFormService : EntityFormService){}
   
   private toggleTree() {
     this.treeVisible = !this.treeVisible;
+  }
+
+ setPath(node:any) {
+   this.config.value = node.data.name;
   }
 }
 
