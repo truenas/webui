@@ -36,7 +36,6 @@ export class ShellService {
   }
 
   public runCmd(user_input) {
-    console.log(user_input);
     this.call(user_input).subscribe((res) => {
       this.shellOutput.emit(res);
     });
