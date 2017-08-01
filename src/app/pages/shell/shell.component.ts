@@ -84,7 +84,8 @@ export class ShellComponent implements OnInit, OnChanges {
     });
     this.xterm.open(this.container.nativeElement);
     this.xterm.writeln('Welcome to Xin-xterm.js');
-    // this.xterm.attach(this.ss);
+    this.xterm.attach(this.ss);
+    this.xterm._initialized = true;
 
     // start registering the event listener, only need to be done the first time
     this.writePrompt();
