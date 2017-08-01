@@ -15,6 +15,7 @@ import { WebSocketService, ShellService } from '../../services/';
 import * as xterm from "xterm";
 import * as Terminal from 'xterm/dist/xterm';
 import 'xterm/dist/addons/fit/fit.js';
+import 'xterm/dist/addons/attach/attach.js';
 
 @Component({
   selector: 'app-shell',
@@ -47,7 +48,7 @@ export class ShellComponent implements OnInit, OnChanges {
   cols: string;
   rows: string;
   public token: any;
-  public xterm: xterm;
+  public xterm: any;
 
   clearLine = "\u001b[2K\r"
 
@@ -83,6 +84,7 @@ export class ShellComponent implements OnInit, OnChanges {
     });
     this.xterm.open(this.container.nativeElement);
     this.xterm.writeln('Welcome to Xin-xterm.js');
+    // this.xterm.attach(this.ss);
 
     // start registering the event listener, only need to be done the first time
     this.writePrompt();
