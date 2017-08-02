@@ -105,7 +105,6 @@ export class ShellService {
     } else {
       // console.log("Unknown message: ", data);
       this.shellCmdOutput = shellMsg;
-      debugger;
       console.log("hey xin" , shellMsg);
       this.shellOutput.emit(this.shellCmdOutput);
     }
