@@ -22,7 +22,6 @@ export class ShellService {
   public token: string;
 
   //input and output and eventEmmitter
-  // private userCmd = '';
   private shellCmdOutput: any;
   @Output() shellOutput = new EventEmitter < any > ();
 
@@ -33,12 +32,6 @@ export class ShellService {
     this.onCloseSubject = new Subject();
     this.pendingCalls = new Map();
   }
-
-  // public runCmd(user_input) {
-  //   this.call(user_input).subscribe((res) => {
-  //     this.shellOutput.emit(res);
-  //   });
-  // }
 
   connect() {
     this.socket = new WebSocket(
@@ -51,7 +44,7 @@ export class ShellService {
 
   onopen(event) {
     this.onOpenSubject.next(true);
-    this.send({ "token": this.token });
+    this.send(JSON.stringify({ "token": this.token }));
   }
 
   onconnect() {
@@ -79,6 +72,7 @@ export class ShellService {
   }
 
   onmessage(msg) {
+    console.log(msg.data);
     let data: any;
     let shellMsg: string;
 
@@ -87,7 +81,7 @@ export class ShellService {
     } catch (e) {
       // just the response from shell
       shellMsg = msg.data;
-      data = {'msg': 'lol'};
+      data = {'msg': 'please discard this'};
     }
 
     if (data.msg == "connected") {
@@ -100,19 +94,61 @@ export class ShellService {
     if (!this.connected) {
       return;
     }
-    if (data.msg == "ping" || data.msgg == "ping") {
+    if (data.msg === "ping") {
       // pass;
     } else {
       // console.log("Unknown message: ", data);
       this.shellCmdOutput = shellMsg;
-      console.log("hey xin" , shellMsg);
+      //console.log("hey xin" , shellMsg, "msg", msg.data, "data", data);
       this.shellOutput.emit(this.shellCmdOutput);
     }
+    
+    
+    // let data: any;
+    // let shellMsg: string;
+    // let dataSent: boolean = false;
+    // try {
+    //   if (msg.data === '"\\r"') {
+    //     dataSent = true;
+    //   } else {
+    //     data = JSON.parse(msg.data);
+    //   }
+    // } catch (e) {
+    //   // just the response from shell
+    //   dataSent = true;
+    // }
+
+    // if (dataSent) {
+    //   shellMsg = msg.data;
+    //   data = {'msg': 'please discard this'};
+    // }
+
+    // if (data.msg == "connected") {
+    //   this.connected = true;
+    //   setTimeout(this.ping.bind(this), 20000);
+    //   this.onconnect();
+    //   return;
+    // }
+
+    // if (!this.connected) {
+    //   return;
+    // }
+    // if (data.msg == "ping") {
+    //   // pass;
+    // } else {
+    //   // console.log("Unknown message: ", data);
+    //   if (typeof(shellMsg) === 'undefined') {
+    //     debugger;
+    //   }
+    //   this.shellCmdOutput = shellMsg;
+    //   //console.log("hey xin shellMsg is: ", shellMsg, "and the msg.data was: ", msg.data);
+    //   this.shellOutput.emit(this.shellCmdOutput);
+    // }
   }
 
   send(payload) {
     if (this.socket.readyState == WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(payload));
+      this.socket.send(payload);
     } else {
       this.pendingMessages.push(payload);
     }
@@ -140,67 +176,4 @@ export class ShellService {
     });
   }
 
-  call(method, params ? : any): Observable < any > {
-
-    let uuid = UUID.UUID();
-    let payload = { "id": uuid, "msg": "method", "method": method, "params": params };
-
-    let source = Observable.create((observer) => {
-      this.pendingCalls.set(uuid, {
-        "method": method,
-        "args": params,
-        "observer": observer,
-      });
-
-      this.send(payload);
-    });
-
-    return source;
-  }
-
-  job(method, params ? : any): Observable < any > {
-    let source = Observable.create((observer) => {
-      this.call(method, params).subscribe((job_id) => {
-        this.subscribe("core.get_jobs").subscribe((res) => {
-          if (res.id == job_id) {
-            observer.next(res.fields);
-            if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
-              observer.complete();
-            }
-          }
-        });
-      });
-    });
-    return source;
-  }
-
-  login(username, password): Observable < any > {
-    this.username = username;
-    this.password = password;
-    return Observable.create((observer) => {
-      this.call('auth.login', [username, password]).subscribe((result) => {
-        if (result === true) {
-          this.loggedIn = true;
-
-          // Subscribe to all events by default
-          this.send({
-            "id": UUID.UUID(),
-            "name": "*",
-            "msg": "sub",
-          });
-        } else {
-          this.loggedIn = false;
-        }
-        observer.next(result);
-        observer.complete();
-      });
-    });
-  }
-
-  logout() {
-    this.loggedIn = false;
-    this.username = '';
-    this.password = '';
-    this._router.navigate(['/login']);
-  }
 }
