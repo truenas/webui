@@ -11,7 +11,7 @@ This is the project for the new angular.io (4.x) WebUI for FreeNAS 11. It is mea
 
   - npm >= 5
   - Node.js >= 5
-  - Running FreeNAS 11 Nightly (Virtual?) Machine
+  - Running FreeNAS 11 Nightly Machine (VM is fine)
 
 
 # Getting started
