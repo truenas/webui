@@ -13,7 +13,8 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 @Component({
   selector : 'form-explorer',
   templateUrl : './form-explorer.component.html',
-  styleUrls : [ '../dynamic-field/dynamic-field.css' ],
+  styleUrls : [ '../dynamic-field/dynamic-field.css',
+                './form-explorer.component.scss'],
 })
 export class FormExplorerComponent implements Field, OnInit {
   config: FieldConfig;
