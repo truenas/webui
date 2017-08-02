@@ -52,5 +52,4 @@ $ ./setup_env.js -i <ip address>
 To start run
 ```npm start```
 
-
 This should open the browser with the WebUI, by default http://localhost:3000.
