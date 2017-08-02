@@ -21,7 +21,8 @@ export class JailsConfigurationComponent {
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'jc_path',
       placeholder : 'Jail Root',
     },

@@ -22,7 +22,8 @@ export class AFPFormComponent {
       placeholder: 'Name',
     },
     {
-      type: 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name: 'afp_path',
       placeholder: 'Path',
     },

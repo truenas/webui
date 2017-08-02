@@ -23,7 +23,8 @@ export class SMBFormComponent {
       placeholder: 'Name',
     },
     {
-      type: 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name: 'cifs_path',
       placeholder: 'Path',
     },

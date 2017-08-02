@@ -33,7 +33,8 @@ export class WebdavFormComponent {
         placeholder : 'Comment',
       },
       {
-        type : 'input',
+        type : 'explorer',
+        initial: '/mnt',
         name : 'webdav_path',
         placeholder : 'Path',
       },

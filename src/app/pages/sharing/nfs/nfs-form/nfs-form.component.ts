@@ -22,7 +22,8 @@ export class NFSFormComponent {
       placeholder: 'Comment',
     },
     {
-      type: 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'path',
       placeholder : 'Path',
     },
