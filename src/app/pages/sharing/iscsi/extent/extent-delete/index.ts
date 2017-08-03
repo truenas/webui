@@ -1,0 +1,1 @@
+export { ExtentDeleteComponent } from './extent-delete.component';

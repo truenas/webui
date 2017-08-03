@@ -22,6 +22,9 @@ import {
 
     <h2>Targets</h2>
     <app-iscsi-target-list></app-iscsi-target-list>
+
+    <h2>Extents</h2>
+    <app-iscsi-extent-list></app-iscsi-extent-list>
     `
 })
 export class ISCSI {
