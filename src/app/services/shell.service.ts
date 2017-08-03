@@ -79,9 +79,8 @@ export class ShellService {
     try {
       data = JSON.parse(msg.data);
     } catch (e) {
-      // just the response from shell
       shellMsg = msg.data;
-      data = {'msg': 'please discard this'};
+      data = { 'msg': 'please discard this' };
     }
 
     if (data.msg == "connected") {
@@ -94,56 +93,10 @@ export class ShellService {
     if (!this.connected) {
       return;
     }
-    if (data.msg === "ping") {
-      // pass;
-    } else {
-      // console.log("Unknown message: ", data);
+    if (data.msg === "ping") {} else {
       this.shellCmdOutput = shellMsg;
-      //console.log("hey xin" , shellMsg, "msg", msg.data, "data", data);
       this.shellOutput.emit(this.shellCmdOutput);
     }
-    
-    
-    // let data: any;
-    // let shellMsg: string;
-    // let dataSent: boolean = false;
-    // try {
-    //   if (msg.data === '"\\r"') {
-    //     dataSent = true;
-    //   } else {
-    //     data = JSON.parse(msg.data);
-    //   }
-    // } catch (e) {
-    //   // just the response from shell
-    //   dataSent = true;
-    // }
-
-    // if (dataSent) {
-    //   shellMsg = msg.data;
-    //   data = {'msg': 'please discard this'};
-    // }
-
-    // if (data.msg == "connected") {
-    //   this.connected = true;
-    //   setTimeout(this.ping.bind(this), 20000);
-    //   this.onconnect();
-    //   return;
-    // }
-
-    // if (!this.connected) {
-    //   return;
-    // }
-    // if (data.msg == "ping") {
-    //   // pass;
-    // } else {
-    //   // console.log("Unknown message: ", data);
-    //   if (typeof(shellMsg) === 'undefined') {
-    //     debugger;
-    //   }
-    //   this.shellCmdOutput = shellMsg;
-    //   //console.log("hey xin shellMsg is: ", shellMsg, "and the msg.data was: ", msg.data);
-    //   this.shellOutput.emit(this.shellCmdOutput);
-    // }
   }
 
   send(payload) {
