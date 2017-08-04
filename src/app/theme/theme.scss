@@ -13,7 +13,4 @@
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome";
 @import "~bootstrap/dist/css/bootstrap.min.css";
-@import "sass/themes/modern";
-@import '~@swimlane/ngx-datatable/release/index.css';
-@import '~@swimlane/ngx-datatable/release/themes/material.css';
-@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+@import "sass/themes/conf/colorSchemes/modern";

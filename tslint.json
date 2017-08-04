@@ -23,8 +23,8 @@
             "spaces"
         ],
         "interface-over-type-literal": true,
-        "label-position": true,
-        "max-line-length": [
+        "label-position":
+        "max-line-length":
             true,
             140
         ],
