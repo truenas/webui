@@ -21,11 +21,11 @@ main {
   font: 1.1em $font-family;
   color: $default-text;
 
-  @include body-bg();
+  background: $body-bg;
 
   .additional-bg {
     display: none;
-    @include additional-bg();
+    background: $body-bg();
   }
 }
 

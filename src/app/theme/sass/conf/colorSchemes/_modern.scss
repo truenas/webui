@@ -2,7 +2,8 @@
 @include mat-core();
 
 $modern-theme-primary:          mat-palette($mat-blue);
-$modern-theme-accent:           mat-palette($mat-amber, A400, A300, A700);
+//$modern-theme-accent:           mat-palette($mat-amber, A400, A300, A700);
+$modern-theme-accent:           mat-palette($mat-amber);
 $modern-theme-warn:             mat-palette($mat-red);
 $modern-theme:                  mat-light-theme($modern-theme-primary, $modern-theme-accent, $modern-theme-warn);
 

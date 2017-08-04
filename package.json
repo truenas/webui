@@ -104,8 +104,8 @@
         "zone.js": "^0.8.11"
     },
     "devDependencies": {
-        "@angular/cli": "",
-        "@angular/compiler-cli": "",
+        "@angular/cli": "^1.2.0",
+        "@angular/compiler-cli": "4.2.6",
         "@angular/tsc-wrapped": "4.2.6",
         "@types/chartist": "^0.9.34",
         "@types/fullcalendar": "2.7.37",
