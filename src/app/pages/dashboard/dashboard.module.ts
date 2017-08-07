@@ -4,6 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {ChartistModule} from 'ng-chartist';
 
 import {NgaModule} from '../../theme/nga.module';
+import { MaterialModule, MdCardModule } from '@angular/material';
 
 import {Dashboard} from './dashboard.component';
 import {routing} from './dashboard.routing';
@@ -11,7 +12,8 @@ import {LineChart} from './lineChart/lineChart.component';
 import {LineChartService} from './lineChart/lineChart.service';
 
 @NgModule({
-  imports : [ CommonModule, ChartistModule, FormsModule, NgaModule, routing ],
+  imports : [ CommonModule, ChartistModule, FormsModule, NgaModule, routing, 
+  MaterialModule, MdCardModule ],
   declarations : [
     Dashboard,
     LineChart,
