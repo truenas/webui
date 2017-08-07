@@ -52,7 +52,8 @@ export class ServiceAFPComponent {
       placeholder : 'Enable home directories',
     },
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'afp_srv_homedir',
       placeholder : 'Home Directories',
     },
@@ -62,7 +63,8 @@ export class ServiceAFPComponent {
       placeholder : 'Home share name',
     },
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'afp_srv_dbpath',
       placeholder : 'Database Path',
     },
