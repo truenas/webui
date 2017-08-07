@@ -71,7 +71,8 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : 'Allow Anonymous Login',
     },
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'ftp_anonpath',
       placeholder : 'Path',
     },
