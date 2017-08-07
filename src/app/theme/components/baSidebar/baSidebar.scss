@@ -11,9 +11,10 @@ $angle-right: "\f101";
   z-index: 1001;
   display: block;
   min-height: 100%;
-  background-color:  #283593  !important; 
+  background-color: $sidebar   !important; 
   height: 100%;
   position: fixed;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12)
 }
 
 .al-sidebar-list {

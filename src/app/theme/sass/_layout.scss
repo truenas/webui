@@ -20,15 +20,14 @@ main {
   position: relative;
   font: 1.1em $font-family;
   color: $default-text;
-
   background: $body-bg;
 
   .additional-bg {
     display: none;
-    background: $body-bg();
+    background: $body-bg;
   }
 }
-
+.mat-card { margin: 60px; }
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   html {
     overflow: hidden;
@@ -47,7 +46,7 @@ a {
 
 .body-bg {
   display: none;
-  background: $primary-light;
+  background: $body-bg;
 }
 main::before {
   background: $primary-light !important;
@@ -64,9 +63,8 @@ main::before {
 
 .al-main {
   margin-left: $left-space;
-  padding: 66px 0 34px 0;
   position: relative;
-  background: $primary-light;
+  background: $body-bg;
 }
 
 .al-footer {
@@ -79,7 +77,7 @@ main::before {
   font-size: 13px;
   color: $default-text;
   transition: padding-left 0.5s ease;
-  background: $primary-light;
+  background: $body-bg;
 }
 
 .al-footer-main {
@@ -109,7 +107,6 @@ main::before {
 }
 
 .al-content {
-  padding: 8px 32px 8px 40px;
 
 
 }
