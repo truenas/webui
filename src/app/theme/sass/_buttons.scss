@@ -81,6 +81,7 @@ button.btn.btn-default {
 }
 
 button.btn.btn-success {
+  color: $light-text;
   @include buttonColor($success, $success);
   &:active, &:target {
     background-color: $success-dark;
@@ -95,6 +96,7 @@ button.btn.btn-info {
 }
 
 button.btn.btn-warning {
+  color: $light-text;
   @include buttonColor($warning, $warning);
   &:active, &:target {
     background-color: $warning-dark;
@@ -102,6 +104,7 @@ button.btn.btn-warning {
 }
 
 button.btn.btn-danger {
+  color: $light-text;
   @include buttonColor($danger, $danger);
   &:active, &:target {
     background-color: $danger-dark;
@@ -110,9 +113,9 @@ button.btn.btn-danger {
 
 button.btn.btn-inverse {
   @include buttonColor($help-text, $help-text);
-  color: $label-text;
+  color: $light-text;
   &:active, &:target, &:hover {
-    background-color: $help-text;
+    background-color: $primary-light;
     color: $label-text;
   }
 }

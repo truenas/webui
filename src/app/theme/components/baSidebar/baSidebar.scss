@@ -40,11 +40,11 @@ $angle-right: "\f101";
   float: none;
   padding: 0;
   &.selected:not(.with-sub-menu) {
-    background-color: $primary;
+    background-color: $primary-light;
     a.al-sidebar-list-link {
-      color: $label-text;
+      color: $light-text;
       b {
-        color: $label-text;
+        color: $light-text;
       }
     }
   }
@@ -71,7 +71,7 @@ $angle-right: "\f101";
     }
   }
 }
-
+.al-sidebar-sublist > ba-menu-item > li.selected:not(.with-sub-menu) > a { color: $light-text !important; }
 a.al-sidebar-list-link {
   display: block;
   height: 1.6em;
@@ -151,14 +151,15 @@ a.al-sidebar-list-link {
       height: auto;
       line-height: 1.4em;
       &:hover {
-        color: $label-text;
+        color: $light-text;
+        background-color: $primary-light;
       }
     }
     &.selected:not(.with-sub-menu) > a {
       border: none;
-      background-color: $primary;
+      background-color: $primary-light;
       &:hover {
-        color: $label-text;
+        color: $light-text;
       }
     }
 

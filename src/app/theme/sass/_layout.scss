@@ -28,6 +28,7 @@ main {
   }
 }
 .mat-card { margin: 60px; }
+.card-header { color: $light-text; }
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   html {
     overflow: hidden;
