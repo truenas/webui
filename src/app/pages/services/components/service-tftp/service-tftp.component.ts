@@ -34,7 +34,8 @@ export class ServiceTFTPComponent {
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 'tftp_directory',
       placeholder : 'Directory',
     },
