@@ -62,7 +62,8 @@ export class ServiceS3Component implements OnInit {
       inputType : 'password'
     },
     {
-      type : 'input',
+      type : 'explorer',
+      initial: '/mnt',
       name : 's3_disks',
       placeholder : 'Disk',
     },
