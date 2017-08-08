@@ -1,51 +1,51 @@
-import {OnInit, Component, EventEmitter, Input, Output, HostListener, Inject} from '@angular/core';
-import {MdDialog, MdDialogRef, MD_DIALOG_DATA} from '@angular/material';
+import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
+import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
-import {WebSocketService} from '../../../../services/';
+import { WebSocketService, RestService } from '../../../../services/';
 
 @Component({
   selector: 'entity-job',
   templateUrl: 'entity-job.component.html',
 })
-export class EntityJobComponent implements OnInit{
-	
-	public job: any = {};
+export class EntityJobComponent implements OnInit {
+
+  public job: any = {};
   public progressTotalPercent: number = 0;
   public description: string;
-	public method: string;
-	public args: any[] = [];
+  public method: string;
+  public args: any[] = [];
 
-	public title: string = '';
+  public title: string = '';
   public showCloseButton: boolean = true;
   public jobId: Number;
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() failure = new EventEmitter();
-	constructor(public dialogRef: MdDialogRef<EntityJobComponent>, 
-							private ws: WebSocketService,
-							@Inject(MD_DIALOG_DATA) public data: any) {}
+  constructor(public dialogRef: MdDialogRef < EntityJobComponent > ,
+    private ws: WebSocketService, public rest: RestService,
+    @Inject(MD_DIALOG_DATA) public data: any) {}
 
-	ngOnInit() {
+  ngOnInit() {
     this.dialogRef.updateSize('25%', '20%');
 
-    if(this.data.title) {
+    if (this.data.title) {
       this.title = this.data.title;
     }
-	}
+  }
 
-	setCall(method: string, args?: any[]) {
-		this.method = method;
-		if (args) {
-			this.args = args;
-		}
-	}
+  setCall(method: string, args ? : any[]) {
+    this.method = method;
+    if (args) {
+      this.args = args;
+    }
+  }
 
-	setDiscription(desc: string) {
-		this.description = desc;
-	}
+  setDiscription(desc: string) {
+    this.description = desc;
+  }
 
-	@HostListener('progress', [ '$event' ])
+  @HostListener('progress', ['$event'])
   public onProgress(progress) {
 
     if (progress.description) {
@@ -56,18 +56,22 @@ export class EntityJobComponent implements OnInit{
     }
   }
 
-  @HostListener('failure', [ '$event' ])
+  @HostListener('failure', ['$event'])
   public onFailure(job) {
     this.description = job.error;
   }
 
   public show() {
-    this.ws.call('core.get_jobs', [ [ [ 'id', '=', this.jobId ] ] ])
-        .subscribe((res) => {
-          if (res.length > 0) {
-            this.jobUpdate(res[0]);
-          }
-        });
+    this.ws.call('core.get_jobs', [
+        [
+          ['id', '=', this.jobId]
+        ]
+      ])
+      .subscribe((res) => {
+        if (res.length > 0) {
+          this.jobUpdate(res[0]);
+        }
+      });
     this.ws.subscribe("core.get_jobs").subscribe((res) => {
       if (res.id == this.jobId) {
         this.jobUpdate(res);
@@ -89,20 +93,37 @@ export class EntityJobComponent implements OnInit{
 
   public submit() {
     this.ws.job(this.method, this.args)
-        .subscribe(
-            (res) => {
-              this.job = res;
-              if (res.progress) {
-                this.progress.emit(res.progress);
-              }
-            },
-            () => {},
-            () => {
-              if (this.job.state == 'SUCCESS') {
-                this.success.emit(this.job);
-              } else if (this.job.state == 'FAILED') {
-                this.failure.emit(this.job);
-              }
-            });
+      .subscribe(
+        (res) => {
+          this.job = res;
+          if (res.progress) {
+            this.progress.emit(res.progress);
+          }
+        },
+        () => {},
+        () => {
+          if (this.job.state == 'SUCCESS') {
+            this.success.emit(this.job);
+          } else if (this.job.state == 'FAILED') {
+            this.failure.emit(this.job);
+          }
+        });
+  }
+
+  public post(path, options) {
+    this.rest.post(path, options).subscribe(
+        (res) => {
+          console.log(res);
+          this.job = res;
+          if (this.job.code == 202) {
+            this.setDiscription(this.job.data);
+            this.success.emit(this.job);
+          } else {
+            this.progress.emit(this.job);
+          }
+        },
+        () => {},
+        () => {
+        });
   }
 }
