@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ng2-webstorage';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
-
 import { environment } from '../../environments/environment';
 
 @Injectable()
