@@ -11,26 +11,34 @@
     <div class="col-md-9">
       <md-card>
       <md-card-title>Data Disk Groups (vdevs)</md-card-title>
+      <div class="md-content">
         <app-vdev *ngFor="let vdev of vdevs.data" [group]="'data'" [manager]="this"></app-vdev>
         <button class="btn btn-accent" (click)="addVdev('data')">add</button>
+        </div>
       </md-card>
       <md-card>
       <md-card-title>Cache Disk Groups (L2ARC vdevs)</md-card-title>
+         <div class="md-content">
         <app-vdev *ngFor="let vdev of vdevs.cache" [group]="'cache'" [manager]="this"></app-vdev>
         <button class="btn btn-accent" (click)="addVdev('cache')"> add </button>
+        </div>
       </md-card>
       <md-card>
       <md-card-title>Log Disk Groups (ZIL vdevs)</md-card-title>
+         <div class="md-content">
         <app-vdev *ngFor="let vdev of vdevs.log" [group]="'log'" [manager]="this"></app-vdev>
         <button class="btn btn-accent" (click)="addVdev('log')">add</button>
+        </div>
       </md-card>
     </div>
     <div class="col-md-3">
       <md-card>
        <md-card-title>Disks</md-card-title>
+          <div class="md-content">
         <p>Drag and drop disks to disks groups</p>
         <div #disksdnd [dragula]='"pool-vdev"' [style.minHeight]="'200px'" [style.width]="'200px'">
           <app-disk *ngFor="let disk of disks" [data]="disk"></app-disk>
+        </div>
         </div>
       </md-card>
     </div>
