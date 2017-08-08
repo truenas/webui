@@ -29,7 +29,7 @@ main {
 
 }
 .mat-card-title { background: $primary-light; padding: 8px 20px; color: $light-text;}
-.mat-card { margin: 32px; padding: 0px !important; }
+.mat-card { margin: 32px; padding: 0px !important; background: $sidebar !important;}
 .card-header { color: $light-text; }
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   html {
