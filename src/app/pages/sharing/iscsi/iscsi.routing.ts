@@ -18,6 +18,8 @@ import {PortalListComponent} from './portal/portal-list/';
 import {TargetAddComponent} from './target/target-add/';
 import {TargetEditComponent} from './target/target-edit/';
 import {TargetDeleteComponent} from './target/target-delete/';
+import { ExtentDeleteComponent } from './extent/extent-delete/';
+import { ExtentFormComponent } from './extent/extent-form/';
 
 export const routes: Routes = [
   {path : '', component : ISCSI},
@@ -33,5 +35,8 @@ export const routes: Routes = [
   {path : 'target/delete/:pk', component : TargetDeleteComponent},
   {path : 'target/add', component : TargetAddComponent},
   {path : 'target/edit/:pk', component: TargetEditComponent},
+  {path : 'extent/delete/:pk', component: ExtentDeleteComponent},
+  {path : 'extent/add', component: ExtentFormComponent},
+  {path : 'extent/edit/:pk', component: ExtentFormComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

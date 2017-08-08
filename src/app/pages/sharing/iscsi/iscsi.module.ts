@@ -28,6 +28,9 @@ import {TargetAddComponent} from './target/target-add/';
 import {TargetEditComponent} from './target/target-edit/';
 import {TargetDeleteComponent} from './target/target-delete/';
 import {TargetListComponent} from './target/target-list/';
+import { ExtentListComponent } from './extent/extent-list/';
+import { ExtentDeleteComponent } from './extent/extent-delete/';
+import { ExtentFormComponent } from './extent/extent-form/';
 
 @NgModule({
   imports : [
@@ -56,6 +59,9 @@ import {TargetListComponent} from './target/target-list/';
     TargetEditComponent,
     TargetDeleteComponent,
     TargetAddComponent,
+    ExtentListComponent,
+    ExtentDeleteComponent,
+    ExtentFormComponent,
   ],
   providers : []
 })
