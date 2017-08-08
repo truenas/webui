@@ -1,14 +1,14 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import {GlobalState} from '../../../../global.state';
-import {RestService, WebSocketService} from '../../../../services/';
+import { GlobalState } from '../../../../global.state';
+import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
-  selector : 'certificate-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  selector: 'certificate-list',
+  template: `<entity-table [conf]="this"></entity-table>`
 })
 
 export class CertificateListComponent {
@@ -19,47 +19,45 @@ export class CertificateListComponent {
   public sub: Subscription;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected _state: GlobalState) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected _state: GlobalState) {}
 
-  public columns: Array<any> = [
-    {prop : 'cert_name', name : 'Name'},
-    {prop : 'cert_issuer', name : 'Issuer'},
-    {prop : 'cert_type_internal', name : 'Internal'},
-    {prop : 'cert_lifetime', name : "Lifetime"},
-    {prop : 'cert_from', name : "From"},
-    {prop : 'cert_until', name : "Expires"},
+  public columns: Array < any > = [
+    { prop: 'cert_name', name: 'Name' },
+    { prop: 'cert_issuer', name: 'Issuer' },
+    { prop: 'cert_type_internal', name: 'Internal' },
+    { prop: 'cert_lifetime', name: "Lifetime" },
+    { prop: 'cert_from', name: "From" },
+    { prop: 'cert_until', name: "Expires" },
   ];
 
   public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
+    paging: true,
+    sorting: { columns: this.columns },
   }
 
   getAddActions() {
     let actions = [];
     actions.push({
-      label : "Import Certificate",
-      onClick : () => {
+      label: "Import Certificate",
+      onClick: () => {
         this.router.navigate(
-            new Array('/pages').concat([ "system", "certificates", "import" ]));
+          new Array('/pages').concat(["system", "certificates", "import"]));
       }
-    },
-                 {
-                   label : "Create Internal",
-                   onClick : () => {
-                     this.router.navigate(new Array('/pages').concat(
-                         [ "system", "certificates", "internal" ]));
-                   }
-                 },
-                 {
-                   label : "Create CSR",
-                   onClick : () => {
-                     this.router.navigate(new Array('/pages').concat(
-                         [ "system", "certificates", "csr" ]));
-                   }
-                 });
+    }, {
+      label: "Create Internal",
+      onClick: () => {
+        this.router.navigate(new Array('/pages').concat(
+          ["system", "certificates", "internal"]));
+      }
+    }, {
+      label: "Create CSR",
+      onClick: () => {
+        this.router.navigate(new Array('/pages').concat(
+          ["system", "certificates", "csr"]));
+      }
+    });
 
     return actions;
   }
@@ -67,10 +65,10 @@ export class CertificateListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-      label : "Delete",
-      onClick : (row) => {
+      label: "Delete",
+      onClick: (row) => {
         this.router.navigate(new Array('/pages').concat(
-            [ "system", "certificates", "delete", row.id ]));
+          ["system", "certificates", "delete", row.id]));
       }
     });
     return actions;
