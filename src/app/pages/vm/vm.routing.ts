@@ -8,14 +8,13 @@ import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list/';
 import {DeviceNicAddComponent} from './devices/device-nic-add/';
 import {DeviceVncAddComponent} from './devices/device-vnc-add/';
-import {VmAddComponent} from './vm-add/';
+import {VmFormComponent} from './vm-form/';
 import {VmDeleteComponent} from './vm-delete/index';
-import {VmEditComponent} from './vm-edit/index';
 import {VmListComponent} from './vm-list/';
 
 export const routes: Routes = [
-  {path : 'add', component : VmAddComponent},
-  {path : 'edit/:pk', component : VmEditComponent},
+  {path : 'add', component : VmFormComponent},
+  {path : 'edit/:pk', component : VmFormComponent},
   {path : 'delete/:pk', component : VmDeleteComponent},
   {path : ':pk/devices/:name', component : DeviceListComponent},
   {path : ':pk/devices/:name/cdrom/add', component : DeviceCdromAddComponent},

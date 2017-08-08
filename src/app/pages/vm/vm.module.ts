@@ -16,8 +16,7 @@ import {
       ],
       declarations : [
         VmListComponent,
-        VmAddComponent,
-        VmEditComponent,
+        VmFormComponent,
         VmDeleteComponent,
         DeviceListComponent,
         DeviceCdromAddComponent,
@@ -42,8 +41,7 @@ import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list';
 import {DeviceNicAddComponent} from './devices/device-nic-add/';
 import {DeviceVncAddComponent} from './devices/device-vnc-add/';
-import {VmAddComponent} from './vm-add/';
+import {VmFormComponent} from './vm-form/';
 import {VmDeleteComponent} from './vm-delete/';
-import {VmEditComponent} from './vm-edit/';
 import {VmListComponent} from './vm-list/';
 import {routing} from './vm.routing';
