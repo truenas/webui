@@ -15,6 +15,7 @@ export class IscsiService {
   protected iscsiAuthCredentialResource: string =
       'services/iscsi/authcredential';
   protected iscsiTargetGroupsResource: string = 'services/iscsi/targetgroup';
+  protected volumeResource: string = 'storage/volume';
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -31,4 +32,17 @@ export class IscsiService {
   };
 
   listTargetGroups() { return this.rest.get(this.iscsiTargetGroupsResource, {}); };
+
+  getRPMChoices() {
+    return this.ws.call('notifier.choices', ['EXTENT_RPM_CHOICES', [true, false]]);
+  };
+
+  getVolumes() {
+    return this.rest.get(this.volumeResource, {});
+  };
+
+  getZvols(volume) {
+    let rs = this.volumeResource + '/' + volume + '/zvols';
+    return this.rest.get(rs, {});
+  }
 }
