@@ -2,41 +2,12 @@
 @include mat-core();
 
 $modern-theme-primary:          mat-palette($mat-blue);
-$modern-theme-accent:           mat-palette($mat-amber, A400, A300, A700);
-//$modern-theme-accent:           mat-palette($mat-amber);
+//$modern-theme-accent:           mat-palette($mat-amber, A400, A300, A700);
+$modern-theme-accent:           mat-palette($mat-amber);
 $modern-theme-warn:             mat-palette($mat-red);
 $modern-theme:                  mat-light-theme($modern-theme-primary, $modern-theme-accent, $modern-theme-warn);
 
-@mixin angular-material-theme($modern-theme) {
-  @include mat-core-theme($modern-theme);
-  @include mat-autocomplete-theme($modern-theme);
-  @include mat-button-theme($modern-theme);
-  @include mat-button-toggle-theme($modern-theme);
-  @include mat-card-theme($modern-theme);
-  @include mat-checkbox-theme($modern-theme);
-  @include mat-chips-theme($modern-theme);
-  @include mat-table-theme($modern-theme);
-  @include mat-datepicker-theme($modern-theme);
-  @include mat-dialog-theme($modern-theme);
-  @include mat-expansion-panel-theme($modern-theme);
-  @include mat-grid-list-theme($modern-theme);
-  @include mat-icon-theme($modern-theme);
-  @include mat-input-theme($modern-theme);
-  @include mat-list-theme($modern-theme);
-  @include mat-menu-theme($modern-theme);
-  @include mat-paginator-theme($modern-theme);
-  //@include mat-progress-bar-theme($modern-theme);
-  @include mat-progress-spinner-theme($modern-theme);
-  @include mat-radio-theme($modern-theme);
-  @include mat-select-theme($modern-theme);
-  @include mat-sidenav-theme($modern-theme);
-  @include mat-slide-toggle-theme($modern-theme);
-  @include mat-slider-theme($modern-theme);
-  @include mat-tabs-theme($modern-theme);
-  @include mat-toolbar-theme($modern-theme);
-  @include mat-tooltip-theme($modern-theme);
-  @include mat-simple-snack-bar-theme($modern-theme);
-}
+@include angular-material-theme($modern-theme);
 
 
 $default:                       #000000;
