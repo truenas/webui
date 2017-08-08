@@ -1,0 +1,1 @@
+export { AssociatedTargetDeleteComponent } from './associated-target-delete.component';
