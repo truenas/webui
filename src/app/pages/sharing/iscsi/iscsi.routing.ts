@@ -21,6 +21,7 @@ import {TargetDeleteComponent} from './target/target-delete/';
 import { ExtentDeleteComponent } from './extent/extent-delete/';
 import { ExtentFormComponent } from './extent/extent-form/';
 import { AssociatedTargetDeleteComponent } from './associated-target/associated-target-delete/';
+import { AssociatedTargetFormComponent } from './associated-target/associated-target-form/';
 
 export const routes: Routes = [
   {path : '', component : ISCSI},
@@ -40,5 +41,7 @@ export const routes: Routes = [
   {path : 'extent/add', component: ExtentFormComponent},
   {path : 'extent/edit/:pk', component: ExtentFormComponent},
   {path : 'associatedtarget/delete/:pk', component: AssociatedTargetDeleteComponent},
+  {path : 'associatedtarget/add', component: AssociatedTargetFormComponent},
+  {path : 'associatedtarget/edit/:pk', component: AssociatedTargetFormComponent},
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

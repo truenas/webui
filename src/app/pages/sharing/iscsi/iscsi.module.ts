@@ -33,6 +33,7 @@ import { ExtentDeleteComponent } from './extent/extent-delete/';
 import { ExtentFormComponent } from './extent/extent-form/';
 import { AssociatedTargetListComponent } from './associated-target/associated-target-list/';
 import { AssociatedTargetDeleteComponent } from './associated-target/associated-target-delete/';
+import { AssociatedTargetFormComponent } from './associated-target/associated-target-form/';
 
 @NgModule({
   imports : [
@@ -66,6 +67,7 @@ import { AssociatedTargetDeleteComponent } from './associated-target/associated-
     ExtentFormComponent,
     AssociatedTargetListComponent,
     AssociatedTargetDeleteComponent,
+    AssociatedTargetFormComponent,
   ],
   providers : []
 })
