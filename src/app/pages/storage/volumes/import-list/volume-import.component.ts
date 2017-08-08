@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -6,6 +6,9 @@ import {Subscription} from 'rxjs';
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
+import { BaJob } from '../../../../theme/components';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { MdDialog, MdDialogRef } from '@angular/material';
 
 @Component({
   selector : 'import-list',
@@ -20,7 +23,7 @@ export class VolumeImportListComponent {
     constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected _state: GlobalState
+              protected _state: GlobalState, protected dialog: MdDialog
     ){}
 
     public columns: Array<any> = [
@@ -33,20 +36,27 @@ export class VolumeImportListComponent {
       sorting : {columns : this.columns},
     }
 
+  getAddActions() {
+    let actions = [];
+    actions.push({
+      label: "Go Back",
+      onClick: () => {
+        this.router.navigate(
+          new Array('/pages').concat(["storage", "volumes"]));
+      }
+    });
+    return actions;
+  }
 
   getActions(row) {
     let actions = [];
     actions.push({
       label : "Import",
       onClick : (row) => {
-        this.busy = this.rest.post(this.resource_name + '/', {
+        let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Volume" } });
+        dialogRef.componentInstance.post(this.resource_name + '/', {
           body: JSON.stringify({"volume_id": row.id}),
-        }).subscribe(
-          (res) => {
-            this.router.navigate(new Array('/pages').concat(this.route_success))
-          },
-          (res) => { new EntityUtils().handleError(this, res); }
-        );
+        });
       }
     });
     return actions;
