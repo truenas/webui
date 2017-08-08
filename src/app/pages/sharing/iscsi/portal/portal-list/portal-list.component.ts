@@ -9,32 +9,39 @@ import {EntityListComponent} from '../../../../common/entity/entity-list/';
 @Component({
   selector : 'app-iscsi-portal-list',
   template : `
-  <entity-list [conf]="this"></entity-list>
+  <entity-table [conf]="this"></entity-table>
   `
 })
 export class PortalListComponent {
 
   protected resource_name: string = 'services/iscsi/portal';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'portals', 'add' ];
-  protected route_delete: string[] =
-      [ 'sharing', 'iscsi', 'portals', 'delete' ];
+  protected route_delete: string[] = [ 'sharing', 'iscsi', 'portals', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'portals', 'edit' ];
-  protected entityList: EntityListComponent;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Portal Group ID', name : 'iscsi_target_portal_tag'},
-    {title : 'Listen', name : 'iscsi_target_portal_ips'},
-    {title : 'Comment', name : 'iscsi_target_portal_comment'},
     {
-      title : 'Discovery Auth Method',
-      name : 'iscsi_target_portal_discoveryauthmethod'
+      name : 'Portal Group ID',
+      prop : 'iscsi_target_portal_tag',
     },
     {
-      title : 'Discovery Auth Group',
-      name : 'iscsi_target_portal_discoveryauthgroup'
+      name : 'Listen',
+      prop : 'iscsi_target_portal_ips',
+    },
+    {
+      name : 'Comment',
+      prop : 'iscsi_target_portal_comment',
+    },
+    {
+      name : 'Discovery Auth Method',
+      prop : 'iscsi_target_portal_discoveryauthmethod',
+    },
+    {
+      name : 'Discovery Auth Group',
+      prop : 'iscsi_target_portal_discoveryauthgroup',
     },
   ];
   public config: any = {
@@ -42,5 +49,5 @@ export class PortalListComponent {
     sorting : {columns : this.columns},
   };
 
-  afterInit(entityList: EntityListComponent) { this.entityList = entityList; }
+  afterInit(entityList: EntityListComponent) {}
 }
