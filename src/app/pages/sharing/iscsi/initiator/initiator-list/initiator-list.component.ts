@@ -8,28 +8,36 @@ import {RestService, WebSocketService} from '../../../../../services/';
 @Component({
   selector : 'app-iscsi-initiator-list',
   template : `
-  <entity-list [conf]="this"></entity-list>
+  <entity-table [conf]="this"></entity-table>
   `
 })
 export class InitiatorListComponent {
 
   protected resource_name: string = 'services/iscsi/authorizedinitiator';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'initiators', 'add' ];
-  protected route_delete: string[] =
-      [ 'sharing', 'iscsi', 'initiators', 'delete' ];
+  protected route_delete: string[] = [ 'sharing', 'iscsi', 'initiators', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'initiators', 'edit' ];
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Group ID', name : 'iscsi_target_initiator_tag'},
-    {title : 'Initiators', name : 'iscsi_target_initiator_initiators'},
     {
-      title : 'Authorized Network',
-      name : 'iscsi_target_initiator_auth_network'
+      name : 'Group ID',
+      prop : 'iscsi_target_initiator_tag',
     },
-    {title : 'Comment', name : 'iscsi_target_initiator_comment'},
+    {
+      name : 'Initiators',
+      prop : 'iscsi_target_initiator_initiators',
+    },
+    {
+      name : 'Authorized Network',
+      prop : 'iscsi_target_initiator_auth_network',
+    },
+    {
+      name : 'Comment',
+      prop : 'iscsi_target_initiator_comment',
+    },
   ];
   public config: any = {
     paging : true,
