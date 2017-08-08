@@ -20,7 +20,29 @@
         background-color: #1a237e;
     }
 }
-
+.ng2-dropdown-container {
+    float: right;
+    margin-right: 8px;
+}
+.top-dropdown-menu { top: 51px !important; }
+.ion-android-more-vertical:before {
+    color: $light-text;
+}
+.dropdown-arr { right: 9px !important; }
+.fa-bell:before {
+    font-size: 1.5em;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    line-height: 2.5em;
+    padding: 0;
+    float: left;
+    margin: 0 0 0 8px;
+    color: $light-text;
+    position: relative;
+    left: 36px;
+    top: 2px;
+}
 a.al-logo {
     width: 222px;
     height: 66px;
