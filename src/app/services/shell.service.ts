@@ -71,7 +71,6 @@ export class ShellService {
   }
 
   onmessage(msg) {
-    console.log(msg.data);
     let data: any;
     let shellMsg: string;
 
