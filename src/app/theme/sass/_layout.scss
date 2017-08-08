@@ -25,9 +25,11 @@ main {
   .additional-bg {
     display: none;
     background: $body-bg;
-  }
+  } 
+
 }
-.mat-card { margin: 60px; }
+.mat-card-title { background: $primary-light; padding: 8px 20px; color: $light-text;}
+.mat-card { margin: 32px; padding: 0px !important; }
 .card-header { color: $light-text; }
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   html {
