@@ -30,6 +30,7 @@ import {TargetDeleteComponent} from './target/target-delete/';
 import {TargetListComponent} from './target/target-list/';
 import { ExtentListComponent } from './extent/extent-list/';
 import { ExtentDeleteComponent } from './extent/extent-delete/';
+import { ExtentFormComponent } from './extent/extent-form/';
 
 @NgModule({
   imports : [
@@ -60,6 +61,7 @@ import { ExtentDeleteComponent } from './extent/extent-delete/';
     TargetAddComponent,
     ExtentListComponent,
     ExtentDeleteComponent,
+    ExtentFormComponent,
   ],
   providers : []
 })
