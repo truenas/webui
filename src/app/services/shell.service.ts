@@ -63,12 +63,6 @@ export class ShellService {
     this._router.navigate(['/login']);
   }
 
-  ping() {
-    if (this.connected) {
-      this.socket.send(JSON.stringify({ "msg": "ping", "id": UUID.UUID() }));
-      setTimeout(this.ping.bind(this), 20000);
-    }
-  }
 
   onmessage(msg) {
     let data: any;
@@ -83,7 +77,6 @@ export class ShellService {
 
     if (data.msg == "connected") {
       this.connected = true;
-      setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
       return;
     }
