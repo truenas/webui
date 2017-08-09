@@ -8,7 +8,7 @@ import {RestService, WebSocketService} from '../../../../../services/';
 @Component({
   selector : 'app-iscsi-target-list',
   template : `
-  <entity-list [conf]="this"></entity-list>
+    <entity-table [conf]="this"></entity-table>
   `
 })
 export class TargetListComponent {
@@ -18,12 +18,17 @@ export class TargetListComponent {
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'target', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'target', 'edit' ];
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Target Name', name : 'iscsi_target_name'},
-    {title : 'Target Alias', name : 'iscsi_target_alias'},
+    {
+      name : 'Target Name',
+      prop : 'iscsi_target_name',
+    },
+    {
+      name : 'Target Alias',
+      prop : 'iscsi_target_alias',
+    },
   ];
   public config: any = {
     paging : true,
