@@ -32,6 +32,11 @@ export class NFSFormComponent {
         placeholder: 'Path',
         type: 'explorer',
         initial: '/mnt',
+      },
+      {
+        type: 'checkbox',
+        name: 'delete',
+        placeholder: 'Delete',
       }]
     },
     {
@@ -100,9 +105,8 @@ export class NFSFormComponent {
     }, 
   ];
 
-  protected path_count: number;
   protected arrayControl: any;
-  protected initialCount: number;
+  protected initialCount: number = 1;
   protected initialCount_default: number = 1;
 
   public custActions: Array<any> = [
@@ -110,17 +114,17 @@ export class NFSFormComponent {
       id : 'add_path',
       name : 'Add Additional Path',
       function : () => {
-        this.path_count += 1;
+        this.initialCount += 1;
         this.entityFormService.insertFormArrayGroup(
-            this.path_count, this.formArray, this.arrayControl.formarray);
+            this.initialCount, this.formArray, this.arrayControl.formarray);
       }
     },
     {
       id : 'remove_path',
       name : 'Remove Additional Path',
       function : () => {
-        this.path_count -= 1;
-        this.entityFormService.removeFormArrayGroup(this.path_count,
+        this.initialCount -= 1;
+        this.entityFormService.removeFormArrayGroup(this.initialCount,
                                                     this.formArray);
       }
     },
@@ -163,19 +167,13 @@ export class NFSFormComponent {
       _.find(this.fieldConfig, {'name' : 'nfs_paths'});
     this.route.params.subscribe(params => {
       if(params['pk']) {
-        this.arrayControl.initialCount = 0;
+         this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
       }
     });
   }
   
   afterInit(EntityForm: any) {
-    this.arrayControl =
-      _.find(this.fieldConfig, {'name' : 'nfs_paths'});
-    if (EntityForm.isNew) {
-      this.initialCount = this.path_count = 1;
-    } else {
-      this.initialCount = this.path_count = this.arrayControl.initialCount;
-    }
+    this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
     this.userService.listUsers().subscribe(res => {
       let users = [];
@@ -197,9 +195,7 @@ export class NFSFormComponent {
       this.nfs_mapall_group.options = groups;
       this.nfs_maproot_group = _.find(this.fieldConfig, {'name' : 'nfs_maproot_group'});
       this.nfs_maproot_group.options = groups;
-    });
-
-    this.formArray = EntityForm.formGroup.controls['nfs_paths'];
+    }); 
   }
 
   isCustActionVisible(actionId: string) {
@@ -208,7 +204,7 @@ export class NFSFormComponent {
     } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
       return false;
     }
-    if (actionId == 'remove_path' && this.path_count <= this.initialCount_default) {
+    if (actionId == 'remove_path' && this.initialCount <= this.initialCount_default) {
       return false;
     }
     return true;
@@ -225,7 +221,9 @@ export class NFSFormComponent {
   clean(data) {
     let paths = [];
     for (let i = 0; i < data.nfs_paths.length; i++) {
-      paths.push(data.nfs_paths[i]['path']);
+      if(!data.nfs_paths[i]['delete']) {
+        paths.push(data.nfs_paths[i]['path']);
+      }
     }
     data.nfs_paths = paths;
     return data;
