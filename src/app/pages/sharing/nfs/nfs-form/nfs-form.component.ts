@@ -208,7 +208,7 @@ export class NFSFormComponent {
     } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
       return false;
     }
-    if (actionId == 'remove_path' && this.initialCount <= this.initialCount_default) {
+    if (actionId == 'remove_path' && this.path_count <= this.initialCount_default) {
       return false;
     }
     return true;
