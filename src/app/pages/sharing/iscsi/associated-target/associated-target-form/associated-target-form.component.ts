@@ -17,7 +17,7 @@ import { IscsiService } from '../../../../../services/';
 export class AssociatedTargetFormComponent {
 
   protected resource_name: string = 'services/iscsi/targettoextent';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'associatedtarget' ];
   protected isEntity: boolean = true;
 
   protected fieldConfig: FieldConfig[] = [

@@ -10,5 +10,5 @@ import {RestService} from '../../../../../services/rest.service';
 export class InitiatorDeleteComponent {
 
   protected resource_name: string = 'services/iscsi/authorizedinitiator';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'initiator' ];
 }

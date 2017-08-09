@@ -21,7 +21,7 @@ export class TargetAddComponent implements OnInit {
 
   public target_resource_name: string = 'services/iscsi/target';
   public targetgroup_resource_name: string = 'services/iscsi/targetgroup';
-  public route_success: string[] = [ 'sharing', 'iscsi' ];
+  public route_success: string[] = [ 'sharing', 'iscsi', 'target' ];
 
   public iscsi_group_count: number = 1;
   public formGroup: any;

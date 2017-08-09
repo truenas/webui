@@ -10,5 +10,5 @@ import {RestService} from '../../../../../services/rest.service';
 export class TargetDeleteComponent {
 
   protected resource_name: string = 'services/iscsi/target';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'target' ];
 }

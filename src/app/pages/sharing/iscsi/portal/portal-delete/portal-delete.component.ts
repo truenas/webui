@@ -10,5 +10,5 @@ import {RestService} from '../../../../../services/rest.service';
 export class PortalDeleteComponent {
 
   protected resource_name: string = 'services/iscsi/portal';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'portals' ];
 }

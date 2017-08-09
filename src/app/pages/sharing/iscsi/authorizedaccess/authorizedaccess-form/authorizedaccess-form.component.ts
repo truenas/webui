@@ -26,7 +26,7 @@ import {
 export class AuthorizedAccessFormComponent {
 
   protected resource_name: string = 'services/iscsi/authcredential';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'auth' ];
   protected isEntity: boolean = true;
 
   protected fieldConfig: FieldConfig[] = [

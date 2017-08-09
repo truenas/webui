@@ -21,7 +21,7 @@ export class TargetEditComponent implements OnInit {
 
   public target_resource_name: string = 'services/iscsi/target/';
   public targetgroup_resource_name: string = 'services/iscsi/targetgroup/';
-  public route_success: string[] = [ 'sharing', 'iscsi' ];
+  public route_success: string[] = [ 'sharing', 'iscsi', 'target' ];
 
   public pk: any;
   protected initialCount: number = 0;

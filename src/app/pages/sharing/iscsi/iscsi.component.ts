@@ -1,15 +1,14 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
-import {
-  GlobalconfigurationComponent
-} from './globalconfiguration/globalconfiguration.component';
+import * as _ from 'lodash';
+import { GlobalconfigurationComponent } from './globalconfiguration/globalconfiguration.component';
 
 @Component({
   selector : 'iscsi',
   template : `
     <md-card>
-      <md-tab-group>
+      <md-tab-group #tabGroup (selectChange)="onSelectChange($event)">
         <md-tab label="Global Configuration">
           <app-iscsi-globalconfiguration></app-iscsi-globalconfiguration>
         </md-tab>
@@ -35,11 +34,27 @@ import {
     </md-card>
   `,
 })
-export class ISCSI {
+export class ISCSI implements OnInit{
 
-  constructor(
-      protected router: Router,
-  ) {}
+   @ViewChild('tabGroup') tabGroup;
+   protected indexMap: any[] = ['configuration', 'portals', 'initiator', 'auth', 'target', 'extent', 'associatedtarget'];
 
-  ngOnInit() {}
+  constructor( protected router: Router, protected aroute: ActivatedRoute, ) {}
+
+  ngOnInit() {
+    this.aroute.params.subscribe(params => {
+      this.selectTab(params['pk']);
+    });
+  }
+
+  selectTab(tabName: any) {
+    let index = _.indexOf(this.indexMap, tabName);
+    this.tabGroup.selectedIndex = index;
+  }
+
+  onSelectChange($event: any) {
+    //update url
+    let pk = this.indexMap[$event.index];
+    this.router.navigate(new Array('/pages/sharing/iscsi').concat(pk));
+  }
 }

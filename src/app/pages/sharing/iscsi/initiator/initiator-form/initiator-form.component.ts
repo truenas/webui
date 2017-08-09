@@ -22,7 +22,7 @@ import {
 export class InitiatorFormComponent {
 
   protected resource_name: string = 'services/iscsi/authorizedinitiator';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'initiator' ];
   protected isEntity: boolean = true;
 
   protected fieldConfig: FieldConfig[] = [

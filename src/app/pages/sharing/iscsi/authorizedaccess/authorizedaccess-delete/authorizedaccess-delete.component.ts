@@ -10,5 +10,5 @@ import {RestService} from '../../../../../services/rest.service';
 export class AuthorizedAccessDeleteComponent {
 
   protected resource_name: string = 'services/iscsi/authcredential';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'auth' ];
 }

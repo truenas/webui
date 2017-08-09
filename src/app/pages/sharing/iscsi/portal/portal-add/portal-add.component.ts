@@ -27,7 +27,7 @@ import {
 export class PortalAddComponent {
 
   protected resource_name: string = 'services/iscsi/portal/';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'portals' ];
   protected isEntity: boolean = true;
 
   protected portal_ip_count: number = 1;

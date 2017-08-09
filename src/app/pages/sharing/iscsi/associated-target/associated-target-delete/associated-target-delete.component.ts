@@ -7,5 +7,5 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class AssociatedTargetDeleteComponent {
   protected resource_name: string = 'services/iscsi/targettoextent';
-  protected route_success: string[] = [ 'sharing', 'iscsi' ];
+  protected route_success: string[] = [ 'sharing', 'iscsi', 'associatedtarget' ];
 }
