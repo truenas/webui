@@ -8,7 +8,7 @@ import {RestService, WebSocketService} from '../../../../../services/';
 @Component({
   selector : 'app-iscsi-extent-list',
   template : `
-  <entity-list [conf]="this"></entity-list>
+    <entity-table [conf]="this"></entity-table>
   `
 })
 export class ExtentListComponent {
@@ -18,12 +18,17 @@ export class ExtentListComponent {
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'extent', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'extent', 'edit' ];
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Extent Name', name : 'iscsi_target_extent_name'},
-    {title : 'Serial', name : 'iscsi_target_extent_serial'},
+    {
+      name : 'Extent Name',
+      prop : 'iscsi_target_extent_name',
+    },
+    {
+      name : 'Serial',
+      prop : 'iscsi_target_extent_serial',
+    },
   ];
   public config: any = {
     paging : true,
