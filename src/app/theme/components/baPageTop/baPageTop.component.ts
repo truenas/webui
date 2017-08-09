@@ -3,20 +3,20 @@ import 'style-loader!./baPageTop.scss';
 import { Component } from '@angular/core';
 
 import { GlobalState } from '../../../global.state';
-import { WebSocketService, DialogService } from '../../../services/index';
+import { WebSocketService, DialogService, RestService } from '../../../services/index';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'ba-page-top',
   templateUrl: './baPageTop.html',
-  providers: [WebSocketService, DialogService]
+  providers: [DialogService]
 })
 export class BaPageTop {
 
   public isScrolled: boolean = false;
   public isMenuCollapsed: boolean = false;
 
-  constructor(protected router: Router, private _state: GlobalState, public _ws: WebSocketService, private dialogService: DialogService) {
+  constructor(protected router: Router, private _state: GlobalState, public _ws: WebSocketService, private dialogService: DialogService, public rest: RestService) {
     this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
       this.isMenuCollapsed = isCollapsed;
     });
@@ -41,7 +41,9 @@ export class BaPageTop {
   public onShutdown(): void {
     this.dialogService.confirm("Reboot", "You are about to SHUTDOWN the system, are you sure?").subscribe((res) => {
       if (res) {
-        this._ws.call('system.shutdown', {});
+        // this.rest.post('system/shutdown/', {});
+        this._ws.call('system.shutdown', {}).subscribe( (res) => {
+        });
       }
     })
   }
@@ -49,7 +51,8 @@ export class BaPageTop {
   public onReboot(): void {
     this.dialogService.confirm("Reboot", "You are about to REBOOT the system, are you sure?").subscribe((res) => {
       if (res) {
-        this._ws.call('system.reboot', {});
+        this.rest.post('system/reboot/', {}).subscribe( (res) => {
+        });
       }
     })
   }
