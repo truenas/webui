@@ -21,7 +21,6 @@ export class FormExplorerComponent implements Field, OnInit {
   group: FormGroup;
   fieldShow: string;
   nodes: any[];
-  value: string;
 
   private treeVisible: boolean = false;
   private actionMapping:IActionMapping = {
@@ -73,8 +72,8 @@ constructor (private entityFormService : EntityFormService){}
     this.treeVisible = !this.treeVisible;
   }
 
- setPath(node:any) {
-   this.value = node.data.name;
+  setPath(node:any) {
+    this.group.controls[this.config.name].setValue(node.data.name);
   }
 }
 

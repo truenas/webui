@@ -1,6 +1,6 @@
 <div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
     <md-input-container class="full-width">
-        <input mdInput [type]="'text'" [placeholder]="config.placeholder" [attr.value]="config.value" [formControlName]="config.name" [(ngModel)]="value">
+        <input mdInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
     </md-input-container>
     <button md-button (click)="toggleTree()" type="button">Browse</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
