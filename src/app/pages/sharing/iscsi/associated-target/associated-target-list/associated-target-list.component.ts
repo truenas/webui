@@ -8,7 +8,7 @@ import {RestService, WebSocketService} from '../../../../../services/';
 @Component({
   selector : 'app-iscsi-associated-target-list',
   template : `
-  <entity-list [conf]="this"></entity-list>
+    <entity-table [conf]="this"></entity-table>
   `
 })
 export class AssociatedTargetListComponent {
@@ -18,13 +18,21 @@ export class AssociatedTargetListComponent {
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'edit' ];
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Target', name : 'iscsi_target'},
-    {title : 'LUN ID', name : 'iscsi_lunid'},
-    {title : 'Extent', name : 'iscsi_extent'}
+    {
+      name : 'Target',
+      prop : 'iscsi_target',
+    },
+    {
+      name : 'LUN ID',
+      prop : 'iscsi_lunid',
+    },
+    {
+      name : 'Extent',
+      prop : 'iscsi_extent',
+    }
   ];
   public config: any = {
     paging : true,
