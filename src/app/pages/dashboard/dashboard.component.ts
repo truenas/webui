@@ -102,7 +102,6 @@ export class Dashboard implements OnInit {
       } else {
         this.ipAddress = res;
       }
-      console.log(this.ipAddress);
     })
   }
 }
