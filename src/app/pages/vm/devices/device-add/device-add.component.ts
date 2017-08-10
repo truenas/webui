@@ -2,10 +2,12 @@ import {Location} from '@angular/common';
 import {
   ApplicationRef,
   Component,
+  ContentChildren,
   Injector,
   Input,
   OnInit,
   QueryList,
+  TemplateRef,
   ViewChildren
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -25,6 +27,7 @@ import {EntityFormService} from '../../../../pages/common/entity/entity-form/ser
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
+import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 
 @Component({
   selector : 'device-add',
@@ -44,6 +47,11 @@ export class DeviceAddComponent implements OnInit {
   protected route_cancel: string[];
   protected route_success: string[];
   public hasConf: boolean = true;
+  public success: boolean = false;
+
+  templateTop: TemplateRef<any>;
+  @ContentChildren(EntityTemplateDirective)
+  templates: QueryList<EntityTemplateDirective>;
 
   @ViewChildren('component') components;
 
@@ -72,7 +80,9 @@ export class DeviceAddComponent implements OnInit {
     return true;
   }
 
-  onSubmit() {
+  onSubmit(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
     this.ws.call('vm.query').subscribe((res) => {
       let formvalue = _.cloneDeep(this.formGroup.value);
       this.route_success = [ 'vm', this.vmid, 'devices', this.vm ];
