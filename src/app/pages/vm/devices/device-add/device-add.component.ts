@@ -10,12 +10,17 @@ import {
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
+// import {
+//   DynamicFormControlModel,
+//   DynamicFormService
+// } from '@ng2-dynamic-forms/core';
 import {
-  DynamicFormControlModel,
-  DynamicFormService
-} from '@ng2-dynamic-forms/core';
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
+import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
+
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
@@ -23,37 +28,49 @@ import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({
   selector : 'device-add',
-  templateUrl : './device-add.component.html',
-  styleUrls : [ './device-add.component.css' ]
+  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
+  styleUrls : [ '../../../common/entity/entity-form/entity-form.component.scss' ]
 })
 export class DeviceAddComponent implements OnInit {
 
   @Input('conf') conf: any;
 
   public formGroup: FormGroup;
+  public fieldConfig: FieldConfig[];
   public error: string;
   public data: Object = {};
   public vm: string;
   public vmid: any;
   protected route_cancel: string[];
   protected route_success: string[];
+  public hasConf: boolean = true;
 
   @ViewChildren('component') components;
 
   public busy: Subscription;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService,
-              protected formService: DynamicFormService,
+              protected ws: WebSocketService, protected entityFormService: EntityFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState, private location: Location) {}
 
   ngOnInit() {
-    this.formGroup = this.formService.createFormGroup(this.conf.formModel);
+    this.fieldConfig = this.conf.fieldConfig;
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.conf.afterInit(this);
+
   }
 
   goBack() { this.location.back(); }
+  
+  isShow(id: any): any {
+    if (this.conf.isBasicMode) {
+      if (this.conf.advanced_field.indexOf(id) > -1) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   onSubmit() {
     this.ws.call('vm.query').subscribe((res) => {
@@ -93,7 +110,7 @@ export class DeviceAddComponent implements OnInit {
           if (self.conf.dtype === 'CDROM') {
             devices.push({
               "dtype" : 'CDROM',
-              "attributes" : {"path" : formvalue.CDROM_path}
+              "attributes" : {"path" : formvalue['path']}
             })
           }
         }

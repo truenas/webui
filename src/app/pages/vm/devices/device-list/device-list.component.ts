@@ -9,7 +9,7 @@ import {RestService, WebSocketService} from '../../../../services/';
   selector : 'app-device-list',
   template : `
   <h1> VM: {{ this.vm }} Devices </h1>
-  <entity-list [conf]="this"></entity-list>
+  <entity-table [conf]="this"></entity-table>
   `
 })
 export class DeviceListComponent {
@@ -25,7 +25,7 @@ export class DeviceListComponent {
               protected rest: RestService, protected ws: WebSocketService) {}
 
   public columns: Array<any> = [
-    {title : 'Type', name : 'dtype'},
+    {name : 'Type', prop : 'dtype'},
   ];
   public config: any = {
     paging : true,
@@ -33,10 +33,7 @@ export class DeviceListComponent {
   };
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId == 'delete' && row.id === true) {
-      return false;
-    }
-    return true;
+    return actionId == 'delete' && row.id === true ? false : true;
   }
 
   getAddActions() {
