@@ -56,7 +56,7 @@ export class DeviceDiskAddComponent {
     });
     this.vmService.getStorageVolumes().subscribe((res) => {
       let data = new EntityUtils().flattenData(res.data);
-      this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_Zvol'});
+      this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
      
       for (let dataset of data) {
         if (dataset.type === 'zvol') {
