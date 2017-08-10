@@ -8,13 +8,8 @@ import {
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  DynamicCheckboxModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel
-} from '@ng2-dynamic-forms/core';
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
@@ -29,21 +24,22 @@ export class DeviceVncAddComponent {
   protected pk: any;
   protected route_success: string[];
   public vm: string;
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id : 'VNC_port',
-      label : 'port',
-      inputType : 'number',
-      min : '0',
-      max : ' 65535'
-    }),
-    new DynamicCheckboxModel({
-      id : 'VNC_wait',
-      label : 'wait on boot',
-    }),
-    new DynamicSelectModel({
-      id : 'VNC_resolution',
-      label : 'Resolution:',
+public fieldConfig: FieldConfig[]  = [
+    {
+      name : 'VNC_port',
+      placeholder : 'port',
+      type : 'input',
+      inputType: 'number'
+    },
+    {
+      name : 'VNC_wait',
+      placeholder : 'wait on boot',
+      type: 'checkbox'
+    },
+    {
+      name : 'VNC_resolution',
+      placeholder : 'Resolution:',
+      type: 'select',
       options : [
         {label : '1920x1080', value : "1920x1080"},
         {label : '1400x1050', value : "1400x1050"},
@@ -53,7 +49,7 @@ export class DeviceVncAddComponent {
         {label : '800x600', value : '800x600'},
         {label : '640x480', value : '640x480'},
       ],
-    }),
+    },
   ];
   protected dtype: string = 'VNC';
   afterInit() {
@@ -65,7 +61,6 @@ export class DeviceVncAddComponent {
   }
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected formService: DynamicFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 }

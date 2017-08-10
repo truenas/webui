@@ -8,13 +8,9 @@ import {
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  DynamicCheckboxModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel
-} from '@ng2-dynamic-forms/core';
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
+import * as _ from 'lodash';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
@@ -29,29 +25,27 @@ export class DeviceNicAddComponent {
   protected pk: any;
   protected route_success: string[];
   public vm: string;
-  private nicType: DynamicSelectModel<string>;
+  private nicType:  any;
 
   protected dtype: string = 'NIC';
 
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicSelectModel({
-      id : 'NIC_type',
-      label : 'Adapter Type:',
-      options : [
-        {label : 'Intel e82545 (e1000)', value : "E1000"},
-        {label : 'VirtIO', value : "VIRTIO"},
-      ],
-    }),
-    new DynamicInputModel({
-      id : 'NIC_mac',
-      label : 'Mac Address',
+  public fieldConfig: FieldConfig[]  = [
+    {
+      name : 'NIC_type',
+      placeholder : 'Adapter Type:',
+      type: 'select',
+      options : [],
+    },
+    {
+      name : 'NIC_mac',
+      placeholder : 'Mac Address',
+      type: 'input',
       value : '00:a0:98:FF:FF:FF',
-    }),
+    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected formService: DynamicFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 
@@ -63,10 +57,9 @@ export class DeviceNicAddComponent {
     });
     entityAdd.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
         .subscribe((res) => {
-          this.nicType = <DynamicSelectModel<string>>this.formService.findById(
-              "type", this.formModel);
+          this.nicType = _.find(this.fieldConfig, {name : "NIC_type"});
           res.forEach((item) => {
-            this.nicType.add({label : item[1], value : item[0]});
+            this.nicType.options.push({label : item[1], value : item[0]});
           });
         });
   }

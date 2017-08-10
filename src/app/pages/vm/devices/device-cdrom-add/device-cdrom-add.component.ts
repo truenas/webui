@@ -8,13 +8,8 @@ import {
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  DynamicCheckboxModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel
-} from '@ng2-dynamic-forms/core';
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
@@ -30,11 +25,13 @@ export class DeviceCdromAddComponent {
   protected pk: any;
   protected route_success: string[];
   public vm: string;
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id : 'path',
-      label : 'CDROM Path',
-    }),
+  public fieldConfig: FieldConfig[] = [
+    {
+      type : 'explorer',
+      initial: '/mnt',
+      name : 'path',
+      placeholder : 'CDROM Path',
+    },
   ];
   protected dtype: string = 'CDROM';
 
@@ -48,7 +45,6 @@ export class DeviceCdromAddComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected formService: DynamicFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected _state: GlobalState) {}
 }
