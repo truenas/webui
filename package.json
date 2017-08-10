@@ -67,7 +67,7 @@
         "buffertools": "^2.1.6",
         "chart.js": "1.1.1",
         "chartist": "^0.10.1",
-        "chartist-plugin-legend": "^0.6.1",
+        "chartist-plugin-legend": "^0.6.2",
         "commander": "^2.11.0",
         "core-js": "2.4.1",
         "dragula": "^3.7.2",
