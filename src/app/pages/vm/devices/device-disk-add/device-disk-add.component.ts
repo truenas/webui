@@ -8,13 +8,9 @@ import {
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  DynamicCheckboxModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel
-} from '@ng2-dynamic-forms/core';
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
+import * as _ from 'lodash';
 
 import {GlobalState} from '../../../../global.state';
 import {RestService, WebSocketService} from '../../../../services/';
@@ -33,23 +29,26 @@ export class DeviceDiskAddComponent {
   public vm: string;
   protected route_success: string[];
   protected dtype: string = 'DISK';
-  private DISK_zvol: DynamicSelectModel<string>;
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicSelectModel({
-      id : 'DISK_zvol',
-      label : 'ZVol',
-    }),
-    new DynamicSelectModel({
-      id : 'DISK_mode',
-      label : 'Mode',
+  private DISK_zvol: any;
+  public fieldConfig: FieldConfig[] = [
+    {
+      name : 'DISK_zvol',
+      placeholder : 'ZVol',
+      type: 'select',
+      options: []
+    },
+    {
+      name : 'DISK_mode',
+      placeholder : 'Mode',
+      type: 'select',
       options : [
         {label : 'AHCI', value : 'AHCI'},
         {label : 'VirtIO', value : 'VIRTIO'},
       ],
-    }),
+    },
   ];
 
-  afterInit(deviceAdd: any) {
+  afterInit(entityAdd: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
       this.vm = params['name'];
@@ -57,11 +56,11 @@ export class DeviceDiskAddComponent {
     });
     this.vmService.getStorageVolumes().subscribe((res) => {
       let data = new EntityUtils().flattenData(res.data);
-      this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById(
-          "DISK_zvol", this.formModel);
+      this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_Zvol'});
+     
       for (let dataset of data) {
         if (dataset.type === 'zvol') {
-          this.DISK_zvol.add({label : dataset.name, value : dataset.path});
+          this.DISK_zvol.options.push({label : dataset.name, value : dataset.path});
         };
       };
     });
@@ -72,7 +71,6 @@ export class DeviceDiskAddComponent {
       protected route: ActivatedRoute,
       protected rest: RestService,
       protected ws: WebSocketService,
-      protected formService: DynamicFormService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected _state: GlobalState,
