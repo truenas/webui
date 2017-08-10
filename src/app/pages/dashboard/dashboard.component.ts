@@ -17,6 +17,7 @@ import {
 export class Dashboard implements OnInit {
 
   public info: any = {};
+  public ipAddress: any = [];
 
   public graphs: any[] = [
     {
@@ -97,10 +98,11 @@ export class Dashboard implements OnInit {
     });
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
-        this.info.IPAddress = _.uniq(res[0]);
+        this.ipAddress = _.uniq(res[0]);
       } else {
-        this.info.IPAddress = res;
+        this.ipAddress = res;
       }
+      console.log(this.ipAddress);
     })
   }
 }
