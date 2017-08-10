@@ -3,13 +3,15 @@ import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 
 import {GlobalState} from '../../../../../global.state';
-import {RestService, WebSocketService} from '../../../../../services/';
+import {RestService, WebSocketService, IscsiService} from '../../../../../services/';
+import * as _ from 'lodash';
 
 @Component({
   selector : 'app-iscsi-associated-target-list',
   template : `
     <entity-table [conf]="this"></entity-table>
-  `
+  `,
+  providers: [IscsiService],
 })
 export class AssociatedTargetListComponent {
 
@@ -18,12 +20,12 @@ export class AssociatedTargetListComponent {
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'edit' ];
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected iscsiService: IscsiService) {}
 
   public columns: Array<any> = [
     {
       name : 'Target',
-      prop : 'iscsi_target',
+      prop : 'iscsi_target_name',
     },
     {
       name : 'LUN ID',
@@ -31,7 +33,7 @@ export class AssociatedTargetListComponent {
     },
     {
       name : 'Extent',
-      prop : 'iscsi_extent',
+      prop : 'iscsi_extent_name',
     }
   ];
   public config: any = {
@@ -40,4 +42,18 @@ export class AssociatedTargetListComponent {
   };
 
   afterInit(entityList: any) {}
+
+  dataHandler(entityList: any) {
+    this.iscsiService.getTargets().subscribe((res) => {
+      let target_list = res.data;
+      this.iscsiService.getExtents().subscribe((res) => {
+        let extent_list = res.data;
+
+        for (let i = 0; i < entityList.rows.length; i++) {
+          entityList.rows[i].iscsi_target_name =  _.find(target_list, {id: entityList.rows[i].iscsi_target})['iscsi_target_name'];
+          entityList.rows[i].iscsi_extent_name = _.find(extent_list, {id: entityList.rows[i].iscsi_extent})['iscsi_target_extent_name'];
+        }
+      });
+    });
+  }
 }

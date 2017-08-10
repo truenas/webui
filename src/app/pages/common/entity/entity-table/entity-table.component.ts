@@ -74,6 +74,9 @@ export class EntityTableComponent implements OnInit {
       this.rest.get(this.conf.resource_name, options).subscribe((res) => {
         this.length = res.total;
         this.rows = new EntityUtils().flattenData(res.data);
+        if (this.conf.dataHandler) {
+          this.conf.dataHandler(this);
+        }
       });
   }
 
