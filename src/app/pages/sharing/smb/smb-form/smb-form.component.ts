@@ -52,5 +52,8 @@ export class SMBFormComponent {
             this.cifs_vfsobjects.options.push({label : item[1], value : item[0]});
           });
         });
+    if (entityForm.isNew) {
+      entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr','aio_pthread']);
+    }
   }
 }
