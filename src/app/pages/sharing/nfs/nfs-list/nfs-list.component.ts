@@ -18,8 +18,8 @@ export class NFSListComponent {
   constructor(_rest: RestService, _router: Router, _state: GlobalState) {}
 
   public columns: any[] = [
-    {name: 'Comment', prop: 'nfs_comment'},
     {name: 'Path', prop: 'nfs_paths'},
+    {name: 'Comment', prop: 'nfs_comment'},
   ];
   public config: any = {
     paging : true,
