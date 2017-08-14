@@ -59,7 +59,7 @@ export class ServiceTFTPComponent {
       ]
     },
     {
-      type : 'input',
+      type : 'permissions',
       name : 'tftp_umask',
       placeholder : 'Umask',
     },
