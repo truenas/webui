@@ -7,7 +7,7 @@ $margin-promotion-sections: 60px;
 .header-background {
   height: 180px;
   margin-bottom: 60px;
-    background: $primary-light;
+    background: $body-bg;
     display: flex;
     flex-direction: column;
 }
@@ -19,11 +19,11 @@ $margin-promotion-sections: 60px;
 
 .header-headline {
   h1 {
-    font-size: 48px;
+    font-size: 32px;
     font-weight: 300;
-    line-height: 48px;
-    margin: 45px 0 35px 0;
-    color: #EEEEEE;
+    line-height: 32px;
+    margin: 32px 0 35px 0;
+    color: $dark-text;
   }
 
   h2 {
