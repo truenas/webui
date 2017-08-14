@@ -1,16 +1,17 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import {Component, ViewContainerRef, OnInit, OnDestroy} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'form-permissions',
   styleUrls : [ '../dynamic-field/dynamic-field.css' ],
   templateUrl : './form-permissions.component.html',
 })
-export class FormPermissionsComponent implements Field {
+export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -28,6 +29,9 @@ export class FormPermissionsComponent implements Field {
   private owner: number = 0;
   private grp: number = 0;
   private other: number = 0;
+  private value: string;
+
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   private formatRe = new RegExp('^[0-7][0-7][0-7]$');
 
@@ -131,57 +135,79 @@ export class FormPermissionsComponent implements Field {
   }
 
   refreshPermissions() {
-    this.config.value =
-        this.owner.toString() + this.grp.toString() + this.other.toString();
+    this.value = this.owner.toString() + 
+        this.grp.toString() + this.other.toString();
+    this.group.controls[this.config.name].setValue(this.value);
+  }
+  
+  ngOnInit() {
+    this.group.controls[this.config.name].valueChanges.subscribe(data => {
+      if (this.value != data) {
+        this.setValue(data);
+        this.refreshPermissions();
+      }
+    });
+    this.setValue();
+    this.refreshPermissions();
   }
 
-  setValue() {
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+  setValue(value: string = '000') {
     if (this.config.value && this.formatRe.test(this.config.value)) {
-      let owner = parseInt(this.config.value[0]);
-      this.owner = owner;
-      let grp = parseInt(this.config.value[1]);
-      this.grp = grp
-      let other = parseInt(this.config.value[2]);
-      this.other = other;
+      this.value = this.config.value;
+    }
+    else if (value && this.formatRe.test(value)) {
+      this.value = value;
+    }
+    
+    let owner = parseInt(this.value[0]);
+    this.owner = owner;
+    let grp = parseInt(this.value[1]);
+    this.grp = grp;
+    let other = parseInt(this.value[2]);
+    this.other = other;
 
-      if (owner - 4 >= 0) {
-        owner -= 4;
-        this.ownerRead = true;
-      }
-      if (owner - 2 >= 0) {
-        owner -= 2;
-        this.ownerWrite = true;
-      }
-      if (owner - 1 >= 0) {
-        owner -= 1;
-        this.ownerExec = true;
-      }
+    if (owner - 4 >= 0) {
+      owner -= 4;
+      this.ownerRead = true;
+    }
+    if (owner - 2 >= 0) {
+      owner -= 2;
+      this.ownerWrite = true;
+    }
+    if (owner - 1 >= 0) {
+      owner -= 1;
+      this.ownerExec = true;
+    }
 
-      if (grp - 4 >= 0) {
-        grp -= 4;
-        this.groupRead = true;
-      }
-      if (grp - 2 >= 0) {
-        grp -= 2;
-        this.groupWrite = true;
-      }
-      if (grp - 1 >= 0) {
-        grp -= 1;
-        this.groupExec = true;
-      }
+    if (grp - 4 >= 0) {
+      grp -= 4;
+      this.groupRead = true;
+    }
+    if (grp - 2 >= 0) {
+      grp -= 2;
+      this.groupWrite = true;
+    }
+    if (grp - 1 >= 0) {
+      grp -= 1;
+      this.groupExec = true;
+    }
 
-      if (other - 4 >= 0) {
-        other -= 4;
-        this.otherRead = true;
-      }
-      if (other - 2 >= 0) {
-        other -= 2;
-        this.ownerWrite = true;
-      }
-      if (other - 1 >= 0) {
-        other -= 1;
-        this.otherExec = true;
-      }
+    if (other - 4 >= 0) {
+      other -= 4;
+      this.otherRead = true;
+    }
+    if (other - 2 >= 0) {
+      other -= 2;
+      this.otherWrite = true;
+    }
+    if (other - 1 >= 0) {
+      other -= 1;
+      this.otherExec = true;
     }
   }
 }

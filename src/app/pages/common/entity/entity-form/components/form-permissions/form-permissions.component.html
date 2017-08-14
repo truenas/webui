@@ -3,10 +3,8 @@
 	<md-input-container class="full-width" style="display:none">
 		<input mdInput [type]="config.inputType ? config.inputType : 'text'" 
 			[placeholder]="config.placeholder"
-			[(ngModel)]="config.value"
 			[attr.value]="config.value"
 			[formControlName]="config.name"
-			(ngModelChange)="setValue()"
 			>
 	</md-input-container>
 		<table>
