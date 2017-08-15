@@ -11,7 +11,7 @@ import {EntityTableComponent} from './entity-table.component';
   selector : 'app-entity-table-add-actions',
   template : `
     <span *ngFor="let action of actions">
-        <button md-mini-fab (click)="action.onClick()" color="accent"><md-icon>add_circle</md-icon></button>
+        <button md-mini-fab class="md-fab-bottom-right-2" (click)="action.onClick()" color="accent"><md-icon>add_circle</md-icon></button>
     </span>
   `
 })
