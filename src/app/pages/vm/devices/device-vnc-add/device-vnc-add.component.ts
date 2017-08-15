@@ -12,11 +12,13 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import {GlobalState} from '../../../../global.state';
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService, SystemGeneralService} from '../../../../services/';
+import * as _ from 'lodash';
 
 @Component({
   selector : 'app-device-vnc-add',
-  template : `<device-add [conf]="this"></device-add>`
+  template : `<device-add [conf]="this"></device-add>`,
+  providers : [ SystemGeneralService ]
 })
 export class DeviceVncAddComponent {
 
@@ -24,6 +26,7 @@ export class DeviceVncAddComponent {
   protected pk: any;
   protected route_success: string[];
   public vm: string;
+  public ipAddress: any = [];
 public fieldConfig: FieldConfig[]  = [
     {
       name : 'VNC_port',
@@ -50,6 +53,18 @@ public fieldConfig: FieldConfig[]  = [
         {label : '640x480', value : '640x480'},
       ],
     },
+    {
+      name : 'vnc_bind',
+      placeholder : 'Bind:',
+      type: 'select',
+      options : [],
+    },
+    {
+      name : 'vnc_password',
+      placeholder : 'password',
+      type : 'input',
+      inputType : 'password',
+    },
   ];
   protected dtype: string = 'VNC';
   afterInit() {
@@ -58,9 +73,18 @@ public fieldConfig: FieldConfig[]  = [
       this.vm = params['name'];
       this.route_success = [ 'vm', this.pk, 'devices', this.vm ];
     });
+    this.systemGeneralService.getIPChoices().subscribe((res) => {
+      if (res.length > 0) {
+        this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+        res.forEach((item) => {
+          this.ipAddress.options.push({label : item[1], value : item[0]});
+        });
+      }
+    })
   }
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected systemGeneralService: SystemGeneralService,
               protected _state: GlobalState) {}
 }
