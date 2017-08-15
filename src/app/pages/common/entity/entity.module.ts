@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule, MdTableModule } from '@angular/material';
 import { DynamicFormsCoreModule } from '@ng2-dynamic-forms/core';
 import { DynamicFormsBootstrapUIModule } from '@ng2-dynamic-forms/ui-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
+
 
 import { RestService, WebSocketService } from '../../../services/index';
 import { NgaModule } from '../../../theme/nga.module';
@@ -38,6 +39,8 @@ import { EntityTemplateDirective } from './entity-template.directive';
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk';
+
+import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent} from './fab-speed-dial/fab-speed-dial';
 
 @NgModule({
   imports: [
@@ -72,6 +75,7 @@ import { CdkTableModule } from '@angular/cdk';
     FormArrayComponent,
     FormUploadComponent,
     EntityJobComponent,
+     SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent
   ],
   exports: [
     EntityAddComponent,
@@ -95,6 +99,7 @@ import { CdkTableModule } from '@angular/cdk';
     FormUploadComponent,
     FormExplorerComponent,
     EntityJobComponent
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EntityModule {}
