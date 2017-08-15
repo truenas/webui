@@ -49,11 +49,11 @@ export class EntityTableActionsComponent implements OnInit {
   @Input('entity') entity: EntityTableComponent;
   @Input('row') row: any;
 
-  private actions: any[];
-  private editAction: any;
-  private deleteAction: any;
-  private actionIconsVisible: number = 0;
-  private showMenu: boolean = true;
+  public actions: any[];
+  public editAction: any;
+  public deleteAction: any;
+  public actionIconsVisible: number = 0;
+  public showMenu: boolean = true;
 
   iconActionVisible(id: string) {
     if (id == 'edit' || id == 'delete') {
