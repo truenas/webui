@@ -51,6 +51,7 @@ export class BootEnvironmentListComponent {
     let actions = [];
     actions.push({
       label : "Delete",
+      id: "delete",
       onClick : (row) => {
         this._router.navigate(new Array('/pages').concat(
             [ "system", "bootenv", "delete", row.id ]));
@@ -58,6 +59,7 @@ export class BootEnvironmentListComponent {
     });
     actions.push({
       label : "Clone",
+      id: "clone",
       onClick : (row) => {
         this._router.navigate(new Array('/pages').concat(
             [ "system", "bootenv", "clone", row.id ]));
