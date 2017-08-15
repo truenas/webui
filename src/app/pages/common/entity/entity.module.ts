@@ -10,6 +10,7 @@ import { TreeModule } from 'angular-tree-component';
 import { RestService, WebSocketService } from '../../../services/index';
 import { NgaModule } from '../../../theme/nga.module';
 import { RangePipe } from '../../../utils/range.pipe';
+import { Ng2DropdownModule } from 'ng2-material-dropdown';
 
 import { EntityAddComponent } from './entity-add/entity-add.component';
 import { EntityConfigComponent } from './entity-config/entity-config.component';
@@ -42,7 +43,8 @@ import { CdkTableModule } from '@angular/cdk';
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     DynamicFormsCoreModule.forRoot(), DynamicFormsBootstrapUIModule, NgaModule,
-    MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule
+    MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
+    Ng2DropdownModule
   ],
   declarations: [
     EntityAddComponent,
