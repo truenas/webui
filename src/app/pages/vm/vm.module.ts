@@ -7,7 +7,7 @@ import {DynamicFormsBootstrapUIModule} from '@ng2-dynamic-forms/ui-bootstrap';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
 
 import {
-  VmService
+  VmService, NetworkService
 } from '../../services'
 
     @NgModule({
@@ -29,7 +29,7 @@ import {
         DeviceDeleteComponent,
         DeviceEditComponent,
       ],
-      providers : [ VmService, EntityFormService ]
+      providers : [ VmService, EntityFormService, NetworkService ]
     }) export class VmModule {} import {
       NgaModule
     } from '../../theme/nga.module';
