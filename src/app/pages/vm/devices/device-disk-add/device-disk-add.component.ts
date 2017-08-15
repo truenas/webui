@@ -46,6 +46,11 @@ export class DeviceDiskAddComponent {
         {label : 'VirtIO', value : 'VIRTIO'},
       ],
     },
+    {
+      name : 'sectorsize',
+      placeholder : 'Disk sectorsize',
+      type: 'input',
+    },
   ];
 
   afterInit(entityAdd: any) {

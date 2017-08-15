@@ -114,7 +114,10 @@ export class DeviceAddComponent implements OnInit {
             devices.push({
               "dtype" : 'DISK',
               "attributes" :
-                  {"type" : formvalue.DISK_mode, "path" : formvalue.DISK_zvol}
+                  {
+                    "type" : formvalue.DISK_mode, "path" : formvalue.DISK_zvol,
+                    "sectorsize":formvalue.sectorsize
+                  }
             })
           }
           if (self.conf.dtype === 'CDROM') {
