@@ -12,6 +12,7 @@ export class VlanListComponent {
 
   protected resource_name: string = 'network/vlan/';
   protected route_add: string[] = [ 'network', 'vlans', 'add' ];
+  protected route_add_tooltip: string = "Add VLAN";
   protected route_edit: string[] = [ 'network', 'vlans', 'edit' ];
   protected route_delete: string[] = [ 'network', 'vlans', 'delete' ];
 

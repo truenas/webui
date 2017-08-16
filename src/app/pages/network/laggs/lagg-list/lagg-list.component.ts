@@ -14,6 +14,7 @@ export class LaggListComponent {
 
   protected resource_name: string = 'network/lagg/';
   protected route_add: string[] = [ 'network', 'laggs', 'add' ];
+  protected route_add_tooltip: string = "Add Link Aggregation";
   protected route_delete: string[] = [ 'network', 'laggs', 'delete' ];
   protected editIds: any = {};
 

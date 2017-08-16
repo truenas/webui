@@ -12,6 +12,7 @@ export class StaticRouteListComponent {
 
   protected resource_name: string = 'network/staticroute/';
   protected route_add: string[] = [ 'network', 'staticroutes', 'add' ];
+  protected route_add_tooltip: string = "Add Static Route";
   protected route_edit: string[] = [ 'network', 'staticroutes', 'edit' ];
   protected route_delete: string[] = [ 'network', 'staticroutes', 'delete' ];
 

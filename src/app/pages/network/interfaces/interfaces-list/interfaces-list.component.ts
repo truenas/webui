@@ -12,6 +12,7 @@ export class InterfacesListComponent {
 
   protected resource_name: string = 'network/interface/';
   protected route_add: string[] = [ 'network', 'interfaces', 'add' ];
+  protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected route_delete: string[] = [ 'network', 'interfaces', 'delete' ];
 
