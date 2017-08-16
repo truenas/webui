@@ -13,6 +13,7 @@ export class VolumesListComponent {
 
   protected resource_name: string = 'storage/volume/';
   protected route_add: string[] = [ 'storage', 'volumes', 'manager' ];
+  protected route_add_tooltip: string = "Volume Manager";
 
   constructor(
     protected _rest: RestService, 
