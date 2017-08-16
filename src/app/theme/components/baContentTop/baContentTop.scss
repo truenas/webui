@@ -39,3 +39,16 @@ $margin-promotion-sections: 60px;
   text-align: center;
   margin: $margin-promotion-sections 0;
 }
+
+.ion-android-more-vertical::before {
+    color: #000 !important;
+    position: relative !important;
+    top: -50px !important;
+}
+.ng2-dropdown-container {
+    float: right !important;;
+    margin-right: 8px !important;;
+    position: relative !important;;
+    top: -50px !important;;
+    color: #000 !important;;
+}
