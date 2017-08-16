@@ -10,21 +10,23 @@ import {EntityTableComponent} from './entity-table.component';
 @Component({
   selector : 'app-entity-table-add-actions',
   template : `
-	<smd-fab-speed-dial #myFab [direction]="direction" [animationMode]="animationMode"
-			(mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
-		<smd-fab-trigger [spin]="spin">
-			<button md-fab><md-icon>add</md-icon></button>
-		</smd-fab-trigger>
+	<div *ngIf="this.entity.conf.route_add || this.actions.length > 0">
+		<smd-fab-speed-dial #myFab [direction]="direction" [animationMode]="animationMode"
+				(mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
+			<smd-fab-trigger [spin]="spin">
+				<button md-fab><md-icon>add</md-icon></button>
+			</smd-fab-trigger>
 
-		<smd-fab-actions>
-			<button *ngIf="this.entity.conf.route_add" md-mini-fab (click)="this.entity.doAdd()" mdTooltip="Add">
-				<md-icon>add</md-icon>
-			</button>
-			<button *ngFor="let action of actions" md-mini-fab (click)="action.onClick()" mdTooltip="{{action.label}}">
-				<md-icon>{{action.icon}}</md-icon>
-			</button>
-		</smd-fab-actions>
-	</smd-fab-speed-dial>
+			<smd-fab-actions>
+				<button *ngIf="this.entity.conf.route_add" md-mini-fab (click)="this.entity.doAdd()" mdTooltip="Add">
+					<md-icon>add</md-icon>
+				</button>
+				<button *ngFor="let action of actions" md-mini-fab (click)="action.onClick()" mdTooltip="{{action.label}}">
+					<md-icon>{{action.icon}}</md-icon>
+				</button>
+			</smd-fab-actions>
+		</smd-fab-speed-dial>
+	</div>
   `
 })
 export class EntityTableAddActionsComponent implements OnInit {
