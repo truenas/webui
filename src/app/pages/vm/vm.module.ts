@@ -28,6 +28,7 @@ import {
         DeviceVncAddComponent,
         DeviceDeleteComponent,
         DeviceEditComponent,
+        DeviceRawFileAddComponent,
       ],
       providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
     }) export class VmModule {} import {
@@ -40,6 +41,7 @@ import {DeviceCdromAddComponent} from './devices/device-cdrom-add/';
 import {DeviceDeleteComponent} from './devices/device-delete/';
 import {DeviceDiskAddComponent} from './devices/device-disk-add/';
 import {DeviceEditComponent} from './devices/device-edit/';
+import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/';
 import {DeviceListComponent} from './devices/device-list';
 import {DeviceNicAddComponent} from './devices/device-nic-add/';
 import {DeviceVncAddComponent} from './devices/device-vnc-add/';

@@ -128,6 +128,16 @@ export class DeviceAddComponent implements OnInit {
               "attributes" : {"path" : formvalue['path']}
             })
           }
+          if (self.conf.dtype === 'RAW') {
+            devices.push({
+              "dtype" : 'RAW',
+              "attributes" :
+                  {
+                    "type" : formvalue.RAW_mode, "path" : formvalue.RAW_path,
+                    "sectorsize":formvalue.RAW_sectorsize
+                  }
+            })
+          }
         }
       }
       payload['devices'] = devices;
