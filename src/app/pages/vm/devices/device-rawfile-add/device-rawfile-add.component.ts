@@ -34,8 +34,9 @@ export class DeviceRawFileAddComponent {
     },
     {
       type : 'input',
-      name : 'ssectorsize',
+      name : 'RAW_sectorsize',
       placeholder : 'Disk sectorsize',
+      inputType : 'number',
     },
     {
       name : 'RAW_mode',

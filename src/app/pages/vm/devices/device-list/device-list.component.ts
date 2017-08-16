@@ -66,6 +66,13 @@ export class DeviceListComponent {
             [ "vm", this.pk, "devices", this.vm, "vnc", "add" ]));
       }
     });
+    actions.push({
+      label : "Add RawFile",
+      onClick : () => {
+        this.router.navigate(new Array('/pages').concat(
+            [ "vm", this.pk, "devices", this.vm, "rawfile", "add" ]));
+      }
+    });
     return actions;
   }
 
