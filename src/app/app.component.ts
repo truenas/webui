@@ -53,6 +53,10 @@ export class App {
   private _loadImages(): void {
     // register some loaders
     BaThemePreloader.registerLoader(
-        this._imageLoader.load(layoutPaths.images.root + ''));
+      // Hey Guys James/Erin sorry to comment this out.. It was hanging the application on load  (Last checkin ID: 9418294d07b46f36547d2fd0effb694103a1a367)
+      //this._imageLoader.load(layoutPaths.images.root + ''));
+      
+      // This is the line of code as it was before the above line was here (last before last checkin This works: f850ae9b8b157603d38ef7d66f9639676e595754)
+      this._imageLoader.load(layoutPaths.images.root + 'sky-bg.jpg'));
   }
 }
