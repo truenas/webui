@@ -14,6 +14,7 @@ export class GroupListComponent {
 
   protected resource_name: string = 'account/groups/';
   protected route_add: string[] = [ 'groups', 'add' ];
+  protected route_add_tooltip: string = "Add Group";
   protected route_edit: string[] = [ 'groups', 'edit' ];
   protected route_delete: string[] = [ 'groups', 'delete' ];
 

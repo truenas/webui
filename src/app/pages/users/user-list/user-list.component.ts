@@ -8,6 +8,7 @@ export class UserListComponent {
 
   protected resource_name: string = 'account/users';
   protected route_add: string[] = ['users', 'add'];
+  protected route_add_tooltip: string = "Add User";
   protected route_edit: string[] = ['users', 'edit'];
   protected route_delete: string[] = ['users', 'delete'];
 
