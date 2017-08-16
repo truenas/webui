@@ -13,6 +13,7 @@ export class StorageListComponent {
 
   protected resource_name: string = 'jails/mountpoints';
   protected route_add: string[] = [ 'jails', 'storage', 'add' ];
+  protected route_add_tooltip: string = "Add Storage";
   protected route_delete: string[] = [ 'jails', 'storage', 'delete' ];
   protected route_edit: string[] = [ 'jails', 'storage', 'edit' ];
 
