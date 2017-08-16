@@ -17,6 +17,7 @@ export class WebdavListComponent {
     public sub: Subscription;
 
     protected route_add: string[] = [ 'sharing', 'webdav', 'add' ];
+    protected route_add_tooltip: string = "Add WebDAV Share";
     protected route_edit: string[] = [ 'sharing', 'webdav', 'edit'];
     protected route_delete: string[] = [ 'sharing', 'webdav', 'delete'];
 
