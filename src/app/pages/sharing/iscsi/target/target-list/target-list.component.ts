@@ -15,6 +15,7 @@ export class TargetListComponent {
 
   protected resource_name: string = 'services/iscsi/target';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'target', 'add' ];
+  protected route_add_tooltip: string = "Add Target";
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'target', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'target', 'edit' ];
 
