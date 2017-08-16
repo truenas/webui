@@ -14,6 +14,7 @@ export class VmListComponent {
 
   protected resource_name: string = 'vm/vm';
   protected route_add: string[] = [ 'vm', 'add' ];
+  protected route_add_tooltip: string = "Add VM";
   protected route_edit: string[] = [ 'vm', 'edit' ];
   protected route_delete: string[] = [ 'vm', 'delete' ];
 
