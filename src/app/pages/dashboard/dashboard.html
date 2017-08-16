@@ -29,8 +29,18 @@
         <div class="col-md-9">{{ ip }}</div>      
       </div>
 </md-card>
+
+
 <md-card *ngFor="let graph of graphs">
   <md-card-title>{{ graph.title }}</md-card-title>
-
+  <md-card-content>
       <line-chart [dataList]="graph.dataList" [legends]="graph.legends" [type]="graph.type || 'Line'" [series]="graph.series"></line-chart>
+	</md-card-content>
+</md-card>
+
+<md-card>
+	<md-card-title>New Chart Control (ng2-charts)</md-card-title>
+	<md-card-content>
+		<ngline-chart></ngline-chart>
+	</md-card-content>
 </md-card>
