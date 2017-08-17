@@ -97,7 +97,7 @@ export class DeviceAddComponent implements OnInit {
             devices.push({
               "dtype" : 'NIC',
               "attributes" :
-                  {"type" : formvalue.NIC_type, "mac" : formvalue.NIC_mac}
+                  { "type" : formvalue.NIC_type, "mac" : formvalue.NIC_mac, "nic_attach": formvalue.nic_attach }
             })
           }
           if (self.conf.dtype === 'VNC') {
@@ -116,10 +116,7 @@ export class DeviceAddComponent implements OnInit {
             devices.push({
               "dtype" : 'DISK',
               "attributes" :
-                  {
-                    "type" : formvalue.DISK_mode, "path" : formvalue.DISK_zvol,
-                    "sectorsize":formvalue.sectorsize
-                  }
+                  { "type" : formvalue.DISK_mode, "path" : formvalue.DISK_zvol, "sectorsize":formvalue.sectorsize }
             })
           }
           if (self.conf.dtype === 'CDROM') {
