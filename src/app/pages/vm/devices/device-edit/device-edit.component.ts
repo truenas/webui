@@ -8,30 +8,27 @@ import {
 import {FormControl, FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  DynamicCheckboxModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel
-} from '@ng2-dynamic-forms/core';
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
+
+
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import {WebSocketService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
+import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 
 @Component({
-  selector : 'app-vm-device-edit',
-  templateUrl : './device-edit.component.html',
+  selector : 'device-edit',
+  template : ` <entity-form [conf]="this"></entity-form>`,
   providers : [ VmService ]
 })
 
 export class DeviceEditComponent implements OnInit {
 
   public resource_name: string = 'vm/device';
-  public volume_resource_name: string = 'storage/volume';
   public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
@@ -43,13 +40,14 @@ export class DeviceEditComponent implements OnInit {
   public data: Object = {};
   public pk: any;
   public busy: Subscription;
-  public DISK_zvol: DynamicSelectModel<string>;
-  public formModel: DynamicFormControlModel[] = [];
+  public DISK_zvol: any;
+  public fieldConfig: FieldConfig[] = [];
+  
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected ws: WebSocketService,
-              protected formService: DynamicFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              private entityFormService : EntityFormService,
               public vmService: VmService) {}
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -61,44 +59,52 @@ export class DeviceEditComponent implements OnInit {
       this.pk = params['pk'];
     });
     if (this.dtype === "CDROM") {
-      this.formModel = [
-        new DynamicInputModel({
-          id : 'CDROM_path',
-          label : 'CDROM Path',
-        }),
+      this.fieldConfig = [
+        {
+          type : 'explorer',
+          initial: '/mnt',
+          name : 'path',
+          placeholder : 'CDROM Path',
+        },
       ];
     } else if (this.dtype === "NIC") {
-      this.formModel = [
-        new DynamicSelectModel({
-          id : 'NIC_type',
-          label : 'Adapter Type:',
-          options : [
-            {label : 'Intel e82545 (e1000)', value : "E1000"},
-            {label : 'VirtIO', value : "VIRTIO"},
-          ],
-        }),
-        new DynamicInputModel({
-          id : 'NIC_mac',
-          label : 'Mac Address',
+      this.fieldConfig = [
+        {
+          name : 'NIC_type',
+          placeholder : 'Adapter Type:',
+          type: 'select',
+          options : [],
+        },
+        {
+          name : 'NIC_mac',
+          placeholder : 'Mac Address',
+          type: 'input',
           value : '00:a0:98:FF:FF:FF',
-        }),
+        },
+        {
+          name : 'nic_attach',
+          placeholder : 'Nic to attach:',
+          type: 'select',
+          options : [],
+        },
       ];
     } else if (this.dtype === "VNC") {
-      this.formModel = [
-        new DynamicInputModel({
-          id : 'VNC_port',
-          label : 'port',
-          inputType : 'number',
-          min : '0',
-          max : ' 65535'
-        }),
-        new DynamicCheckboxModel({
-          id : 'VNC_wait',
-          label : 'wait on boot',
-        }),
-        new DynamicSelectModel({
-          id : 'VNC_resolution',
-          label : 'Resolution:',
+      this.fieldConfig = [
+        {
+          name : 'VNC_port',
+          placeholder : 'port',
+          type : 'input',
+          inputType: 'number'
+        },
+        {
+          name : 'VNC_wait',
+          placeholder : 'wait on boot',
+          type: 'checkbox'
+        },
+        {
+          name : 'VNC_resolution',
+          placeholder : 'Resolution:',
+          type: 'select',
           options : [
             {label : '1920x1080', value : "1920x1080"},
             {label : '1400x1050', value : "1400x1050"},
@@ -108,28 +114,67 @@ export class DeviceEditComponent implements OnInit {
             {label : '800x600', value : '800x600'},
             {label : '640x480', value : '640x480'},
           ],
-        }),
+        },
+        {
+          name : 'vnc_bind',
+          placeholder : 'Bind:',
+          type: 'select',
+          options : [],
+        },
+        {
+          name : 'vnc_password',
+          placeholder : 'password',
+          type : 'input',
+          inputType : 'password',
+        },
       ];
     } else if (this.dtype === "DISK") {
-      this.formModel = [
-        new DynamicSelectModel({
-          id : 'DISK_zvol',
-          label : 'ZVol',
-        }),
-        new DynamicSelectModel({
-          id : 'DISK_mode',
-          label : 'Mode',
+      this.fieldConfig = [
+        {
+          name : 'DISK_zvol',
+          placeholder : 'ZVol',
+          type: 'select',
+          options: []
+        },
+        {
+          name : 'DISK_mode',
+          placeholder : 'Mode',
+          type: 'select',
           options : [
             {label : 'AHCI', value : 'AHCI'},
             {label : 'VirtIO', value : 'VIRTIO'},
           ],
-        }),
+        },
+        {
+          name : 'sectorsize',
+          placeholder : 'Disk sectorsize',
+          type: 'input',
+        },
+      ];
+    } else if (this.dtype === "RAW") {
+      this.fieldConfig = [
+        {
+          type : 'explorer',
+          initial: '/mnt',
+          name : 'RAW_path',
+          placeholder : 'Raw File',
+        },
+        {
+          type : 'input',
+          name : 'RAW_sectorsize',
+          placeholder : 'Disk sectorsize',
+          inputType : 'number',
+        },
+        {
+          name : 'RAW_mode',
+          placeholder : 'Mode',
+          type: 'select',
+          options : [],
+        },
       ];
       this.vmService.getStorageVolumes().subscribe((res) => {
         let data = new EntityUtils().flattenData(res.data);
-        this.DISK_zvol = <DynamicSelectModel<string>>this.formService.findById(
-            "DISK_zvol", this.formModel);
-        ;
+        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
         for (let dataset of data) {
           if (dataset.type === 'zvol') {
             this.DISK_zvol.add({label : dataset.name, value : dataset.path});
@@ -138,22 +183,31 @@ export class DeviceEditComponent implements OnInit {
       });
     }
 
-    this.formGroup = this.formService.createFormGroup(this.formModel);
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     let vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
       'vnc_resolution' : 'VNC_resolution',
       'wait' : 'VNC_wait',
+      'vnc_bind':'vnc_bind',
+      'vnc_password':'vnc_password'
     };
     let nic_lookup_table: Object = {
       'mac' : 'NIC_mac',
       'type' : 'NIC_type',
+      'nic_attach':'nic_attach'
     };
     let disk_lookup_table: Object = {
       'path' : "DISK_zvol",
       'type' : "DISK_mode",
+      'sectorsize': "sectorsize",
     };
     let cdrom_lookup_table: Object = {
       'path' : "CDROM_path",
+    };
+    let rawfile_lookup_table: Object = {
+      'RAW_path' : 'RAW_path',
+      'RAW_sectorsize': 'RAW_sectorsize',
+      'RAW_mode':'RAW_mode'
     };
 
     this.ws.call('vm.query').subscribe((res) => {
@@ -184,6 +238,10 @@ export class DeviceEditComponent implements OnInit {
             };
             case 'DISK': {
               setgetValues(device.attributes, disk_lookup_table);
+              break;
+            };
+            case 'RAW': {
+              setgetValues(device.attributes, rawfile_lookup_table);
               break;
             };
             }
