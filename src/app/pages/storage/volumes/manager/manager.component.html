@@ -3,7 +3,11 @@
 <div [ngBusy]="busy">
   <div class="row">
     <div class="col-md-2" [style.paddingBottom]="'15px'">
-      <input [(ngModel)]="name" class="form-control" placeholder="Name" required/>
+      <md-input-container>
+        <input mdInput placeholder="Name" [(ngModel)]="name" value="Sushi" required>
+      </md-input-container>    
+      <!-- <input class="form-control" placeholder="Name" required/> -->
+      <md-checkbox [(ngModel)]="isEncrypted" class="form-control" placeholder="Encryption" (change)="isEncryptedChecked()" >Encryption</md-checkbox>
     </div>
   </div>
 

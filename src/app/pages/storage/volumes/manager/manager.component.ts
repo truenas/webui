@@ -5,43 +5,46 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {Router} from '@angular/router';
-import {DragulaService} from 'ng2-dragula';
-import {Subscription} from 'rxjs';
+import { Router } from '@angular/router';
+import { DragulaService } from 'ng2-dragula';
+import { Subscription } from 'rxjs';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services/';
 
-import {DiskComponent} from './disk/';
-import {VdevComponent} from './vdev/';
+import { DiskComponent } from './disk/';
+import { VdevComponent } from './vdev/';
+import { MdSnackBar } from '@angular/material';
 
 @Component({
-  selector : 'app-manager',
-  templateUrl : 'manager.component.html',
-  styleUrls : [
+  selector: 'app-manager',
+  templateUrl: 'manager.component.html',
+  styleUrls: [
     'manager.component.css',
   ],
-  providers : [
+  providers: [
     RestService,
   ],
 })
 export class ManagerComponent implements OnInit {
 
-  public disks: Array<any>;
+  public disks: Array < any > ;
   public vdevs:
-      any = {data : [ {} ], cache : [ {} ], spare : [ {} ], log : [ {} ]};
+    any = { data: [{}], cache: [{}], spare: [{}], log: [{}] };
   public error: string;
   @ViewChild('disksdnd') disksdnd;
-  @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent>;
-  @ViewChildren(DiskComponent) diskComponents: QueryList<DiskComponent>;
+  @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
+  @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
 
   public name: string;
+  public vol_encrypt: number = 0;
+  public isEncrypted: boolean = false;
 
   public busy: Subscription;
 
   constructor(private rest: RestService, private ws: WebSocketService,
-              private router: Router, private dragulaService: DragulaService) {
+    private router: Router, private dragulaService: DragulaService, public snackBar: MdSnackBar) {
     dragulaService.setOptions('pool-vdev', {
-      accepts : (el, target, source, sibling) => { return true; },
+      accepts: (el, target, source, sibling) => { return true; },
     });
     dragulaService.drag.subscribe((value) => { console.log(value); });
     dragulaService.drop.subscribe((value) => {
@@ -71,7 +74,7 @@ export class ManagerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.ws.call("notifier.get_disks", [ true ]).subscribe((res) => {
+    this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
       this.disks = [];
       for (let i in res) {
         this.disks.push(res[i]);
@@ -91,7 +94,7 @@ export class ManagerComponent implements OnInit {
     if (index !== null) {
       vdev.getDisks().forEach((item) => {
         item.elementRef.nativeElement.parentNode.removeChild(
-            item.elementRef.nativeElement);
+          item.elementRef.nativeElement);
         this.disksdnd.nativeElement.appendChild(item.elementRef.nativeElement);
       });
       this.vdevs[vdev.group].splice(index, 1);
@@ -106,27 +109,41 @@ export class ManagerComponent implements OnInit {
       let disks = [];
       vdev.getDisks().forEach((disk) => { disks.push(disk.data.devname); });
       if (disks.length > 0) {
-        layout.push({vdevtype : vdev.type, disks : disks});
+        layout.push({ vdevtype: vdev.type, disks: disks });
       }
     });
     this.busy =
-        this.rest
-            .post('storage/volume/', {
-              body :
-                  JSON.stringify({volume_name : this.name, layout : layout})
-            })
-            .subscribe(
-                (res) => {
-                  this.router.navigate([ '/pages', 'storage', 'volumes' ]);
-                },
-                (res) => {
-                  if (res.code == 409) {
-                    this.error = '';
-                    for (let i in res.error) {
-                      res.error[i].forEach(
-                          (error) => { this.error += error + '<br />'; });
-                    }
-                  }
-                });
+      this.rest
+      .post('storage/volume/', {
+        body: JSON.stringify({ volume_name: this.name, layout: layout })
+      })
+      .subscribe(
+        (res) => {
+          this.router.navigate(['/pages', 'storage', 'volumes']);
+        },
+        (res) => {
+          if (res.code == 409) {
+            this.error = '';
+            for (let i in res.error) {
+              res.error[i].forEach(
+                (error) => { this.error += error + '<br />'; });
+            }
+          }
+        });
+  }
+
+  openSnackBar() {
+    this.snackBar.open("Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.", "WARNING!", {
+      duration: 5000,
+    });
+  }
+
+  isEncryptedChecked() {
+    if (this.isEncrypted) {
+      this.vol_encrypt = 1;
+      this.openSnackBar();
+    } else {
+      this.vol_encrypt = 0;
+    }
   }
 }
