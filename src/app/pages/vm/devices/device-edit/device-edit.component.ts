@@ -79,7 +79,7 @@ export class DeviceEditComponent implements OnInit {
           name : 'NIC_mac',
           placeholder : 'Mac Address',
           type: 'input',
-          value : '00:a0:98:FF:FF:FF',
+          value : '',
         },
         {
           name : 'nic_attach',
@@ -106,13 +106,6 @@ export class DeviceEditComponent implements OnInit {
           placeholder : 'Resolution:',
           type: 'select',
           options : [
-            {label : '1920x1080', value : "1920x1080"},
-            {label : '1400x1050', value : "1400x1050"},
-            {label : '1280x1024', value : "1280x1024"},
-            {label : '1280x960', value : "1280x960"},
-            {label : '1024x768', value : '1024x768'},
-            {label : '800x600', value : '800x600'},
-            {label : '640x480', value : '640x480'},
           ],
         },
         {
@@ -140,10 +133,7 @@ export class DeviceEditComponent implements OnInit {
           name : 'DISK_mode',
           placeholder : 'Mode',
           type: 'select',
-          options : [
-            {label : 'AHCI', value : 'AHCI'},
-            {label : 'VirtIO', value : 'VIRTIO'},
-          ],
+          options : [],
         },
         {
           name : 'sectorsize',
