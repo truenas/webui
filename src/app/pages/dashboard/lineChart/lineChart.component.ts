@@ -4,23 +4,23 @@ import {Component, Input, OnInit} from '@angular/core';
 import * as ChartistLegend from 'chartist-plugin-legend';
 import filesize from 'filesize';
 
-import {LineChartService} from './lineChart.service';
+import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.service';
 
 @Component({selector : 'line-chart', templateUrl : './lineChart.html'})
-export class LineChart implements OnInit {
-
-  chartData: Object;
+export class LineChart implements OnInit, HandleDataFunc {
 
   @Input() dataList: any[];
   @Input() series: any;
   @Input() legends: any[];
   @Input() type: string;
 
-  data = {
+  data: LineChartData = {
     labels : [],
     series : [],
   };
 
+  controlIsInitialized: boolean = false;
+  
   options: any = {
     showPoint : false,
     axisX : {
@@ -47,6 +47,24 @@ export class LineChart implements OnInit {
 
   constructor(private _lineChartService: LineChartService) {}
 
+  handleDataFunc(linechartData: LineChartData) {
+      
+      this.data.labels.splice(0, this.data.labels.length); 
+      this.data.series.splice(0, this.data.series.length);
+      
+      linechartData.labels.forEach( (label) => {this.data.labels.push(label)});
+      linechartData.series.forEach( (dataSeriesArray) => {this.data.series.push(dataSeriesArray)});
+      
+      
+      if (this.series) {
+        this.series.forEach((i) => { this.data.series.push(i); });
+      }
+    
+     this.controlIsInitialized = true;
+      
+  }
+  
+  
   ngOnInit() {
     if (this.type == 'Pie') {
       delete this.options.axisX;
@@ -55,7 +73,15 @@ export class LineChart implements OnInit {
         // FIXME, workaround to work with just size pie
         return filesize(value, {standard : "iec"});
       }
-    }
+      
+      if (this.series) {
+        this.series.forEach((i) => { this.data.series.push(i); });
+      }
+    
+     this.controlIsInitialized = true;
+      
+    } 
+    
     if (this.legends && this.type != 'Pie') {
       this.options.plugins.push(ChartistLegend({
         classNames : Array(this.legends.length)
@@ -64,12 +90,12 @@ export class LineChart implements OnInit {
                                                 String.fromCharCode(97 + i)}),
         legendNames : this.legends,
       }));
+      
+       if (this.dataList.length > 0) {
+          this._lineChartService.getData(this, this.dataList);
+       }
     }
-    if (this.dataList.length > 0) {
-      this._lineChartService.getData(this, this.dataList);
-    }
-    if (this.series) {
-      this.series.forEach((i) => { this.data.series.push(i); });
-    }
+   
+    
   }
 }

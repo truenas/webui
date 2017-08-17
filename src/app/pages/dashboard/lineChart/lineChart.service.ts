@@ -3,24 +3,42 @@ import {Injectable} from '@angular/core';
 import {WebSocketService} from '../../../services/';
 import {BaThemeConfigProvider, colorHelper, layoutPaths} from '../../../theme';
 
+export interface LineChartData {
+    labels: Date[];
+    series: any[];
+}
+
+
+export interface HandleDataFunc {
+  handleDataFunc( lineChartData: LineChartData);
+  
+}
+
+
 @Injectable()
 export class LineChartService {
 
   constructor(private _baConfig: BaThemeConfigProvider,
               private _ws: WebSocketService) {}
 
-  getData(chart: any, dataList: any[]) {
+  getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
 
     this._ws.call('stats.get_data', [ dataList, {} ]).subscribe((res) => {
-      dataList.forEach(() => { chart.data.series.push([]); })
+      let linechartData: LineChartData = {
+        labels: new Array<Date>(),
+        series: new Array<any>()
+      }
+      
+      dataList.forEach(() => { linechartData.series.push([]); })
       res.data.forEach((item, i) => {
-        chart.data.labels.push(
+        linechartData.labels.push(
             new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
         for (let x in dataList) {
-          chart.data.series[x].push(item[x]);
+          linechartData.series[x].push(item[x]);
         }
       });
-
+      
+      dataHandlerInterface.handleDataFunc(linechartData);
     });
   }
 }

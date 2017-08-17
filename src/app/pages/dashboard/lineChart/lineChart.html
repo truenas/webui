@@ -1,4 +1,3 @@
-<x-chartist [data]="data" [type]="type" [options]="options">
+<x-chartist *ngIf="controlIsInitialized" [data]="data" [type]="type" [options]="options">
     <!--[responsiveOptions]="responsiveOptions"  removing this because cli is saying it doesn't exist-->
-
 </x-chartist>
