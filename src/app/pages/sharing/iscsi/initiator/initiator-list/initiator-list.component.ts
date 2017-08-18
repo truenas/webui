@@ -15,6 +15,7 @@ export class InitiatorListComponent {
 
   protected resource_name: string = 'services/iscsi/authorizedinitiator';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'initiators', 'add' ];
+  protected route_add_tooltip: string = "Add Initiator";
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'initiators', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'initiators', 'edit' ];
 

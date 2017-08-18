@@ -12,6 +12,7 @@ export class NFSListComponent {
 
   protected resource_name: string = 'sharing/nfs/';
   protected route_add: string[] = [ 'sharing', 'nfs', 'add' ];
+  protected route_add_tooltip: string = "Add Unix (NFS) Share";
   protected route_edit: string[] = [ 'sharing', 'nfs', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'nfs', 'delete' ];
 

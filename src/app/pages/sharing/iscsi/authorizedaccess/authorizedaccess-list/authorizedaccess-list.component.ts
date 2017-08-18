@@ -16,6 +16,7 @@ export class AuthorizedAccessListComponent {
 
   protected resource_name: string = 'services/iscsi/authcredential';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'auth', 'add' ];
+  protected route_add_tooltip: string = "Add Authorized Access";
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'auth', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'auth', 'edit' ];
 

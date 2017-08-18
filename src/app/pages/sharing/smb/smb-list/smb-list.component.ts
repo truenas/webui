@@ -12,6 +12,7 @@ export class SMBListComponent {
 
   protected resource_name: string = 'sharing/cifs/';
   protected route_add: string[] = [ 'sharing', 'smb', 'add' ];
+  protected route_add_tooltip: string = "Add Windows (SMB) Share";
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
 

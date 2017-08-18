@@ -41,18 +41,21 @@ export class CertificateListComponent {
     let actions = [];
     actions.push({
       label: "Import Certificate",
+      icon: "card_membership",
       onClick: () => {
         this.router.navigate(
           new Array('/pages').concat(["system", "certificates", "import"]));
       }
     }, {
       label: "Create Internal",
+      icon: "system_update_alt",
       onClick: () => {
         this.router.navigate(new Array('/pages').concat(
           ["system", "certificates", "internal"]));
       }
     }, {
       label: "Create CSR",
+      icon: "vpn_lock",
       onClick: () => {
         this.router.navigate(new Array('/pages').concat(
           ["system", "certificates", "csr"]));

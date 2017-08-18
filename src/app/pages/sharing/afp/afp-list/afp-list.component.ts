@@ -12,6 +12,7 @@ export class AFPListComponent {
 
   protected resource_name: string = 'sharing/afp/';
   protected route_add: string[] = [ 'sharing', 'afp', 'add' ];
+  protected route_add_tooltip: string = "Add Apple (AFP) Share";
   protected route_edit: string[] = [ 'sharing', 'afp', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'afp', 'delete' ];
 

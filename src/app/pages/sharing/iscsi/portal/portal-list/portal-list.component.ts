@@ -16,6 +16,7 @@ export class PortalListComponent {
 
   protected resource_name: string = 'services/iscsi/portal';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'portals', 'add' ];
+  protected route_add_tooltip: string = "Add Portal";
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'portals', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'portals', 'edit' ];
 

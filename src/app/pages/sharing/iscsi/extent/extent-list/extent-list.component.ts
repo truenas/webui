@@ -15,6 +15,7 @@ export class ExtentListComponent {
 
   protected resource_name: string = 'services/iscsi/extent';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'extent', 'add' ];
+  protected route_add_tooltip: string = "Add Extent";
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'extent', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'extent', 'edit' ];
 

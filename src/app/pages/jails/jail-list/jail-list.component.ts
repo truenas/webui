@@ -14,6 +14,7 @@ export class JailListComponent {
 
   protected resource_name: string = 'jails/jails';
   protected route_add: string[] = [ 'jails', 'add' ];
+  protected route_add_tooltip: string = "Add Jail";
   protected entityList: EntityListComponent;
 
   constructor(protected router: Router, protected rest: RestService,

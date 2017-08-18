@@ -1,10 +1,10 @@
 @import '../../sass/conf/conf';
 @import '../../components/baMsgCenter/baMsgCenter';
 .page-top {
-    background-color: $primary;
+    background-color: #1a237e;
     position: fixed;
     z-index: 904;
-    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+    box-shadow: 2px 0 3px rgba(10, 9, 9, .8);
     height: 66px;
     width: 100%;
     min-width: $resMin;

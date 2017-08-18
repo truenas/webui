@@ -17,6 +17,7 @@ export class AssociatedTargetListComponent {
 
   protected resource_name: string = 'services/iscsi/targettoextent';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'add' ];
+  protected route_add_tooltip: string = "Add Target/Extent";
   protected route_delete: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'delete' ];
   protected route_edit: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'edit' ];
 
