@@ -352,4 +352,12 @@ export const PAGES_MENU = [
       },
     ],
   },
+  {
+    path : [ 'reportsdashboard' ],
+    title : 'Reports',
+    icon : 'ion-ios-book',
+    selected : false,
+    expanded : false,
+    order : 0
+  }
 ];

@@ -1,0 +1,9 @@
+ 
+<md-card *ngFor="let graph of graphs">
+  <md-card-title>{{ graph.title }}</md-card-title>
+  <md-card-content>
+      
+      <line-chart [dataList]="graph.dataList" [legends]="graph.legends" [type]="graph.type || 'Line'" [series]="graph.series"></line-chart>
+
+	</md-card-content>
+</md-card>
