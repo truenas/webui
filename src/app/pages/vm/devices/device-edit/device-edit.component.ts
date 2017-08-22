@@ -141,6 +141,15 @@ export class DeviceEditComponent implements OnInit {
           type: 'input',
         },
       ];
+      this.vmService.getStorageVolumes().subscribe((res) => {
+        let data = new EntityUtils().flattenData(res.data);
+        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
+        for (let dataset of data) {
+          if (dataset.type === 'zvol') {
+            this.DISK_zvol.add({label : dataset.name, value : dataset.path});
+          };
+        };
+      });
     } else if (this.dtype === "RAW") {
       this.fieldConfig = [
         {
@@ -162,18 +171,10 @@ export class DeviceEditComponent implements OnInit {
           options : [],
         },
       ];
-      this.vmService.getStorageVolumes().subscribe((res) => {
-        let data = new EntityUtils().flattenData(res.data);
-        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
-        for (let dataset of data) {
-          if (dataset.type === 'zvol') {
-            this.DISK_zvol.add({label : dataset.name, value : dataset.path});
-          };
-        };
-      });
     }
-
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+  }
+  afterInit(entityForm: any){
+    this.formGroup = entityForm.formGroup;
     let vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
       'vnc_resolution' : 'VNC_resolution',
@@ -200,45 +201,41 @@ export class DeviceEditComponent implements OnInit {
       'RAW_mode':'RAW_mode'
     };
 
-    this.ws.call('vm.query').subscribe((res) => {
-      function setgetValues(data, lookupTable) {
-        for (let i in data) {
-          let fg = self.formGroup.controls[lookupTable[i]];
-          if (fg) {
-            fg.setValue(data[i]);
-          }
+    this.ws.call('vm.query', [[[ "name", "=", this.vm ]], {"get": true}]).subscribe((vm) => {
+      for (let device of vm.devices) {
+        switch (device.dtype) {
+          case 'VNC': {
+            this.setgetValues(device.attributes, vnc_lookup_table);
+            break;
+          };
+          case 'NIC': {
+            this.setgetValues(device.attributes, nic_lookup_table);
+            break;
+          };
+          case 'CDROM': {
+            this.setgetValues(device.attributes, cdrom_lookup_table);
+            break;
+          };
+          case 'DISK': {
+            this.setgetValues(device.attributes, disk_lookup_table);
+            break;
+          };
+          case 'RAW': {
+            this.setgetValues(device.attributes, rawfile_lookup_table);
+            break;
+          };
         }
       }
-      let self = this;
-      for (let vm of res) {
-        if (vm.name === this.vm) {
-          for (let device of vm.devices) {
-            switch (device.dtype) {
-            case 'VNC': {
-              setgetValues(device.attributes, vnc_lookup_table);
-              break;
-            };
-            case 'NIC': {
-              setgetValues(device.attributes, nic_lookup_table);
-              break;
-            };
-            case 'CDROM': {
-              setgetValues(device.attributes, cdrom_lookup_table);
-              break;
-            };
-            case 'DISK': {
-              setgetValues(device.attributes, disk_lookup_table);
-              break;
-            };
-            case 'RAW': {
-              setgetValues(device.attributes, rawfile_lookup_table);
-              break;
-            };
-            }
-          }
-        };
-      }
     });
+  }
+  
+  setgetValues(data, lookupTable) {
+    for (let i in data) {
+      let fg = this.formGroup.controls[lookupTable[i]];
+      if (fg) {
+        fg.setValue(data[i]);
+      }
+    }
   }
   goBack() {
     let route = this.route_cancel;
