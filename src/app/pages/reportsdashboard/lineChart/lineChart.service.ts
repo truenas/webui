@@ -30,7 +30,7 @@ export interface HandleDataFunc {
 }
 
 export interface HandleChartConfigDataFunc {
-  handleChartConfigDataFunc(chartConfigData:ChartConfigData[]);
+  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]);
 }
 
 
@@ -61,7 +61,10 @@ export class LineChartService {
     });
   }
 
-  getChartConfigData(dataCallbackHandler: HandleChartConfigDataFunc) {
+
+  getChartConfigDataSpoof(dataCallbackHandler: HandleChartConfigDataFunc) {
+    let configData: ChartConfigData[] = [];
+
     let spoofData: ChartConfigData[] = [
       {
         title: "Average Load",
@@ -115,12 +118,49 @@ export class LineChartService {
         ],
       }
     ];
-    
-    
+
     setTimeout(() => {
-      dataCallbackHandler.handleChartConfigDataFunc( spoofData );
-    }, -1 ); 
+      dataCallbackHandler.handleChartConfigDataFunc(spoofData);
+    }, -1);
+
   }
-  
-  
+
+  getChartConfigData(dataCallbackHandler: HandleChartConfigDataFunc) {
+
+
+    this._ws.call('stats.get_sources').subscribe((res) => {
+      let configData: ChartConfigData[] = [];
+
+      for (let prop in res) {
+        var propObjArray: string[] = res[prop];
+        console.info("prop:" + prop, propObjArray);
+
+        var dataListItemArray: DataListItem[] = [];
+
+        propObjArray.forEach((proObjArrayItem) => {
+
+          let dataListItem: DataListItem = {
+            source: prop,
+            type: proObjArrayItem,
+            dataset: 'value'
+          };
+
+          dataListItemArray.push(dataListItem);
+        });
+
+        let chartData: ChartConfigData = {
+          title: prop,
+          legends: propObjArray,
+          dataList: dataListItemArray
+        };
+
+        configData.push(chartData);
+
+      }
+
+      dataCallbackHandler.handleChartConfigDataFunc(configData);
+    });
+  }
+
+
 }
