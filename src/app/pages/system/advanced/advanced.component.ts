@@ -39,12 +39,7 @@ export class AdvancedComponent {
       placeholder : 'Serial Port',
       options : []
     },
-    {
-      type : 'input',
-      name : 'adv_swapondrive',
-      placeholder :
-          'Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).',
-    },
+
     {
       type : 'select',
       name : 'adv_serialspeed',
@@ -56,6 +51,12 @@ export class AdvancedComponent {
         {label : '57600', value : "57600"},
         {label : '115200', value : "115200"},
       ],
+    },
+    {
+      type : 'input',
+      name : 'adv_swapondrive',
+      placeholder :
+          'Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).',
     },
     {
       type : 'checkbox',

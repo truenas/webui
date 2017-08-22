@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 
 @Component({
   selector : 'app-ntpserver-list',
-  template : `<entity-list [conf]="this"></entity-list>`
+  template: `<entity-table [conf]="this"></entity-table>`
 })
 export class NTPServerListComponent {
 
@@ -12,12 +12,12 @@ export class NTPServerListComponent {
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
 
   public columns: Array<any> = [
-    {title : 'Address', name : 'ntp_address'},
-    {title : 'Burst', name : 'ntp_burst'},
-    {title : 'IBurst', name : 'ntp_iburst'},
-    {title : 'Prefer', name : 'ntp_prefer'},
-    {title : 'Min. Poll', name : 'ntp_minpoll'},
-    {title : 'Max. Poll', name : 'ntp_maxpoll'},
+    {name : 'Address', prop : 'ntp_address'},
+    {name : 'Burst', prop : 'ntp_burst'},
+    {name : 'IBurst', prop : 'ntp_iburst'},
+    {name : 'Prefer', prop : 'ntp_prefer'},
+    {name : 'Min. Poll', prop : 'ntp_minpoll'},
+    {name : 'Max. Poll', prop : 'ntp_maxpoll'},
   ];
   public config: any = {
     paging : true,
