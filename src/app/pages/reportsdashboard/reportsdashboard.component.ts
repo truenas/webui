@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
-import {LineChartService, ChartConfigData} from './lineChart/lineChart.service';
+import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from './lineChart/lineChart.service';
 
 import {
   RestService,
@@ -15,12 +15,12 @@ import {
   templateUrl : './reportsdashboard.html',
   providers : [ SystemGeneralService ]
 })
-export class ReportsDashboard implements OnInit {
+export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
 
   public info: any = {};
   public ipAddress: any = [];
   private allowChartsDisplay: boolean = true;
-  
+  private drawTabs: boolean = false; 
   public graphs: ChartConfigData[] = [];
 
   constructor(private _lineChartService: LineChartService) {
@@ -28,7 +28,14 @@ export class ReportsDashboard implements OnInit {
   }
 
   ngOnInit() {
-     this.graphs = this._lineChartService.getChartConfigData();
+     this._lineChartService.getChartConfigData(this);
+  }
+  
+  
+  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {;
+     this.graphs.splice(0, this.graphs.length);
+     chartConfigData.forEach( (label) => {this.graphs.push(label)});
+     this.drawTabs = true; 
   }
   
   tabSelectChangeHandler($event) {

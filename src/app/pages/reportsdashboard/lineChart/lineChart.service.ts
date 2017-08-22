@@ -3,6 +3,8 @@ import {Injectable} from '@angular/core';
 import {WebSocketService} from '../../../services/';
 import {BaThemeConfigProvider, colorHelper, layoutPaths} from '../../../theme';
 
+
+
 export interface LineChartData {
   labels: Date[];
   series: any[];
@@ -25,6 +27,10 @@ export interface ChartConfigData {
 export interface HandleDataFunc {
   handleDataFunc(lineChartData: LineChartData);
 
+}
+
+export interface HandleChartConfigDataFunc {
+  handleChartConfigDataFunc(chartConfigData:ChartConfigData[]);
 }
 
 
@@ -55,8 +61,8 @@ export class LineChartService {
     });
   }
 
-  getChartConfigData(): ChartConfigData[] {
-    return [
+  getChartConfigData(dataCallbackHandler: HandleChartConfigDataFunc) {
+    let spoofData: ChartConfigData[] = [
       {
         title: "Average Load",
         legends: ['Short Term', ' Mid Term', 'Long Term'],
@@ -109,6 +115,11 @@ export class LineChartService {
         ],
       }
     ];
+    
+    
+    setTimeout(() => {
+      dataCallbackHandler.handleChartConfigDataFunc( spoofData );
+    }, -1 ); 
   }
   
   

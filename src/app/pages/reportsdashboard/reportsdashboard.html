@@ -1,6 +1,6 @@
 
 
-<md-tab-group (selectChange)="tabSelectChangeHandler($event)">
+<md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
   <md-tab *ngFor="let graph of graphs"  label="{{ graph.title }}" >
 	<md-card>
 	  <md-card-title>{{ graph.title }}</md-card-title>
