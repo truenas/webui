@@ -18,7 +18,8 @@ export class ReportsDashboard implements OnInit {
 
   public info: any = {};
   public ipAddress: any = [];
-
+  private allowChartsDisplay: boolean = true;
+  
   public graphs: any[] = [
     {
       title : "Average Load",
@@ -80,5 +81,11 @@ export class ReportsDashboard implements OnInit {
 
   ngOnInit() {
    
+  }
+  
+  tabSelectChangeHandler($event) {
+    this.allowChartsDisplay = false;
+    setTimeout(()=> {  this.allowChartsDisplay = true; }, -1 );
+      
   }
 }
