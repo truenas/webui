@@ -171,7 +171,10 @@ export class DeviceEditComponent implements OnInit {
           name : 'RAW_mode',
           placeholder : 'Mode',
           type: 'select',
-          options : [],
+          options : [
+            {label : 'AHCI', value : 'AHCI'},
+            {label : 'VirtIO', value : 'VIRTIO'},
+          ],
         },
       ];
     }
@@ -204,9 +207,9 @@ export class DeviceEditComponent implements OnInit {
       'path' : "CDROM_path",
     };
     let rawfile_lookup_table: Object = {
-      'RAW_path' : 'RAW_path',
-      'RAW_sectorsize': 'RAW_sectorsize',
-      'RAW_mode':'RAW_mode'
+      'path' : 'RAW_path',
+      'sectorsize': 'RAW_sectorsize',
+      'type':'RAW_mode'
     };
     this.vmService.getVM(this.vm).subscribe((vm) => {
       for (let device of vm.devices) {
@@ -331,6 +334,18 @@ export class DeviceEditComponent implements OnInit {
           'attributes' : {
             'path' : formvalue.CDROM_path ? formvalue.CDROM_path
                                           : vm.attributes.path
+          }
+        })
+      }
+      if (vm.dtype === 'RAW') {
+        devices.push({
+          'dtype' : 'RAW',
+          'attributes' : {
+            'path' : formvalue.RAW_path ? formvalue.RAW_path
+                                          : vm.attributes.path,
+            'sectorsize' : formvalue.RAW_sectorsize ? formvalue.RAW_sectorsize : vm.attributes.sectorsize,
+            'mode': formvalue.RAW_mode ? formvalue.RAW_mode : vm.attributes.mode,
+
           }
         })
       }
