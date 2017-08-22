@@ -124,11 +124,8 @@ export class LineChartService {
     }, -1);
 
   }
-
-  getChartConfigData(dataCallbackHandler: HandleChartConfigDataFunc) {
-
-
-    this._ws.call('stats.get_sources').subscribe((res) => {
+  
+  createChartConfigDataFromWebSocketReponse(res): ChartConfigData [] {
       let configData: ChartConfigData[] = [];
       let properties : string[] = [];
       for (let prop in res) {
@@ -163,7 +160,15 @@ export class LineChartService {
         configData.push(chartData);
 
       }
+      
+      return configData;
+  }
 
+  getChartConfigData(dataCallbackHandler: HandleChartConfigDataFunc) {
+
+
+    this._ws.call('stats.get_sources').subscribe((res) => {
+      let configData: ChartConfigData [] = this.createChartConfigDataFromWebSocketReponse(res);
       dataCallbackHandler.handleChartConfigDataFunc(configData);
     });
   }
