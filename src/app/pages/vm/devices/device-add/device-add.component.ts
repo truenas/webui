@@ -12,10 +12,6 @@ import {
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-// import {
-//   DynamicFormControlModel,
-//   DynamicFormService
-// } from '@ng2-dynamic-forms/core';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -42,7 +38,6 @@ export class DeviceAddComponent implements OnInit {
   public fieldConfig: FieldConfig[];
   public error: string;
   public data: Object = {};
-  public vm: string;
   public vmid: any;
   protected route_cancel: string[];
   protected route_success: string[];
@@ -83,67 +78,63 @@ export class DeviceAddComponent implements OnInit {
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.ws.call('vm.query').subscribe((res) => {
+    this.ws.call('vm.query', [[[ "name", "=", this.conf.vm ]]]).subscribe((res) => {
       let formvalue = _.cloneDeep(this.formGroup.value);
-      this.route_success = [ 'vm', this.vmid, 'devices', this.vm ];
-      this.route_cancel = [ 'vm', this.vmid, 'devices', this.vm ];
-      let self = this;
+      this.route_success = [ 'vm', this.vmid, 'devices', this.conf.vm ];
+      this.route_cancel = [ 'vm', this.vmid, 'devices', this.conf.vm ];
       this.error = null;
       let payload = {};
       let devices = [];
-      for (let vm of res) {
-        if (vm.name === self.conf.vm) {
-          if (self.conf.dtype === 'NIC') {
-            devices.push({
-              "dtype" : 'NIC',
-              "attributes" :
-                  { "type" : formvalue.NIC_type, "mac" : formvalue.NIC_mac, "nic_attach": formvalue.nic_attach }
-            })
-          }
-          if (self.conf.dtype === 'VNC') {
-            devices.push({
-              "dtype" : 'VNC',
-              "attributes" : {
-                "wait" : formvalue.VNC_wait,
-                "vnc_port" : formvalue.VNC_port,
-                "vnc_resolution" : formvalue.VNC_resolution,
-                "vnc_bind": formvalue.vnc_bind,
-                "vnc_password": formvalue.vnc_password
-              }
-            })
-          }
-          if (self.conf.dtype === 'DISK') {
-            devices.push({
-              "dtype" : 'DISK',
-              "attributes" :
-                  { "type" : formvalue.DISK_mode, "path" : formvalue.DISK_zvol, "sectorsize":formvalue.sectorsize }
-            })
-          }
-          if (self.conf.dtype === 'CDROM') {
-            devices.push({
-              "dtype" : 'CDROM',
-              "attributes" : {"path" : formvalue['path']}
-            })
-          }
-          if (self.conf.dtype === 'RAW') {
-            devices.push({
-              "dtype" : 'RAW',
-              "attributes" :
-                  {
-                    "type" : formvalue.RAW_mode, "path" : formvalue.RAW_path,
-                    "sectorsize":formvalue.RAW_sectorsize
-                  }
-            })
-          }
-        }
+      if (this.conf.dtype === 'NIC') {
+        devices.push({
+          "dtype" : 'NIC',
+          "attributes" :
+              { "type" : formvalue.NIC_type, "mac" : formvalue.NIC_mac, "nic_attach": formvalue.nic_attach }
+        })
       }
+      if (this.conf.dtype === 'VNC') {
+        devices.push({
+          "dtype" : 'VNC',
+          "attributes" : {
+            "wait" : formvalue.VNC_wait,
+            "vnc_port" : formvalue.VNC_port,
+            "vnc_resolution" : formvalue.VNC_resolution,
+            "vnc_bind": formvalue.vnc_bind,
+            "vnc_password": formvalue.vnc_password
+          }
+        })
+      }
+      if (this.conf.dtype === 'DISK') {
+        devices.push({
+          "dtype" : 'DISK',
+          "attributes" :
+              { "type" : formvalue.DISK_mode, "path" : formvalue.DISK_zvol, "sectorsize":formvalue.sectorsize }
+        })
+      }
+      if (this.conf.dtype === 'CDROM') {
+        devices.push({
+          "dtype" : 'CDROM',
+          "attributes" : {"path" : formvalue['path']}
+        })
+      }
+      if (this.conf.dtype === 'RAW') {
+        devices.push({
+          "dtype" : 'RAW',
+          "attributes" :
+              {
+                "type" : formvalue.RAW_mode, "path" : formvalue.RAW_path,
+                "sectorsize":formvalue.RAW_sectorsize
+              }
+        })
+      }
+
       payload['devices'] = devices;
       this.busy =
-          this.ws.call('vm.create_device', [ self.conf.pk, payload ])
+          this.ws.call('vm.create_device', [ this.conf.pk, payload ])
               .subscribe(
                   (res) => {
                     this.router.navigate(
-                        new Array('/pages').concat(self.conf.route_success));
+                        new Array('/pages').concat(this.conf.route_success));
                   },
                   (res) => { new EntityUtils().handleError(this, res); });
     });

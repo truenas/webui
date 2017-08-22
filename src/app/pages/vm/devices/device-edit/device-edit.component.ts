@@ -141,6 +141,15 @@ export class DeviceEditComponent implements OnInit {
           type: 'input',
         },
       ];
+      this.vmService.getStorageVolumes().subscribe((res) => {
+        let data = new EntityUtils().flattenData(res.data);
+        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
+        for (let dataset of data) {
+          if (dataset.type === 'zvol') {
+            this.DISK_zvol.add({label : dataset.name, value : dataset.path});
+          };
+        };
+      });
     } else if (this.dtype === "RAW") {
       this.fieldConfig = [
         {
@@ -162,18 +171,10 @@ export class DeviceEditComponent implements OnInit {
           options : [],
         },
       ];
-      this.vmService.getStorageVolumes().subscribe((res) => {
-        let data = new EntityUtils().flattenData(res.data);
-        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
-        for (let dataset of data) {
-          if (dataset.type === 'zvol') {
-            this.DISK_zvol.add({label : dataset.name, value : dataset.path});
-          };
-        };
-      });
     }
-
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+  }
+  afterInit(entityForm: any){
+    this.formGroup = entityForm.formGroup;
     let vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
       'vnc_resolution' : 'VNC_resolution',
@@ -199,46 +200,41 @@ export class DeviceEditComponent implements OnInit {
       'RAW_sectorsize': 'RAW_sectorsize',
       'RAW_mode':'RAW_mode'
     };
-
-    this.ws.call('vm.query').subscribe((res) => {
-      function setgetValues(data, lookupTable) {
-        for (let i in data) {
-          let fg = self.formGroup.controls[lookupTable[i]];
-          if (fg) {
-            fg.setValue(data[i]);
-          }
+    this.vmService.getVM(this.vm).subscribe((vm) => {
+      for (let device of vm.devices) {
+        switch (device.dtype) {
+          case 'VNC': {
+            this.setgetValues(device.attributes, vnc_lookup_table);
+            break;
+          };
+          case 'NIC': {
+            this.setgetValues(device.attributes, nic_lookup_table);
+            break;
+          };
+          case 'CDROM': {
+            this.setgetValues(device.attributes, cdrom_lookup_table);
+            break;
+          };
+          case 'DISK': {
+            this.setgetValues(device.attributes, disk_lookup_table);
+            break;
+          };
+          case 'RAW': {
+            this.setgetValues(device.attributes, rawfile_lookup_table);
+            break;
+          };
         }
       }
-      let self = this;
-      for (let vm of res) {
-        if (vm.name === this.vm) {
-          for (let device of vm.devices) {
-            switch (device.dtype) {
-            case 'VNC': {
-              setgetValues(device.attributes, vnc_lookup_table);
-              break;
-            };
-            case 'NIC': {
-              setgetValues(device.attributes, nic_lookup_table);
-              break;
-            };
-            case 'CDROM': {
-              setgetValues(device.attributes, cdrom_lookup_table);
-              break;
-            };
-            case 'DISK': {
-              setgetValues(device.attributes, disk_lookup_table);
-              break;
-            };
-            case 'RAW': {
-              setgetValues(device.attributes, rawfile_lookup_table);
-              break;
-            };
-            }
-          }
-        };
-      }
     });
+  }
+  
+  setgetValues(data, lookupTable) {
+    for (let i in data) {
+      let fg = this.formGroup.controls[lookupTable[i]];
+      if (fg) {
+        fg.setValue(data[i]);
+      }
+    }
   }
   goBack() {
     let route = this.route_cancel;
@@ -249,73 +245,62 @@ export class DeviceEditComponent implements OnInit {
   }
 
   onSubmit() {
-    this.ws.call('vm.query').subscribe((res) => {
-      let self = this;
+    this.vmService.getVM(this.vm).subscribe((vm) => {
       this.error = null;
       let payload = {};
       let devices = [];
       let formvalue = _.cloneDeep(this.formGroup.value);
-      for (let vm of res) {
-        if (vm.name === this.vm) {
-          for (let device of vm.devices) {
-            if (device.dtype === 'NIC') {
-              devices.push({
-                'dtype' : 'NIC',
-                'attributes' : {
-                  'type' : formvalue.NIC_type ? formvalue.NIC_type
-                                              : device.attributes.type,
-                  'mac' : formvalue.NIC_mac ? formvalue.NIC_mac
-                                            : device.attributes.mac
-                }
-              })
+      if (vm.dtype === 'NIC') {
+          devices.push({
+            'dtype' : 'NIC',
+            'attributes' : {
+              'type' : formvalue.NIC_type ? formvalue.NIC_type
+                                          : vm.attributes.type,
+              'mac' : formvalue.NIC_mac ? formvalue.NIC_mac
+                                        : vm.attributes.mac
             }
-            if (device.dtype === 'VNC') {
-              devices.push({
-                'dtype' : 'VNC',
-                'attributes' : {
-                  'wait' : new EntityUtils().bool(formvalue.VNC_wait
-                                                      ? formvalue.VNC_wait
-                                                      : device.attributes.wait),
-                  'vnc_port' : formvalue.VNC_port ? formvalue.VNC_port
-                                                  : device.attributes.port,
-                  'vnc_resolution' : formvalue.VNC_resolution
-                                         ? formvalue.VNC_resolution
-                                         : device.attributes.vnc_resolution
-                }
-              })
-            }
-            if (device.dtype === 'DISK') {
-              devices.push({
-                'dtype' : 'DISK',
-                'attributes' : {
-                  'type' : formvalue.DISK_mode ? formvalue.DISK_mode
-                                               : device.attributes.type,
-                  'path' : formvalue.DISK_zvol ? formvalue.DISK_zvol
-                                               : device.attributes.path
-                }
-              })
-            }
-            if (device.dtype === 'CDROM') {
-              devices.push({
-                'dtype' : 'CDROM',
-                'attributes' : {
-                  'path' : formvalue.CDROM_path ? formvalue.CDROM_path
-                                                : device.attributes.path
-                }
-              })
-            }
-          }
+          })
         }
+      if (vm.dtype === 'VNC') {
+        devices.push({
+          'dtype' : 'VNC',
+          'attributes' : {
+            'wait' : new EntityUtils().bool(formvalue.VNC_wait
+                                                ? formvalue.VNC_wait
+                                                : vm.attributes.wait),
+            'vnc_port' : formvalue.VNC_port ? formvalue.VNC_port
+                                            : vm.attributes.port,
+            'vnc_resolution' : formvalue.VNC_resolution
+                                    ? formvalue.VNC_resolution
+                                    : vm.attributes.vnc_resolution
+          }
+        })
+      }
+      if (vm.dtype === 'DISK') {
+        devices.push({
+          'dtype' : 'DISK',
+          'attributes' : {
+            'type' : formvalue.DISK_mode ? formvalue.DISK_mode
+                                          : vm.attributes.type,
+            'path' : formvalue.DISK_zvol ? formvalue.DISK_zvol
+                                          : vm.attributes.path
+          }
+        })
+      }
+      if (vm.dtype === 'CDROM') {
+        devices.push({
+          'dtype' : 'CDROM',
+          'attributes' : {
+            'path' : formvalue.CDROM_path ? formvalue.CDROM_path
+                                          : vm.attributes.path
+          }
+        })
       }
       payload['devices'] = devices;
-      this.busy =
-          this.ws.call('vm.update', [ self.vmid, payload ])
-              .subscribe(
-                  (res) => {
-                    this.router.navigate(
-                        new Array('/pages').concat(this.route_success));
-                  },
-                  (res) => { new EntityUtils().handleError(this, res); });
+      this.busy = this.ws.call('vm.update', [ this.vmid, payload ]).subscribe(
+        (res) => { this.router.navigate(new Array('/pages').concat(this.route_success));},
+        (res) => { new EntityUtils().handleError(this, res);}
+      );
     });
   }
 }
