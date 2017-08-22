@@ -200,8 +200,7 @@ export class DeviceEditComponent implements OnInit {
       'RAW_sectorsize': 'RAW_sectorsize',
       'RAW_mode':'RAW_mode'
     };
-
-    this.ws.call('vm.query', [[[ "name", "=", this.vm ]], {"get": true}]).subscribe((vm) => {
+    this.vmService.getVM(this.vm).subscribe((vm) => {
       for (let device of vm.devices) {
         switch (device.dtype) {
           case 'VNC': {
@@ -246,73 +245,62 @@ export class DeviceEditComponent implements OnInit {
   }
 
   onSubmit() {
-    this.ws.call('vm.query').subscribe((res) => {
-      let self = this;
+    this.vmService.getVM(this.vm).subscribe((vm) => {
       this.error = null;
       let payload = {};
       let devices = [];
       let formvalue = _.cloneDeep(this.formGroup.value);
-      for (let vm of res) {
-        if (vm.name === this.vm) {
-          for (let device of vm.devices) {
-            if (device.dtype === 'NIC') {
-              devices.push({
-                'dtype' : 'NIC',
-                'attributes' : {
-                  'type' : formvalue.NIC_type ? formvalue.NIC_type
-                                              : device.attributes.type,
-                  'mac' : formvalue.NIC_mac ? formvalue.NIC_mac
-                                            : device.attributes.mac
-                }
-              })
+      if (vm.dtype === 'NIC') {
+          devices.push({
+            'dtype' : 'NIC',
+            'attributes' : {
+              'type' : formvalue.NIC_type ? formvalue.NIC_type
+                                          : vm.attributes.type,
+              'mac' : formvalue.NIC_mac ? formvalue.NIC_mac
+                                        : vm.attributes.mac
             }
-            if (device.dtype === 'VNC') {
-              devices.push({
-                'dtype' : 'VNC',
-                'attributes' : {
-                  'wait' : new EntityUtils().bool(formvalue.VNC_wait
-                                                      ? formvalue.VNC_wait
-                                                      : device.attributes.wait),
-                  'vnc_port' : formvalue.VNC_port ? formvalue.VNC_port
-                                                  : device.attributes.port,
-                  'vnc_resolution' : formvalue.VNC_resolution
-                                         ? formvalue.VNC_resolution
-                                         : device.attributes.vnc_resolution
-                }
-              })
-            }
-            if (device.dtype === 'DISK') {
-              devices.push({
-                'dtype' : 'DISK',
-                'attributes' : {
-                  'type' : formvalue.DISK_mode ? formvalue.DISK_mode
-                                               : device.attributes.type,
-                  'path' : formvalue.DISK_zvol ? formvalue.DISK_zvol
-                                               : device.attributes.path
-                }
-              })
-            }
-            if (device.dtype === 'CDROM') {
-              devices.push({
-                'dtype' : 'CDROM',
-                'attributes' : {
-                  'path' : formvalue.CDROM_path ? formvalue.CDROM_path
-                                                : device.attributes.path
-                }
-              })
-            }
-          }
+          })
         }
+      if (vm.dtype === 'VNC') {
+        devices.push({
+          'dtype' : 'VNC',
+          'attributes' : {
+            'wait' : new EntityUtils().bool(formvalue.VNC_wait
+                                                ? formvalue.VNC_wait
+                                                : vm.attributes.wait),
+            'vnc_port' : formvalue.VNC_port ? formvalue.VNC_port
+                                            : vm.attributes.port,
+            'vnc_resolution' : formvalue.VNC_resolution
+                                    ? formvalue.VNC_resolution
+                                    : vm.attributes.vnc_resolution
+          }
+        })
+      }
+      if (vm.dtype === 'DISK') {
+        devices.push({
+          'dtype' : 'DISK',
+          'attributes' : {
+            'type' : formvalue.DISK_mode ? formvalue.DISK_mode
+                                          : vm.attributes.type,
+            'path' : formvalue.DISK_zvol ? formvalue.DISK_zvol
+                                          : vm.attributes.path
+          }
+        })
+      }
+      if (vm.dtype === 'CDROM') {
+        devices.push({
+          'dtype' : 'CDROM',
+          'attributes' : {
+            'path' : formvalue.CDROM_path ? formvalue.CDROM_path
+                                          : vm.attributes.path
+          }
+        })
       }
       payload['devices'] = devices;
-      this.busy =
-          this.ws.call('vm.update', [ self.vmid, payload ])
-              .subscribe(
-                  (res) => {
-                    this.router.navigate(
-                        new Array('/pages').concat(this.route_success));
-                  },
-                  (res) => { new EntityUtils().handleError(this, res); });
+      this.busy = this.ws.call('vm.update', [ this.vmid, payload ]).subscribe(
+        (res) => { this.router.navigate(new Array('/pages').concat(this.route_success));},
+        (res) => { new EntityUtils().handleError(this, res);}
+      );
     });
   }
 }
