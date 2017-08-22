@@ -15,7 +15,7 @@ import {
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
-import {WebSocketService, NetworkService} from '../../../../services/';
+import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
@@ -48,6 +48,7 @@ export class DeviceEditComponent implements OnInit {
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected networkService: NetworkService,
+              protected systemGeneralService: SystemGeneralService,
               private entityFormService : EntityFormService,
               public vmService: VmService) {}
   ngOnInit() {
@@ -107,6 +108,13 @@ export class DeviceEditComponent implements OnInit {
           placeholder : 'Resolution:',
           type: 'select',
           options : [
+            {label : '1920x1080', value : "1920x1080"},
+            {label : '1400x1050', value : "1400x1050"},
+            {label : '1280x1024', value : "1280x1024"},
+            {label : '1280x960', value : "1280x960"},
+            {label : '1024x768', value : '1024x768'},
+            {label : '800x600', value : '800x600'},
+            {label : '640x480', value : '640x480'},
           ],
         },
         {
@@ -176,6 +184,7 @@ export class DeviceEditComponent implements OnInit {
   }
   private nic_attach: any;
   private nicType:  any;
+  private ipAddress: any;
 
   afterInit(entityForm: any){
     
@@ -210,6 +219,14 @@ export class DeviceEditComponent implements OnInit {
         switch (device.dtype) {
           case 'VNC': {
             this.setgetValues(device.attributes, vnc_lookup_table);
+            this.systemGeneralService.getIPChoices().subscribe((res) => {
+              if (res.length > 0) {
+                this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+                res.forEach((item) => {
+                  this.ipAddress.options.push({label : item[1], value : item[0]});
+                });
+              }
+            })
             break;
           };
           case 'NIC': {
