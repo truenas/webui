@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
+import { ConfirmDialogComponent } from './pages/common/confirm-dialog/confirm-dialog/confirm-dialog.component';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
@@ -30,7 +31,7 @@ export function createTranslateLoader(http: Http) {
     }),
     RouterModule.forRoot(rootRouterConfig, { useHash: false })
   ],
-  declarations: [AppComponent],
+  declarations: [AppComponent, ConfirmDialogComponent],
   providers: [RoutePartsService, NavigationService, AuthService],
   bootstrap: [AppComponent]
 })
