@@ -3,14 +3,22 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'confirm-dialog',
-  template: `
-        <p>{{ title }}</p>
-        <p>{{ message }}</p>
-        <button md-raised-button 
-            (click)="dialogRef.close(true)">OK</button>
-        <button md-button 
-            (click)="dialogRef.close(false)">Cancel</button>
-    `,
+  template: `<h1 md-dialog-title>{{ title }}</h1>
+    <div md-dialog-content>{{ message }}</div>
+    <div md-dialog-actions>
+    <button 
+    type="button" 
+    md-raised-button
+    color="primary" 
+    (click)="dialogRef.close(true)">OK</button>
+    &nbsp;
+    <span fxFlex></span>
+    <button 
+    type="button"
+    color="accent"
+    md-raised-button 
+    (click)="dialogRef.close(false)">Cancel</button>
+    </div>`,
 })
 export class ConfirmDialog {
 
