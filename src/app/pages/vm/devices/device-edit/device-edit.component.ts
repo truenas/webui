@@ -15,7 +15,7 @@ import {
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
-import {WebSocketService} from '../../../../services/';
+import {WebSocketService, NetworkService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
@@ -47,6 +47,7 @@ export class DeviceEditComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected networkService: NetworkService,
               private entityFormService : EntityFormService,
               public vmService: VmService) {}
   ngOnInit() {
@@ -173,7 +174,11 @@ export class DeviceEditComponent implements OnInit {
       ];
     }
   }
+  private nic_attach: any;
+  private nicType:  any;
+
   afterInit(entityForm: any){
+    
     this.formGroup = entityForm.formGroup;
     let vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
@@ -209,6 +214,19 @@ export class DeviceEditComponent implements OnInit {
           };
           case 'NIC': {
             this.setgetValues(device.attributes, nic_lookup_table);
+            this.networkService.getAllNicChoices().subscribe((res) => {
+              this.nic_attach = _.find(this.fieldConfig, {'name' : 'nic_attach'});
+              res.forEach((item) => {
+                this.nic_attach.options.push({label : item[1], value : item[0]});
+              });
+            });
+            entityForm.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
+            .subscribe((res) => {
+              this.nicType = _.find(this.fieldConfig, {name : "NIC_type"});
+              res.forEach((item) => {
+                this.nicType.options.push({label : item[1], value : item[0]});
+              });
+            });
             break;
           };
           case 'CDROM': {
