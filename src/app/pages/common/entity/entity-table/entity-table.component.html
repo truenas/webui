@@ -1,0 +1,31 @@
+<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+<md-card [ngBusy]="busy">
+  <ngx-datatable
+    class="material" 
+    [rows]="rows" 
+    [columns]="conf.columns" 
+    [headerHeight]="50" 
+    [rowHeight]="50"
+    [footerHeight]="50" 
+    [columnMode]="'force'" 
+    [limit]="conf.config.pageLimit ? conf.config.pageLimit : 20" 
+    [selectionType]="conf.config.selectionType ? conf.config.selectionType : ''"
+  >
+  <ngx-datatable-column
+    [width]="conf.config.width ? conf.config.width : 30"
+    [sortable]="conf.config.sortable ? conf.config.sortable : false"
+    [canAutoResize]="conf.config.canAutoResize ? conf.config.canAutoResize : false"
+    [draggable]="conf.config.draggable ? conf.config.draggable : false"
+    [resizeable]="conf.config.resizeable ? conf.config : false"
+    [checkboxable]="conf.config.selectionType ? true : false">
+  </ngx-datatable-column>
+  <div *ngFor="let col of conf.columns">
+    <ngx-datatable-column prop="{{col.prop}}" name="{{col.name}}"></ngx-datatable-column>
+  </div>
+  <ngx-datatable-column prop="action">
+    <ng-template let-row="row" ngx-datatable-cell-template>
+      <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>
+    </ng-template>
+  </ngx-datatable-column>
+  </ngx-datatable>
+</md-card>

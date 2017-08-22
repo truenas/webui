@@ -1,0 +1,15 @@
+<div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
+    <md-input-container class="full-width">
+        <input mdInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
+    </md-input-container>
+    <button md-button (click)="toggleTree()" type="button">Browse</button>
+    <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
+        <template #treeNodeTemplate let-node>
+            <i *ngIf="node.data.hasChildren" class='ion-folder'></i>
+            <i *ngIf="!node.data.hasChildren" class='ion-document'></i>
+            <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
+        </template>
+    </tree-root>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+    <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+</div>
