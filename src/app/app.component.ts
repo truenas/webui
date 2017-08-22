@@ -10,7 +10,7 @@ import { RoutePartsService } from "./services/route-parts/route-parts.service";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  appTitle = 'Egret';
+  appTitle = 'FreeNAS Material UI';
   pageTitle = '';
 
   constructor(public title: Title, 
