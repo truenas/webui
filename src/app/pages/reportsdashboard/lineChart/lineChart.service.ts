@@ -130,8 +130,14 @@ export class LineChartService {
 
     this._ws.call('stats.get_sources').subscribe((res) => {
       let configData: ChartConfigData[] = [];
-
+      let properties : string[] = [];
       for (let prop in res) {
+        properties.push(prop);
+      }
+      
+      properties = properties.sort();
+      
+      for (let prop of properties) {
         var propObjArray: string[] = res[prop];
         console.info("prop:" + prop, propObjArray);
 
