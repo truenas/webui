@@ -1,0 +1,18 @@
+<div class="text-center mat-bg-primary pt-1 pb-1">
+  <h6 class="m-0">Notifications</h6>
+</div>
+<md-nav-list class="notification-list" role="list">
+  <!-- Notification item -->
+  <md-list-item *ngFor="let n of notifications" class="notific-item" role="listitem" routerLinkActive="open">
+    <md-icon [color]="n.color" class="notific-icon">{{n.icon}}</md-icon>
+    <a [routerLink]="[n.route || '/dashboard']">
+      <div class="mat-list-text">
+        <h4 class="message">{{n.message}}</h4>
+        <small class="time text-muted">{{n.time}}</small>
+      </div>
+    </a>
+  </md-list-item>
+</md-nav-list>
+<div class="text-center mt-1" *ngIf="notifications.length">
+  <small><a href="#" (click)="clearAll($event)">Clear all notifications</a></small>
+</div>

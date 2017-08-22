@@ -32,7 +32,6 @@
 npm-debug.log
 testem.log
 /typings
-package-lock.json
 
 # e2e
 /e2e/*.js
@@ -41,7 +40,3 @@ package-lock.json
 # System Files
 .DS_Store
 Thumbs.db
-
-#ip/port config
-proxy.config.json
-src/environments/environment.ts

@@ -1,0 +1,61 @@
+<div class="page-wrap height-100 mat-bg-primary">
+  <div class="session-form-hold">
+    <md-progress-bar mode="determinate" class="session-progress"></md-progress-bar>
+    <md-card>
+      <md-card-content>
+        <div class="text-center pb-1">
+          <img src="assets/images/logo-full.png" alt="">
+          <p class="text-muted">Sign in to your account</p>
+        </div>
+        <form #signinForm="ngForm" (ngSubmit)="signin()">
+          <div class="">
+            <md-input-container class="full-width">
+              <input
+                mdInput
+                name="username"
+                required
+                [(ngModel)]="signinData.username"
+                #username="ngModel"
+                placeholder="Username"
+                value="">
+            </md-input-container>
+            <small 
+              *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)" 
+              class="form-error-msg"> Username is required </small>
+          </div>
+
+          <div class="">
+            <md-input-container class="full-width">
+              <input 
+                type="password"
+                name="password"
+                required
+                mdInput
+                [(ngModel)]="signinData.password"
+                #password="ngModel"
+                placeholder="Password" 
+                value="">
+            </md-input-container>
+            <small 
+              *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)" 
+              class="form-error-msg"> Password is required </small>
+          </div>
+          
+          <div class="pb-1">
+            <md-checkbox
+              name="rememberMe"
+              class="pb-1">Remember this computer</md-checkbox>
+          </div>
+          
+          <button md-raised-button class="mat-primary full-width mb-1" [disabled]="signinForm.invalid">Sign in</button>
+          <div class="text-center">
+            <a [routerLink]="['/sessions/forgot-password']" class="mat-primary text-center full-width">Forgot password</a>
+            <span fxFlex></span>
+            <a [routerLink]="['/sessions/signup']" class="mat-primary text-center full-width">Create a new account</a>
+          </div>
+        </form>
+      </md-card-content>
+    </md-card>
+  </div>
+</div>
+

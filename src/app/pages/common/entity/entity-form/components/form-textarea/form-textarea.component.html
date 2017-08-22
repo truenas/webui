@@ -1,8 +1,0 @@
-<div class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
-  <md-input-container class="full-width">
-    <textarea mdInput [placeholder]="config.placeholder" [formControlName]="config.name" rows="4">
-    </textarea>
-  </md-input-container>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
-</div>

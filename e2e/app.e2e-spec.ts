@@ -1,12 +1,14 @@
-import {FreenasPage} from './app.po';
+import { NgEgretPage } from './app.po';
 
-describe('freenas App', () => {
-  let page: FreenasPage;
+describe('ng-egret App', () => {
+  let page: NgEgretPage;
 
-  beforeEach(() => { page = new FreenasPage(); });
+  beforeEach(() => {
+    page = new NgEgretPage();
+  });
 
-  it('should display welcome message', () => {
+  it('should display message saying app works', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!!');
+    expect(page.getParagraphText()).toEqual('app works!');
   });
 });

@@ -1,0 +1,40 @@
+<md-sidenav-container class="app-side-nav-container">
+  <!-- Main side navigation -->
+  <md-sidenav #sidenav [opened]="isSidenavOpen" mode="side" class="sidebar-panel">
+    <div id="scroll-area" class="navigation-hold" fxLayout="column">
+      <div class="branding mat-bg-primary">
+        <img src="assets/images/logo.png" alt="" class="app-logo">
+        <img src="assets/images/logo-text.png" alt="" class="app-logo-text">
+      </div>
+      <div class="app-user">
+        <div class="app-user-photo">
+          <img src="assets/images/face-7.jpg" alt="">
+        </div>
+        <span class="app-user-name">
+          <md-icon class="icon-xs text-muted">lock</md-icon> 
+          Watson Joyce
+        </span>
+      </div>
+      <navigation></navigation>
+    </div>
+  </md-sidenav>
+
+  <!-- Top Bar -->
+  <!-- Template reference variables of Left sidebar and Right notification is supplied -->
+  <!-- Listens language change event -->
+  <topbar 
+  [sidenav]="sidenav" 
+  [notificPanel]="notificationPanel"
+  (onLangChange)="translate.use($event)"></topbar>
+  <!-- App content -->
+  <app-breadcrumb></app-breadcrumb>
+  <div class="rightside-content-hold">
+    <router-outlet></router-outlet>
+  </div>
+  <!-- Notificaation bar -->
+  <md-sidenav #notificationPanel mode="over" class="" align="end">
+    <div class="navigation-hold" fxLayout="column">
+      <app-notifications [notificPanel]="notificationPanel"></app-notifications>
+    </div>
+  </md-sidenav>
+</md-sidenav-container>

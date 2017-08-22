@@ -1,69 +1,37 @@
-import 'style-loader!tixif-ngx-busy/build/style/busy.css';
-import 'hammerjs';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+import { Http, HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateModule, TranslateLoader, TranslateStaticLoader } from 'ng2-translate/ng2-translate';
 
-import {ApplicationRef, NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
-import {MaterialModule} from '@angular/material';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {RouterModule} from '@angular/router';
-import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import {ConfirmDialog} from './pages/common/confirm-dialog/confirm-dialog.component';
+import { rootRouterConfig } from './app.routes';
+import { AppCommonModule } from "./components/common/app-common.module";
+import { AppComponent } from './app.component';
 
-/*
- * Platform and Environment providers/directives/pipes
- */
-import {ENV_PROVIDERS} from '../environments/environment';
+import { RoutePartsService } from './services/route-parts/route-parts.service';
+import { NavigationService } from "./services/navigation/navigation.service";
+import { AuthService } from './services/auth/auth.service';
 
-// App is our top level component
-import {App} from './app.component';
-import {routing} from './app.routing';
-import {AppState, InternalStateType} from './app.service';
-import {GlobalState} from './global.state';
-import {PagesModule} from './pages/pages.module';
-import {NgaModule} from './theme/nga.module';
-
-
-// Application wide providers
-const APP_PROVIDERS = [ AppState, GlobalState ];
-
-export type StoreType = {
-  state : InternalStateType,
-  restoreInputValues : () => void,
-  disposeOldHosts : () => void
-};
-
-/**
- * `AppModule` is the main entry point into Angular2's bootstraping process
- */
-@NgModule({
-  bootstrap: [App],
-  declarations: [
-    App,
-    ConfirmDialog
-  ],
-  imports: [ // import Angular's modules
-    BrowserModule,
-    MaterialModule,
-    BrowserAnimationsModule,
-    NgxDatatableModule,
-    HttpModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgaModule.forRoot(),
-    PagesModule,
-    routing,
-  ],
-  providers: [ // expose our Services and Providers into Angular's dependency injection
-    ENV_PROVIDERS,
-    APP_PROVIDERS
-  ],
-  entryComponents: [
-    ConfirmDialog,
-  ],
-})
-
-export class AppModule {
+export function createTranslateLoader(http: Http) {
+  return new TranslateStaticLoader(http, './assets/i18n', '.json');
 }
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpModule,
+    AppCommonModule,
+    TranslateModule.forRoot({
+      provide: TranslateLoader,
+      useFactory: (createTranslateLoader),
+      deps: [Http]
+    }),
+    RouterModule.forRoot(rootRouterConfig, { useHash: false })
+  ],
+  declarations: [AppComponent],
+  providers: [RoutePartsService, NavigationService, AuthService],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

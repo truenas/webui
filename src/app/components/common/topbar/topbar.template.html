@@ -1,0 +1,98 @@
+<md-toolbar class="topbar">
+  <!-- Sidenav toggle button -->
+  <button 
+  md-icon-button
+  id="sidenavToggle" 
+  (click)="toggleSidenav()"
+  md-tooltip="Toggle Hide/Open">
+  <md-icon>menu</md-icon>
+  </button>
+  <!-- Sidenav toggle collapse -->
+  <button 
+  md-icon-button
+  id="collapseToggle"
+  fxHide.lt-md="true" 
+  (click)="toggleCollapse()"
+  md-tooltip="Toggle Collapse"
+  class="toggle-collapsed">
+  <md-icon>chevron_left</md-icon>
+  </button>
+  <!-- Search form -->
+  <div 
+  fxFlex
+  fxHide.lt-sm="true" 
+  class="search-bar">
+    <form class="top-search-form">
+      <md-icon role="img">search</md-icon>
+      <input autofocus="true" placeholder="Search" type="text">
+    </form>
+  </div>
+  <span fxFlex></span>
+  <!-- Language Switcher -->
+  <md-select 
+  placeholder=""
+  name="currentLang"
+  [(ngModel)]="currentLang" 
+  (change)="setLang()">
+    <md-option 
+    *ngFor="let lang of availableLangs" 
+    [value]="lang.code" ngDefaultControl>{{ lang.name }}</md-option>
+  </md-select>
+  <!-- Theme Switcher -->
+  <button 
+  md-icon-button
+  id="schemeToggle" 
+  [style.overflow]="'visible'"
+  mdTooltip="Color Schemes"
+  [mdMenuTriggerFor]="themeMenu"
+  class="topbar-button-right">
+    <md-icon>format_color_fill</md-icon>
+  </button>
+  <md-menu #themeMenu="mdMenu">
+    <md-grid-list
+    class="theme-list" 
+    cols="2" 
+    rowHeight="48px">
+      <md-grid-tile 
+      *ngFor="let theme of egretThemes"
+      (click)="changeTheme(theme)">
+        <div md-menu-item [title]="theme.name">
+          <div [style.background]="theme.baseColor" class="egret-swatch"></div>
+          <md-icon class="active-icon" *ngIf="theme.isActive">check</md-icon>
+        </div>
+      </md-grid-tile>
+    </md-grid-list>
+  </md-menu>
+  <!-- Notification toggle button -->
+  <button 
+  md-icon-button
+  mdTooltip="Notifications" 
+  (click)="toggleNotific()"
+  [style.overflow]="'visible'" 
+  class="topbar-button-right">
+    <md-icon>notifications</md-icon>
+    <span class="notification-number mat-bg-warn">3</span>
+  </button>
+  <!-- Top left user menu -->
+  <button md-icon-button [mdMenuTriggerFor]="accountMenu" class="topbar-button-right">
+    <md-icon>person</md-icon>
+  </button>
+  <md-menu #accountMenu="mdMenu">
+    <button md-menu-item [routerLink]="['/dashboard']">
+      <md-icon>account_box</md-icon>
+      <span>Account</span>
+    </button>
+    <button md-menu-item>
+      <md-icon>settings</md-icon>
+      <span>Settings</span>
+    </button>
+    <button md-menu-item>
+      <md-icon>notifications_off</md-icon>
+      <span>Disable alerts</span>
+    </button>
+    <button md-menu-item [routerLink]="['/sessions/signin']">
+      <md-icon>exit_to_app</md-icon>
+      <span>Sign out</span>
+    </button>
+  </md-menu>
+</md-toolbar>

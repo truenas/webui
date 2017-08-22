@@ -1,0 +1,216 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$md-primary: (
+    50 : #fce4ec,
+    100 : #f8bcd0,
+    200 : #f48fb1,
+    300 : #f06292,
+    400 : #ec407a,
+    500 : #e91e63,
+    600 : #e61a5b,
+    700 : #e31651,
+    800 : #df1247,
+    900 : #d90a35,
+    A100 : #ffffff,
+    A200 : #ffd0d8,
+    A400 : #ff9dae,
+    A700 : #ff8498,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$md-accent: (
+    50 : #eceff1,
+    100 : #cfd8dc,
+    200 : #b0bec5,
+    300 : #90a4ae,
+    400 : #78919c,
+    500 : #607d8b,
+    600 : #587583,
+    700 : #4e6a78,
+    800 : #44606e,
+    900 : #334d5b,
+    A100 : #abe1ff,
+    A200 : #78ceff,
+    A400 : #45bcff,
+    A700 : #2bb3ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+// mandatory stuff for theming
+$egret-primary: mat-palette($md-primary);
+$egret-accent:  mat-palette($md-accent);
+
+// include the custom theme components into a theme object
+$egret-theme: mat-dark-theme($egret-primary, $egret-accent);
+
+$primary-dark: darken( map-get($md-primary, 500), 8% );
+
+// include the custom theme object into the angular material theme
+.egret-dark-pink {
+    @include angular-material-theme($egret-theme);
+
+    .mat-bg-primary,
+    .topbar,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+    .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+    .fileupload-drop-zone.dz-file-over,
+    .toolbar-avatar.online > .status-dot,
+    .cal-open-day-events,
+    div.hopscotch-bubble {
+        background: map-get($md-primary, 500) !important;
+        color: #ffffff !important;
+    }
+    .mat-color-primary,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        color: map-get($md-primary, 500) !important;
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        font-weight: 500;
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+        border-left: 2px solid map-get($md-primary, 500);
+    }
+    .messages-wrap .inbox-hold {
+        background: transparent !important;
+    }
+    .sidebar-panel.mat-sidenav {
+        background: url('../../images/sidebar-bg-dark.jpg') no-repeat;
+    }
+    .app-user .app-user-name,
+    .sidebar-panel.mat-sidenav .sidebar-list-item md-icon:not(.menu-caret),
+    .ql-snow .ql-picker {
+        color: white !important;
+    }
+    .text-muted {
+        color: rgba(255, 255, 255, .54) !important;
+    }
+
+    .ql-snow .ql-stroke  {
+        stroke: #ffffff;
+    }
+    .ql-snow .ql-fill {
+        fill: #ffffff;
+    }
+    .ql-toolbar.ql-snow,
+    .ql-toolbar.ql-snow + .ql-container.ql-snow {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .sidebar-panel.mat-sidenav .navigation-hold,
+    .message-item.open .message-head,
+    .ngx-datatable.material .datatable-header,
+    .bg-white,
+    .cal-month-view .cal-cell-row:hover,
+    .chats-wrap .conversations-hold .single-conversation.sender .conversation-msg,
+    .cal-day-view .cal-hour:nth-child(odd),
+    &.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu,
+    .breadcrumb-bar {
+        background: rgba(66, 66, 66, 0.92) !important;
+    }
+    .cal-month-view .cal-cell-row .cal-cell:hover, 
+    .cal-month-view .cal-cell.cal-has-events.cal-open,
+    .cal-week-view .cal-day-headers .cal-header:hover, 
+    .cal-week-view .cal-day-headers .cal-drag-over,
+    .cal-day-view .cal-hour-segment:hover, 
+    .cal-day-view .cal-drag-over .cal-hour-segment {
+        background: #333 !important;
+    }
+    .cal-month-view .cal-day-cell:not(:last-child),
+    .cal-month-view .cal-days,
+    .cal-week-view .cal-day-headers .cal-header:not(:last-child),
+    .cal-week-view .cal-day-headers,
+    .cal-month-view .cal-days .cal-cell-row,
+    .cal-day-view .cal-hour:not(:last-child) .cal-hour-segment, 
+    .cal-day-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
+        border-color: #000 !important;
+    }
+
+    /* Hopscotch Tour */ 
+    div.hopscotch-bubble {
+        border-color: $primary-dark;
+    }
+    /* up arrow  */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
+        border-bottom: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
+        border-bottom: 17px solid map-get($md-primary, 500);
+        top: -16px;
+    }
+    /* right arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
+        border-left: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
+        border-left: 17px solid map-get($md-primary, 500);
+        left: -1px;
+    }
+    /* bottom arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
+        border-top: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
+        border-top: 17px solid map-get($md-primary, 500);
+        top: -18px;
+    }
+    /* Left Arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
+        border-right: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
+        left: 1px;
+        border-right: 17px solid map-get($md-primary, 500);
+    }
+
+    .mat-bg-accent,
+    div.hopscotch-bubble .hopscotch-bubble-number,
+    div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+    div.hopscotch-bubble .hopscotch-nav-button.next {
+        background-color: map-get($md-accent, 500);
+        color: black;
+    }
+    .mat-bg-warn {
+        background-color: #f44336;
+        color: white;
+    }
+    .mat-color-accent {
+        color: map-get($md-accent, 500);
+    }
+    .mat-color-warn {
+        color: #f44336;
+    }
+}

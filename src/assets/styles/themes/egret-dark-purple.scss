@@ -1,0 +1,218 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$md-primary: (
+    50 : #f3e5f6,
+    100 : #e1bee7,
+    200 : #ce93d8,
+    300 : #ba68c8,
+    400 : #ab47bc,
+    500 : #9c27b0,
+    600 : #9423a9,
+    700 : #8a1da0,
+    800 : #801797,
+    900 : #6e0e87,
+    A100 : #efb8ff,
+    A200 : #e485ff,
+    A400 : #d852ff,
+    A700 : #d238ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #ffffff,
+    )
+);
+
+$md-accent: (
+    50 : #eaf5ea,
+    100 : #c9e7cb,
+    200 : #a6d7a8,
+    300 : #82c785,
+    400 : #67bb6a,
+    500 : #4caf50,
+    600 : #45a849,
+    700 : #3c9f40,
+    800 : #339637,
+    900 : #248627,
+    A100 : #c5ffc7,
+    A200 : #92ff95,
+    A400 : #5fff64,
+    A700 : #46ff4b,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+// mandatory stuff for theming
+$egret-primary: mat-palette($md-primary);
+$egret-accent:  mat-palette($md-accent);
+
+// include the custom theme components into a theme object
+$egret-theme: mat-dark-theme($egret-primary, $egret-accent);
+
+$primary-dark: darken( map-get($md-primary, 500), 8% );
+
+// include the custom theme object into the angular material theme
+.egret-dark-purple {
+    @include angular-material-theme($egret-theme);
+
+    .mat-bg-primary,
+    .topbar,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+    .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+    .fileupload-drop-zone.dz-file-over,
+    .toolbar-avatar.online > .status-dot,
+    .cal-open-day-events,
+    div.hopscotch-bubble {
+        background: map-get($md-primary, 500) !important;
+        color: #ffffff !important;
+    }
+    .mat-color-primary,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        color: map-get($md-primary, 500) !important;
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        font-weight: 500;
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+        border-left: 2px solid map-get($md-primary, 500);
+    }
+    .messages-wrap .inbox-hold {
+        background: transparent !important;
+    }
+    .sidebar-panel.mat-sidenav {
+        background: url('../../images/sidebar-bg-dark.jpg') no-repeat;
+    }
+    .app-user .app-user-name,
+    .sidebar-panel.mat-sidenav .sidebar-list-item md-icon:not(.menu-caret),
+    .ql-snow .ql-picker,
+    .mat-option,
+    .mat-dialog-container {
+        color: white !important;
+    }
+    .text-muted {
+        color: rgba(255, 255, 255, .54) !important;
+    }
+
+    .ql-snow .ql-stroke  {
+        stroke: #ffffff;
+    }
+    .ql-snow .ql-fill {
+        fill: #ffffff;
+    }
+    .ql-toolbar.ql-snow,
+    .ql-toolbar.ql-snow + .ql-container.ql-snow {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .sidebar-panel.mat-sidenav .navigation-hold,
+    .message-item.open .message-head,
+    .ngx-datatable.material .datatable-header,
+    .bg-white,
+    .cal-month-view .cal-cell-row:hover,
+    .chats-wrap .conversations-hold .single-conversation.sender .conversation-msg,
+    .cal-day-view .cal-hour:nth-child(odd),
+    &.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu,
+    .breadcrumb-bar {
+        background: rgba(66, 66, 66, 0.92) !important;
+    }
+    .cal-month-view .cal-cell-row .cal-cell:hover, 
+    .cal-month-view .cal-cell.cal-has-events.cal-open,
+    .cal-week-view .cal-day-headers .cal-header:hover, 
+    .cal-week-view .cal-day-headers .cal-drag-over,
+    .cal-day-view .cal-hour-segment:hover, 
+    .cal-day-view .cal-drag-over .cal-hour-segment {
+        background: #333 !important;
+    }
+    .cal-month-view .cal-day-cell:not(:last-child),
+    .cal-month-view .cal-days,
+    .cal-week-view .cal-day-headers .cal-header:not(:last-child),
+    .cal-week-view .cal-day-headers,
+    .cal-month-view .cal-days .cal-cell-row,
+    .cal-day-view .cal-hour:not(:last-child) .cal-hour-segment, 
+    .cal-day-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
+        border-color: #000 !important;
+    }
+
+    /* Hopscotch Tour */ 
+    div.hopscotch-bubble {
+        border-color: $primary-dark;
+    }
+    /* up arrow  */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
+        border-bottom: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
+        border-bottom: 17px solid map-get($md-primary, 500);
+        top: -16px;
+    }
+    /* right arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
+        border-left: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
+        border-left: 17px solid map-get($md-primary, 500);
+        left: -1px;
+    }
+    /* bottom arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
+        border-top: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
+        border-top: 17px solid map-get($md-primary, 500);
+        top: -18px;
+    }
+    /* Left Arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
+        border-right: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
+        left: 1px;
+        border-right: 17px solid map-get($md-primary, 500);
+    }
+    
+    .mat-bg-accent,
+    div.hopscotch-bubble .hopscotch-bubble-number,
+    div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+    div.hopscotch-bubble .hopscotch-nav-button.next {
+        background-color: map-get($md-accent, 500);
+        color: black;
+    }
+    .mat-bg-warn {
+        background-color: #f44336;
+        color: white;
+    }
+    .mat-color-accent {
+        color: map-get($md-accent, 500);
+    }
+    .mat-color-warn {
+        color: #f44336;
+    }
+}

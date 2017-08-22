@@ -1,1 +1,0 @@
-export {TargetEditComponent} from './target-edit.component';

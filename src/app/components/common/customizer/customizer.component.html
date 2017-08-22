@@ -1,0 +1,40 @@
+<div id="app-customizer">
+  <div class="handle" *ngIf="!isCustomizerOpen">
+    <button 
+    md-fab
+    color="warn" 
+    (click)="isCustomizerOpen = true">
+      <md-icon>settings</md-icon>
+    </button>
+  </div>
+  <md-card class="p-0" *ngIf="isCustomizerOpen">
+    <md-card-title class="mat-bg-warn">
+      <div class="card-title-text">
+        <span>Settings</span>
+        <span fxFlex></span>
+        <button 
+        class="card-control" 
+        md-icon-button
+        (click)="isCustomizerOpen = false">
+          <md-icon>close</md-icon>
+        </button>
+      </div>
+    </md-card-title>
+    <md-card-content>
+      <div class="pb-1">
+        <h5 class="m-0 pb-1">Choose a Navigation Style</h5>
+        <md-radio-group fxLayout="column" [(ngModel)]="selectedMenu" (change)="changeSidenav($event)">
+          <md-radio-button 
+          *ngFor="let type of sidenavTypes" 
+          [value]="type.value">
+            {{type.name}}
+          </md-radio-button>
+        </md-radio-group>
+      </div>
+      <md-divider></md-divider>
+      <div class="pt-1 pb-1">
+        <md-checkbox (change)="toggleBreadcrumb($event)" [checked]="true">Use breadcrumb</md-checkbox>
+      </div>
+    </md-card-content>
+  </md-card>
+</div>

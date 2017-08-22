@@ -1,0 +1,5 @@
+<div class="breadcrumb-bar" *ngIf="isEnabled">
+  <ul class="breadcrumb">
+    <li *ngFor="let part of routeParts"><a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a></li>
+  </ul>
+</div>

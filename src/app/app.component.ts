@@ -1,62 +1,37 @@
-import 'style-loader!./app.scss';
-import 'style-loader!./theme/initial.scss';
+import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 
-import {Component, ViewContainerRef} from '@angular/core';
-import * as $ from 'jquery';
+import { RoutePartsService } from "./services/route-parts/route-parts.service";
 
-import {GlobalState} from './global.state';
-import {
-  BaImageLoaderService,
-  BaThemePreloader,
-  BaThemeSpinner
-} from './theme/services';
-import {BaThemeConfig} from './theme/theme.config';
-import {layoutPaths} from './theme/theme.constants';
-
-/*
- * App Component
- * Top Level Component
- */
 @Component({
-  selector : 'app',
-  template : `
-    <main [ngClass]="{'menu-collapsed': isMenuCollapsed}" baThemeRun>
-      <div class="additional-bg"></div>
-      <router-outlet></router-outlet>
-    </main>
-  `
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class App {
+export class AppComponent implements OnInit {
+  appTitle = 'Egret';
+  pageTitle = '';
 
-  isMenuCollapsed: boolean = false;
+  constructor(public title: Title, 
+    private router: Router, 
+    private activeRoute: ActivatedRoute,
+    private routePartsService: RoutePartsService) { }
 
-  constructor(private _state: GlobalState,
-              private _imageLoader: BaImageLoaderService,
-              private _spinner: BaThemeSpinner,
-              private viewContainerRef: ViewContainerRef,
-              private themeConfig: BaThemeConfig) {
-
-    themeConfig.config();
-
-    this._loadImages();
-
-    this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
-      this.isMenuCollapsed = isCollapsed;
+  ngOnInit() {
+    this.changePageTitle();
+  }
+  changePageTitle() {
+    this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
+      var routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+      if (!routeParts.length)
+        return this.title.setTitle(this.appTitle);
+      // Extract title from parts;
+      this.pageTitle = routeParts
+                      .map((part) => part.title )
+                      .reduce((partA, partI) => {return `${partA} > ${partI}`});
+      this.pageTitle += ` | ${this.appTitle}`;
+      this.title.setTitle(this.pageTitle);
     });
-  }
-
-  public ngAfterViewInit(): void {
-    // hide spinner once all loaders are completed
-    BaThemePreloader.load().then((values) => { this._spinner.hide(); });
-  }
-
-  private _loadImages(): void {
-    // register some loaders
-    //BaThemePreloader.registerLoader(
-      // Hey Guys James/Erin sorry to comment this out.. It was hanging the application on load  (Last checkin ID: 9418294d07b46f36547d2fd0effb694103a1a367)
-      //this._imageLoader.load(layoutPaths.images.root + ''));
-      
-      // This is the line of code as it was before the above line was here (last before last checkin)
-      //this._imageLoader.load(layoutPaths.images.root + 'sky-bg.jpg'));
   }
 }

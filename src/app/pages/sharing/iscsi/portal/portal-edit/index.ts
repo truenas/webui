@@ -1,1 +1,0 @@
-export {PortalEditComponent} from './portal-edit.component';
