@@ -142,7 +142,10 @@ export class DeviceEditComponent implements OnInit {
           name : 'DISK_mode',
           placeholder : 'Mode',
           type: 'select',
-          options : [],
+          options : [
+            {label : 'AHCI', value : 'AHCI'},
+            {label : 'VirtIO', value : 'VIRTIO'},
+          ],
         },
         {
           name : 'sectorsize',
@@ -150,15 +153,6 @@ export class DeviceEditComponent implements OnInit {
           type: 'input',
         },
       ];
-      this.vmService.getStorageVolumes().subscribe((res) => {
-        let data = new EntityUtils().flattenData(res.data);
-        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
-        for (let dataset of data) {
-          if (dataset.type === 'zvol') {
-            this.DISK_zvol.add({label : dataset.name, value : dataset.path});
-          };
-        };
-      });
     } else if (this.dtype === "RAW") {
       this.fieldConfig = [
         {
@@ -252,6 +246,15 @@ export class DeviceEditComponent implements OnInit {
           };
           case 'DISK': {
             this.setgetValues(device.attributes, disk_lookup_table);
+            this.vmService.getStorageVolumes().subscribe((res) => {
+              let data = new EntityUtils().flattenData(res.data);
+              this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
+              for (let dataset of data) {
+                if (dataset.type === 'zvol') {
+                  this.DISK_zvol.add({label : dataset.name, value : dataset.path});
+                };
+              };
+            });
             break;
           };
           case 'RAW': {
