@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
@@ -23,6 +23,7 @@ import { MdSnackBar } from '@angular/material';
   ],
   providers: [
     RestService,
+    DialogService
   ],
 })
 export class ManagerComponent implements OnInit {
@@ -42,7 +43,7 @@ export class ManagerComponent implements OnInit {
   public busy: Subscription;
 
   constructor(private rest: RestService, private ws: WebSocketService,
-    private router: Router, private dragulaService: DragulaService, public snackBar: MdSnackBar) {
+    private router: Router, private dragulaService: DragulaService, private dialog:DialogService, public snackBar: MdSnackBar) {
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
     });
@@ -138,12 +139,19 @@ export class ManagerComponent implements OnInit {
     });
   }
 
+  openDialog() {
+    this.dialog.confirm("Warning", "Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.").subscribe((res) => {
+      if (res) {
+        this.isEncrypted = true;
+        this.vol_encrypt = 1
+      } else {
+        this.isEncrypted = false;
+        this.vol_encrypt = 0;
+      }
+    });
+  }
+
   isEncryptedChecked() {
-    if (this.isEncrypted) {
-      this.vol_encrypt = 1;
-      this.openSnackBar();
-    } else {
-      this.vol_encrypt = 0;
-    }
+    this.openDialog();
   }
 }
