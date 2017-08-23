@@ -31,18 +31,23 @@ export const rootRouterConfig: Routes = [
         path: 'dashboard', 
         loadChildren: './pages/dashboard/dashboard.module#DashboardModule', 
         data: { title: 'Dashboard', breadcrumb: 'DASHBOARD'}
+      },
+      {
+        path: 'account',
+        children: [
+          {
+            path : 'users',
+            loadChildren : './pages/users/users.module#UsersModule',
+            data: { title: 'Users', breadcrumb: 'USERS'}
+          },
+          {
+            path : 'groups',
+            loadChildren : './pages/groups/groups.module#GroupsModule',
+            data: { title: 'Groups', breadcrumb: 'GROUPS'}
+          },
+        ]
       }
     ]
-  },
-  {
-    path : 'users',
-    loadChildren : './pages/users/users.module#UsersModule',
-    data: { title: 'Users', breadcrumb: 'USERS'}
-  },
-  {
-    path : 'groups',
-    loadChildren : './pages/groups/groups.module#GroupsModule',
-    data: { title: 'Groups', breadcrumb: 'GROUPS'}
   },
   { 
     path: '**', 
