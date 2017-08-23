@@ -20,19 +20,4 @@ export class NavigationComponent {
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
     });
   }
-
-  // Only for demo purpose
-  addMenuItem() {
-    this.menuItems.push({
-      name: 'ITEM',
-      type: 'dropDown',
-      tooltip: 'Item',
-      icon: 'done',
-      state: 'material',
-      sub: [
-        {name: 'SUBITEM', state: 'cards'},
-        {name: 'SUBITEM', state: 'buttons'}
-      ]
-    });
-  }
 }

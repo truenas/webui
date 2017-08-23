@@ -14,7 +14,7 @@ import * as domHelper from '../../../../helpers/dom.helper';
 export class AdminLayoutComponent implements OnInit {
   private isMobile;
   screenSizeWatcher: Subscription;
-  isSidenavOpen: Boolean = false;
+  isSidenavOpen: Boolean = true;
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
 
   constructor(private router: Router,

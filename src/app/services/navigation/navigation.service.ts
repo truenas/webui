@@ -25,21 +25,39 @@ export class NavigationService {
       type: 'link',
       tooltip: 'Dashboard',
       icon: 'dashboard',
-      state: 'dashboard'
+      state: 'dashboard',
     },
     {
       name: 'Account',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Account',
       icon: 'people',
-      state: 'account'
+      state: 'account',
+      sub: [
+        {name: 'Users', state: 'users'},
+        {name: 'Groups', state: 'group'},
+      ]
     },
     {
       name: 'System',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'System',
       icon: 'computer',
-      state: 'system'
+      state: 'system',
+      sub: [
+        {name: 'Information', state: 'information'},
+        {name: 'General', state: 'general'},
+        {name: 'Boot', state: 'boot'},
+        {name: 'Advanced', state: 'advanced'},
+        {name: 'Email', state: 'email'},
+        {name: 'System Dataset', state: 'systemdataset'},
+        {name: 'Alert Services', state: 'alertservices'},
+        {name: 'Tunables', state: 'tunables'},
+        {name: 'Update', state: 'update'},
+        {name: 'CAs', state: 'ca'},
+        {name: 'Certificates', state: 'certs'},
+        {name: 'Support', state: 'support'},
+      ]
     },
 //    {
 //      name: 'Tasks',
@@ -50,56 +68,65 @@ export class NavigationService {
 //    },
     {
       name: 'Network',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Network',
       icon: 'device_hub',
-      state: 'network'
+      state: 'network',
+      sub: [
+        {name: 'Global Configuration', state: 'networkconfig'},
+        {name: 'Interfaces', state: 'interfaces'},
+        {name: 'IPMI', state: 'ipmi'},
+        {name: 'Link Aggregation', state: 'laggs'},
+        {name: 'Network Summary', state: 'networksummary'},
+        {name: 'Static Routes', state: 'staticroutes'},
+        {name: 'VLANs', state: 'vlans'},
+      ]
     },
     {
       name: 'Storage',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Storage',
       icon: 'storage',
       state: 'storage'
     },
     {
       name: 'Directory Service',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Directory Service',
       icon: 'group_work',
       state: 'directoryservice'
     },
     {
       name: 'Sharing',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Sharing',
       icon: 'folder_shared',
       state: 'sharing'
     },
     {
       name: 'Services',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Services',
       icon: 'tune',
       state: 'services'
     },
     {
       name: 'Plugins',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Plugins',
       icon: 'extension',
       state: 'plugins'
     },
     {
       name: 'Jails',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Jails',
       icon: 'apps',
       state: 'jails'
     },
     {
       name: 'Virtualization',
-      type: 'link',
+      type: 'dropDown',
       tooltip: 'Virtualization',
       icon: 'laptop_windows',
       state: 'virtualization'
