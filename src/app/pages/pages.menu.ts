@@ -352,4 +352,12 @@ export const PAGES_MENU = [
       },
     ],
   },
+  {
+    url: 'http://doc.freenas.org/11/freenas.html',
+    title : 'Guide',
+    icon : 'ion-information-circled',
+    selected : false,
+    expanded : false,
+    order : 0,
+  }
 ];
