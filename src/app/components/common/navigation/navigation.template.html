@@ -67,19 +67,4 @@
       <span class="nav-section-title text-muted" *ngIf="!!item.name">{{item.name | translate}}</span>
     </div>
   </div>
-
-  <!-- Only for demo purpose -->
-  <md-divider></md-divider>
-  <div>
-    <md-list-item class="sidebar-list-item">
-      <a (click)="addMenuItem()">
-        <span
-        class="menu-item-tooltip" 
-        mdTooltip="Add new menu item" 
-        mdTooltipPosition="right"></span>
-        <md-icon>add</md-icon>
-        <span>{{'ADD' | translate}}</span>
-      </a>
-    </md-list-item>
-  </div>
 </md-nav-list>
