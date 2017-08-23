@@ -1,14 +1,47 @@
-# Egret
+# FreeNAS 11 - WebUI 
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.4.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.4. 
+
+## Angular / Material Design
+
+The FreeNAS WebUI is built on official Angular Material Design components and the FreeNAS 11 API via REST/Websockets and features: 
+
+* Lazy loading
+* AOT compilation
+* Color schemes/theme picker
+* Translations 
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. 
+
+The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+Run `ng generate component component-name` to generate a new component. 
+
+You can also use `ng generate directive|pipe|service|class|module`.
+
+## Examples
+
+These examples use angular-cli to generate code in specific locations 
+
+1. generate a 'common' Module for the 'pages' Component:
+
+`ng generate component pages`
+`ng generate module pages/common`
+
+2. Add a component for to handle confirm dialogs in the 'pages' common module:
+
+`ng generate component pages/common/confirm-dialog`
+`ng generate service services/dialog`
+
+3. In our 'pages' component we implement the 'dashboard' using a component, module, and routing table. Now let's add a 'linechart' component to the dashboard:
+
+`ng generate component pages/dashboard/linechart`
+
+**If you follow these examples when extending the FreeNAS WebUI you'll have good karma for the rest of the day.**
 
 ## Build
 
