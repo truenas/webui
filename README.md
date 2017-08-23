@@ -4,12 +4,13 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Angular / Material Design
 
-The FreeNAS WebUI is built on official Angular Material Design components and the FreeNAS 11 API via REST/Websockets and features: 
+The FreeNAS WebUI is built with official Angular Material Design components and features: 
 
 * Lazy loading
 * AOT compilation
-* Color schemes/theme picker
-* Translations 
+* Color Scheme / Theme Picker
+* Translations
+* Websockets / REST calls to the FreeNAS 11 API
 
 ## Development server
 
@@ -30,11 +31,13 @@ These examples use angular-cli to generate code in specific locations
 1. generate a 'common' Module for the 'pages' Component:
 
 `ng generate component pages`
+
 `ng generate module pages/common`
 
 2. Add a component for to handle confirm dialogs in the 'pages' common module:
 
 `ng generate component pages/common/confirm-dialog`
+
 `ng generate service services/dialog`
 
 3. In our 'pages' component we implement the 'dashboard' using a component, module, and routing table. Now let's add a 'linechart' component to the dashboard:
