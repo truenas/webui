@@ -5,7 +5,7 @@
       <md-card-content>
         <div class="text-center pb-1">
           <img src="assets/images/logo-full.png" alt="">
-          <p class="text-muted">Sign in to your account</p>
+          <!--p class="text-muted">Sign in to your account</p-->
         </div>
         <form #signinForm="ngForm" (ngSubmit)="signin()">
           <div class="">
@@ -41,18 +41,18 @@
               class="form-error-msg"> Password is required </small>
           </div>
           
-          <div class="pb-1">
+          <!--div class="pb-1">
             <md-checkbox
               name="rememberMe"
               class="pb-1">Remember this computer</md-checkbox>
-          </div>
+          </div-->
           
           <button md-raised-button class="mat-primary full-width mb-1" [disabled]="signinForm.invalid">Sign in</button>
-          <div class="text-center">
+          <!--div class="text-center">
             <a [routerLink]="['/sessions/forgot-password']" class="mat-primary text-center full-width">Forgot password</a>
             <span fxFlex></span>
             <a [routerLink]="['/sessions/signup']" class="mat-primary text-center full-width">Create a new account</a>
-          </div>
+          </div-->
         </form>
       </md-card-content>
     </md-card>

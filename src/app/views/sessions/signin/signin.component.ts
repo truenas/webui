@@ -1,5 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import {Router} from '@angular/router';
 import { MdProgressBar, MdButton } from '@angular/material';
+
+import {WebSocketService} from '../../../services/ws.service';
 
 @Component({
   selector: 'app-signin',
@@ -10,20 +13,45 @@ export class SigninComponent implements OnInit {
   @ViewChild(MdProgressBar) progressBar: MdProgressBar;
   @ViewChild(MdButton) submitButton: MdButton;
 
+  private failed: Boolean = false;
+
   signinData = {
-    username: '',
+    username: 'root',
     password: ''
   }
-  constructor() { }
+  constructor(private ws: WebSocketService, private router: Router) { }
 
   ngOnInit() {
   }
 
   signin() {
-    console.log(this.signinData);
-
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
+
+    this.ws.login(this.signinData.username, this.signinData.password)
+                      .subscribe((result) => { this.loginCallback(result); });
+  }
+
+  loginCallback(result) {
+    if (result === true) {
+      this.successLogin();
+    } else {
+      this.errorLogin();
+    }
+  }
+
+  successLogin() {
+    if (this.ws.redirectUrl) {
+      this.router.navigateByUrl(this.ws.redirectUrl);
+      this.ws.redirectUrl = '';
+    } else {
+      this.router.navigate([ '/dashboard' ]);
+    }
+  }
+
+  errorLogin() { 
+    this.failed = true;
+    this.progressBar.mode = 'determinate';
   }
 
 }
