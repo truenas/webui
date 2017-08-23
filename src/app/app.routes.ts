@@ -36,12 +36,12 @@ export const rootRouterConfig: Routes = [
   },
   {
     path : 'users',
-    loadChildren : 'app/pages/users/users.module#UsersModule',
+    loadChildren : './pages/users/users.module#UsersModule',
     data: { title: 'Users', breadcrumb: 'USERS'}
   },
   {
     path : 'groups',
-    loadChildren : 'app/pages/groups/groups.module#GroupsModule',
+    loadChildren : './pages/groups/groups.module#GroupsModule',
     data: { title: 'Groups', breadcrumb: 'GROUPS'}
   },
   { 
