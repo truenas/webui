@@ -22,7 +22,7 @@ import {
 export class UserFormComponent {
 
   protected resource_name: string = 'account/users/';
-  protected route_success: string[] = [ 'users' ];
+  protected route_success: string[] = ['account', 'users' ];
   protected isEntity: boolean = true;
 
   public fieldConfig: FieldConfig[] = [
@@ -125,7 +125,7 @@ export class UserFormComponent {
   private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected _state: _) {}
+              protected ws: WebSocketService ) {}
   preInit(entityForm: any) {
     if (!entityForm.isNew) {
       this.bsdusr_creategroup =

@@ -8,5 +8,5 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class UserDeleteComponent {
 
   protected resource_name: string = 'account/users';
-  protected route_success: string[] = [ 'users' ];
+  protected route_success: string[] = [ 'account','users' ];
 }

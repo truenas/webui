@@ -154,7 +154,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     if (!route) {
       route = this.conf.route_success;
     }
-    this.router.navigate(new Array('/pages').concat(route));
+    this.router.navigate(new Array('/').concat(route));
   }
 
   editSubmit(body: any) { return this.rest.put(this.resourceName, body); }
@@ -192,7 +192,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                     .subscribe(
                         (res) => {
                           if (this.conf.route_success) {
-                            this.router.navigate(new Array('/pages').concat(
+                            this.router.navigate(new Array('/').concat(
                                 this.conf.route_success));
                           } else {
                             this.success = true;
@@ -222,7 +222,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     if (!route) {
       route = this.conf.route_success;
     }
-    this.router.navigate(new Array('/pages').concat(route));
+    this.router.navigate(new Array('/').concat(route));
   }
 
   createControl(config: FieldConfig) {

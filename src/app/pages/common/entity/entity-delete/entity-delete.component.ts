@@ -60,7 +60,7 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
     this.busy = this.rest.delete(this.conf.resource_name + '/' + this.pk, data)
                     .subscribe(
                         (res) => {
-                          this.router.navigate(new Array('/pages').concat(
+                          this.router.navigate(new Array('/').concat(
                               this.conf.route_success));
                         },
                         (res) => { new EntityUtils().handleError(this, res); });
@@ -71,6 +71,6 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
     if (!route) {
       route = this.conf.route_success;
     }
-    this.router.navigate(new Array('/pages').concat(route));
+    this.router.navigate(new Array('/').concat(route));
   }
 }

@@ -133,16 +133,16 @@ export class EntityTableComponent implements OnInit {
   }
 
   doAdd() {
-    this.router.navigate(new Array('/pages').concat(this.conf.route_add));
+    this.router.navigate(new Array('/').concat(this.conf.route_add));
   }
 
   doEdit(id) {
     this.router.navigate(
-      new Array('/pages').concat(this.conf.route_edit).concat(id));
+      new Array('/').concat(this.conf.route_edit).concat(id));
   }
 
   doDelete(id) {
     this.router.navigate(
-      new Array('/pages').concat(this.conf.route_delete).concat(id));
+      new Array('/').concat(this.conf.route_delete).concat(id));
   }
 }
