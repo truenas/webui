@@ -31,11 +31,21 @@ export class EntityUtils {
         let fc: any = _.find(entity.fieldConfig, {'name' : i});
         if (fc) {
           let errors = '';
-          field.forEach((item, j) => { errors += item + ' '; });
+          for (let item in field) {
+            let item = field[i];
+            if (field.hasOwnProperty(item)) {
+              errors += item + ' ';
+            }
+          }
           fc.hasErrors = true;
           fc.errors = errors;
         } else {
-          field.forEach((item, j) => { entity.error += item + '<br />'; });
+          for (let i in field) {
+            let item = field[i];
+            if (field.hasOwnProperty(item)) {
+              entity.error += item + '<br />';
+            }
+          }
         }
       }
     }

@@ -15,7 +15,7 @@ import {
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
-import {WebSocketService} from '../../../../services/';
+import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
@@ -47,6 +47,8 @@ export class DeviceEditComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected networkService: NetworkService,
+              protected systemGeneralService: SystemGeneralService,
               private entityFormService : EntityFormService,
               public vmService: VmService) {}
   ngOnInit() {
@@ -106,6 +108,13 @@ export class DeviceEditComponent implements OnInit {
           placeholder : 'Resolution:',
           type: 'select',
           options : [
+            {label : '1920x1080', value : "1920x1080"},
+            {label : '1400x1050', value : "1400x1050"},
+            {label : '1280x1024', value : "1280x1024"},
+            {label : '1280x960', value : "1280x960"},
+            {label : '1024x768', value : '1024x768'},
+            {label : '800x600', value : '800x600'},
+            {label : '640x480', value : '640x480'},
           ],
         },
         {
@@ -133,7 +142,10 @@ export class DeviceEditComponent implements OnInit {
           name : 'DISK_mode',
           placeholder : 'Mode',
           type: 'select',
-          options : [],
+          options : [
+            {label : 'AHCI', value : 'AHCI'},
+            {label : 'VirtIO', value : 'VIRTIO'},
+          ],
         },
         {
           name : 'sectorsize',
@@ -141,15 +153,6 @@ export class DeviceEditComponent implements OnInit {
           type: 'input',
         },
       ];
-      this.vmService.getStorageVolumes().subscribe((res) => {
-        let data = new EntityUtils().flattenData(res.data);
-        this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
-        for (let dataset of data) {
-          if (dataset.type === 'zvol') {
-            this.DISK_zvol.add({label : dataset.name, value : dataset.path});
-          };
-        };
-      });
     } else if (this.dtype === "RAW") {
       this.fieldConfig = [
         {
@@ -168,12 +171,20 @@ export class DeviceEditComponent implements OnInit {
           name : 'RAW_mode',
           placeholder : 'Mode',
           type: 'select',
-          options : [],
+          options : [
+            {label : 'AHCI', value : 'AHCI'},
+            {label : 'VirtIO', value : 'VIRTIO'},
+          ],
         },
       ];
     }
   }
+  private nic_attach: any;
+  private nicType:  any;
+  private ipAddress: any;
+
   afterInit(entityForm: any){
+    
     this.formGroup = entityForm.formGroup;
     let vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
@@ -196,19 +207,49 @@ export class DeviceEditComponent implements OnInit {
       'path' : "CDROM_path",
     };
     let rawfile_lookup_table: Object = {
-      'RAW_path' : 'RAW_path',
-      'RAW_sectorsize': 'RAW_sectorsize',
-      'RAW_mode':'RAW_mode'
+      'path' : 'RAW_path',
+      'sectorsize': 'RAW_sectorsize',
+      'type':'RAW_mode'
     };
     this.vmService.getVM(this.vm).subscribe((vm) => {
       for (let device of vm.devices) {
         switch (device.dtype) {
           case 'VNC': {
             this.setgetValues(device.attributes, vnc_lookup_table);
+            this.systemGeneralService.getIPChoices().subscribe((res) => {
+              if (res.length > 0) {
+                this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+                if (this.ipAddress ){
+                  for(let i in res){
+                    let item = res[i];
+                    this.ipAddress.options.push({label : item[1], value : item[0]});
+                  }
+                }
+              }
+            })
             break;
           };
           case 'NIC': {
-            this.setgetValues(device.attributes, nic_lookup_table);
+            this.setgetValues(device.attributes, nic_lookup_table);           
+            this.networkService.getAllNicChoices().subscribe((res) => {
+              this.nic_attach = _.find(this.fieldConfig, {'name' : 'nic_attach'});
+              if (this.nic_attach ){
+                for(let i in res){
+                  let item = res[i];
+                  this.nic_attach.options.push({label : item[1], value : item[0]});
+                }
+              }
+            });
+            entityForm.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
+            .subscribe((res) => {
+              this.nicType = _.find(this.fieldConfig, {name : "NIC_type"});
+              if (this.nicType ){
+                for(let i in res){
+                  let item = res[i];
+                  this.nicType.options.push({label : item[1], value : item[0]});
+                }
+              }
+            });
             break;
           };
           case 'CDROM': {
@@ -217,6 +258,15 @@ export class DeviceEditComponent implements OnInit {
           };
           case 'DISK': {
             this.setgetValues(device.attributes, disk_lookup_table);
+            this.vmService.getStorageVolumes().subscribe((res) => {
+              let data = new EntityUtils().flattenData(res.data);
+              this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
+              for (let dataset of data) {
+                if (dataset.type === 'zvol') {
+                  this.DISK_zvol.add({label : dataset.name, value : dataset.path});
+                };
+              };
+            });
             break;
           };
           case 'RAW': {
@@ -293,6 +343,18 @@ export class DeviceEditComponent implements OnInit {
           'attributes' : {
             'path' : formvalue.CDROM_path ? formvalue.CDROM_path
                                           : vm.attributes.path
+          }
+        })
+      }
+      if (vm.dtype === 'RAW') {
+        devices.push({
+          'dtype' : 'RAW',
+          'attributes' : {
+            'path' : formvalue.RAW_path ? formvalue.RAW_path
+                                          : vm.attributes.path,
+            'sectorsize' : formvalue.RAW_sectorsize ? formvalue.RAW_sectorsize : vm.attributes.sectorsize,
+            'mode': formvalue.RAW_mode ? formvalue.RAW_mode : vm.attributes.mode,
+
           }
         })
       }
