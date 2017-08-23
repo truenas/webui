@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
-import { ConfirmDialog } from './views/common/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 

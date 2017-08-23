@@ -29,8 +29,8 @@ export const rootRouterConfig: Routes = [
     children: [
       {
         path: 'dashboard', 
-        loadChildren: './views/others/others.module#OthersModule', 
-        data: { title: 'Others', breadcrumb: 'OTHERS'}
+        loadChildren: './pages/dashboard/dashboard.module#DashboardModule', 
+        data: { title: 'Dashboard', breadcrumb: 'DASHBOARD'}
       }
     ]
   },
