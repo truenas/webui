@@ -1,41 +1,55 @@
- <md-card>
-  <md-card-title>System Information</md-card-title>
-      <div class="row">
-        <div class="col-md-3">Uptime</div>
-        <div class="col-md-9">{{ info.uptime }}</div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">Version</div>
-        <div class="col-md-9">{{ info.version }}</div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">Model</div>
-        <div class="col-md-9">{{ info.model }}</div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">Average Load</div>
-        <div class="col-md-9">{{ info.loadavg }}</div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">Physical Memory</div>
-        <div class="col-md-9">{{ info.physmem }}</div>
-      </div>
-      <div *ngIf="info.hostname" class="row">
-        <div class="col-md-3">Hostname </div>
-        <div class="col-md-9">{{ info.hostname }}</div>      
-      </div>
-      <div *ngFor="let ip of ipAddress" class="row">
-        <div class="col-md-3">IP </div>
-        <div class="col-md-9">{{ ip }}</div>      
-      </div>
-</md-card>
-
-
-<md-card *ngFor="let graph of graphs">
-  <md-card-title>{{ graph.title }}</md-card-title>
-  <md-card-content>
-      
-      <line-chart [dataList]="graph.dataList" [legends]="graph.legends" [type]="graph.type || 'Line'" [series]="graph.series"></line-chart>
-
-	</md-card-content>
-</md-card>
+ <div fxLayout="row" fxLayoutWrap="wrap">
+  <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50">
+  <md-card class="p-0">
+      <md-card-title fxLayoutAlign="start center">
+        <div class="card-title-text mat-bg-primary">
+          <span>System Information</span>
+          <span fxFlex></span>
+        </div>
+      </md-card-title>
+      <md-card-content>
+      	  <div class="row">
+	        <div class="col-md-3">Uptime</div>
+	        <div class="col-md-9">{{ info.uptime }}</div>
+	      </div>
+	      <div class="row">
+	        <div class="col-md-3">Version</div>
+	        <div class="col-md-9">{{ info.version }}</div>
+	      </div>
+	      <div class="row">
+	        <div class="col-md-3">Model</div>
+	        <div class="col-md-9">{{ info.model }}</div>
+	      </div>
+	      <div class="row">
+	        <div class="col-md-3">Average Load</div>
+	        <div class="col-md-9">{{ info.loadavg }}</div>
+	      </div>
+	      <div class="row">
+	        <div class="col-md-3">Physical Memory</div>
+	        <div class="col-md-9">{{ info.physmem }}</div>
+	      </div>
+	      <div *ngIf="info.hostname" class="row">
+	        <div class="col-md-3">Hostname </div>
+	        <div class="col-md-9">{{ info.hostname }}</div>      
+	      </div>
+	      <div *ngFor="let ip of ipAddress" class="row">
+	        <div class="col-md-3">IP </div>
+	        <div class="col-md-9">{{ ip }}</div>      
+	      </div>
+      </md-card-content>
+    </md-card>
+    </div>
+	<div *ngFor="let graph of graphs" fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50">
+	<md-card class="p-0">
+	  <md-card-title>
+        <div class="card-title-text mat-bg-primary">
+          <span>{{ graph.title }}</span>
+          <span fxFlex></span>
+        </div>
+      </md-card-title>
+	  <md-card-content>
+	  	<line-chart [dataList]="graph.dataList" [legends]="graph.legends" [type]="graph.type || 'Line'" [series]="graph.series"></line-chart>
+	  </md-card-content>
+	</md-card>
+	</div>
+</div>
