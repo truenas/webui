@@ -5,8 +5,8 @@
     <button md-button (click)="toggleTree()" type="button">Browse</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
         <template #treeNodeTemplate let-node>
-            <i *ngIf="node.data.hasChildren" class='ion-folder'></i>
-            <i *ngIf="!node.data.hasChildren" class='ion-document'></i>
+            <md-icon *ngIf="node.data.hasChildren">folder</md-icon>
+            <md-icon *ngIf="!node.data.hasChildren">insert_drive_file</md-icon>
             <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
         </template>
     </tree-root>

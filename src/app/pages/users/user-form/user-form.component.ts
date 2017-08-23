@@ -125,7 +125,7 @@ export class UserFormComponent {
   private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected _state: GlobalState) {}
+              protected ws: WebSocketService, protected _state: _) {}
   preInit(entityForm: any) {
     if (!entityForm.isNew) {
       this.bsdusr_creategroup =
