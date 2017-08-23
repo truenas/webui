@@ -35,7 +35,7 @@ export class NavigationService {
       state: 'account',
       sub: [
         {name: 'Users', state: 'users'},
-        {name: 'Groups', state: 'group'},
+        {name: 'Groups', state: 'groups'},
       ]
     },
     {

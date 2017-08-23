@@ -13,7 +13,7 @@ import {
 })
 export class GroupFormComponent {
 
-  protected route_success: string[] = [ 'groups' ];
+  protected route_success: string[] = [ 'account', 'groups' ];
   protected resource_name: string = 'account/groups/';
   protected isEntity: boolean = true;
 

@@ -10,10 +10,10 @@ import {RestService} from '../../../services/rest.service';
 export class GroupListComponent {
 
   protected resource_name: string = 'account/groups/';
-  protected route_add: string[] = [ 'groups', 'add' ];
+  protected route_add: string[] = ['account', 'groups', 'add' ];
   protected route_add_tooltip: string = "Add Group";
-  protected route_edit: string[] = [ 'groups', 'edit' ];
-  protected route_delete: string[] = [ 'groups', 'delete' ];
+  protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
+  protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
 
   public columns: Array<any> = [
     {name : 'Group', prop : 'bsdgrp_group'},

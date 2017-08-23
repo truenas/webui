@@ -16,5 +16,5 @@ import {RestService} from '../../../services/rest.service';
 export class GroupDeleteComponent {
 
   protected resource_name: string = 'account/groups/';
-  protected route_success: string[] = [ 'groups' ];
+  protected route_success: string[] = [ 'account','groups' ];
 }
