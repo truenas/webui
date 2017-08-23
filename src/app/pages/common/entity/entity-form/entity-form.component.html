@@ -1,12 +1,12 @@
 <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
-<alert *ngIf="!hasConf" type="danger">
+<p *ngIf="!hasConf">
   Please click<button class="btn btn-link" type="button" (click)="goConf()">here</button>to setup configuration first.
-</alert>
-<alert *ngIf="success" type="success">Successfully updated.</alert>
-<alert *ngIf="error" type="danger"><span [innerHTML]="error"></span></alert>
+</p>
+<p *ngIf="success" type="success">Successfully updated.</p>
+<p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <md-card>
 <div class="md-content">
-  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" [ngBusy]="busy">
+  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
     <ng-container *ngFor="let field of fieldConfig;" 
       dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
     </ng-container>

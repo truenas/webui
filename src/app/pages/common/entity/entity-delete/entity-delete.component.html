@@ -1,5 +1,5 @@
-<ba-card title="Are You Sure?">
-	<form [ngBusy]="busy">
+<md-card title="Are You Sure?">
+	<form>
   	<div *ngIf="error" class="error">
     		<span>{{ error }}</span>
   	</div>
@@ -8,4 +8,4 @@
    	<button class="btn btn-outline-warning" (click)="doCancel()">Cancel</button>
 	</form>
 
-</ba-card>
+</md-card>
