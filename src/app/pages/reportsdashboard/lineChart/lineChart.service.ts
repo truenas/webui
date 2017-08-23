@@ -38,6 +38,8 @@ export interface HandleChartConfigDataFunc {
 @Injectable()
 export class LineChartService {
 
+  private cacheConfigData: ChartConfigData[] = [];
+  
   constructor(private _baConfig: BaThemeConfigProvider,
     private _ws: WebSocketService) {}
 
@@ -70,33 +72,50 @@ export class LineChartService {
     //this.getChartConfigDataSpoof(handleChartConfigDataFunc);
 
     this._ws.call('stats.get_sources').subscribe((res) => {
-      let configData: ChartConfigData[] = this.chartConfigDataFromWsReponse(res);
-      this.extendChartConfigData(configData, handleChartConfigDataFunc);
-
+       this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
+       handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
     });
   }
+  
+  private getCacheConfigDataByTitle(title:string): ChartConfigData {
+     let chartConfigData: ChartConfigData = null;
+    
+    for( let cacheConfigDataItem of this.cacheConfigData ) {
+        if( title === cacheConfigDataItem.title ) {
+            chartConfigData = cacheConfigDataItem;
+            break;
+        }
+    }
+    
+    return chartConfigData;
+  }
 
-  private extendChartConfigData(chartConfigData: ChartConfigData[], handleChartConfigDataFunc: HandleChartConfigDataFunc) {
+  public extendChartConfigData(chartConfigTitle: string, handleChartConfigDataFunc: HandleChartConfigDataFunc) {
     let count: number = 0;
+    let chartConfigData: ChartConfigData = this.getCacheConfigDataByTitle(chartConfigTitle);
+    
+    if( chartConfigData === null || typeof(chartConfigData) === 'undefined' ) {
+      return;
+    }
+    
+    if( chartConfigData.dataList.length > 0 && 
+          chartConfigData.dataList[0].jsonResponse !== null &&
+            typeof(chartConfigData.dataList[0].jsonResponse) !== 'undefined' ) {
+        // Then this was already done.. Just use the data, spare the webservice dall.
+        // because the client expects notification
+         setTimeout(() => {
+            handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
+          }, -1)
+          return;
+    }
 
-    chartConfigData.forEach((item: ChartConfigData) => {
-      let theItem: ChartConfigData = item;
-      item.dataList.forEach((dataListItem: DataListItem) => {
-        let storeDataListItem: DataListItem = dataListItem;
-        this._ws.call('stats.get_dataset_info', [dataListItem.source, dataListItem.type]).subscribe((res) => {
-          storeDataListItem.jsonResponse = res;
-          console.log("theItem", theItem);
-          if (count < chartConfigData.length) {
-            ++count;
-          }
-
-          // Becuase when count is this.. Ive seen them all.
-          if (count >= chartConfigData.length ) {
-            handleChartConfigDataFunc.handleChartConfigDataFunc(chartConfigData);
-          }
-        });
-      });
-
+    chartConfigData.dataList.forEach((dataListItem: DataListItem) => {
+    let storeDataListItem: DataListItem = dataListItem;
+    
+    this._ws.call('stats.get_dataset_info', [dataListItem.source, dataListItem.type]).subscribe((res) => {
+      storeDataListItem.jsonResponse = res;
+      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
+    });
 
     });
   }
@@ -139,7 +158,7 @@ export class LineChartService {
   }
 
 
-  private getChartConfigDataSpoof(dataCallbackHandler: HandleChartConfigDataFunc) {
+  private getChartConfigDataSpoof(handleChartConfigDataFunc: HandleChartConfigDataFunc) {
 
     let configData: ChartConfigData[] = [];
 
@@ -198,7 +217,7 @@ export class LineChartService {
     ];
 
     setTimeout(() => {
-      dataCallbackHandler.handleChartConfigDataFunc(spoofData);
+      handleChartConfigDataFunc.handleChartConfigDataFunc(spoofData);
     }, -1)
 
   }
