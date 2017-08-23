@@ -32,6 +32,7 @@ export class EntityUtils {
         if (fc) {
           let errors = '';
           for (let item in field) {
+            let item = field[i];
             if (field.hasOwnProperty(item)) {
               errors += item + ' ';
             }
@@ -39,7 +40,8 @@ export class EntityUtils {
           fc.hasErrors = true;
           fc.errors = errors;
         } else {
-          for (let item in field) {
+          for (let i in field) {
+            let item = field[i];
             if (field.hasOwnProperty(item)) {
               entity.error += item + '<br />';
             }

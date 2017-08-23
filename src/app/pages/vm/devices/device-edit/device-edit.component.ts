@@ -219,27 +219,36 @@ export class DeviceEditComponent implements OnInit {
             this.systemGeneralService.getIPChoices().subscribe((res) => {
               if (res.length > 0) {
                 this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
-                res.forEach((item) => {
-                  this.ipAddress.options.push({label : item[1], value : item[0]});
-                });
+                if (this.ipAddress ){
+                  for(let i in res){
+                    let item = res[i];
+                    this.ipAddress.options.push({label : item[1], value : item[0]});
+                  }
+                }
               }
             })
             break;
           };
           case 'NIC': {
-            this.setgetValues(device.attributes, nic_lookup_table);
+            this.setgetValues(device.attributes, nic_lookup_table);           
             this.networkService.getAllNicChoices().subscribe((res) => {
               this.nic_attach = _.find(this.fieldConfig, {'name' : 'nic_attach'});
-              res.forEach((item) => {
-                this.nic_attach.options.push({label : item[1], value : item[0]});
-              });
+              if (this.nic_attach ){
+                for(let i in res){
+                  let item = res[i];
+                  this.nic_attach.options.push({label : item[1], value : item[0]});
+                }
+              }
             });
             entityForm.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
             .subscribe((res) => {
               this.nicType = _.find(this.fieldConfig, {name : "NIC_type"});
-              res.forEach((item) => {
-                this.nicType.options.push({label : item[1], value : item[0]});
-              });
+              if (this.nicType ){
+                for(let i in res){
+                  let item = res[i];
+                  this.nicType.options.push({label : item[1], value : item[0]});
+                }
+              }
             });
             break;
           };
