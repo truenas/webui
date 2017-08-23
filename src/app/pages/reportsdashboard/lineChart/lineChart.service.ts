@@ -15,6 +15,7 @@ export interface DataListItem {
   source: string;
   type: string;
   dataset: string;
+  jsonResponse?: any;
 }
 
 export interface ChartConfigData {
@@ -40,7 +41,7 @@ export class LineChartService {
   constructor(private _baConfig: BaThemeConfigProvider,
     private _ws: WebSocketService) {}
 
-  getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
+  public getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
 
     this._ws.call('stats.get_data', [dataList, {}]).subscribe((res) => {
       let linechartData: LineChartData = {
@@ -62,7 +63,84 @@ export class LineChartService {
   }
 
 
-  getChartConfigDataSpoof(dataCallbackHandler: HandleChartConfigDataFunc) {
+  public getChartConfigData(handleChartConfigDataFunc: HandleChartConfigDataFunc) {
+    // Use this instead of the below.. TO just spoof the data
+    // So you can see what the control looks like with no WS
+
+    //this.getChartConfigDataSpoof(handleChartConfigDataFunc);
+
+    this._ws.call('stats.get_sources').subscribe((res) => {
+      let configData: ChartConfigData[] = this.chartConfigDataFromWsReponse(res);
+      this.extendChartConfigData(configData, handleChartConfigDataFunc);
+
+    });
+  }
+
+  private extendChartConfigData(chartConfigData: ChartConfigData[], handleChartConfigDataFunc: HandleChartConfigDataFunc) {
+    let count: number = 0;
+
+    chartConfigData.forEach((item: ChartConfigData) => {
+      let theItem: ChartConfigData = item;
+      item.dataList.forEach((dataListItem: DataListItem) => {
+        let storeDataListItem: DataListItem = dataListItem;
+        this._ws.call('stats.get_dataset_info', [dataListItem.source, dataListItem.type]).subscribe((res) => {
+          storeDataListItem.jsonResponse = res;
+          console.log("theItem", theItem);
+          if (count < chartConfigData.length) {
+            ++count;
+          }
+
+          // Becuase when count is this.. Ive seen them all.
+          if (count >= chartConfigData.length ) {
+            handleChartConfigDataFunc.handleChartConfigDataFunc(chartConfigData);
+          }
+        });
+      });
+
+
+    });
+  }
+
+  private chartConfigDataFromWsReponse(res): ChartConfigData[] {
+    let configData: ChartConfigData[] = [];
+    let properties: string[] = [];
+    for (let prop in res) {
+      properties.push(prop);
+    }
+
+    properties = properties.sort();
+
+    for (let prop of properties) {
+      var propObjArray: string[] = res[prop];
+      var dataListItemArray: DataListItem[] = [];
+
+      propObjArray.forEach((proObjArrayItem) => {
+
+        let dataListItem: DataListItem = {
+          source: prop,
+          type: proObjArrayItem,
+          dataset: 'value'
+        };
+
+        dataListItemArray.push(dataListItem);
+      });
+
+      let chartData: ChartConfigData = {
+        title: prop,
+        legends: propObjArray,
+        dataList: dataListItemArray
+      };
+
+      configData.push(chartData);
+
+    }
+
+    return configData;
+  }
+
+
+  private getChartConfigDataSpoof(dataCallbackHandler: HandleChartConfigDataFunc) {
+
     let configData: ChartConfigData[] = [];
 
     let spoofData: ChartConfigData[] = [
@@ -121,57 +199,8 @@ export class LineChartService {
 
     setTimeout(() => {
       dataCallbackHandler.handleChartConfigDataFunc(spoofData);
-    }, -1);
+    }, -1)
 
   }
-  
-  createChartConfigDataFromWebSocketReponse(res): ChartConfigData [] {
-      let configData: ChartConfigData[] = [];
-      let properties : string[] = [];
-      for (let prop in res) {
-        properties.push(prop);
-      }
-      
-      properties = properties.sort();
-      
-      for (let prop of properties) {
-        var propObjArray: string[] = res[prop];
-        console.info("prop:" + prop, propObjArray);
-
-        var dataListItemArray: DataListItem[] = [];
-
-        propObjArray.forEach((proObjArrayItem) => {
-
-          let dataListItem: DataListItem = {
-            source: prop,
-            type: proObjArrayItem,
-            dataset: 'value'
-          };
-
-          dataListItemArray.push(dataListItem);
-        });
-
-        let chartData: ChartConfigData = {
-          title: prop,
-          legends: propObjArray,
-          dataList: dataListItemArray
-        };
-
-        configData.push(chartData);
-
-      }
-      
-      return configData;
-  }
-
-  getChartConfigData(dataCallbackHandler: HandleChartConfigDataFunc) {
-
-
-    this._ws.call('stats.get_sources').subscribe((res) => {
-      let configData: ChartConfigData [] = this.createChartConfigDataFromWebSocketReponse(res);
-      dataCallbackHandler.handleChartConfigDataFunc(configData);
-    });
-  }
-
 
 }

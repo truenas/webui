@@ -39,6 +39,8 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
   }
   
   tabSelectChangeHandler($event) {
+    let selectedTabName = $event.tab.textLabel;
+    
     this.allowChartsDisplay = false;
     setTimeout(()=> {  this.allowChartsDisplay = true; }, -1 );
       
