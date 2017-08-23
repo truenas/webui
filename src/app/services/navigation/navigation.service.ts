@@ -21,11 +21,116 @@ export class NavigationService {
 
   defaultMenu:IMenuItem[] = [
     {
-      name: 'DASHBOARD',
+      name: 'Dashboard',
       type: 'link',
       tooltip: 'Dashboard',
       icon: 'dashboard',
       state: 'dashboard'
+    },
+    {
+      name: 'Account',
+      type: 'link',
+      tooltip: 'Account',
+      icon: 'people',
+      state: 'account'
+    },
+    {
+      name: 'System',
+      type: 'link',
+      tooltip: 'System',
+      icon: 'computer',
+      state: 'system'
+    },
+//    {
+//      name: 'Tasks',
+//      type: 'link',
+//      tooltip: 'Tasks',
+//      icon: 'playlist_add_check',
+//      state: 'tasks'
+//    },
+    {
+      name: 'Network',
+      type: 'link',
+      tooltip: 'Network',
+      icon: 'device_hub',
+      state: 'network'
+    },
+    {
+      name: 'Storage',
+      type: 'link',
+      tooltip: 'Storage',
+      icon: 'storage',
+      state: 'storage'
+    },
+    {
+      name: 'Directory Service',
+      type: 'link',
+      tooltip: 'Directory Service',
+      icon: 'group_work',
+      state: 'directoryservice'
+    },
+    {
+      name: 'Sharing',
+      type: 'link',
+      tooltip: 'Sharing',
+      icon: 'folder_shared',
+      state: 'sharing'
+    },
+    {
+      name: 'Services',
+      type: 'link',
+      tooltip: 'Services',
+      icon: 'tune',
+      state: 'services'
+    },
+    {
+      name: 'Plugins',
+      type: 'link',
+      tooltip: 'Plugins',
+      icon: 'extension',
+      state: 'plugins'
+    },
+    {
+      name: 'Jails',
+      type: 'link',
+      tooltip: 'Jails',
+      icon: 'apps',
+      state: 'jails'
+    },
+    {
+      name: 'Virtualization',
+      type: 'link',
+      tooltip: 'Virtualization',
+      icon: 'laptop_windows',
+      state: 'virtualization'
+    },
+    {
+      name: 'Reporting',
+      type: 'link',
+      tooltip: 'Reporting',
+      icon: 'show_chart',
+      state: 'reporting'
+    },
+//  {
+//    name: 'GUIDE',
+//    type: 'link',
+//    tooltip: 'Storage',
+//    icon: 'storage',
+//    state: 'storage'
+//  },
+//    {
+//      name: 'WIZARD',
+//      type: 'link',
+//      tooltip: 'Wizard',
+//     icon: 'cake',
+//    state: 'wizard'
+//  },
+    {
+      name: 'SHELL',
+      type: 'link',
+      tooltip: 'Shell',
+      icon: 'code',
+      state: 'shell'
     }
   ]
   
