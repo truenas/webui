@@ -56,6 +56,7 @@
     "perfect-scrollbar": "0.7.1",
     "raven-js": "^3.17.0",
     "rxjs": "5.1.0",
+    "webpack": "^3.5.5",
     "zone.js": "0.8.4"
   },
   "devDependencies": {
