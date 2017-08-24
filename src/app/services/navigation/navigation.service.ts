@@ -130,13 +130,12 @@ export class NavigationService {
       tooltip: 'Virtualization',
       icon: 'laptop_windows',
       state: 'virtualization'
-    },
-    {
+    },{
       name: 'Reporting',
       type: 'link',
-      tooltip: 'Reporting',
-      icon: 'show_chart',
-      state: 'reporting'
+      tooltip: 'Services',
+      icon: 'reports',
+      state: 'reportsdashboard',
     },
 //  {
 //    name: 'GUIDE',
@@ -151,7 +150,7 @@ export class NavigationService {
 //      tooltip: 'Wizard',
 //     icon: 'cake',
 //    state: 'wizard'
-//  },
+//  }
     {
       name: 'SHELL',
       type: 'link',
