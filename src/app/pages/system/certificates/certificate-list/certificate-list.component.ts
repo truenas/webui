@@ -14,6 +14,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class CertificateListComponent {
 
   protected resource_name: string = 'system/certificate';
+  protected route_delete: string[] = ['system', 'certificates', 'delete'];
+  protected route_success: string[] = [ 'system', 'certificates' ];
 
   public busy: Subscription;
   public sub: Subscription;
@@ -65,17 +67,17 @@ export class CertificateListComponent {
     return actions;
   }
 
-  getActions(row) {
-    let actions = [];
-    actions.push({
-      label: "Delete",
-      onClick: (row) => {
-        this.router.navigate(new Array('/pages').concat(
-          ["system", "certificates", "delete", row.id]));
-      }
-    });
-    return actions;
-  }
+  // getActions(row) {
+  //   let actions = [];
+  //   actions.push({
+  //     label: "Delete",
+  //     onClick: (row) => {
+  //       this.router.navigate(new Array('/pages').concat(
+  //         ["system", "certificates", "delete", row.id]));
+  //     }
+  //   });
+  //   return actions;
+  // }
 
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {});
