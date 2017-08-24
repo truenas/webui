@@ -36,10 +36,14 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
     this._lineChartService.getChartConfigData(this);
   }
 
-
+  /**
+   * The service returns back all sources as a flat list.  What I do in here is
+   * Go through the flat list.. And collect the ones I want for each Tab I want to show.
+   */
   handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {
     let map: Map<string, TabChartsMappingData> = new Map<string, TabChartsMappingData>();
 
+    // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
     map.set("CPU", {
       keyName: "CPU",
       chartConfigData: []
