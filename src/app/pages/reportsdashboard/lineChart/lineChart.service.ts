@@ -129,6 +129,8 @@ export class LineChartService {
 
     } else if (source.startsWith("interface-")) {
         returnVal = "rx";
+    } else if (source === "ctl-tpc") {
+        returnVal = "read";
     }
 
 

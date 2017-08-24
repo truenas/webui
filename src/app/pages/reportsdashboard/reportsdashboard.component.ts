@@ -113,6 +113,10 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
         let tab: TabChartsMappingData = map.get("Network");
         tab.chartConfigData.push(chartConfigDataItem);
         
+      } else if (chartConfigDataItem.title.startsWith("ctl-tpc")) {
+        let tab: TabChartsMappingData = map.get("Target");
+        tab.chartConfigData.push(chartConfigDataItem);
+        
       } else {
         
         //map.set(chartConfigDataItem.title, {
