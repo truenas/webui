@@ -1,0 +1,26 @@
+<i 
+*ngIf="(editAction && iconActionVisible(editAction.id)) &&
+  (!entity.conf.isActionVisible 
+  || entity.conf.isActionVisible.bind(entity.conf)(editAction.id, row))"
+(click)="editAction.onClick(row)"
+class='ion-wrench'>
+</i>
+<i
+*ngIf="(deleteAction && iconActionVisible(deleteAction.id)) &&
+  (!entity.conf.isActionVisible 
+  || entity.conf.isActionVisible.bind(entity.conf)(deleteAction.id, row))"
+(click)="deleteAction.onClick(row)"
+class='ion-trash-a'>
+</i>
+<md-menu #appMenu="mdMenu">
+  <span *ngFor="let action of actions">
+    <button *ngIf="!entity.conf.isActionVisible 
+        || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+        (click)="action.onClick(this.row)">
+      <span>{{ action?.label }}</span>
+    </button>
+  </span>
+ </md-menu>
+ <button md-icon-button [mdMenuTriggerFor]="appMenu" class="action-menu">
+    <md-icon>more_vert</md-icon>
+ </button>
