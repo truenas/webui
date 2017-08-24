@@ -116,6 +116,10 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
       } else if (chartConfigDataItem.title.startsWith("ctl-tpc")) {
         let tab: TabChartsMappingData = map.get("Target");
         tab.chartConfigData.push(chartConfigDataItem);
+         
+      } else if (chartConfigDataItem.title.startsWith("ZFS ") ) {
+        let tab: TabChartsMappingData = map.get("ZFS");
+        tab.chartConfigData.push(chartConfigDataItem);
         
       } else {
         

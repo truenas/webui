@@ -131,7 +131,11 @@ export class LineChartService {
         returnVal = "rx";
     } else if (source === "ctl-tpc") {
         returnVal = "read";
-    }
+    } else if (source ==="zfs_arc") {
+        if (dataSetType === "io_octets-L2") {
+        returnVal = "rx";
+      }
+    } 
 
 
     return returnVal;
@@ -251,8 +255,50 @@ export class LineChartService {
           {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
           {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
         ],
+      }, {
+        title: "ZFS Arc Size",
+        legends: ['Arc Size'],
+        dataList: [
+          {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'}
+        ],
+      }, {
+        title: "ZFS Arc Hit Ratio",
+        legends: ['Arc', 'L2'],
+        dataList: [
+          {source: 'zfs_arc', type: 'cache_ratio-arc', dataset: 'value'},
+          {source: 'zfs_arc', type: 'cache_ratio-L2', dataset: 'value'}
+        ],
+      }, {
+        title: "ZFS Demand Data",
+        legends: ['Hits', 'Miss',],
+        dataList: [
+          {source: 'zfs_arc', type: 'cache_result-demand_data-hit', dataset: 'value'},
+          {source: 'zfs_arc', type: 'cache_result-demand_data-miss', dataset: 'value'}
+        ],
+      }, {
+        title: "ZFS Demand Metadata",
+        legends: ['Hits', 'Miss',],
+        dataList: [
+          {source: 'zfs_arc', type: 'cache_result-demand_metadata-hit', dataset: 'value'},
+          {source: 'zfs_arc', type: 'cache_result-demand_metadata-miss', dataset: 'value'}
+        ],
+      }, {
+        title: "ZFS Prefetch Data",
+        legends: ['Hits', 'Miss',],
+        dataList: [
+          {source: 'zfs_arc', type: 'cache_result-prefetch_data-hit', dataset: 'value'},
+          {source: 'zfs_arc', type: 'cache_result-prefetch_data-miss', dataset: 'value'}
+        ],
+      }, {
+        title: "ZFS Prefetch Metadata",
+        legends: ['Hits', 'Miss',],
+        dataList: [
+          {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-hit', dataset: 'value'},
+          {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-miss', dataset: 'value'}
+        ],
       }
     ];
+    
 
     return chartConfigData;
 
