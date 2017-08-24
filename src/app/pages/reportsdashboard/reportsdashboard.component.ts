@@ -45,13 +45,29 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
       chartConfigData: []
     });
     
+    map.set("Disk", {
+      keyName: "Disk",
+      chartConfigData: []
+    });
+    
      map.set("Memory", {
       keyName: "Memory",
       chartConfigData: []
     });
     
-    map.set("Storage", {
-      keyName: "Storage",
+    map.set("Network", {
+      keyName: "Network",
+      chartConfigData: []
+    });
+    
+    
+    map.set("Partition", {
+      keyName: "Partition",
+      chartConfigData: []
+    });
+    
+     map.set("System", {
+      keyName: "System",
       chartConfigData: []
     });
 
@@ -67,16 +83,28 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
         let tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
         
+      } else if (chartConfigDataItem.title.toLowerCase() === "processes" || chartConfigDataItem.title.toLowerCase() === "uptime") {
+        let tab: TabChartsMappingData = map.get("System");
+        tab.chartConfigData.push(chartConfigDataItem);
+        
       } else if (chartConfigDataItem.title.startsWith("df-")) {
-        let tab: TabChartsMappingData = map.get("Storage");
+        let tab: TabChartsMappingData = map.get("Partition");
+        tab.chartConfigData.push(chartConfigDataItem);
+        
+      } else if (chartConfigDataItem.title.startsWith("disk")) {
+        let tab: TabChartsMappingData = map.get("Disk");
+        tab.chartConfigData.push(chartConfigDataItem);
+        
+      } else if (chartConfigDataItem.title.startsWith("interface-")) {
+        let tab: TabChartsMappingData = map.get("Network");
         tab.chartConfigData.push(chartConfigDataItem);
         
       } else {
         
-        map.set(chartConfigDataItem.title, {
-          keyName: chartConfigDataItem.title,
-          chartConfigData: [chartConfigDataItem]
-        });
+        //map.set(chartConfigDataItem.title, {
+        //  keyName: chartConfigDataItem.title,
+        //  chartConfigData: [chartConfigDataItem]
+        //});
 
       }
     });
