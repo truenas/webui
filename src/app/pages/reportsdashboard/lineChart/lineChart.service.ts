@@ -4,13 +4,18 @@ import {WebSocketService} from '../../../services/';
 import {BaThemeConfigProvider, colorHelper, layoutPaths} from '../../../theme';
 
 
-
+/*
+ * Fed to the LineChart ./lineChart.component.ts
+ */
 export interface LineChartData {
   labels: Date[];
   series: any[];
 }
 
 
+/**
+ * For a given chart.. This is each line on the chart.
+ */
 export interface DataListItem {
   source: string;
   type: string;
@@ -18,6 +23,18 @@ export interface DataListItem {
   jsonResponse?: any;
 }
 
+
+/**
+ * name of plugin mapped to a series of charts (Each chart comprised of DataListItem[]
+ */
+export interface ChartSeries {
+    rowMap: Map<string, ChartConfigData[]>;
+}
+
+
+/**
+ * One Whole Charts worth of data
+ */
 export interface ChartConfigData {
   title: string;
   legends: string[];
@@ -25,11 +42,19 @@ export interface ChartConfigData {
 }
 
 
+/**
+ * Retunrs back the Series/Data Points for a given chart.
+ */
 export interface HandleDataFunc {
   handleDataFunc(lineChartData: LineChartData);
 
 }
 
+/**
+ * Gets all the existing Collectd/Report RRD Sources with a high level list
+ * Of children types: string[] Some charts/Metrics require more data..  And
+ * Need to have additional ? optional parameters filled out... Via LineChartService.extendChartConfigData
+ */
 export interface HandleChartConfigDataFunc {
   handleChartConfigDataFunc(chartConfigData: ChartConfigData[]);
 }
