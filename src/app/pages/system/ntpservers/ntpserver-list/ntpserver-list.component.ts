@@ -10,7 +10,8 @@ export class NTPServerListComponent {
   protected route_add: string[] = [ 'system', 'ntpservers', 'add' ];
   protected route_edit: string[] = [ 'system', 'ntpservers', 'edit' ];
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
-
+  protected route_success: string[] = [ 'system', 'ntpservers' ];
+  
   public columns: Array<any> = [
     {name : 'Address', prop : 'ntp_address'},
     {name : 'Burst', prop : 'ntp_burst'},
