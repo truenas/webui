@@ -25,14 +25,6 @@ export interface DataListItem {
 
 
 /**
- * name of plugin mapped to a series of charts (Each chart comprised of DataListItem[]
- */
-export interface ChartSeries {
-    rowMap: Map<string, ChartConfigData[]>;
-}
-
-
-/**
  * One Whole Charts worth of data
  */
 export interface ChartConfigData {
@@ -98,7 +90,10 @@ export class LineChartService {
 
     this._ws.call('stats.get_sources').subscribe((res) => {
        this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-       handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
+        let knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
+        knownCharts.forEach((item)=>{this.cacheConfigData.push(item); });
+      
+        handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
     });
   }
   
@@ -183,13 +178,12 @@ export class LineChartService {
   }
 
 
-  private getChartConfigDataSpoof(handleChartConfigDataFunc: HandleChartConfigDataFunc) {
+  private getKnownChartConfigData(): ChartConfigData[] {
 
-    let configData: ChartConfigData[] = [];
 
-    let spoofData: ChartConfigData[] = [
+    let chartConfigData: ChartConfigData[] = [
       {
-        title: "Average Load",
+        title: "Load",
         legends: ['Short Term', ' Mid Term', 'Long Term'],
         dataList: [
           {source: 'load', type: 'load', dataset: 'shortterm'},
@@ -209,7 +203,7 @@ export class LineChartService {
         ],
       },
       {
-        title: "CPU Usage",
+        title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
         dataList: [
           {
@@ -241,9 +235,7 @@ export class LineChartService {
       }
     ];
 
-    setTimeout(() => {
-      handleChartConfigDataFunc.handleChartConfigDataFunc(spoofData);
-    }, -1)
+    return chartConfigData;
 
   }
 

@@ -9,40 +9,68 @@ import {
   WebSocketService
 } from '../../services/';
 
+
+interface TabChartsMappingData {
+  keyName: string;
+  chartConfigData: ChartConfigData[];
+}
+
 @Component({
-  selector : 'reportsdashboard',
-  styleUrls : [ './reportsdashboard.scss' ],
-  templateUrl : './reportsdashboard.html',
-  providers : [ SystemGeneralService ]
+  selector: 'reportsdashboard',
+  styleUrls: ['./reportsdashboard.scss'],
+  templateUrl: './reportsdashboard.html',
+  providers: [SystemGeneralService]
 })
 export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
 
   public info: any = {};
   public ipAddress: any = [];
-  private allowChartsDisplay: boolean = true;
-  private drawTabs: boolean = false; 
-  public graphs: ChartConfigData[] = [];
+  public allowChartsDisplay: boolean = true;
+  public drawTabs: boolean = false;
+  public tabChartsMappingData: TabChartsMappingData[] = [];
 
   constructor(private _lineChartService: LineChartService) {
-    
   }
 
   ngOnInit() {
-     this._lineChartService.getChartConfigData(this);
+    this._lineChartService.getChartConfigData(this);
   }
-  
-  
-  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {;
-     this.graphs.splice(0, this.graphs.length);
-     chartConfigData.forEach( (label) => {this.graphs.push(label)});
-     this.drawTabs = true; 
+
+
+  handleChartConfigDataFunc(chartConfigData: ChartConfigData[]) {
+    let map: Map<string, TabChartsMappingData> = new Map<string, TabChartsMappingData>();
+
+    map.set("CPU", {
+      keyName: "CPU",
+      chartConfigData: []
+    });
+
+    chartConfigData.forEach((chartConfigDataItem: ChartConfigData) => {
+      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
+        let tab: TabChartsMappingData = map.get("CPU");
+        tab.chartConfigData.push(chartConfigDataItem);
+      } else {
+        map.set(chartConfigDataItem.title, {
+          keyName: chartConfigDataItem.title,
+          chartConfigData: [chartConfigDataItem]
+        });
+
+      }
+    });
+    
+    this.tabChartsMappingData.splice(0, this.tabChartsMappingData.length);
+    map.forEach((value: TabChartsMappingData )=>{ 
+         this.tabChartsMappingData.push( value );
+    });  
+    
+    this.drawTabs = true;
   }
-  
+
   tabSelectChangeHandler($event) {
     let selectedTabName = $event.tab.textLabel;
-    
+
     this.allowChartsDisplay = false;
-    setTimeout(()=> {  this.allowChartsDisplay = true; }, -1 );
-      
+    setTimeout(() => {this.allowChartsDisplay = true;}, -1);
+
   }
 }
