@@ -13,6 +13,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 export class CertificateAuthorityListComponent {
   protected resource_name: string = 'system/certificateauthority';
+  protected route_delete: string[] = ['system', 'ca', 'delete'];
+  protected route_success: string[] = [ 'system', 'ca' ];
 
   public busy: Subscription;
   public sub: Subscription;
@@ -65,15 +67,15 @@ export class CertificateAuthorityListComponent {
     return actions;
   }
 
-  getActions(row) {
-    let actions = [];
-    actions.push({
-      label: "Delete",
-      onClick: (row) => {
-        this.router.navigate(
-          new Array('/pages').concat(["system", "ca", "delete", row.id]));
-      }
-    });
-    return actions;
-  }
+  // getActions(row) {
+  //   let actions = [];
+  //   actions.push({
+  //     label: "Delete",
+  //     onClick: (row) => {
+  //       this.router.navigate(
+  //         new Array('/pages').concat(["system", "ca", "delete", row.id]));
+  //     }
+  //   });
+  //   return actions;
+  // }
 }
