@@ -183,14 +183,6 @@ export class LineChartService {
 
     let chartConfigData: ChartConfigData[] = [
       {
-        title: "Load",
-        legends: ['Short Term', ' Mid Term', 'Long Term'],
-        dataList: [
-          {source: 'load', type: 'load', dataset: 'shortterm'},
-          {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
-          {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
-        ],
-      },{
         title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
         dataList: [
@@ -219,6 +211,14 @@ export class LineChartService {
             'type': 'cpu-nice',
             'dataset': 'value'
           },
+        ],
+      }, {
+        title: "Load",
+        legends: ['Short Term', ' Mid Term', 'Long Term'],
+        dataList: [
+          {source: 'load', type: 'load', dataset: 'shortterm'},
+          {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
+          {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
         ],
       }
     ];
