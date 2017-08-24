@@ -11,13 +11,14 @@ import 'rxjs/add/operator/map';
 
 //local libs
 import { GlobalState } from '../../../../global.state';
-import { RestService } from '../../../../services/rest.service';
+import { RestService, DialogService } from '../../../../services/';
 import { EntityUtils } from '../utils';
 
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
-  styleUrls: ['./entity-table.component.css']
+  styleUrls: ['./entity-table.component.css'],
+  providers: [DialogService]
 })
 export class EntityTableComponent implements OnInit {
 
@@ -38,7 +39,7 @@ export class EntityTableComponent implements OnInit {
   };
 
   constructor(protected rest: RestService, protected router: Router,
-    protected _state: GlobalState, protected _eRef: ElementRef) {}
+    protected _state: GlobalState, protected _eRef: ElementRef, private dialog: DialogService) {}
 
   ngOnInit() {
     if (this.conf.preInit) {
@@ -143,7 +144,27 @@ export class EntityTableComponent implements OnInit {
   }
 
   doDelete(id) {
-    this.router.navigate(
-      new Array('/pages').concat(this.conf.route_delete).concat(id));
+    this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+      console.log(new Array('/pages').concat(this.conf.route_success));
+      if (res) {
+        let data = {};
+        this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
+          (res) => {
+            // if (this.conf.route_success) {
+            //   this.router.navigate(new Array('/pages').concat(this.conf.route_success));
+            // }else {
+            //   location.reload();
+            // }
+            //fix me
+            // because this is the same route, 
+            // the add a new parameter way 
+            // to trick the route to refresh way doesn't work
+            // yet
+            location.reload();
+          },
+          (res) => { new EntityUtils().handleError(this, res); }
+        );
+      }
+    })
   }
 }
