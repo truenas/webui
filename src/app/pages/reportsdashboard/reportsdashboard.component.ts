@@ -44,12 +44,35 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
       keyName: "CPU",
       chartConfigData: []
     });
+    
+     map.set("Memory", {
+      keyName: "Memory",
+      chartConfigData: []
+    });
+    
+    map.set("Storage", {
+      keyName: "Storage",
+      chartConfigData: []
+    });
 
+    // Go through all the items.. Sticking each source in the appropraite bucket
+    // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
+    // move towards.. just knowing the ones Im wanting.
     chartConfigData.forEach((chartConfigDataItem: ChartConfigData) => {
       if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
         let tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
+        
+      } else if (chartConfigDataItem.title.toLowerCase() === "memory" || chartConfigDataItem.title.toLowerCase() === "swap") {
+        let tab: TabChartsMappingData = map.get("Memory");
+        tab.chartConfigData.push(chartConfigDataItem);
+        
+      } else if (chartConfigDataItem.title.startsWith("df-")) {
+        let tab: TabChartsMappingData = map.get("Storage");
+        tab.chartConfigData.push(chartConfigDataItem);
+        
       } else {
+        
         map.set(chartConfigDataItem.title, {
           keyName: chartConfigDataItem.title,
           chartConfigData: [chartConfigDataItem]

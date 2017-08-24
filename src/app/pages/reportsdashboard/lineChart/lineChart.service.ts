@@ -190,19 +190,7 @@ export class LineChartService {
           {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
           {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
         ],
-      },
-      {
-        title: "Memory",
-        legends: ['Free', 'Active', 'Cache', 'Wired', 'Inactive'],
-        dataList: [
-          {'source': 'memory', 'type': 'memory-free', 'dataset': 'value'},
-          {'source': 'memory', 'type': 'memory-active', 'dataset': 'value'},
-          {'source': 'memory', 'type': 'memory-cache', 'dataset': 'value'},
-          {'source': 'memory', 'type': 'memory-wired', 'dataset': 'value'},
-          {'source': 'memory', 'type': 'memory-inactive', 'dataset': 'value'},
-        ],
-      },
-      {
+      },{
         title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
         dataList: [
