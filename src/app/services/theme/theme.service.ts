@@ -10,9 +10,10 @@ export class ThemeService {
     name: 'egret-dark-pink',
     baseColor: '#e91e63',
     isActive: false
-  }, {
-    name: 'egret-blue',
-    baseColor: '#247ba0',
+  },
+  {
+    name: 'freenas-warriors',
+    baseColor: '#fdb927',
     isActive: false
   }, {
     name: 'egret-indigo',

@@ -1,0 +1,217 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+// You can define colors here (using http://mcg.mbitson.com)
+$md-primary: (
+    50 : #fff7e5,
+    100 : #feeabe,
+    200 : #fedc93,
+    300 : #fece68,
+    400 : #fdc447,
+    500 : #fdb927,
+    600 : #fdb223,
+    700 : #fcaa1d,
+    800 : #fca217,
+    900 : #fc930e,
+    A100 : #ffffff,
+    A200 : #fff9f3,
+    A400 : #ffe1c0,
+    A700 : #ffd5a7,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #26282A,
+        700 : #26282A,
+        800 : #26282A,
+        900 : #26282A,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$md-accent: (
+    50 : #e0edf6,
+    100 : #b3d3e9,
+    200 : #80b5db,
+    300 : #4d97cc,
+    400 : #2681c1,
+    500 : #006bb6,
+    600 : #0063af,
+    700 : #0058a6,
+    800 : #004e9e,
+    900 : #003c8e,
+    A100 : #bad2ff,
+    A200 : #87b0ff,
+    A400 : #548eff,
+    A700 : #3b7eff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #ffffff,
+    )
+);
+
+// mandatory stuff for theming
+$freenas-primary: mat-palette($md-primary);
+$freenas-accent:  mat-palette($md-accent);
+
+// include the custom theme components into a theme object
+$freenas-warriors: mat-light-theme($freenas-primary, $freenas-accent);
+
+$primary-dark: darken( map-get($md-primary, 500), 8% );
+
+// include the custom theme object into the angular material theme
+.freenas-warriors {
+    @include angular-material-theme($freenas-warriors);
+
+    .mat-bg-primary,
+    .topbar,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+    .fileupload-drop-zone.dz-file-over,
+    .toolbar-avatar.online > .status-dot,
+    .cal-open-day-events,
+    div.hopscotch-bubble {
+        background: map-get($md-accent, 600) !important;
+        color: #f5f5f6 !important;
+    }
+    .mat-sidenav-container {    
+          background: map-get($md-primary, 200) !important;
+        color: #f5f5f6 !important;
+     }
+    
+    .mat-list-item-content {
+        background: map-get($md-accent, 300) !important;
+        color: #f5f5f6 !important;
+    }
+    .sidebar-panel.mat-sidenav .navigation-hold {    
+        background: map-get($md-accent, 200) !important;
+        color: #26282A !important;
+     }
+    
+    .mat-bg-primary {
+        background: map-get($md-accent, 600) !important;
+        color: #f5f5f6 !important;
+    }
+.datatable { margin: 35px; }
+    .datatable-header {
+        background: map-get($md-accent, 600) !important;
+        color: #f5f5f6 !important;
+    }
+ .datatable-body {
+        background: map-get($md-primary, 300) !important;
+        color: #26282A !important;
+    }
+
+    .page-wrap {
+        background: map-get($md-primary, 100) !important;
+        color: #f5f5f6 !important;
+    }
+    .mat-card {
+        background: map-get($md-primary, 300) !important;
+        color: #26282A !important;    
+        margin:35px;
+    }
+    .mat-card a {
+        color: map-get($md-accent, 700) !important;
+    }
+   .mat-focused .mat-input-placeholder.mat-float, 
+   .mat-input-placeholder.mat-empty, 
+   .mat-input-placeholder.mat-float:not(.mat-empty)  {
+        color: map-get($md-accent, 700) !important;
+    }
+  .freenas-warriors .mat-input-ripple  { 
+        color: map-get($md-accent, 900) !important;
+   }
+
+    .mat-color-primary,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        color: map-get($md-primary, 400) !important;
+    }
+    .sidebar-panel .mat-nav-list .mat-list-item {
+        color: rgba(255, 255, 255, 0.94)
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+        border-left: 2px solid map-get($md-accent, 900);
+    }
+    .sidebar-panel.mat-sidenav {
+        background: url('../../images/sidebar-bg.jpg') no-repeat;
+    }
+    .breadcrumb-bar {
+        background: #26282A !important;
+                color: #f5f5f6 !important;
+
+    }
+    /* Hopscotch Tour */ 
+    div.hopscotch-bubble {
+        border-color: $primary-dark;
+    }
+    /* up arrow  */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
+        border-bottom: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
+        border-bottom: 17px solid map-get($md-primary, 500);
+        top: -16px;
+    }
+    /* right arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
+        border-left: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
+        border-left: 17px solid map-get($md-primary, 500);
+        left: -1px;
+    }
+    /* bottom arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
+        border-top: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
+        border-top: 17px solid map-get($md-primary, 500);
+        top: -18px;
+    }
+    /* Left Arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
+        border-right: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
+        left: 1px;
+        border-right: 17px solid map-get($md-primary, 500);
+    }
+
+    .mat-bg-accent,
+    div.hopscotch-bubble .hopscotch-bubble-number,
+    div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+    div.hopscotch-bubble .hopscotch-nav-button.next {
+        background-color: map-get($md-accent, 500);
+        color: #26282A;
+    }
+    .mat-bg-warn {
+        background-color: #f44336;
+        color: #f5f5f6;
+    }
+    .mat-color-accent {
+        color: map-get($md-accent, 500);
+    }
+    .mat-color-warn {
+        color: #f44336;
+    }
+}

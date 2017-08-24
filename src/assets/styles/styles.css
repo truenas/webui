@@ -496,7 +496,7 @@ body .mat-select-trigger {
 .ngx-datatable.fullscreen .datatable-header {
     position: fixed;
     overflow: hidden;
-    background: #ffffff;
+    background: blue;
     z-index: 999;
 }
 .ngx-datatable.material .datatable-header {
