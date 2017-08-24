@@ -56,7 +56,7 @@ export interface HandleChartConfigDataFunc {
 export class LineChartService {
 
   private cacheConfigData: ChartConfigData[] = [];
-  
+
   constructor(private _baConfig: BaThemeConfigProvider,
     private _ws: WebSocketService) {}
 
@@ -89,45 +89,82 @@ export class LineChartService {
     //this.getChartConfigDataSpoof(handleChartConfigDataFunc);
 
     this._ws.call('stats.get_sources').subscribe((res) => {
-       this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-        let knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
-        knownCharts.forEach((item)=>{this.cacheConfigData.push(item); });
-      
-        handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
+      this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
+      let knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
+      knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
+
+      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
     });
   }
-  
-  private getCacheConfigDataByTitle(title:string): ChartConfigData {
-     let chartConfigData: ChartConfigData = null;
-    
-    for( let cacheConfigDataItem of this.cacheConfigData ) {
-        if( title === cacheConfigDataItem.title ) {
-            chartConfigData = cacheConfigDataItem;
-            break;
-        }
+
+  private getCacheConfigDataByTitle(title: string): ChartConfigData {
+    let chartConfigData: ChartConfigData = null;
+
+    for (let cacheConfigDataItem of this.cacheConfigData) {
+      if (title === cacheConfigDataItem.title) {
+        chartConfigData = cacheConfigDataItem;
+        break;
+      }
     }
-    
+
     return chartConfigData;
   }
 
- private computeValueColumnName(source:string, dataSetType:string): string {
-   let returnVal: string = "value"; // default
-   
-   if( source.startsWith("disk") ) {
-     
-     if( dataSetType === "disk_octets" || dataSetType === "disk_ops" || dataSetType === "disk_time") {
-       returnVal = "read";
-     } else  if( dataSetType === "disk_io_time") {
-       returnVal = "io_time";
-     }
-     
-      
-   }
-   
-   
-   return returnVal;
- }
+  /**
+   * For RRD metric files that don't have a dataset called value... 
+   * This method findsd the ones I use.. Sparing me an expensive call
+   * to get_source_info Api.
+   */
+  private computeValueColumnName(source: string, dataSetType: string): string {
+    let returnVal: string = "value"; // default
 
+    if (source.startsWith("disk-")) {
+
+      if (dataSetType === "disk_octets" || dataSetType === "disk_ops" || dataSetType === "disk_time") {
+        returnVal = "read";
+      } else if (dataSetType === "disk_io_time") {
+        returnVal = "io_time";
+      }
+
+
+    } else if (source.startsWith("interface-")) {
+        returnVal = "rx";
+    }
+
+
+    return returnVal;
+  }
+
+  /** 
+   * Certain nodes like... disk_io have read/write.  WHen I get a source that's like that... Ill auto create
+   * the Write.  Do this for all types I need.  rx/tx etc.... where a given source has datasets that make
+   * sense displayed together.  Most nodes.. This does not happen.  That's why the name "Possible" is in the 
+   * funciton.
+   */
+  private constructPossibleNodeCopy(dataListItem: DataListItem, dataListItemArray: DataListItem[]): void {
+    if (dataListItem.dataset === "read") {
+      let dataListItemCopied: DataListItem = {
+        source: dataListItem.source,
+        type: dataListItem.type,
+        dataset: "write"
+      };
+
+      dataListItemArray.push(dataListItemCopied);
+    } else if (dataListItem.dataset === "rx") {
+      let dataListItemCopied: DataListItem = {
+        source: dataListItem.source,
+        type: dataListItem.type,
+        dataset: "tx"
+      };
+
+      dataListItemArray.push(dataListItemCopied);
+    }
+  }
+  
+  /**
+   * Take the WebSocket response for get_sources and chruns it 
+   * down into a list of javascript objects that drive the charts.
+   */
   private chartConfigDataFromWsReponse(res): ChartConfigData[] {
     let configData: ChartConfigData[] = [];
     let properties: string[] = [];
@@ -150,6 +187,8 @@ export class LineChartService {
         };
 
         dataListItemArray.push(dataListItem);
+        this.constructPossibleNodeCopy(dataListItem, dataListItemArray);
+
       });
 
       let chartData: ChartConfigData = {
@@ -165,7 +204,9 @@ export class LineChartService {
     return configData;
   }
 
-
+  /**
+   * Certain ones I can hard code.. And interject them into the dynamic ones.
+   */
   private getKnownChartConfigData(): ChartConfigData[] {
 
 
