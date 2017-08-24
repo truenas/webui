@@ -200,6 +200,7 @@ export class DeviceEditComponent implements OnInit {
   private ipAddress: any;
 
   afterInit(){
+    let self = this;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     let vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
@@ -231,62 +232,72 @@ export class DeviceEditComponent implements OnInit {
         switch (device.dtype) {
           case 'VNC': {
             this.setgetValues(device.attributes, vnc_lookup_table);
+            if (this.dtype === 'VNC') {  
             this.systemGeneralService.getIPChoices().subscribe((res) => {
               if (res.length > 0) {
-                this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+                self.ipAddress = _.find(self.fieldConfig, {'name' : 'vnc_bind'});
                 if (this.ipAddress ){
                   for(let i in res){
                     let item = res[i];
-                    this.ipAddress.options.push({label : item[1], value : item[0]});
+                    self.ipAddress.options.push({label : item[1], value : item[0]});
                   }
                 }
               }
             })
+          }
             break;
           };
           case 'NIC': {
-            this.setgetValues(device.attributes, nic_lookup_table);           
+            this.setgetValues(device.attributes, nic_lookup_table);
+            if (this.dtype === 'NIC') {        
             this.networkService.getAllNicChoices().subscribe((res) => {
-              this.nic_attach = _.find(this.fieldConfig, {'name' : 'nic_attach'});
+              self.nic_attach = _.find(self.fieldConfig, {'name' : 'nic_attach'});
               if (this.nic_attach ){
                 for(let i in res){
                   let item = res[i];
-                  this.nic_attach.options.push({label : item[1], value : item[0]});
+                  self.nic_attach.options.push({label : item[1], value : item[0]});
                 }
               }
             });
             this.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
             .subscribe((res) => {
-              this.nicType = _.find(this.fieldConfig, {name : "NIC_type"});
+              self.nicType = _.find(self.fieldConfig, {name : "NIC_type"});
               if (this.nicType ){
                 for(let i in res){
                   let item = res[i];
-                  this.nicType.options.push({label : item[1], value : item[0]});
+                  self.nicType.options.push({label : item[1], value : item[0]});
                 }
               }
             });
+          }
             break;
           };
           case 'CDROM': {
+            if (this.dtype === 'CDROM') { 
             this.setgetValues(device.attributes, cdrom_lookup_table);
             break;
+            }
           };
           case 'DISK': {
+            if (this.dtype === 'DISK') {
             this.setgetValues(device.attributes, disk_lookup_table);
-            this.vmService.getStorageVolumes().subscribe((res) => {
-              let data = new EntityUtils().flattenData(res.data);
-              this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
-              for (let dataset of data) {
-                if (dataset.type === 'zvol') {
-                  this.DISK_zvol.add({label : dataset.name, value : dataset.path});
+              this.vmService.getStorageVolumes().subscribe((res) => {
+                let data = new EntityUtils().flattenData(res.data);
+                self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
+                for (let dataset of data) {
+                  if (dataset.type === 'zvol') {
+                    self.DISK_zvol.options.push({label : dataset.name, value : dataset.path});
+                  };
                 };
-              };
-            });
+              });
+            }
             break;
           };
           case 'RAW': {
+            if (this.dtype === 'RAW') {
             this.setgetValues(device.attributes, rawfile_lookup_table);
             break;
+            }
           };
         }
       }
@@ -338,9 +349,11 @@ export class DeviceEditComponent implements OnInit {
                 'dtype' : 'NIC',
                 'attributes' : {
                   'type' : formvalue.NIC_type ? formvalue.NIC_type
-                                              : vm.attributes.type,
+                                              : device.attributes.type,
                   'mac' : formvalue.NIC_mac ? formvalue.NIC_mac
-                                            : vm.attributes.mac
+                                            : device.attributes.mac,
+                  'nic_attach' : formvalue.nic_attach ? formvalue.nic_attach
+                                            : device.attributes.nic_attach,
                 }
               })
             }
@@ -350,12 +363,12 @@ export class DeviceEditComponent implements OnInit {
               'attributes' : {
                 'wait' : new EntityUtils().bool(formvalue.VNC_wait
                                                     ? formvalue.VNC_wait
-                                                    : vm.attributes.wait),
+                                                    : device.attributes.wait),
                 'vnc_port' : formvalue.VNC_port ? formvalue.VNC_port
-                                                : vm.attributes.port,
+                                                : device.attributes.port,
                 'vnc_resolution' : formvalue.VNC_resolution
                                         ? formvalue.VNC_resolution
-                                        : vm.attributes.vnc_resolution
+                                        : device.attributes.vnc_resolution
               }
             })
           }
@@ -364,29 +377,30 @@ export class DeviceEditComponent implements OnInit {
               'dtype' : 'DISK',
               'attributes' : {
                 'type' : formvalue.DISK_mode ? formvalue.DISK_mode
-                                              : vm.attributes.type,
+                                              : device.attributes.type,
                 'path' : formvalue.DISK_zvol ? formvalue.DISK_zvol
-                                              : vm.attributes.path
+                                              : device.attributes.path
               }
             })
           }
           if (device.dtype === 'CDROM') {
-            devices.push({
-              'dtype' : 'CDROM',
-              'attributes' : {
-                'path' : formvalue.CDROM_path ? formvalue.CDROM_path
-                                              : vm.attributes.path
-              }
-            })
-          }
+                devices.push({
+                  'dtype' : 'CDROM',
+                  'attributes' : {
+                    'path' : formvalue.CDROM_path ? formvalue.CDROM_path
+                                                  : device.attributes.path
+                  }
+              })
+            }
+          
           if (device.dtype === 'RAW') {
             devices.push({
               'dtype' : 'RAW',
               'attributes' : {
                 'path' : formvalue.RAW_path ? formvalue.RAW_path
-                                              : vm.attributes.path,
-                'sectorsize' : formvalue.RAW_sectorsize ? formvalue.RAW_sectorsize : vm.attributes.sectorsize,
-                'mode': formvalue.RAW_mode ? formvalue.RAW_mode : vm.attributes.mode,
+                                              : device.attributes.path,
+                'sectorsize' : formvalue.RAW_sectorsize ? formvalue.RAW_sectorsize : device.attributes.sectorsize,
+                'mode': formvalue.RAW_mode ? formvalue.RAW_mode : device.attributes.mode,
                 }
               })
             }
