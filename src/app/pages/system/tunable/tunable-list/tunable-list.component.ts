@@ -24,6 +24,7 @@ export class TunableListComponent {
   protected resource_name: string = 'system/tunable';
   protected route_delete: string[] = ['system', 'tunable', 'delete'];
   protected route_edit: string[] = ['system', 'tunable', 'edit'];
+  protected route_success: string[] = [ 'system', 'tunable' ];
 
   public busy: Subscription;
   public sub: Subscription;
