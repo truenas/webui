@@ -121,7 +121,7 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
         //});
 
       }
-    });
+    }); 
     
     this.tabChartsMappingData.splice(0, this.tabChartsMappingData.length);
     map.forEach((value: TabChartsMappingData )=>{ 
@@ -132,10 +132,24 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
   }
 
   tabSelectChangeHandler($event) {
-    let selectedTabName = $event.tab.textLabel;
-
+    let selectedTabName: string = $event.tab.textLabel;
+    let tabChartsMappingData: TabChartsMappingData = this.getTabChartsMappingDataByName(selectedTabName);
+    
+   
     this.allowChartsDisplay = false;
     setTimeout(() => {this.allowChartsDisplay = true;}, -1);
 
+  }
+  
+  private getTabChartsMappingDataByName(name:string ): TabChartsMappingData {
+     let foundTabChartsMappingData: TabChartsMappingData = null;
+     
+     for( let item of this.tabChartsMappingData) {
+        if(name === item.keyName ) {
+          foundTabChartsMappingData = item;
+          break;
+        }
+     }
+     return foundTabChartsMappingData;
   }
 }

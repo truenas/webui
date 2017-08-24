@@ -110,35 +110,23 @@ export class LineChartService {
     return chartConfigData;
   }
 
-  public extendChartConfigData(chartConfigTitle: string, handleChartConfigDataFunc: HandleChartConfigDataFunc) {
-    let count: number = 0;
-    let chartConfigData: ChartConfigData = this.getCacheConfigDataByTitle(chartConfigTitle);
-    
-    if( chartConfigData === null || typeof(chartConfigData) === 'undefined' ) {
-      return;
-    }
-    
-    if( chartConfigData.dataList.length > 0 && 
-          chartConfigData.dataList[0].jsonResponse !== null &&
-            typeof(chartConfigData.dataList[0].jsonResponse) !== 'undefined' ) {
-        // Then this was already done.. Just use the data, spare the webservice dall.
-        // because the client expects notification
-         setTimeout(() => {
-            handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
-          }, -1)
-          return;
-    }
-
-    chartConfigData.dataList.forEach((dataListItem: DataListItem) => {
-    let storeDataListItem: DataListItem = dataListItem;
-    
-    this._ws.call('stats.get_dataset_info', [dataListItem.source, dataListItem.type]).subscribe((res) => {
-      storeDataListItem.jsonResponse = res;
-      handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
-    });
-
-    });
-  }
+ private computeValueColumnName(source:string, dataSetType:string): string {
+   let returnVal: string = "value"; // default
+   
+   if( source.startsWith("disk") ) {
+     
+     if( dataSetType === "disk_octets" || dataSetType === "disk_ops" || dataSetType === "disk_time") {
+       returnVal = "read";
+     } else  if( dataSetType === "disk_io_time") {
+       returnVal = "io_time";
+     }
+     
+      
+   }
+   
+   
+   return returnVal;
+ }
 
   private chartConfigDataFromWsReponse(res): ChartConfigData[] {
     let configData: ChartConfigData[] = [];
@@ -158,7 +146,7 @@ export class LineChartService {
         let dataListItem: DataListItem = {
           source: prop,
           type: proObjArrayItem,
-          dataset: 'value'
+          dataset: this.computeValueColumnName(prop, proObjArrayItem)
         };
 
         dataListItemArray.push(dataListItem);
