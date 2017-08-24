@@ -70,6 +70,16 @@ export class ReportsDashboard implements OnInit, HandleChartConfigDataFunc {
       keyName: "System",
       chartConfigData: []
     });
+    
+     map.set("Target", {
+      keyName: "Target",
+      chartConfigData: []
+    });
+    
+     map.set("ZFS", {
+      keyName: "ZFS",
+      chartConfigData: []
+    });
 
     // Go through all the items.. Sticking each source in the appropraite bucket
     // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
