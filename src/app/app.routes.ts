@@ -64,6 +64,11 @@ export const rootRouterConfig: Routes = [
             path: 'afp',
             loadChildren: './pages/sharing/afp/afp.module#AFPModule',
             data: {title: 'AFP', breadcrumb: 'AFP'},
+          },
+          {
+            path: 'nfs',
+            loadChildren: './pages/sharing/nfs/nfs.module#NFSModule',
+            data: {title: 'NFS', breadcrumb: 'NFS'},
           }
         ]
       },

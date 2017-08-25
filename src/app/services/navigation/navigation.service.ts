@@ -104,6 +104,7 @@ export class NavigationService {
       state: 'sharing',
       sub: [
         {name: 'AFP', state: 'afp'},
+        {name: 'NFS', state: 'nfs'},
       ]
     },
     {
