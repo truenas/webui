@@ -1,17 +1,3 @@
-<i 
-*ngIf="(editAction && iconActionVisible(editAction.id)) &&
-  (!entity.conf.isActionVisible 
-  || entity.conf.isActionVisible.bind(entity.conf)(editAction.id, row))"
-(click)="editAction.onClick(row)"
-class='ion-wrench'>
-</i>
-<i
-*ngIf="(deleteAction && iconActionVisible(deleteAction.id)) &&
-  (!entity.conf.isActionVisible 
-  || entity.conf.isActionVisible.bind(entity.conf)(deleteAction.id, row))"
-(click)="deleteAction.onClick(row)"
-class='ion-trash-a'>
-</i>
 <md-menu #appMenu="mdMenu">
   <span *ngFor="let action of actions">
     <button *ngIf="!entity.conf.isActionVisible 
