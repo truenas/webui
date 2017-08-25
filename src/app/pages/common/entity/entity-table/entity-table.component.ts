@@ -146,7 +146,6 @@ export class EntityTableComponent implements OnInit {
 
   doDelete(id) {
     this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
-      console.log(new Array('/pages').concat(this.conf.route_success));
       if (res) {
         let data = {};
         this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
