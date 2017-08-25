@@ -101,7 +101,10 @@ export class NavigationService {
       type: 'dropDown',
       tooltip: 'Sharing',
       icon: 'folder_shared',
-      state: 'sharing'
+      state: 'sharing',
+      sub: [
+        {name: 'AFP', state: 'afp'},
+      ]
     },
     {
       name: 'Services',

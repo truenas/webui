@@ -48,6 +48,16 @@ export const rootRouterConfig: Routes = [
         ]
       },
       {
+        path: 'sharing',
+        children: [
+          {
+            path: 'afp',
+            loadChildren: './pages/sharing/afp/afp.module#AFPModule',
+            data: {title: 'AFP', breadcrumb: 'AFP'},
+          }
+        ]
+      },
+      {
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
         data: {title: 'reportsdashboard', breadcrumb: 'REPORTING'}
