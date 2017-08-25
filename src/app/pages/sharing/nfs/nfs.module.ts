@@ -6,9 +6,8 @@ import { EntityModule } from '../../common/entity/entity.module';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { UserService } from '../../../services/user.service';
 
-//import {NFSFormComponent} from './nfs-form/';
-//import {NFSDeleteComponent} from './nfs-delete/';
 import { NFSListComponent } from './nfs-list/';
+import { NFSFormComponent } from './nfs-form/';
 import { routing } from './nfs.routing';
 
 @NgModule({
@@ -20,8 +19,7 @@ import { routing } from './nfs.routing';
   ],
   declarations : [
     NFSListComponent,
-    // NFSFormComponent,
-    // NFSDeleteComponent,
+    NFSFormComponent,
   ],
   providers : [EntityFormService, UserService]
 })
