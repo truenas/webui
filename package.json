@@ -1,7 +1,9 @@
 {
-  "name": "egret",
-  "version": "1.1.1",
-  "license": "MIT",
+  "name": "freenas-webui",
+  "version": "1.2.0",
+  "license": "BSD",
+  "description": "FreeNAS Angular 4 WebUI",
+  "homepage": "http://github.com/freenas/webui/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.config.json",
@@ -10,9 +12,18 @@
     "start:prod": "ng serve --prod",
     "start:prod:aot": "ng serve --prod --aot",
     "build": "ng build",
+    "build:prod": "npm run build -- --prod",
+    "build:prod:aot": "npm run build:prod -- --aot",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freenas/webui.git"
+  },
+  "bugs": {
+    "url": "https://bugs.freenas.org"
   },
   "private": true,
   "dependencies": {
