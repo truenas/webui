@@ -16,6 +16,8 @@ import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.comp
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 
+import {ENV_PROVIDERS} from '../environments/environment';
+
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
 }
@@ -34,7 +36,13 @@ export function createTranslateLoader(http: Http) {
     RouterModule.forRoot(rootRouterConfig, { useHash: false })
   ],
   declarations: [AppComponent, ConfirmDialog],
-  providers: [RoutePartsService, NavigationService, AuthService, WebSocketService, RestService],
+  providers: [
+    RoutePartsService,
+    NavigationService,
+    AuthService,
+    WebSocketService,
+    RestService, 
+    ENV_PROVIDERS],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
