@@ -29,3 +29,12 @@
   </ngx-datatable-column>
   </ngx-datatable>
 </md-card>
+
+<md-table #table [dataSource]="this.rows">
+  <div *ngIf="let col of conf.columns">
+    <ng-container cdkColumnDef="{{col.prop}}">
+      <md-header-cell *cdkHeaderCellDef> ID </md-header-cell>
+      <md-cell *cdkCellDef="let row"> {{row.id}} </md-cell>
+    </ng-container>
+  </div>
+</md-table>
