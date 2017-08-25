@@ -157,7 +157,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     div.hopscotch-bubble .hopscotch-bubble-number,
     div.hopscotch-bubble .hopscotch-nav-button.next:hover,
     div.hopscotch-bubble .hopscotch-nav-button.next {
-        background-color: map-get($md-accent, 500);
+        background-color: map-get($md-primary, 500);
         color: black;
     }
     .mat-bg-warn {

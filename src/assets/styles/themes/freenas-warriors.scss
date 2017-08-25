@@ -93,16 +93,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         color: #f5f5f6 !important;
     }
     .mat-sidenav-container {    
-          background: map-get($md-primary, 200) !important;
+          background: map-get($md-primary, 900) !important;
         color: #f5f5f6 !important;
      }
     
     .mat-list-item-content {
-        background: map-get($md-accent, 300) !important;
+        background: map-get($md-accent, 900) !important;
         color: #f5f5f6 !important;
     }
     .sidebar-panel.mat-sidenav .navigation-hold {    
-        background: map-get($md-accent, 200) !important;
+        background: map-get($md-accent, 900) !important;
         color: #26282A !important;
      }
     
