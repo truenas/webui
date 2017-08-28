@@ -92,9 +92,7 @@ export class AdvancedComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected _injector: Injector,
-              protected _appRef: ApplicationRef) {
-    console.log("huh");
-  }
+              protected _appRef: ApplicationRef) {}
 
   afterInit(entityEdit: any) {
     entityEdit.ws.call('device.get_info', [ 'SERIAL' ]).subscribe((res) => {
