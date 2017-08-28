@@ -51,10 +51,15 @@ export const rootRouterConfig: Routes = [
         path: 'system',
         children: [
           {
-            path: '',
+            path: 'ca',
+            loadChildren : 'app/pages/system/ca/ca.module#CertificateAuthorityModule',
+            data: {title: 'System', breadcrumb: 'CA'}
+          },
+          {
+            path: 'advanced',
             loadChildren: './pages/system/system.module#SystemModule',
-            data: {title: 'Systems', breadcrumb: 'ADVANCED'}
-          }
+            data: {title: 'System', breadcrumb: 'ADVANCED'}
+          },
         ]
       },
       {

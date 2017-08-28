@@ -4,6 +4,6 @@ import {RouterModule, Routes} from '@angular/router';
 import {AdvancedComponent} from './advanced/';
 
 export const routes: Routes = [
-  {path : 'advanced', component : AdvancedComponent}
+  {path : '', component : AdvancedComponent}
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
