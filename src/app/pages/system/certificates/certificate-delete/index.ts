@@ -1,0 +1,1 @@
+export {CertificateDeleteComponent} from './certificate-delete.component';

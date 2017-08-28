@@ -1,12 +1,11 @@
-import {Routes} from '@angular/router';
+import { Routes } from '@angular/router';
 
-import {AdminLayoutComponent} from './components/common/layouts/admin-layout/admin-layout.component';
-import {AuthLayoutComponent} from './components/common/layouts/auth-layout/auth-layout.component';
+import { AdminLayoutComponent } from './components/common/layouts/admin-layout/admin-layout.component';
+import { AuthLayoutComponent } from './components/common/layouts/auth-layout/auth-layout.component';
 
-import {AuthService} from './services/auth/auth.service';
+import { AuthService } from './services/auth/auth.service';
 
-export const rootRouterConfig: Routes = [
-  {
+export const rootRouterConfig: Routes = [{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'
@@ -14,36 +13,32 @@ export const rootRouterConfig: Routes = [
   {
     path: '',
     component: AuthLayoutComponent,
-    children: [
-      {
-        path: 'sessions',
-        loadChildren: './views/sessions/sessions.module#SessionsModule',
-        data: {title: 'Session'}
-      }
-    ]
+    children: [{
+      path: 'sessions',
+      loadChildren: './views/sessions/sessions.module#SessionsModule',
+      data: { title: 'Session' }
+    }]
   },
   {
     path: '',
     component: AdminLayoutComponent,
     canActivate: [AuthService],
-    children: [
-      {
+    children: [{
         path: 'dashboard',
         loadChildren: './pages/dashboard/dashboard.module#DashboardModule',
-        data: {title: 'Dashboard', breadcrumb: 'DASHBOARD'}
+        data: { title: 'Dashboard', breadcrumb: 'DASHBOARD' }
       },
       {
         path: 'account',
-        children: [
-          {
+        children: [{
             path: 'users',
             loadChildren: './pages/users/users.module#UsersModule',
-            data: {title: 'Users', breadcrumb: 'USERS'}
+            data: { title: 'Users', breadcrumb: 'USERS' }
           },
           {
             path: 'groups',
             loadChildren: './pages/groups/groups.module#GroupsModule',
-            data: {title: 'Groups', breadcrumb: 'GROUPS'}
+            data: { title: 'Groups', breadcrumb: 'GROUPS' }
           }
         ]
       },
@@ -51,43 +46,47 @@ export const rootRouterConfig: Routes = [
         path: 'system',
         children: [
           {
-            path: 'ca',
-            loadChildren : 'app/pages/system/ca/ca.module#CertificateAuthorityModule',
-            data: {title: 'System', breadcrumb: 'CA'}
+            path: 'advanced',
+            loadChildren: 'app/pages/system/system.module#SystemModule',
+            data: { title: 'System', breadcrumb: 'ADVANCED' }
           },
           {
-            path: 'advanced',
-            loadChildren: './pages/system/system.module#SystemModule',
-            data: {title: 'System', breadcrumb: 'ADVANCED'}
+            path: 'ca',
+            loadChildren: 'app/pages/system/ca/ca.module#CertificateAuthorityModule',
+            data: { title: 'System', breadcrumb: 'CA' }
+          },
+          {
+            path: 'certificates',
+            loadChildren: 'app/pages/system/certificates/certificate.module#CertificateModule',
+            data: { title: 'System', breadcrumb: 'Certificates' }
           },
         ]
       },
       {
         path: 'sharing',
-        children: [
-          {
+        children: [{
             path: 'afp',
             loadChildren: './pages/sharing/afp/afp.module#AFPModule',
-            data: {title: 'AFP', breadcrumb: 'AFP'},
+            data: { title: 'AFP', breadcrumb: 'AFP' },
           },
           {
             path: 'nfs',
             loadChildren: './pages/sharing/nfs/nfs.module#NFSModule',
-            data: {title: 'NFS', breadcrumb: 'NFS'},
+            data: { title: 'NFS', breadcrumb: 'NFS' },
           }
         ]
       },
       {
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
-        data: {title: 'reportsdashboard', breadcrumb: 'REPORTING'}
+        data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
       }
     ]
   },
   {
     path: 'reportsdashboard',
     loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
-    data: {title: 'reportsdashboard', breadcrumb: 'REPORTING'}
+    data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
   },
   {
     path: '**',
@@ -95,4 +94,3 @@ export const rootRouterConfig: Routes = [
     pathMatch: 'full'
   }
 ];
-
