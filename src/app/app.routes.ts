@@ -51,7 +51,7 @@ export const rootRouterConfig: Routes = [
         path: 'system',
         children: [
           {
-            path: 'advanced',
+            path: '',
             loadChildren: './pages/system/system.module#SystemModule',
             data: {title: 'Systems', breadcrumb: 'ADVANCED'}
           }
