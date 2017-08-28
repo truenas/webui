@@ -68,17 +68,17 @@ $md-accent: (
 );
 
 // mandatory stuff for theming
-$egret-primary: mat-palette($md-primary);
-$egret-accent:  mat-palette($md-accent);
+$freenas-primary: mat-palette($md-primary);
+$freenas-accent:  mat-palette($md-accent);
 
 // include the custom theme components into a theme object
-$egret-theme: mat-dark-theme($egret-primary, $egret-accent);
+$freenas-theme: mat-dark-theme($freenas-primary, $freenas-accent);
 
 $primary-dark: darken( map-get($md-primary, 500), 8% );
 
 // include the custom theme object into the angular material theme
 .egret-dark-purple {
-    @include angular-material-theme($egret-theme);
+    @include angular-material-theme($freenas-theme);
 
     .mat-bg-primary,
     .topbar,
