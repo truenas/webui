@@ -105,6 +105,7 @@ export class NavigationService {
       sub: [
         {name: 'AFP', state: 'afp'},
         {name: 'NFS', state: 'nfs'},
+        {name: 'SMB', state: 'smb'},
       ]
     },
     {

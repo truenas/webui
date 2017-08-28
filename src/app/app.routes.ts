@@ -72,7 +72,12 @@ export const rootRouterConfig: Routes = [{
           {
             path: 'nfs',
             loadChildren: './pages/sharing/nfs/nfs.module#NFSModule',
-            data: { title: 'NFS', breadcrumb: 'NFS' },
+            data: {title: 'NFS', breadcrumb: 'NFS'},
+          },
+          {
+            path: 'smb',
+            loadChildren: './pages/sharing/smb/smb.module#SMBModule',
+            data: {title: 'SMB', breadcrumb: 'SMB'},
           }
         ]
       },
