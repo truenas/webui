@@ -20,6 +20,9 @@ import * as _ from 'lodash';
         <md-tab label="Authorized Access">
           <app-iscsi-authorizedaccess-list></app-iscsi-authorizedaccess-list>
         </md-tab>
+        <md-tab label="Targets">
+          <app-iscsi-target-list></app-iscsi-target-list>
+        </md-tab>
       </md-tab-group>
     </md-card>
   `,

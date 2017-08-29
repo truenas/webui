@@ -16,12 +16,13 @@ import { InitiatorFormComponent } from './initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
+import { TargetListComponent} from './target/target-list/';
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 // import { TargetAddComponent } from './target/target-add/';
 // import { TargetEditComponent} from './target/target-edit/';
 // import { TargetDeleteComponent} from './target/target-delete/';
-// import { TargetListComponent} from './target/target-list/';
+
 // import { ExtentListComponent } from './extent/extent-list/';
 // import { ExtentDeleteComponent } from './extent/extent-delete/';
 // import { ExtentFormComponent } from './extent/extent-form/';
@@ -47,7 +48,7 @@ import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedacce
     AuthorizedAccessListComponent,
     AuthorizedAccessFormComponent,
     // AuthorizedAccessDeleteComponent,
-    // TargetListComponent,
+    TargetListComponent,
     // TargetEditComponent,
     // TargetDeleteComponent,
     // TargetAddComponent,
