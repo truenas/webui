@@ -177,7 +177,7 @@ export class TargetAddComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(new Array('/pages').concat(this.route_success));
+    this.router.navigate(new Array('').concat(this.route_success));
   }
 
   onSubmit() {
