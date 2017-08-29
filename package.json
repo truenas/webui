@@ -6,17 +6,21 @@
   "homepage": "http://github.com/freenas/webui/",
   "scripts": {
     "ng": "ng",
+    "rimraf": "rimraf",
+    "changelog": "standard-changelog",
     "start": "ng serve --proxy-config proxy.config.json",
     "start:dev:aot": "ng serve --proxy-config proxy.config.json --aot",
     "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "ng serve --prod",
     "start:prod:aot": "ng serve --prod --aot",
-    "build": "ng build",
+    "build": "npm run clean:dist && ng build",
     "build:prod": "npm run build -- --prod",
     "build:prod:aot": "npm run build:prod -- --aot",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "clean:dist": "npm run rimraf -- dist",
+    "clean:coverage": "npm run rimraf -- coverage"
   },
   "repository": {
     "type": "git",
