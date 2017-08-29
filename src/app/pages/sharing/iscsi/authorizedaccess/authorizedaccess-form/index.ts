@@ -1,1 +1,1 @@
-export {AuthorizedAccessFormComponent} from './authorizedaccess-form.component';
+export { AuthorizedAccessFormComponent } from './authorizedaccess-form.component';

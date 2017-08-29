@@ -1,19 +1,8 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
-} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import { Component } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import {GlobalState} from '../../../../../global.state';
-
-import {EntityFormComponent} from '../../../../common/entity/entity-form';
-import {
-  FieldConfig
-} from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 import {
   matchOtherValidator
@@ -80,9 +69,7 @@ export class AuthorizedAccessFormComponent {
     },
   ];
 
-  constructor(protected router: Router, protected _injector: Injector,
-              protected _appRef: ApplicationRef,
-              protected _state: GlobalState) {}
+  constructor(protected router: Router) {}
 
   afterInit(entityAdd: any) {}
 }

@@ -15,7 +15,7 @@ import { InitiatorListComponent } from './initiator/initiator-list/';
 import { InitiatorFormComponent } from './initiator/initiator-form/';
 import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
-// import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
+import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 // import { TargetAddComponent } from './target/target-add/';
@@ -45,7 +45,7 @@ import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedacce
     InitiatorFormComponent,
     // InitiatorDeleteComponent,
     AuthorizedAccessListComponent,
-    // AuthorizedAccessFormComponent,
+    AuthorizedAccessFormComponent,
     // AuthorizedAccessDeleteComponent,
     // TargetListComponent,
     // TargetEditComponent,

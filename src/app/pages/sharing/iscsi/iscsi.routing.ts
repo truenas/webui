@@ -2,13 +2,14 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
-// import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
+
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 import { ISCSI } from './iscsi.component';
 import { PortalAddComponent } from './portal/portal-add/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 import { PortalEditComponent } from './portal/portal-edit/';
 import { InitiatorFormComponent } from './initiator/initiator-form/';
+import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 // import { TargetAddComponent } from './target/target-add/';
 // import { TargetEditComponent } from './target/target-edit/';
 // import { TargetDeleteComponent } from './target/target-delete/';
@@ -26,9 +27,9 @@ export const routes: Routes = [
   { path : 'initiators/add', component : InitiatorFormComponent },
   // { path : 'initiators/delete/:pk', component : InitiatorDeleteComponent },
   { path : 'initiators/edit/:pk', component : InitiatorFormComponent },
-  // { path : 'auth/add', component : AuthorizedAccessFormComponent },
+  { path : 'auth/add', component : AuthorizedAccessFormComponent },
   // { path : 'auth/delete/:pk', component : AuthorizedAccessDeleteComponent },
-  // { path : 'auth/edit/:pk', component : AuthorizedAccessFormComponent },
+  { path : 'auth/edit/:pk', component : AuthorizedAccessFormComponent },
   // { path : 'target/delete/:pk', component : TargetDeleteComponent },
   // { path : 'target/add', component : TargetAddComponent },
   // { path : 'target/edit/:pk', component: TargetEditComponent },
