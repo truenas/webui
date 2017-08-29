@@ -1,4 +1,3 @@
-import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgUploaderModule} from 'ngx-uploader';
@@ -13,9 +12,8 @@ import {NISComponent} from './nis/';
 
 @NgModule({
   imports : [
-    EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgUploaderModule, 
-    routing
+    EntityModule, FormsModule, ReactiveFormsModule,
+    NgUploaderModule, routing
   ],
   declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent ],
   providers : [ SystemGeneralService ]

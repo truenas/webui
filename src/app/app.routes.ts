@@ -72,6 +72,11 @@ export const rootRouterConfig: Routes = [{
         ]
       },
       {
+        path: 'directoryservice',
+        loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
+        data: { title: 'directoryservice', breadcrumb: 'DIRECTORYSERVICE' }
+      },
+      {
         path: 'sharing',
         children: [{
             path: 'afp',

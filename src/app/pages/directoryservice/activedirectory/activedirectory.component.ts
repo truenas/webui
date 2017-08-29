@@ -3,7 +3,7 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
-import {GlobalState} from '../../../global.state';
+//import {GlobalState} from '../../../global.state';
 import {
   RestService,
   SystemGeneralService,
@@ -123,7 +123,7 @@ export class ActiveDirectoryComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected _state: GlobalState,
+              //protected _state: GlobalState,
               protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {

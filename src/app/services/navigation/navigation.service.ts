@@ -95,7 +95,12 @@ export class NavigationService {
       type: 'dropDown',
       tooltip: 'Directory Service',
       icon: 'group_work',
-      state: 'directoryservice'
+      state: 'directoryservice',
+      sub: [
+        {name: 'ActiveDirectory', state: 'activedirectory'},
+        {name: 'LDAP', state: 'ldap'},
+        {name: 'NIS', state: 'nis'},
+      ]
     },
     {
       name: 'Sharing',
