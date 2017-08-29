@@ -1,19 +1,7 @@
-import {
-  ApplicationRef,
-  Component,
-  Injector,
-  OnInit,
-  ViewContainerRef
-} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import {Router} from '@angular/router';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
-import {GlobalState} from '../../../../../global.state';
-
-import {EntityFormComponent} from '../../../../common/entity/entity-form';
-import {
-  FieldConfig
-} from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-iscsi-initiator-form',
@@ -47,9 +35,7 @@ export class InitiatorFormComponent {
     },
   ];
 
-  constructor(protected router: Router, protected _injector: Injector,
-              protected _appRef: ApplicationRef,
-              protected _state: GlobalState) {}
+  constructor(protected router: Router) {}
 
   afterInit(entityAdd: any) {}
 }

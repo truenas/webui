@@ -12,11 +12,11 @@ import { PortalListComponent } from './portal/portal-list/';
 import { PortalAddComponent } from './portal/portal-add/';
 import { PortalEditComponent } from './portal/portal-edit/';
 import { InitiatorListComponent } from './initiator/initiator-list/';
+import { InitiatorFormComponent } from './initiator/initiator-form/';
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 // import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 // import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
-// import { InitiatorFormComponent } from './initiator/initiator-form/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 // import { TargetAddComponent } from './target/target-add/';
 // import { TargetEditComponent} from './target/target-edit/';
@@ -42,7 +42,7 @@ import { InitiatorListComponent } from './initiator/initiator-list/';
     PortalAddComponent,
     PortalEditComponent,
     InitiatorListComponent,
-    // InitiatorFormComponent,
+    InitiatorFormComponent,
     // InitiatorDeleteComponent,
     // AuthorizedAccessListComponent,
     // AuthorizedAccessFormComponent,
