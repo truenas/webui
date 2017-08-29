@@ -40,7 +40,8 @@
         "../node_modules/hopscotch/dist/js/hopscotch.min.js",
         "../node_modules/hammerjs/hammer.js",
         "vendor/Chart.min.js",
-        "../node_modules/quill/dist/quill.min.js"
+        "../node_modules/quill/dist/quill.min.js",
+        "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
