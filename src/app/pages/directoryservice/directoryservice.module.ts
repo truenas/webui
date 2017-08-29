@@ -4,7 +4,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgUploaderModule} from 'ngx-uploader';
 
 import {SystemGeneralService} from '../../services';
-import {FnCommonModule} from '../common/common.module';
 import {EntityModule} from '../common/entity/entity.module';
 
 import {ActiveDirectoryComponent} from './activedirectory/';
@@ -15,7 +14,7 @@ import {NISComponent} from './nis/';
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgUploaderModule, FnCommonModule,
+    ReactiveFormsModule, NgUploaderModule, 
     routing
   ],
   declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent ],
