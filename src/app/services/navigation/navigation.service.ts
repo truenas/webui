@@ -52,8 +52,9 @@ export class NavigationService {
         {name: 'Email', state: 'email'},
         {name: 'System Dataset', state: 'systemdataset'},
         {name: 'Alert Services', state: 'alertservices'},
-        {name: 'Tunables', state: 'tunables'},
+        {name: 'Tunables', state: 'tunable'},
         {name: 'Update', state: 'update'},
+        {name: 'NTPServers', state: 'ntpservers'},
         {name: 'CAs', state: 'ca'},
         {name: 'Certificates', state: 'certificates'},
         {name: 'Support', state: 'support'},
@@ -73,11 +74,11 @@ export class NavigationService {
       icon: 'device_hub',
       state: 'network',
       sub: [
-        {name: 'Global Configuration', state: 'networkconfig'},
+        {name: 'Global Configuration', state: 'configuration'},
         {name: 'Interfaces', state: 'interfaces'},
-        {name: 'IPMI', state: 'ipmi'},
+//        {name: 'IPMI', state: 'ipmi'},
         {name: 'Link Aggregation', state: 'laggs'},
-        {name: 'Network Summary', state: 'networksummary'},
+//        {name: 'Network Summary', state: 'networksummary'},
         {name: 'Static Routes', state: 'staticroutes'},
         {name: 'VLANs', state: 'vlans'},
       ]
@@ -94,7 +95,12 @@ export class NavigationService {
       type: 'dropDown',
       tooltip: 'Directory Service',
       icon: 'group_work',
-      state: 'directoryservice'
+      state: 'directoryservice',
+      sub: [
+        {name: 'ActiveDirectory', state: 'activedirectory'},
+        {name: 'LDAP', state: 'ldap'},
+        {name: 'NIS', state: 'nis'},
+      ]
     },
     {
       name: 'Sharing',
@@ -107,6 +113,7 @@ export class NavigationService {
         {name: 'NFS', state: 'nfs'},
         {name: 'WebDAV', state: 'webdav'},
         {name: 'SMB', state: 'smb'},
+        {name: 'ISCSI', state: 'iscsi'},
       ]
     },
     {

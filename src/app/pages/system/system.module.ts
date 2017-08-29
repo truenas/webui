@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgUploaderModule } from 'ngx-uploader';
 
-import { FnCommonModule } from '../common/common.module';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { AdvancedComponent } from './advanced/';
@@ -12,7 +11,7 @@ import { routing } from './system.routing';
 
 @NgModule({
   imports: [
-    EntityModule, FnCommonModule, CommonModule, FormsModule,
+    EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
     MaterialModule
   ],

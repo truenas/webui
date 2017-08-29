@@ -14,6 +14,7 @@ export class CertificateListComponent {
 
   protected resource_name: string = 'system/certificate';
   protected route_delete: string[] = ['system', 'certificates', 'delete'];
+  protected route_edit: string[] = ['system', 'certificates', 'edit'];
   protected route_success: string[] = [ 'system', 'certificates' ];
 
   public busy: Subscription;

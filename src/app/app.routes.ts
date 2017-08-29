@@ -44,8 +44,7 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path: 'system',
-        children: [
-          {
+        children: [{
             path: 'advanced',
             loadChildren: 'app/pages/system/system.module#SystemModule',
             data: { title: 'System', breadcrumb: 'ADVANCED' }
@@ -60,7 +59,27 @@ export const rootRouterConfig: Routes = [{
             loadChildren: 'app/pages/system/certificates/certificate.module#CertificateModule',
             data: { title: 'System', breadcrumb: 'Certificates' }
           },
+          {
+            path: 'tunable',
+            loadChildren: 'app/pages/system/tunable/tunable.module#TunableModule',
+            data: { title: 'System', breadcrumb: 'Tunable' }
+          },
+          {
+            path: 'ntpservers',
+            loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule',
+            data: { title: 'System', breadcrumb: 'NTPServers' }
+          },
         ]
+      },
+      {
+        path:'network',
+        loadChildren: 'app/pages/network/network.module#NetworkModule',
+        data: { title: 'Network', breadcrumb: 'NETWORK' }
+      },
+      {
+        path: 'directoryservice',
+        loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
+        data: { title: 'directoryservice', breadcrumb: 'DIRECTORYSERVICE' }
       },
       {
         path: 'sharing',
@@ -72,17 +91,22 @@ export const rootRouterConfig: Routes = [{
           {
             path: 'nfs',
             loadChildren: './pages/sharing/nfs/nfs.module#NFSModule',
-            data: {title: 'NFS', breadcrumb: 'NFS'},
+            data: { title: 'NFS', breadcrumb: 'NFS' },
           },
           {
             path: 'webdav',
             loadChildren: './pages/sharing/webdav/webdav.module#WebdavModule',
-            data: {title: 'WebDAV', breadcrumb: 'WebDAV'},
+            data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
           },
           {
             path: 'smb',
             loadChildren: './pages/sharing/smb/smb.module#SMBModule',
-            data: {title: 'SMB', breadcrumb: 'SMB'},
+            data: { title: 'SMB', breadcrumb: 'SMB' },
+          },
+          {
+            path: 'iscsi',
+            loadChildren: './pages/sharing/iscsi/iscsi.module#ISCSIModule',
+            data: { title: 'ISCSI', breadcrumb: 'ISCSI' },
           }
         ]
       },

@@ -5,7 +5,8 @@ import {Http} from '@angular/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {EntityUtils} from '../pages/common/entity/utils'
-import {RestService, WebSocketService} from '../services/';
+import {RestService} from './rest.service';
+import {WebSocketService} from './ws.service';
 
 @Injectable()
 export class JailService {

@@ -1,0 +1,8 @@
+<h1 md-dialog-title>{{ title }}</h1>
+<div md-dialog-content>{{ message }}</div>
+<div md-dialog-actions>
+  <button md-button (click)="dialogRef.close(true)">OK</button>
+  &nbsp;
+  <span fxFlex></span>
+  <button md-button (click)="dialogRef.close(false)">Cancel</button>
+</div>

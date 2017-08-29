@@ -28,15 +28,9 @@
 
   <ngx-datatable-column prop=" " [width]="25" >
     <ng-template let-row="row" ngx-datatable-cell-template>
-      <md-menu #appMenu="mdMenu">
-            <app-entity-table-actions [entity]="this" [row]="row">
-            </app-entity-table-actions>
-      </md-menu>
+    <app-entity-table-actions [entity]="this" [row]="row">
+    </app-entity-table-actions>
 
-      <button md-icon-button [mdMenuTriggerFor]="appMenu" class="action-menu">
-         <md-icon>more_vert</md-icon>
-      </button>
-    
     </ng-template>
   </ngx-datatable-column>
   </ngx-datatable>

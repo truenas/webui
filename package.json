@@ -6,17 +6,21 @@
   "homepage": "http://github.com/freenas/webui/",
   "scripts": {
     "ng": "ng",
+    "rimraf": "rimraf",
+    "changelog": "standard-changelog",
     "start": "ng serve --proxy-config proxy.config.json",
     "start:dev:aot": "ng serve --proxy-config proxy.config.json --aot",
     "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "ng serve --prod",
     "start:prod:aot": "ng serve --prod --aot",
-    "build": "ng build",
+    "build": "npm run clean:dist && ng build",
     "build:prod": "npm run build -- --prod",
-    "build:prod:aot": "npm run build:prod -- --aot",
+    "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "clean:dist": "npm run rimraf -- dist",
+    "clean:coverage": "npm run rimraf -- coverage"
   },
   "repository": {
     "type": "git",
@@ -41,7 +45,6 @@
     "@angular/platform-browser-dynamic": "4.3.6",
     "@angular/platform-server": "4.2.6",
     "@angular/router": "4.3.6",
-    "@ng2-dynamic-forms/core": "^1.4.25",
     "@swimlane/ngx-datatable": "9.1.0",
     "@types/d3": "^4.10.0",
     "angular-calendar": "0.17.0",
@@ -74,7 +77,6 @@
     "perfect-scrollbar": "0.7.1",
     "raven-js": "^3.17.0",
     "rxjs": "5.1.0",
-    "tixif-ngx-busy": "0.0.5",
     "zone.js": "0.8.4"
   },
   "devDependencies": {
