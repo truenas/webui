@@ -19,7 +19,7 @@ import { ISCSI } from './iscsi.component';
 
 export const routes: Routes = [
   { path : '', component: ISCSI },
-  // { path : ':pk', component : ISCSI },
+  { path : ':pk', component : ISCSI },
   // { path : 'portals/delete/:pk', component : PortalDeleteComponent },
   // { path : 'portals/add', component : PortalAddComponent },
   // { path : 'portals/edit/:pk', component : PortalEditComponent },

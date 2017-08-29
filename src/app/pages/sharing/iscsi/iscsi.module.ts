@@ -8,6 +8,7 @@ import { EntityModule } from '../../common/entity/entity.module';
 import { ISCSI } from './iscsi.component';
 import { routing } from './iscsi.routing';
 import { GlobalconfigurationComponent } from './globalconfiguration/';
+import { PortalListComponent } from './portal/portal-list/';
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 // import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 // import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
@@ -17,7 +18,6 @@ import { GlobalconfigurationComponent } from './globalconfiguration/';
 // import { PortalAddComponent } from './portal/portal-add/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 // import { PortalEditComponent } from './portal/portal-edit/';
-// import { PortalListComponent } from './portal/portal-list/';
 // import { TargetAddComponent } from './target/target-add/';
 // import { TargetEditComponent} from './target/target-edit/';
 // import { TargetDeleteComponent} from './target/target-delete/';
@@ -37,7 +37,7 @@ import { GlobalconfigurationComponent } from './globalconfiguration/';
   declarations : [
     ISCSI,
     GlobalconfigurationComponent,
-    // PortalListComponent,
+    PortalListComponent,
     // PortalDeleteComponent,
     // PortalAddComponent,
     // PortalEditComponent,

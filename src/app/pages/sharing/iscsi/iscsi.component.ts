@@ -11,6 +11,9 @@ import * as _ from 'lodash';
         <md-tab label="Global Configuration">
           <app-iscsi-globalconfiguration></app-iscsi-globalconfiguration>
         </md-tab>
+        <md-tab label="Portals">
+          <app-iscsi-portal-list></app-iscsi-portal-list>
+        </md-tab>
       </md-tab-group>
     </md-card>
   `,
