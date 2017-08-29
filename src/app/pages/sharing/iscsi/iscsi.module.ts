@@ -18,10 +18,11 @@ import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedacce
 import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 import { TargetListComponent} from './target/target-list/';
 import { TargetAddComponent } from './target/target-add/';
+import { TargetEditComponent} from './target/target-edit/';
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 
-// import { TargetEditComponent} from './target/target-edit/';
+
 // import { TargetDeleteComponent} from './target/target-delete/';
 
 // import { ExtentListComponent } from './extent/extent-list/';
@@ -51,7 +52,7 @@ import { TargetAddComponent } from './target/target-add/';
     // AuthorizedAccessDeleteComponent,
     TargetListComponent,
     TargetAddComponent,
-    // TargetEditComponent,
+    TargetEditComponent,
     // TargetDeleteComponent,
     // ExtentListComponent,
     // ExtentDeleteComponent,

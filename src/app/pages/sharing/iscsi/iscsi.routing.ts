@@ -11,7 +11,7 @@ import { PortalEditComponent } from './portal/portal-edit/';
 import { InitiatorFormComponent } from './initiator/initiator-form/';
 import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 import { TargetAddComponent } from './target/target-add/';
-// import { TargetEditComponent } from './target/target-edit/';
+import { TargetEditComponent } from './target/target-edit/';
 // import { TargetDeleteComponent } from './target/target-delete/';
 // import { ExtentDeleteComponent } from './extent/extent-delete/';
 // import { ExtentFormComponent } from './extent/extent-form/';
@@ -32,7 +32,7 @@ export const routes: Routes = [
   { path : 'auth/edit/:pk', component : AuthorizedAccessFormComponent },
   // { path : 'target/delete/:pk', component : TargetDeleteComponent },
   { path : 'target/add', component : TargetAddComponent },
-  // { path : 'target/edit/:pk', component: TargetEditComponent },
+  { path : 'target/edit/:pk', component: TargetEditComponent },
   // { path : 'extent/delete/:pk', component: ExtentDeleteComponent },
   // { path : 'extent/add', component: ExtentFormComponent },
   // { path : 'extent/edit/:pk', component: ExtentFormComponent },
