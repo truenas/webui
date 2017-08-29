@@ -64,6 +64,11 @@ export const rootRouterConfig: Routes = [{
             loadChildren: 'app/pages/system/tunable/tunable.module#TunableModule',
             data: { title: 'System', breadcrumb: 'Tunable' }
           },
+          {
+            path: 'ntpservers',
+            loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule',
+            data: { title: 'System', breadcrumb: 'NTPServers' }
+          },
         ]
       },
       {
