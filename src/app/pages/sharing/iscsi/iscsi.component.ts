@@ -17,6 +17,9 @@ import * as _ from 'lodash';
         <md-tab label="Initiators">
           <app-iscsi-initiator-list></app-iscsi-initiator-list>
         </md-tab>
+        <md-tab label="Authorized Access">
+          <app-iscsi-authorizedaccess-list></app-iscsi-authorizedaccess-list>
+        </md-tab>
       </md-tab-group>
     </md-card>
   `,
