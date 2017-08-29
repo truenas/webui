@@ -9,7 +9,6 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
-import {GlobalState} from '../../../global.state';
 import {RestService, UserService, WebSocketService} from '../../../services/';
 import {
   FieldConfig
