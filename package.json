@@ -15,7 +15,7 @@
     "start:prod:aot": "ng serve --prod --aot",
     "build": "npm run clean:dist && ng build",
     "build:prod": "npm run build -- --prod",
-    "build:prod:aot": "npm run build:prod -- --aot",
+    "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
