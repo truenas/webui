@@ -1,24 +1,9 @@
-import { MdDialogRef } from '@angular/material';
+import {MdDialog, MdDialogRef} from '@angular/material';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'confirm-dialog',
-  template: `<h1 md-dialog-title>{{ title }}</h1>
-    <div md-dialog-content>{{ message }}</div>
-    <div md-dialog-actions>
-    <button 
-    type="button" 
-    md-raised-button
-    color="primary" 
-    (click)="dialogRef.close(true)">OK</button>
-    &nbsp;
-    <span fxFlex></span>
-    <button 
-    type="button"
-    color="accent"
-    md-raised-button 
-    (click)="dialogRef.close(false)">Cancel</button>
-    </div>`,
+  templateUrl: './confirm-dialog.component.html',
 })
 export class ConfirmDialog {
 
