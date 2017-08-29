@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 // import { InitiatorFormComponent } from './initiator/initiator-form/';
 import { ISCSI } from './iscsi.component';
-// import { PortalAddComponent } from './portal/portal-add/';
+import { PortalAddComponent } from './portal/portal-add/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 // import { PortalEditComponent } from './portal/portal-edit/';
 // import { TargetAddComponent } from './target/target-add/';
@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path : '', component: ISCSI },
   { path : ':pk', component : ISCSI },
   // { path : 'portals/delete/:pk', component : PortalDeleteComponent },
-  // { path : 'portals/add', component : PortalAddComponent },
+  { path : 'portals/add', component : PortalAddComponent },
   // { path : 'portals/edit/:pk', component : PortalEditComponent },
   // { path : 'initiators/add', component : InitiatorFormComponent },
   // { path : 'initiators/delete/:pk', component : InitiatorDeleteComponent },

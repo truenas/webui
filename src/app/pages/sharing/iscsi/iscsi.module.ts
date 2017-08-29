@@ -9,13 +9,13 @@ import { ISCSI } from './iscsi.component';
 import { routing } from './iscsi.routing';
 import { GlobalconfigurationComponent } from './globalconfiguration/';
 import { PortalListComponent } from './portal/portal-list/';
+import { PortalAddComponent } from './portal/portal-add/';
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 // import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 // import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
 // import { InitiatorDeleteComponent } from './initiator/initiator-delete/';
 // import { InitiatorFormComponent } from './initiator/initiator-form/';
 // import { InitiatorListComponent } from './initiator/initiator-list/';
-// import { PortalAddComponent } from './portal/portal-add/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
 // import { PortalEditComponent } from './portal/portal-edit/';
 // import { TargetAddComponent } from './target/target-add/';
@@ -39,7 +39,7 @@ import { PortalListComponent } from './portal/portal-list/';
     GlobalconfigurationComponent,
     PortalListComponent,
     // PortalDeleteComponent,
-    // PortalAddComponent,
+    PortalAddComponent,
     // PortalEditComponent,
     // InitiatorListComponent,
     // InitiatorFormComponent,
