@@ -10,6 +10,7 @@ import { routing } from './iscsi.routing';
 import { GlobalconfigurationComponent } from './globalconfiguration/';
 import { PortalListComponent } from './portal/portal-list/';
 import { PortalAddComponent } from './portal/portal-add/';
+import { PortalEditComponent } from './portal/portal-edit/';
 // import { AuthorizedAccessDeleteComponent } from './authorizedaccess/authorizedaccess-delete/';
 // import { AuthorizedAccessFormComponent } from './authorizedaccess/authorizedaccess-form/';
 // import { AuthorizedAccessListComponent } from './authorizedaccess/authorizedaccess-list/';
@@ -17,7 +18,6 @@ import { PortalAddComponent } from './portal/portal-add/';
 // import { InitiatorFormComponent } from './initiator/initiator-form/';
 // import { InitiatorListComponent } from './initiator/initiator-list/';
 // import { PortalDeleteComponent } from './portal/portal-delete/';
-// import { PortalEditComponent } from './portal/portal-edit/';
 // import { TargetAddComponent } from './target/target-add/';
 // import { TargetEditComponent} from './target/target-edit/';
 // import { TargetDeleteComponent} from './target/target-delete/';
@@ -40,7 +40,7 @@ import { PortalAddComponent } from './portal/portal-add/';
     PortalListComponent,
     // PortalDeleteComponent,
     PortalAddComponent,
-    // PortalEditComponent,
+    PortalEditComponent,
     // InitiatorListComponent,
     // InitiatorFormComponent,
     // InitiatorDeleteComponent,
