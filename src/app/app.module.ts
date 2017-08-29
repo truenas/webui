@@ -43,6 +43,11 @@ export function createTranslateLoader(http: Http) {
     WebSocketService,
     RestService, 
     ENV_PROVIDERS],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent
+  ],
+  entryComponents: [
+    ConfirmDialog,
+  ],
 })
 export class AppModule { }
