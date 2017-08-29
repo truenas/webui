@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EntityModule } from '../../common/entity/entity.module';
 
 import { WebdavListComponent } from './webdav-list/';
-// import { WebdavFormComponent } from './webdav-form/';
+import { WebdavFormComponent } from './webdav-form/';
 // import { WebdavDeleteComponent } from './webdav-delete/';
 import { routing } from './webdav.routing';
 
@@ -18,7 +18,7 @@ import { routing } from './webdav.routing';
   ],
   declarations : [
     WebdavListComponent,
-    // WebdavFormComponent,
+    WebdavFormComponent,
     // WebdavDeleteComponent,
   ],
   providers : []
