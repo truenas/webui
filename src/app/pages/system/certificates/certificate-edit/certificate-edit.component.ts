@@ -5,72 +5,50 @@ import {
   OnInit,
   ViewContainerRef
 } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {
-  DynamicCheckboxModel,
-  DynamicFormControlModel,
-  DynamicFormService,
-  DynamicInputModel,
-  DynamicRadioGroupModel,
-  DynamicSelectModel
-} from '@ng2-dynamic-forms/core';
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
-import {RestService} from '../../../../services/rest.service';
+import { RestService, WebSocketService } from '../../../../services/';
+import {
+  FieldConfig
+} from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-certificate-edit',
-  template : `<entity-form [conf]="this"></entity-form>`
+  selector: 'app-certificate-edit',
+  template: `<entity-form [conf]="this"></entity-form>`
 })
 export class CertificateEditComponent {
 
   protected resource_name: string = 'system/certificate';
-  protected route_success: string[] = [ 'system', 'certificates' ];
+  protected route_success: string[] = ['system', 'certificates'];
 
-  public formModel: DynamicFormControlModel[] = [
-    new DynamicInputModel({
-      id : 'name',
-      label : 'name',
-      validators : {required : null},
-    }),
-    new DynamicInputModel({
-      id : 'description',
-      label : 'Description',
-    }),
-    new DynamicInputModel({
-      id : 'vcpus',
-      label : 'Virtual CPUs',
-    }),
-    new DynamicInputModel({
-      id : 'memory',
-      label : 'Memory Size (MiB)',
-    }),
-    new DynamicSelectModel({
-      id : 'bootloader',
-      label : 'Boot Loader Type',
-    }),
+  protected fieldConfig: FieldConfig[] = [{
+      type: 'input',
+      name: 'cert_name',
+      placeholder: 'Identifier'
+    },
+    {
+      type: 'input',
+      name: 'cert_certificate',
+      placeholder: 'Certificate'
+    },
+    {
+      type: 'input',
+      name: 'cert_privatekey',
+      placeholder: 'Private Key'
+    }
   ];
 
-  private bootloader: DynamicSelectModel<string>;
-  public bootloader_type: any[]
-
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService,
-              protected formService: DynamicFormService,
-              protected _injector: Injector,
-              protected _appRef: ApplicationRef) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  afterInit(entityEdit) {
-    entityEdit.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ])
-        .subscribe((res) => {
-          this.bootloader =
-              <DynamicSelectModel<string>>this.formService.findById(
-                  "bootloader", this.formModel);
-          this.bootloader_type = res
-          res.forEach((item) => {
-            this.bootloader.add({label : item[1], value : item[0]});
-          });
-          entityEdit.formGroup.controls['bootloader'].setValue(
-              this.bootloader_type[1][0]);
-        });
-  }
+  afterInit(entityEdit: any) {}
 }
