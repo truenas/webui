@@ -75,6 +75,11 @@ export const rootRouterConfig: Routes = [{
             data: {title: 'NFS', breadcrumb: 'NFS'},
           },
           {
+            path: 'webdav',
+            loadChildren: './pages/sharing/webdav/webdav.module#WebdavModule',
+            data: {title: 'WebDAV', breadcrumb: 'WebDAV'},
+          },
+          {
             path: 'smb',
             loadChildren: './pages/sharing/smb/smb.module#SMBModule',
             data: {title: 'SMB', breadcrumb: 'SMB'},
