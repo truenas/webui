@@ -72,6 +72,11 @@ export const rootRouterConfig: Routes = [{
         ]
       },
       {
+        path:'network',
+        loadChildren: 'app/pages/network/network.module#NetworkModule',
+        data: { title: 'Network', breadcrumb: 'NETWORK' }
+      },
+      {
         path: 'directoryservice',
         loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
         data: { title: 'directoryservice', breadcrumb: 'DIRECTORYSERVICE' }

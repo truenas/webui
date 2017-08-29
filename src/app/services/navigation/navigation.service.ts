@@ -74,11 +74,11 @@ export class NavigationService {
       icon: 'device_hub',
       state: 'network',
       sub: [
-        {name: 'Global Configuration', state: 'networkconfig'},
+        {name: 'Global Configuration', state: 'configuration'},
         {name: 'Interfaces', state: 'interfaces'},
-        {name: 'IPMI', state: 'ipmi'},
+//        {name: 'IPMI', state: 'ipmi'},
         {name: 'Link Aggregation', state: 'laggs'},
-        {name: 'Network Summary', state: 'networksummary'},
+//        {name: 'Network Summary', state: 'networksummary'},
         {name: 'Static Routes', state: 'staticroutes'},
         {name: 'VLANs', state: 'vlans'},
       ]
