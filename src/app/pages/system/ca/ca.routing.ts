@@ -6,11 +6,13 @@ import { CertificateAuthorityImportComponent } from './ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca-internal/';
 import { CertificateAuthorityListComponent } from './ca-list/';
+import { CAFormComponent } from './ca-form/';
 
 export const routes: Routes = [
   { path: 'import', component: CertificateAuthorityImportComponent },
   { path: 'internal', component: CertificateAuthorityInternalComponent },
   { path: 'intermediate', component: CertificateAuthorityIntermediateComponent },
+  { path: 'edit/:pk', component: CAFormComponent },
   { path: 'delete/:pk', component: CertificateAuthorityDeleteComponent },
   { path: '', component: CertificateAuthorityListComponent, pathMatch: 'full' },
 ];

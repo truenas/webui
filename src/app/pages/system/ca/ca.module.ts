@@ -10,6 +10,7 @@ import {CertificateAuthorityImportComponent} from './ca-import/';
 import {CertificateAuthorityIntermediateComponent} from './ca-intermediate/';
 import {CertificateAuthorityInternalComponent} from './ca-internal/';
 import {CertificateAuthorityListComponent} from './ca-list/';
+import {CAFormComponent} from './ca-form/';
 import {routing} from './ca.routing';
 
 @NgModule({
@@ -18,6 +19,7 @@ import {routing} from './ca.routing';
     ReactiveFormsModule, NgUploaderModule, routing
   ],
   declarations : [
+    CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityImportComponent,
     CertificateAuthorityInternalComponent,
