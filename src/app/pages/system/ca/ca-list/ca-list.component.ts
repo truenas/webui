@@ -12,6 +12,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class CertificateAuthorityListComponent {
   protected resource_name: string = 'system/certificateauthority';
   protected route_delete: string[] = ['system', 'ca', 'delete'];
+  protected route_edit: string[] = ['system', 'ca', 'edit'];
   protected route_success: string[] = [ 'system', 'ca' ];
 
   public busy: Subscription;
