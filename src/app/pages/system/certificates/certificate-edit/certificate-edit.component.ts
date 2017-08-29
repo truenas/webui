@@ -28,6 +28,7 @@ export class CertificateEditComponent {
 
   protected resource_name: string = 'system/certificate';
   protected route_success: string[] = ['system', 'certificates'];
+  protected isEntity: boolean = true;
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
