@@ -52,7 +52,7 @@ export class NavigationService {
         {name: 'Email', state: 'email'},
         {name: 'System Dataset', state: 'systemdataset'},
         {name: 'Alert Services', state: 'alertservices'},
-        {name: 'Tunables', state: 'tunables'},
+        {name: 'Tunables', state: 'tunable'},
         {name: 'Update', state: 'update'},
         {name: 'CAs', state: 'ca'},
         {name: 'Certificates', state: 'certificates'},
