@@ -4,7 +4,8 @@ import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
-import {RestService, WebSocketService} from '../services/';
+import {RestService} from './rest.service';
+import {WebSocketService} from './ws.service';
 
 @Injectable()
 export class SystemGeneralService {
