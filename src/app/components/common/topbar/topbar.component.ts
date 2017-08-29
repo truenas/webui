@@ -18,11 +18,11 @@ export class TopbarComponent implements OnInit {
     name: 'Spanish',
     code: 'es',
   }]
-  egretThemes;
+  freenasThemes;
   
   constructor(private themeService: ThemeService) {}
   ngOnInit() {
-    this.egretThemes = this.themeService.egretThemes;
+    this.freenasThemes = this.themeService.freenasThemes;
   }
   setLang() {
     this.onLangChange.emit(this.currentLang);

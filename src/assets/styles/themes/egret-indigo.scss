@@ -1,7 +1,6 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
-// You can define colors here (using http://mcg.mbitson.com)
 $md-primary: (
     50 : #e8eaf6,
     100 : #c5cbe9,
@@ -69,17 +68,17 @@ $md-accent: (
 );
 
 // mandatory stuff for theming
-$egret-primary: mat-palette($md-primary);
-$egret-accent:  mat-palette($md-accent);
+$freenas-primary: mat-palette($md-primary);
+$freenas-accent:  mat-palette($md-accent);
 
 // include the custom theme components into a theme object
-$egret-theme: mat-light-theme($egret-primary, $egret-accent);
+$freenas-theme: mat-light-theme($freenas-primary, $freenas-accent);
 
 $primary-dark: darken( map-get($md-primary, 500), 8% );
 
 // include the custom theme object into the angular material theme
 .egret-indigo {
-    @include angular-material-theme($egret-theme);
+    @include angular-material-theme($freenas-theme);
 
     .mat-bg-primary,
     .topbar,
@@ -93,12 +92,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         background: map-get($md-primary, 500) !important;
         color: #ffffff !important;
     }
-
-    .datatable-header {
-        background: map-get($md-primary, 700) !important;
-        color: #ffffff !important;
-    }
-
     .mat-color-primary,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
