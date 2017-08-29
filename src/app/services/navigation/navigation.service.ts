@@ -113,6 +113,7 @@ export class NavigationService {
         {name: 'NFS', state: 'nfs'},
         {name: 'WebDAV', state: 'webdav'},
         {name: 'SMB', state: 'smb'},
+        {name: 'ISCSI', state: 'iscsi'},
       ]
     },
     {

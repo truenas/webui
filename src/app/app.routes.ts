@@ -97,6 +97,11 @@ export const rootRouterConfig: Routes = [{
             path: 'smb',
             loadChildren: './pages/sharing/smb/smb.module#SMBModule',
             data: { title: 'SMB', breadcrumb: 'SMB' },
+          },
+          {
+            path: 'iscsi',
+            loadChildren: './pages/sharing/iscsi/iscsi.module#ISCSIModule',
+            data: { title: 'ISCSI', breadcrumb: 'ISCSI' },
           }
         ]
       },
