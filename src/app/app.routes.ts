@@ -44,9 +44,15 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path: 'system',
-        children: [{
+        children: [
+          {
+            path: 'general',
+            loadChildren: 'app/pages/system/general/general.module#SystemGeneralModule',
+            data: { title: 'System', breadcrumb: 'General' }
+          },
+          {
             path: 'advanced',
-            loadChildren: 'app/pages/system/system.module#SystemModule',
+            loadChildren: 'app/pages/system/advanced/advanced.module#SystemAdvancedModule',
             data: { title: 'System', breadcrumb: 'ADVANCED' }
           },
           {
