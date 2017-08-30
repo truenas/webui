@@ -59,7 +59,6 @@
     "core-js": "2.4.1",
     "d3": "^4.10.0",
     "date-fns": "1.28.5",
-    "element-resize-detector": "^1.1.12",
     "filesize": "^3.5.10",
     "hammerjs": "2.0.8",
     "hopscotch": "0.3.1",
@@ -76,6 +75,7 @@
     "ngx-uploader": "2.2.7",
     "perfect-scrollbar": "0.7.1",
     "raven-js": "^3.17.0",
+    "react-size": "^0.1.1",
     "rxjs": "5.1.0",
     "zone.js": "0.8.4"
   },
