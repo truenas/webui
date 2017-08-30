@@ -272,7 +272,7 @@ export class TargetEditComponent implements OnInit {
             }
           }
 
-          this.router.navigate(new Array('/pages').concat(this.route_success));
+          this.router.navigate(new Array('').concat(this.route_success));
         },
         (res) => {
           new EntityUtils().handleError(this, res);
