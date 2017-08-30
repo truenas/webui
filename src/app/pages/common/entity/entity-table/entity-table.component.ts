@@ -143,27 +143,13 @@ export class EntityTableComponent implements OnInit {
       new Array('/').concat(this.conf.route_edit).concat(id));
   }
 
-  // doDelete(id) {
-  //   this.router.navigate(
-  //     new Array('/').concat(this.conf.route_delete).concat(id));
-  // }
   doDelete(id) {
     this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
       if (res) {
         let data = {};
         this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
           (res) => {
-            // if (this.conf.route_success) {
-            //   this.router.navigate(new Array('/pages').concat(this.conf.route_success));
-            // }else {
-            //   location.reload();
-            // }
-            //fix me
-            // because this is the same route, 
-            // the add a new parameter way 
-            // to trick the route to refresh way doesn't work
-            // yet
-            location.reload();
+            this.getData();
           },
           (res) => { new EntityUtils().handleError(this, res); }
         );
