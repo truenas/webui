@@ -59,6 +59,7 @@
     "core-js": "2.4.1",
     "d3": "^4.10.0",
     "date-fns": "1.28.5",
+    "element-resize-detector": "^1.1.12",
     "filesize": "^3.5.10",
     "hammerjs": "2.0.8",
     "hopscotch": "0.3.1",
