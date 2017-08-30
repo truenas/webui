@@ -45,6 +45,7 @@
     "@angular/platform-browser-dynamic": "4.3.6",
     "@angular/platform-server": "4.2.6",
     "@angular/router": "4.3.6",
+    "@ng2-dynamic-forms/core": "^1.4.25",
     "@swimlane/ngx-datatable": "9.1.0",
     "@types/d3": "^4.10.0",
     "angular-calendar": "0.17.0",

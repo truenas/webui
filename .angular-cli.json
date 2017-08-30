@@ -25,6 +25,7 @@
         "../node_modules/angular-calendar/dist/css/angular-calendar.css",
         "../node_modules/hopscotch/dist/css/hopscotch.min.css",
         "../node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
+	   "../node_modules/chartist/dist/chartist.min.css",
         "vendor/pace/pace-theme-min.css",
         "assets/styles/themes/egret-dark-purple.scss",
         "assets/styles/themes/egret-dark-pink.scss",
@@ -41,7 +42,7 @@
         "../node_modules/hammerjs/hammer.js",
         "vendor/Chart.min.js",
         "../node_modules/quill/dist/quill.min.js",
-        "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"
+        "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"	   
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
