@@ -8,14 +8,14 @@ import { MaterialModule, MdCardModule } from '@angular/material';
 import {ReportsDashboard} from './reportsdashboard.component';
 import {routing} from './reportsdashboard.routing';
 import {LineChartService} from './lineChart/lineChart.service';
-import {LineChart} from './lineChart/lineChart.component';
+import {LineChartComponent} from './lineChart/lineChart.component';
 
 @NgModule({
   imports : [ CommonModule, ChartistModule, FormsModule, routing, 
   MaterialModule, MdCardModule ],
   declarations : [
     ReportsDashboard,
-    LineChart
+    LineChartComponent
   ],
   providers : [
     LineChartService

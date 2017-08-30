@@ -1,14 +1,19 @@
 import 'style-loader!./lineChart.scss';
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild, ElementRef} from '@angular/core';
 import * as ChartistLegend from 'chartist-plugin-legend';
 import filesize from 'filesize';
 
 import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.service';
 
 @Component({selector : 'line-chart', templateUrl : './lineChart.html'})
-export class LineChart implements OnInit, HandleDataFunc {
+export class LineChartComponent implements OnInit, HandleDataFunc {
 
+  @ViewChild('chartListControl') 
+  chartListControlElementRef:ElementRef;
+  
+  erd: any = null;
+  
   @Input() dataList: any[];
   @Input() series: any;
   @Input() legends: any[];
@@ -19,23 +24,25 @@ export class LineChart implements OnInit, HandleDataFunc {
     series : [],
   };
 
-  controlIsInitialized: boolean = false;
+  controlIsInitialized = false;
   
   options: any = {
     showPoint : false,
     axisX : {
       labelInterpolationFnc : function(value, index) {
-        let pad =
+        const pad =
             (num, size) => {
-              var s = num + "";
-              while (s.length < size)
+              let s = num + "";
+              while (s.length < size) {
                 s = "0" + s;
+              }
               return s;
-            }
+            };
+        
         // let date = String(value.getYear() + 1900) + '-' + value.getMonth() +
         // '-' + value.getDay() + ' ' + value.getHours() + ':' +
         // value.getMinutes() + ':' + value.getSeconds();
-        let date = pad(value.getHours(), 2) + ':' + pad(value.getMinutes(), 2) +
+        const date = pad(value.getHours(), 2) + ':' + pad(value.getMinutes(), 2) +
                    ':' + pad(value.getSeconds(), 2);
         return index % 40 === 0 ? date : null;
       },
@@ -61,12 +68,27 @@ export class LineChart implements OnInit, HandleDataFunc {
       }
     
      this.controlIsInitialized = true;
+    
+    setTimeout(()=>{
+      this.erd.listenTo((<any>this.chartListControlElementRef).element, (element) => {
+        
+        setTimeout(()=>{        
+            (<any>window).dispatchEvent(new Event('resize'));
+          }, -1 );
+      });
+    }, -1);
+    
       
   }
   
   
   ngOnInit() {
-    if (this.type == 'Pie') {
+    
+    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
+          this.erd = window['elementResizeDetectorMaker'].call();
+    }
+    
+    if (this.type === 'Pie') {
       delete this.options.axisX;
       delete this.options.axisY;
       this.options.labelInterpolationFnc = function(value, index) {
@@ -82,7 +104,7 @@ export class LineChart implements OnInit, HandleDataFunc {
       
     } 
     
-    if (this.legends && this.type != 'Pie') {
+    if (this.legends && this.type !== 'Pie') {
       this.options.plugins.push(ChartistLegend({
         classNames : Array(this.legends.length)
                          .fill(0)
@@ -98,4 +120,5 @@ export class LineChart implements OnInit, HandleDataFunc {
    
     
   }
+  
 }

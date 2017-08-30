@@ -23,9 +23,10 @@ export class AppComponent implements OnInit {
   }
   changePageTitle() {
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
-      var routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-      if (!routeParts.length)
+      const routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+      if (!routeParts.length) {
         return this.title.setTitle(this.appTitle);
+      }
       // Extract title from parts;
       this.pageTitle = routeParts
                       .map((part) => part.title )

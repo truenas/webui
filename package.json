@@ -75,7 +75,6 @@
     "ngx-uploader": "2.2.7",
     "perfect-scrollbar": "0.7.1",
     "raven-js": "^3.17.0",
-    "react-size": "^0.1.1",
     "rxjs": "5.1.0",
     "zone.js": "0.8.4"
   },
@@ -87,6 +86,7 @@
     "@types/jasmine": "2.5.38",
     "@types/lodash": "^4.14.74",
     "@types/node": "6.0.60",
+    "angular-ide": "^0.9.31",
     "codelyzer": "~2.0.1",
     "enhanced-resolve": "3.3.0",
     "jasmine-core": "~2.5.2",
