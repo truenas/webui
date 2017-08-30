@@ -16,7 +16,6 @@ import { routing } from './system.routing';
     MaterialModule
   ],
   declarations: [
-    AdvancedComponent,
   ],
   providers: []
 })
