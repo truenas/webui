@@ -11,61 +11,60 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'system-tunable-edit',
-  template : `<entity-form [conf]="this"></entity-form>`
+  selector: 'system-tunable-edit',
+  template: `<entity-form [conf]="this"></entity-form>`
 })
 export class TunableFormComponent {
 
   protected resource_name: string = 'system/tunable';
-  protected route_success: string[] = [ 'system', 'tunable' ];
+  protected route_success: string[] = ['system', 'tunable'];
   protected isEntity: boolean = true;
 
-  protected fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : 'tun_var',
-      placeholder : 'Variable',
+  protected fieldConfig: FieldConfig[] = [{
+      type: 'input',
+      name: 'tun_var',
+      placeholder: 'Variable',
     },
     {
-      type : 'textarea',
-      name : 'tun_value',
-      placeholder : 'Value',
+      type: 'textarea',
+      name: 'tun_value',
+      placeholder: 'Value',
     },
     {
-      type : 'select',
-      name : 'tun_type',
-      placeholder : 'Type',
-      options : [
-        {label : 'Loader', value : 'loader'},
-        {label : 'rc.conf', value : 'rc'},
-        {label : 'Sysctl', value : 'sysctl'},
+      type: 'select',
+      name: 'tun_type',
+      placeholder: 'Type',
+      options: [
+        { label: 'Loader', value: 'loader' },
+        { label: 'rc.conf', value: 'rc' },
+        { label: 'Sysctl', value: 'sysctl' },
       ]
     },
     {
-      type : 'input',
-      name : 'tun_comment',
-      placeholder : 'Comment',
+      type: 'input',
+      name: 'tun_comment',
+      placeholder: 'Comment',
     },
     {
-      type : 'checkbox',
-      name : 'tun_enabled',
-      placeholder : 'Enable',
+      type: 'checkbox',
+      name: 'tun_enabled',
+      placeholder: 'Enable',
     },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
   afterInit(entityForm: any) {}
 }
