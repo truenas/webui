@@ -13,23 +13,13 @@ export class AppComponent implements OnInit {
   appTitle = 'FreeNAS Material UI';
   pageTitle = '';
 
-  constructor(public title: Title,
-    private router: Router,
+  constructor(public title: Title, 
+    private router: Router, 
     private activeRoute: ActivatedRoute,
-    private routePartsService: RoutePartsService) {}
+    private routePartsService: RoutePartsService) { }
 
   ngOnInit() {
     this.changePageTitle();
-    this.router.routeReuseStrategy.shouldReuseRoute = function() {
-      return false;
-    };
-
-    this.router.events.subscribe((evt) => {
-      if (evt instanceof NavigationEnd) {
-        this.router.navigated = false;
-        window.scrollTo(0, 0);
-      }
-    });
   }
   changePageTitle() {
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
@@ -38,8 +28,8 @@ export class AppComponent implements OnInit {
         return this.title.setTitle(this.appTitle);
       // Extract title from parts;
       this.pageTitle = routeParts
-        .map((part) => part.title)
-        .reduce((partA, partI) => { return `${partA} > ${partI}` });
+                      .map((part) => part.title )
+                      .reduce((partA, partI) => {return `${partA} > ${partI}`});
       this.pageTitle += ` | ${this.appTitle}`;
       this.title.setTitle(this.pageTitle);
     });
