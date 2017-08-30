@@ -139,7 +139,7 @@ export class NavigationService {
     },
     {
       name: 'Virtualization',
-      type: 'dropDown',
+      type: 'link',
       tooltip: 'Virtualization',
       icon: 'laptop_windows',
       state: 'virtualization'

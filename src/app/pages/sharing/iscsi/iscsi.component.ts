@@ -14,6 +14,9 @@ import * as _ from 'lodash';
         <md-tab label="Portals">
           <app-iscsi-portal-list></app-iscsi-portal-list>
         </md-tab>
+        <md-tab label="Initiators">
+          <app-iscsi-initiator-list></app-iscsi-initiator-list>
+        </md-tab>
       </md-tab-group>
     </md-card>
   `,
