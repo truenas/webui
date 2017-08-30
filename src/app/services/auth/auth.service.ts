@@ -9,9 +9,10 @@ export class AuthService implements CanActivate {
   
   constructor(private router: Router, private ws: WebSocketService) { }
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.ws.connected) {
+    if (this.ws.loggedIn) {
       return true;
     }
+    this.ws.redirectUrl = state.url;
     this.router.navigate(['/sessions/signin']);
     return false;
   }

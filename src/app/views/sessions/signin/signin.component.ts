@@ -19,9 +19,18 @@ export class SigninComponent implements OnInit {
     username: 'root',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router) { }
+  constructor(private ws: WebSocketService, private router: Router) {
+    this.ws = ws;
+   }
 
   ngOnInit() {
+    if (this.ws.username && this.ws.password && this.ws.redirectUrl) {
+      this.submitButton.disabled = true;
+      this.progressBar.mode = 'indeterminate';
+
+      this.ws.login(this.ws.username, this.ws.password)
+                       .subscribe((result) => { this.loginCallback(result); });
+    }
   }
 
   signin() {
