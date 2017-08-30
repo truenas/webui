@@ -2,7 +2,6 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule, MdTableModule } from '@angular/material';
-import {DynamicFormsCoreModule} from '@ng2-dynamic-forms/core';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
 
 import {
@@ -11,8 +10,7 @@ import {
 
     @NgModule({
       imports : [
-        EntityModule, DynamicFormsCoreModule.forRoot(),
-        CommonModule, FormsModule,
+        EntityModule, CommonModule, FormsModule,
         ReactiveFormsModule, routing, MaterialModule, MdTableModule
       ],
       declarations : [
