@@ -133,7 +133,7 @@ export class DeviceAddComponent implements OnInit {
               .subscribe(
                   (res) => {
                     this.router.navigate(
-                        new Array('/pages').concat(this.conf.route_success));
+                        new Array('').concat(this.conf.route_success));
                   },
                   (res) => { new EntityUtils().handleError(this, res); });
     });

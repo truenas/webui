@@ -41,35 +41,35 @@ export class DeviceListComponent {
     actions.push({
       label : "Add CDROM",
       onClick : () => {
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "cdrom", "add" ]));
       }
     });
     actions.push({
       label : "Add NIC",
       onClick : () => {
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "nic", "add" ]));
       }
     });
     actions.push({
       label : "Add Disk",
       onClick : () => {
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "disk", "add" ]));
       }
     });
     actions.push({
       label : "Add VNC",
       onClick : () => {
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "vnc", "add" ]));
       }
     });
     actions.push({
       label : "Add RawFile",
       onClick : () => {
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "rawfile", "add" ]));
       }
     });
@@ -82,14 +82,14 @@ export class DeviceListComponent {
       label : "Edit",
       onClick : (row) => {
         // console.log(row);
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "edit", row.id, row.dtype ]));
       }
     });
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.router.navigate(new Array('/pages').concat(
+        this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "delete", row.id ]));
       },
     });

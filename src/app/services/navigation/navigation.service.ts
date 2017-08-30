@@ -142,7 +142,7 @@ export class NavigationService {
       type: 'link',
       tooltip: 'Virtualization',
       icon: 'laptop_windows',
-      state: 'virtualization'
+      state: 'vm'
     },{
       name: 'Reporting',
       type: 'link',

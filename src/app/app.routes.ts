@@ -88,7 +88,7 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'directoryservice', breadcrumb: 'DIRECTORYSERVICE' }
       },
       {
-        path: 'virtualization',
+        path: 'vm',
         loadChildren: 'app/pages/vm/vm.module#VmModule',
         data: { title: 'virtualization', breadcrumb: 'VIRTUALIZATION' }
       },

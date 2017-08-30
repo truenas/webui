@@ -62,21 +62,21 @@ export class VmListComponent {
       label : "Edit",
       onClick : (row) => {
         this.router.navigate(
-            new Array('/pages').concat([ "vm", "edit", row.id ]));
+            new Array('').concat([ "vm", "edit", row.id ]));
       }
     });
     actions.push({
       label : "Delete",
       onClick : (row) => {
         this.router.navigate(
-            new Array('/pages').concat([ "vm", "delete", row.id ]));
+            new Array('').concat([ "vm", "delete", row.id ]));
       },
     });
     actions.push({
       label : "Devices",
       onClick : (row) => {
         this.router.navigate(
-            new Array('/pages').concat([ "vm", row.id, "devices", row.name ]));
+            new Array('').concat([ "vm", row.id, "devices", row.name ]));
       }
     });
     return actions;

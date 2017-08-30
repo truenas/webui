@@ -317,7 +317,7 @@ export class DeviceEditComponent implements OnInit {
     if (!route) {
       route = this.route_success;
     }
-    this.router.navigate(new Array('/pages').concat(route));
+    this.router.navigate(new Array('').concat(route));
   }
 
   isShow(id: any): any {
@@ -334,7 +334,7 @@ export class DeviceEditComponent implements OnInit {
     if (!route) {
       route = this.conf.route_success;
     }
-    this.router.navigate(new Array('/pages').concat(route));
+    this.router.navigate(new Array('').concat(route));
   }
 
   onSubmit(event: Event) {
@@ -407,7 +407,7 @@ export class DeviceEditComponent implements OnInit {
           }
       payload['devices'] = devices;
       this.busy = this.ws.call('vm.update', [ this.vmid, payload ]).subscribe(
-        (res) => { this.router.navigate(new Array('/pages').concat(this.route_success));},
+        (res) => { this.router.navigate(new Array('').concat(this.route_success));},
         (res) => { new EntityUtils().handleError(this, res);}
       );
     });
