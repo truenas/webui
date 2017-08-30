@@ -12,7 +12,11 @@ import {WebSocketService} from './ws.service';
 export class VmService {
   protected volume_resource_name: string = 'storage/volume'
 
-  constructor(protected rest: RestService) {};
+  constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getStorageVolumes() { return this.rest.get(this.volume_resource_name, {}); }
+
+  getVM(vm: string) {
+    return this.ws.call('vm.query', [[[ "name", "=",  vm ]], {"get": true}])
+  }
 }
