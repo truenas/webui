@@ -14,7 +14,7 @@ import { TargetAddComponent } from './target/target-add/';
 import { TargetEditComponent } from './target/target-edit/';
 // import { TargetDeleteComponent } from './target/target-delete/';
 // import { ExtentDeleteComponent } from './extent/extent-delete/';
-// import { ExtentFormComponent } from './extent/extent-form/';
+import { ExtentFormComponent } from './extent/extent-form/';
 // import { AssociatedTargetDeleteComponent } from './associated-target/associated-target-delete/';
 // import { AssociatedTargetFormComponent } from './associated-target/associated-target-form/';
 
@@ -34,8 +34,8 @@ export const routes: Routes = [
   { path : 'target/add', component : TargetAddComponent },
   { path : 'target/edit/:pk', component: TargetEditComponent },
   // { path : 'extent/delete/:pk', component: ExtentDeleteComponent },
-  // { path : 'extent/add', component: ExtentFormComponent },
-  // { path : 'extent/edit/:pk', component: ExtentFormComponent },
+  { path : 'extent/add', component: ExtentFormComponent },
+  { path : 'extent/edit/:pk', component: ExtentFormComponent },
   // { path : 'associatedtarget/delete/:pk', component: AssociatedTargetDeleteComponent },
   // { path : 'associatedtarget/add', component: AssociatedTargetFormComponent },
   // { path : 'associatedtarget/edit/:pk', component: AssociatedTargetFormComponent },

@@ -27,7 +27,7 @@ import { TargetEditComponent} from './target/target-edit/';
 
 import { ExtentListComponent } from './extent/extent-list/';
 // import { ExtentDeleteComponent } from './extent/extent-delete/';
-// import { ExtentFormComponent } from './extent/extent-form/';
+import { ExtentFormComponent } from './extent/extent-form/';
 // import { AssociatedTargetListComponent } from './associated-target/associated-target-list/';
 // import { AssociatedTargetDeleteComponent } from './associated-target/associated-target-delete/';
 // import { AssociatedTargetFormComponent } from './associated-target/associated-target-form/';
@@ -56,7 +56,7 @@ import { ExtentListComponent } from './extent/extent-list/';
     // TargetDeleteComponent,
     ExtentListComponent,
     // ExtentDeleteComponent,
-    // ExtentFormComponent,
+    ExtentFormComponent,
     // AssociatedTargetListComponent,
     // AssociatedTargetDeleteComponent,
     // AssociatedTargetFormComponent,
