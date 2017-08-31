@@ -104,7 +104,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = res;
       }
     });
-
+    
+    
+    // This invokes the element-resize-detector js library under node_modules
+    // It listens to element level size change events (even when the global window
+    // Doesn't Resize.)  This lets you even off of card and element and div level
+    // size rechange events... As a result of responive, menu moving, etc...
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
