@@ -137,6 +137,7 @@ export class NavigationService {
       icon: 'apps',
       state: 'jails',
       sub: [
+        {name: 'Instances', state: 'jails'},
         {name: 'Configuration', state: 'configuration'},
       ]
     },
