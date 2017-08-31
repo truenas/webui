@@ -135,7 +135,13 @@ export class NavigationService {
       type: 'dropDown',
       tooltip: 'Jails',
       icon: 'apps',
-      state: 'jails'
+      state: 'jails',
+      sub: [
+        {name: 'Instances', state: 'jails'},
+        {name: 'Storage', state: 'storage'},
+        {name: 'Templates', state: 'templates'},
+        {name: 'Configuration', state: 'configuration'},
+      ]
     },
     {
       name: 'Virtualization',
