@@ -3,8 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { JailsConfigurationComponent } from './configuration/';
 // import { JailDeleteComponent } from './jail-delete/';
-// import { JailFormComponent } from './jail-form/';
 import { JailListComponent } from './jail-list/';
+import { JailFormComponent } from './jail-form/';
 // import { StorageDeleteComponent } from './storages/storage-delete/';
 // import { StorageFormComponent } from './storages/storage-form/';
 // import { StorageListComponent } from './storages/storage-list/';
@@ -14,8 +14,8 @@ import { JailListComponent } from './jail-list/';
 
 export const routes: Routes = [
   { path : 'jails', component : JailListComponent, pathMatch : 'full' },
-  // { path : 'add', component : JailFormComponent },
-  // { path : 'edit/:pk', component : JailFormComponent },
+  { path : 'add', component : JailFormComponent },
+  { path : 'edit/:pk', component : JailFormComponent },
   // { path : 'delete/:pk', component : JailDeleteComponent },
   // { path : 'storage', component : StorageListComponent },
   // { path : 'storage/add', component : StorageFormComponent },
