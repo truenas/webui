@@ -176,6 +176,13 @@ export class NavigationService {
       tooltip: 'Shell',
       icon: 'code',
       state: 'shell'
+    },
+    {
+      name: 'Guide',
+      type: 'extLink',
+      tooltip: 'Guide',
+      icon: 'info',
+      state: 'http://doc.freenas.org/11/freenas.html',
     }
   ]
   
