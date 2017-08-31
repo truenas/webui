@@ -23,6 +23,10 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
   
   options: any = {
     showPoint : false,
+    showArea: true,
+    fullWidth: true,
+    fillHoles: true,
+    showLine: true,
     axisX : {
       labelInterpolationFnc : function(value, index) {
         const pad =
@@ -34,14 +38,12 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
               return s;
             };
         
-        // let date = String(value.getYear() + 1900) + '-' + value.getMonth() +
-        // '-' + value.getDay() + ' ' + value.getHours() + ':' +
-        // value.getMinutes() + ':' + value.getSeconds();
         const date = pad(value.getHours(), 2) + ':' + pad(value.getMinutes(), 2) +
                    ':' + pad(value.getSeconds(), 2);
         return index % 40 === 0 ? date : null;
       },
     },
+    
     axisY : {},
     plugins : []
   };

@@ -23,7 +23,7 @@ export class LineChartService {
   getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
 
     this._ws.call('stats.get_data', [ dataList, {} ]).subscribe((res) => {
-      let linechartData: LineChartData = {
+      const linechartData: LineChartData = {
         labels: new Array<Date>(),
         series: new Array<any>()
       }
@@ -32,7 +32,7 @@ export class LineChartService {
       res.data.forEach((item, i) => {
         linechartData.labels.push(
             new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
-        for (let x in dataList) {
+        for (const x in dataList) {
           linechartData.series[x].push(item[x]);
         }
       });

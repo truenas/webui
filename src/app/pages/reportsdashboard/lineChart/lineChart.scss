@@ -4,7 +4,24 @@
   margin-top: -10px;
 }
 
-$ct-series-colors: (#689F38 #8BC34A #DCEDC8 #DCEDC8 #FFA000 #FFC107 #FFECB3 #FF9800 #ff4081);
+$ct-series-colors: (
+  #d70206,
+  #f05b4f,
+  #f4c63d,
+  #d17905,
+  #453d3f,
+  #59922b,
+  #0544d3,
+  #6b0392,
+  #f05b4f,
+  #dda458,
+  #eacf7d,
+  #86797d,
+  #b2c326,
+  #6188e2,
+  #a748ca
+)!default
+
 .ct-label {
   color:   #4fc3f7;
 }
