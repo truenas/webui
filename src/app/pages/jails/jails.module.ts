@@ -15,8 +15,8 @@ import { JailFormComponent } from './jail-form/';
 import { StorageListComponent } from './storages/storage-list/';
 import { StorageFormComponent } from './storages/storage-form/';
 // import { TemplateDeleteComponent } from './templates/template-delete/';
-// import { TemplateFormComponent } from './templates/template-form/';
 import { TemplateListComponent } from './templates/template-list/';
+import { TemplateFormComponent } from './templates/template-form/';
 
 @NgModule({
   imports : [
@@ -31,7 +31,7 @@ import { TemplateListComponent } from './templates/template-list/';
     StorageFormComponent,
     // StorageDeleteComponent,
     TemplateListComponent,
-    // TemplateFormComponent,
+    TemplateFormComponent,
     // TemplateDeleteComponent,
   ],
   providers : [
