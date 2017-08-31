@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from './lineChart/lineChart.service';
 
@@ -20,19 +20,32 @@ interface TabChartsMappingData {
   templateUrl: './reportsdashboard.html',
   providers: [SystemGeneralService]
 })
-export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataFunc {
+export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataFunc, AfterViewInit {
+
 
   public info: any = {};
   public ipAddress: any = [];
   public allowChartsDisplay = true;
   public drawTabs = false;
   public tabChartsMappingData: TabChartsMappingData[] = [];
+  private erd: any = null;
 
   constructor(private _lineChartService: LineChartService) {
   }
 
   ngOnInit() {
     this._lineChartService.getChartConfigData(this);
+
+    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
+      this.erd = window['elementResizeDetectorMaker'].call();
+    }
+
+  }
+
+  ngAfterViewInit(): void {
+    this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
+      (<any>window).dispatchEvent(new Event('resize'));
+    });
   }
 
   /**
@@ -47,39 +60,39 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
       keyName: "CPU",
       chartConfigData: []
     });
-    
+
     map.set("Disk", {
       keyName: "Disk",
       chartConfigData: []
     });
-    
-     map.set("Memory", {
+
+    map.set("Memory", {
       keyName: "Memory",
       chartConfigData: []
     });
-    
+
     map.set("Network", {
       keyName: "Network",
       chartConfigData: []
     });
-    
-    
+
+
     map.set("Partition", {
       keyName: "Partition",
       chartConfigData: []
     });
-    
-     map.set("System", {
+
+    map.set("System", {
       keyName: "System",
       chartConfigData: []
     });
-    
-     map.set("Target", {
+
+    map.set("Target", {
       keyName: "Target",
       chartConfigData: []
     });
-    
-     map.set("ZFS", {
+
+    map.set("ZFS", {
       keyName: "ZFS",
       chartConfigData: []
     });
@@ -91,65 +104,68 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
       if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
         const tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
-        
+
       } else if (chartConfigDataItem.title.toLowerCase() === "memory" || chartConfigDataItem.title.toLowerCase() === "swap") {
         const tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
-        
+
       } else if (chartConfigDataItem.title.toLowerCase() === "processes" || chartConfigDataItem.title.toLowerCase() === "uptime") {
         const tab: TabChartsMappingData = map.get("System");
         tab.chartConfigData.push(chartConfigDataItem);
-        
+
       } else if (chartConfigDataItem.title.startsWith("df-")) {
         const tab: TabChartsMappingData = map.get("Partition");
         tab.chartConfigData.push(chartConfigDataItem);
-        
+
       } else if (chartConfigDataItem.title.startsWith("disk")) {
         const tab: TabChartsMappingData = map.get("Disk");
         tab.chartConfigData.push(chartConfigDataItem);
-        
+
       } else if (chartConfigDataItem.title.startsWith("interface-")) {
         const tab: TabChartsMappingData = map.get("Network");
         tab.chartConfigData.push(chartConfigDataItem);
-        
+
       } else if (chartConfigDataItem.title.startsWith("ctl-tpc")) {
         const tab: TabChartsMappingData = map.get("Target");
         tab.chartConfigData.push(chartConfigDataItem);
-         
-      } else if (chartConfigDataItem.title.startsWith("ZFS ") ) {
+
+      } else if (chartConfigDataItem.title.startsWith("ZFS ")) {
         const tab: TabChartsMappingData = map.get("ZFS");
         tab.chartConfigData.push(chartConfigDataItem);
-        
-      } 
-    }); 
-    
+
+      }
+    });
+
     this.tabChartsMappingData.splice(0, this.tabChartsMappingData.length);
-    map.forEach((value: TabChartsMappingData )=>{ 
-         this.tabChartsMappingData.push( value );
-    });  
-    
+    map.forEach((value: TabChartsMappingData) => {
+      this.tabChartsMappingData.push(value);
+    });
+
     this.drawTabs = true;
+
   }
 
   tabSelectChangeHandler($event) {
     const selectedTabName: string = $event.tab.textLabel;
     const tabChartsMappingData: TabChartsMappingData = this.getTabChartsMappingDataByName(selectedTabName);
-    
-   
+
+
     this.allowChartsDisplay = false;
     setTimeout(() => {this.allowChartsDisplay = true;}, -1);
 
   }
-  
-  private getTabChartsMappingDataByName(name:string ): TabChartsMappingData {
-     let foundTabChartsMappingData: TabChartsMappingData = null;
-     
-     for( const item of this.tabChartsMappingData) {
-        if(name === item.keyName ) {
-          foundTabChartsMappingData = item;
-          break;
-        }
-     }
-     return foundTabChartsMappingData;
+
+  private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
+    let foundTabChartsMappingData: TabChartsMappingData = null;
+
+    for (const item of this.tabChartsMappingData) {
+      if (name === item.keyName) {
+        foundTabChartsMappingData = item;
+        break;
+      }
+    }
+    return foundTabChartsMappingData;
   }
+
+
 }

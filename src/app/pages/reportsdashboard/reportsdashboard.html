@@ -1,5 +1,4 @@
-
-
+<div id="dashboardcontainerdiv">
 <md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
   <md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingData"  label="{{ tabChartsMappingDataItem.keyName }}" >
 	<md-card *ngFor="let chartConfigData of tabChartsMappingDataItem.chartConfigData">
@@ -15,3 +14,4 @@
 <!-- Silly but stops the footer from scrunching up into my action. -->
 <div style="padding-bottom: 20px;"></div>
 
+</div>

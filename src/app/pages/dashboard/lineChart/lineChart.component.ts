@@ -1,6 +1,6 @@
 import 'style-loader!./lineChart.scss';
 
-import {Component, Input, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import * as ChartistLegend from 'chartist-plugin-legend';
 import filesize from 'filesize';
 
@@ -8,11 +8,6 @@ import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.servi
 
 @Component({selector : 'line-chart', templateUrl : './lineChart.html'})
 export class LineChartComponent implements OnInit, HandleDataFunc {
-
-  @ViewChild('chartListControl') 
-  chartListControlElementRef:ElementRef;
-  
-  erd: any = null;
   
   @Input() dataList: any[];
   @Input() series: any;
@@ -68,25 +63,11 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
       }
     
      this.controlIsInitialized = true;
-    
-    setTimeout(()=>{
-      this.erd.listenTo((<any>this.chartListControlElementRef).element, (element) => {
-        
-        setTimeout(()=>{        
-            (<any>window).dispatchEvent(new Event('resize'));
-          }, -1 );
-      });
-    }, -1);
-    
       
   }
   
   
   ngOnInit() {
-    
-    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
-          this.erd = window['elementResizeDetectorMaker'].call();
-    }
     
     if (this.type === 'Pie') {
       delete this.options.axisX;
