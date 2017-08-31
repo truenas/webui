@@ -122,6 +122,11 @@ export const rootRouterConfig: Routes = [{
         ]
       },
       {
+        path: 'jails',
+        loadChildren: './pages/jails/jails.module#JailsModule',
+        data: { title: 'Jails', breadcrumb: 'Jails' },
+      },
+      {
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
         data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
