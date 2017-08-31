@@ -2,35 +2,35 @@
 @include mat-core();
 
 $md-primary: (
-    50 : #fff7e5,
-    100 : #feeabe,
-    200 : #fedc93,
-    300 : #fece68,
-    400 : #fdc447,
-    500 : #fdb927,
-    600 : #fdb223,
-    700 : #fcaa1d,
-    800 : #fca217,
-    900 : #fc930e,
+    50 : #fff8e6,
+    100 : #ffeec0,
+    200 : #ffe396,
+    300 : #ffd86c,
+    400 : #ffcf4d,
+    500 : #ffc72d,
+    600 : #ffc128,
+    700 : #ffba22,
+    800 : #ffb31c,
+    900 : #ffa611,
     A100 : #ffffff,
-    A200 : #fff9f3,
-    A400 : #ffe1c0,
-    A700 : #ffd5a7,
+    A200 : #fffcf8,
+    A400 : #ffe8c5,
+    A700 : #ffddac,
     contrast: (
-        50 : #000000,
-        100 : #000000,
-        200 : #000000,
-        300 : #000000,
-        400 : #000000,
-        500 : #000000,
-        600 : #26282A,
-        700 : #26282A,
-        800 : #26282A,
-        900 : #26282A,
-        A100 : #000000,
-        A200 : #000000,
-        A400 : #000000,
-        A700 : #000000,
+        50 : #006BB6,
+        100 : #006BB6,
+        200 : #006BB6,
+        300 : #006BB6,
+        400 : #006BB6,
+        500 : #006BB6,
+        600 : #006BB6,
+        700 : #006BB6,
+        800 : #006BB6,
+        900 : #006BB6,
+        A100 : #006BB6,
+        A200 : #006BB6,
+        A400 : #006BB6,
+        A700 : #006BB6,
     )
 );
 
@@ -54,16 +54,16 @@ $md-accent: (
         100 : #000000,
         200 : #000000,
         300 : #000000,
-        400 : #ffffff,
-        500 : #ffffff,
-        600 : #ffffff,
-        700 : #ffffff,
-        800 : #ffffff,
-        900 : #ffffff,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
         A100 : #000000,
         A200 : #000000,
         A400 : #000000,
-        A700 : #ffffff,
+        A700 : #000000,
     )
 );
 
@@ -72,7 +72,7 @@ $freenas-primary: mat-palette($md-primary);
 $freenas-accent:  mat-palette($md-accent);
 
 // include the custom theme components into a theme object
-$freenas-theme: mat-light-theme($freenas-primary, $freenas-accent);
+$freenas-theme: mat-dark-theme($freenas-primary, $freenas-accent);
 
 $primary-dark: darken( map-get($md-primary, 500), 8% );
 
@@ -83,82 +83,90 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-bg-primary,
     .topbar,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+    .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
     .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
     .fileupload-drop-zone.dz-file-over,
     .toolbar-avatar.online > .status-dot,
-    .cal-open-day-events,
+    .cal-open-day-events,.mat-select-arrow
     div.hopscotch-bubble {
-        background: map-get($md-accent, 600) !important;
-        color: #f5f5f6 !important;
+        background: map-get($md-primary, 500) !important;
+        color: #000 !important;
     }
-    .mat-sidenav-container {    
-          background: map-get($md-primary, 900) !important;
-        color: #f5f5f6 !important;
-     }
-    
-    .mat-list-item-content {
-        background: map-get($md-accent, 900) !important;
-        color: #f5f5f6 !important;
-    }
-    .sidebar-panel.mat-sidenav .navigation-hold {    
-        background: map-get($md-accent, 900) !important;
-        color: #26282A !important;
-     }
-    
-    .mat-bg-primary {
-        background: map-get($md-accent, 600) !important;
-        color: #f5f5f6 !important;
-    }
-.datatable { margin: 35px; }
-    .datatable-header {
-        background: map-get($md-accent, 600) !important;
-        color: #f5f5f6 !important;
-    }
- .datatable-body {
-        background: map-get($md-primary, 300) !important;
-        color: #26282A !important;
-    }
-
-    .page-wrap {
-        background: map-get($md-primary, 100) !important;
-        color: #f5f5f6 !important;
-    }
-    .mat-card {
-        background: map-get($md-primary, 300) !important;
-        color: #26282A !important;    
-        margin:35px;
-    }
-    .mat-card a {
-        color: map-get($md-accent, 700) !important;
-    }
-   .mat-focused .mat-input-placeholder.mat-float, 
-   .mat-input-placeholder.mat-empty, 
-   .mat-input-placeholder.mat-float:not(.mat-empty)  {
-        color: map-get($md-accent, 700) !important;
-    }
-  .freenas-warriors .mat-input-ripple  { 
-        color: map-get($md-accent, 900) !important;
-   }
-
     .mat-color-primary,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
-        color: map-get($md-primary, 400) !important;
+        color: map-get($md-primary, 500) !important;
     }
-    .sidebar-panel .mat-nav-list .mat-list-item {
-        color: rgba(255, 255, 255, 0.94)
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        font-weight: 500;
     }
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
-        border-left: 2px solid map-get($md-accent, 900);
+        border-left: 2px solid map-get($md-primary, 500);
+    }
+    .messages-wrap .inbox-hold {
+        background: transparent !important;
     }
     .sidebar-panel.mat-sidenav {
-        background: url('../../images/sidebar-bg.jpg') no-repeat;
+        background: url('../../images/sidebar-bg-dark.jpg') no-repeat;
     }
-    .breadcrumb-bar {
-        background: #26282A !important;
-                color: #f5f5f6 !important;
+    .app-user .app-user-name,
+    .sidebar-panel.mat-sidenav .sidebar-list-item md-icon:not(.menu-caret),
+    .ql-snow .ql-picker,
+    .mat-option,
+    .mat-dialog-container, .mat-select-value {
+        color: black !important;
+    }
+    .md-option, .mat-sidenav.mat-sidenav-opened:not(.mat-sidenav-side), .mat-sidenav {
+        background: rgba(20, 107, 182, 1) !important;
+    }
+    .md-select-content, .mat-select-content, .mat-select-panel-done-animating  {
+        background: rgba(20, 107, 182, 1) !important;
+    }
+    .text-muted {
+        color: rgba(0, 107,182, .54) !important;
+    }
 
+    .ql-snow .ql-stroke  {
+        stroke: #006BB6;
     }
+    .ql-snow .ql-fill {
+        fill: #006BB6;
+    }
+    .ql-toolbar.ql-snow,
+    .ql-toolbar.ql-snow + .ql-container.ql-snow {
+        border-color: rgba(0, 107, 182, 0.12) !important;
+    }
+
+    .sidebar-panel.mat-sidenav .navigation-hold,
+    .message-item.open .message-head,
+    .ngx-datatable.material .datatable-header,
+    .bg-white,
+    .cal-month-view .cal-cell-row:hover,
+    .chats-wrap .conversations-hold .single-conversation.sender .conversation-msg,
+    .cal-day-view .cal-hour:nth-child(odd),
+    &.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu,
+    .breadcrumb-bar, .mat-card {
+        background: rgba(0, 107, 182, 0.92) !important;
+    }
+    .cal-month-view .cal-cell-row .cal-cell:hover, 
+    .cal-month-view .cal-cell.cal-has-events.cal-open,
+    .cal-week-view .cal-day-headers .cal-header:hover, 
+    .cal-week-view .cal-day-headers .cal-drag-over,
+    .cal-day-view .cal-hour-segment:hover, 
+    .cal-day-view .cal-drag-over .cal-hour-segment, .mat-sidenav-container {
+        background: #006BB6 !important;
+    }
+    .cal-month-view .cal-day-cell:not(:last-child),
+    .cal-month-view .cal-days,
+    .cal-week-view .cal-day-headers .cal-header:not(:last-child),
+    .cal-week-view .cal-day-headers,
+    .cal-month-view .cal-days .cal-cell-row,
+    .cal-day-view .cal-hour:not(:last-child) .cal-hour-segment, 
+    .cal-day-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
+        border-color: #006BB6 !important;
+    }
+
     /* Hopscotch Tour */ 
     div.hopscotch-bubble {
         border-color: $primary-dark;
@@ -195,17 +203,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         left: 1px;
         border-right: 17px solid map-get($md-primary, 500);
     }
-
+    
     .mat-bg-accent,
     div.hopscotch-bubble .hopscotch-bubble-number,
     div.hopscotch-bubble .hopscotch-nav-button.next:hover,
     div.hopscotch-bubble .hopscotch-nav-button.next {
         background-color: map-get($md-accent, 500);
-        color: #26282A;
+        color: black;
     }
     .mat-bg-warn {
         background-color: #f44336;
-        color: #f5f5f6;
+        color: black;
     }
     .mat-color-accent {
         color: map-get($md-accent, 500);
