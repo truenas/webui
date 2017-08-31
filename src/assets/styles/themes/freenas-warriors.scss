@@ -22,7 +22,7 @@ $md-primary: (
         200 : #006BB6,
         300 : #006BB6,
         400 : #006BB6,
-        500 : #006BB6,
+        500 : #000000,
         600 : #006BB6,
         700 : #006BB6,
         800 : #006BB6,
@@ -40,7 +40,7 @@ $md-accent: (
     200 : #80b5db,
     300 : #4d97cc,
     400 : #2681c1,
-    500 : #006bb6,
+    500 : #ffc72d,
     600 : #0063af,
     700 : #0058a6,
     800 : #004e9e,
@@ -120,7 +120,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .md-option, .mat-sidenav.mat-sidenav-opened:not(.mat-sidenav-side), .mat-sidenav {
         background: rgba(20, 107, 182, 1) !important;
     }
-    .md-select-content, .mat-select-content, .mat-select-panel-done-animating  {
+    .md-select-content, .mat-select-content, .mat-select-panel-done-animating, .mat-menu-item, .mat-menu-content {
         background: rgba(20, 107, 182, 1) !important;
     }
     .text-muted {
@@ -208,7 +208,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     div.hopscotch-bubble .hopscotch-bubble-number,
     div.hopscotch-bubble .hopscotch-nav-button.next:hover,
     div.hopscotch-bubble .hopscotch-nav-button.next {
-        background-color: map-get($md-accent, 500);
+        background-color: map-get($md-accent, 200);
         color: black;
     }
     .mat-bg-warn {
@@ -216,9 +216,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         color: black;
     }
     .mat-color-accent {
-        color: map-get($md-accent, 500);
+        color: #ffe396;
     }
     .mat-color-warn {
         color: #f44336;
     }
 }
+ .mat-raised-button.mat-accent,  .mat-fab.mat-accent, .mat-mini-fab.mat-accent {
+            background-color: map-get($md-accent, 200);
+ }
