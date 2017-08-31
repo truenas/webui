@@ -13,7 +13,7 @@ import { JailListComponent } from './jail-list/';
 import { JailFormComponent } from './jail-form/';
 // import { StorageDeleteComponent } from './storages/storage-delete/';
 // import { StorageFormComponent } from './storages/storage-form/';
-// import { StorageListComponent } from './storages/storage-list/';
+import { StorageListComponent } from './storages/storage-list/';
 // import { TemplateDeleteComponent } from './templates/template-delete/';
 // import { TemplateFormComponent } from './templates/template-form/';
 // import { TemplateListComponent } from './templates/template-list/';
@@ -27,7 +27,7 @@ import { JailFormComponent } from './jail-form/';
     JailListComponent,
     JailFormComponent,
     // JailDeleteComponent,
-    // StorageListComponent,
+    StorageListComponent,
     // StorageFormComponent,
     // StorageDeleteComponent,
     // TemplateListComponent,

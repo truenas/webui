@@ -138,6 +138,7 @@ export class NavigationService {
       state: 'jails',
       sub: [
         {name: 'Instances', state: 'jails'},
+        {name: 'Storage', state: 'storage'},
         {name: 'Configuration', state: 'configuration'},
       ]
     },
