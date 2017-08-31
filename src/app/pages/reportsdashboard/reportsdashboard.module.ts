@@ -5,7 +5,7 @@ import {ChartistModule} from 'ng-chartist';
 
 import { MaterialModule, MdCardModule } from '@angular/material';
 
-import {ReportsDashboard} from './reportsdashboard.component';
+import {ReportsDashboardComponent} from './reportsdashboard.component';
 import {routing} from './reportsdashboard.routing';
 import {LineChartService} from './lineChart/lineChart.service';
 import {LineChartComponent} from './lineChart/lineChart.component';
@@ -14,7 +14,7 @@ import {LineChartComponent} from './lineChart/lineChart.component';
   imports : [ CommonModule, ChartistModule, FormsModule, routing, 
   MaterialModule, MdCardModule ],
   declarations : [
-    ReportsDashboard,
+    ReportsDashboardComponent,
     LineChartComponent
   ],
   providers : [
