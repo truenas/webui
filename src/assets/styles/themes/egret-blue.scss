@@ -2,26 +2,26 @@
 @include mat-core();
 
 $md-primary: (
-    50 : #e5eff4,
-    100 : #bdd7e3,
-    200 : #92bdd0,
-    300 : #66a3bd,
-    400 : #458fae,
-    500 : #247ba0,
-    600 : #207398,
-    700 : #1b688e,
-    800 : #165e84,
-    900 : #0d4b73,
-    A100 : #a6d8ff,
-    A200 : #73c2ff,
-    A400 : #40acff,
-    A700 : #26a1ff,
+    50 : #e4f2fe,
+    100 : #bce0fb,
+    200 : #90cbf9,
+    300 : #64b6f7,
+    400 : #42a6f5,
+    500 : #2196f3,
+    600 : #1d8ef1,
+    700 : #1883ef,
+    800 : #1479ed,
+    900 : #0b68ea,
+    A100 : #ffffff,
+    A200 : #e1ecff,
+    A400 : #aeccff,
+    A700 : #95bcff,
     contrast: (
         50 : #000000,
         100 : #000000,
         200 : #000000,
         300 : #000000,
-        400 : #ffffff,
+        400 : #000000,
         500 : #ffffff,
         600 : #ffffff,
         700 : #ffffff,
@@ -82,6 +82,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 .egret-blue {
     @include angular-material-theme($freenas-theme);
 
+.app-loader {
+    background: map-get($md-primary, 500) !important;
+
+}
     .mat-bg-primary,
     .topbar,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -91,14 +95,21 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .toolbar-avatar.online > .status-dot,
     .cal-open-day-events,
     div.hopscotch-bubble {
-        background: map-get($md-primary, 500) !important;
+        background: map-get($md-primary, 700) !important;
         color: #ffffff !important;
     }
-    .mat-color-primary,
+    .mat-color-primary, .tree, 
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
-        color: map-get($md-primary, 500) !important;
+        color: map-get($md-primary, 700) !important;
     }
+    .node-content-wrapper-active, 
+    .node-content-wrapper.node-content-wrapper-active:hover,
+    .node-content-wrapper-active.node-content-wrapper-focused {
+        background: map-get($md-primary, 400) !important;
+        color: #ffffff;
+    }
+
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
         border-left: 2px solid map-get($md-primary, 500);
     }
@@ -107,6 +118,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
     .breadcrumb-bar {
         background: #ffffff !important;
+    }
+    .ngx-datatable.material .datatable-header {
+        background-color: map-get($md-primary, 500) !important;
+        color: #ffffff !important;
+
     }
     /* Hopscotch Tour */ 
     div.hopscotch-bubble {
@@ -150,7 +166,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     div.hopscotch-bubble .hopscotch-nav-button.next:hover,
     div.hopscotch-bubble .hopscotch-nav-button.next {
         background-color: map-get($md-accent, 500);
-        color: black;
+        color: #ffffff;
+    }
+    .mat-button {
+        background-color: map-get($md-primary, 500);
+        color: black;   
     }
     .mat-bg-warn {
         background-color: #f44336;

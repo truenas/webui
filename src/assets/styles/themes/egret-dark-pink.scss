@@ -80,6 +80,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 .egret-dark-pink {
     @include angular-material-theme($freenas-theme);
 
+
+.app-loader {
+    background: map-get($md-primary, 500) !important;
+
+}
     .mat-bg-primary,
     .topbar,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -92,11 +97,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         background: map-get($md-primary, 500) !important;
         color: #ffffff !important;
     }
-    .mat-color-primary,
+    .mat-color-primary, .tree, 
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
-        color: map-get($md-primary, 500) !important;
+        color: map-get($md-primary, 700) !important;
     }
+    .node-content-wrapper-active, 
+    .node-content-wrapper.node-content-wrapper-active:hover,
+    .node-content-wrapper-active.node-content-wrapper-focused {
+        background: map-get($md-primary, 400) !important;
+        color: #000000;
+    }
+
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
         font-weight: 500;
@@ -158,7 +170,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .cal-day-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
         border-color: #000 !important;
     }
+    .ngx-datatable.material .datatable-header {
+        background-color: map-get($md-primary, 500) !important;
+        color: #ffffff !important;
 
+    }
     /* Hopscotch Tour */ 
     div.hopscotch-bubble {
         border-color: $primary-dark;
@@ -202,6 +218,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     div.hopscotch-bubble .hopscotch-nav-button.next {
         background-color: map-get($md-accent, 500);
         color: black;
+    }
+    .mat-button {
+        background-color: map-get($md-primary, 500);
+        color: black;   
     }
     .mat-bg-warn {
         background-color: #f44336;

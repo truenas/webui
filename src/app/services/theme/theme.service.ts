@@ -5,27 +5,33 @@ export class ThemeService {
   freenasThemes = [{
     name: 'egret-dark-purple',
     baseColor: '#9c27b0',
-    isActive: false
+    isActive: false,
+    hasDarkLogo: false
   }, {
     name: 'egret-dark-pink',
     baseColor: '#e91e63',
-    isActive: true
+    isActive: false,
+    hasDarkLogo: false
   }, {
     name: 'egret-blue',
-    baseColor: '#247ba0',
-    isActive: false
+    baseColor: '#2196f3',
+    isActive: false,
+    hasDarkLogo: true
   }, {
     name: 'egret-indigo',
     baseColor: '#3f51b5',
-    isActive: false
+    isActive: true,
+    hasDarkLogo: false
   }, {
     name: 'freenas-warriors',
     baseColor: '#fdb927',
-    isActive: false
+    isActive: false,
+    hasDarkLogo: false
   }, {
     name: 'freenas-sharks',
     baseColor: '#088696',
-    isActive: false
+    isActive: false,
+    hasDarkLogo: true
   }];
   constructor() { }
   changeTheme(theme) {

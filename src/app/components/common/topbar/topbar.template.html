@@ -43,16 +43,16 @@
   md-icon-button
   id="schemeToggle" 
   [style.overflow]="'visible'"
-  mdTooltip="Color Schemes"
+  mdTooltip="FreeNAS Themes"
   [mdMenuTriggerFor]="themeMenu"
   class="topbar-button-right">
     <md-icon>format_color_fill</md-icon>
   </button>
-  <md-menu #themeMenu="mdMenu">
+  <md-menu #themeMenu="mdMenu" >
     <md-grid-list
     class="theme-list" 
-    cols="2" 
-    rowHeight="48px">
+    cols="1" 
+    rowHeight="24px">
       <md-grid-tile 
       *ngFor="let theme of freenasThemes"
       (click)="changeTheme(theme)">
@@ -60,6 +60,7 @@
           <div [style.background]="theme.baseColor" class="egret-swatch"></div>
           <md-icon class="active-icon" *ngIf="theme.isActive">check</md-icon>
         </div>
+        <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.name }}</span>
       </md-grid-tile>
     </md-grid-list>
   </md-menu>
@@ -71,7 +72,7 @@
   [style.overflow]="'visible'" 
   class="topbar-button-right">
     <md-icon>notifications</md-icon>
-    <span class="notification-number mat-bg-warn">3</span>
+    <span class="notification-number mat-bg-warn">9</span>
   </button>
   <!-- Top left user menu -->
   <button md-icon-button [mdMenuTriggerFor]="accountMenu" class="topbar-button-right">
