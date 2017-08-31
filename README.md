@@ -1,28 +1,65 @@
-# Egret
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.4.
+FreeNAS 11 WebUI
+================
+![Build Status][buildimage]
 
-## Development server
+[buildimage]: https://builds.ixsystems.com/jenkins/job/FreeNAS-WebUI-CI/badge/icon "Build Status"
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+This is the project for the new angular.io (4.x) WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+# Development requirements
 
-## Build
+  - npm >= 5
+  - Node.js >= 5
+  - Running FreeNAS 11 Nightly Machine (VM is fine)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-## Running unit tests
+# Getting started
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Install the development requirements (FreeBSD 11 or later):
 
-## Running end-to-end tests
+```sh
+# pkg install node6
+# pkg install npm
+```
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+On some Operating Systems it is quickest to install npm > 3 first then install npm:
 
-## Further help
+```sh
+# npm install -g npm5
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Checkout FreeNAS git repository:
+
+```sh
+$ git clone https://github.com/freenas/webui.git
+$ cd webui
+```
+
+Install npm packages:
+
+```sh
+$ npm install
+```
+
+Run the environment configuration script
+(if your ip address changes later you may repeat this step)
+
+```sh
+$ ./setup_env.js -i <ip address>
+```
+
+To start run
+```npm start```
+
+This should open the browser with the WebUI, by default http://localhost:4200.
+
+To test AOT in dev mode run
+
+```npm run start:dev:aot```
+
+To run the production build, run
+
+```npm run build:prod:aot```
+
