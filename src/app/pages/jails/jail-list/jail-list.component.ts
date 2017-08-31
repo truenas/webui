@@ -1,3 +1,4 @@
+import { RestService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -7,12 +8,12 @@ import { Router } from '@angular/router';
 })
 export class JailListComponent {
 
-  protected resource_name: string = 'jails/jails';
+  protected resource_name = 'jails/jails';
   protected route_add: string[] = [ 'jails', 'add' ];
-  protected route_add_tooltip: string = "Add Jail";
+  protected route_add_tooltip = "Add Jail";
   protected entityList: any;
 
-  constructor(protected router: Router) {}
+ 
 
   public columns: Array<any> = [
     {name : 'Jail', prop : 'jail_host'},
@@ -25,20 +26,22 @@ export class JailListComponent {
     sorting : {columns : this.columns},
   };
 
+  constructor(protected router: Router, protected rest: RestService) {}
+  
   afterInit(entityList: any) { this.entityList = entityList; }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId == 'start' && row.jail_status == "Running") {
+    if (actionId === 'start' && row.jail_status === "Running") {
       return false;
-    } else if (actionId == 'stop' && row.jail_status == "Stopped") {
+    } else if (actionId === 'stop' && row.jail_status === "Stopped") {
       return false;
-    } else if (actionId == 'restart' && row.jail_status == "Stopped") {
+    } else if (actionId === 'restart' && row.jail_status === "Stopped") {
       return false;
     }
     return true;
   }
 
-  getActions(row) {
+  getActions(parentRow) {
     return [
       {
         id : "edit",
