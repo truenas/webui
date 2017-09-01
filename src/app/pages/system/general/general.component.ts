@@ -179,21 +179,21 @@ export class GeneralComponent {
 
   gotoSaveConfig() {
     this.router.navigate(
-        new Array('/pages').concat([ 'system', 'general', 'config-save' ]));
+        new Array('').concat([ 'system', 'general', 'config-save' ]));
   }
 
   gotoUploadConfig() {
     this.router.navigate(
-        new Array('/pages').concat([ 'system', 'general', 'config-upload' ]));
+        new Array('').concat([ 'system', 'general', 'config-upload' ]));
   }
 
   gotoResetConfig() {
     this.router.navigate(
-        new Array('/pages').concat([ 'system', 'general', 'config-reset' ]));
+        new Array('').concat([ 'system', 'general', 'config-reset' ]));
   }
 
   gotoNTPServers() {
     this.router.navigate(
-        new Array('/pages').concat([ 'system', 'ntpservers' ]));
+        new Array('').concat([ 'system', 'ntpservers' ]));
   }
 }
