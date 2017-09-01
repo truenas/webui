@@ -71,6 +71,11 @@ export const rootRouterConfig: Routes = [{
             data: { title: 'System', breadcrumb: 'Tunable' }
           },
           {
+            path: 'update',
+            loadChildren: 'app/pages/system/update/update.module#UpdateModule',
+            data: {title: 'Update', breadcrumb: 'UPDATE'},
+          },
+          {
             path: 'ntpservers',
             loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule',
             data: { title: 'System', breadcrumb: 'NTPServers' }
