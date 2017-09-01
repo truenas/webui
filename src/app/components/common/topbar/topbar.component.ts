@@ -1,6 +1,8 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService } from '../../../services/theme/theme.service';
+import { WebSocketService } from '../../../services/ws.service';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'topbar',
@@ -20,7 +22,7 @@ export class TopbarComponent implements OnInit {
   }]
   freenasThemes;
   
-  constructor(private themeService: ThemeService) {}
+  constructor(private themeService: ThemeService, private ws: WebSocketService, private dialogService: DialogService) {}
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
   }
@@ -40,5 +42,13 @@ export class TopbarComponent implements OnInit {
         let appBody = document.body;
         domHelper.toggleClass(appBody, 'collapsed-menu');
         domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
-    }
+  }
+
+  signOut() {
+    this.dialogService.confirm("Logout", "You are about to LOGOUT the system, are you sure?").subscribe((res) => {
+      if (res) {
+        this.ws.logout();
+      }
+    });
+  }
 }

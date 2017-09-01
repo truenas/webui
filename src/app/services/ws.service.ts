@@ -195,6 +195,6 @@ export class WebSocketService {
     this.loggedIn = false;
     this.username = '';
     this.password = '';
-    this._router.navigate([ '/login' ]);
+    this._router.navigate(['/sessions/signin']);
   }
 }

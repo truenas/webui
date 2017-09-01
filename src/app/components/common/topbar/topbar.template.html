@@ -91,7 +91,7 @@
       <md-icon>notifications_off</md-icon>
       <span>Disable alerts</span>
     </button>
-    <button md-menu-item [routerLink]="['/sessions/signin']">
+    <button md-menu-item (click)="signOut()">
       <md-icon>exit_to_app</md-icon>
       <span>Sign out</span>
     </button>

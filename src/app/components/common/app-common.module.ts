@@ -19,7 +19,8 @@ import {
   MdButtonModule,
   MdRadioModule,
   MdCheckboxModule,
-  MdCardModule
+  MdCardModule,
+  MdDialogModule
 } from '@angular/material';
 import { TopbarComponent } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -28,6 +29,7 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 import { ThemeService } from '../../services/theme/theme.service';
+import { DialogService } from '../../services/dialog.service';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 
@@ -52,6 +54,7 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
     MdRadioModule,
     MdCheckboxModule,
     MdCardModule,
+    MdDialogModule,
     CommonDirectivesModule,
     TranslateModule
   ],
@@ -62,7 +65,7 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
     NavigationComponent, 
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent
   ],
-  providers: [ThemeService],
+  providers: [ThemeService, DialogService],
   exports: []
 })
 export class AppCommonModule {}
