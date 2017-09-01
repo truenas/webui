@@ -56,6 +56,11 @@ export const rootRouterConfig: Routes = [{
             data: { title: 'System', breadcrumb: 'ADVANCED' }
           },
           {
+            path: 'bootenv',
+            loadChildren: 'app/pages/system/bootenv/bootenv.module#BootEnvironmentsModule',
+            data: { title: 'Boot Environments', breadcrumb: 'BOOTENV' }
+          },
+          {
             path: 'ca',
             loadChildren: 'app/pages/system/ca/ca.module#CertificateAuthorityModule',
             data: { title: 'System', breadcrumb: 'CA' }

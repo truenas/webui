@@ -47,8 +47,8 @@ export class NavigationService {
       sub: [
         //{name: 'Information', state: 'information'},
         {name: 'General', state: 'general'},
-        {name: 'Boot', state: 'boot'},
         {name: 'Advanced', state: 'advanced'},
+        {name: 'Boot Environments', state: 'bootenv'},
         //{name: 'Email', state: 'email'},
         //{name: 'System Dataset', state: 'systemdataset'},
         //{name: 'Alert Services', state: 'alertservices'},
