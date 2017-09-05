@@ -16,51 +16,51 @@ export const routes: Routes = [
     children: [{
       path: 'jails',
       component: JailListComponent,
-      data: { title: 'Instances', breadcrumb: 'INSTANCES'}
+      data: { title: 'Instances', breadcrumb: 'Instances'}
     }, {
       path: 'add',
       component: JailFormComponent,
-      data: { title: 'Add', breadcrumb: 'ADD' },
+      data: { title: 'Add', breadcrumb: 'Add' },
     }, {
       path: 'edit/:pk',
       component: JailFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' },
     }, {
       path: 'storage',
-      data: { title: 'Storage', breadcrumb: 'STORAGE'},
+      data: { title: 'Storage', breadcrumb: 'Storage'},
       children: [{
         path: '',
         component: StorageListComponent,
-        data: { title: 'Storage', breadcrumb: 'STORAGE'},
+        data: { title: 'Storage', breadcrumb: 'Storage'},
       },{
         path: 'add',
         component: StorageFormComponent,
-        data: { title: 'Add', breadcrumb: 'ADD' },
+        data: { title: 'Add', breadcrumb: 'Add' },
       },
       {
         path: 'edit/:pk',
         component: StorageFormComponent,
-        data: { title: 'Edit', breadcrumb: 'EDIT' },
+        data: { title: 'Edit', breadcrumb: 'Edit' },
       }]
     }, {
       path: 'configuration',
       component: JailsConfigurationComponent,
-      data: { title: 'Configuration', breadcrumb: 'CONFIGURATION' },
+      data: { title: 'Configuration', breadcrumb: 'Configuration' },
     }, {
       path: 'templates',
-      data: { title: 'Templates', breadcrumb: 'TEMPLATES'},
+      data: { title: 'Templates', breadcrumb: 'Templates'},
       children: [{
         path: '',
         component: TemplateListComponent,
-        data: { title: 'Templates', breadcrumb: 'TEMPLATES'},
+        data: { title: 'Templates', breadcrumb: 'Templates'},
       },{
         path: 'add',
         component: TemplateFormComponent,
-        data: { title: 'Add', breadcrumb: 'ADD' },
+        data: { title: 'Add', breadcrumb: 'Add' },
       },{
         path: 'edit/:pk',
         component: TemplateFormComponent,
-        data: { title: 'Edit', breadcrumb: 'EDIT' },
+        data: { title: 'Edit', breadcrumb: 'Edit' },
       }]
     }]
   }

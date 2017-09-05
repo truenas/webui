@@ -154,7 +154,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'jails',
         loadChildren: './pages/jails/jails.module#JailsModule',
-        data: { title: 'Jails', breadcrumb: 'JAILS' },
+        data: { title: 'Jails', breadcrumb: 'Jails' },
       },
       {
         path: 'reportsdashboard',
