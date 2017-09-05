@@ -10,15 +10,59 @@ import { TemplateListComponent } from './templates/template-list/';
 import { TemplateFormComponent } from './templates/template-form/';
 
 export const routes: Routes = [
-  { path : 'jails', component : JailListComponent, pathMatch : 'full' },
-  { path : 'add', component : JailFormComponent },
-  { path : 'edit/:pk', component : JailFormComponent },
-  { path : 'storage', component : StorageListComponent },
-  { path : 'storage/add', component : StorageFormComponent },
-  { path : 'storage/edit/:pk', component : StorageFormComponent },
-  { path : 'configuration', component : JailsConfigurationComponent },
-  { path : 'templates', component : TemplateListComponent },
-  { path : 'templates/add', component : TemplateFormComponent },
-  { path : 'templates/edit/:pk', component : TemplateFormComponent },
+  {
+    path: '',
+    data: { title: 'Jails' },
+    children: [{
+      path: 'jails',
+      component: JailListComponent,
+      data: { title: 'Instances', breadcrumb: 'INSTANCES'}
+    }, {
+      path: 'add',
+      component: JailFormComponent,
+      data: { title: 'Add', breadcrumb: 'ADD' },
+    }, {
+      path: 'edit/:pk',
+      component: JailFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' },
+    }, {
+      path: 'storage',
+      data: { title: 'Storage', breadcrumb: 'STORAGE'},
+      children: [{
+        path: '',
+        component: StorageListComponent,
+        data: { title: 'Storage', breadcrumb: 'STORAGE'},
+      },{
+        path: 'add',
+        component: StorageFormComponent,
+        data: { title: 'Add', breadcrumb: 'ADD' },
+      },
+      {
+        path: 'edit/:pk',
+        component: StorageFormComponent,
+        data: { title: 'Edit', breadcrumb: 'EDIT' },
+      }]
+    }, {
+      path: 'configuration',
+      component: JailsConfigurationComponent,
+      data: { title: 'Configuration', breadcrumb: 'CONFIGURATION' },
+    }, {
+      path: 'templates',
+      data: { title: 'Templates', breadcrumb: 'TEMPLATES'},
+      children: [{
+        path: '',
+        component: TemplateListComponent,
+        data: { title: 'Templates', breadcrumb: 'TEMPLATES'},
+      },{
+        path: 'add',
+        component: TemplateFormComponent,
+        data: { title: 'Add', breadcrumb: 'ADD' },
+      },{
+        path: 'edit/:pk',
+        component: TemplateFormComponent,
+        data: { title: 'Edit', breadcrumb: 'EDIT' },
+      }]
+    }]
+  }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
