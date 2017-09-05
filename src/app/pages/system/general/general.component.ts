@@ -191,9 +191,4 @@ export class GeneralComponent {
     this.router.navigate(
         new Array('').concat([ 'system', 'general', 'config-reset' ]));
   }
-
-  gotoNTPServers() {
-    this.router.navigate(
-        new Array('').concat([ 'system', 'ntpservers' ]));
-  }
 }
