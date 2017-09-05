@@ -1,0 +1,18 @@
+<p *ngIf="success" type="success">Successfully updated.</p>
+<p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
+<md-card>
+  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+    <ng-container *ngFor="let field of fieldConfig;" 
+      dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
+    </ng-container>
+    <div class="btn-group btn-group-justified btn-group-raised">
+    <button md-raised-button class="btn btn-block btn-warning" type="submit">Save</button>
+    <button md-raised-button *ngIf="route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()">Cancel</button>
+    </div>
+    <div class="btn-group btn-group-justified btn-group-raised">
+    <span *ngFor="let custBtn of custActions">
+      <button md-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" class="btn  btn-block btn-default" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+    </span>
+    </div>
+  </form>
+</md-card>

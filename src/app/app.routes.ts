@@ -137,6 +137,21 @@ export const rootRouterConfig: Routes = [{
         ]
       },
       {
+        path: 'storage',
+        children: [
+          {
+            path: 'volumes',
+            loadChildren: './pages/storage/volumes/volumes.module#VolumesModule',
+            data: { title: 'Volumes', breadcrumb: 'Volumes' }
+          },
+          //{
+          //  path: 'snapshots',
+          //  loadChildren: './pages/storage/snapshots/snapshots.module#SnapshotsModule',
+          //  data: { title: 'Snapshots', breadcrumb: 'Snapshots' }
+          //}
+        ]
+      },
+      {
         path: 'jails',
         loadChildren: './pages/jails/jails.module#JailsModule',
         data: { title: 'Jails', breadcrumb: 'Jails' },

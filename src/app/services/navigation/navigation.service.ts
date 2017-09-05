@@ -88,7 +88,11 @@ export class NavigationService {
       type: 'dropDown',
       tooltip: 'Storage',
       icon: 'storage',
-      state: 'storage'
+      state: 'storage',
+      sub: [
+        {name: 'Volumes', state: 'volumes'},
+        //{name: 'Snapshots', state: 'snapshots'}
+      ]
     },
     {
       name: 'Directory Service',
