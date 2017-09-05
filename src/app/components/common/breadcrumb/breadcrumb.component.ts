@@ -15,6 +15,21 @@ export class BreadcrumbComponent implements OnInit {
   private activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
+  // must be running once to get breadcrumbs
+    this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+    // generate url from parts
+    this.routeParts.reverse().map((item, i) => {
+      // prepend / to first part
+      if(i === 0) {
+        item.url = `/${item.url}`;
+        return item;
+      }
+      // prepend previous part to current part
+      item.url = `${this.routeParts[i - 1].url}/${item.url}`;
+      return item;
+    });
+
+  // only execute when routechange
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       // generate url from parts
