@@ -157,9 +157,23 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     this.router.navigate(new Array('/').concat(route));
   }
 
-  editSubmit(body: any) { return this.rest.put(this.resourceName, body); }
+  editSubmit(body: any) { 
+    let resource = this.resourceName;
+    if (this.conf.custom_edit_query) {
+      resource = this.conf.custom_edit_query;
+    }
 
-  addSubmit(body: any) { return this.rest.post(this.resourceName, body); }
+    return this.rest.put(resource, body);
+  }
+
+  addSubmit(body: any) {
+    let resource = this.resourceName;
+    if (this.conf.custom_add_query) {
+      resource = this.conf.custom_add_query;
+    }
+
+    return this.rest.post(resource, body); 
+  }
 
   onSubmit(event: Event) {
     event.preventDefault();
@@ -170,9 +184,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     let value = _.cloneDeep(this.formGroup.value);
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
-        let clean = this['clean_' + i];
-        if (clean) {
-          value = clean(value, i);
+        if (this.conf['clean_' + i]) {
+          value = this.conf['clean_' + i](value, i);
         }
       }
     }
