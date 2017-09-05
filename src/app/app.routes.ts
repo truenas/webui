@@ -145,6 +145,11 @@ export const rootRouterConfig: Routes = [{
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
         data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
+      },
+      {
+        path : 'shell',
+        loadChildren : './pages/shell/shell.module#ShellModule',
+        data: { title: 'Shell', breadcrumb: 'SHELL'}
       }
     ]
   },

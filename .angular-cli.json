@@ -1,79 +1,86 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "project": {
-    "name": "freenas-material-ui"
-  },
-  "apps": [
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "project":
     {
-      "root": "src",
-      "outDir": "dist",
-      "assets": [
-        "assets",
-        "favicon.ico"
-      ],
-      "index": "index.html",
-      "main": "main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.app.json",
-      "testTsconfig": "tsconfig.spec.json",
-      "prefix": "app",
-      "styles": [
-        "../node_modules/quill/dist/quill.core.css",
-        "../node_modules/quill/dist/quill.snow.css",
-        "../node_modules/dragula/dist/dragula.css",
-        "../node_modules/angular-calendar/dist/css/angular-calendar.css",
-        "../node_modules/hopscotch/dist/css/hopscotch.min.css",
-        "../node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
-	   "../node_modules/chartist/dist/chartist.min.css",
-        "vendor/pace/pace-theme-min.css",
-        "assets/styles/themes/egret-dark-purple.scss",
-        "assets/styles/themes/egret-dark-pink.scss",
-        "assets/styles/themes/egret-blue.scss",
-        "assets/styles/themes/egret-indigo.scss",
-        "assets/styles/themes/freenas-warriors.scss",
-        "assets/styles/themes/freenas-sharks.scss",
-        "assets/styles/styles.css"
-      ],
-      "scripts": [
-        "vendor/pace/pace.min.js",
-        "../node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",
-        "../node_modules/hopscotch/dist/js/hopscotch.min.js",
-        "../node_modules/hammerjs/hammer.js",
-        "vendor/Chart.min.js",
-        "../node_modules/quill/dist/quill.min.js",
-        "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"	   
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
-    }
-  ],
-  "e2e": {
-    "protractor": {
-      "config": "./protractor.conf.js"
-    }
-  },
-  "lint": [
+        "name": "freenas-material-ui"
+    },
+    "apps": [
     {
-      "project": "src/tsconfig.app.json"
+        "root": "src",
+        "outDir": "dist",
+        "assets": [
+            "assets",
+            "favicon.ico"
+        ],
+        "index": "index.html",
+        "main": "main.ts",
+        "polyfills": "polyfills.ts",
+        "test": "test.ts",
+        "tsconfig": "tsconfig.app.json",
+        "testTsconfig": "tsconfig.spec.json",
+        "prefix": "app",
+        "styles": [
+            "../node_modules/xterm/dist/xterm.css",
+            "../node_modules/quill/dist/quill.core.css",
+            "../node_modules/quill/dist/quill.snow.css",
+            "../node_modules/dragula/dist/dragula.css",
+            "../node_modules/angular-calendar/dist/css/angular-calendar.css",
+            "../node_modules/hopscotch/dist/css/hopscotch.min.css",
+            "../node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
+            "../node_modules/chartist/dist/chartist.min.css",
+            "vendor/pace/pace-theme-min.css",
+            "assets/styles/themes/egret-dark-purple.scss",
+            "assets/styles/themes/egret-dark-pink.scss",
+            "assets/styles/themes/egret-blue.scss",
+            "assets/styles/themes/egret-indigo.scss",
+            "assets/styles/themes/freenas-warriors.scss",
+            "assets/styles/themes/freenas-sharks.scss",
+            "assets/styles/styles.css"
+        ],
+        "scripts": [
+            "vendor/pace/pace.min.js",
+            "../node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",
+            "../node_modules/hopscotch/dist/js/hopscotch.min.js",
+            "../node_modules/hammerjs/hammer.js",
+            "vendor/Chart.min.js",
+            "../node_modules/quill/dist/quill.min.js",
+            "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"
+        ],
+        "environmentSource": "environments/environment.ts",
+        "environments":
+        {
+            "dev": "environments/environment.ts",
+            "prod": "environments/environment.prod.ts"
+        }
+    }],
+    "e2e":
+    {
+        "protractor":
+        {
+            "config": "./protractor.conf.js"
+        }
+    },
+    "lint": [
+    {
+        "project": "src/tsconfig.app.json"
     },
     {
-      "project": "src/tsconfig.spec.json"
+        "project": "src/tsconfig.spec.json"
     },
     {
-      "project": "e2e/tsconfig.e2e.json"
+        "project": "e2e/tsconfig.e2e.json"
+    }],
+    "test":
+    {
+        "karma":
+        {
+            "config": "./karma.conf.js"
+        }
+    },
+    "defaults":
+    {
+        "styleExt": "css",
+        "component":
+        {}
     }
-  ],
-  "test": {
-    "karma": {
-      "config": "./karma.conf.js"
-    }
-  },
-  "defaults": {
-    "styleExt": "css",
-    "component": {}
-  }
 }
