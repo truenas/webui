@@ -15,7 +15,7 @@ import { MdSnackBar } from '@angular/material';
 export class ConfigSaveComponent {
 
   public sub: Subscription;
-  protected secretseed: boolean = false;
+  public secretseed: boolean = false;
 
   constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MdSnackBar) {}
 
