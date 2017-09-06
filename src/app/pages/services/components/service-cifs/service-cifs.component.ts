@@ -16,7 +16,7 @@ import {
 
 @Component({
   selector : 'cifs-edit',
-  template : ` <entity-config [conf]="this"></entity-config>`,
+  template : ` <entity-form [conf]="this"></entity-form>`,
   providers : [ IscsiService, IdmapService ],
 })
 
