@@ -8,6 +8,7 @@ import { EntityModule } from '../../common/entity/entity.module';
 import { GeneralComponent } from './general.component';
 import { ConfigSaveComponent } from './config-save/config-save.component';
 import { ConfigUploadComponent } from './config-upload/config-upload.component';
+import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { routing } from './general.routing';
 
 @NgModule({
@@ -19,6 +20,7 @@ import { routing } from './general.routing';
   declarations: [
     GeneralComponent,
     ConfigUploadComponent,
+    ConfigResetComponent,
     ConfigSaveComponent
   ],
   providers: []
