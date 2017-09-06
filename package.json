@@ -8,7 +8,7 @@
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
-    "start": "ng serve --proxy-config proxy.config.json",
+    "start": "ng serve --proxy-config proxy.config.json --aot",
     "start:dev:aot": "ng serve --proxy-config proxy.config.json --aot",
     "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "ng serve --prod",
