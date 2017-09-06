@@ -122,7 +122,7 @@ export class NavigationService {
     },
     {
       name: 'Services',
-      type: 'dropDown',
+      type: 'link',
       tooltip: 'Services',
       icon: 'tune',
       state: 'services'
