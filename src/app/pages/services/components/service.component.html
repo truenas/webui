@@ -5,7 +5,6 @@
   <md-card-subtitle>
       <md-slide-toggle
           class="example-margin"
-          [color]="color"
           [checked]="status.state == 'RUNNING' ? 'checked' : ''"
           (click)="toggle()">
         {{status.state}}
