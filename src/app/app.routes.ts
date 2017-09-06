@@ -125,11 +125,11 @@ export const rootRouterConfig: Routes = [{
             loadChildren: './pages/storage/volumes/volumes.module#VolumesModule',
             data: { title: 'Volumes', breadcrumb: 'Volumes' }
           },
-          //{
-          //  path: 'snapshots',
-          //  loadChildren: './pages/storage/snapshots/snapshots.module#SnapshotsModule',
-          //  data: { title: 'Snapshots', breadcrumb: 'Snapshots' }
-          //}
+          {
+            path: 'snapshots',
+            loadChildren: './pages/storage/snapshots/snapshots.module#SnapshotsModule',
+            data: { title: 'Snapshots', breadcrumb: 'Snapshots' }
+          }
         ]
       },
       {
