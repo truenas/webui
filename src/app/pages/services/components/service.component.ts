@@ -52,10 +52,10 @@ export class Service {
     if (service == 'iscsitarget') {
       // iscsi target global config route
       let route = [ 'sharing', 'iscsi' ];
-      this.router.navigate(new Array('/pages').concat(route));
+      this.router.navigate(new Array('').concat(route));
     } else {
       // Determines the route path
-      this.router.navigate(new Array('/pages').concat([ 'services', service ]));
+      this.router.navigate(new Array('').concat([ 'services', service ]));
     }
   }
 }
