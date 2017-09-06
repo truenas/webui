@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
-//import {GlobalState} from '../../../../global.state';
 import {RestService} from '../../../../services/rest.service';
 
 @Component({
