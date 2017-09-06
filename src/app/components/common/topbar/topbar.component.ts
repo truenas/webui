@@ -1,5 +1,6 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import * as domHelper from '../../../helpers/dom.helper';
+import { RestService } from '../../../services';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -12,6 +13,9 @@ export class TopbarComponent implements OnInit {
   @Input() sidenav;
   @Input() notificPanel;
   @Output() onLangChange = new EventEmitter<any>();
+  
+  notificationCount = 0;
+  
   currentLang = 'en';
   availableLangs = [{
     name: 'English',
@@ -22,9 +26,13 @@ export class TopbarComponent implements OnInit {
   }]
   freenasThemes;
   
-  constructor(private themeService: ThemeService, private ws: WebSocketService, private dialogService: DialogService) {}
+  constructor(private themeService: ThemeService, private rs: RestService, private ws: WebSocketService, private dialogService: DialogService) {}
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
+    
+     this.rs.get("system/alert", {}).subscribe((res) => {
+       this.notificationCount = res.data.length;
+     });
   }
   setLang() {
     this.onLangChange.emit(this.currentLang);

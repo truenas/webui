@@ -1,6 +1,16 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { MdSidenav } from '@angular/material';
-import { Router, NavigationEnd } from '@angular/router';
+import {RestService} from '../../../services';
+import {Component, OnInit, ViewChild, Input} from '@angular/core';
+import {MdSidenav} from '@angular/material';
+import {Router, NavigationEnd} from '@angular/router';
+
+
+interface Notification {
+  message: string;
+  icon: string;
+  time: string;
+  route: string;
+  color: string;
+}
 
 @Component({
   selector: 'app-notifications',
@@ -10,72 +20,90 @@ import { Router, NavigationEnd } from '@angular/router';
 export class NotificationsComponent implements OnInit {
   @Input() notificPanel;
 
-  // Dummy notifications
-  notifications = [{
-    message: 'Replication Task "SYAB_hivemind-assimilation" finished successfully!',
-    icon: 'check_circle',
-    time: 'Just now',
-    route: '/dashboard',
-    color: 'primary'
-  }, {
-    message: 'Replication Task "SYAB_hivemind-assimilation" is running...',
-    icon: 'swap_horiz',
-    time: '9 minutes ago',
-    route: '/dashboard',
-    color: ''
-  }, {
-    message: 'Replication Task "SYAB_hivemind-assimilation" initialized.',
-    icon: 'watch_later',
-    time: '13 minutes ago',
-    route: '/dashboard',
-    color: ''
-  }, {
-    message: 'Snapshot Task "backsnap_datasets_20170901" has failed with error: not enough space left in pool.',
-    icon: 'error',
-    time: '36 minutes ago',
-    route: '/dashboard',
-    color: 'warn'
-  }, {
-    message: 'Available space in pool "tank" is critically LOW.',
-    icon: 'info',
-    time: '42 minutes ago',
-    route: '/dashboard',
-    color: 'accent'
-  }, {
-    message: 'Snapshot Task "backsnap_datasets_20170901" is running...',
-    icon: 'photo_camera',
-    time: 'An hour ago',
-    route: '/dashboard',
-    color: ''
-  }, {
-    message: 'Snapshot Task "backsnap_datasets_20170901" initialized.',
-    icon: 'watch_later',
-    time: 'An hour ago',
-    route: '/dashboard',
-    color: ''
-  }, {
-    message: 'FreeNAS host "lit.freenas.host" rebooted after updates. Uptime reset to 0.',
-    icon: 'error',
-    time: '3 days ago',
-    route: '/chat',
-    color: 'accent'
-  }, {
-    message: 'FreeNAS host "lit.freenas.host" finished updating on train: 11.1-NIGHTLIES',
-    icon: 'info',
-    time: '5 days ago',
-    route: '/dashboard',
-    color: 'primary'
-  }]
-
-  constructor(private router: Router) {}
-
+  notifications: Array<Notification> = [];
+  
+ 
+  constructor(private _rs: RestService, private router: Router) {}
+  
   ngOnInit() {
     this.router.events.subscribe((routeChange) => {
-        if (routeChange instanceof NavigationEnd) {
-          this.notificPanel.close();
-        }
+      if (routeChange instanceof NavigationEnd) {
+        this.notificPanel.close();
+      }
+    });
+
+    this._rs.get("system/alert", {}).subscribe((res) => {
+      this.alertsArrivedHandler(res);
     });
   }
+
+  /**
+   * Returns the hours/mintues am/pm part of the date.
+   */
+  private getTimeAsString(timestamp: number) {
+    const d: Date = new Date(timestamp);
+    d.setHours(d.getHours() + 2); // offset from local time
+    const h = (d.getHours() % 12) || 12; // show midnight & noon as 12
+    return (
+      (h < 10 ? '0' : '') + h +
+      (d.getMinutes() < 10 ? ':0' : ':') + d.getMinutes() +
+      // optional seconds display
+      // ( d.getSeconds() < 10 ? ':0' : ':') + d.getSeconds() + 
+      (d.getHours() < 12 ? ' AM' : ' PM')
+    );
+
+  }
+
+  /**
+   * Takes incomming JSON REST message from system/alert rest api
+   * res.data  array where each element looks like:
+   *  {"dismissed":false,
+   *   "id":"d90e9594a20cba9660003a55c3f51a6c",
+   *   "level":"WARN",
+   *   "message":"smartd is not running.\n",
+   *   "timestamp":1504725447}
+   */
+  alertsArrivedHandler(res) {
+   const data: Array<any> = res.data;
+
+    data.forEach((alertObj) => {
+      this.addNotification(alertObj);
+    });
+  }
+
+
+  addNotification(alertObj) {
+
+    const message: string = <string>alertObj.message;
+    const level: string = <string>alertObj.level;
+    const timestamp: number = <number>alertObj.timestamp * 1000; // unix timestamp in seconds
+                                                                 // javascript in milli
+    const date: Date = new Date(timestamp);
+    const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
+    const routeName = "/dashboard"
+    let icon = "info";
+    let color = "primary";
+
+    if (level === "WARN") {
+      icon = "watch_later";
+      color = "warn";
+    } else if (level === 'ERROR') {
+      icon = "error";
+      color = "warn";
+    }
+
+    const newNotification: Notification = {
+      message: message,
+      icon: icon,
+      time: dateStr,
+      route: routeName,
+      color: color
+    };
+
+    this.notifications.push(newNotification);
+
+  }
+
   clearAll(e) {
     e.preventDefault();
     this.notifications = [];
