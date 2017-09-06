@@ -35,12 +35,6 @@ export class ServiceAFPComponent {
       placeholder : 'Guest Access',
     },
     {
-      type : 'select',
-      name : 'afp_srv_guest',
-      placeholder : 'Guest Access',
-      options : []
-    },
-    {
       type : 'input',
       name : 'afp_srv_connections_limit',
       placeholder : 'Max. Connections',
