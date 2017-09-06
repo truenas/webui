@@ -109,32 +109,8 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path: 'sharing',
-        children: [{
-            path: 'afp',
-            loadChildren: './pages/sharing/afp/afp.module#AFPModule',
-            data: { title: 'AFP', breadcrumb: 'AFP' },
-          },
-          {
-            path: 'nfs',
-            loadChildren: './pages/sharing/nfs/nfs.module#NFSModule',
-            data: { title: 'NFS', breadcrumb: 'NFS' },
-          },
-          {
-            path: 'webdav',
-            loadChildren: './pages/sharing/webdav/webdav.module#WebdavModule',
-            data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
-          },
-          {
-            path: 'smb',
-            loadChildren: './pages/sharing/smb/smb.module#SMBModule',
-            data: { title: 'SMB', breadcrumb: 'SMB' },
-          },
-          {
-            path: 'iscsi',
-            loadChildren: './pages/sharing/iscsi/iscsi.module#ISCSIModule',
-            data: { title: 'ISCSI', breadcrumb: 'ISCSI' },
-          }
-        ]
+        loadChildren: 'app/pages/sharing/sharing.module#SharingModule',
+        data: { title: 'Sharing', breadcrumb: 'Sharing'}
       },
       {
         path: 'storage',
