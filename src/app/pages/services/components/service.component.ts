@@ -19,7 +19,6 @@ export class Service {
               private ws: WebSocketService) {}
 
   toggle() {
-
     let rpc: string;
     if (this.status.state != 'RUNNING') {
       rpc = 'service.start';

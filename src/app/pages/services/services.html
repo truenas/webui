@@ -1,7 +1,5 @@
-<md-card class="mat-card card-body">
-    <table class="table table-striped">
-        <tr role="row">
-            <service *ngFor="let service of services" [status]="service"></service>
-        </tr>
-    </table>
+<md-card>
+  <md-grid-list cols="4" rowHeight="2:1">
+    <service *ngFor="let service of services" [status]="service"></service>
+  </md-grid-list>
 </md-card>

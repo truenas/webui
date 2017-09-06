@@ -1,21 +1,23 @@
-<td class="col-md-3">
-  {{status.label}}
-</td>
-<td class="col-md-3">
-  {{status.state}}
-</td>
-<td class="col-md-3">
+<md-card style="width: 150px;">
+  <md-card-title>
+    {{status.label}}
+  </md-card-title>
+  <md-card-subtitle>
+      <md-slide-toggle
+          class="example-margin"
+          [color]="color"
+          [checked]="status.state == 'RUNNING' ? 'checked' : ''"
+          (click)="toggle()">
+        {{status.state}}
+      </md-slide-toggle>
+  </md-card-subtitle>
+  <md-card-content>
     <label>Start on Boot </label>
-    <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)" ></md-checkbox>
-</td>
-<td class="col-md-3">
-  <button class="btn" (click)="editService(this.status.service)">
-    <i class="ion-wrench"></i>
-    <span>Configure</span>
+    <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox>
+  </md-card-content>
+  <md-card-actions>
+  <button md-raised-button color="primary" (click)="editService(this.status.service)">
+    Configure
   </button>
-</td>
-<td class="col-md-3">
-<a [ngClass]="status.state == 'RUNNING' ? 'btn btn-info' : 'btn'" (click)="toggle()">
-    <i [ngClass]="status.state == 'RUNNING' ? 'ion-stop' : 'ion-power'"></i>
-  </a>
-</td>
+  </md-card-actions>
+</md-card>
