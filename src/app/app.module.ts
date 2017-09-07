@@ -15,6 +15,8 @@ import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
+import { AppLoaderService } from './services/app-loader/app-loader.service';
+import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 
 import {ENV_PROVIDERS} from '../environments/environment';
 
@@ -41,12 +43,14 @@ export function createTranslateLoader(http: Http) {
     NavigationService,
     AuthService,
     WebSocketService,
-    RestService, 
+    RestService,
+    AppLoaderService, 
     ENV_PROVIDERS],
   bootstrap: [
     AppComponent
   ],
   entryComponents: [
+    AppLoaderComponent,
     ConfirmDialog,
   ],
 })

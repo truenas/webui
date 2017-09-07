@@ -6,6 +6,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 
 
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 
@@ -79,5 +80,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityJobComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [
+    AppLoaderService
+  ]
 })
 export class EntityModule {}

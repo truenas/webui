@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import {RestService, WebSocketService} from '../../../../services/';
+import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
@@ -64,7 +65,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected rest: RestService, protected ws: WebSocketService,
               protected location: Location, private fb: FormBuilder,
               protected entityFormService: EntityFormService,
-              protected fieldRelationService: FieldRelationService) {}
+              protected fieldRelationService: FieldRelationService,
+              protected loader: AppLoaderService) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
@@ -201,9 +203,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.beforeSubmit(value);
     }
 
+    this.loader.open();
     this.busy = this.submitFunction({body : JSON.stringify(value)})
                     .subscribe(
                         (res) => {
+                          this.loader.close();
                           if (this.conf.route_success) {
                             this.router.navigate(new Array('/').concat(
                                 this.conf.route_success));
@@ -211,7 +215,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             this.success = true;
                           }
                         },
-                        (res) => { new EntityUtils().handleError(this, res); });
+                        (res) => {
+                          this.loader.close();
+                          new EntityUtils().handleError(this, res); });
   }
 
   clearErrors() {
