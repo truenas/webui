@@ -5,7 +5,6 @@ import { NgUploaderModule } from 'ngx-uploader';
 
 import { EntityModule } from '../common/entity/entity.module';
 
-import { AdvancedComponent } from './advanced/';
 import { MaterialModule } from '@angular/material';
 import { routing } from './system.routing';
 
@@ -13,6 +12,7 @@ import { GeneralComponent } from './general/general.component';
 import { ConfigSaveComponent } from './general/config-save/config-save.component';
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
+import { AdvancedComponent } from './advanced/';
 
 @NgModule({
   imports: [
@@ -24,7 +24,8 @@ import { ConfigResetComponent } from './general/config-reset/config-reset.compon
     GeneralComponent,
     ConfigUploadComponent,
     ConfigResetComponent,
-    ConfigSaveComponent
+    ConfigSaveComponent,
+    AdvancedComponent
   ],
   providers: []
 })
