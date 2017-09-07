@@ -16,9 +16,10 @@ import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.comp
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
-import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 
 import {ENV_PROVIDERS} from '../environments/environment';
+import { AppLoaderComponent } from './services/app-loader/app-loader.component';
+import { AppLoaderModule } from './services/app-loader/app-loader.module';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
@@ -28,6 +29,7 @@ export function createTranslateLoader(http: Http) {
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    AppLoaderModule,
     HttpModule,
     AppCommonModule,
     TranslateModule.forRoot({
