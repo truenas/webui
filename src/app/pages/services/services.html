@@ -1,5 +1,3 @@
-<md-card>
-  <md-grid-list cols="4" rowHeight="2:1">
-    <service *ngFor="let service of services" [status]="service"></service>
-  </md-grid-list>
+<md-card class="services-wrap">
+	<service *ngFor="let service of services" [status]="service" class="service-item"></service>
 </md-card>
