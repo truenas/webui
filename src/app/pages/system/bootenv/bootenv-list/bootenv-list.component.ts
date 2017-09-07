@@ -12,6 +12,7 @@ export class BootEnvironmentListComponent {
 
   protected resource_name: string = 'system/bootenv';
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
+  protected entityList: any;
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -38,6 +39,10 @@ export class BootEnvironmentListComponent {
 
   constructor(_rest: RestService, private _router: Router) {}
 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+  }
+
   isActionVisible(actionId: string, row: any) {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
@@ -51,8 +56,7 @@ export class BootEnvironmentListComponent {
       label : "Delete",
       id: "delete",
       onClick : (row) => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "delete", row.id ]));
+        this.entityList.doDelete(row.id);
       }
     });
     actions.push({
