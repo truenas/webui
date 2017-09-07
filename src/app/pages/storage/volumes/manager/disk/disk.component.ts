@@ -6,8 +6,8 @@ import filesize from 'filesize';
   selector : 'app-disk',
   template : `
   <span>
-	<i class="fa fa-hdd-o fa-25">
-	</i>
+  <i class="material-icons">local_laundry_service
+  </i>
 	<br>
 	{{ data.devname }} ({{ capacity }})
 	<br>

@@ -3,14 +3,26 @@
 <div>
   <div class="row">
     <div class="col-md-2" [style.paddingBottom]="'15px'">
+    <md-card>
       <md-input-container>
         <input mdInput placeholder="Name" [(ngModel)]="name" value="Sushi" required>
       </md-input-container>    
       <!-- <input class="form-control" placeholder="Name" required/> -->
       <md-checkbox [(ngModel)]="isEncrypted" class="form-control" placeholder="Encryption" (change)="isEncryptedChecked()" >Encryption</md-checkbox>
+    </md-card>
     </div>
   </div>
-
+  <div class="col-md-3">
+    <md-card>
+      <md-card-title>Disks</md-card-title>
+        <div class="md-content">
+      <p>Drag and drop disks to disks groups</p>
+      <div #disksdnd [dragula]='"pool-vdev"' [style.minHeight]="'200px'" [style.width]="'200px'">
+        <app-disk *ngFor="let disk of disks" [data]="disk"></app-disk>
+      </div>
+      </div>
+    </md-card>
+  </div>
   <div class="row">
     <div class="col-md-9">
       <md-card>
@@ -35,17 +47,7 @@
         </div>
       </md-card>
     </div>
-    <div class="col-md-3">
-      <md-card>
-       <md-card-title>Disks</md-card-title>
-          <div class="md-content">
-        <p>Drag and drop disks to disks groups</p>
-        <div #disksdnd [dragula]='"pool-vdev"' [style.minHeight]="'200px'" [style.width]="'200px'">
-          <app-disk *ngFor="let disk of disks" [data]="disk"></app-disk>
-        </div>
-        </div>
-      </md-card>
-    </div>
+
   </div>
   <div class="row">
     <div class="col-md-4">
