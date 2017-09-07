@@ -82,12 +82,16 @@ export class JailListComponent {
                              (res) => { console.log(res); });
         }
       },
-      {id : "shell", label : "Shell", onClick : (row) => {}}, {
+      // {
+      //   id : "shell",
+      //   label : "Shell",
+      //   onClick : (row) => {}
+      // },
+      {
         id : "delete",
         label : "Delete",
         onClick : (row) => {
-          this.router.navigate(
-              new Array('/pages').concat([ "jails", "delete", row.id ]));
+          this.entityList.doDelete(row.id);
         }
       }
     ]
