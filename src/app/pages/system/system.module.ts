@@ -13,6 +13,8 @@ import { ConfigSaveComponent } from './general/config-save/config-save.component
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
+import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 
 @NgModule({
   imports: [
@@ -25,7 +27,9 @@ import { AdvancedComponent } from './advanced/';
     ConfigUploadComponent,
     ConfigResetComponent,
     ConfigSaveComponent,
-    AdvancedComponent
+    AdvancedComponent,
+    BootEnvironmentListComponent,
+    BootEnvironmentCloneComponent
   ],
   providers: []
 })

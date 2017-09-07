@@ -8,6 +8,8 @@ import { ConfigSaveComponent } from './general/config-save/config-save.component
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
+import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -39,6 +41,18 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedComponent,
       data: { title: 'Advanced', breadcrumb: 'Advanced' },
+    }, {
+      path: 'bootenv',
+      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments' },
+      children: [{
+        path: '',
+        component: BootEnvironmentListComponent,
+        data: { title: 'Boot Environments', breadcrumb: 'Boot Environments' },
+      }, {
+        path: 'clone/:pk',
+        component: BootEnvironmentCloneComponent,
+        data: { title: 'Clone', breadcrumb: 'Clone' },
+      }]
     }]
   }
 ];
