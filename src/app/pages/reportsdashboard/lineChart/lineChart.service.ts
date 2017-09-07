@@ -209,6 +209,28 @@ export class LineChartService {
                      { source: prop, type: 'disk_octets', dataset: 'write'} ]
         });
         
+      } else  if (prop.startsWith("interface-")) {
+          configData.push({
+          title: prop + " (if_errors)",
+          legends: ["rx", "tx"],
+          dataList: [{ source: prop, type: 'if_errors', dataset: 'rx'},
+                     { source: prop, type: 'if_errors', dataset: 'tx'} ]
+        });
+        
+        configData.push({
+          title: prop + " (if_octets)",
+          legends: ["rx", "tx"],
+          dataList: [{ source: prop, type: 'if_octets', dataset: 'rx'},
+                     { source: prop, type: 'if_octets', dataset: 'tx'} ]
+        });
+        
+        configData.push({
+          title: prop + " (if_packets)",
+          legends: ["rx", "tx"],
+          dataList: [{ source: prop, type: 'if_packets', dataset: 'rx'},
+                     { source: prop, type: 'if_packets', dataset: 'tx'} ]
+        });
+        
       } else {
         const propObjArray: string[] = res[prop];
         const dataListItemArray: DataListItem[] = [];
