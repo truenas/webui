@@ -9,6 +9,11 @@ import { AdvancedComponent } from './advanced/';
 import { MaterialModule } from '@angular/material';
 import { routing } from './system.routing';
 
+import { GeneralComponent } from './general/general.component';
+import { ConfigSaveComponent } from './general/config-save/config-save.component';
+import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
+import { ConfigResetComponent } from './general/config-reset/config-reset.component';
+
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
@@ -16,6 +21,10 @@ import { routing } from './system.routing';
     MaterialModule
   ],
   declarations: [
+    GeneralComponent,
+    ConfigUploadComponent,
+    ConfigResetComponent,
+    ConfigSaveComponent
   ],
   providers: []
 })

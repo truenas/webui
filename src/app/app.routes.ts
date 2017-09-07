@@ -35,53 +35,55 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path: 'system',
-        children: [
-          {
-            path: 'general',
-            loadChildren: 'app/pages/system/general/general.module#SystemGeneralModule',
-            data: { title: 'System', breadcrumb: 'General' }
-          },
-          {
-            path: 'advanced',
-            loadChildren: 'app/pages/system/advanced/advanced.module#SystemAdvancedModule',
-            data: { title: 'System', breadcrumb: 'ADVANCED' }
-          },
-          {
-            path: 'bootenv',
-            loadChildren: 'app/pages/system/bootenv/bootenv.module#BootEnvironmentsModule',
-            data: { title: 'Boot Environments', breadcrumb: 'BOOTENV' }
-          },
-          {
-            path: 'ca',
-            loadChildren: 'app/pages/system/ca/ca.module#CertificateAuthorityModule',
-            data: { title: 'System', breadcrumb: 'CA' }
-          },
-          {
-            path: 'certificates',
-            loadChildren: 'app/pages/system/certificates/certificate.module#CertificateModule',
-            data: { title: 'System', breadcrumb: 'Certificates' }
-          },
-          {
-            path: 'tunable',
-            loadChildren: 'app/pages/system/tunable/tunable.module#TunableModule',
-            data: { title: 'System', breadcrumb: 'Tunable' }
-          },
-          {
-            path: 'update',
-            loadChildren: 'app/pages/system/update/update.module#UpdateModule',
-            data: {title: 'Update', breadcrumb: 'UPDATE'},
-          },
-          {
-            path: 'support',
-            loadChildren: 'app/pages/system/support/support.module#SupportModule',
-            data: {title: 'Support', breadcrumb: 'SUPPORT'},
-          },
-          {
-            path: 'ntpservers',
-            loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule',
-            data: { title: 'System', breadcrumb: 'NTPServers' }
-          },
-        ]
+        loadChildren: './pages/system/system.module#SystemModule',
+        data: { title: 'System', breadcrumb: 'System'}
+        // children: [
+        //   {
+        //     path: 'general',
+        //     loadChildren: 'app/pages/system/general/general.module#SystemGeneralModule',
+        //     data: { title: 'System', breadcrumb: 'General' }
+        //   },
+        //   {
+        //     path: 'advanced',
+        //     loadChildren: 'app/pages/system/advanced/advanced.module#SystemAdvancedModule',
+        //     data: { title: 'System', breadcrumb: 'ADVANCED' }
+        //   },
+        //   {
+        //     path: 'bootenv',
+        //     loadChildren: 'app/pages/system/bootenv/bootenv.module#BootEnvironmentsModule',
+        //     data: { title: 'Boot Environments', breadcrumb: 'BOOTENV' }
+        //   },
+        //   {
+        //     path: 'ca',
+        //     loadChildren: 'app/pages/system/ca/ca.module#CertificateAuthorityModule',
+        //     data: { title: 'System', breadcrumb: 'CA' }
+        //   },
+        //   {
+        //     path: 'certificates',
+        //     loadChildren: 'app/pages/system/certificates/certificate.module#CertificateModule',
+        //     data: { title: 'System', breadcrumb: 'Certificates' }
+        //   },
+        //   {
+        //     path: 'tunable',
+        //     loadChildren: 'app/pages/system/tunable/tunable.module#TunableModule',
+        //     data: { title: 'System', breadcrumb: 'Tunable' }
+        //   },
+        //   {
+        //     path: 'update',
+        //     loadChildren: 'app/pages/system/update/update.module#UpdateModule',
+        //     data: {title: 'Update', breadcrumb: 'UPDATE'},
+        //   },
+        //   {
+        //     path: 'support',
+        //     loadChildren: 'app/pages/system/support/support.module#SupportModule',
+        //     data: {title: 'Support', breadcrumb: 'SUPPORT'},
+        //   },
+        //   {
+        //     path: 'ntpservers',
+        //     loadChildren: 'app/pages/system/ntpservers/ntpservers.module#NTPServersModule',
+        //     data: { title: 'System', breadcrumb: 'NTPServers' }
+        //   },
+        // ]
       },
       {
         path:'network',
