@@ -30,9 +30,17 @@ export class ServiceAFPComponent {
 
   public fieldConfig: FieldConfig[] = [
     {
+      type : 'select',
+      name : 'afp_srv_guest_user',
+      placeholder : 'Guest Access',
+      options: [
+        {label : 'nobody', value : 'nobody'}
+      ]
+    },
+    {
       type : 'checkbox',
       name : 'afp_srv_guest',
-      placeholder : 'Guest Access',
+      placeholder : 'Guest account',
     },
     {
       type : 'input',
@@ -91,11 +99,21 @@ export class ServiceAFPComponent {
       placeholder : 'Global auxiliary parameters'
     }
   ];
-
+  private guest_users: any;
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected userService: UserService) {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityEdit: any) {
+    let self = this;
+    this.userService.listUsers().subscribe((res) => {
+      self.guest_users = _.find(this.fieldConfig, {name : 'afp_srv_guest_user'});
+      for (let i = 0; i < res.data.length; i++) {
+        this.guest_users.options.push(
+          { label : res.data[i].bsdusr_username, value : res.data[i].bsdusr_username }
+          );
+      }
+    });
+  }
 }
