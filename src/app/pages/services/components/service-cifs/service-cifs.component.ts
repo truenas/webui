@@ -197,7 +197,7 @@ export class ServiceCIFSComponent {
     entityEdit.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ])
     .subscribe((res) => {
       this.ipChoice =
-          _.find(this.fieldConfig, {'name' : 'stg_guiaddress'});
+          _.find(this.fieldConfig, {'name' : 'bindips'});
       this.ipChoice.options.push(
           {label : '0.0.0.0', value : '0.0.0.0'});
       res.forEach((item) => {
