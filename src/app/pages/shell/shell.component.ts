@@ -33,7 +33,12 @@ export class ShellComponent implements AfterViewInit {
 
   ngAfterViewInit() {
 
-   this.xterm = new Terminal({
+    this.getAuthToken().subscribe((res) => {
+
+
+    });
+
+    this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 4,
       'cols': 80,
@@ -43,7 +48,6 @@ export class ShellComponent implements AfterViewInit {
 
 
     this.xterm.open(document.getElementById("terminal"), true);
-    //this.xterm.attach(this.ws);  We need the websocket.  The shellService /websocket/shell redirects
     this.xterm._initialized = true;
 
   }
