@@ -157,7 +157,7 @@ export class NavigationService {
       name: 'Reporting',
       type: 'link',
       tooltip: 'Services',
-      icon: 'reports',
+      icon: 'insert_chart',
       state: 'reportsdashboard',
     },
 //  {
