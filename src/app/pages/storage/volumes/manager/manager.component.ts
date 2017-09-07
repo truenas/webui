@@ -14,6 +14,8 @@ import { RestService, WebSocketService, DialogService } from '../../../../servic
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
 import { MdSnackBar } from '@angular/material';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+
 
 @Component({
   selector: 'app-manager',
@@ -43,7 +45,9 @@ export class ManagerComponent implements OnInit {
   public busy: Subscription;
 
   constructor(private rest: RestService, private ws: WebSocketService,
-    private router: Router, private dragulaService: DragulaService, private dialog:DialogService, public snackBar: MdSnackBar) {
+    private router: Router, private dragulaService: DragulaService, 
+    private dialog:DialogService, public snackBar: MdSnackBar,
+    private loader:AppLoaderService) {
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
     });
@@ -113,6 +117,8 @@ export class ManagerComponent implements OnInit {
         layout.push({ vdevtype: vdev.type, disks: disks });
       }
     });
+
+    this.loader.open();
     this.busy =
       this.rest
       .post('storage/volume/', {
@@ -120,9 +126,11 @@ export class ManagerComponent implements OnInit {
       })
       .subscribe(
         (res) => {
+          this.loader.close()
           this.router.navigate(['/', 'storage', 'volumes']);
         },
         (res) => {
+          this.loader.close();
           if (res.code == 409) {
             this.error = '';
             for (let i in res.error) {
