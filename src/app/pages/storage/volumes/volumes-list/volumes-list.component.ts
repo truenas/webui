@@ -47,6 +47,7 @@ export class VolumesListComponent {
     let actions = [];
     actions.push({
       label : "Import Volumes",
+      icon: "vertical_align_bottom",
       onClick : () => {
         this._router.navigate(new Array('/').concat(
             [ "storage", "volumes", "import_list" ]));
