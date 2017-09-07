@@ -1,20 +1,18 @@
-<md-card class="col-xlg-12 col-xl-12 col-lg-12 col-sm-12 col-xs-12 col-md-12">
+<md-card>
   <div>
-    <div class="row form-group">
-      <div class="col-md-6">
-        <md-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
-          (change)="toggleAutoCheck()">Automatically check for new updates</md-checkbox>
-      </div>
-      <div class="col-md-6">
-        <md-select class="form-control" [(ngModel)]="train">
-          <md-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</md-option>
-        </md-select>
-      </div>
+    <div>
+      <md-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
+        (change)="toggleAutoCheck()">Automatically check for new updates</md-checkbox>
+    </div>
+    <div>
+      <md-select class="form-control full-width" [(ngModel)]="train">
+        <md-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</md-option>
+      </md-select>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <button md-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">Check Now</button>
-        <button md-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">Update and Reboot</button>
+        <button md-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">Check Now</button>
+        <button md-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">Update and Reboot</button>
       </div>
     </div>
     <div class="row">
