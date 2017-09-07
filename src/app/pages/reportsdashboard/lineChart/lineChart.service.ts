@@ -61,7 +61,7 @@ export class LineChartService {
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
 
     this._ws.call('stats.get_data', [dataList, {}]).subscribe((res) => {
-      let linechartData: LineChartData = {
+      const linechartData: LineChartData = {
         labels: new Array<Date>(),
         series: new Array<any>()
       }
@@ -70,7 +70,7 @@ export class LineChartService {
       res.data.forEach((item, i) => {
         linechartData.labels.push(
           new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
-        for (let x in dataList) {
+        for (const x in dataList) {
           linechartData.series[x].push(item[x]);
         }
       });
@@ -88,7 +88,7 @@ export class LineChartService {
 
     this._ws.call('stats.get_sources').subscribe((res) => {
       this.cacheConfigData = this.chartConfigDataFromWsReponse(res);
-      let knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
+      const knownCharts: ChartConfigData[] = this.getKnownChartConfigData();
       knownCharts.forEach((item) => {this.cacheConfigData.push(item);});
 
       handleChartConfigDataFunc.handleChartConfigDataFunc(this.cacheConfigData);
@@ -98,7 +98,7 @@ export class LineChartService {
   private getCacheConfigDataByTitle(title: string): ChartConfigData {
     let chartConfigData: ChartConfigData = null;
 
-    for (let cacheConfigDataItem of this.cacheConfigData) {
+    for (const cacheConfigDataItem of this.cacheConfigData) {
       if (title === cacheConfigDataItem.title) {
         chartConfigData = cacheConfigDataItem;
         break;
@@ -114,7 +114,7 @@ export class LineChartService {
    * to get_source_info Api.
    */
   private computeValueColumnName(source: string, dataSetType: string): string {
-    let returnVal: string = "value"; // default
+    let returnVal = "value"; // default
 
     if (source.startsWith("disk-")) {
 
@@ -126,14 +126,14 @@ export class LineChartService {
 
 
     } else if (source.startsWith("interface-")) {
-        returnVal = "rx";
+      returnVal = "rx";
     } else if (source === "ctl-tpc") {
-        returnVal = "read";
-    } else if (source ==="zfs_arc") {
-        if (dataSetType === "io_octets-L2") {
+      returnVal = "read";
+    } else if (source === "zfs_arc") {
+      if (dataSetType === "io_octets-L2") {
         returnVal = "rx";
       }
-    } 
+    }
 
 
     return returnVal;
@@ -147,7 +147,7 @@ export class LineChartService {
    */
   private constructPossibleNodeCopy(dataListItem: DataListItem, dataListItemArray: DataListItem[]): void {
     if (dataListItem.dataset === "read") {
-      let dataListItemCopied: DataListItem = {
+      const dataListItemCopied: DataListItem = {
         source: dataListItem.source,
         type: dataListItem.type,
         dataset: "write"
@@ -155,7 +155,7 @@ export class LineChartService {
 
       dataListItemArray.push(dataListItemCopied);
     } else if (dataListItem.dataset === "rx") {
-      let dataListItemCopied: DataListItem = {
+      const dataListItemCopied: DataListItem = {
         source: dataListItem.source,
         type: dataListItem.type,
         dataset: "tx"
@@ -164,44 +164,74 @@ export class LineChartService {
       dataListItemArray.push(dataListItemCopied);
     }
   }
-  
+
   /**
    * Take the WebSocket response for get_sources and chruns it 
    * down into a list of javascript objects that drive the charts.
    */
   private chartConfigDataFromWsReponse(res): ChartConfigData[] {
-    let configData: ChartConfigData[] = [];
+    const configData: ChartConfigData[] = [];
     let properties: string[] = [];
-    for (let prop in res) {
+    for (const prop in res) {
       properties.push(prop);
     }
 
     properties = properties.sort();
 
-    for (let prop of properties) {
-      var propObjArray: string[] = res[prop];
-      var dataListItemArray: DataListItem[] = [];
+    for (const prop of properties) {
 
-      propObjArray.forEach((proObjArrayItem) => {
 
-        let dataListItem: DataListItem = {
-          source: prop,
-          type: proObjArrayItem,
-          dataset: this.computeValueColumnName(prop, proObjArrayItem)
-        };
+      if (prop.startsWith("disk-")) {
+          configData.push({
+          title: prop + " (disk_time)",
+          legends: ["read", "write"],
+          dataList: [{ source: prop, type: 'disk_time', dataset: 'read'},
+                     { source: prop, type: 'disk_time', dataset: 'write'} ]
+        });
+        
+        configData.push({
+          title: prop + " (disk_io_time)",
+          legends: ["read", "write"],
+          dataList: [{ source: prop, type: 'disk_io_time', dataset: 'io_time'}]
+        });
+        
+        configData.push({
+          title: prop + " (disk_ops)",
+          legends: ["read", "write"],
+          dataList: [{ source: prop, type: 'disk_ops', dataset: 'read'},
+                     { source: prop, type: 'disk_ops', dataset: 'write'} ]
+        });
+        
+        configData.push({
+          title: prop + " (disk_octets)",
+          legends: ["read", "write"],
+          dataList: [{ source: prop, type: 'disk_octets', dataset: 'read'},
+                     { source: prop, type: 'disk_octets', dataset: 'write'} ]
+        });
+        
+      } else {
+        const propObjArray: string[] = res[prop];
+        const dataListItemArray: DataListItem[] = [];
 
-        dataListItemArray.push(dataListItem);
-        this.constructPossibleNodeCopy(dataListItem, dataListItemArray);
+        propObjArray.forEach((proObjArrayItem) => {
 
-      });
+          const dataListItem: DataListItem = {
+            source: prop,
+            type: proObjArrayItem,
+            dataset: this.computeValueColumnName(prop, proObjArrayItem)
+          };
 
-      let chartData: ChartConfigData = {
-        title: prop,
-        legends: propObjArray,
-        dataList: dataListItemArray
-      };
+          dataListItemArray.push(dataListItem);
+          this.constructPossibleNodeCopy(dataListItem, dataListItemArray);
 
-      configData.push(chartData);
+        });
+
+        configData.push({
+          title: prop,
+          legends: propObjArray,
+          dataList: dataListItemArray
+        });
+      }
 
     }
 
@@ -214,7 +244,7 @@ export class LineChartService {
   private getKnownChartConfigData(): ChartConfigData[] {
 
 
-    let chartConfigData: ChartConfigData[] = [
+    const chartConfigData: ChartConfigData[] = [
       {
         title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
@@ -296,7 +326,7 @@ export class LineChartService {
         ],
       }
     ];
-    
+
 
     return chartConfigData;
 
