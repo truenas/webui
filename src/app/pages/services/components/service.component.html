@@ -1,5 +1,5 @@
 <md-card>
-  <md-card-title>
+  <md-card-title class="service-item-title">
     {{status.label}}
   </md-card-title>
   <md-card-subtitle>
@@ -14,6 +14,7 @@
     <label>Start on Boot </label>
     <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox>
   </md-card-content>
+  <md-divider class="mb-1"></md-divider>
   <md-card-actions>
   <button md-raised-button color="primary" (click)="editService(this.status.service)">
     Configure
