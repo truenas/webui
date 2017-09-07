@@ -13,7 +13,6 @@ export class InterfacesListComponent {
   protected route_add: string[] = [ 'network', 'interfaces', 'add' ];
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
-  protected route_delete: string[] = [ 'network', 'interfaces', 'delete' ];
 
   constructor(_rest: RestService, _router: Router) {}
 

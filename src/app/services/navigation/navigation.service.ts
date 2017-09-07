@@ -80,7 +80,7 @@ export class NavigationService {
         {name: 'Link Aggregation', state: 'laggs'},
 //        {name: 'Network Summary', state: 'networksummary'},
         {name: 'Static Routes', state: 'staticroutes'},
-        {name: 'VLANs', state: 'vlans'},
+        {name: 'Vlans', state: 'vlans'},
       ]
     },
     {

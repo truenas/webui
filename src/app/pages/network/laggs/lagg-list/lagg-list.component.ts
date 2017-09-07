@@ -14,8 +14,8 @@ export class LaggListComponent {
   protected resource_name: string = 'network/lagg/';
   protected route_add: string[] = [ 'network', 'laggs', 'add' ];
   protected route_add_tooltip: string = "Add Link Aggregation";
-  protected route_delete: string[] = [ 'network', 'laggs', 'delete' ];
   protected editIds: any = {};
+  protected entityList: any;
 
   constructor(protected rest: RestService, protected router: Router) {}
 
@@ -33,7 +33,7 @@ export class LaggListComponent {
     actions.push({
       label : "Edit Interface",
       onClick : (row) => {
-        this.router.navigate(new Array('/pages').concat([
+        this.router.navigate(new Array('').concat([
           "network", "interfaces", "edit", this.editIds[row.lagg_interface]
         ]));
       }
@@ -41,15 +41,15 @@ export class LaggListComponent {
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.router.navigate(new Array('/pages').concat(
-            [ "network", "laggs", "delete", row.id ]));
+        this.entityList.doDelete(row.id);;
       },
     });
     return actions;
   }
 
   afterInit(entityList: any) {
-    entityList.busy =
+    this.entityList = entityList;
+    this.entityList.busy =
         this.rest.get('network/interface/', {}).subscribe((res) => {
           let interfaces = new EntityUtils().flattenData(res.data);
           let lagg_interface;

@@ -95,7 +95,7 @@ export const rootRouterConfig: Routes = [{
       {
         path:'network',
         loadChildren: 'app/pages/network/network.module#NetworkModule',
-        data: { title: 'Network', breadcrumb: 'NETWORK' }
+        data: { title: 'Network', breadcrumb: 'Network' }
       },
       {
         path:'services',
