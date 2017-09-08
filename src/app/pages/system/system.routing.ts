@@ -16,6 +16,11 @@ import { UpdateComponent } from './update/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
+import { CertificateAuthorityImportComponent } from './ca/ca-import/';
+import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
+import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
+import { CertificateAuthorityListComponent } from './ca/ca-list/';
+import { CAFormComponent } from './ca/ca-form/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -92,6 +97,32 @@ export const routes: Routes = [
           path: 'add',
           component: NTPServerAddComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: NTPServerEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
+      ]
+    }, {
+      path: 'ca',
+      data: { title: 'CAs', breadcrumb: 'CAs' },
+      children: [{
+          path: '',
+          component: CertificateAuthorityListComponent,
+          data: { title: 'CAs', breadcrumb: 'CAs' },
+        }, {
+          path: 'import',
+          component: CertificateAuthorityImportComponent,
+          data: { title: 'Import', breadcrumb: 'Import' },
+        }, {
+          path: 'internal',
+          component: CertificateAuthorityInternalComponent,
+          data: { title: 'Internal', breadcrumb: 'Internal' },
+        }, {
+          path: 'intermediate',
+          component: CertificateAuthorityIntermediateComponent,
+          data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
         },
         {
           path: 'edit/:pk',

@@ -21,6 +21,11 @@ import { UpdateComponent } from './update/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
+import { CertificateAuthorityImportComponent } from './ca/ca-import/';
+import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
+import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
+import { CertificateAuthorityListComponent } from './ca/ca-list/';
+import { CAFormComponent } from './ca/ca-form/';
 
 @NgModule({
   imports: [
@@ -42,6 +47,11 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
     NTPServerListComponent,
     NTPServerAddComponent,
     NTPServerEditComponent,
+    CAFormComponent,
+    CertificateAuthorityListComponent,
+    CertificateAuthorityImportComponent,
+    CertificateAuthorityInternalComponent,
+    CertificateAuthorityIntermediateComponent,
   ],
   providers: []
 })
