@@ -2,6 +2,7 @@ import {RestService} from '../../../services';
 import {Component, OnInit, ViewChild, Input} from '@angular/core';
 import {MdSidenav} from '@angular/material';
 import {Router, NavigationEnd} from '@angular/router';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 
 interface Notification {

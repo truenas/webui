@@ -3,6 +3,12 @@
 </div>
 <md-nav-list class="notification-list" role="list">
   <!-- Notification item -->
+  <md-list-item *ngIf="notifications.length === 0" class="notific-item" role="listitem" routerLinkActive="open">
+     <md-icon color="primary" class="notific-icon">info</md-icon>
+      <div class="mat-list-text">
+        <h4 class="message">There are no alert notifications.</h4>
+      </div>
+  </md-list-item>
   <md-list-item *ngFor="let n of notifications" class="notific-item" role="listitem" routerLinkActive="open">
     <md-icon [color]="n.color" class="notific-icon">{{n.icon}}</md-icon>
     <a [routerLink]="[n.route || '/dashboard']">
