@@ -6,6 +6,7 @@ import { MdSidenav } from '@angular/material';
 import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
+import { ThemeService } from '../../../../services/theme/theme.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -16,8 +17,10 @@ export class AdminLayoutComponent implements OnInit {
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
+  freenasThemes;
 
   constructor(private router: Router,
+    public themeService: ThemeService,
     private media: ObservableMedia,
     public translate: TranslateService) {
     // Close sidenav after route change in mobile
@@ -31,17 +34,19 @@ export class AdminLayoutComponent implements OnInit {
       this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
     });
-    
+
     // Translator init
     const browserLang: string = translate.getBrowserLang();
     translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
   }
   ngOnInit() {
+    this.freenasThemes = this.themeService.freenasThemes;
     // Initialize Perfect scrollbar for sidenav
     let navigationHold = document.getElementById('scroll-area');
     Ps.initialize(navigationHold, {
       suppressScrollX: true
     });
+
   }
   updateSidenav() {
     var self = this;
