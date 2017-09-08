@@ -21,6 +21,11 @@ import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CAFormComponent } from './ca/ca-form/';
+import { CertificateCSRComponent } from './certificates/certificate-csr/';
+import { CertificateEditComponent } from './certificates/certificate-edit/';
+import { CertificateImportComponent } from './certificates/certificate-import/';
+import { CertificateInternalComponent } from './certificates/certificate-internal/';
+import { CertificateListComponent } from './certificates/certificate-list';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -123,10 +128,34 @@ export const routes: Routes = [
           path: 'intermediate',
           component: CertificateAuthorityIntermediateComponent,
           data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
-        },
-        {
+        }, {
           path: 'edit/:pk',
           component: NTPServerEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
+      ]
+    }, {
+      path: 'certificates',
+      data: { title: 'Certificates', breadcrumb: 'Certificates' },
+      children: [{
+          path: '',
+          component: CertificateListComponent,
+          data: { title: 'Certificates', breadcrumb: 'Certificates' },
+        }, {
+          path: 'import',
+          component: CertificateImportComponent,
+          data: { title: 'Import', breadcrumb: 'Import' },
+        }, {
+          path: 'internal',
+          component: CertificateInternalComponent,
+          data: { title: 'Internal', breadcrumb: 'Internal' },
+        }, {
+          path: 'csr',
+          component: CertificateCSRComponent,
+          data: { title: 'CSR', breadcrumb: 'CSR' },
+        }, {
+          path: 'edit/:pk',
+          component: CertificateEditComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
         }
       ]
