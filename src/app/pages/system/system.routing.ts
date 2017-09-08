@@ -10,6 +10,8 @@ import { ConfigResetComponent } from './general/config-reset/config-reset.compon
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
+import { TunableFormComponent } from './tunable/tunable-form/';
+import { TunableListComponent } from './tunable/tunable-list/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -53,7 +55,24 @@ export const routes: Routes = [
         component: BootEnvironmentCloneComponent,
         data: { title: 'Clone', breadcrumb: 'Clone' },
       }]
-    }]
+    }, {
+      path: 'tunable',
+      data: { title: 'Tunable', breadcrumb: 'Tunable'},
+      children: [{
+        path: '',
+        component: TunableListComponent,
+        data: { title: 'Tunable', breadcrumb: 'Tunable'},
+      },{
+        path: 'add',
+        component: TunableFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
+      },
+      {
+        path: 'edit/:pk',
+        component: TunableFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      }]
+    },]
   }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

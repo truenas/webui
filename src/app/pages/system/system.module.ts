@@ -15,6 +15,8 @@ import { ConfigResetComponent } from './general/config-reset/config-reset.compon
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
+import { TunableListComponent } from './tunable/tunable-list/';
+import { TunableFormComponent } from './tunable/tunable-form/';
 
 @NgModule({
   imports: [
@@ -29,7 +31,9 @@ import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
     ConfigSaveComponent,
     AdvancedComponent,
     BootEnvironmentListComponent,
-    BootEnvironmentCloneComponent
+    BootEnvironmentCloneComponent,
+    TunableListComponent,
+    TunableFormComponent
   ],
   providers: []
 })

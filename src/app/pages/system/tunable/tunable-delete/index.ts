@@ -1,1 +1,0 @@
-export {TunableDeleteComponent} from './tunable-delete.component';
