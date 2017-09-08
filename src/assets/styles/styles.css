@@ -231,11 +231,9 @@ code {
     padding: 0;
 }
 .mat-card.default .mat-card-title {
-    padding-top: 1rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 1rem;
     line-height: 1;
-    font-weight: 400;
+    font-weight: 600;
 }
 .mat-card.default>:first-child {
     border-radius: 2px 2px 0 0;
@@ -431,8 +429,8 @@ code {
     background: #3f51b5;
 }
 .loading-logo {
-    width: 128px;
-    height: 128px;
+    width: 66.6%;
+    height: 66.6%;
     position: relative;
     margin: auto;
     fill: #000000;
