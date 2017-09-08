@@ -12,6 +12,7 @@ import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
+import { UpdateComponent } from './update/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -72,6 +73,10 @@ export const routes: Routes = [
         component: TunableFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
       }]
+    }, {
+      path: 'update',
+      component: UpdateComponent,
+      data: { title: 'Update', breadcrumb: 'Update' },
     },]
   }
 ];

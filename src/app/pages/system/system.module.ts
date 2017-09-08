@@ -17,6 +17,7 @@ import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
+import { UpdateComponent } from './update/';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { TunableFormComponent } from './tunable/tunable-form/';
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     TunableListComponent,
-    TunableFormComponent
+    TunableFormComponent,
+    UpdateComponent
   ],
   providers: []
 })
