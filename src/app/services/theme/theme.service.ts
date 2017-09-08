@@ -16,7 +16,7 @@ export class ThemeService {
     name: 'egret-blue',
     baseColor: '#2196f3',
     isActive: false,
-    hasDarkLogo: true
+    hasDarkLogo:true
   }, {
     name: 'egret-indigo',
     baseColor: '#3f51b5',
@@ -26,12 +26,12 @@ export class ThemeService {
     name: 'freenas-warriors',
     baseColor: '#fdb927',
     isActive: false,
-    hasDarkLogo: false
+    hasDarkLogo: true
   }, {
     name: 'freenas-sharks',
     baseColor: '#088696',
     isActive: false,
-    hasDarkLogo: true
+    hasDarkLogo: false
   }];
   constructor() { }
   changeTheme(theme) {
