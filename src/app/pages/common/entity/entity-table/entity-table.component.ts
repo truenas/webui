@@ -13,6 +13,7 @@ import 'rxjs/add/operator/map';
 import { RestService } from '../../../../services/rest.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { EntityUtils } from '../utils';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'entity-table',
@@ -37,9 +38,10 @@ export class EntityTableComponent implements OnInit {
     paging: true,
     sorting: { columns: this.columns },
   };
+  protected loaderOpen: boolean = false;
 
   constructor(protected rest: RestService, protected router: Router,
-    protected _eRef: ElementRef, private dialog: DialogService) {}
+    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) {}
 
   ngOnInit() {
     if (this.conf.preInit) {
@@ -73,6 +75,10 @@ export class EntityTableComponent implements OnInit {
 
     this.busy =
       this.rest.get(this.conf.resource_name, options).subscribe((res) => {
+        if (this.loaderOpen) {
+          this.loader.close();
+          this.loaderOpen = false;
+        }
         this.length = res.total;
         this.rows = new EntityUtils().flattenData(res.data);
         if (this.conf.dataHandler) {
@@ -146,12 +152,14 @@ export class EntityTableComponent implements OnInit {
   doDelete(id) {
     this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
       if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
         let data = {};
         this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
           (res) => {
             this.getData();
           },
-          (res) => { new EntityUtils().handleError(this, res); }
+          (res) => { new EntityUtils().handleError(this, res); this.loader.close();}
         );
       }
     })
