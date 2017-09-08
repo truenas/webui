@@ -1,6 +1,7 @@
 import {
   Component,
   OnInit,
+  OnDestroy,
   QueryList,
   ViewChild,
   ViewChildren
@@ -28,7 +29,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
     DialogService
   ],
 })
-export class ManagerComponent implements OnInit {
+export class ManagerComponent implements OnInit, OnDestroy {
 
   public disks: Array < any > ;
   public vdevs:
@@ -87,6 +88,10 @@ export class ManagerComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.dragulaService.destroy("pool-vdev");
+  }
+
   addVdev(group) { this.vdevs[group].push({}); }
 
   removeVdev(vdev: VdevComponent) {
@@ -139,6 +144,10 @@ export class ManagerComponent implements OnInit {
             }
           }
         });
+  }
+
+  goBack() {
+    this.router.navigate(['/', 'storage', 'volumes']);
   }
 
   openSnackBar() {

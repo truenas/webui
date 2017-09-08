@@ -8,6 +8,7 @@ import { RestService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-dataset-form',
@@ -150,7 +151,9 @@ export class DatasetFormComponent implements OnInit{
   };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService, protected entityFormService: EntityFormService) {}
+              protected rest: RestService, protected ws: WebSocketService, 
+              protected entityFormService: EntityFormService,
+              protected loader: AppLoaderService) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -313,9 +316,11 @@ export class DatasetFormComponent implements OnInit{
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
 
+    this.loader.open();
     this.busy = this.submitFunction({body : JSON.stringify(value)})
                     .subscribe(
                         (res) => {
+                          this.loader.close();
                           if (this.route_success) {
                             this.router.navigate(new Array('').concat(
                                 this.route_success));
@@ -323,6 +328,8 @@ export class DatasetFormComponent implements OnInit{
                             this.success = true;
                           }
                         },
-                        (res) => { new EntityUtils().handleError(this, res); });
+                        (res) => { 
+                          this.loader.close();
+                          new EntityUtils().handleError(this, res); });
   }
 }

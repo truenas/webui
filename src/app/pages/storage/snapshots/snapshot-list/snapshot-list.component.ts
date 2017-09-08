@@ -11,7 +11,7 @@ import {RestService} from '../../../../services/rest.service';
 export class SnapshotListComponent {
 
   protected resource_name: string = 'storage/snapshot';
-  protected route_delete: string[] = [ 'storage', 'snapshots', 'delete' ];
+  protected entityList: any;
 
   public columns: Array<any> = [
     {name : 'Fullname', prop : 'fullname'}, {name : 'Used', prop : 'used'},
@@ -48,8 +48,7 @@ export class SnapshotListComponent {
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this._router.navigate(new Array('/').concat(
-            [ "storage", "snapshots", "delete", row.id ]));
+        this.entityList.doDelete(row.id );
       }
     });
     actions.push({
@@ -69,5 +68,9 @@ export class SnapshotListComponent {
       });
     }
     return actions;
+  }
+
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 }

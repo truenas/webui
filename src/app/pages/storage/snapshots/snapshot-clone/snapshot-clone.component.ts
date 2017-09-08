@@ -26,7 +26,8 @@ import * as _ from 'lodash';
 export class SnapshotCloneComponent {
 
   protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = [ 'storage', 'datasets' ];
+  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_cancel: string[] = [ 'storage', 'snapshots' ];
   protected pk: any;
   protected isEntity: boolean = true;
   protected isNew: boolean = true;

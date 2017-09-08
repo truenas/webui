@@ -38,9 +38,10 @@ export class VolumeImportListComponent {
     let actions = [];
     actions.push({
       label: "Go Back",
+      icon: "undo",
       onClick: () => {
         this.router.navigate(
-          new Array('/pages').concat(["storage", "volumes"]));
+          new Array('/').concat(["storage", "volumes"]));
       }
     });
     return actions;
