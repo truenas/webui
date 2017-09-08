@@ -15,7 +15,7 @@ export class UserService {
 
   constructor(protected rest: RestService) {};
 
-  listUsers() { return this.rest.get(this.accountUserResource, {}); };
+  listUsers() { return this.rest.get(this.accountUserResource, {limit: 50}); };
 
-  listGroups() { return this.rest.get(this.accountGroupResource, {}); };
+  listGroups() { return this.rest.get(this.accountGroupResource, {limit: 50}); };
 }
