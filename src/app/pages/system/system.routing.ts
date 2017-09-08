@@ -26,6 +26,7 @@ import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { SupportComponent } from './support/support.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -113,52 +114,54 @@ export const routes: Routes = [
       path: 'ca',
       data: { title: 'CAs', breadcrumb: 'CAs' },
       children: [{
-          path: '',
-          component: CertificateAuthorityListComponent,
-          data: { title: 'CAs', breadcrumb: 'CAs' },
-        }, {
-          path: 'import',
-          component: CertificateAuthorityImportComponent,
-          data: { title: 'Import', breadcrumb: 'Import' },
-        }, {
-          path: 'internal',
-          component: CertificateAuthorityInternalComponent,
-          data: { title: 'Internal', breadcrumb: 'Internal' },
-        }, {
-          path: 'intermediate',
-          component: CertificateAuthorityIntermediateComponent,
-          data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
-        }, {
-          path: 'edit/:pk',
-          component: NTPServerEditComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
-        }
-      ]
+        path: '',
+        component: CertificateAuthorityListComponent,
+        data: { title: 'CAs', breadcrumb: 'CAs' },
+      }, {
+        path: 'import',
+        component: CertificateAuthorityImportComponent,
+        data: { title: 'Import', breadcrumb: 'Import' },
+      }, {
+        path: 'internal',
+        component: CertificateAuthorityInternalComponent,
+        data: { title: 'Internal', breadcrumb: 'Internal' },
+      }, {
+        path: 'intermediate',
+        component: CertificateAuthorityIntermediateComponent,
+        data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
+      }, {
+        path: 'edit/:pk',
+        component: NTPServerEditComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      }]
     }, {
       path: 'certificates',
       data: { title: 'Certificates', breadcrumb: 'Certificates' },
       children: [{
-          path: '',
-          component: CertificateListComponent,
-          data: { title: 'Certificates', breadcrumb: 'Certificates' },
-        }, {
-          path: 'import',
-          component: CertificateImportComponent,
-          data: { title: 'Import', breadcrumb: 'Import' },
-        }, {
-          path: 'internal',
-          component: CertificateInternalComponent,
-          data: { title: 'Internal', breadcrumb: 'Internal' },
-        }, {
-          path: 'csr',
-          component: CertificateCSRComponent,
-          data: { title: 'CSR', breadcrumb: 'CSR' },
-        }, {
-          path: 'edit/:pk',
-          component: CertificateEditComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
-        }
-      ]
+        path: '',
+        component: CertificateListComponent,
+        data: { title: 'Certificates', breadcrumb: 'Certificates' },
+      }, {
+        path: 'import',
+        component: CertificateImportComponent,
+        data: { title: 'Import', breadcrumb: 'Import' },
+      }, {
+        path: 'internal',
+        component: CertificateInternalComponent,
+        data: { title: 'Internal', breadcrumb: 'Internal' },
+      }, {
+        path: 'csr',
+        component: CertificateCSRComponent,
+        data: { title: 'CSR', breadcrumb: 'CSR' },
+      }, {
+        path: 'edit/:pk',
+        component: CertificateEditComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      }]
+    }, {
+      path: 'support',
+      component: SupportComponent,
+      data: { title: 'Support', breadcrumb: 'Support' },
     },]
   }
 ];

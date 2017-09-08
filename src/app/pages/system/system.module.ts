@@ -31,6 +31,7 @@ import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { SupportComponent } from './support/support.component';
 
 @NgModule({
   imports: [
@@ -62,6 +63,7 @@ import { CertificateListComponent } from './certificates/certificate-list';
     CertificateImportComponent,
     CertificateInternalComponent,
     CertificateCSRComponent,
+    SupportComponent
   ],
   providers: []
 })
