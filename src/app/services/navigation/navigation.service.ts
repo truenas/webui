@@ -127,13 +127,13 @@ export class NavigationService {
       icon: 'tune',
       state: 'services'
     },
-    {
-      name: 'Plugins',
-      type: 'dropDown',
-      tooltip: 'Plugins',
-      icon: 'extension',
-      state: 'plugins'
-    },
+    // {
+    //   name: 'Plugins',
+    //   type: 'dropDown',
+    //   tooltip: 'Plugins',
+    //   icon: 'extension',
+    //   state: 'plugins'
+    // },
     {
       name: 'Jails',
       type: 'dropDown',
