@@ -13,6 +13,9 @@ import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
+import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
+import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -58,25 +61,44 @@ export const routes: Routes = [
       }]
     }, {
       path: 'tunable',
-      data: { title: 'Tunable', breadcrumb: 'Tunable'},
+      data: { title: 'Tunable', breadcrumb: 'Tunable' },
       children: [{
-        path: '',
-        component: TunableListComponent,
-        data: { title: 'Tunable', breadcrumb: 'Tunable'},
-      },{
-        path: 'add',
-        component: TunableFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      },
-      {
-        path: 'edit/:pk',
-        component: TunableFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
-      }]
+          path: '',
+          component: TunableListComponent,
+          data: { title: 'Tunable', breadcrumb: 'Tunable' },
+        }, {
+          path: 'add',
+          component: TunableFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: TunableFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
+      ]
     }, {
       path: 'update',
       component: UpdateComponent,
       data: { title: 'Update', breadcrumb: 'Update' },
+    }, {
+      path: 'ntpservers',
+      data: { title: 'NTPservers', breadcrumb: 'NTPservers' },
+      children: [{
+          path: '',
+          component: NTPServerListComponent,
+          data: { title: 'NTPservers', breadcrumb: 'NTPservers' },
+        }, {
+          path: 'add',
+          component: NTPServerAddComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: NTPServerEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
+      ]
     },]
   }
 ];

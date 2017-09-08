@@ -18,6 +18,9 @@ import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
+import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
+import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
+import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 
 @NgModule({
   imports: [
@@ -35,7 +38,10 @@ import { UpdateComponent } from './update/';
     BootEnvironmentCloneComponent,
     TunableListComponent,
     TunableFormComponent,
-    UpdateComponent
+    UpdateComponent,
+    NTPServerListComponent,
+    NTPServerAddComponent,
+    NTPServerEditComponent,
   ],
   providers: []
 })
