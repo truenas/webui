@@ -79,21 +79,29 @@
     <md-icon>person</md-icon>
   </button>
   <md-menu #accountMenu="mdMenu">
-    <button md-menu-item [routerLink]="['/dashboard']">
+    <button md-menu-item [routerLink]="['/account/users/edit/1']">
       <md-icon>account_box</md-icon>
       <span>Account</span>
     </button>
-    <button md-menu-item>
+    <button md-menu-item [routerLink]="['/system/general']">
       <md-icon>settings</md-icon>
       <span>Settings</span>
     </button>
-    <button md-menu-item>
+    <!-- button md-menu-item>
       <md-icon>notifications_off</md-icon>
       <span>Disable alerts</span>
-    </button>
+    </button -->
     <button md-menu-item (click)="signOut()">
       <md-icon>exit_to_app</md-icon>
-      <span>Sign out</span>
+      <span>Logout</span>
+    </button>
+    <button md-menu-item (click)="onReboot()">
+      <md-icon>replay</md-icon>
+      <span>Reboot</span>
+    </button>
+    <button md-menu-item (click)="onShutdown()">
+      <md-icon>power_settings_new</md-icon>
+      <span>Shutdown</span>
     </button>
   </md-menu>
 </md-toolbar>

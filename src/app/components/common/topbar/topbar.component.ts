@@ -51,12 +51,26 @@ export class TopbarComponent implements OnInit {
         domHelper.toggleClass(appBody, 'collapsed-menu');
         domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
   }
-
   signOut() {
-    this.dialogService.confirm("Logout", "You are about to LOGOUT the system, are you sure?").subscribe((res) => {
+    this.dialogService.confirm("Logout", "You are about to LOGOUT of the FreeNAS WebUI. If unsure, hit 'Cancel', otherwise, press 'OK' to logout.").subscribe((res) => {
       if (res) {
         this.ws.logout();
       }
     });
   }
+  onShutdown() {
+    this.dialogService.confirm("Shutdown", "You are about to SHUTDOWN the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to shutdown the system.").subscribe((res) => {
+    if (res) {
+        this.ws.call('system.shutdown', {});
+      }
+    });
+  }
+  onReboot() {
+    this.dialogService.confirm("Reboot", "You are about to REBOOT the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to reboot the system.").subscribe((res) => {
+      if (res) {
+        this.ws.call('system.reboot', {});
+      }
+    });
+  }
+
 }
