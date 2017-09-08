@@ -9,6 +9,7 @@ import {
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 
+import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {RestService} from '../../../../services/rest.service';
 import {EntityUtils} from '../utils';
 
@@ -30,7 +31,8 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected _injector: Injector,
-              protected _appRef: ApplicationRef) {}
+              protected _appRef: ApplicationRef,
+              protected loader: AppLoaderService) {}
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -57,13 +59,17 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
     if (this.conf.clean) {
       data = this.conf.clean.bind(this.conf)(data);
     }
+    this.loader.open();
     this.busy = this.rest.delete(this.conf.resource_name + '/' + this.pk, data)
                     .subscribe(
                         (res) => {
+                          this.loader.close();
                           this.router.navigate(new Array('/').concat(
                               this.conf.route_success));
                         },
-                        (res) => { new EntityUtils().handleError(this, res); });
+                        (res) => {
+                          this.loader.close(); 
+                          new EntityUtils().handleError(this, res); });
   }
 
   doCancel() {
