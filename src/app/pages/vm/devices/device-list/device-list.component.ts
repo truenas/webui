@@ -40,6 +40,7 @@ export class DeviceListComponent {
     let actions = [];
     actions.push({
       label : "Add CDROM",
+      icon: "album",
       onClick : () => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "cdrom", "add" ]));
@@ -47,6 +48,7 @@ export class DeviceListComponent {
     });
     actions.push({
       label : "Add NIC",
+      icon: "device_hub",
       onClick : () => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "nic", "add" ]));
@@ -54,6 +56,7 @@ export class DeviceListComponent {
     });
     actions.push({
       label : "Add Disk",
+      icon: "local_laundry_service",
       onClick : () => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "disk", "add" ]));
@@ -61,6 +64,7 @@ export class DeviceListComponent {
     });
     actions.push({
       label : "Add VNC",
+      icon: "cast",
       onClick : () => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "vnc", "add" ]));
@@ -68,6 +72,7 @@ export class DeviceListComponent {
     });
     actions.push({
       label : "Add RawFile",
+      icon: "description",
       onClick : () => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "rawfile", "add" ]));

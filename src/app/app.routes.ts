@@ -110,7 +110,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'vm',
         loadChildren: 'app/pages/vm/vm.module#VmModule',
-        data: { title: 'virtualization', breadcrumb: 'VIRTUALIZATION' }
+        data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' }
       },
       {
         path: 'sharing',

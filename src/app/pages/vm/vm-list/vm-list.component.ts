@@ -16,7 +16,6 @@ export class VmListComponent {
   protected route_add: string[] = [ 'vm', 'add' ];
   protected route_add_tooltip: string = "Add VM";
   protected route_edit: string[] = [ 'vm', 'edit' ];
-  protected route_delete: string[] = [ 'vm', 'delete' ];
 
   protected entityTable: EntityTableComponent;
 
@@ -68,8 +67,7 @@ export class VmListComponent {
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", "delete", row.id ]));
+        this.entityTable.doDelete(row.id );
       },
     });
     actions.push({
