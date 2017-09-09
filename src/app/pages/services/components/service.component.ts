@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import {Component, Input} from '@angular/core';
 import {Router, RouterModule, Routes} from '@angular/router';
 import {Subscription} from 'rxjs';
@@ -48,10 +49,12 @@ export class Service {
   }
 
   editService(service: any) {
-    if (service == 'iscsitarget') {
+    if (service === 'iscsitarget') {
       // iscsi target global config route
       let route = [ 'sharing', 'iscsi' ];
       this.router.navigate(new Array('').concat(route));
+    } else if (service === 'netdata') {
+      window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
     } else {
       // Determines the route path
       this.router.navigate(new Array('').concat([ 'services', service ]));
