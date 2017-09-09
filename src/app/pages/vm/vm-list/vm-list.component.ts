@@ -51,10 +51,7 @@ export class VmListComponent {
         } else {
           rpc = 'vm.stop';
         }
-        this.entityTable.busy = this.ws.call(rpc, [ row.id ])
-                                   .subscribe((res) => {
-                                                  // console.log(res);
-                                              });
+        this.ws.call(rpc, [ row.id ]).subscribe((res) => {});
       }
     });
     actions.push({
