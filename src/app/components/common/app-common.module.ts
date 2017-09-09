@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from "@angular/forms";
-import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from 'ng2-translate/ng2-translate';
@@ -22,6 +21,8 @@ import {
   MdCardModule,
   MdDialogModule
 } from '@angular/material';
+
+import {ChartistModule} from 'ng-chartist';
 import { TopbarComponent } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -32,12 +33,13 @@ import { ThemeService } from '../../services/theme/theme.service';
 import { DialogService } from '../../services/dialog.service';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { LineChartComponent } from './lineChart';
+import { LineChartService } from './lineChart/lineChart.service';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    BrowserModule,
     RouterModule,
     FlexLayoutModule,
     MdSidenavModule,
@@ -56,16 +58,17 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
     MdCardModule,
     MdDialogModule,
     CommonDirectivesModule,
-    TranslateModule
+    TranslateModule,
+    ChartistModule
   ],
   declarations: [
     AdminLayoutComponent,
     AuthLayoutComponent,
     TopbarComponent, 
     NavigationComponent, 
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent
+    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
   ],
-  providers: [ThemeService, DialogService],
-  exports: []
+  providers: [ThemeService, DialogService, LineChartService],
+  exports: [LineChartComponent]
 })
 export class AppCommonModule {}

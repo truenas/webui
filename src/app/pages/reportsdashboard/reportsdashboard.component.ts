@@ -1,6 +1,6 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
-import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from './lineChart/lineChart.service';
+import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 
 import {
   RestService,

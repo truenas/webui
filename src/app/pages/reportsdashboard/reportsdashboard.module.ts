@@ -1,24 +1,22 @@
+import { AppCommonModule } from '../../components/common/app-common.module';
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ChartistModule} from 'ng-chartist';
 
 import { MaterialModule, MdCardModule } from '@angular/material';
 
 import {ReportsDashboardComponent} from './reportsdashboard.component';
 import {routing} from './reportsdashboard.routing';
-import {LineChartService} from './lineChart/lineChart.service';
-import {LineChartComponent} from './lineChart/lineChart.component';
+import {LineChartService} from '../../components/common/lineChart/lineChart.service';
 
 @NgModule({
-  imports : [ CommonModule, ChartistModule, FormsModule, routing, 
-  MaterialModule, MdCardModule ],
+  imports : [ CommonModule, FormsModule, routing, 
+  MaterialModule, MdCardModule, AppCommonModule ],
   declarations : [
-    ReportsDashboardComponent,
-    LineChartComponent
+    ReportsDashboardComponent
   ],
   providers : [
-    LineChartService
+    
   ]
 })
 export class ReportsDashboardModule {

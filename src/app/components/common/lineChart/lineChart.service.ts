@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 
-import {WebSocketService} from '../../../services/';
+import {WebSocketService} from '../../../services';
 
 
 /*
