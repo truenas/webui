@@ -103,7 +103,6 @@ export class VolumesListComponent {
           ]));
         }
       });
-
       if (row.path.indexOf('/') != -1) {
         actions.push({
           label : "Delete Dataset",
@@ -111,6 +110,15 @@ export class VolumesListComponent {
             this._router.navigate(new Array('/').concat([
               "storage", "volumes", "id", row.path.split('/')[0], "dataset",
               "delete", row.path
+            ]));
+          }
+        });
+        actions.push({
+          label : "Edit Permissions",
+          onClick : (row) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "volumes", "id", row.path.split('/')[0], "dataset",
+              "permissions", row.path
             ]));
           }
         });

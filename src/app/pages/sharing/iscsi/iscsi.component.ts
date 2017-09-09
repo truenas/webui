@@ -12,26 +12,39 @@ import * as _ from 'lodash';
           <app-iscsi-globalconfiguration></app-iscsi-globalconfiguration>
         </md-tab>
         <md-tab label="Portals">
-          <app-iscsi-portal-list></app-iscsi-portal-list>
+          <div class="iscsi-padding">
+            <app-iscsi-portal-list></app-iscsi-portal-list>
+          </div>
         </md-tab>
-        <md-tab label="Initiators">
-          <app-iscsi-initiator-list></app-iscsi-initiator-list>
+        <md-tab label="Initiators" class="iscsi-padding">
+          <div class="iscsi-padding">
+            <app-iscsi-initiator-list></app-iscsi-initiator-list>
+          </div>
         </md-tab>
         <md-tab label="Authorized Access">
-          <app-iscsi-authorizedaccess-list></app-iscsi-authorizedaccess-list>
+          <div class="iscsi-padding">
+            <app-iscsi-authorizedaccess-list></app-iscsi-authorizedaccess-list>
+          </div>
         </md-tab>
         <md-tab label="Targets">
-          <app-iscsi-target-list></app-iscsi-target-list>
+          <div class="iscsi-padding">
+            <app-iscsi-target-list></app-iscsi-target-list>
+          </div>
         </md-tab>
         <md-tab label="Extents">
-          <app-iscsi-extent-list></app-iscsi-extent-list>
+          <div class="iscsi-padding">
+            <app-iscsi-extent-list></app-iscsi-extent-list>
+          </div>
         </md-tab>
         <md-tab label="Associated Targets">
-          <app-iscsi-associated-target-list></app-iscsi-associated-target-list>
+          <div class="iscsi-padding">
+            <app-iscsi-associated-target-list></app-iscsi-associated-target-list>
+          </div>
         </md-tab>
       </md-tab-group>
     </md-card>
   `,
+  styleUrls: ['./iscsi.component.css']
 })
 export class ISCSI implements OnInit{
 
