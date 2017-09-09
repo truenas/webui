@@ -11,7 +11,7 @@ import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.servi
 
 @Component({selector: 'line-chart', templateUrl: './lineChart.html'})
 export class LineChartComponent implements OnInit, HandleDataFunc {
-  
+
   @Input() dataList: any[];
   @Input() series: any;
   @Input() legends: any[];
@@ -25,7 +25,7 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
   controlIsInitialized = false;
 
   options: any = {
-    showPoint : false,
+    showPoint: false,
     showArea: true,
     fullWidth: true,
     fillHoles: true,
@@ -66,28 +66,44 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
     }
 
     this.controlIsInitialized = true;
-  
+
   }
-  
+
+
 
   ngOnInit() {
-    
-  
-    this.options.plugins.push(ChartistLegend({
-      classNames: Array(this.legends.length)
-        .fill(0)
-        .map((x, i) => {
-          return 'ct-series-' +
-            String.fromCharCode(97 + i)
-        }),
-      legendNames: this.legends,
-    }));
 
-    if (this.dataList.length > 0) {
-      this._lineChartService.getData(this, this.dataList);
+    if (this.type === 'Pie') {
+      delete this.options.axisX;
+      delete this.options.axisY;
+      this.options.labelInterpolationFnc = function(value, index) {
+        // FIXME, workaround to work with just size pie
+        return filesize(value, {standard: "iec"});
+      }
+
+      if (this.series) {
+        this.series.forEach((i) => {this.data.series.push(i);});
+      }
+
+      this.controlIsInitialized = true;
+
+    } else if (this.legends && this.type !== 'Pie') {
+      this.options.plugins.push(ChartistLegend({
+        classNames: Array(this.legends.length)
+          .fill(0)
+          .map((x, i) => {
+            return 'ct-series-' +
+              String.fromCharCode(97 + i)
+          }),
+        legendNames: this.legends,
+      }));
+
+      if (this.dataList.length > 0) {
+        this._lineChartService.getData(this, this.dataList);
+      }
     }
 
+
   }
-  
-  
+
 }
