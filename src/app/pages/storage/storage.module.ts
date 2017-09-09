@@ -6,6 +6,7 @@ import {DragulaModule} from 'ng2-dragula';
 import { MaterialModule, MdTableModule, MdCardModule } from '@angular/material';
 
 import {EntityModule} from '../common/entity/entity.module';
+import { UserService } from '../../services/user.service';
 
 import {SnapshotAddComponent} from './snapshots/snapshot-add/';
 import {SnapshotCloneComponent} from './snapshots/snapshot-clone/';
@@ -13,6 +14,8 @@ import {SnapshotListComponent} from './snapshots/snapshot-list/';
 import {SnapshotRollbackComponent} from './snapshots/snapshot-rollback/';
 import {DatasetFormComponent} from './volumes/datasets/dataset-form/';
 import {DatasetDeleteComponent} from './volumes/datasets/dataset-delete/';
+import {DatasetPermissionsComponent} from './volumes/datasets/dataset-permissions/'
+
 import {DiskComponent, ManagerComponent, VdevComponent} from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
 import {VolumeDeleteComponent} from './volumes/volume-delete/';
@@ -44,9 +47,10 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
     SnapshotListComponent, 
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
-    SnapshotAddComponent
+    SnapshotAddComponent,
+    DatasetPermissionsComponent
   ],
-  providers : []
+  providers : [UserService]
 })
 export class StorageModule {
 }

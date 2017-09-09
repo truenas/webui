@@ -1,6 +1,7 @@
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
+import {DatasetPermissionsComponent} from './volumes/datasets/dataset-permissions/'
 import {SnapshotAddComponent} from './snapshots/snapshot-add/';
 import {SnapshotCloneComponent} from './snapshots/snapshot-clone/';
 import {SnapshotListComponent} from './snapshots/snapshot-list/';
@@ -43,6 +44,10 @@ export const routes: Routes = [
         {
           path : 'id/:pk/dataset/delete/:path', component : DatasetDeleteComponent,
           data: {title: 'Delete Dataset', breadcrumb:'Delete Dataset' }},
+        {
+          path : 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
+          data: {title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
+        },
         {
           path : 'id/:pk/zvol/delete/:path', component : ZvolDeleteComponent,
           data: {title: 'Delete Zvol', breadcrumb:'Delete Zvol' }},
