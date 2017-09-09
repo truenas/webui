@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       ],
     },
     {
-      title: "Memory",
+      title: "Memory (gigabytes)",
       legends: ['Free', 'Active', 'Cache', 'Wired', 'Inactive'],
       dataList: [
         {'source': 'memory', 'type': 'memory-free', 'dataset': 'value'},
@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         {'source': 'memory', 'type': 'memory-wired', 'dataset': 'value'},
         {'source': 'memory', 'type': 'memory-inactive', 'dataset': 'value'},
       ],
+      divideBy: 1073741824 // Gigs worth of bytes
     },
     {
       title: "CPU Usage",

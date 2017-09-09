@@ -109,7 +109,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
         const tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.toLowerCase() === "memory" || chartConfigDataItem.title.toLowerCase() === "swap") {
+      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap") ) {
         const tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
 

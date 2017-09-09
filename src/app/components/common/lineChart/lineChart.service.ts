@@ -30,6 +30,7 @@ export interface ChartConfigData {
   title: string;
   legends: string[];
   dataList: DataListItem[];
+  divideBy?: number;
 }
 
 
@@ -182,60 +183,62 @@ export class LineChartService {
 
 
       if (prop.startsWith("disk-")) {
-          configData.push({
+        configData.push({
           title: prop + " (disk_time)",
           legends: ["read", "write"],
-          dataList: [{ source: prop, type: 'disk_time', dataset: 'read'},
-                     { source: prop, type: 'disk_time', dataset: 'write'} ]
+          dataList: [{source: prop, type: 'disk_time', dataset: 'read'},
+          {source: prop, type: 'disk_time', dataset: 'write'}]
         });
-        
+
         configData.push({
           title: prop + " (disk_io_time)",
           legends: ["read", "write"],
-          dataList: [{ source: prop, type: 'disk_io_time', dataset: 'io_time'}]
+          dataList: [{source: prop, type: 'disk_io_time', dataset: 'io_time'}]
         });
-        
+
         configData.push({
           title: prop + " (disk_ops)",
           legends: ["read", "write"],
-          dataList: [{ source: prop, type: 'disk_ops', dataset: 'read'},
-                     { source: prop, type: 'disk_ops', dataset: 'write'} ]
+          dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
+          {source: prop, type: 'disk_ops', dataset: 'write'}]
         });
-        
+
         configData.push({
           title: prop + " (disk_octets)",
           legends: ["read", "write"],
-          dataList: [{ source: prop, type: 'disk_octets', dataset: 'read'},
-                     { source: prop, type: 'disk_octets', dataset: 'write'} ]
+          dataList: [{source: prop, type: 'disk_octets', dataset: 'read'},
+          {source: prop, type: 'disk_octets', dataset: 'write'}]
         });
-        
-      } else  if (prop.startsWith("interface-")) {
-          configData.push({
+
+      } else if (prop.startsWith("interface-")) {
+        configData.push({
           title: prop + " (if_errors)",
           legends: ["rx", "tx"],
-          dataList: [{ source: prop, type: 'if_errors', dataset: 'rx'},
-                     { source: prop, type: 'if_errors', dataset: 'tx'} ]
+          dataList: [{source: prop, type: 'if_errors', dataset: 'rx'},
+          {source: prop, type: 'if_errors', dataset: 'tx'}]
         });
-        
+
         configData.push({
           title: prop + " (if_octets)",
           legends: ["rx", "tx"],
-          dataList: [{ source: prop, type: 'if_octets', dataset: 'rx'},
-                     { source: prop, type: 'if_octets', dataset: 'tx'} ]
+          dataList: [{source: prop, type: 'if_octets', dataset: 'rx'},
+          {source: prop, type: 'if_octets', dataset: 'tx'}]
         });
-        
+
         configData.push({
           title: prop + " (if_packets)",
           legends: ["rx", "tx"],
-          dataList: [{ source: prop, type: 'if_packets', dataset: 'rx'},
-                     { source: prop, type: 'if_packets', dataset: 'tx'} ]
+          dataList: [{source: prop, type: 'if_packets', dataset: 'rx'},
+          {source: prop, type: 'if_packets', dataset: 'tx'}]
         });
-        
+
       } else {
         const propObjArray: string[] = res[prop];
         const dataListItemArray: DataListItem[] = [];
 
         propObjArray.forEach((proObjArrayItem) => {
+
+
 
           const dataListItem: DataListItem = {
             source: prop,
@@ -248,10 +251,22 @@ export class LineChartService {
 
         });
 
+        let divideBy: number;
+        let title: string = prop;
+        
+        // Things I want convertd from Bytes to gigabytes
+        if (prop.startsWith("df-") ||
+          prop === "memory" || prop === "swap") {
+          divideBy = 1073741824;
+          title += " (gigabytes)";
+        }
+        
+        
         configData.push({
-          title: prop,
+          title: title,
           legends: propObjArray,
-          dataList: dataListItemArray
+          dataList: dataListItemArray,
+          divideBy: divideBy
         });
       }
 

@@ -16,6 +16,7 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
   @Input() series: any;
   @Input() legends: any[];
   @Input() type: string;
+  @Input() divideBy: number;
 
   data: LineChartData = {
     labels: [],
@@ -58,7 +59,23 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
     this.data.series.splice(0, this.data.series.length);
 
     linechartData.labels.forEach((label) => {this.data.labels.push(label)});
-    linechartData.series.forEach((dataSeriesArray) => {this.data.series.push(dataSeriesArray)});
+    linechartData.series.forEach((dataSeriesArray) => {
+
+      if (typeof (this.divideBy) !== 'undefined') {
+        const newArray = new Array();
+        dataSeriesArray.forEach((numberVal) => {
+
+          if (numberVal > 0) {
+            newArray.push(numberVal / this.divideBy);
+          } else {
+            newArray.push(numberVal);
+          }
+        });
+
+        dataSeriesArray = newArray;
+      }
+      this.data.series.push(dataSeriesArray)
+    });
 
 
     if (this.series) {
