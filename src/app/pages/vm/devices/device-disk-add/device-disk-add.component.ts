@@ -64,7 +64,7 @@ export class DeviceDiskAddComponent {
      
       for (let dataset of data) {
         if (dataset.type === 'zvol') {
-          this.DISK_zvol.options.push({label : dataset.name, value : dataset.path});
+          this.DISK_zvol.options.push({label : dataset.name, value : '/dev/zvol/' + dataset.path});
         };
       };
     });
