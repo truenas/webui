@@ -26,6 +26,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }, {
     name: 'Spanish',
     code: 'es',
+  },{
+    name: '中文',
+    code: 'zh',
   }]
   freenasThemes;
 
