@@ -75,9 +75,9 @@ public fieldConfig: FieldConfig[]  = [
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
         this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
-        res.forEach((item) => {
+        for (let item of res){
           this.ipAddress.options.push({label : item[1], value : item[0]});
-        });
+        }
       }
     })
   }
