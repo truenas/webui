@@ -64,6 +64,11 @@ public fieldConfig: FieldConfig[]  = [
       type : 'input',
       inputType : 'password',
     },
+    {
+      name : 'vnc_web',
+      placeholder : 'VNC web',
+      type: 'checkbox'
+    },
   ];
   protected dtype: string = 'VNC';
   afterInit() {

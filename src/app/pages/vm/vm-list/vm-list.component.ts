@@ -74,6 +74,15 @@ export class VmListComponent {
             new Array('').concat([ "vm", row.id, "devices", row.name ]));
       }
     });
+    actions.push({
+      label : "vnc via web",
+      onClick : (row) => {
+        let rpc: string;
+        this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
+          console.log(res)
+        });
+      }
+    });
     return actions;
   }
 }

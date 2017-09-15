@@ -144,6 +144,11 @@ export class DeviceEditComponent implements OnInit {
           type : 'input',
           inputType : 'password',
         },
+        {
+          name : 'vnc_web',
+          placeholder : 'VNC web',
+          type: 'checkbox'
+        },
       ];
     } else if (this.dtype === "DISK") {
       this.fieldConfig = [
@@ -207,7 +212,8 @@ export class DeviceEditComponent implements OnInit {
       'vnc_resolution' : 'VNC_resolution',
       'wait' : 'VNC_wait',
       'vnc_bind':'vnc_bind',
-      'vnc_password':'vnc_password'
+      'vnc_password':'vnc_password',
+      'vnc_web':'vnc_web'
     };
     let nic_lookup_table: Object = {
       'mac' : 'NIC_mac',
@@ -249,7 +255,7 @@ export class DeviceEditComponent implements OnInit {
           };
           case 'NIC': {
             this.setgetValues(device.attributes, nic_lookup_table);
-            if (this.dtype === 'NIC') {        
+            if (this.dtype === 'NIC') {     
             this.networkService.getAllNicChoices().subscribe((res) => {
               self.nic_attach = _.find(self.fieldConfig, {'name' : 'nic_attach'});
               if (this.nic_attach ){
