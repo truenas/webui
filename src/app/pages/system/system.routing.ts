@@ -131,7 +131,7 @@ export const routes: Routes = [
         data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
       }, {
         path: 'edit/:pk',
-        component: NTPServerEditComponent,
+        component: CertificateEditComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
       }]
     }, {
