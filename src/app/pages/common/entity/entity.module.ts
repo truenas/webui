@@ -62,7 +62,9 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormArrayComponent,
     FormUploadComponent,
     EntityJobComponent,
-     SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent
+    SmdFabSpeedDialTrigger,
+    SmdFabSpeedDialActions,
+    SmdFabSpeedDialComponent
   ],
   exports: [
     EntityDeleteComponent,
@@ -72,6 +74,9 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityCardComponent,
     EntityCardActionsComponent,
     DynamicFieldDirective,
+    SmdFabSpeedDialTrigger,
+    SmdFabSpeedDialActions,
+    SmdFabSpeedDialComponent
   ],
   entryComponents: [
     FormButtonComponent,
