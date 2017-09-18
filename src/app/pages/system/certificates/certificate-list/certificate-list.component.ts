@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-
+import {Observable} from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
@@ -20,9 +20,12 @@ export class CertificateListComponent {
   public busy: Subscription;
   public sub: Subscription;
 
+  public gcl = this.getCertList().subscribe(result => console.log(result),error => console.log(error));
+
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) {}
+    protected _injector: Injector, protected _appRef: ApplicationRef) {
+  }
 
   public columns: Array < any > = [
     { prop: 'cert_name', name: 'Name' },
@@ -66,19 +69,11 @@ export class CertificateListComponent {
     return actions;
   }
 
-  // getActions(row) {
-  //   let actions = [];
-  //   actions.push({
-  //     label: "Delete",
-  //     onClick: (row) => {
-  //       this.router.navigate(new Array('/pages').concat(
-  //         ["system", "certificates", "delete", row.id]));
-  //     }
-  //   });
-  //   return actions;
-  // }
-
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {});
+  }
+
+  getCertList(): Observable<Array<any>> {
+    return this.rest.get(this.resource_name, {});
   }
 }

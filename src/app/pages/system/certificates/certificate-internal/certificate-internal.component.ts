@@ -73,6 +73,8 @@ export class CertificateInternalComponent {
       type : 'input',
       name : 'cert_lifetime',
       placeholder : 'Lifetime',
+      inputType: 'number',
+      validation: [Validators.required, Validators.min(0)]
     },
     {
       type : 'select',
