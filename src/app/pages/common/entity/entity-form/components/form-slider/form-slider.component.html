@@ -1,0 +1,5 @@
+<div [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
+  <label>{{ config.placeholder }}</label>
+  <md-slider thumbLabel [min]="config.min" [max]="config.max" [formControlName]="config.name">
+  </md-slider>
+</div>

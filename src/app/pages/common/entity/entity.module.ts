@@ -21,6 +21,7 @@ import { FormSelectComponent } from './entity-form/components/form-select/form-s
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
+import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
@@ -59,6 +60,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
+    FormSliderComponent,
     FormArrayComponent,
     FormUploadComponent,
     EntityJobComponent,
@@ -88,7 +90,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormArrayComponent,
     FormUploadComponent,
     FormExplorerComponent,
-    EntityJobComponent
+    EntityJobComponent,
+    FormSliderComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
