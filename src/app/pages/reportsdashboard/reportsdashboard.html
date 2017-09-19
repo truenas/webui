@@ -1,6 +1,7 @@
 <div id="dashboardcontainerdiv">
 <md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-  <md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingData"  label="{{ tabChartsMappingDataItem.keyName }}" >
+  <md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"  label="{{ tabChartsMappingDataItem.keyName }}" >
+	<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName" >
 	<md-card *ngFor="let chartConfigData of tabChartsMappingDataItem.chartConfigData">
 	  <md-card-title>{{ chartConfigData.title }}</md-card-title>
 	  <md-card-content>
@@ -8,6 +9,7 @@
 	      <line-chart *ngIf="allowChartsDisplay" [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
 		</md-card-content>
 	</md-card>
+	</div>
    </md-tab>
 </md-tab-group> 
 

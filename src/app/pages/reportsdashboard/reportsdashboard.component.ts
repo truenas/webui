@@ -27,7 +27,9 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
   public ipAddress: any = [];
   public allowChartsDisplay = true;
   public drawTabs = false;
-  public tabChartsMappingData: TabChartsMappingData[] = [];
+  public tabChartsMappingDataArray: TabChartsMappingData[] = [];
+  public tabChartsMappingDataSelected: TabChartsMappingData;
+  
   private erd: any = null;
 
   constructor(private _lineChartService: LineChartService) {
@@ -140,9 +142,13 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
       }
     });
 
-    this.tabChartsMappingData.splice(0, this.tabChartsMappingData.length);
+    this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
     map.forEach((value: TabChartsMappingData) => {
-      this.tabChartsMappingData.push(value);
+      
+      if( this.tabChartsMappingDataSelected === undefined ) {
+        this.tabChartsMappingDataSelected = value;
+      }
+      this.tabChartsMappingDataArray.push(value);
     });
 
     this.drawTabs = true;
@@ -151,7 +157,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
 
   tabSelectChangeHandler($event) {
     const selectedTabName: string = $event.tab.textLabel;
-    const tabChartsMappingData: TabChartsMappingData = this.getTabChartsMappingDataByName(selectedTabName);
+    this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
 
 
     this.allowChartsDisplay = false;
@@ -162,7 +168,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
   private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
     let foundTabChartsMappingData: TabChartsMappingData = null;
 
-    for (const item of this.tabChartsMappingData) {
+    for (const item of this.tabChartsMappingDataArray) {
       if (name === item.keyName) {
         foundTabChartsMappingData = item;
         break;
