@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
       id: 'hello-egret',
       showPrevButton: true,
       onEnd: function() {
-        self.snackBar.open('Awesome! Now let\'s explore Egret\'s cool features.', 'close', { duration: 5000 });
+        self.snackBar.open('Awesome! Now let\'s explore FreeNAS\'s cool features.', 'close', { duration: 5000 });
       },
       onClose: function() {
         self.snackBar.open('You just closed User Tour!', 'close', { duration: 3000 });
