@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
-import {RestService, WebSocketService} from '../../../../../services/';
+import {RestService, WebSocketService, StorageService} from '../../../../../services/';
 import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
@@ -57,7 +57,6 @@ export class DatasetPermissionsComponent {
       type: 'permissions',
       name: 'mp_mode',
       placeholder: 'Mode',
-      value: '755'
     },
     {
       type: 'select',
@@ -75,7 +74,8 @@ export class DatasetPermissionsComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected aroute: ActivatedRoute, protected rest: RestService,
-              protected ws: WebSocketService, protected userService: UserService) {}
+              protected ws: WebSocketService, protected userService: UserService,
+              protected storageService: StorageService) {}
 
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
@@ -86,10 +86,11 @@ export class DatasetPermissionsComponent {
     });
 
 
+
     this.userService.listUsers().subscribe(res => {
       let users = [];
       for (let user of res.data) {
-        users.push({label: user['bsdusr_username'], value: user['bsdusr_username']});
+        users.push({label: user['bsdusr_username'], value: user['bsdusr_uid']});
       }
       this.mp_user = _.find(this.fieldConfig, {'name' : 'mp_user'});
       this.mp_user.options = users;
@@ -98,10 +99,18 @@ export class DatasetPermissionsComponent {
     this.userService.listGroups().subscribe(res => {
       let groups = [];
       for (let group of res.data) {
-        groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_group']});
+        groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_gid']});
       }
       this.mp_group = _.find(this.fieldConfig, {'name' : 'mp_group'});
-      this.mp_group.options = groups;
+        this.mp_group.options = groups;
     }); 
+  }
+
+  afterInit(entityEdit: any) {
+    this.storageService.filesystemStat(this.path).subscribe(res => {
+      entityEdit.formGroup.controls['mp_mode'].setValue(res.mode.toString(8).substring(2,5));
+      entityEdit.formGroup.controls['mp_user'].setValue(res.uid);
+      entityEdit.formGroup.controls['mp_group'].setValue(res.gid);
+    });
   }
 }
