@@ -22,6 +22,7 @@ import {FormTextareaComponent} from '../form-textarea/form-textarea.component';
 import {FormUploadComponent} from '../form-upload/form-upload.component';
 import {FormExplorerComponent} from '../form-explorer/form-explorer.component';
 import {FormSliderComponent} from '../form-slider/form-slider.component';
+import {FormToggleButtonComponent} from '../form-toggle-button/form-toggle-button.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -34,6 +35,7 @@ const components: {[type: string] : Type<Field>} = {
   upload : FormUploadComponent,
   explorer: FormExplorerComponent,
   slider: FormSliderComponent,
+  togglebutton: FormToggleButtonComponent,
 };
 
 @Directive({selector : '[dynamicField]'})

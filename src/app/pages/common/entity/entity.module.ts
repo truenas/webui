@@ -22,6 +22,7 @@ import { FormTextareaComponent } from './entity-form/components/form-textarea/fo
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
+import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
@@ -34,7 +35,7 @@ import { FormPermissionsComponent } from './entity-form/components/form-permissi
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk';
 
-import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent} from './fab-speed-dial/fab-speed-dial';
+import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormPermissionsComponent,
     TooltipComponent,
     FormSliderComponent,
+    FormToggleButtonComponent,
     FormArrayComponent,
     FormUploadComponent,
     EntityJobComponent,
@@ -91,7 +93,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormUploadComponent,
     FormExplorerComponent,
     EntityJobComponent,
-    FormSliderComponent
+    FormSliderComponent,
+    FormToggleButtonComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
