@@ -23,8 +23,10 @@ import { FormExplorerComponent } from './entity-form/components/form-explorer/fo
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
+import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
@@ -42,6 +44,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   declarations: [
     EntityDeleteComponent,
     EntityTableComponent,
+    EntityCardComponent,
+    EntityCardActionsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -65,6 +69,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityTemplateDirective,
     EntityFormComponent,
     EntityTableComponent,
+    EntityCardComponent,
+    EntityCardActionsComponent,
     DynamicFieldDirective,
   ],
   entryComponents: [

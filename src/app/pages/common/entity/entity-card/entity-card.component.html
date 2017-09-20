@@ -1,0 +1,21 @@
+<div *ngFor="let row of rows">
+    <md-card>
+        <div *ngFor="let col of conf.columns">
+            <div *ngIf="col.card">
+                {{ col.name }}: {{ row[col.prop] }}
+            </div>
+
+        </div>
+        <div *ngIf="conf.toggleProp">
+            <md-slide-toggle [checked]="row[conf.toggleProp] == conf.runnningState ? 'checked' : ''" (click)="toggle(row)">
+                {{ row[conf.toggleProp] }}
+            </md-slide-toggle>
+        </div>
+        <app-entity-card-actions [entity]="this" [row]="row">
+        </app-entity-card-actions>
+    </md-card>
+</div>
+<div>
+
+    <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+</div>
