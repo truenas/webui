@@ -1,10 +1,9 @@
-<div [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
+<div class="toggle-button" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
   <br>
-  <md-button-toggle-group multiple>
-    <md-button-toggle *ngFor="let option of config.options" [value]="option.value">
+  <md-button-toggle-group multiple class="toggle-button-wrap toggle-button-group">
+    <md-button-toggle *ngFor="let option of config.options" [value]="option.value" (change)="check(option.value)" buttonToggleGroupMultiple>
       {{ option.label }}
     </md-button-toggle>
   </md-button-toggle-group>
-
 </div>
