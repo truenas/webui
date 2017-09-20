@@ -30,7 +30,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
   public drawTabs = false;
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
-  
+
   private erd: any = null;
 
   constructor(private _lineChartService: LineChartService) {
@@ -46,15 +46,32 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
-    
+
     const chart = c3.generate({
-    bindto: '#fuckingchartDUDE',
-        data: {
+      bindto: '#fuckingchartDUDE',
+      data: {
         columns: [
-            ['data1', 30, 200, 100, 400, 150, 250],
-            ['data2', 50, 20, 10, 40, 15, 25]
-        ]
+          ['xValues', '01:10', '02:10', '03:10', '04:10', '05:10', '06:10' ],
+          ['data1', 30, 200, 100, 400, 150, 250],
+          ['data2', 50, 20, 10, 40, 15, 25]
+        ],
+        x: 'xValues',
+        xFormat: '%H:%M',
+        axes: {
+          data1: 'y',
+          data2: 'y2'
+        },
+        type: 'area-spline'
+      },
+      axis: {
+        x: {
+            type: 'timeseries',
+            tick: {
+                format: '%H:%M'
+            }
         }
+    }
+
     });
 
   }
@@ -122,7 +139,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
         const tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap") ) {
+      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap")) {
         const tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
 
@@ -155,8 +172,8 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
 
     this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
     map.forEach((value: TabChartsMappingData) => {
-      
-      if( this.tabChartsMappingDataSelected === undefined ) {
+
+      if (this.tabChartsMappingDataSelected === undefined) {
         this.tabChartsMappingDataSelected = value;
       }
       this.tabChartsMappingDataArray.push(value);
