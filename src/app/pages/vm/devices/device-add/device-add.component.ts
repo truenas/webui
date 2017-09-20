@@ -99,7 +99,8 @@ export class DeviceAddComponent implements OnInit {
             "vnc_port" : formvalue.VNC_port,
             "vnc_resolution" : formvalue.VNC_resolution,
             "vnc_bind": formvalue.vnc_bind,
-            "vnc_password": formvalue.vnc_password
+            "vnc_password": formvalue.vnc_password,
+            "vnc_web": formvalue.vnc_web,
           }
         })
       }

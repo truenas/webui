@@ -79,11 +79,13 @@ export class VmListComponent {
       }
     });
     actions.push({
-      label : "vnc via web",
+      label : "Web VNC",
       onClick : (row) => {
         let rpc: string;
         this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-          console.log(res)
+          for (let item in res){
+            window.open(res[item])
+          }
         });
       }
     });
@@ -116,7 +118,9 @@ export class VmListComponent {
       onClick : (row) => {
         let rpc: string;
         this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-          console.log(res)
+          for (let item in res){
+            window.open(res[item])
+          }
         });
       }
     });
