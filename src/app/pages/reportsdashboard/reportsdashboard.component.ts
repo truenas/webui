@@ -51,7 +51,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
       bindto: '#fuckingchartDUDE',
       data: {
         columns: [
-          ['xValues', '01:10', '02:10', '03:10', '04:10', '05:10', '06:10' ],
+          ['xValues', '01:10', '03:10', '04:10', '05:10', '06:10' ],
           ['data1', 30, 200, 100, 400, 150, 250],
           ['data2', 50, 20, 10, 40, 15, 25],
           ['data3', 20, 80, 60, 20, 15, 45]
@@ -64,7 +64,9 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
         x: {
             type: 'timeseries',
             tick: {
-                format: '%H:%M'
+                format: '%H:%M',
+                fit: true,
+                values: ['01:10', '03:10', '06:10']
             }
         }
     }
