@@ -1,4 +1,6 @@
 <div id="dashboardcontainerdiv">
+    <div id="fuckingchartDUDE"></div>
+
 <md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
   <md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"  label="{{ tabChartsMappingDataItem.keyName }}" >
 	<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName" >
