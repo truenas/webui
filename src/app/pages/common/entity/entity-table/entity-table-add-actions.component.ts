@@ -30,7 +30,7 @@ import {EntityTableComponent} from './entity-table.component';
 })
 export class EntityTableAddActionsComponent implements OnInit {
 
-  @Input('entity') entity: EntityTableComponent;
+  @Input('entity') entity: any;
 
   public actions: any[];
 
