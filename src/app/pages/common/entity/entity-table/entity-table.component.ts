@@ -84,6 +84,13 @@ export class EntityTableComponent implements OnInit {
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
+        for (let i=0; i<this.rows.length; i++) {
+          for (let attr in this.rows[i]) {
+            if (this.rows[i].hasOwnProperty(attr)) {
+              this.rows[i][attr] = this.rowValue(this.rows[i], attr);
+            }
+          }
+        }
       });
   }
 
