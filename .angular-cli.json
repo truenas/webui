@@ -28,6 +28,7 @@
             "../node_modules/hopscotch/dist/css/hopscotch.min.css",
             "../node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
             "../node_modules/chartist/dist/chartist.min.css",
+            "../node_modules/c3/c3.min.css",
             "vendor/pace/pace-theme-min.css",
             "assets/styles/themes/egret-dark-purple.scss",
             "assets/styles/themes/egret-dark-pink.scss",
