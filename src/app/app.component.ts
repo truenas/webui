@@ -5,6 +5,7 @@ import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MdSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
+import { RestService } from './services/rest.service';
 
 @Component({
   selector: 'app-root',
@@ -14,18 +15,28 @@ import * as hopscotch from 'hopscotch';
 export class AppComponent implements OnInit {
   appTitle = 'FreeNAS Material UI';
   pageTitle = '';
+  protected accountUserResource: string = 'account/users/1';
 
-  constructor(public title: Title, 
-    private router: Router, 
+  constructor(public title: Title,
+    private router: Router,
     private activeRoute: ActivatedRoute,
     private routePartsService: RoutePartsService,
-    public snackBar: MdSnackBar) { }
+    public snackBar: MdSnackBar,
+    private rest: RestService) {}
+    protected user: any;
 
   ngOnInit() {
     this.changePageTitle();
-    setTimeout(() => {
-      hopscotch.startTour(this.tourSteps());
-    }, 2000);
+    this.getUserPreference().subscribe((res) => {
+      this.user = res.data;
+      let ShowTour = this.user.bsdusr_attributes.showTour;
+      if (ShowTour) {
+        setTimeout(() => {
+          hopscotch.startTour(this.tourSteps());
+        }, 2000);
+        this.user.bsdusr_attributes['showTour'] = false;
+      }
+    });
   }
 
   tourSteps(): any {
@@ -39,8 +50,7 @@ export class AppComponent implements OnInit {
       onClose: function() {
         self.snackBar.open('You just closed User Tour!', 'close', { duration: 3000 });
       },
-      steps: [
-        {
+      steps: [{
           title: 'Sidebar Controls',
           content: 'Control left sidebar\'s display style.',
           target: 'sidenavToggle', // Element ID
@@ -80,6 +90,10 @@ export class AppComponent implements OnInit {
     }
   }
 
+  getUserPreference() {
+    return this.rest.get(this.accountUserResource, {});
+  }
+
   changePageTitle() {
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
       const routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
@@ -88,8 +102,8 @@ export class AppComponent implements OnInit {
       }
       // Extract title from parts;
       this.pageTitle = routeParts
-                      .map((part) => part.title )
-                      .reduce((partA, partI) => {return `${partA} > ${partI}`});
+        .map((part) => part.title)
+        .reduce((partA, partI) => { return `${partA} > ${partI}` });
       this.pageTitle += ` | ${this.appTitle}`;
       this.title.setTitle(this.pageTitle);
     });

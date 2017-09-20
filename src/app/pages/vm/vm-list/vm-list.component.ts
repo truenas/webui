@@ -8,7 +8,7 @@ import {EntityTableComponent} from '../../common/entity/entity-table/';
 
 @Component({
   selector : 'app-vm-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  templateUrl : './vm-list.component.html'
 })
 export class VmListComponent {
 

@@ -7,6 +7,7 @@ import { MaterialModule, MdTableModule, MdCardModule } from '@angular/material';
 
 import {EntityModule} from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
+import { StorageService } from '../../services/storage.service';
 
 import {SnapshotAddComponent} from './snapshots/snapshot-add/';
 import {SnapshotCloneComponent} from './snapshots/snapshot-clone/';
@@ -50,7 +51,7 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
     SnapshotAddComponent,
     DatasetPermissionsComponent
   ],
-  providers : [UserService]
+  providers : [UserService, StorageService]
 })
 export class StorageModule {
 }

@@ -6,7 +6,8 @@ import * as _ from 'lodash';
 import {
   NetworkService,
   RestService,
-  WebSocketService
+  WebSocketService,
+  StorageService
 } from '../../../../services/';
 import {
   FieldConfig
@@ -136,6 +137,8 @@ export class UserFormComponent {
     // },
 
   ];
+  private home: any;
+  private mode: any;
   private shells: any;
   private bsdusr_shell: any;
   private bsdusr_group: any;
@@ -143,7 +146,7 @@ export class UserFormComponent {
   private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService ) {}
+              protected ws: WebSocketService, protected storageService: StorageService ) {}
 
   preInit(entityForm: any) {
     // if (!entityForm.isNew) {
@@ -185,6 +188,15 @@ export class UserFormComponent {
         }
         */
       });
+
+      if (entityForm.data.bsdusr_home) {
+        this.storageService.filesystemStat(entityForm.data.bsdusr_home).subscribe(stat => {
+          entityForm.formGroup.controls['bsdusr_mode'].setValue(stat.mode.toString(8).substring(2,5));
+        });
+      } else {
+        entityForm.formGroup.controls['bsdusr_mode'].setValue('755');
+      }
+
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdusr_username', true);
         entityForm.setDisabled('bsdusr_creategroup', true);
