@@ -1,7 +1,7 @@
-<i class="material-icons"
-          #tooltip="mdTooltip"
-          [mdTooltip]="message"
-          [mdTooltipPosition]="position"
-          [mdTooltipDisabled]="disabled"
-          [mdTooltipShowDelay]="showDelay"
-          [mdTooltipHideDelay]="hideDelay">info</i>
+
+<div class="tooltip">
+    <i class="material-icons">info</i>
+     <div class="tooltiptext"
+            [innerHTML]="message">
+     </div>
+</div>
