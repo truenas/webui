@@ -1,10 +1,9 @@
-.service-item {
-	flex: 1 1 50%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 50%;
-}
-
 .service-item-title {
 	font-size: 20px !important;
+	padding-top: 4px !important;
+}
+p.service-item-status.mat-line {
+	text-transform: lowercase !important;
+	
+
 }

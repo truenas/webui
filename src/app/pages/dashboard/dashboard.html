@@ -1,57 +1,72 @@
-<div id="dashboardcontainerdiv">
- <div fxLayout="row" fxLayoutWrap="wrap">
-  <div fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50">
-  <md-card class="p-0">
-      <md-card-title fxLayoutAlign="start center">
+<div id="dashboardcontainerdiv" class="dashboard-wrap mt-1 mr-1 mb-05 ml-1">
+  <md-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+      <md-card-title>
         <div class="card-title-text mat-bg-primary">
           <span>System Information</span>
-          <span fxFlex></span>
         </div>
       </md-card-title>
       <md-card-content>
-      	  <div class="row">
-	        <div class="col-md-3">Uptime</div>
-	        <div class="col-md-9">{{ info.uptime }}</div>
-	      </div>
-	      <div class="row">
-	        <div class="col-md-3">Version</div>
-	        <div class="col-md-9">{{ info.version }}</div>
-	      </div>
-	      <div class="row">
-	        <div class="col-md-3">Model</div>
-	        <div class="col-md-9">{{ info.model }}</div>
-	      </div>
-	      <div class="row">
-	        <div class="col-md-3">Average Load</div>
-	        <div class="col-md-9">{{ info.loadavg }}</div>
-	      </div>
-	      <div class="row">
-	        <div class="col-md-3">Physical Memory</div>
-	        <div class="col-md-9">{{ info.physmem }}</div>
-	      </div>
-	      <div *ngIf="info.hostname" class="row">
-	        <div class="col-md-3">Hostname </div>
-	        <div class="col-md-9">{{ info.hostname }}</div>      
-	      </div>
-	      <div *ngFor="let ip of ipAddress" class="row">
-	        <div class="col-md-3">IP </div>
-	        <div class="col-md-9">{{ ip }}</div>      
-	      </div>
+      	<md-list>
+      		<md-list-item>
+      			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>Uptime:</strong></label>
+        		<p mdLine>{{info.uptime}} </p>
+      		</md-list-item>
+      		<md-list-item>
+      			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>Version:</strong></label>
+        		<p mdLine>{{info.version}} </p>
+      		</md-list-item>
+      		<md-list-item>
+      			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>Model:</strong></label>
+        		<p mdLine>{{info.model}} </p>
+      		</md-list-item>
+      		<md-list-item>
+      			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>Average Load:</strong></label>
+        		<p mdLine>{{info.loadavg}} </p>
+      		</md-list-item>
+      		<md-list-item>
+      			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>Physical Memory:</strong></label>
+        		<p mdLine>{{info.physmem}} </p>
+      		</md-list-item>
+      		<md-list-item *ngIf="info.hostname">
+      			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>Hostname:</strong></label>
+        		<p mdLine>{{info.hostname}} </p>
+      		</md-list-item>
+  			<md-list-item *ngFor="let ip of ipAddress">
+  				<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+        		<span class="cdk-visually-hidden mr-1">Label Icon</span>
+      			<label mdLine class="mr-1"><strong>IP:</strong></label>
+        		<p mdLine>{{ip}} </p>
+      		</md-list-item>
+  		</md-list>
       </md-card-content>
     </md-card>
-    </div>
-	<div *ngFor="let graph of graphs" fxFlex="100" fxFlex.gt-sm="25" fxFlex.sm="50">
-	<md-card class="p-0">
-	  <md-card-title>
-        <div class="card-title-text mat-bg-primary">
-          <span>{{ graph.title }}</span>
-          <span fxFlex></span>
-        </div>
-      </md-card-title>
-	  <md-card-content>
-	  	<line-chart [dataList]="graph.dataList" [legends]="graph.legends" [type]="graph.type || 'Line'" [series]="graph.series" [divideBy]="graph.divideBy"></line-chart>
-	  </md-card-content>
-	</md-card>
-	</div>
-</div>
+  	<md-card
+  		*ngFor="let graph of graphs" 
+  		class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+  	  <md-card-title>
+          <div class="card-title-text mat-bg-primary">
+            <span>{{ graph.title }}</span>
+          </div>
+        </md-card-title>
+  	  <md-card-content class="pb-1 pt-1">
+  	  	<line-chart 
+  	  	[dataList]="graph.dataList" 
+  	  	[legends]="graph.legends" 
+  	  	[type]="graph.type || 'Line'" 
+  	  	[series]="graph.series" 
+  	  	[divideBy]="graph.divideBy"></line-chart>
+  	  </md-card-content>
+  	</md-card>
 </div>
