@@ -12,6 +12,7 @@ import {
   isSameMonth,
   addHours
 } from 'date-fns';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'task-calendar',
@@ -20,13 +21,30 @@ import {
 export class TaskCalendarComponent implements OnInit {
   view = 'month';
   viewDate = new Date();
-  @ViewChild('modalContent') modalContent: TemplateRef<any>;
+  @ViewChild('modalContent') modalContent: TemplateRef < any > ;
   dialogRef;
 
-  constructor(public dialogBox: MdDialog) { }
+  public spin: boolean = true;
+  public direction: string = 'right';
+  public animationMode: string = 'fling';
 
-  ngOnInit() {
-  }
+  public tasks: Array < any > = [{
+    name: 'cron',
+    label: 'Cron Job',
+    icon: 'query_builder'
+  }, {
+    name: 'rsync',
+    label: 'Rsync Task',
+    icon: 'sync'
+  }, {
+    name: 'smart',
+    label: 'S.M.A.R.T. Test',
+    icon: 'add'
+  }];
+
+  constructor(public dialogBox: MdDialog, protected router: Router) {}
+
+  ngOnInit() {}
   modalData: {
     action: string,
     event: CalendarEvent
@@ -60,7 +78,7 @@ export class TaskCalendarComponent implements OnInit {
     }
   }];
 
-  refresh: Subject<any> = new Subject();
+  refresh: Subject < any > = new Subject();
   events: CalendarEvent[] = [{
     start: subDays(startOfDay(new Date()), 1),
     end: addDays(new Date(), 1),
@@ -118,5 +136,9 @@ export class TaskCalendarComponent implements OnInit {
   }
   closeDialog() {
     this.dialogBox.closeAll();
+  }
+
+  addTask(name) {
+    this.router.navigate(new Array('/tasks/add/').concat(name));
   }
 }
