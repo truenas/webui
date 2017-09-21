@@ -1,13 +1,20 @@
 .services-wrap {
 	display: flex;
-    flex-flow: row wrap;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    box-sizing: border-box;
+	flex-flow: row wrap;
+	justify-content: space-around;
+	align-items: stretch;
+	align-content: stretch;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	box-sizing: border-box;
 }
 .service-item {
-	flex: 1 1 25%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 50%;
+	flex-basis: auto;
+	-webkit-box-flex: 1;
+	flex-grow: 1;
+	min-width: 25%;
+}
+.service-item-title {
+	font-size: 26px !important;
+	padding-top: 4px !important;
 }

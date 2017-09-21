@@ -31,6 +31,7 @@
 ## Media queries
 */
 
+
 /*---- Globals -----*/
 html {
     font-size: 16px;
@@ -66,6 +67,7 @@ div {
 .mat-card {
     font-size: .875rem;
 }
+
 a, a:focus, a:hover {
     text-decoration: none;
 }
@@ -450,7 +452,17 @@ code {
         -webkit-transform: scale(1.0);
     }
 }
-
+.ct-legend {
+  position: relative;
+  z-index: 10;
+  list-style-type: none;
+  top: -2.3em !important;
+}
+.ct-legend li {
+    padding-left: 22px !important;
+    margin-left: 5px !important;
+    margin-bottom: 4px !important;
+}
 /*---- Third pirty adjust -----*/
 /*--------- Material ---------*/
 md-list a[md-list-item] .mat-list-item-content, 

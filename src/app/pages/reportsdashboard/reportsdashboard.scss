@@ -1,24 +1,16 @@
-@media screen and (min-width: 1620px) {
-  .row.shift-up {
-    > * {
-      margin-top: -573px;
-    }
-  }
+.dashboard-wrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: stretch;
+  align-content: stretch;
 }
-
-@media screen and (max-width: 1620px) {
-  .card.feed-panel.large-card {
-    height: 824px;
-  }
+.dashboard-item {
+  flex-basis: 33.3333%;
+  -webkit-box-flex: 1;
+  flex-grow: 1;
 }
-
-.systeminfo {
-  line-height: 200%;
-}
-
-.systeminfo .col-md-2 {
-  font-weight: bold;
-}
-.row {
-  padding: 8px;
+ul.ct-legend {
+  top: -2em !important;
 }

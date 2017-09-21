@@ -1,23 +1,31 @@
-<md-card>
-  <md-card-title class="service-item-title">
+<md-card class="m-0 p-0">
+<md-toolbar class="mat-bg-primary" >
+  <md-slide-toggle
+    [checked]="status.state == 'RUNNING' ? 'checked' : ''"
+    (click)="toggle()">
+  </md-slide-toggle>
+  <md-card-title class="mb-05 ml-1 service-item-title">
     {{status.label}}
   </md-card-title>
-  <md-card-subtitle>
-      <md-slide-toggle
-          class="example-margin"
-          [checked]="status.state == 'RUNNING' ? 'checked' : ''"
-          (click)="toggle()">
-        {{status.state}}
-      </md-slide-toggle>
-  </md-card-subtitle>
-  <md-card-content>
-    <label>Start on Boot </label>
-    <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox>
-  </md-card-content>
-  <md-divider class="mb-1"></md-divider>
-  <md-card-actions>
+  </md-toolbar>
+    <md-list>
+      <md-list-item>
+        <md-icon mdListIcon aria-hidden="true" color="primary" class="margin-333">label</md-icon>
+        <span class="cdk-visually-hidden margin-333">Label Icon</span>
+        <label mdLine class="mr-1"><strong>Status:</strong></label>
+        <p mdLine class="service-item-status pr-1"><em>{{status.state}}</em></p>
+      </md-list-item>
+        <md-list-item>
+        <md-icon mdListIcon color="primary" class="margin-333">label</md-icon>
+        <label mdLine class="mr-1"><strong>Auto-start:</strong></label>
+        <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox>
+      </md-list-item>
+    </md-list>      
+  <md-divider></md-divider>
+  <md-card-actions class="mt-1 mr-1 mb-1 ml-1">
   <button md-raised-button color="primary" (click)="editService(this.status.service)">
     Configure
   </button>
   </md-card-actions>
 </md-card>
+

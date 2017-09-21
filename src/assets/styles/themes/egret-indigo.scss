@@ -145,7 +145,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         left: 1px;
         border-right: 17px solid map-get($md-primary, 500);
     }
+    .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+        background-color: map-get($md-accent, 400);
 
+    }
+    .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+          background-color: map-get($md-accent, 200);
+
+    }
     .mat-bg-accent,
     div.hopscotch-bubble .hopscotch-bubble-number,
     div.hopscotch-bubble .hopscotch-nav-button.next:hover,
