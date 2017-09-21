@@ -1,5 +1,9 @@
 <div>
-	<x-chartist *ngIf="controlIsInitialized && type === 'Pie'" [data]="data" [type]="type" [options]="options"[responsiveOptions]="responsiveOptions">
+	<x-chartist *ngIf="type === 'Pie'" 
+				[data]="data" 
+				[type]="type" 
+				[options]="pieChartOptions"
+				[responsiveOptions]="responsiveOptions">
 	</x-chartist>
 	
 	<div id="{{controlUid}}"></div>
