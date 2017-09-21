@@ -25,6 +25,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 export class EntityCardComponent implements OnInit {
 
   @Input('conf') conf: any;
+  @Input() isFlipped = false;  
 
   public busy: Subscription;
 
@@ -40,6 +41,7 @@ export class EntityCardComponent implements OnInit {
     sorting: { columns: this.columns },
   };
   protected loaderOpen: boolean = false;
+
 
   constructor(protected rest: RestService, protected ws: WebSocketService,  protected router: Router,
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) {}
@@ -183,4 +185,8 @@ export class EntityCardComponent implements OnInit {
       }
     })
   }
+  toggleFlip(){
+    this.isFlipped = !this.isFlipped;
+  }
 }
+

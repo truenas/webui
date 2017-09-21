@@ -1,21 +1,54 @@
 <div *ngFor="let row of rows" class="card-item">
-    <md-card>
-        <div *ngFor="let col of conf.columns">
-            <div *ngIf="col.card">
-                {{ col.name }}: {{ row[col.prop] }}
-            </div>
+    <div class="flip" style="height:420px;width:400px;">
+        <div class="card-container" [ngClass]="{'flipped':isFlipped}">
+
+            <md-card class="card front face animated slideInUp">
+                <md-card-header class="">
+                    <md-card-title class="">Front Side</md-card-title>
+                </md-card-header>
+                <md-card-content class="">
+                    <div *ngFor="let col of conf.columns">
+                        <div *ngIf="col.card">
+                            {{ col.name }}: {{ row[col.prop] }}
+                        </div>
+
+                    </div>
+                    <div *ngIf="conf.toggleProp">
+                        <md-slide-toggle [checked]="row[conf.toggleProp] == conf.runnningState ? 'checked' : ''" (click)="toggle(row)">
+                            {{ row[conf.toggleProp] }}
+                        </md-slide-toggle>
+                    </div>
+                </md-card-content>
+                <md-card-footer class="card-footer">
+                    <div class="">
+                        <button md-button class="" (click)="toggleFlip()">
+                                    <span class="md-icon dp48">rotate_left</span>
+                                </button>
+                    </div>
+                </md-card-footer>
+            </md-card>
+
+            <md-card class="card back face">
+                <md-card-header>
+                    <md-card-title class="">Back Side</md-card-title>
+                </md-card-header>
+                <md-card-content>
+                    <app-entity-card-actions [entity]="this" [row]="row">
+                    </app-entity-card-actions>
+                </md-card-content>
+                <md-card-footer class="card-footer">
+                    <div class="">
+                        <button md-button class="" (click)="toggleFlip()">
+                                    <span class="md-icon dp48">rotate_left</span>
+                                </button>
+                    </div>
+                </md-card-footer>
+            </md-card>
 
         </div>
-        <div *ngIf="conf.toggleProp">
-            <md-slide-toggle [checked]="row[conf.toggleProp] == conf.runnningState ? 'checked' : ''" (click)="toggle(row)">
-                {{ row[conf.toggleProp] }}
-            </md-slide-toggle>
-        </div>
-        <app-entity-card-actions [entity]="this" [row]="row">
-        </app-entity-card-actions>
-    </md-card>
+    </div>
+
 </div>
 <div>
-
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 </div>
