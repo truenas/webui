@@ -61,7 +61,7 @@ export class LineChartService {
 
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
 
-    this._ws.call('stats.get_data', [dataList, {}]).subscribe((res) => {
+    this._ws.call('stats.get_data', [dataList, {step: '10', start: 'now-10m'}]).subscribe((res) => {
       const linechartData: LineChartData = {
         labels: new Array<Date>(),
         series: new Array<any>()

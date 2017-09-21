@@ -42,9 +42,6 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
 
   handleDataFunc(linechartData: LineChartData) {
     
-    linechartData.labels = linechartData.labels.splice( linechartData.labels.length - 50, linechartData.labels.length);
-    
-    
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
 
@@ -64,8 +61,6 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
 
         dataSeriesArray = newArray;
       }
-      
-      dataSeriesArray = dataSeriesArray.splice(linechartData.labels.length - 50, linechartData.labels.length);
       this.data.series.push(dataSeriesArray);
     });
     
