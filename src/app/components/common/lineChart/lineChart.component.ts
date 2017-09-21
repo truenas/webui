@@ -3,6 +3,8 @@ import 'style-loader!./lineChart.scss';
 import {Component, Input, OnInit} from '@angular/core';
 import * as ChartistLegend from 'chartist-plugin-legend';
 import filesize from 'filesize';
+import { UUID } from 'angular2-uuid';
+import * as c3 from 'c3';
 
 import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.service';
 
@@ -24,7 +26,8 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
   };
 
   controlIsInitialized = false;
-
+  controlUid: string;
+  
   options: any = {
     showPoint: false,
     showArea: true,
@@ -81,6 +84,32 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
     if (this.series) {
       this.series.forEach((i) => {this.data.series.push(i);});
     }
+    
+     const chart = c3.generate({
+      bindto: '#' + this.controlUid,
+      data: {
+        columns: [
+          ['xValues', '01:10', '03:10', '04:10', '05:10', '06:10' ],
+          ['data1', 30, 200, 100, 400, 150, 250],
+          ['data2', 50, 20, 10, 40, 15, 25],
+          ['data3', 20, 80, 60, 20, 15, 45]
+        ],
+        x: 'xValues',
+        xFormat: '%H:%M',
+        type: 'area-spline'
+      },
+      axis: {
+        x: {
+            type: 'timeseries',
+            tick: {
+                format: '%H:%M',
+                fit: true,
+                values: ['01:10', '03:10', '06:10']
+            }
+        }
+    }
+
+    });
 
     this.controlIsInitialized = true;
 
@@ -90,6 +119,8 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
 
   ngOnInit() {
 
+    this.controlUid = "chart_" + UUID.UUID();
+    
     if (this.type === 'Pie') {
       delete this.options.axisX;
       delete this.options.axisY;
@@ -105,16 +136,6 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
       this.controlIsInitialized = true;
 
     } else if (this.legends && this.type !== 'Pie') {
-      this.options.plugins.push(ChartistLegend({
-        classNames: Array(this.legends.length)
-          .fill(0)
-          .map((x, i) => {
-            return 'ct-series-' +
-              String.fromCharCode(97 + i)
-          }),
-        legendNames: this.legends,
-      }));
-
       if (this.dataList.length > 0) {
         this._lineChartService.getData(this, this.dataList);
       }

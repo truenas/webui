@@ -1,7 +1,6 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
-import * as c3 from 'c3';
 
 import {
   RestService,
@@ -47,31 +46,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
       this.erd = window['elementResizeDetectorMaker'].call();
     }
 
-    const chart = c3.generate({
-      bindto: '#fuckingchartDUDE',
-      data: {
-        columns: [
-          ['xValues', '01:10', '03:10', '04:10', '05:10', '06:10' ],
-          ['data1', 30, 200, 100, 400, 150, 250],
-          ['data2', 50, 20, 10, 40, 15, 25],
-          ['data3', 20, 80, 60, 20, 15, 45]
-        ],
-        x: 'xValues',
-        xFormat: '%H:%M',
-        type: 'area-spline'
-      },
-      axis: {
-        x: {
-            type: 'timeseries',
-            tick: {
-                format: '%H:%M',
-                fit: true,
-                values: ['01:10', '03:10', '06:10']
-            }
-        }
-    }
-
-    });
+   
 
   }
 
