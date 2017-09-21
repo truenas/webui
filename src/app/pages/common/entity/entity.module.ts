@@ -21,17 +21,22 @@ import { FormSelectComponent } from './entity-form/components/form-select/form-s
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
+import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
+import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
+import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
+import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
+import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk';
 
-import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent} from './fab-speed-dial/fab-speed-dial';
+import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
 @NgModule({
   imports: [
@@ -42,6 +47,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   declarations: [
     EntityDeleteComponent,
     EntityTableComponent,
+    EntityCardComponent,
+    EntityCardActionsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -55,17 +62,27 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
+    FormSliderComponent,
+    FormToggleButtonComponent,
+    FormTaskComponent,
     FormArrayComponent,
     FormUploadComponent,
     EntityJobComponent,
-     SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent
+    SmdFabSpeedDialTrigger,
+    SmdFabSpeedDialActions,
+    SmdFabSpeedDialComponent
   ],
   exports: [
     EntityDeleteComponent,
     EntityTemplateDirective,
     EntityFormComponent,
     EntityTableComponent,
+    EntityCardComponent,
+    EntityCardActionsComponent,
     DynamicFieldDirective,
+    SmdFabSpeedDialTrigger,
+    SmdFabSpeedDialActions,
+    SmdFabSpeedDialComponent
   ],
   entryComponents: [
     FormButtonComponent,
@@ -77,7 +94,10 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormArrayComponent,
     FormUploadComponent,
     FormExplorerComponent,
-    EntityJobComponent
+    EntityJobComponent,
+    FormSliderComponent,
+    FormToggleButtonComponent,
+    FormTaskComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

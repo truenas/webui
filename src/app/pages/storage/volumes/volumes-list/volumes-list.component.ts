@@ -21,7 +21,7 @@ export class VolumesListComponent {
   ) {}
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name'},
+    {name : 'Name', prop : 'path'},
     {name : 'Status', prop : 'status'},
     {name : 'Available', prop : 'avail'},
     {name : 'Used', prop : 'used'},
@@ -30,6 +30,14 @@ export class VolumesListComponent {
     paging : true,
     sorting : {columns : this.columns},
   };
+
+  dataHandler(EntityTable:any) {
+    for (let i=0; i<EntityTable.rows.length; i++) {
+      if (!EntityTable.rows[i].path) {
+        EntityTable.rows[i].path = EntityTable.rows[i].name;
+      }
+    }
+  }
 
   rowValue(row, attr) {
     switch (attr) {

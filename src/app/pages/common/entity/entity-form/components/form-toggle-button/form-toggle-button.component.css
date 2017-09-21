@@ -1,0 +1,16 @@
+.toggle-button {
+	padding: 0.4375em 0;
+}
+
+.toggle-button-wrap {
+	display: flex;
+    flex-flow: row wrap;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    box-sizing: border-box;
+}
+
+.toggle-button-group {
+	padding-top: 10px;
+    padding-bottom: 10px;
+}

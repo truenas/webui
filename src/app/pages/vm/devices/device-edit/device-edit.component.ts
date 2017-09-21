@@ -80,7 +80,7 @@ export class DeviceEditComponent implements OnInit {
         {
           type : 'explorer',
           initial: '/mnt',
-          name : 'path',
+          name : 'CDROM_path',
           placeholder : 'CDROM Path',
         },
       ];
@@ -168,7 +168,7 @@ export class DeviceEditComponent implements OnInit {
           ],
         },
         {
-          name : 'sectorsize',
+          name : 'DISK_sectorsize',
           placeholder : 'Disk sectorsize',
           type: 'input',
         },
@@ -223,7 +223,7 @@ export class DeviceEditComponent implements OnInit {
     let disk_lookup_table: Object = {
       'path' : "DISK_zvol",
       'type' : "DISK_mode",
-      'sectorsize': "sectorsize",
+      'sectorsize': "DISK_sectorsize",
     };
     let cdrom_lookup_table: Object = {
       'path' : "CDROM_path",
@@ -279,7 +279,7 @@ export class DeviceEditComponent implements OnInit {
             break;
           };
           case 'CDROM': {
-            if (this.dtype === 'CDROM') { 
+            if (this.dtype === 'CDROM') {
             this.setgetValues(device.attributes, cdrom_lookup_table);
             break;
             }
@@ -374,8 +374,17 @@ export class DeviceEditComponent implements OnInit {
                                                 : device.attributes.port,
                 'vnc_resolution' : formvalue.VNC_resolution
                                         ? formvalue.VNC_resolution
-                                        : device.attributes.vnc_resolution
-              }
+                                        : device.attributes.vnc_resolution,
+                'vnc_bind' : formvalue.vnc_bind 
+                                      ? formvalue.vnc_bind
+                                      : device.attributes.vnc_bind,
+                'vnc_password' : formvalue.vnc_password 
+                                      ? formvalue.vnc_password
+                                      : device.attributes.vnc_password,
+                'vnc_web' : formvalue.vnc_web 
+                                      ? formvalue.vnc_web
+                                      : device.attributes.vnc_web,
+                }
             })
           }
           if (device.dtype === 'DISK') {

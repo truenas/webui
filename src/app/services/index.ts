@@ -11,3 +11,4 @@ export * from './tooltips.service';
 export * from './dialog.service';
 export * from './shell.service';
 export * from './storage.service';
+export * from './task.service';

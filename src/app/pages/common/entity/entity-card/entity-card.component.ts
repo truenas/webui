@@ -11,17 +11,18 @@ import 'rxjs/add/operator/map';
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
+import { WebSocketService } from '../../../../services/ws.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
-  selector: 'entity-table',
-  templateUrl: './entity-table.component.html',
-  styleUrls: ['./entity-table.component.css'],
+  selector: 'entity-card',
+  templateUrl: './entity-card.component.html',
+  styleUrls: ['./entity-card.component.css'],
   providers: [DialogService]
 })
-export class EntityTableComponent implements OnInit {
+export class EntityCardComponent implements OnInit {
 
   @Input('conf') conf: any;
 
@@ -40,7 +41,7 @@ export class EntityTableComponent implements OnInit {
   };
   protected loaderOpen: boolean = false;
 
-  constructor(protected rest: RestService, protected router: Router,
+  constructor(protected rest: RestService, protected ws: WebSocketService,  protected router: Router,
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) {}
 
   ngOnInit() {
@@ -51,6 +52,24 @@ export class EntityTableComponent implements OnInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+  }
+  toggle(row: any) {
+    
+    let rpc: string;
+
+    if (row[this.conf.toggleProp] !== this.conf.runnningState) {
+      rpc = this.conf.toggleStart;
+    } else {
+      rpc = this.conf.toggleStop;
+    }
+
+    this.busy = this.ws.call(rpc, [ row.id ]).subscribe((res) => {
+      if (res) {
+        row[this.conf.toggleProp]= 'RUNNING';
+      } else {
+        row[this.conf.toggleProp] = 'STOPPED';
+      }
+    });
   }
 
   getData() {
@@ -84,13 +103,6 @@ export class EntityTableComponent implements OnInit {
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
-        for (let i=0; i<this.rows.length; i++) {
-          for (let attr in this.rows[i]) {
-            if (this.rows[i].hasOwnProperty(attr)) {
-              this.rows[i][attr] = this.rowValue(this.rows[i], attr);
-            }
-          }
-        }
       });
   }
 
@@ -116,9 +128,9 @@ export class EntityTableComponent implements OnInit {
     return classes.join(' ');
   }
 
-  getActions(row) {
-    if (this.conf.getActions) {
-      return this.conf.getActions(row);
+  getCardActions(row) {
+    if (this.conf.getCardActions) {
+      return this.conf.getCardActions(row);
     } else {
       return [{
         id: "edit",

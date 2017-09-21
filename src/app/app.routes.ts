@@ -39,6 +39,11 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'System', breadcrumb: 'System'}
       },
       {
+        path: 'tasks',
+        loadChildren: './pages/task-calendar/task-calendar.module#TaskCalendarModule',
+        data: { title: 'Tasks', breadcrumb: 'Tasks'}
+      },
+      {
         path:'network',
         loadChildren: 'app/pages/network/network.module#NetworkModule',
         data: { title: 'Network', breadcrumb: 'Network' }

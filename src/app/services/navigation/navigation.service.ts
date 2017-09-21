@@ -60,13 +60,13 @@ export class NavigationService {
         {name: 'Support', state: 'support'},
       ]
     },
-//    {
-//      name: 'Tasks',
-//      type: 'link',
-//      tooltip: 'Tasks',
-//      icon: 'playlist_add_check',
-//      state: 'tasks'
-//    },
+    {
+     name: 'Tasks',
+     type: 'link',
+     tooltip: 'Tasks',
+     icon: 'date_range',
+     state: 'tasks'
+    },
     {
       name: 'Network',
       type: 'dropDown',
