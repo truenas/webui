@@ -23,6 +23,7 @@ import { FormExplorerComponent } from './entity-form/components/form-explorer/fo
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
+import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
@@ -63,6 +64,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     TooltipComponent,
     FormSliderComponent,
     FormToggleButtonComponent,
+    FormTaskComponent,
     FormArrayComponent,
     FormUploadComponent,
     EntityJobComponent,
@@ -94,7 +96,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormExplorerComponent,
     EntityJobComponent,
     FormSliderComponent,
-    FormToggleButtonComponent
+    FormToggleButtonComponent,
+    FormTaskComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
