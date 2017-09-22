@@ -1,9 +1,12 @@
-import {Component, OnInit, EventEmitter, Input, Output, OnDestroy} from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 import * as domHelper from '../../../helpers/dom.helper';
-import {RestService} from '../../../services';
-import {ThemeService} from '../../../services/theme/theme.service';
-import {WebSocketService} from '../../../services/ws.service';
-import {DialogService} from '../../../services/dialog.service';
+import { RestService } from '../../../services';
+import { ThemeService } from '../../../services/theme/theme.service';
+import { WebSocketService } from '../../../services/ws.service';
+import { DialogService } from '../../../services/dialog.service';
+import { TourService } from '../../../services/tour.service';
+import { MdSnackBar } from '@angular/material';
+import * as hopscotch from 'hopscotch';
 
 @Component({
   selector: 'topbar',
@@ -12,12 +15,12 @@ import {DialogService} from '../../../services/dialog.service';
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav;
   @Input() notificPanel;
-  @Output() onLangChange = new EventEmitter<any>(); 
+  @Output() onLangChange = new EventEmitter < any > ();
 
   notificationCount = 0;
   interval: any;
   useUpateTimerInterval = true; // Change to false to shut this off.... The thought is.. It updates while
-                                // the user is logged in.
+  // the user is logged in.
 
   currentLang = 'en';
   availableLangs = [{
@@ -26,34 +29,44 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }, {
     name: 'Spanish',
     code: 'es',
-  },{
+  }, {
     name: '中文',
     code: 'zh',
   }]
   freenasThemes;
 
-  constructor(private themeService: ThemeService, private rs: RestService, private ws: WebSocketService, private dialogService: DialogService) {}
+  constructor(
+    private themeService: ThemeService, 
+    private rs: RestService, 
+    private ws: WebSocketService, 
+    private dialogService: DialogService,
+    private tour: TourService,
+    public snackBar: MdSnackBar,) {}
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
 
     this.rs.get("system/alert", {}).subscribe((res) => {
       this.notificationCount = res.data.length;
     });
-     
-    if( this.useUpateTimerInterval === true ) {
-        this.interval = setInterval(() => {
-          this.rs.get("system/alert", {}).subscribe((res) => {
-            this.notificationCount = res.data.length;
-          });
-        }, 10000);
+
+    if (this.useUpateTimerInterval === true) {
+      this.interval = setInterval(() => {
+        this.rs.get("system/alert", {}).subscribe((res) => {
+          this.notificationCount = res.data.length;
+        });
+      }, 10000);
     }
 
   }
 
   ngOnDestroy() {
-    if( typeof(this.interval) !== 'undefined') {
+    if (typeof(this.interval) !== 'undefined') {
       clearInterval(this.interval);
     }
+  }
+
+  startTour() {
+    hopscotch.startTour(this.tour.tourSteps());
   }
 
   setLang() {
