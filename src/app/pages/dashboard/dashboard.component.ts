@@ -1,11 +1,14 @@
+import { PieFormatter } from '../../components/common/lineChart/lineChart.component';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
+import filesize from 'filesize';
 
 import {
   RestService,
   SystemGeneralService,
   WebSocketService
 } from '../../services/';
+
 
 @Component({
   selector: 'dashboard',
@@ -15,9 +18,14 @@ import {
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
 
+
   public info: any = {};
   public ipAddress: any = [];
-
+  public pieFormatter: PieFormatter = {
+    format(value, ratio, id) {
+      return filesize(value, {standard: "iec"});
+    }
+  };
   public graphs: any[] = [
     {
       title: "Average Load",
@@ -105,8 +113,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = res;
       }
     });
-    
-    
+
+
     // This invokes the element-resize-detector js library under node_modules
     // It listens to element level size change events (even when the global window
     // Doesn't Resize.)  This lets you even off of card and element and div level

@@ -8,6 +8,9 @@ import * as c3 from 'c3';
 import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.service';
 
 
+export interface PieFormatter {
+  format (value, ratio, id);
+}
 
 
 @Component({selector: 'line-chart', templateUrl: './lineChart.html'})
@@ -18,7 +21,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
   @Input() legends: any[];
   @Input() type: string;
   @Input() divideBy: number;
-
+  @Input() pieFormatter: PieFormatter;
   data: LineChartData = {
     labels: [],
     series: [],
@@ -26,11 +29,11 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
 
   controlUid: string;
 
- 
+
   constructor(private _lineChartService: LineChartService) {}
 
   handleDataFunc(linechartData: LineChartData) {
-    
+
     this.data.labels.splice(0, this.data.labels.length);
     this.data.series.splice(0, this.data.series.length);
 
@@ -52,7 +55,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
       }
       this.data.series.push(dataSeriesArray);
     });
-    
+
     const columns: any[][] = [];
 
     // xColumn
@@ -61,17 +64,17 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
     this.data.labels.forEach((label) => {
       xValues.push(label);
     });
-    
+
     columns.push(xValues);
-    
+
     // For C3.. Put the name of the series as the first element of each series array
-    for( let i = 0; i < this.legends.length && this.data.series.length; ++ i ) {
-        const legend: string = this.legends[i];
-        const series: any[] = this.data.series[i];
-        series.unshift(legend);
-        columns.push(series);
+    for (let i = 0; i < this.legends.length && this.data.series.length; ++i) {
+      const legend: string = this.legends[i];
+      const series: any[] = this.data.series[i];
+      series.unshift(legend);
+      columns.push(series);
     }
-    
+
     const chart = c3.generate({
       bindto: '#' + this.controlUid,
       data: {
@@ -96,22 +99,27 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
   }
 
   private setupPiechart() {
-    
+
     const chart = c3.generate({
       bindto: '#' + this.controlUid,
       data: {
         columns: this.series,
-        type : 'pie'
+        type: 'pie'
+      },
+      pie: {
+        label: {
+            format: this.pieFormatter.format
+        }
     }
-});
+    });
 
   }
-  
+
   ngOnInit() {
 
     this.controlUid = "chart_" + UUID.UUID();
   }
-  
+
   ngAfterViewInit() {
     if (this.type === 'Pie') {
       this.setupPiechart();
