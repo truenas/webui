@@ -1,8 +1,7 @@
 import 'style-loader!./lineChart.scss';
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import * as ChartistLegend from 'chartist-plugin-legend';
-import filesize from 'filesize';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 
@@ -12,7 +11,7 @@ import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.servi
 
 
 @Component({selector: 'line-chart', templateUrl: './lineChart.html'})
-export class LineChartComponent implements OnInit, HandleDataFunc {
+export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc {
 
   @Input() dataList: any[];
   @Input() series: any;
@@ -27,17 +26,7 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
 
   controlUid: string;
 
-  pieChartOptions: any =  {
-      showPoint: false,
-      showArea: true,
-      fullWidth: true,
-      fillHoles: true,
-      showLine: true,
-      plugins: []
-    };
-  ;
-  responsiveOptions = {};
-
+ 
   constructor(private _lineChartService: LineChartService) {}
 
   handleDataFunc(linechartData: LineChartData) {
@@ -107,21 +96,23 @@ export class LineChartComponent implements OnInit, HandleDataFunc {
   }
 
   private setupPiechart() {
-    this.pieChartOptions.labelInterpolationFnc = function(value, index) {
-      // FIXME, workaround to work with just size pie
-      return filesize(value, {standard: "iec"});
+    
+    const chart = c3.generate({
+      bindto: '#' + this.controlUid,
+      data: {
+        columns: this.series,
+        type : 'pie'
     }
-
-    if (this.series) {
-      this.series.forEach((i) => {this.data.series.push(i);});
-    }
+});
 
   }
-
+  
   ngOnInit() {
 
     this.controlUid = "chart_" + UUID.UUID();
-
+  }
+  
+  ngAfterViewInit() {
     if (this.type === 'Pie') {
       this.setupPiechart();
 

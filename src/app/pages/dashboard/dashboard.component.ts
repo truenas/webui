@@ -84,7 +84,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           type: 'Pie',
           legends: ['Available', 'Used'],
           dataList: [],
-          series: [vol.avail, vol.used],
+          series: [['Available', vol.avail], ['Used', vol.used]]
         });
       });
     });
