@@ -50,6 +50,9 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     if (this.active_tab.type == 'slider' && this.value) {
       this.value = '*/' + this.value;
     }
+    if (this.active_tab.type == 'togglebutton' && this.value) {
+      this.value = this.value.join();
+    }
     this.control.setValue(this.value);
   }
 }

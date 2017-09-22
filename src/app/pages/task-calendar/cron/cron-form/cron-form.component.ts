@@ -146,19 +146,19 @@ export class CronFormComponent {
     let cron_minute = _.find(this.fieldConfig, { 'name': 'cron_minute' });
     this.mintue_field = _.find(cron_minute.tabs, { 'name': 'cron_minute_togglebutton' });
     for (let i = 0; i < 60; i++) {
-      this.mintue_field.options.push({ label: i, value: i.toString() });
+      this.mintue_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
 
     let cron_hour = _.find(this.fieldConfig, { 'name': 'cron_hour' });
     this.hour_field = _.find(cron_hour.tabs, { 'name': 'cron_hour_togglebutton' });
     for (let i = 0; i < 24; i++) {
-      this.hour_field.options.push({ label: i, value: i.toString() });
+      this.hour_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
 
     let cron_daymonth = _.find(this.fieldConfig, { 'name': 'cron_daymonth' });
     this.daymonth_field = _.find(cron_daymonth.tabs, { 'name': 'cron_daymonth_togglebutton' });
     for (let i = 1; i < 32; i++) {
-      this.daymonth_field.options.push({ label: i, value: i.toString() });
+      this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
   }
 }
