@@ -6,11 +6,13 @@ import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MdSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
+import { TourService } from './services/tour.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [TourService]
 })
 export class AppComponent implements OnInit {
   appTitle = 'FreeNAS Material UI';
@@ -22,7 +24,8 @@ export class AppComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private routePartsService: RoutePartsService,
     public snackBar: MdSnackBar,
-    private rest: RestService) {}
+    private rest: RestService,
+    private tour: TourService) {}
     protected user: any;
 
   ngOnInit() {
@@ -32,62 +35,11 @@ export class AppComponent implements OnInit {
       let ShowTour = this.user.bsdusr_attributes.showTour;
       if (ShowTour) {
         setTimeout(() => {
-          hopscotch.startTour(this.tourSteps());
+          hopscotch.startTour(this.tour.tourSteps());
         }, 2000);
         this.user.bsdusr_attributes['showTour'] = false;
       }
     });
-  }
-
-  tourSteps(): any {
-    let self = this;
-    return {
-      id: 'hello-egret',
-      showPrevButton: true,
-      onEnd: function() {
-        self.snackBar.open('Awesome! Now let\'s explore FreeNAS\'s cool features.', 'close', { duration: 5000 });
-      },
-      onClose: function() {
-        self.snackBar.open('You just closed User Tour!', 'close', { duration: 3000 });
-      },
-      steps: [{
-          title: 'Sidebar Controls',
-          content: 'Control left sidebar\'s display style.',
-          target: 'sidenavToggle', // Element ID
-          placement: 'bottom',
-          xOffset: 10
-        },
-        {
-          title: 'Available Themes',
-          content: 'Choose a color scheme.',
-          target: 'schemeToggle', // Element ID
-          placement: 'left',
-          xOffset: 20
-        },
-        {
-          title: 'Language',
-          content: 'Choose your language.',
-          target: document.querySelector('.topbar .mat-select'),
-          placement: 'left',
-          xOffset: 10,
-          yOffset: -5
-        },
-        {
-          title: 'Users & Groups',
-          content: 'Setup Users and Groups.',
-          target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
-          placement: 'right',
-          yOffset: 50
-        },
-        {
-          title: 'Volumes & Snapshots',
-          content: 'Create a new Volume.',
-          target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
-          placement: 'right',
-          yOffset: 200
-        }
-      ]
-    }
   }
 
   getUserPreference() {
