@@ -29,9 +29,6 @@
   </div -->
   <span fxFlex></span>
   <!-- Language Switcher -->
-  <button md-icon-button (click)="startTour()">
-    <md-icon>flight_takeoff</md-icon>
-  </button>
   <md-select 
   placeholder=""
   name="currentLang"
@@ -67,6 +64,15 @@
       </md-grid-tile>
     </md-grid-list>
   </md-menu>
+  <button 
+  md-icon-button 
+  (click)="startTour()"
+  class="topbar-button-right"
+  mdTooltip="Guide Tour"
+  [style.overflow]="'visible'" 
+  >
+    <md-icon>flight_takeoff</md-icon>
+  </button>
   <!-- Notification toggle button -->
   <button 
   md-icon-button
