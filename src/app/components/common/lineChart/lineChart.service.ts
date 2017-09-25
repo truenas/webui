@@ -24,7 +24,11 @@ export interface DataListItem {
 
 
 /**
- * One Whole Charts worth of data
+ * One Whole Charts worth of data.
+ * Well.. All that's needed to query that data.
+ * series allows you to by-pass the whole query..
+ * and just set the data directly.  This is being done in the
+ * Main Dashboard regarding storage size.
  */
 export interface ChartConfigData {
   title: string;
