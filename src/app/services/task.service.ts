@@ -11,6 +11,8 @@ import { WebSocketService } from './ws.service';
 @Injectable()
 export class TaskService {
 
+  protected cronjobResource: string = 'tasks/cronjob';
+
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getMonthChoices() {
@@ -20,4 +22,8 @@ export class TaskService {
   getWeekdayChoices() {
     return this.ws.call('notifier.choices', ['WEEKDAYS_CHOICES', [true, false]]);
   };
+
+  listCronjob() {
+    return this.rest.get(this.cronjobResource, {});
+  }
 }
