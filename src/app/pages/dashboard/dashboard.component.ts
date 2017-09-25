@@ -8,6 +8,7 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../services/';
+import { ChartConfigData } from 'app/components/common/lineChart/lineChart.service';
 
 
 @Component({
@@ -26,10 +27,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       return filesize(value, {standard: "iec"});
     }
   };
-  public graphs: any[] = [
+  public graphs: ChartConfigData[] = [
     {
       title: "Average Load",
       legends: ['Short Term', ' Mid Term', 'Long Term'],
+      type: "line",
       dataList: [
         {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
         {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
@@ -38,6 +40,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     },
     {
       title: "Memory (gigabytes)",
+      type: "line",
       legends: ['Free', 'Active', 'Cache', 'Wired', 'Inactive'],
       dataList: [
         {'source': 'memory', 'type': 'memory-free', 'dataset': 'value'},
@@ -50,6 +53,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     },
     {
       title: "CPU Usage",
+      type: "line",
       legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
       dataList: [
         {
