@@ -14,6 +14,17 @@ export interface LineChartData {
 
 /**
  * For a given chart.. This is each line on the chart.
+ * 
+ * For Example
+ * 
+ *  {
+        'source': 'aggregation-cpu-sum',
+        'type': 'cpu-user',
+        'dataset': 'value'
+    }
+
+
+
  */
 export interface DataListItem {
   source: string;
@@ -35,7 +46,7 @@ export interface ChartConfigData {
   legends: string[];
   type: string;
   dataList: DataListItem[];
-  series?: any[][];
+  series?: any[][];  
   divideBy?: number;
 }
 
