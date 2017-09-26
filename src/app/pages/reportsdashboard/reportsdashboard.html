@@ -5,7 +5,7 @@
 	<md-card *ngFor="let chartConfigData of tabChartsMappingDataItem.chartConfigData">
 	  <md-card-title>{{ chartConfigData.title }}</md-card-title>
 	  <md-card-content>
-	      <line-chart *ngIf="allowChartsDisplay" [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
+	      <line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
 		</md-card-content>
 	</md-card>
 	</div>

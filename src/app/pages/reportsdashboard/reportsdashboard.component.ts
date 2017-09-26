@@ -25,7 +25,6 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
 
   public info: any = {};
   public ipAddress: any = [];
-  public allowChartsDisplay = true;
   public drawTabs = false;
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
@@ -161,11 +160,7 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
     const selectedTabName: string = $event.tab.textLabel;
     this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
 
-
-    this.allowChartsDisplay = false;
-    setTimeout(() => {this.allowChartsDisplay = true;}, -1);
-
-  }
+}
 
   private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
     let foundTabChartsMappingData: TabChartsMappingData = null;
