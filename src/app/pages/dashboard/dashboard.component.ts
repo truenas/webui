@@ -1,4 +1,4 @@
-import { PieFormatter } from '../../components/common/lineChart/lineChart.component';
+import { ChartFormatter } from '../../components/common/lineChart/lineChart.component';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
 import filesize from 'filesize';
@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   public info: any = {};
   public ipAddress: any = [];
-  public pieFormatter: PieFormatter = {
+  public chartFormatter: ChartFormatter = {
     format(value, ratio, id) {
       return filesize(value, {standard: "iec"});
     }

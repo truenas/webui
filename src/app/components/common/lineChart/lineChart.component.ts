@@ -8,7 +8,7 @@ import * as c3 from 'c3';
 import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.service';
 
 
-export interface PieFormatter {
+export interface ChartFormatter {
   format (value, ratio, id);
 }
 
@@ -21,7 +21,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
   @Input() legends: any[];
   @Input() type: string;
   @Input() divideBy: number;
-  @Input() pieFormatter: PieFormatter;
+  @Input() chartFormatter: ChartFormatter;
   data: LineChartData = {
     labels: [],
     series: [],
@@ -108,7 +108,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
       },
       pie: {
         label: {
-            format: this.pieFormatter.format
+            format: this.chartFormatter.format
         }
     }
     });
