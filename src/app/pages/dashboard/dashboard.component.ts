@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     {
       title: "Average Load",
       legends: ['Short Term', ' Mid Term', 'Long Term'],
-      type: "line",
+      type: LineChartService.lineChart,
       dataList: [
         {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
         {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     },
     {
       title: "Memory (gigabytes)",
-      type: "line",
+      type: LineChartService.lineChart,
       legends: ['Free', 'Active', 'Cache', 'Wired', 'Inactive'],
       dataList: [
         {'source': 'memory', 'type': 'memory-free', 'dataset': 'value'},
@@ -53,7 +53,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     },
     {
       title: "CPU Usage",
-      type: "line",
+      type: LineChartService.lineChart,
       legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
       dataList: [
         {
