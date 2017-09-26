@@ -60,6 +60,8 @@ export interface HandleChartConfigDataFunc {
 
 @Injectable()
 export class LineChartService {
+  public static lineChart = LineChartService.lineChart;
+  public static pieChart = "Pie";
 
   private cacheConfigData: ChartConfigData[] = [];
 
@@ -191,7 +193,7 @@ export class LineChartService {
       if (prop.startsWith("disk-")) {
         configData.push({
           title: prop + " (disk_time)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_time', dataset: 'read'},
           {source: prop, type: 'disk_time', dataset: 'write'}]
@@ -199,14 +201,14 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (disk_io_time)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_io_time', dataset: 'io_time'}]
         });
 
         configData.push({
           title: prop + " (disk_ops)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
           {source: prop, type: 'disk_ops', dataset: 'write'}]
@@ -214,7 +216,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (disk_octets)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["read", "write"],
           dataList: [{source: prop, type: 'disk_octets', dataset: 'read'},
           {source: prop, type: 'disk_octets', dataset: 'write'}]
@@ -223,7 +225,7 @@ export class LineChartService {
       } else if (prop.startsWith("interface-")) {
         configData.push({
           title: prop + " (if_errors)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_errors', dataset: 'rx'},
           {source: prop, type: 'if_errors', dataset: 'tx'}]
@@ -231,7 +233,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (if_octets)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_octets', dataset: 'rx'},
           {source: prop, type: 'if_octets', dataset: 'tx'}]
@@ -239,7 +241,7 @@ export class LineChartService {
 
         configData.push({
           title: prop + " (if_packets)",
-          type: "line",
+          type: LineChartService.lineChart,
           legends: ["rx", "tx"],
           dataList: [{source: prop, type: 'if_packets', dataset: 'rx'},
           {source: prop, type: 'if_packets', dataset: 'tx'}]
@@ -277,7 +279,7 @@ export class LineChartService {
         
         configData.push({
           title: title,
-          type: "line",
+          type: LineChartService.lineChart,
           legends: propObjArray,
           dataList: dataListItemArray,
           divideBy: divideBy
@@ -299,7 +301,7 @@ export class LineChartService {
       {
         title: "CPU",
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
-        type: "line",
+        type: LineChartService.lineChart,
         dataList: [
           {
             'source': 'aggregation-cpu-sum',
@@ -329,7 +331,7 @@ export class LineChartService {
         ],
       }, {
         title: "Load",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Short Term', ' Mid Term', 'Long Term'],
         dataList: [
           {source: 'load', type: 'load', dataset: 'shortterm'},
@@ -338,14 +340,14 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Arc Size",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Arc Size'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'}
         ],
       }, {
         title: "ZFS Arc Hit Ratio",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Arc', 'L2'],
         dataList: [
           {source: 'zfs_arc', type: 'cache_ratio-arc', dataset: 'value'},
@@ -353,7 +355,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Demand Data",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_data-hit', dataset: 'value'},
@@ -361,7 +363,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Demand Metadata",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_metadata-hit', dataset: 'value'},
@@ -369,7 +371,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Prefetch Data",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_data-hit', dataset: 'value'},
@@ -377,7 +379,7 @@ export class LineChartService {
         ],
       }, {
         title: "ZFS Prefetch Metadata",
-        type: "line",
+        type: LineChartService.lineChart,
         legends: ['Hits', 'Miss',],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-hit', dataset: 'value'},

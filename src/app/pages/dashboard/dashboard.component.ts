@@ -8,7 +8,7 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../services/';
-import { ChartConfigData } from 'app/components/common/lineChart/lineChart.service';
+import { ChartConfigData, LineChartService } from 'app/components/common/lineChart/lineChart.service';
 
 
 @Component({
@@ -93,7 +93,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       res.data.forEach((vol) => {
         this.graphs.splice(0, 0, {
           title: vol.vol_name + " Volume Usage",
-          type: 'Pie',
+          type: LineChartService.pieChart,
           legends: ['Available', 'Used'],
           dataList: [],
           series: [['Available', vol.avail], ['Used', vol.used]]
