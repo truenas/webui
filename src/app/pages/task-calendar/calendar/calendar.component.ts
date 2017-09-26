@@ -136,7 +136,7 @@ export class TaskCalendarComponent implements OnInit {
   }
 
   addTask(name) {
-    this.router.navigate(new Array('/tasks/add/').concat(name));
+    this.router.navigate(new Array('/tasks/').concat(name).concat('add'));
   }
 
   generateEvent(job) {

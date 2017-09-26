@@ -13,19 +13,15 @@ export const TaskCalendarRoutes: Routes = [{
     data: { title: 'Calendar', breadcrumb: 'Calendar' }
   }, {
     path: 'cron',
-    component: CronListComponent,
-    data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs'}
-  }, {
-    path: 'add',
-    data: { title: 'Add', breadcrumb: 'Add' },
+    data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
     children: [{
-      path: 'cron',
+      path: '',
+      component: CronListComponent,
+      data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
+    }, {
+      path: 'add',
       component: CronFormComponent,
-      data: { title: 'Cron Job', breadcrumb: 'Cron Job' },
+      data: { title: 'Add', breadcrumb: 'Add' }
     }]
-  }, {
-    path: 'edit/:pk',
-    component: CronFormComponent,
-    data: { title: 'Edit', breadcrumb: 'Edit' },
   }]
 }];

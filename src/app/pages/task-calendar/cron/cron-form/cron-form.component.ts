@@ -17,7 +17,7 @@ import { FormGroup } from '@angular/forms';
 export class CronFormComponent {
 
   protected resource_name: string = 'tasks/cronjob';
-  protected route_success: string[] = ['tasks'];
+  protected route_success: string[] = ['tasks', 'cron'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
 
