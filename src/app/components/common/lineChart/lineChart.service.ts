@@ -60,7 +60,7 @@ export interface HandleChartConfigDataFunc {
 
 @Injectable()
 export class LineChartService {
-  public static lineChart = LineChartService.lineChart;
+  public static lineChart = "Line";
   public static pieChart = "Pie";
 
   private cacheConfigData: ChartConfigData[] = [];
