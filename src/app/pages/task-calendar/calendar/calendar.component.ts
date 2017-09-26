@@ -14,7 +14,7 @@ import {
   addHours
 } from 'date-fns';
 import { Router } from '@angular/router';
-import { TaskService } from '../../services/task.service';
+import { TaskService } from '../../../services/task.service';
 import * as _ from 'lodash';
 
 interface Task {
@@ -27,7 +27,7 @@ interface Task {
 
 @Component({
   selector: 'task-calendar',
-  templateUrl: './task-calendar.component.html',
+  templateUrl: './calendar.component.html',
   providers: [TaskService]
 })
 export class TaskCalendarComponent implements OnInit {
