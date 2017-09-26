@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
 
@@ -7,11 +7,13 @@ import {
   SystemGeneralService,
   WebSocketService
 } from '../../services/';
+import { PageEvent } from '@angular/material';
 
 
 interface TabChartsMappingData {
   keyName: string;
   chartConfigData: ChartConfigData[];
+  paginatedChartConfigData: ChartConfigData[]
 }
 
 @Component({
@@ -20,21 +22,52 @@ interface TabChartsMappingData {
   templateUrl: './reportsdashboard.html',
   providers: [SystemGeneralService]
 })
-export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataFunc, AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChartConfigDataFunc, AfterViewInit {
 
 
+   // MdPaginator Inputs
+   paginationLength = 0;
+   paginationPageSize = 5;
+   paginationPageSizeOptions = [5, 10, 20];
+   paginationPageIndex = 0;
+   paginationPageEvent: PageEvent;
+   
+   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
+     this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
+   }
+
+   
   public info: any = {};
   public ipAddress: any = [];
   public drawTabs = false;
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
-
+  
   private erd: any = null;
 
   constructor(private _lineChartService: LineChartService) {
+    
   }
 
-  ngOnInit() {
+  private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
+    let paginationChartData: ChartConfigData[] = new Array();
+    tabChartsMappingDataSelected.chartConfigData.forEach((item)=>{paginationChartData.push(item)});
+
+    const beginIndex = this.paginationPageIndex * this.paginationPageSize;
+    const endIndex = beginIndex + this.paginationPageSize ;
+    if( beginIndex < paginationChartData.length && endIndex > paginationChartData.length ) {
+      paginationChartData = paginationChartData.slice(beginIndex, paginationChartData.length);
+    } else if( endIndex < paginationChartData.length ) {
+      paginationChartData = paginationChartData.slice(beginIndex, endIndex);
+    }
+
+    tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData;
+
+
+    this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
+  }
+
+  ngOnInit() { 
     this._lineChartService.getChartConfigData(this);
 
     // This invokes the element-resize-detector js library under node_modules
@@ -47,6 +80,9 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
 
    
 
+  }
+
+  ngOnDestroy() {
   }
 
   ngAfterViewInit(): void {
@@ -65,43 +101,52 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
     map.set("CPU", {
       keyName: "CPU",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
+
     });
 
     map.set("Disk", {
       keyName: "Disk",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
     map.set("Memory", {
       keyName: "Memory",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
     map.set("Network", {
       keyName: "Network",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
 
     map.set("Partition", {
       keyName: "Partition",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
     map.set("System", {
       keyName: "System",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
     map.set("Target", {
       keyName: "Target",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
     map.set("ZFS", {
       keyName: "ZFS",
-      chartConfigData: []
+      chartConfigData: [],
+      paginatedChartConfigData: []
     });
 
     // Go through all the items.. Sticking each source in the appropraite bucket
@@ -148,9 +193,11 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
 
       if (this.tabChartsMappingDataSelected === undefined) {
         this.tabChartsMappingDataSelected = value;
+        this.setPaginationInfo( this.tabChartsMappingDataSelected );
       }
       this.tabChartsMappingDataArray.push(value);
     });
+    
 
     this.drawTabs = true;
 
@@ -159,8 +206,20 @@ export class ReportsDashboardComponent implements OnInit, HandleChartConfigDataF
   tabSelectChangeHandler($event) {
     const selectedTabName: string = $event.tab.textLabel;
     this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
+    this.paginationPageIndex = 0;
+    this.paginationPageSize = 5;
+   this.setPaginationInfo( this.tabChartsMappingDataSelected );
+    
+  }
+  
+  paginationUpdate($pageEvent: PageEvent) {
+    this.paginationPageEvent = $pageEvent;
+    this.paginationPageIndex = this.paginationPageEvent.pageIndex;
+    this.paginationPageSize = this.paginationPageEvent.pageSize;
+    this.setPaginationInfo( this.tabChartsMappingDataSelected );
+  }
 
-}
+
 
   private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
     let foundTabChartsMappingData: TabChartsMappingData = null;

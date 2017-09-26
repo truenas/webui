@@ -81,8 +81,12 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
     // For C3.. Put the name of the series as the first element of each series array
     for (let i = 0; i < this.legends.length && this.data.series.length; ++i) {
       const legend: string = this.legends[i];
-      const series: any[] = this.data.series[i];
-      series.unshift(legend);
+      let series: any[] = this.data.series[i];
+      if( typeof(series) !== 'undefined' && series.length > 0 ) {
+        series.unshift(legend);
+      } else {
+        series = [legend];
+      }
       columns.push(series);
     }
 

@@ -1,19 +1,28 @@
 <div id="dashboardcontainerdiv">
-<md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-  <md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray"  label="{{ tabChartsMappingDataItem.keyName }}" >
-	<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName" >
-	<md-card *ngFor="let chartConfigData of tabChartsMappingDataItem.chartConfigData">
-	  <md-card-title>{{ chartConfigData.title }}</md-card-title>
-	  <md-card-content>
-	      <line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
-		</md-card-content>
-	</md-card>
-	</div>
-   </md-tab>
-</md-tab-group> 
+	<md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
+		<md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName }}">
+			<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+				<md-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+					<md-card-title>{{ chartConfigData.title }}</md-card-title>
+					<md-card-content>
+						<line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
+					</md-card-content>
+				</md-card>
 
-<!-- Silly but stops the footer from scrunching up into my action. -->
-<div style="padding-bottom: 20px;"></div>
+				<div class="give_me_space_bottom">
+					<br/>
+				</div>
+
+				<div *ngIf="paginationLength > paginationPageSize">
+					<md-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
+					</md-paginator>
+				</div>
+			</div>
+		</md-tab>
+	</md-tab-group>
+
+	<!-- Silly but stops the footer from scrunching up into my action. -->
+	<div class="give_me_space_bottom"></div>
 
 
 </div>
