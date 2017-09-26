@@ -10,11 +10,12 @@ import {
  } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule } from 'angular-calendar';
-import { TaskCalendarComponent } from './task-calendar.component';
+import { TaskCalendarComponent } from './calendar/calendar.component';
 import { TaskCalendarRoutes } from "./task-calendar.routing";
 import { EntityModule } from '../common/entity/entity.module';
 
 import { CronFormComponent } from './cron/cron-form/cron-form.component';
+import { CronListComponent } from './cron/cron-list/cron-list.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { CronFormComponent } from './cron/cron-form/cron-form.component';
   ],
   declarations: [
     TaskCalendarComponent,
-    CronFormComponent
+    CronFormComponent,
+    CronListComponent
   ]
 })
 export class TaskCalendarModule { }

@@ -62,10 +62,14 @@ export class NavigationService {
     },
     {
      name: 'Tasks',
-     type: 'link',
+     type: 'dropDown',
      tooltip: 'Tasks',
      icon: 'date_range',
-     state: 'tasks'
+     state: 'tasks',
+     sub: [
+       {name: 'Calendar', state: 'calendar'},
+       {name: 'Cron Jobs', state: 'cron'}
+     ]
     },
     {
       name: 'Network',
