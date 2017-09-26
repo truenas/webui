@@ -5,7 +5,7 @@ import * as ChartistLegend from 'chartist-plugin-legend';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
 
-import {LineChartService, HandleDataFunc, LineChartData} from './lineChart.service';
+import { LineChartService, HandleDataFunc, LineChartData, DataListItem } from './lineChart.service';
 
 
 export interface ChartFormatter {
@@ -16,9 +16,9 @@ export interface ChartFormatter {
 @Component({selector: 'line-chart', templateUrl: './lineChart.html'})
 export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc {
 
-  @Input() dataList: any[];
-  @Input() series: any;
-  @Input() legends: any[];
+  @Input() dataList: DataListItem[];
+  @Input() series: any[][];
+  @Input() legends: string[];
   @Input() type: string;
   @Input() divideBy: number;
   @Input() chartFormatter: ChartFormatter;
