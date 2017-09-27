@@ -14,6 +14,9 @@ import {
 } from '@angular/forms';
 import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
+  matchOtherValidator
+} from '../../common/entity/entity-form/validators/password-validation';
+import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 import {Tooltip} from '../../common/tooltip';
@@ -30,6 +33,7 @@ export class IPMIComponent {
 
   protected resource_name: string = '';
   public formGroup: FormGroup;
+  protected route_success: string[] = ['network', 'ipmi'];
   public fieldConfig: FieldConfig[] = [
     {
       type: 'select',
@@ -48,6 +52,7 @@ export class IPMIComponent {
       name : 'conf_password',
       inputType: 'password',
       placeholder : 'Password Conformation',
+      validation : [ matchOtherValidator('password') ]
     },
     {
       type : 'checkbox',
