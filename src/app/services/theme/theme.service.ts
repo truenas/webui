@@ -20,8 +20,13 @@ export class ThemeService {
   }, {
     name: 'egret-indigo',
     baseColor: '#3f51b5',
-    isActive: true,
+    isActive: false,
     hasDarkLogo: false
+    }, {
+    name: 'ix-blue',
+    baseColor: '#0095D5',
+    isActive: true,
+    hasDarkLogo: true
   }, {
     name: 'freenas-warriors',
     baseColor: '#fdb927',
