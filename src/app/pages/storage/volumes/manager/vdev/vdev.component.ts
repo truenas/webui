@@ -7,8 +7,6 @@ import {
   ViewChild
 } from '@angular/core';
 
-import {DiskComponent} from '../disk/';
-
 @Component({
   selector : 'app-vdev',
   templateUrl : 'vdev.component.html',
@@ -21,19 +19,41 @@ export class VdevComponent implements OnInit {
   @ViewChild('dnd') dnd;
   public type: string = 'stripe';
   public removable: boolean = true;
-  private diskComponents: Array<DiskComponent> = [];
+  public disks: Array<any> = [];
+  public selected: Array < any > = [];
 
   constructor(public elementRef: ElementRef) {}
 
   ngOnInit() {}
 
-  addDisk(disk: DiskComponent) { this.diskComponents.push(disk); }
+  addDisk(disk: any) { this.disks.push(disk); }
 
-  removeDisk(disk: DiskComponent) {
-    this.diskComponents.splice(this.diskComponents.indexOf(disk), 1);
+  removeDisk(disk: any) {
+    this.disks.splice(this.disks.indexOf(disk), 1);
   }
 
-  getDisks() { return this.diskComponents; }
+  onSelect({ selected }) {
+    this.selected.splice(0, this.selected.length);
+    this.selected.push(...selected);
+  }
+
+  removeSelectedDisks() {
+    for (let i = 0; i < this.selected.length; i++) {
+      this.manager.addDisk(this.selected[i]);
+      this.removeDisk(this.selected[i]);
+    }
+    this.selected = [];
+  }
+
+  addSelectedDisks() {
+    for (let i = 0; i < this.manager.selected.length; i++) {
+      this.addDisk(this.manager.selected[i]);
+      this.manager.removeDisk(this.manager.selected[i]);
+    }
+    this.manager.selected = [];
+  }
+
+  getDisks() { return this.disks; }
 
   onTypeChange(e) { console.log(e, this.group); }
 

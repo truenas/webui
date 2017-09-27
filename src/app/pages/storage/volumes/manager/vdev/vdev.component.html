@@ -1,16 +1,44 @@
 <md-card>
-    <div [dragula]='"pool-vdev"' #dnd [style.minHeight]="'100px'" [style.width]="'100%'">
-    </div>
+    <!--div [dragula]='"pool-vdev"' #dnd [style.minHeight]="'100px'" [style.width]="'100%'">
+    </div-->
     <div class="row">
+        <ngx-datatable
+           #table
+           class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow" 
+           [rows]="getDisks()" 
+           [headerHeight]="50" 
+           [rowHeight]="50"
+           [footerHeight]="50" 
+           [columnMode]="'force'" 
+           [limit]="10"
+           [selected] = "selected"
+           [selectionType]="'checkbox'"
+           (select)='onSelect($event)'>
+           <ngx-datatable-column
+             [width]="30"
+             [sortable]="false"
+             [canAutoResize]="false"
+             [draggable]="false"
+             [resizeable]="false"
+             [headerCheckboxable]="true"
+             [checkboxable]="true">
+           </ngx-datatable-column>
+           <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
+           <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
+        </ngx-datatable>
         <div class="col-md-11">
-            <select [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
-        <option value="stripe">Stripe</option>
-        <option value="mirror" *ngIf="getDisks().length >= 2">Mirror</option>
-        <option value="raidz1" *ngIf="getDisks().length >= 3">Raid-z</option>
-        <option value="raidz2" *ngIf="getDisks().length >= 4">Raid-z2</option>
-        <option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</option>
-      </select>
+            <md-select [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
+                <md-option value="stripe">Stripe</md-option>
+                <md-option value="mirror" *ngIf="getDisks().length >= 2">Mirror</md-option>
+                <md-option value="raidz1" *ngIf="getDisks().length >= 3">Raid-z</md-option>
+                <md-option value="raidz2" *ngIf="getDisks().length >= 4">Raid-z2</md-option>
+                <md-option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</md-option>
+            </md-select>
         </div>
-        <div class="col-md-1" style="text-align: right"><button class="btn" *ngIf="removable" (click)="remove()">X</button></div>
+        <div class="col-md-1" style="text-align: right">
+                <button md-raised-button class="btn btn-accent" (click)="addSelectedDisks()">Add disks</button>
+                <button md-raised-button class="btn btn-accent" (click)="removeSelectedDisks()">Remove disks</button>
+                <button md-raised-button class="btn" *ngIf="removable" (click)="remove()">X</button>
+        </div>
     </div>
 </md-card>

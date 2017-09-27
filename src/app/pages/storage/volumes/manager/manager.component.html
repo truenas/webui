@@ -15,11 +15,39 @@
   <div class="col-md-3">
     <md-card>
       <md-card-title>Disks</md-card-title>
-        <div class="md-content">
-      <p>Drag and drop disks to disks groups</p>
-      <div #disksdnd [dragula]='"pool-vdev"' [style.minHeight]="'200px'" [style.width]="'200px'">
-        <app-disk *ngFor="let disk of disks" [data]="disk"></app-disk>
-      </div>
+      <div class="md-content">
+        <md-input-container>
+          <input mdInput
+            type='text'
+            placeholder='Filter disks'
+            (keyup)='updateFilter($event)'
+          />
+        </md-input-container>
+        <md-error *ngIf="re_has_errors">{{re_errors}}</md-error>
+        <ngx-datatable
+          #table
+          class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow" 
+          [rows]="disks" 
+          [headerHeight]="50" 
+          [rowHeight]="50"
+          [footerHeight]="50" 
+          [columnMode]="'force'" 
+          [limit]="10"
+          [selected] = "selected"
+          [selectionType]="'checkbox'"
+          (select)='onSelect($event)'>
+          <ngx-datatable-column
+            [width]="30"
+            [sortable]="false"
+            [canAutoResize]="false"
+            [draggable]="false"
+            [resizeable]="false"
+            [headerCheckboxable]="true"
+            [checkboxable]="true">
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
+          <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
+        </ngx-datatable>
       </div>
     </md-card>
   </div>

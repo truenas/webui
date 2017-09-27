@@ -4,6 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {DragulaModule} from 'ng2-dragula';
 import { MaterialModule, MdTableModule, MdCardModule } from '@angular/material';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {EntityModule} from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
@@ -30,7 +31,8 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
 @NgModule({
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, routing, MaterialModule, MdTableModule, MdCardModule
+    ReactiveFormsModule, routing, MaterialModule, MdTableModule, MdCardModule,
+    NgxDatatableModule
   ],
   declarations : [
     VolumesListComponent,

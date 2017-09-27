@@ -9,12 +9,15 @@ import {
 import { Router } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
+import filesize from 'filesize';
 
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
 import { MdSnackBar } from '@angular/material';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
+
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 
@@ -31,7 +34,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 })
 export class ManagerComponent implements OnInit, OnDestroy {
 
-  public disks: Array < any > ;
+  public disks: Array < any > = [];
+  public selected: Array < any > = [];
   public vdevs:
     any = { data: [{}], cache: [{}], spare: [{}], log: [{}] };
   public error: string;
@@ -39,9 +43,14 @@ export class ManagerComponent implements OnInit, OnDestroy {
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
 
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+  public temp = [];
+  
   public name: string;
   public vol_encrypt: number = 0;
   public isEncrypted: boolean = false;
+  public re_errors = "";
+  public re_has_errors = false;
 
   public busy: Subscription;
 
@@ -83,8 +92,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
       this.disks = [];
       for (let i in res) {
+        res[i]['capacity'] = filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
+      this.temp = [...this.disks];
     });
   }
 
@@ -117,7 +128,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
     let layout = [];
     this.vdevComponents.forEach((vdev) => {
       let disks = [];
-      vdev.getDisks().forEach((disk) => { disks.push(disk.data.devname); });
+      vdev.getDisks().forEach((disk) => { 
+        disks.push(disk.devname); });
       if (disks.length > 0) {
         layout.push({ vdevtype: vdev.type, disks: disks });
       }
@@ -170,5 +182,46 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   isEncryptedChecked() {
     this.openDialog();
+  }
+
+  addDisk(disk: any) {
+     this.disks.push(disk);
+     this.temp.push(disk);
+  }
+  
+  removeDisk(disk: any) {
+    this.disks.splice(this.disks.indexOf(disk), 1);
+    this.temp.splice(this.temp.indexOf(disk), 1);
+  }
+
+  onSelect({ selected }) {
+    this.selected.splice(0, this.selected.length);
+    this.selected.push(...selected);
+  }
+
+  updateFilter(event) {
+    const val = event.target.value.toLowerCase();
+    let temp = this.temp;
+    let re;
+    try {
+      re = new RegExp(val);
+    } catch(e) {
+      this.re_errors = "Invalid regex filter";
+      this.re_has_errors = true;
+    }
+
+    // filter our data
+    if (re) {
+      this.re_has_errors = false;
+      const temp = this.temp.filter(function(d) {
+        return re.test(d.devname.toLowerCase());
+      });
+
+      // update the rows
+      this.disks = temp;
+
+      // Whenever the filter changes, always go back to the first page
+      this.table.offset = 0;
+    }
   }
 }
