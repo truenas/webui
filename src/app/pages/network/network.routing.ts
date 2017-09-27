@@ -10,6 +10,7 @@ import {InterfacesListComponent} from './interfaces/interfaces-list/';
 import {ConfigurationComponent} from './configuration/';
 import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
+import {IPMIComponent} from './ipmi/'
 
 export const routes: Routes = [
   {
@@ -18,7 +19,10 @@ export const routes: Routes = [
     children: [
       {
         path : 'configuration', component : ConfigurationComponent,
-        data: {title: 'Configuration', breadcrumb:'Configuration' }}, 
+        data: {title: 'Configuration', breadcrumb:'Configuration' }},
+        {
+          path : 'ipmi', component : IPMIComponent,
+          data: {title: 'IPMI', breadcrumb:'IPMI' }}, 
       {
         path : 'interfaces',
         data: {title: 'Interfaces', breadcrumb:'Interfaces' },

@@ -76,7 +76,7 @@ export class NavigationService {
       sub: [
         {name: 'Global Configuration', state: 'configuration'},
         {name: 'Interfaces', state: 'interfaces'},
-//        {name: 'IPMI', state: 'ipmi'},
+       {name: 'IPMI', state: 'ipmi'},
         {name: 'Link Aggregation', state: 'laggs'},
 //        {name: 'Network Summary', state: 'networksummary'},
         {name: 'Static Routes', state: 'staticroutes'},

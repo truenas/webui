@@ -15,6 +15,7 @@ import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
 import {InterfacesFormComponent} from './interfaces/interfaces-form/';
 import {InterfacesListComponent} from './interfaces/interfaces-list/';
 import {ConfigurationComponent} from './configuration/';
+import {IPMIComponent} from './ipmi'
 import {routing} from './network.routing';
 
 @NgModule({
@@ -32,6 +33,7 @@ import {routing} from './network.routing';
     InterfacesListComponent,
     InterfacesFormComponent,
     ConfigurationComponent,
+    IPMIComponent,
   ],
   providers : [NetworkService]
 })
