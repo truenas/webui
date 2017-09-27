@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnInit, Input} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -21,6 +21,7 @@ import {
 } from '../../common/entity/entity-form/models/field-config.interface';
 import {Tooltip} from '../../common/tooltip';
 import {TOOLTIPS} from '../../common/tooltips';
+import {EntityUtils} from '../../common/entity/utils';
 
 @Component({
   selector : 'app-ipmi',
@@ -30,10 +31,12 @@ import {TOOLTIPS} from '../../common/tooltips';
   providers : [ TooltipsService ],
 })
 export class IPMIComponent {
+  @Input('conf') conf: any;
 
   protected resource_name: string = '';
   public formGroup: FormGroup;
   protected route_success: string[] = ['network', 'ipmi'];
+  public busy: Subscription;
   public fieldConfig: FieldConfig[] = [
     {
       type: 'select',
@@ -105,6 +108,7 @@ export class IPMIComponent {
   }
 
   afterInit(entityEdit: any) {
+    entityEdit.submitFunction = this.submitFunction;
     
     this.ws.call('ipmi.query', []).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
@@ -116,6 +120,19 @@ export class IPMIComponent {
         entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan)
       }
     });
+
     
+    }
+    submitFunction({}){
+      let payload = {}
+      let formvalue = _.cloneDeep(this.formGroup.value);
+      payload['password'] = formvalue.password;
+      payload['dhcp'] = formvalue.dhcp;
+      payload['gateway'] = formvalue.gateway;
+      payload['ipaddress'] = formvalue.ipaddress;
+      payload['netmask'] = formvalue.netmask;
+      payload['vlan'] = formvalue.vlan;
+      return this.ws.call('ipmi.update', [ formvalue.channel, payload ]);
+      
     }
 }
