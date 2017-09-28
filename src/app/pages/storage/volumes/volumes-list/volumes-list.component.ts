@@ -1,14 +1,14 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
+import { RestService } from '../../../../services/';
+import { TourService } from '../../../../services/tour.service';
 import filesize from 'filesize';
-
-import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-volumes-list',
   template : `<entity-table [conf]="this"></entity-table>`
 })
-export class VolumesListComponent {
+export class VolumesListComponent implements OnInit {
 
   protected resource_name: string = 'storage/volume/';
   protected route_add: string[] = [ 'storage', 'volumes', 'manager' ];
@@ -17,7 +17,8 @@ export class VolumesListComponent {
   constructor(
     protected _rest: RestService, 
     private _router: Router,
-    protected _eRef: ElementRef
+    protected _eRef: ElementRef,
+    private tour: TourService
   ) {}
 
   public columns: Array<any> = [
@@ -30,6 +31,14 @@ export class VolumesListComponent {
     paging : true,
     sorting : {columns : this.columns},
   };
+
+  ngOnInit() {
+    let showTour = localStorage.getItem(this._router.url) || 'false';
+    if (showTour != "true") {
+      hopscotch.startTour(this.tour.startTour(this._router.url));
+      localStorage.setItem(this._router.url, 'true');
+    }
+  }
 
   dataHandler(EntityTable:any) {
     for (let i=0; i<EntityTable.rows.length; i++) {
