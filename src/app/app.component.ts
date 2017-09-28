@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
       let ShowTour = this.user.bsdusr_attributes.showTour;
       if (ShowTour) {
         setTimeout(() => {
-          hopscotch.startTour(this.tour.tourSteps());
+          hopscotch.startTour(this.tour.startTour(this.router.url));
         }, 2000);
         this.user.bsdusr_attributes['showTour'] = false;
       }
