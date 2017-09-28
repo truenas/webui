@@ -1,4 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { RestService } from '../../../services';
 import { ThemeService } from '../../../services/theme/theme.service';
@@ -37,6 +38,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private themeService: ThemeService, 
+    private router: Router,
+    private activeRoute: ActivatedRoute,
     private rs: RestService, 
     private ws: WebSocketService, 
     private dialogService: DialogService,
@@ -57,6 +60,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }, 10000);
     }
 
+    let showTour = localStorage.getItem(this.router.url) || 'false';
+    if (showTour != "true") {
+      hopscotch.startTour(this.tour.startTour(this.router.url));
+      localStorage.setItem(this.router.url, 'true');
+    }
+
   }
 
   ngOnDestroy() {
@@ -66,7 +75,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   startTour() {
-    hopscotch.startTour(this.tour.tourSteps());
+    hopscotch.startTour(this.tour.startTour(this.router.url));
+    localStorage.setItem(this.router.url, 'false');
   }
 
   setLang() {
