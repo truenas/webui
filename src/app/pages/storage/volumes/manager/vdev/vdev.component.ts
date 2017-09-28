@@ -14,6 +14,7 @@ import {
 })
 export class VdevComponent implements OnInit {
 
+  @Input() index: any;
   @Input() group: string;
   @Input() manager: any;
   @ViewChild('dnd') dnd;
@@ -21,10 +22,16 @@ export class VdevComponent implements OnInit {
   public removable: boolean = true;
   public disks: Array<any> = [];
   public selected: Array < any > = [];
+  public id: number;
 
   constructor(public elementRef: ElementRef) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
+
+  getTitle() {
+    return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
+  }
 
   addDisk(disk: any) { this.disks.push(disk); }
 
