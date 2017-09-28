@@ -18,7 +18,7 @@ export class VdevComponent implements OnInit {
   @Input() group: string;
   @Input() manager: any;
   @ViewChild('dnd') dnd;
-  public type: string = 'stripe';
+  public type: string;
   public removable: boolean = true;
   public disks: Array<any> = [];
   public selected: Array < any > = [];
@@ -27,6 +27,11 @@ export class VdevComponent implements OnInit {
   constructor(public elementRef: ElementRef) {}
 
   ngOnInit() {
+    if (this.group === 'data') {
+      this.type = 'stripe';
+    } else {
+      this.type = this.group;
+    }
   }
 
   getTitle() {

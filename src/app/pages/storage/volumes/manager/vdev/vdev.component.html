@@ -28,10 +28,10 @@
            <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
         </ngx-datatable>
         <div class="col-md-11">
-            <md-select [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
+            <md-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
                 <md-option value="stripe">Stripe</md-option>
                 <md-option value="mirror" *ngIf="getDisks().length >= 2">Mirror</md-option>
-                <md-option value="raidz1" *ngIf="getDisks().length >= 3">Raid-z</md-option>
+                <md-option value="raidz" *ngIf="getDisks().length >= 3">Raid-z</md-option>
                 <md-option value="raidz2" *ngIf="getDisks().length >= 4">Raid-z2</md-option>
                 <md-option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</md-option>
             </md-select>
