@@ -124,8 +124,8 @@ export class IPMIComponent {
     
     }
     submitFunction({}){
-      let payload = {}
-      let formvalue = _.cloneDeep(this.formGroup.value);
+      const payload = {}
+      const formvalue = _.cloneDeep(this.formGroup.value);
       payload['password'] = formvalue.password;
       payload['dhcp'] = formvalue.dhcp;
       payload['gateway'] = formvalue.gateway;
