@@ -63,7 +63,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     let showTour = localStorage.getItem(this.router.url) || 'false';
     if (showTour != "true") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
-      localStorage.setItem(this.router.url, 'true');
+      localStorage.setItem(this.router.url, 'false');
     }
 
   }
