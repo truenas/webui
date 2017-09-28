@@ -14,7 +14,9 @@
     ],
     "lib": [
       "es2016",
-      "dom"
+      "dom",
+      "es2017.object",
+      "es2016.array.include"
     ]
   }
 }
