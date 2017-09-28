@@ -16,11 +16,16 @@ export class ThemeService {
     name: 'egret-blue',
     baseColor: '#2196f3',
     isActive: false,
-    hasDarkLogo:true
+    hasDarkLogo: true
+  }, {
+    name: 'ix-blue',
+    baseColor: '#0095D5',
+    isActive: true,
+    hasDarkLogo: true
   }, {
     name: 'egret-indigo',
     baseColor: '#3f51b5',
-    isActive: true,
+    isActive: false,
     hasDarkLogo: false
   }, {
     name: 'freenas-warriors',
