@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { RestService } from '../../../../services/';
+import { TourService } from '../../../../services/tour.service';
 
 @Component({
   selector: 'app-user-list',
   template: `<entity-table [conf]="this"></entity-table>`
 })
-export class UserListComponent {
+export class UserListComponent implements OnInit {
 
   protected resource_name: string = 'account/users';
-  protected route_add: string[] = ['account','users', 'add'];
+  protected route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip: string = "Add User";
-  protected route_edit: string[] = ['account','users', 'edit'];
-  protected route_delete: string[] = ['account','users', 'delete'];
+  protected route_edit: string[] = ['account', 'users', 'edit'];
+  protected route_delete: string[] = ['account', 'users', 'delete'];
 
   public columns: Array < any > = [
     { name: 'Username', prop: 'bsdusr_username' },
@@ -30,5 +33,23 @@ export class UserListComponent {
       return false;
     }
     return true;
+  }
+
+  getUserList() {
+    this.rest.get(this.resource_name, {}).subscribe((res) => {
+      console.log(res);
+    })
+  }
+
+  constructor(protected rest: RestService, private router: Router, private tour: TourService){
+    this.getUserList()
+  }
+
+  ngOnInit() {
+    let showTour = localStorage.getItem(this.router.url) || 'false';
+    if (showTour != "true") {
+      hopscotch.startTour(this.tour.startTour(this.router.url));
+      localStorage.setItem(this.router.url, 'true');
+    }
   }
 }
