@@ -18,8 +18,17 @@
       <div class="md-content">
         <md-input-container>
           <input mdInput
+            id="nameFilter"
             type='text'
-            placeholder='Filter disks'
+            placeholder='Filter disks by name'
+            (keyup)='updateFilter($event)'
+          />
+        </md-input-container>
+        <md-input-container>
+          <input mdInput
+            id="capacityFilter"
+            type='text'
+            placeholder='Filter disks by capacity'
             (keyup)='updateFilter($event)'
           />
         </md-input-container>

@@ -51,6 +51,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public isEncrypted: boolean = false;
   public re_errors = "";
   public re_has_errors = false;
+  public nameFilter: RegExp;
+  public capacityFilter: RegExp;
 
   public busy: Subscription;
 
@@ -89,6 +91,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.nameFilter = new RegExp('');
+    this.capacityFilter = new RegExp('');
     this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
       this.disks = [];
       for (let i in res) {
@@ -212,9 +216,17 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
     // filter our data
     if (re) {
+      if (event.target.id === "nameFilter") {
+        this.nameFilter = re;
+      } else if (event.target.id === "capacityFilter") {
+        this.capacityFilter = re;
+      }
+
       this.re_has_errors = false;
+      const self = this;
       const temp = this.temp.filter(function(d) {
-        return re.test(d.devname.toLowerCase());
+        return self.nameFilter.test(d.devname.toLowerCase()) &&
+               self.capacityFilter.test(d.capacity.toLowerCase());
       });
 
       // update the rows
