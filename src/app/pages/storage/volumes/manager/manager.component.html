@@ -71,14 +71,20 @@
       </md-card>
       <md-card>
       <md-card-title>Cache Disk Groups (L2ARC vdevs)</md-card-title>
-         <div class="md-content">
-        <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
+        <div class="md-content">
+          <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
         </div>
       </md-card>
       <md-card>
       <md-card-title>Log Disk Groups (ZIL vdevs)</md-card-title>
-         <div class="md-content">
-        <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
+        <div class="md-content">
+          <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
+        </div>
+      </md-card>
+      <md-card>
+      <md-card-title>Spare Disk Groups</md-card-title>
+        <div class="md-content">
+          <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
         </div>
       </md-card>
     </div>
