@@ -66,25 +66,28 @@
       <md-card-title>Data Disk Groups (vdevs)</md-card-title>
       <div class="md-content">
         <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
-        <button md-raised-button class="btn btn-accent" (click)="addVdev('data')">add</button>
+        <button md-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
         </div>
       </md-card>
       <md-card>
       <md-card-title>Cache Disk Groups (L2ARC vdevs)</md-card-title>
         <div class="md-content">
           <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
+          <button *ngIf="vdevs.cache.length === 0" md-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>
         </div>
       </md-card>
       <md-card>
       <md-card-title>Log Disk Groups (ZIL vdevs)</md-card-title>
         <div class="md-content">
           <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
+          <button *ngIf="vdevs.log.length === 0" md-raised-button class="btn btn-accent" (click)="addVdev('log')">Add Log</button>
         </div>
       </md-card>
       <md-card>
       <md-card-title>Spare Disk Groups</md-card-title>
         <div class="md-content">
           <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
+          <button *ngIf="vdevs.spare.length === 0" md-raised-button class="btn btn-accent" (click)="addVdev('spare')">Add Spare</button>
         </div>
       </md-card>
     </div>

@@ -37,7 +37,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public disks: Array < any > = [];
   public selected: Array < any > = [];
   public vdevs:
-    any = { data: [{}], cache: [{}], spare: [{}], log: [{}] };
+    any = { data: [{}], cache: [], spare: [], log: [] };
   public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
@@ -117,12 +117,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
       }
     });
     if (index !== null) {
-      vdev.getDisks().forEach((item) => {
-        item.elementRef.nativeElement.parentNode.removeChild(
-          item.elementRef.nativeElement);
-        this.disksdnd.nativeElement.appendChild(item.elementRef.nativeElement);
-      });
-      this.vdevs[vdev.group].splice(index, 1);
+      if (vdev.group === 'data') {
+        this.vdevs[vdev.group].splice(index, 1);
+      } else {
+        this.vdevs[vdev.group] = []; // should only be one cache/spare/log
+      }
     }
   }
 

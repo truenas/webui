@@ -31,7 +31,6 @@ export class VdevComponent implements OnInit {
       this.type = 'stripe';
     } else {
       this.type = this.group;
-      this.removable = false;
     }
   }
 
@@ -70,5 +69,10 @@ export class VdevComponent implements OnInit {
 
   onTypeChange(e) { console.log(e, this.group); }
 
-  remove() { this.manager.removeVdev(this); }
+  remove() { 
+    while (this.disks.length > 0) { 
+      this.manager.addDisk(this.disks.pop());
+    }
+    this.manager.removeVdev(this);
+  }
 }
