@@ -28,7 +28,6 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
   constructor(protected entityFormService: EntityFormService, ) {}
   ngAfterViewInit() {
-    console.log(this.tabGroup.selectedIndex);
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }

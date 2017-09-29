@@ -96,7 +96,8 @@ export class CronFormComponent {
     }, {
       type: 'checkbox',
       name: 'cron_stdout',
-      placeholder: 'Redirect Stdout'
+      placeholder: 'Redirect Stdout',
+      value: true,
     }, {
       type: 'checkbox',
       name: 'cron_stderr',
@@ -104,7 +105,8 @@ export class CronFormComponent {
     }, {
       type: 'checkbox',
       name: 'cron_enabled',
-      placeholder: 'Enable'
+      placeholder: 'Enable',
+      value: true,
     }
   ];
 
