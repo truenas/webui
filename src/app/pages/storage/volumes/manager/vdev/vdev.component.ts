@@ -31,6 +31,7 @@ export class VdevComponent implements OnInit {
       this.type = 'stripe';
     } else {
       this.type = this.group;
+      this.removable = false;
     }
   }
 
