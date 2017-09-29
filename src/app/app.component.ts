@@ -30,21 +30,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.changePageTitle();
-    this.getUserPreference().subscribe((res) => {
-      this.user = res.data;
-      let ShowTour = this.user.bsdusr_attributes.showTour;
-      if (ShowTour) {
-        setTimeout(() => {
-          hopscotch.startTour(this.tour.startTour(this.router.url));
-        }, 2000);
-        this.user.bsdusr_attributes['showTour'] = false;
-      }
-    });
   }
 
-  getUserPreference() {
-    return this.rest.get(this.accountUserResource, {});
-  }
 
   changePageTitle() {
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
