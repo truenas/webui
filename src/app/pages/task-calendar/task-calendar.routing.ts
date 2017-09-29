@@ -22,6 +22,10 @@ export const TaskCalendarRoutes: Routes = [{
       path: 'add',
       component: CronFormComponent,
       data: { title: 'Add', breadcrumb: 'Add' }
+    }, {
+      path: 'edit/:pk',
+      component: CronFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
   }]
 }];

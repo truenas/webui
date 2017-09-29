@@ -7,6 +7,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 import { FormSliderComponent } from '../form-slider/form-slider.component';
 import { FormToggleButtonComponent } from '../form-toggle-button/form-toggle-button.component';
 import { EntityFormService } from '../../services/entity-form.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'form-task',
@@ -22,15 +23,19 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   protected control: any;
   protected active_tab: any;
   protected value: any;
+  protected init: boolean;
   @ViewChild('tabGroup') tabGroup;
 
   constructor(protected entityFormService: EntityFormService, ) {}
   ngAfterViewInit() {
+    console.log(this.tabGroup.selectedIndex);
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }
 
   ngOnInit() {
+    this.init = true;
+
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
     this.control = this.group.controls[this.config.name];
     for (let item in this.tabFormGroup.controls) {
@@ -38,6 +43,23 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
         this.setControlValue();
       })
     }
+
+    this.group.controls[this.config.name].valueChanges.subscribe((res) => {
+      if (this.init && res) {
+        this.init = false;
+        if (_.startsWith(this.control.value, '*/')) {
+          this.tabGroup.selectedIndex = 0
+          this.active_tab = this.config.tabs[0];
+          this.value = Number(_.trim(this.control.value, '*/'));
+          this.tabFormGroup.controls[this.active_tab.name].setValue(this.value);
+        } else {
+          this.tabGroup.selectedIndex = 1;
+          this.active_tab = this.config.tabs[1];
+          this.tabFormGroup.controls[this.active_tab.name].setValue(this.control.value.split(','));
+        }
+      }
+
+    });
   }
 
   onSelectChange($event: any) {

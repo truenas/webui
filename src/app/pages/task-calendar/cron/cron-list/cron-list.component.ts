@@ -15,6 +15,7 @@ export class CronListComponent {
   protected resource_name = 'tasks/cronjob';
   protected route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = "Add Cron Job";
+  protected route_edit: string[] = ['tasks', 'cron', 'edit'];
   protected entityList: any;
 
   public columns: Array < any > = [

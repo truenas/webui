@@ -18,6 +18,9 @@ export class FormSliderComponent implements Field, OnInit {
 
   ngOnInit() {
     this.value = this.config.min;
+    this.group.controls[this.config.name].valueChanges.subscribe((res) => {
+      this.value = res;
+    })
   }
 
   updateValue($event) {

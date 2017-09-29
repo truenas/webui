@@ -34,8 +34,7 @@ export class CronFormComponent {
       type: 'input',
       name: 'cron_description',
       placeholder: 'Short description'
-    },
-    {
+    }, {
       type: 'task',
       name: 'cron_minute',
       placeholder: 'Minute',
@@ -51,8 +50,7 @@ export class CronFormComponent {
         tabName: 'Each selected minute',
         options: []
       }]
-    },
-    {
+    }, {
       type: 'task',
       name: 'cron_hour',
       placeholder: 'Hour',
@@ -84,15 +82,13 @@ export class CronFormComponent {
         tabName: 'Each selected day of month',
         options: []
       }]
-    },
-    {
+    }, {
       type: 'togglebutton',
       name: 'cron_month',
       placeholder: 'Month',
       multiple: true,
       options: []
-    },
-    {
+    }, {
       type: 'togglebutton',
       name: 'cron_dayweek',
       placeholder: 'Day of week',
@@ -119,9 +115,7 @@ export class CronFormComponent {
   protected hour_field: any;
   protected daymonth_field: any;
 
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {}
-
-  afterInit(entityForm: any) {
+  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {
     this.user_field = _.find(this.fieldConfig, { 'name': 'cron_user' });
     this.userService.listUsers().subscribe((res) => {
       res.data.forEach((item) => {
@@ -160,5 +154,6 @@ export class CronFormComponent {
     for (let i = 1; i < 32; i++) {
       this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
+
   }
 }
