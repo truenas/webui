@@ -2,6 +2,13 @@
 	<md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
 		<md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName }}">
 			<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
+				
+
+				<div *ngIf="paginationLength > paginationPageSize">
+					<md-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
+					</md-paginator>
+				</div>
+
 				<md-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
 					<md-card-title>{{ chartConfigData.title }}</md-card-title>
 					<md-card-content>
@@ -11,11 +18,6 @@
 
 				<div class="give_me_space_bottom">
 					<br/>
-				</div>
-
-				<div *ngIf="paginationLength > paginationPageSize">
-					<md-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
-					</md-paginator>
 				</div>
 			</div>
 		</md-tab>
