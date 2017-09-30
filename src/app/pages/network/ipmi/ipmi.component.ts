@@ -1,7 +1,8 @@
-import {ApplicationRef, Component, Injector, OnInit, Input} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
+import { MaterialModule, MdTableModule } from '@angular/material';
 
 import {
   RestService,
@@ -26,24 +27,33 @@ import {EntityUtils} from '../../common/entity/utils';
 @Component({
   selector : 'app-ipmi',
   template : `
+  <md-card>
+  <md-select #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
+    <md-option *ngFor="let channel of channels" [value]="channel.value">
+      Channel {{channel.value}}
+    </md-option>
+  </md-select>
+  </md-card>
   <entity-form [conf]="this"></entity-form>
   `,
   providers : [ TooltipsService ],
 })
 export class IPMIComponent {
   @Input('conf') conf: any;
+  @ViewChild('selectedChannel') select: ElementRef;
+  selectedValue: string
 
   protected resource_name: string = '';
   public formGroup: FormGroup;
   protected route_success: string[] = ['network', 'ipmi'];
   public busy: Subscription;
+  public channels = [];
+  protected channel: any;
+  protected netmask: any;
+  protected ipaddress: any;
+  protected entityEdit: any;
   public fieldConfig: FieldConfig[] = [
-    {
-      type: 'select',
-      name: 'channel',
-      placeholder: 'Channel',
-      options: [],
-    },
+
     {
       type : 'input',
       inputType: 'password',
@@ -92,36 +102,22 @@ export class IPMIComponent {
               protected networkService: NetworkService
             ) {}
 
-  protected channel: any;
-  protected netmask: any;
-  protected ipaddress: any;
+
 
   preInit(entityEdit: any) {
-    entityEdit.isNew = true;
-    this.ws.call('ipmi.query', []).subscribe((res) => {
-      this.channel = _.find(this.fieldConfig, {name:'channel'});
-      let netmask = [];
-      for (let i = 0; i < res.length; i++) {
-        this.channel.options.push({label: res[i].channel, value: res[i].channel})
-      }
-    });
+
   }
 
   afterInit(entityEdit: any) {
-    entityEdit.submitFunction = this.submitFunction;
-    
+    entityEdit.isNew = true;
     this.ws.call('ipmi.query', []).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
-        entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask)
-        entityEdit.formGroup.controls['channel'].setValue(res[i].channel)
-        entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp)
-        entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress)
-        entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway)
-        entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan)
+        this.channels.push({label: res[i].channel, value: res[i].channel})
       }
     });
-
-    
+    entityEdit.submitFunction = this.submitFunction;
+    this.entityEdit = entityEdit;
+    this.loadData();
     }
     submitFunction({}){
       const payload = {}
@@ -132,7 +128,27 @@ export class IPMIComponent {
       payload['ipaddress'] = formvalue.ipaddress;
       payload['netmask'] = formvalue.netmask;
       payload['vlan'] = formvalue.vlan;
-      return this.ws.call('ipmi.update', [ formvalue.channel, payload ]);
+      return this.ws.call('ipmi.update', [ this.selectedValue, payload ]);
+      
+    }
+    switchChannel(){
+      const myFilter = [];
+      myFilter.push("id")
+      myFilter.push("=")
+      myFilter.push(this.selectedValue)
+      this.loadData([[myFilter]]);
+    }
+
+    loadData(filter = []){
+      this.ws.call('ipmi.query', filter).subscribe((res) => {
+        for (let i = 0; i < res.length; i++) {
+          this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
+          this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
+          this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
+          this.entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway);
+          this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
+        }
+      });
       
     }
 }
