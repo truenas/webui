@@ -13,6 +13,7 @@ import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angul
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
+import { MdSnackBar } from '@angular/material';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
@@ -66,7 +67,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected location: Location, private fb: FormBuilder,
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
-              protected loader: AppLoaderService) {}
+              protected loader: AppLoaderService,
+              public snackBar: MdSnackBar) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
@@ -208,6 +210,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                     .subscribe(
                         (res) => {
                           this.loader.close();
+                          this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
                           if (this.conf.route_success) {
                             this.router.navigate(new Array('/').concat(
                                 this.conf.route_success));
