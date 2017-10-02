@@ -128,14 +128,14 @@ export class IPMIComponent {
       payload['ipaddress'] = formvalue.ipaddress;
       payload['netmask'] = formvalue.netmask;
       payload['vlan'] = formvalue.vlan;
-      return this.ws.call('ipmi.update', [ this.selectedValue, payload ]);
+      return this.ws.call('ipmi.update', [ this.conf.selectedValue, payload ]);
       
     }
     switchChannel(){
       const myFilter = [];
       myFilter.push("id")
       myFilter.push("=")
-      myFilter.push(this.selectedValue)
+      myFilter.push(this.selectedValue) 
       this.loadData([[myFilter]]);
     }
 
