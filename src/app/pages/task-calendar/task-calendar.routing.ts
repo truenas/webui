@@ -4,6 +4,7 @@ import { TaskCalendarComponent } from './calendar/calendar.component';
 import { CronFormComponent } from './cron/cron-form/cron-form.component';
 import { CronListComponent } from './cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './initshutdown/initshutdown-list/initshutdown-list.component';
+import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -35,6 +36,14 @@ export const TaskCalendarRoutes: Routes = [{
       path: '',
       component: InitshutdownListComponent,
       data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
+    }, {
+      path: 'add',
+      component: InitshutdownFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add' }
+    }, {
+      path: 'edit/:pk',
+      component: InitshutdownFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
   }]
 }];

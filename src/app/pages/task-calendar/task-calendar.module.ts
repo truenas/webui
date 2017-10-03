@@ -17,6 +17,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { CronFormComponent } from './cron/cron-form/cron-form.component';
 import { CronListComponent } from './cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './initshutdown/initshutdown-list/initshutdown-list.component';
+import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { InitshutdownListComponent } from './initshutdown/initshutdown-list/init
     TaskCalendarComponent,
     CronFormComponent,
     CronListComponent,
-    InitshutdownListComponent
+    InitshutdownListComponent,
+    InitshutdownFormComponent
   ]
 })
 export class TaskCalendarModule {}
