@@ -71,6 +71,7 @@ export class NavigationService {
        {name: 'Calendar', state: 'calendar'},
        {name: 'Cron Jobs', state: 'cron'},
        {name: 'Init/Shutdown Scripts', state: 'initshutdown'},
+       {name: 'Periodic Snapshot Tasks', state: 'snapshot'},
      ]
     },
     {
