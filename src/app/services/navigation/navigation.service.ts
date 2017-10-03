@@ -68,7 +68,8 @@ export class NavigationService {
      state: 'tasks',
      sub: [
        {name: 'Calendar', state: 'calendar'},
-       {name: 'Cron Jobs', state: 'cron'}
+       {name: 'Cron Jobs', state: 'cron'},
+       {name: 'Init/Shutdown Scripts', state: 'initshutdown'},
      ]
     },
     {
