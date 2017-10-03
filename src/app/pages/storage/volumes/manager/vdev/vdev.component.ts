@@ -38,10 +38,30 @@ export class VdevComponent implements OnInit {
     return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
-  addDisk(disk: any) { this.disks.push(disk); }
+  addDisk(disk: any) { 
+    this.disks.push(disk);
+    this.guessVdevType();
+  }
 
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
+    this.guessVdevType();
+  }
+
+  guessVdevType() {
+    if (this.group === "data") {
+      if (this.disks.length === 2) {
+        this.type = "mirror";
+      } else if (this.disks.length === 3) {
+        this.type = "raidz";
+      } else if (this.disks.length >= 4 && this.disks.length <= 6 ) {
+        this.type = "raidz2";
+      } else if (this.disks.length >= 7) {
+        this.type = "raidz3";
+      } else {
+        this.type = "stripe";
+      }
+    }
   }
 
   onSelect({ selected }) {
