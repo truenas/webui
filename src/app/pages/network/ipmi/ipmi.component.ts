@@ -142,6 +142,7 @@ export class IPMIComponent {
     loadData(filter = []){
       this.ws.call('ipmi.query', filter).subscribe((res) => {
         for (let i = 0; i < res.length; i++) {
+          this.selectedValue = res[i].channel;
           this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
           this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
           this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
