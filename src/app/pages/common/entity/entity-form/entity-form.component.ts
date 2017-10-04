@@ -38,6 +38,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
   protected resourceName: string;
+  public getFunction;
   public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public hasConf: boolean = true;
@@ -90,9 +91,18 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       if (this.conf.isEntity) {
         this.pk = params['pk'];
         if (this.pk && !this.conf.isNew) {
-          this.resourceName = this.resourceName + this.pk + '/';
+          if (this.conf.editCall) {
+            this.submitFunction = this.editCall;
+          } else {
+            this.submitFunction = this.editSubmit;
+            this.resourceName = this.resourceName + this.pk + '/';
+          }      
         } else {
-          this.submitFunction = this.addSubmit;
+          if (this.conf.addCall) {
+            this.submitFunction = this.addCall;
+          } else {
+            this.submitFunction = this.addSubmit;
+          }
           this.isNew = true;
         }
       }
@@ -107,12 +117,22 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         }
       }
 
-      let getQuery = this.resourceName;
-      if (this.conf.custom_get_query) {
-        getQuery = this.conf.custom_get_query;
+      if (this.conf.queryCall) {
+        if(this.pk) {
+          this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
+        } else {
+          this.getFunction = this.ws.call(this.conf.queryCall, []);
+        }
+      } else {
+        let getQuery = this.resourceName;
+        if (this.conf.custom_get_query) {
+          getQuery = this.conf.custom_get_query;
+        }
+        this.getFunction = this.rest.get(getQuery, {});
       }
+
       if (!this.isNew) {
-        this.rest.get(getQuery, {}).subscribe((res) => {
+        this.getFunction.subscribe((res) => {
           this.data = res.data;
           for (let i in this.data) {
             let fg = this.formGroup.controls[i];
@@ -161,13 +181,25 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     this.router.navigate(new Array('/').concat(route));
   }
 
+  addCall(body: any) {
+    let call = this.conf.addCall;
+
+    return this.ws.call(call, body);
+  }
+
   editSubmit(body: any) { 
     let resource = this.resourceName;
     if (this.conf.custom_edit_query) {
       resource = this.conf.custom_edit_query;
     }
 
-    return this.rest.put(resource, body);
+    return this.rest.put(resource, {body});
+  }
+
+  editCall(body: any) {
+    let call = this.conf.editCall;
+
+    return this.ws.call(call, body);
   }
 
   addSubmit(body: any) {
@@ -176,7 +208,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       resource = this.conf.custom_add_query;
     }
 
-    return this.rest.post(resource, body); 
+    return this.rest.post(resource, {body}); 
   }
 
   onSubmit(event: Event) {
@@ -206,7 +238,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     }
 
     this.loader.open();
-    this.busy = this.submitFunction({body : JSON.stringify(value)})
+    this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
