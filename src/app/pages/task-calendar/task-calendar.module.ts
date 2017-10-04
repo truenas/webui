@@ -19,6 +19,7 @@ import { CronListComponent } from './cron/cron-list/cron-list.component';
 import { InitshutdownListComponent } from './initshutdown/initshutdown-list/initshutdown-list.component';
 import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
+import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 
 @NgModule({
   imports: [
@@ -39,7 +40,8 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
     CronListComponent,
     InitshutdownListComponent,
     InitshutdownFormComponent,
-    SnapshotListComponent
+    SnapshotListComponent,
+    SnapshotFormComponent
   ]
 })
 export class TaskCalendarModule {}
