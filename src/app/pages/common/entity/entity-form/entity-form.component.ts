@@ -242,11 +242,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                     .subscribe(
                         (res) => {
                           this.loader.close();
-                          this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
                           if (this.conf.route_success) {
                             this.router.navigate(new Array('/').concat(
                                 this.conf.route_success));
                           } else {
+                            this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
                             this.success = true;
                           }
                         },
