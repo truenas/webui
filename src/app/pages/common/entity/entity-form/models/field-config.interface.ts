@@ -8,5 +8,5 @@ export interface FieldConfig {
       value?: any, multiple?: boolean, tooltip?: string,
       relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
       initialCount?: number, readonly?: boolean, initial?: string,
-      min?: number, max?: number, tabs?: any[], tabName?: string,
+      min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
 }

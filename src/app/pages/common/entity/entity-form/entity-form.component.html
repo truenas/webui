@@ -6,9 +6,12 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <md-card>
 <div class="md-content">
-  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
-    <ng-container *ngFor="let field of fieldConfig;" 
-      dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
+  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap">
+    <ng-container *ngFor="let field of fieldConfig;">
+      <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">
+        <div dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
+        </div>
+      </div>
     </ng-container>
     <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
     <md-card-actions>

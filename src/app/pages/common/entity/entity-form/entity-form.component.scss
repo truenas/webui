@@ -1,0 +1,21 @@
+.form-wrap {
+	display: flex;
+    flex-flow: row wrap;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    box-sizing: border-box;
+}
+
+.form-line {
+	flex: 1 1 100%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+    max-width: 100%;
+}
+
+.form-inline {
+	flex: 1 1 33.33%;
+    box-sizing: border-box;
+    -webkit-box-flex: 1;
+    max-width: 33.33%;
+}
