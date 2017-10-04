@@ -45,7 +45,6 @@ export class IPMIComponent {
 
   protected resource_name: string = '';
   public formGroup: FormGroup;
-  protected route_success: string[] = ['network', 'ipmi'];
   public busy: Subscription;
   public channels = [];
   protected channel: any;
