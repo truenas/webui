@@ -126,39 +126,44 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   doSubmit() {
-    this.error = null;
+    this.dialog.confirm("Warning", "The existing contents of all the disks you have added will be erased.")
+    .subscribe((res) => {
+      if (res) {
+        this.error = null;
 
-    let layout = [];
-    this.vdevComponents.forEach((vdev) => {
-      let disks = [];
-      vdev.getDisks().forEach((disk) => { 
-        disks.push(disk.devname); });
-      if (disks.length > 0) {
-        layout.push({ vdevtype: vdev.type, disks: disks });
-      }
-    });
-
-    this.loader.open();
-    this.busy =
-      this.rest
-      .post('storage/volume/', {
-        body: JSON.stringify({ volume_name: this.name, layout: layout })
-      })
-      .subscribe(
-        (res) => {
-          this.loader.close()
-          this.router.navigate(['/', 'storage', 'volumes']);
-        },
-        (res) => {
-          this.loader.close();
-          if (res.code == 409) {
-            this.error = '';
-            for (let i in res.error) {
-              res.error[i].forEach(
-                (error) => { this.error += error + '<br />'; });
-            }
+        let layout = [];
+        this.vdevComponents.forEach((vdev) => {
+          let disks = [];
+          vdev.getDisks().forEach((disk) => { 
+            disks.push(disk.devname); });
+          if (disks.length > 0) {
+            layout.push({ vdevtype: vdev.type, disks: disks });
           }
         });
+
+        this.loader.open();
+        this.busy =
+          this.rest
+          .post('storage/volume/', {
+            body: JSON.stringify({ volume_name: this.name, layout: layout })
+          })
+          .subscribe(
+            (res) => {
+              this.loader.close()
+              this.router.navigate(['/', 'storage', 'volumes']);
+            },
+            (res) => {
+              this.loader.close();
+              if (res.code == 409) {
+                this.error = '';
+                for (let i in res.error) {
+                  res.error[i].forEach(
+                    (error) => { this.error += error + '<br />'; });
+                }
+              }
+            });
+      }
+    });
   }
 
   goBack() {
