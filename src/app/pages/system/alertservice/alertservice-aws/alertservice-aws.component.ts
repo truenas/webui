@@ -20,49 +20,46 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-alertservice-add',
+  selector : 'app-alertservice-aws',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class AlertServiceAddComponent {
+export class AlertServiceAWSComponent {
 
   protected isEntity: boolean = true;
+  protected addCall = 'consul.do_create';
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'ntp_address',
-      placeholder : 'Address',
-    },
-    {
-      type : 'checkbox',
-      name : 'ntp_burst',
-      placeholder : 'Burst',
-    },
-    {
-      type : 'checkbox',
-      name : 'ntp_iburst',
-      placeholder : 'IBurst',
-    },
-    {
-      type : 'checkbox',
-      name : 'ntp_prefer',
-      placeholder : 'Prefer',
+      name : 'consulalert_type',
+      placeholder : 'Service Name',
+      value: 'AWS-SNS',
+      isHidden: true
     },
     {
       type : 'input',
-      name : 'ntp_minpoll',
-      placeholder : 'Min. Poll',
-      value : 6
+      name : 'region',
+      placeholder : 'Region',
     },
     {
       type : 'input',
-      name : 'ntp_maxpoll',
-      placeholder : 'Max. Poll',
-      value : 10,
+      name : 'topic-arn',
+      placeholder : 'ARN',
+    },
+    {
+      type : 'input',
+      name : 'aws-access-key-id',
+      placeholder : 'Key Id',
+    },
+    {
+      type : 'input',
+      name : 'aws-secret-access-key',
+      placeholder : 'Secret Key',
     },
     {
       type : 'checkbox',
-      name : 'force',
-      placeholder : 'Force',
+      name : 'enabled',
+      placeholder : 'Enabled',
+      value: true
     },
   ];
 
@@ -75,5 +72,6 @@ export class AlertServiceAddComponent {
       protected _appRef: ApplicationRef
   ) {}
 
-  afterInit(entityAdd: any) {}
+  afterInit(entityForm: any) {
+  }
 }

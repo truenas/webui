@@ -1,27 +1,44 @@
-import {Component} from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { RestService, WebSocketService } from '../../../../services/';
+
 
 @Component({
   selector : 'app-alertservice-list',
   template: `<entity-table [conf]="this"></entity-table>`
 })
 export class AlertServiceListComponent {
-
-  protected resource_name: string = 'system/ntpserver';
-  protected route_add: string[] = [ 'system', 'ntpservers', 'add' ];
-  protected route_edit: string[] = [ 'system', 'ntpservers', 'edit' ];
+  protected resource_name = 'system/ntpserver';
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];
-  
+    
   public columns: Array<any> = [
-    {name : 'Address', prop : 'ntp_address'},
-    {name : 'Burst', prop : 'ntp_burst'},
-    {name : 'IBurst', prop : 'ntp_iburst'},
-    {name : 'Prefer', prop : 'ntp_prefer'},
-    {name : 'Min. Poll', prop : 'ntp_minpoll'},
-    {name : 'Max. Poll', prop : 'ntp_maxpoll'},
+    {name : 'Service Name', prop : 'name'},
+    {name : 'Enabled', prop : 'enabled'},
   ];
-  public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
-  };
+    public config: any = {
+      paging : true,
+      sorting : {columns : this.columns},
+    };
+
+  constructor(protected router: Router, protected aroute: ActivatedRoute,
+     protected ws: WebSocketService,
+    protected _injector: Injector, protected _appRef: ApplicationRef) {}
+
+
+  getAddActions() {
+    let actions = [];
+    actions.push({
+      label: "AWS-SN",
+      icon: "card_membership",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "aws"]));
+      }
+    });
+
+    return actions;
+  }
 }
