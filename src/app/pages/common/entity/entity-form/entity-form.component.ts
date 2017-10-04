@@ -85,7 +85,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     }
     this.sub = this.route.params.subscribe(params => {
       this.resourceName = this.conf.resource_name;
-      if (!this.resourceName.endsWith('/')) {
+      if (this.resourceName && !this.resourceName.endsWith('/')) {
         this.resourceName = this.resourceName + '/';
       }
       if (this.conf.isEntity) {
