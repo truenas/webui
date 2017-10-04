@@ -16,6 +16,9 @@ import { UpdateComponent } from './update/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
+import { AlertServiceAddComponent } from './alertservice/alertservice-add/';
+import { AlertServiceEditComponent } from './alertservice/alertservice-edit/';
+import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -111,6 +114,25 @@ export const routes: Routes = [
         }
       ]
     }, {
+      path: 'alertservice',
+      data: { title: 'AlertService', breadcrumb: 'AlertService' },
+      children: [{
+          path: '',
+          component: AlertServiceListComponent,
+          data: { title: 'AlertService', breadcrumb: 'AlertService' },
+        }, {
+          path: 'add',
+          component: NTPServerAddComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: NTPServerEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
+      ]
+    },
+    {
       path: 'ca',
       data: { title: 'CAs', breadcrumb: 'CAs' },
       children: [{

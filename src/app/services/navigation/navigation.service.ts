@@ -55,6 +55,7 @@ export class NavigationService {
         {name: 'Tunables', state: 'tunable'},
         {name: 'Update', state: 'update'},
         {name: 'NTPServers', state: 'ntpservers'},
+        {name: 'AlertService', state: 'alertservice'},
         {name: 'CAs', state: 'ca'},
         {name: 'Certificates', state: 'certificates'},
         {name: 'Support', state: 'support'},

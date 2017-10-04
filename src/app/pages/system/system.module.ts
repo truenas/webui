@@ -21,6 +21,9 @@ import { UpdateComponent } from './update/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
+import { AlertServiceAddComponent } from './alertservice/alertservice-add/';
+import { AlertServiceEditComponent } from './alertservice/alertservice-edit/';
+import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -53,6 +56,9 @@ import { SupportComponent } from './support/support.component';
     NTPServerListComponent,
     NTPServerAddComponent,
     NTPServerEditComponent,
+    AlertServiceAddComponent,
+    AlertServiceEditComponent,
+    AlertServiceListComponent,
     CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityImportComponent,
