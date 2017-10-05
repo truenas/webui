@@ -6,6 +6,7 @@ import {
   QueryList,
   ViewChild
 } from '@angular/core';
+import filesize from 'filesize';
 
 @Component({
   selector : 'app-vdev',
@@ -23,10 +24,12 @@ export class VdevComponent implements OnInit {
   public disks: Array<any> = [];
   public selected: Array < any > = [];
   public id: number;
+  public size;
 
   constructor(public elementRef: ElementRef) {}
 
   ngOnInit() {
+    this.estimateSize();
     if (this.group === 'data') {
       this.type = 'stripe';
     } else {
@@ -41,11 +44,13 @@ export class VdevComponent implements OnInit {
   addDisk(disk: any) { 
     this.disks.push(disk);
     this.guessVdevType();
+    this.estimateSize();
   }
 
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.guessVdevType();
+    this.estimateSize();
   }
 
   guessVdevType() {
@@ -62,6 +67,33 @@ export class VdevComponent implements OnInit {
         this.type = "stripe";
       }
     }
+  }
+
+  estimateSize() {
+    let totalsize = 0;
+    let smallestdisk = 0;
+    let estimate = 0;
+    let swapsize = 2 * 1024 * 1024 * 1024;
+    for (let i = 0; i < this.disks.length; i++) {
+      let size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
+      if (i === 0 || this.disks[i].real_capacity < smallestdisk) {
+        smallestdisk = size;
+      }
+    }
+    totalsize = smallestdisk * this.disks.length;
+    if (this.type === "mirror") {
+      estimate = smallestdisk; 
+    } else if (this.type === "raidz") {
+      estimate = totalsize - smallestdisk;
+    } else if (this.type === "raidz2") {
+      estimate = totalsize - 2 * smallestdisk;
+    } else if (this.type === "raidz3") {
+      estimate = totalsize - 3 * smallestdisk;
+    } else {
+      estimate = totalsize; // stripe
+    }
+        
+    this.size = filesize(estimate, {standard : "iec"});
   }
 
   onSelect({ selected }) {
@@ -87,7 +119,10 @@ export class VdevComponent implements OnInit {
 
   getDisks() { return this.disks; }
 
-  onTypeChange(e) { console.log(e, this.group); }
+  onTypeChange(e) { 
+    this.estimateSize();
+    //console.log(e, this.group);
+  }
 
   remove() { 
     while (this.disks.length > 0) { 
