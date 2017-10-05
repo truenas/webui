@@ -23,6 +23,8 @@ import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
+import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
+import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -57,6 +59,8 @@ import { SupportComponent } from './support/support.component';
     NTPServerEditComponent,
     AlertServiceAWSComponent,
     AlertServiceListComponent,
+    CloudCredentialsGCSComponent,
+    CloudCredentialsListComponent,
     CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityImportComponent,

@@ -56,6 +56,7 @@ export class NavigationService {
         {name: 'Update', state: 'update'},
         {name: 'NTPServers', state: 'ntpservers'},
         {name: 'AlertService', state: 'alertservice'},
+        {name: 'CloudCredentials', state: 'cloudcredentials'},
         {name: 'CAs', state: 'ca'},
         {name: 'Certificates', state: 'certificates'},
         {name: 'Support', state: 'support'},

@@ -18,6 +18,8 @@ import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
+import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
+import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -118,6 +120,19 @@ export const routes: Routes = [
           path: 'aws',
           component: AlertServiceAWSComponent,
           data: { title: 'AddAWS', breadcrumb: 'AddAWS' },
+        },
+      ]
+    },{
+      path: 'cloudcredentials',
+      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+      children: [{
+          path: '',
+          component: CloudCredentialsListComponent,
+          data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+        }, {
+          path: 'gcs',
+          component: CloudCredentialsGCSComponent,
+          data: { title: 'gcs', breadcrumb: 'gcs' },
         },
       ]
     },
