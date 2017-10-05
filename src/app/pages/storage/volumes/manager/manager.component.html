@@ -1,5 +1,3 @@
-
-<div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
 <div>
   <div class="row">
     <div class="col-md-2" [style.paddingBottom]="'15px'">
@@ -93,6 +91,7 @@
     </div>
 
   </div>
+  <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
   <div class="row">
     <div class="col-md-4">
       <button md-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Create</button>
