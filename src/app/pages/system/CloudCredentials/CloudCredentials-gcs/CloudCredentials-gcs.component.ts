@@ -27,6 +27,7 @@ export class CloudCredentialsGCSComponent {
 
   protected isEntity: boolean = true;
   protected addCall = 'backup.credential.create';
+  public formGroup: FormGroup;
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -41,8 +42,8 @@ export class CloudCredentialsGCSComponent {
       placeholder : 'Account Name',
     },
     {
-      type : 'upload',
-      name : 'keyfile',
+      type : 'textarea',
+      name : 'attributes',
       placeholder : 'JSON Service Account Key',
     },
   ];
@@ -57,5 +58,18 @@ export class CloudCredentialsGCSComponent {
   ) {}
 
   afterInit(entityForm: any) {
+    entityForm.submitFunction = this.submitFunction;
+  }
+  submitFunction(){
+    const auxPayLoad = []
+    const payload = {};
+    const formvalue = _.cloneDeep(this.formGroup.value);
+    payload['provider'] = formvalue.provider;
+    payload['name'] = formvalue.name;
+    const kf = formvalue.attributes;
+    payload['attributes'] = { 'keyfile': JSON.parse(kf) };
+    auxPayLoad.push(payload)
+    return this.ws.call('backup.credential.create', auxPayLoad);
+
   }
 }

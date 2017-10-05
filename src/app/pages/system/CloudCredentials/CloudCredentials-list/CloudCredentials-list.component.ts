@@ -10,13 +10,13 @@ import { RestService, WebSocketService } from '../../../../services/';
   template: `<entity-table [conf]="this"></entity-table>`
 })
 export class CloudCredentialsListComponent {
-  protected resource_name = 'system/ntpserver';
+  protected queryCall = 'backup.credential.query';
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];
     
   public columns: Array<any> = [
-    {name : 'Service Name', prop : 'name'},
-    {name : 'Enabled', prop : 'enabled'},
+    {name : 'Account Name', prop : 'name'},
+    {name : 'Provider', prop : 'provider'},
   ];
     public config: any = {
       paging : true,
