@@ -1,11 +1,11 @@
 import { Component, OnInit, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
-import { RestService } from '../../../services';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { TourService } from '../../../services/tour.service';
+import { Notification, NotificationsService } from '../../../services/notifications.service';
 import { MdSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 
@@ -16,13 +16,14 @@ import * as hopscotch from 'hopscotch';
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav;
   @Input() notificPanel;
+  
+  notifications: Notification[] = [];
+
   @Output() onLangChange = new EventEmitter < any > ();
 
   notificationCount = 0;
   interval: any;
-  useUpateTimerInterval = true; // Change to false to shut this off.... The thought is.. It updates while
-  // the user is logged in.
-
+  
   currentLang = 'en';
   availableLangs = [{
     name: 'English',
@@ -39,32 +40,34 @@ export class TopbarComponent implements OnInit, OnDestroy {
   constructor(
     private themeService: ThemeService, 
     private router: Router,
+    private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
-    private rs: RestService, 
     private ws: WebSocketService, 
     private dialogService: DialogService,
     private tour: TourService,
     public snackBar: MdSnackBar,) {}
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
-
-    this.rs.get("system/alert", {}).subscribe((res) => {
-      this.notificationCount = res.data.length;
-    });
-
-    if (this.useUpateTimerInterval === true) {
-      this.interval = setInterval(() => {
-        this.rs.get("system/alert", {}).subscribe((res) => {
-          this.notificationCount = res.data.length;
-        });
-      }, 10000);
-    }
+  
 
     let showTour = localStorage.getItem(this.router.url) || 'true';
     if (showTour == "true") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
       localStorage.setItem(this.router.url, 'false');
     }
+
+    this.notificationsService.getNotifications().subscribe((notifications)=>{
+      this.notifications = notifications;
+
+      this.interval = setInterval(()=>{
+        this.notificationsService.getNotifications().subscribe((notifications)=>{
+          this.notifications = notifications;
+        });
+    
+      }, 4000);
+    });
+
+    
 
   }
 

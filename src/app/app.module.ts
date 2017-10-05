@@ -21,6 +21,7 @@ import { AppLoaderService } from './services/app-loader/app-loader.service';
 import {ENV_PROVIDERS} from '../environments/environment';
 import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 import { AppLoaderModule } from './services/app-loader/app-loader.module';
+import { NotificationsService } from 'app/services/notifications.service';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
@@ -49,6 +50,7 @@ export function createTranslateLoader(http: Http) {
     WebSocketService,
     RestService,
     AppLoaderService, 
+    NotificationsService,
     ENV_PROVIDERS],
   bootstrap: [
     AppComponent

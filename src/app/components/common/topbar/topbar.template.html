@@ -82,7 +82,7 @@
   [style.overflow]="'visible'" 
   class="topbar-button-right">
     <md-icon>notifications</md-icon>
-    <span *ngIf="notificationCount > 0" class="notification-number mat-bg-warn">{{notificationCount}}</span>
+    <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
   </button>
   <!-- Top left user menu -->
   <button md-icon-button [mdMenuTriggerFor]="accountMenu" class="topbar-button-right">

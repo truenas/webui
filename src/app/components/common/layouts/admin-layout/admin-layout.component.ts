@@ -16,6 +16,7 @@ export class AdminLayoutComponent implements OnInit {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
+
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   freenasThemes;
 
@@ -39,6 +40,8 @@ export class AdminLayoutComponent implements OnInit {
     const browserLang: string = translate.getBrowserLang();
     translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
   }
+
+
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
     // Initialize Perfect scrollbar for sidenav
@@ -46,6 +49,8 @@ export class AdminLayoutComponent implements OnInit {
     Ps.initialize(navigationHold, {
       suppressScrollX: true
     });
+
+
 
   }
   updateSidenav() {
@@ -56,5 +61,14 @@ export class AdminLayoutComponent implements OnInit {
       if (self.isMobile)
         domHelper.removeClass(document.body, 'collapsed-menu');
     })
+  }
+
+
+  public onOpen($event) {
+    this.isSidenavOpen = true;
+  }
+
+  public onClose($event) {
+    this.isSidenavOpen = false;
   }
 }
