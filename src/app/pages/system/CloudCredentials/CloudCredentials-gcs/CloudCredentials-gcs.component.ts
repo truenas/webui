@@ -26,24 +26,24 @@ import {
 export class CloudCredentialsGCSComponent {
 
   protected isEntity: boolean = true;
-  protected addCall = 'consul.do_create';
+  protected addCall = 'backup.credential.create';
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'consulalert_type',
-      placeholder : 'Service Name',
-      value: 'AWS-SNS',
+      name : 'provider',
+      placeholder : 'google cloud service',
+      value: 'GCLOUD',
       isHidden: true
     },
     {
       type : 'input',
-      name : 'region',
+      name : 'name',
       placeholder : 'Account Name',
     },
     {
       type : 'upload',
-      name : 'JSON Service Account Key',
-      placeholder : 'ARN',
+      name : 'keyfile',
+      placeholder : 'JSON Service Account Key',
     },
   ];
 
