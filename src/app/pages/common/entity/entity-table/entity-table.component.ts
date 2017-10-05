@@ -11,6 +11,7 @@ import 'rxjs/add/operator/map';
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
+import { WebSocketService } from '../../../../services/ws.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -34,13 +35,14 @@ export class EntityTableComponent implements OnInit {
   public maxSize: number = 5;
   public numPages: number = 1;
   public length: number = 0;
+  public getFunction;
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
   };
   protected loaderOpen: boolean = false;
 
-  constructor(protected rest: RestService, protected router: Router,
+  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) {}
 
   ngOnInit() {
@@ -72,15 +74,25 @@ export class EntityTableComponent implements OnInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
-
+if (this.conf.queryCall){
+  this.getFunction = this.ws.call(this.conf.queryCall,[]);
+}
+else {
+  this.getFunction = this.rest.get(this.conf.resource_name, options);
+}
     this.busy =
-      this.rest.get(this.conf.resource_name, options).subscribe((res) => {
+    this.getFunction.subscribe((res) => {
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
-        this.length = res.total;
-        this.rows = new EntityUtils().flattenData(res.data);
+        if (res.data){
+          this.length = res.total;
+          this.rows = new EntityUtils().flattenData(res.data);
+        } else {
+          this.length = res.length;
+          this.rows = new EntityUtils().flattenData(res);
+        }
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
@@ -92,6 +104,7 @@ export class EntityTableComponent implements OnInit {
           }
         }
       });
+    
   }
 
   onChangeTable(
