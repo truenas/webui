@@ -17,7 +17,8 @@ export class NotificationsComponent implements OnInit {
 
   notifications: Array<Notification> = [];
   
- 
+  showMe: Boolean = false;
+
   constructor(private notificationsService: NotificationsService, private router: Router) {}
   
   ngOnInit() {
@@ -29,6 +30,7 @@ export class NotificationsComponent implements OnInit {
 
     this.notificationsService.getNotifications().subscribe((notifications)=>{
         this.notifications = notifications;
+        this.showMe = true;
     });
   }
 
