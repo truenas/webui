@@ -94,7 +94,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
     this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
-      console.log(res);
       this.disks = [];
       for (let i in res) {
         res[i]['real_capacity'] = res[i]['capacity'];
