@@ -42,10 +42,10 @@ export class NotificationsComponent implements OnInit {
   }
 
 
-  clearAll(e) {
+  closeAll(e) {
     e.preventDefault();
 
-    this.notificationsService.clearNotifications(this.notifications);
+    this.notificationsService.clearNotifications(this.notifications, true);
     
     this.notifications.forEach((notification: NotificationAlert)=>{
       notification.dismissed = true;
@@ -53,5 +53,18 @@ export class NotificationsComponent implements OnInit {
     });
 
     this.notifications = [];
+  }
+
+  reopenAll(e) {
+    e.preventDefault();
+
+    this.notificationsService.clearNotifications(this.dismissedNotifications, false);
+    
+    this.dismissedNotifications.forEach((notification: NotificationAlert)=>{
+      notification.dismissed = false;
+      this.notifications.push( notification );
+    });
+
+    this.dismissedNotifications = [];
   }
 }

@@ -34,14 +34,14 @@ export class NotificationsService {
     return source;
   }
 
-  public clearNotifications(notifications: Array<NotificationAlert>) {
+  public clearNotifications(notifications: Array<NotificationAlert>, dismissedFlag: Boolean) {
     const oldNotifications = new Array<NotificationAlert>();
     notifications.forEach((notification)=>{
       oldNotifications.push(notification);
     });
     
     oldNotifications.forEach((notification) => {
-      this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: true }).subscribe((res) => {
+      this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: dismissedFlag }).subscribe((res) => {
           console.log("alert dismissed id:" + notification.id );
       });
       
