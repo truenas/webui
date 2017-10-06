@@ -85,7 +85,7 @@ export class NotificationsComponent implements OnInit {
 
   turnMeOn(notification: NotificationAlert, e) {
     e.preventDefault();
-    this.notificationsService.clearNotifications([notification], true);
+    this.notificationsService.clearNotifications([notification], false);
 
     for (let i = this.dismissedNotifications.length - 1; i >= 0; i--) {
       if (this.dismissedNotifications[i].id === notification.id) {
