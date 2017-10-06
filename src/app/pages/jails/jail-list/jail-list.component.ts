@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 export class JailListComponent {
 
   protected resource_name = 'jails/jails';
+  protected queryCall = 'jail.query';
   protected route_add: string[] = [ 'jails', 'add' ];
   protected route_add_tooltip = "Add Jail";
   protected entityList: any;
@@ -16,10 +17,10 @@ export class JailListComponent {
  
 
   public columns: Array<any> = [
-    {name : 'Jail', prop : 'jail_host'},
-    {name : 'IPv4 Address', prop : 'jail_ipv4'},
-    {name : 'Autostart', prop : 'jail_autostart'},
+    {name : 'Jail', prop : 'host_hostname'},
     {name : 'Status', prop : 'jail_status'},
+    {name : 'Release', prop : 'release'},
+    {name : 'IPv4 Address', prop : 'ip4_addr'},
   ];
   public config: any = {
     paging : true,
@@ -47,8 +48,9 @@ export class JailListComponent {
         id : "edit",
         label : "Edit",
         onClick : (row) => {
+          console.log(row.host_hostuuid);
           this.router.navigate(
-              new Array('').concat([ "jails", "edit", row.id ]));
+              new Array('').concat([ "jails", "edit", row.host_hostuuid ]));
         }
       },
       {
