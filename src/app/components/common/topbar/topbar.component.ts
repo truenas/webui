@@ -64,7 +64,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.notifications = notifications2;
         });
     
-      }, 4000);
+      }, 8000);
     });
 
     
