@@ -3,7 +3,7 @@ import {Component, OnInit, ViewChild, Input} from '@angular/core';
 import {MdSidenav} from '@angular/material';
 import {Router, NavigationEnd} from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { NotificationsService } from 'app/services/notifications.service';
+import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 
 
 
@@ -15,7 +15,8 @@ import { NotificationsService } from 'app/services/notifications.service';
 export class NotificationsComponent implements OnInit {
   @Input() notificPanel;
 
-  notifications: Array<Notification> = [];
+  notifications: Array<NotificationAlert> = [];
+  dismissedNotifications: Array<NotificationAlert> = []
   
   showMe: Boolean = false;
 
@@ -28,8 +29,14 @@ export class NotificationsComponent implements OnInit {
       }
     });
 
-    this.notificationsService.getNotifications().subscribe((notifications)=>{
-        this.notifications = notifications;
+    this.notificationsService.getNotifications(true).subscribe((notifications)=>{
+        notifications.forEach((notification: NotificationAlert)=>{
+            if( notification.dismissed === false ) {
+              this.notifications.push( notification );
+            } else {
+              this.dismissedNotifications.push( notification );
+            }
+        });
         this.showMe = true;
     });
   }
@@ -38,7 +45,13 @@ export class NotificationsComponent implements OnInit {
   clearAll(e) {
     e.preventDefault();
 
-    this.notificationsService.clearNotifications();
+    this.notificationsService.clearNotifications(this.notifications);
+    
+    this.notifications.forEach((notification: NotificationAlert)=>{
+      notification.dismissed = true;
+      this.dismissedNotifications.push( notification );
+    });
+
     this.notifications = [];
   }
 }

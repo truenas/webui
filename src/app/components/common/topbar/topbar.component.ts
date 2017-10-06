@@ -5,7 +5,7 @@ import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { TourService } from '../../../services/tour.service';
-import { Notification, NotificationsService } from '../../../services/notifications.service';
+import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MdSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 
@@ -50,18 +50,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.freenasThemes = this.themeService.freenasThemes;
   
 
-    let showTour = localStorage.getItem(this.router.url) || 'true';
-    if (showTour == "true") {
+    const showTour = localStorage.getItem(this.router.url) || 'true';
+    if (showTour === "true") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
       localStorage.setItem(this.router.url, 'false');
     }
 
-    this.notificationsService.getNotifications().subscribe((notifications)=>{
-      this.notifications = notifications;
+    this.notificationsService.getNotifications(false).subscribe((notifications1)=>{
+      this.notifications = notifications1;
 
       this.interval = setInterval(()=>{
-        this.notificationsService.getNotifications().subscribe((notifications)=>{
-          this.notifications = notifications;
+        this.notificationsService.getNotifications(false).subscribe((notifications2)=>{
+          this.notifications = notifications2;
         });
     
       }, 4000);

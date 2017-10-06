@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 
-export interface Notification {
+export interface NotificationAlert {
   id: string;
   message: string;
   icon: string;
@@ -18,31 +18,32 @@ export interface Notification {
 @Injectable()
 export class NotificationsService {
 
-  notifications: Array<Notification> = [];
+  constructor(private restService: RestService) { 
 
-  constructor(private restService: RestService) { }
+  }
 
 
-  public getNotifications(): Observable<any> {
+  public getNotifications(returnAll?: boolean): Observable<any> {
     const source = Observable.create((observer) => {
       this.restService.get("system/alert", {}).subscribe((res) => {
-        this.notifications = new Array<Notification>();
-        this.alertsArrivedHandler(res);
-        observer.next(this.notifications);
+        const notifications = this.alertsArrivedHandler(res, returnAll);
+        observer.next(notifications);
         observer.complete();
       });
     });
     return source;
   }
 
-  public clearNotifications() {
-    const oldNotifications: Array<Notification> = this.notifications;
-    this.notifications = new Array<Notification>();
+  public clearNotifications(notifications: Array<NotificationAlert>) {
+    const oldNotifications = new Array<NotificationAlert>();
+    notifications.forEach((notification)=>{
+      oldNotifications.push(notification);
+    });
+    
     oldNotifications.forEach((notification) => {
       this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: true }).subscribe((res) => {
           console.log("alert dismissed id:" + notification.id );
       });
-
       
     });
   }
@@ -56,12 +57,23 @@ export class NotificationsService {
   *   "message":"smartd is not running.\n",
   *   "timestamp":1504725447}
   */
-  alertsArrivedHandler(res) {
+  private alertsArrivedHandler(res, returnAll?: boolean): NotificationAlert[] {
+    const returnAlerts = new Array<NotificationAlert>();
     const data: Array<any> = res.data;
 
-    data.forEach((alertObj) => {
-      this.addNotification(alertObj);
+    data.forEach((alertObj: NotificationAlert) => {
+
+      if( typeof(returnAll) === "undefined" || returnAll === true ) {
+        returnAlerts.push(this.addNotification(alertObj));
+      } else {
+        if( alertObj.dismissed === false) {
+          returnAlerts.push(this.addNotification(alertObj));
+        }
+      }
+     
     });
+
+    return returnAlerts;
   }
 
   /**
@@ -81,7 +93,7 @@ export class NotificationsService {
 
   }
 
-  private addNotification(alertObj) {
+  private addNotification(alertObj): NotificationAlert {
     const id: string = alertObj.id;
     const dismissed: boolean = alertObj.dismissed;
     const message: string = <string>alertObj.message;
@@ -102,7 +114,7 @@ export class NotificationsService {
       color = "warn";
     }
 
-    const newNotification: Notification = {
+    const newNotification: NotificationAlert = {
       id: id,
       message: message,
       icon: icon,
@@ -112,10 +124,7 @@ export class NotificationsService {
       dismissed: dismissed
     };
 
-    if (newNotification.dismissed === false) {
-      this.notifications.push(newNotification);
-    }
-
+    return newNotification;
   }
 
 }
