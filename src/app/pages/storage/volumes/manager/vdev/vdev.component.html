@@ -38,9 +38,9 @@
             Estimated available capacity: {{size}}
         </div>
         <div class="col-md-1" style="text-align: right">
-                <button md-raised-button class="btn btn-accent" (click)="addSelectedDisks()">Add disks</button>
-                <button md-raised-button class="btn btn-accent" (click)="removeSelectedDisks()">Remove disks</button>
-                <button md-raised-button class="btn" *ngIf="removable" (click)="remove()">X</button>
+                <button md-raised-button class="btn btn-accent" (click)="addSelectedDisks()" [disabled]="!manager.selected.length">Add disks</button>
+                <button md-raised-button class="btn btn-accent" (click)="removeSelectedDisks()" [disabled]="!selected.length">Remove disks</button>
+                <button md-raised-button class="btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
         </div>
     </div>
 </md-card>
