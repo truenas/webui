@@ -134,6 +134,11 @@ export const routes: Routes = [
           component: CloudCredentialsGCSComponent,
           data: { title: 'gcs', breadcrumb: 'gcs' },
         },
+        {
+          path: 'gcs/:pk',
+          component: CloudCredentialsGCSComponent,
+          data: { title: 'gcs', breadcrumb: 'gcs' },
+        },
       ]
     },
     {
