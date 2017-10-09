@@ -27,7 +27,11 @@ export class CloudCredentialsGCSComponent {
 
   protected isEntity: boolean = true;
   protected addCall = 'backup.credential.create';
+  protected queryCall = 'backup.credential.query';
+  protected editCall;
   public formGroup: FormGroup;
+  protected pk: any;
+  protected queryPayload = [];
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -57,6 +61,16 @@ export class CloudCredentialsGCSComponent {
       protected _appRef: ApplicationRef
   ) {}
 
+  preInit(entityForm: any) {
+    if (!entityForm.isNew) {
+    this.route.params.subscribe(params => {
+      this.queryPayload.push("id")
+      this.queryPayload.push("=")
+      this.queryPayload.push(parseInt(params['pk']));
+      this.pk = [this.queryPayload];
+    });
+  }
+  }
   afterInit(entityForm: any) {
     entityForm.submitFunction = this.submitFunction;
   }
@@ -68,8 +82,17 @@ export class CloudCredentialsGCSComponent {
     payload['name'] = formvalue.name;
     const kf = formvalue.attributes;
     payload['attributes'] = { 'keyfile': JSON.parse(kf) };
-    auxPayLoad.push(payload)
-    return this.ws.call('backup.credential.create', auxPayLoad);
+    if (!this.pk){
+      auxPayLoad.push(payload)
+      return this.ws.call('backup.credential.create', auxPayLoad);
+    }
+    else {
+      payload['id'] = this.pk;
+      auxPayLoad.push(payload);
+      console.log(JSON.stringify(auxPayLoad));
+      return this.ws.call('backup.credential.update', auxPayLoad);
+    }
+    
 
   }
 }

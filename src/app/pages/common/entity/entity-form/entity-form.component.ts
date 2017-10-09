@@ -119,7 +119,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
       if (this.conf.queryCall) {
         if(this.pk) {
-          this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
+          const filter = []
+          filter.push(this.conf.pk)
+          this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []);
         }
@@ -133,18 +135,41 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
       if (!this.isNew) {
         this.getFunction.subscribe((res) => {
-          this.data = res.data;
-          for (let i in this.data) {
-            let fg = this.formGroup.controls[i];
-            if (fg) {
-              let current_field = this.fieldConfig.find((control) => control.name === i);
-              if (current_field.type == "array") {
-                  this.setArrayValue(this.data[i], fg, i);
-              } else {
-                fg.setValue(this.data[i]);
+          if (res.data){
+            this.data = res.data;
+            for (let i in this.data) {
+              let fg = this.formGroup.controls[i];
+              if (fg) {
+                let current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.type == "array") {
+                    this.setArrayValue(this.data[i], fg, i);
+                } else {
+                  fg.setValue(this.data[i]);
+                }
+              }
+            }
+          } else {
+            const wsResponse = res[0];
+            for (let i in wsResponse){
+              let fg = this.formGroup.controls[i];
+              if (fg) {
+                let current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.type == "array") {
+                    this.setArrayValue(wsResponse[i], fg, i);
+                } else {
+                  if (typeof wsResponse[i] === "object"){
+                    if (wsResponse[i].hasOwnProperty('keyfile')){
+                      fg.setValue(JSON.stringify(wsResponse[i].keyfile))
+                    }
+                  }
+                  else{
+                  fg.setValue(wsResponse[i]);
+                  }
+                }
               }
             }
           }
+
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }

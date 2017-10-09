@@ -11,8 +11,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 })
 export class CloudCredentialsListComponent {
   protected queryCall = 'backup.credential.query';
-  protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
-  protected route_success: string[] = [ 'system', 'ntpservers' ];
+  protected route_edit: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
+  protected route_success: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
     
   public columns: Array<any> = [
     {name : 'Account Name', prop : 'name'},
@@ -38,7 +38,29 @@ export class CloudCredentialsListComponent {
           new Array('').concat(["system", "cloudcredentials", "gcs"]));
       }
     });
+    
 
+    return actions;
+  }
+  getActions(row) {
+    
+    let actions = [];
+    if (!row.type) {
+      actions.push({
+        label : "Delete",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs", row.id, "delete"]));}
+      });
+    }
+    if(row.provider == "GCLOUD"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs",row.id]));
+        }
+      });
+
+    }
     return actions;
   }
 }
