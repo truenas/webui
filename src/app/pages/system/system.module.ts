@@ -25,6 +25,7 @@ import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
+import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -61,6 +62,7 @@ import { SupportComponent } from './support/support.component';
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsListComponent,
+    CloudCredentialsDeleteComponent,
     CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityImportComponent,

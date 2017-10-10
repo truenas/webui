@@ -20,6 +20,7 @@ import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
+import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -138,6 +139,11 @@ export const routes: Routes = [
           path: 'gcs/:pk',
           component: CloudCredentialsGCSComponent,
           data: { title: 'gcs', breadcrumb: 'gcs' },
+        },
+        {
+          path: ':pk/delete',
+          component: CloudCredentialsDeleteComponent,
+          data: { title: 'delete', breadcrumb: 'delete' },
         },
       ]
     },

@@ -49,7 +49,7 @@ export class CloudCredentialsListComponent {
       actions.push({
         label : "Delete",
         onClick : (row) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs", row.id, "delete"]));}
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));}
       });
     }
     if(row.provider == "GCLOUD"){
