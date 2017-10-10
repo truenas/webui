@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services/';
 
 
@@ -10,12 +11,15 @@ import { RestService, WebSocketService } from '../../../../services/';
   template: `<entity-table [conf]="this"></entity-table>`
 })
 export class AlertServiceListComponent {
-  protected resource_name = 'system/ntpserver';
+  protected resource_name = 'system/consulalerts/?parent=null';
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];
     
+  public busy: Subscription;
+  public sub: Subscription;
+
   public columns: Array<any> = [
-    {name : 'Service Name', prop : 'name'},
+    {name : 'Service Name', prop : 'consulalert_type'},
     {name : 'Enabled', prop : 'enabled'},
   ];
     public config: any = {
@@ -24,7 +28,7 @@ export class AlertServiceListComponent {
     };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-     protected ws: WebSocketService,
+     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
 
@@ -40,5 +44,13 @@ export class AlertServiceListComponent {
     });
 
     return actions;
+  }
+
+  preInit(entityList: any) {
+    this.sub = this.aroute.params.subscribe(params => {});
+  }
+ 
+  getAlertList(): Observable<Array<any>> {
+    return this.rest.get(this.resource_name, {});
   }
 }
