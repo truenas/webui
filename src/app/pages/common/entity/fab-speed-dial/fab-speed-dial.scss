@@ -28,7 +28,7 @@ smd-fab-speed-dial {
   display: inline-block;
   position: absolute;
   right: 66px;
-  padding-bottom: 60px;
+  bottom: 6px;
 
   &.smd-opened {
     .smd-fab-speed-dial-container {
