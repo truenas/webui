@@ -42,6 +42,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public hasConf: boolean = true;
+  public wsResponse;
+  public wsfg;
+  public wsResponseIdx;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -149,21 +152,20 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               }
             }
           } else {
-            const wsResponse = res[0];
-            for (let i in wsResponse){
-              let fg = this.formGroup.controls[i];
-              if (fg) {
+            this.wsResponse = res[0];
+            for (let i in this.wsResponse){
+              this.wsfg = this.formGroup.controls[i];
+              this.wsResponseIdx = this.wsResponse[i]
+              if (this.wsfg) {
                 let current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type == "array") {
-                    this.setArrayValue(wsResponse[i], fg, i);
+                    this.setArrayValue(this.wsResponse[i], this.wsfg, i);
                 } else {
-                  if (typeof wsResponse[i] === "object"){
-                    if (wsResponse[i].hasOwnProperty('keyfile')){
-                      fg.setValue(JSON.stringify(wsResponse[i].keyfile))
-                    }
+                  if (this.conf.dataHandler) {
+                    this.conf.dataHandler(this);
                   }
-                  else{
-                  fg.setValue(wsResponse[i]);
+                  else {
+                    this.wsfg.setValue(this.wsResponse[i]);
                   }
                 }
               }

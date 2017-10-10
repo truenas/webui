@@ -91,4 +91,14 @@ export class CloudCredentialsGCSComponent {
     
 
   }
+  dataHandler(entityForm: any){
+    if (typeof entityForm.wsResponseIdx === "object"){
+      if (entityForm.wsResponseIdx.hasOwnProperty('keyfile')){
+        entityForm.wsfg.setValue(JSON.stringify(entityForm.wsResponseIdx.keyfile))
+      }
+    }
+    else {
+      entityForm.wsfg.setValue(entityForm.wsResponseIdx);
+    }
+  }
 }
