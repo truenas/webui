@@ -28,7 +28,6 @@ export class CloudCredentialsGCSComponent {
   protected isEntity: boolean = true;
   protected addCall = 'backup.credential.create';
   protected queryCall = 'backup.credential.query';
-  protected editCall;
   public formGroup: FormGroup;
   protected pk: any;
   protected queryPayload = [];
@@ -87,10 +86,7 @@ export class CloudCredentialsGCSComponent {
       return this.ws.call('backup.credential.create', auxPayLoad);
     }
     else {
-      payload['id'] = this.pk;
-      auxPayLoad.push(payload);
-      console.log(JSON.stringify(auxPayLoad));
-      return this.ws.call('backup.credential.update', auxPayLoad);
+      return this.ws.call('backup.credential.update', [this.pk, payload]);
     }
     
 
