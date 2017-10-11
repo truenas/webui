@@ -145,4 +145,8 @@ export class TaskService {
   getRsyncDirectionChoices() {
     return this.ws.call('notifier.choices', ['RSYNC_DIRECTION', [true, false]]);
   };
+
+  getSmarttestTypeChoices() {
+    return this.ws.call('notifier.choices', ['SMART_TEST', [true, false]]);
+  };
 }
