@@ -27,6 +27,7 @@ export class AlertServiceEditAWSComponent {
 
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = [ 'system', 'alertservice'];
+  protected isNew = false;
   protected isEntity = true;
   
   

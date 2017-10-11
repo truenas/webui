@@ -27,15 +27,17 @@ export class AlertServiceAddAWSComponent {
 
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = [ 'system', 'alertservice'];
+  protected isNew = true;
   protected isEntity = true;
+  
   
   
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type',
+      value: 'AWSSNS'
     },
     {
       type : 'input',
@@ -49,18 +51,13 @@ export class AlertServiceAddAWSComponent {
     },
     {
       type : 'input',
-      name : 'base_url',
-      placeholder : 'base_url'
-    },
-    {
-      type : 'input',
       name : 'aws_access_key_id',
-      placeholder : 'key id'
+      placeholder : 'aws_access_key_id'
     },
     {
       type: 'input',
       name: 'aws_secret_access_key',
-      placeholder: 'secret access key',
+      placeholder: 'aws_secret_access_key',
     },
     {
       type : 'checkbox',
@@ -78,6 +75,5 @@ export class AlertServiceAddAWSComponent {
       protected _appRef: ApplicationRef
   ) {}
 
-  afterInit(entityForm: any) {
-  }
+  afterInit(entityAdd: any) {}
 }
