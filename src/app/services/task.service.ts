@@ -137,4 +137,12 @@ export class TaskService {
   getVolumeList() {
     return this.rest.get(this.volumeResource, {});
   }
+
+  getRsyncModeChoices() {
+    return this.ws.call('notifier.choices', ['RSYNC_MODE_CHOICES', [true, false]]);
+  };
+
+  getRsyncDirectionChoices() {
+    return this.ws.call('notifier.choices', ['RSYNC_DIRECTION', [true, false]]);
+  };
 }
