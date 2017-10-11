@@ -58,7 +58,7 @@ export class AlertServiceEditAWSComponent {
     },
   ];
 
-  fieldConfigDataPrepare(data:any): any {
+  resource_transformIncommingRestData(data:any): any {
     data.aws_access_key_id = data.attributes.aws_access_key_id;
     data.aws_secret_access_key = data.attributes.aws_secret_access_key;
     data.base_url = data.attributes.base_url;
