@@ -23,6 +23,7 @@ import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.co
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
 import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { SmartListComponent } from './smart/smart-list/smart-list.component';
+import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { SmartListComponent } from './smart/smart-list/smart-list.component';
     SnapshotFormComponent,
     RsyncListComponent,
     RsyncFormComponent,
-    SmartListComponent
+    SmartListComponent,
+    SmartFormComponent
   ]
 })
 export class TaskCalendarModule {}
