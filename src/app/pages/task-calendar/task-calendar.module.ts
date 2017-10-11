@@ -21,6 +21,7 @@ import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/init
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
+import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
     InitshutdownFormComponent,
     SnapshotListComponent,
     SnapshotFormComponent,
-    RsyncListComponent
+    RsyncListComponent,
+    RsyncFormComponent
   ]
 })
 export class TaskCalendarModule {}

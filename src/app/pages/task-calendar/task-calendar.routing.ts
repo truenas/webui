@@ -8,6 +8,7 @@ import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/init
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
+import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -71,6 +72,14 @@ export const TaskCalendarRoutes: Routes = [{
       path: '',
       component: RsyncListComponent,
       data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
+    }, {
+      path: 'add',
+      component: RsyncFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add' }
+    }, {
+      path: 'edit/:pk',
+      component: RsyncFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
   }]
 }];
