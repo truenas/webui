@@ -9,6 +9,7 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
 import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
+import { SmartListComponent } from './smart/smart-list/smart-list.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -80,6 +81,14 @@ export const TaskCalendarRoutes: Routes = [{
       path: 'edit/:pk',
       component: RsyncFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
+    }]
+  }, {
+    path: 'smart',
+    data: { title: 'S.M.A.R.T Tests', breadcrumb: 'S.M.A.R.T Tests' },
+    children: [{
+      path: '',
+      component: SmartListComponent,
+      data: { title: 'S.M.A.R.T Tests', breadcrumb: 'S.M.A.R.T Tests' },
     }]
   }]
 }];
