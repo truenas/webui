@@ -34,7 +34,18 @@ export class AlertServiceEditAWSComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'counsulalert_type'
+      placeholder: 'service name',
+      disabled: true,
+    },
+    {
+      type : 'input',
+      name : 'region',
+      placeholder : 'region'
+    },
+    {
+      type: 'input',
+      name: 'topic_arn',
+      placeholder: 'topic_arn'
     },
     {
       type : 'input',
@@ -44,12 +55,12 @@ export class AlertServiceEditAWSComponent {
     {
       type : 'input',
       name : 'aws_access_key_id',
-      placeholder : 'aws_access_key_id'
+      placeholder : 'key id'
     },
     {
       type: 'input',
       name: 'aws_secret_access_key',
-      placeholder: 'aws_secret_access_key',
+      placeholder: 'secret access key',
     },
     {
       type : 'checkbox',
@@ -62,6 +73,8 @@ export class AlertServiceEditAWSComponent {
     data.aws_access_key_id = data.attributes.aws_access_key_id;
     data.aws_secret_access_key = data.attributes.aws_secret_access_key;
     data.base_url = data.attributes.base_url;
+    data.region = data.attributes.region;
+    data.topic_arn = data.attributes.topic_arn;
     return data;
   };
 

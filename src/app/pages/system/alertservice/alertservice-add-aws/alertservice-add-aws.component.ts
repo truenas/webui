@@ -29,39 +29,43 @@ export class AlertServiceAddAWSComponent {
   protected route_success: string[] = [ 'system', 'alertservice'];
   protected isEntity = true;
   
+  
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder : 'Service Name',
-      value: 'AWS-SNS',
-      isHidden: true
+      placeholder: 'service name',
+      disabled: true,
     },
     {
       type : 'input',
       name : 'region',
-      placeholder : 'Region',
+      placeholder : 'region'
+    },
+    {
+      type: 'input',
+      name: 'topic_arn',
+      placeholder: 'topic_arn'
     },
     {
       type : 'input',
-      name : 'topic-arn',
-      placeholder : 'ARN',
+      name : 'base_url',
+      placeholder : 'base_url'
     },
     {
       type : 'input',
-      name : 'aws-access-key-id',
-      placeholder : 'Key Id',
+      name : 'aws_access_key_id',
+      placeholder : 'key id'
     },
     {
-      type : 'input',
-      name : 'aws-secret-access-key',
-      placeholder : 'Secret Key',
+      type: 'input',
+      name: 'aws_secret_access_key',
+      placeholder: 'secret access key',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled',
-      value: true
+      placeholder : 'Enabled'
     },
   ];
 
