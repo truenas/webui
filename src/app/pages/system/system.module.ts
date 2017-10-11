@@ -21,7 +21,6 @@ import { UpdateComponent } from './update/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
-import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
@@ -36,6 +35,8 @@ import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
+import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
+import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
 
 @NgModule({
   imports: [
@@ -57,7 +58,8 @@ import { SupportComponent } from './support/support.component';
     NTPServerListComponent,
     NTPServerAddComponent,
     NTPServerEditComponent,
-    AlertServiceAWSComponent,
+    AlertServiceAddAWSComponent,
+    AlertServiceEditAWSComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsListComponent,

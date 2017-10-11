@@ -16,7 +16,6 @@ import { UpdateComponent } from './update/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
-import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
@@ -31,6 +30,8 @@ import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
+import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
+import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -117,9 +118,13 @@ export const routes: Routes = [
           component: AlertServiceListComponent,
           data: { title: 'AlertService', breadcrumb: 'AlertService' },
         }, {
-          path: 'aws',
-          component: AlertServiceAWSComponent,
+          path: 'add-aws',
+          component: AlertServiceAddAWSComponent,
           data: { title: 'AddAWS', breadcrumb: 'AddAWS' },
+        },{
+          path: 'edit-aws/:pk',
+          component: AlertServiceEditAWSComponent,
+          data: { title: 'EditAWS', breadcrumb: 'EditAWS' },
         },
       ]
     },{

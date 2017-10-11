@@ -128,7 +128,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         if (this.conf.custom_get_query) {
           getQuery = this.conf.custom_get_query;
         }
-        this.getFunction = this.rest.get(getQuery, {});
+        this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
 
       if (!this.isNew) {
@@ -194,7 +194,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       resource = this.conf.custom_edit_query;
     }
 
-    return this.rest.put(resource, {body});
+    return this.rest.put(resource, {body}, this.conf.route_usebaseUrl);
   }
 
   editCall(body: any) {
@@ -209,7 +209,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       resource = this.conf.custom_add_query;
     }
 
-    return this.rest.post(resource, {body}); 
+    return this.rest.post(resource, {body}, this.conf.route_usebaseUrl); 
   }
 
   onSubmit(event: Event) {

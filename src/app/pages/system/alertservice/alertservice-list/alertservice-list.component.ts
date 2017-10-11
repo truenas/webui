@@ -12,9 +12,10 @@ import { RestService, WebSocketService } from '../../../../services/';
 })
 export class AlertServiceListComponent {
   protected resource_name = 'system/consulalerts/?parent=null';
-  protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
-  protected route_success: string[] = [ 'system', 'ntpservers' ];
-    
+  protected route_edit: string[] = [ 'system', 'alertservice', 'edit-aws' ];
+  protected route_add: string[] = [ 'system', 'alertservice', 'add-aws' ];
+  protected route_success: string[] = [ 'system', 'alertservice' ];
+  
   public busy: Subscription;
   public sub: Subscription;
 
@@ -39,7 +40,7 @@ export class AlertServiceListComponent {
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
-          new Array('').concat(["system", "alertservice", "aws"]));
+          new Array('').concat(["system", "alertservice", "add-aws"]));
       }
     });
 
