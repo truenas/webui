@@ -11,7 +11,7 @@ import { RestService, WebSocketService } from '../../../../services/';
   template: `<entity-table [conf]="this"></entity-table>`
 })
 export class AlertServiceListComponent {
-  protected resource_name = 'system/consulalerts/?parent=null';
+  protected resource_name = 'system/consulalerts';
   protected route_edit: string[] = [ 'system', 'alertservice', 'edit-aws' ];
   protected route_add: string[] = [ 'system', 'alertservice', 'add-aws' ];
   protected route_success: string[] = [ 'system', 'alertservice' ];
