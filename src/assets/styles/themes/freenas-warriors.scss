@@ -155,6 +155,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
 
     .sidebar-panel.mat-sidenav .navigation-hold,
+    .mat-tab-header,
     .message-item.open .message-head,
     .bg-white,
     .cal-month-view .cal-cell-row:hover,
@@ -162,7 +163,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .cal-day-view .cal-hour:nth-child(odd),
     &.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu,
     .breadcrumb-bar, .mat-card, .ngx-datatable .datatable-body {
-        background: rgba(0, 107, 182, 0.92) !important;
+        background: rgb(0, 107, 182) !important;
     }
     .ngx-datatable .datatable-footer {
         background: map-get($md-primary, 500) !important;

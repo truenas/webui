@@ -37,7 +37,8 @@
             "assets/styles/themes/ix-blue.scss",
             "assets/styles/themes/freenas-warriors.scss",
             "assets/styles/themes/freenas-sharks.scss",
-            "assets/styles/styles.css"
+            "assets/styles/styles.css",
+            "assets/styles/egret_overrides.css"
         ],
         "scripts": [
             "vendor/pace/pace.min.js",

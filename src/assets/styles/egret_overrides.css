@@ -1,0 +1,45 @@
+/* Universal Overrides for Egret */
+
+
+/* Navigation fixed to Top */
+topbar, app-breadcrumb{
+    position:fixed;
+    width:100%;
+    z-index:3;
+}
+
+topbar{
+    top:0;
+}
+
+app-breadcrumb{
+    top:64px;
+}
+
+.rightside-content-hold {
+    padding: 104px .03rem 10%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display: block;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+/* Tabbed navigation is fixed too */
+.mat-tab-header{
+    overflow: hidden;
+    position: fixed !important;
+    top:104px;
+    flex-shrink: 0;
+    z-index: 2;
+    background:#efefef;
+    width: 100%;
+}
+
+.mat-tab-body-wrapper{
+    padding:64px 16px 16px;
+}
+
+
