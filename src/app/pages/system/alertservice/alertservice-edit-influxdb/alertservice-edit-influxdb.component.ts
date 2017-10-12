@@ -35,8 +35,28 @@ export class AlertServiceEditInfluxdbComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type',
+      value: 'InfluxDB'
+    },{
+      type : 'input',
+      name : 'username',
+      placeholder: 'username'
+    },{
+      type : 'input',
+      name : 'password',
+      placeholder: 'password'
+    },{
+      type : 'input',
+      name : 'host',
+      placeholder: 'host'
+    },{
+      type : 'input',
+      name : 'database',
+      placeholder: 'database'
+    },{
+      type : 'input',
+      name : 'series_name',
+      placeholder: 'series_name'
     },
     {
       type : 'checkbox',
@@ -46,6 +66,13 @@ export class AlertServiceEditInfluxdbComponent {
   ];
 
   resource_transformIncommingRestData(data:any): any {
+
+    data.username = data.attributes.username;
+    data.password = data.attributes.password;
+    data.host = data.attributes.host;
+    data.database = data.attributes.database;
+    data.series_name = data.attributes.series_name;
+
     return data;
   };
 
