@@ -64,7 +64,7 @@ export class AlertServiceListComponent {
       }
     },{
         label: "Mattermost",
-        icon: "vpn_lock",
+        icon: "fiber_new",
         onClick: () => {
           this.router.navigate(
             new Array('').concat(["system", "alertservice", "add-mattermost"]));
