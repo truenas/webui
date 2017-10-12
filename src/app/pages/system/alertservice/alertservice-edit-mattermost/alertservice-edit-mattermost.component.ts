@@ -35,8 +35,32 @@ export class AlertServiceEditMattermostComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type',
+      value: 'Mattermost'
+    },{
+      type : 'input',
+      name : 'username',
+      placeholder: 'username'
+    },{
+      type : 'input',
+      name : 'password',
+      placeholder: 'password'
+    },{
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'cluster_name'
+    },{
+      type : 'input',
+      name : 'url',
+      placeholder: 'url'
+    },{
+      type : 'input',
+      name : 'channel',
+      placeholder: 'channel'
+    },{
+      type : 'input',
+      name : 'team',
+      placeholder: 'team'
     },
     {
       type : 'checkbox',
@@ -46,6 +70,14 @@ export class AlertServiceEditMattermostComponent {
   ];
 
   resource_transformIncommingRestData(data:any): any {
+
+    data.username = data.attributes.username;
+    data.password = data.attributes.password;
+    data.cluster_name = data.attributes.cluster_name;
+    data.url = data.attributes.url;
+    data.channel = data.attributes.channel;
+    data.team = data.attributes.team;
+    
     return data;
   };
 

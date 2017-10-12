@@ -38,6 +38,30 @@ export class AlertServiceAddMattermostComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'Mattermost'
+    },{
+      type : 'input',
+      name : 'username',
+      placeholder: 'username'
+    },{
+      type : 'input',
+      name : 'password',
+      placeholder: 'password'
+    },{
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'cluster_name'
+    },{
+      type : 'input',
+      name : 'url',
+      placeholder: 'url'
+    },{
+      type : 'input',
+      name : 'channel',
+      placeholder: 'channel'
+    },{
+      type : 'input',
+      name : 'team',
+      placeholder: 'team'
     },
     {
       type : 'checkbox',
