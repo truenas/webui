@@ -155,7 +155,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
             this.wsResponse = res[0];
             for (let i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
-              this.wsResponseIdx = this.wsResponse[i]
+              this.wsResponseIdx = this.wsResponse[i];
               if (this.wsfg) {
                 let current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type == "array") {
@@ -167,6 +167,10 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                   else {
                     this.wsfg.setValue(this.wsResponse[i]);
                   }
+                }
+              } else {
+                if (this.conf.dataAttributeHandler) {
+                  this.conf.dataAttributeHandler(this);
                 }
               }
             }
