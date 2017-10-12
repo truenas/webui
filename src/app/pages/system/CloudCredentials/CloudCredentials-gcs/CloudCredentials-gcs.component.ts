@@ -81,7 +81,9 @@ export class CloudCredentialsGCSComponent {
     payload['provider'] = formvalue.provider;
     payload['name'] = formvalue.name;
     const kf = formvalue.attributes;
-    payload['attributes'] = { 'keyfile': JSON.parse(kf) };
+    try{
+      //payload['attributes'] = { 'keyfile': JSON.parse(kf) };
+      payload['attributes'] = { 'keyfile': kf };
     if (!this.pk){
       auxPayLoad.push(payload)
       return this.ws.call('backup.credential.create', auxPayLoad);
@@ -89,7 +91,13 @@ export class CloudCredentialsGCSComponent {
     else {
       return this.ws.call('backup.credential.update', [this.pk, payload]);
     }
+  }
+  catch(err) {
+    alert("Invalid JSON")
     
+  }
+
+  
 
   }
   dataHandler(entityForm: any){
