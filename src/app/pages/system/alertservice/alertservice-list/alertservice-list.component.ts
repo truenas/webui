@@ -61,7 +61,8 @@ export class AlertServiceListComponent {
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-influxdb"]));
-      },{
+      }
+    },{
         label: "Mattermost",
         icon: "vpn_lock",
         onClick: () => {
