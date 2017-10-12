@@ -73,6 +73,8 @@ export class NavigationService {
        {name: 'Cron Jobs', state: 'cron'},
        {name: 'Init/Shutdown Scripts', state: 'initshutdown'},
        {name: 'Periodic Snapshot Tasks', state: 'snapshot'},
+       {name: 'Rsync Tasks', state: 'rsync'},
+       {name: 'S.M.A.R.T Tests', state: 'smart'},
      ]
     },
     {

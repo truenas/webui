@@ -7,6 +7,10 @@ import { InitshutdownListComponent } from './initshutdown/initshutdown-list/init
 import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
+import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
+import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
+import { SmartListComponent } from './smart/smart-list/smart-list.component';
+import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -61,6 +65,38 @@ export const TaskCalendarRoutes: Routes = [{
     }, {
       path: 'edit/:pk',
       component: SnapshotFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
+    }]
+  }, {
+    path: 'rsync',
+    data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
+    children: [{
+      path: '',
+      component: RsyncListComponent,
+      data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
+    }, {
+      path: 'add',
+      component: RsyncFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add' }
+    }, {
+      path: 'edit/:pk',
+      component: RsyncFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
+    }]
+  }, {
+    path: 'smart',
+    data: { title: 'S.M.A.R.T Tests', breadcrumb: 'S.M.A.R.T Tests' },
+    children: [{
+      path: '',
+      component: SmartListComponent,
+      data: { title: 'S.M.A.R.T Tests', breadcrumb: 'S.M.A.R.T Tests' },
+    }, {
+      path: 'add',
+      component: SmartFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add' }
+    }, {
+      path: 'edit/:pk',
+      component: SmartFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
   }]
