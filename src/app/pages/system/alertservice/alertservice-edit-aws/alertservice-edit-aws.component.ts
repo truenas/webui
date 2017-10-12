@@ -20,7 +20,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-alertservice-aws',
+  selector : 'app-alertservice-edit-aws',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class AlertServiceEditAWSComponent {

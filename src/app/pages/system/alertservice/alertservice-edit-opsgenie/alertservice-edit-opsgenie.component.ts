@@ -20,10 +20,10 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-alertservice-edit-influxdb',
+  selector : 'app-alertservice-edit-opsgenie',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class AlertServiceEditInfluxdbComponent {
+export class AlertServiceEditOpsgenieComponent {
 
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = [ 'system', 'alertservice'];

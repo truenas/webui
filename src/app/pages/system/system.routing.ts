@@ -38,6 +38,14 @@ import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/
 import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
 import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
 import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
+import { AlertServiceEditVictoropsComponent } from 'app/pages/system/alertservice/alertservice-edit-victorops';
+import { AlertServiceAddVictoropsComponent } from 'app/pages/system/alertservice/alertservice-add-victorops';
+import { AlertServiceEditSlackComponent } from 'app/pages/system/alertservice/alertservice-edit-slack';
+import { AlertServiceAddSlackComponent } from 'app/pages/system/alertservice/alertservice-add-slack';
+import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-edit-pagerduty';
+import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
+import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
+import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -155,6 +163,38 @@ export const routes: Routes = [
           path: 'edit-mattermost/:pk',
           component: AlertServiceEditMattermostComponent,
           data: { title: 'Edit Mattermost', breadcrumb: 'Edit Mattermost' },
+        },{
+          path: 'add-opsgenie',
+          component: AlertServiceAddOpsgenieComponent,
+          data: { title: 'Add Mattermost', breadcrumb: 'Add OpsGenie' },
+        },{
+          path: 'edit-opsgenie/:pk',
+          component: AlertServiceEditOpsgenieComponent,
+          data: { title: 'Edit Mattermost', breadcrumb: 'Edit OpsGenie' },
+        },{
+          path: 'add-pagerduty',
+          component: AlertServiceAddPagerdutyComponent,
+          data: { title: 'Add Mattermost', breadcrumb: 'Add PagerDuty' },
+        },{
+          path: 'edit-pagerduty/:pk',
+          component: AlertServiceEditPagerdutyComponent,
+          data: { title: 'Edit Mattermost', breadcrumb: 'Edit PagerDuty' },
+        },{
+          path: 'add-slack',
+          component: AlertServiceAddSlackComponent,
+          data: { title: 'Add Mattermost', breadcrumb: 'Add Slack' },
+        },{
+          path: 'edit-slack/:pk',
+          component: AlertServiceEditSlackComponent,
+          data: { title: 'Edit Mattermost', breadcrumb: 'Edit Slack' },
+        },{
+          path: 'add-victorops',
+          component: AlertServiceAddVictoropsComponent,
+          data: { title: 'Add Mattermost', breadcrumb: 'Add VictOps' },
+        },{
+          path: 'edit-victorops/:pk',
+          component: AlertServiceEditVictoropsComponent,
+          data: { title: 'Edit Mattermost', breadcrumb: 'Edit VictorOps' },
         }
       ]
     },{

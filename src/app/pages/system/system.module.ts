@@ -43,6 +43,14 @@ import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/
 import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
 import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
 import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
+import { AlertServiceEditVictoropsComponent } from 'app/pages/system/alertservice/alertservice-edit-victorops';
+import { AlertServiceAddVictoropsComponent } from 'app/pages/system/alertservice/alertservice-add-victorops';
+import { AlertServiceEditSlackComponent } from 'app/pages/system/alertservice/alertservice-edit-slack';
+import { AlertServiceAddSlackComponent } from 'app/pages/system/alertservice/alertservice-add-slack';
+import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-edit-pagerduty';
+import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
+import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
+import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 
 @NgModule({
   imports: [
@@ -72,6 +80,14 @@ import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservic
     AlertServiceEditInfluxdbComponent,
     AlertServiceAddMattermostComponent,
     AlertServiceEditMattermostComponent,
+    AlertServiceAddOpsgenieComponent,
+    AlertServiceEditOpsgenieComponent,
+    AlertServiceAddPagerdutyComponent,
+    AlertServiceEditPagerdutyComponent,
+    AlertServiceAddSlackComponent,
+    AlertServiceEditSlackComponent,
+    AlertServiceAddVictoropsComponent,
+    AlertServiceEditVictoropsComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsListComponent,

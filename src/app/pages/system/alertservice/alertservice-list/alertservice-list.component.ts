@@ -64,12 +64,40 @@ export class AlertServiceListComponent {
       }
     },{
         label: "Mattermost",
-        icon: "fiber_new",
+        icon: "device_hub",
         onClick: () => {
           this.router.navigate(
             new Array('').concat(["system", "alertservice", "add-mattermost"]));
         }
-    }];
+    },{
+      label: "OpsGenie",
+      icon: "local_laundry_service",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-opsgenie"]));
+      }
+  },{
+    label: "PagerDuty",
+    icon: "albulm",
+    onClick: () => {
+      this.router.navigate(
+        new Array('').concat(["system", "alertservice", "add-pagerduty"]));
+    }
+},{
+  label: "Slack",
+  icon: "fiber_new",
+  onClick: () => {
+    this.router.navigate(
+      new Array('').concat(["system", "alertservice", "add-slack"]));
+  }
+},{
+  label: "VictorOps",
+  icon: "system_update_alt",
+  onClick: () => {
+    this.router.navigate(
+      new Array('').concat(["system", "alertservice", "add-victorops"]));
+  }
+}];
   }
 
   getActions(parentRow) {
@@ -89,6 +117,18 @@ export class AlertServiceListComponent {
           this.router.navigate(urlNav);
         } else if (row.consulalert_type === "Mattermost") {
           const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-mattermost', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "OpsGenie") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-opsgenie', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "PagerDuty") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-pagerduty', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "Slack") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-slack', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "VictorOps") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-victorops', row.id]);
           this.router.navigate(urlNav);
         }
       }

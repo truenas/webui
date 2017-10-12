@@ -20,7 +20,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-alertservice-add-hipchat',
+  selector : 'app-alertservice-add-influxdb',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class AlertServiceAddInfluxdbComponent {

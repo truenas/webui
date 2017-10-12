@@ -20,23 +20,24 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-alertservice-edit-influxdb',
+  selector : 'app-alertservice-add-opengenie',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class AlertServiceEditInfluxdbComponent {
+export class AlertServiceAddOpsgenieComponent {
 
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = [ 'system', 'alertservice'];
-  protected isNew = false;
+  protected isNew = true;
   protected isEntity = true;
+  
   
   
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type',
+      value: 'OpsGenie'
     },
     {
       type : 'checkbox',
@@ -45,11 +46,6 @@ export class AlertServiceEditInfluxdbComponent {
     },
   ];
 
-  resource_transformIncommingRestData(data:any): any {
-    return data;
-  };
-
-
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
@@ -57,10 +53,7 @@ export class AlertServiceEditInfluxdbComponent {
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef
-  ) {
+  ) {}
 
-  }
-
-  afterInit(entityForm: any) {
-  }
+  afterInit(entityAdd: any) {}
 }
