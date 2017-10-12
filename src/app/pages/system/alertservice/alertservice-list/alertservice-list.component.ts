@@ -12,9 +12,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 })
 export class AlertServiceListComponent {
   protected resource_name = 'system/consulalerts';
-  protected route_edit: string[] = [ 'system', 'alertservice', 'edit-aws' ];
-  protected route_add: string[] = [ 'system', 'alertservice', 'add-aws' ];
   protected route_success: string[] = [ 'system', 'alertservice' ];
+  protected entityList: any;
   
   public busy: Subscription;
   public sub: Subscription;
@@ -33,25 +32,42 @@ export class AlertServiceListComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
 
+  afterInit(entityList: any) { 
+    this.entityList = entityList; 
+  }
+    
+  preInit(entityList: any) {
+    this.sub = this.aroute.params.subscribe(params => {});
+  }
+  
   getAddActions() {
-    let actions = [];
-    actions.push({
+    return [{
       label: "AWS-SN",
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-aws"]));
       }
-    });
-
-    return actions;
+    }]; 
   }
 
-  preInit(entityList: any) {
-    this.sub = this.aroute.params.subscribe(params => {});
+  getActions(parentRow) {
+    return [{
+        id: "edit",
+        label: "Edit",
+        onClick: (row) => {
+          this.router.navigate(
+            new Array('').concat([ 'system', 'alertservice', 'edit-aws', row.id ]));
+        }
+      },
+      {
+        id: "delete",
+        label: "Delete",
+        onClick: (row) => {
+          this.entityList.doDelete(row.id);
+        }
+      }
+    ]
   }
  
-  getAlertList(): Observable<Array<any>> {
-    return this.rest.get(this.resource_name, {});
-  }
 }

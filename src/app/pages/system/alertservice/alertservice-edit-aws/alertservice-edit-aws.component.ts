@@ -87,7 +87,9 @@ export class AlertServiceEditAWSComponent {
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef
-  ) {}
+  ) {
+
+  }
 
   afterInit(entityForm: any) {
   }
