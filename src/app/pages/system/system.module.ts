@@ -24,6 +24,8 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
+import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-b2/';
+import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
@@ -61,6 +63,8 @@ import { SupportComponent } from './support/support.component';
     AlertServiceAWSComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
+    CloudCredentialsAmazonComponent,
+    CloudCredentialsB2Component,
     CloudCredentialsListComponent,
     CloudCredentialsDeleteComponent,
     CAFormComponent,

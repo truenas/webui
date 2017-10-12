@@ -19,6 +19,8 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceAWSComponent } from './alertservice/alertservice-aws/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
+import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-b2/';
+import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
@@ -130,7 +132,8 @@ export const routes: Routes = [
           path: '',
           component: CloudCredentialsListComponent,
           data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
-        }, {
+        },
+        {
           path: 'gcs',
           component: CloudCredentialsGCSComponent,
           data: { title: 'gcs', breadcrumb: 'gcs' },
@@ -139,6 +142,26 @@ export const routes: Routes = [
           path: 'gcs/:pk',
           component: CloudCredentialsGCSComponent,
           data: { title: 'gcs', breadcrumb: 'gcs' },
+        },
+        {
+          path: 'amazon',
+          component: CloudCredentialsAmazonComponent,
+          data: { title: 'amazon', breadcrumb: 'amazon' },
+        },
+        {
+          path: 'amazon/:pk',
+          component: CloudCredentialsAmazonComponent,
+          data: { title: 'amazon', breadcrumb: 'amazon' },
+        },
+        {
+          path: 'b2',
+          component: CloudCredentialsB2Component,
+          data: { title: 'b2', breadcrumb: 'b2' },
+        },
+        {
+          path: 'b2/:pk',
+          component: CloudCredentialsB2Component,
+          data: { title: 'b2', breadcrumb: 'b2' },
         },
         {
           path: ':pk/delete',

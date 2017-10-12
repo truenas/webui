@@ -20,10 +20,10 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-cloudcredentials-gcs',
+  selector : 'app-cloudcredentials-b2',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class CloudCredentialsGCSComponent {
+export class CloudCredentialsB2Component {
 
   protected isEntity: boolean = true;
   protected addCall = 'backup.credential.create';
@@ -33,24 +33,29 @@ export class CloudCredentialsGCSComponent {
   protected pk: any;
   protected queryPayload = [];
   protected fieldConfig: FieldConfig[] = [
-    {
-      type : 'input',
-      name : 'provider',
-      placeholder : 'google cloud service',
-      value: 'GCLOUD',
-      isHidden: true
-    },
-    {
-      type : 'input',
-      name : 'name',
-      placeholder : 'Account Name',
-    },
-    {
-      type : 'textarea',
-      name : 'attributes',
-      placeholder : 'JSON Service Account Key',
-    },
-  ];
+  {
+    type : 'input',
+    name : 'provider',
+    placeholder : 'backblaze',
+    value: 'BACKBLAZE',
+    isHidden: true
+  },
+  {
+    type : 'input',
+    name : 'name',
+    placeholder : 'Account Name',
+  },
+  {
+    type : 'textarea',
+    name : 'accesskey',
+    placeholder :  'Access Key',
+  },
+  {
+    type : 'textarea',
+    name : 'secretkey',
+    placeholder : 'Secret Key',
+  },
+];
 
   constructor(
       protected router: Router,
@@ -80,8 +85,7 @@ export class CloudCredentialsGCSComponent {
     const formvalue = _.cloneDeep(this.formGroup.value);
     payload['provider'] = formvalue.provider;
     payload['name'] = formvalue.name;
-    const kf = formvalue.attributes;
-    payload['attributes'] = { 'keyfile': JSON.parse(kf) };
+    payload['attributes'] = { 'accesskey': formvalue.accesskey, 'secretkey': formvalue.secretkey };
     if (!this.pk){
       auxPayLoad.push(payload)
       return this.ws.call('backup.credential.create', auxPayLoad);
@@ -94,12 +98,26 @@ export class CloudCredentialsGCSComponent {
   }
   dataHandler(entityForm: any){
     if (typeof entityForm.wsResponseIdx === "object"){
-      if (entityForm.wsResponseIdx.hasOwnProperty('keyfile')){
-        entityForm.wsfg.setValue(JSON.stringify(entityForm.wsResponseIdx.keyfile))
+      if (entityForm.wsResponseIdx.hasOwnProperty('accesskey')){
+        entityForm.wsfg.setValue(entityForm.wsResponseIdx.accesskey);
+      } else if (entityForm.wsResponseIdx.hasOwnProperty('secretkey')){
+        entityForm.wsfg.setValue(entityForm.wsResponseIdx.secretkey);
       }
     }
     else {
       entityForm.wsfg.setValue(entityForm.wsResponseIdx);
+    }
+  }
+  dataAttributeHandler(entityForm: any){
+    const formvalue = _.cloneDeep(entityForm.formGroup.value);
+    if (typeof entityForm.wsResponseIdx === "object"){
+      for (let flds in entityForm.wsResponseIdx){
+        if (flds === 'accesskey'){
+          entityForm.formGroup.controls['accesskey'].setValue(entityForm.wsResponseIdx.accesskey);
+        } else if (flds === 'secretkey'){
+          entityForm.formGroup.controls['secretkey'].setValue(entityForm.wsResponseIdx.secretkey);
+         }
+      }
     }
   }
 }

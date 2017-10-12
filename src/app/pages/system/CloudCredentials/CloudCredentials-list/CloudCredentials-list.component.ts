@@ -31,11 +31,27 @@ export class CloudCredentialsListComponent {
   getAddActions() {
     let actions = [];
     actions.push({
-      label: "GCS",
+      label: "GCLOUD",
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "cloudcredentials", "gcs"]));
+      }
+    });
+    actions.push({
+      label: "AMAZON",
+      icon: "card_membership",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "cloudcredentials", "amazon"]));
+      }
+    });
+    actions.push({
+      label: "BACKBLAZE",
+      icon: "card_membership",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "cloudcredentials", "b2"]));
       }
     });
     
@@ -59,7 +75,22 @@ export class CloudCredentialsListComponent {
           this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs",row.id]));
         }
       });
-
+    }
+    if(row.provider == "AMAZON"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "amazon",row.id]));
+        }
+      });
+    }
+    if(row.provider == "BACKBLAZE"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
+        }
+      });
     }
     return actions;
   }
