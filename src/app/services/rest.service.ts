@@ -3,7 +3,7 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   Headers,
   Http,
@@ -12,11 +12,11 @@ import {
   RequestOptions,
   Response
 } from '@angular/http';
-import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 
-import {environment} from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
-import {WebSocketService} from './ws.service';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class RestService {
@@ -30,7 +30,7 @@ export class RestService {
   constructor(private http: Http, private ws: WebSocketService) {
     let self = this;
     this.http = http;
-    this.openapi = Observable.create(function(observer) {
+    this.openapi = Observable.create(function (observer) {
       self.get('swagger.json', {}).subscribe((res) => {
         observer.next(res.data);
       });
@@ -55,31 +55,35 @@ export class RestService {
     }
 
     return {
-      data : data,
-      code : res.status,
-      total : total,
+      data: data,
+      code: res.status,
+      total: total,
     };
   }
 
   handleError(error: any) {
     return Observable.throw({
-      error : error.json(),
-      code : error.status,
+      error: error.json(),
+      code: error.status,
     });
   }
 
-  request(method: RequestMethod, path: string, options: Object) {
-    let headers = new Headers({
-      'Content-Type' : 'application/json',
-      'Authorization' :
-          'Basic ' + btoa(this.ws.username + ':' + this.ws.password)
+  request(method: RequestMethod, path: string, options: Object, useBaseUrl?: boolean) {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization':
+      'Basic ' + btoa(this.ws.username + ':' + this.ws.password)
     });
-    let requestOptions: Object = Object.assign(
-        {method : method, url : this.baseUrl + path, headers : headers},
-        options);
+
+    const requestUrl: string = (typeof (useBaseUrl) !== "undefined" && useBaseUrl === false)
+      ? path : this.baseUrl + path;
+
+    const requestOptions: Object = Object.assign(
+      { method: method, url: requestUrl, headers: headers },
+      options);
     return this.http.request(new Request(new RequestOptions(requestOptions)))
-        .map(this.handleResponse)
-        .catch(this.handleError);
+      .map(this.handleResponse)
+      .catch(this.handleError);
   }
 
   buildOptions(options) {
@@ -98,19 +102,19 @@ export class RestService {
     return result;
   }
 
-  get(path: string, options: Object) {
-    return this.request(RequestMethod.Get, path, this.buildOptions(options));
+  get(path: string, options: Object, useBaseUrl?: boolean) {
+    return this.request(RequestMethod.Get, path, this.buildOptions(options), useBaseUrl);
   }
 
-  post(path: string, options: Object) {
-    return this.request(RequestMethod.Post, path, options);
+  post(path: string, options: Object, useBaseUrl?: boolean) {
+    return this.request(RequestMethod.Post, path, options, useBaseUrl);
   }
 
-  put(path: string, options: Object) {
-    return this.request(RequestMethod.Put, path, options);
+  put(path: string, options: Object, useBaseUrl?: boolean) {
+    return this.request(RequestMethod.Put, path, options, useBaseUrl);
   }
 
-  delete(path: string, options: Object) {
-    return this.request(RequestMethod.Delete, path, options);
+  delete(path: string, options: Object, useBaseUrl?: boolean) {
+    return this.request(RequestMethod.Delete, path, options, useBaseUrl);
   }
 }

@@ -10,7 +10,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 })
 export class NTPServerEditComponent {
 
-  protected resource_name: string = 'system/ntpserver';
+  protected resource_name: string = 'system/ntpserver/';
   protected route_success: string[] = ['system', 'ntpservers'];
   protected isEntity: boolean = true;
 

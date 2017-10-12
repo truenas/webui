@@ -25,7 +25,7 @@ export class ThemeService {
     label: 'iX Blue',
     baseColor: '#0095D5',
     isActive: true,
-    hasDarkLogo: true
+    hasDarkLogo: false
   }, {
     name: 'egret-indigo',
     label: 'Indigo',
