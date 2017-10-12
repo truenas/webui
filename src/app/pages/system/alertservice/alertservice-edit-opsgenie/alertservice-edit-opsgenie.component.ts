@@ -35,8 +35,15 @@ export class AlertServiceEditOpsgenieComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type'
+    },{
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'cluster_name'
+    },{
+      type : 'input',
+      name : 'api_key',
+      placeholder: 'api_key'
     },
     {
       type : 'checkbox',
@@ -46,6 +53,9 @@ export class AlertServiceEditOpsgenieComponent {
   ];
 
   resource_transformIncommingRestData(data:any): any {
+    data.cluster_name = data.attributes.cluster_name;
+    data.api_key = data.attributes.api_key;
+
     return data;
   };
 

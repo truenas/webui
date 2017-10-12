@@ -38,6 +38,14 @@ export class AlertServiceAddOpsgenieComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'OpsGenie'
+    },{
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'cluster_name'
+    },{
+      type : 'input',
+      name : 'api_key',
+      placeholder: 'api_key'
     },
     {
       type : 'checkbox',
