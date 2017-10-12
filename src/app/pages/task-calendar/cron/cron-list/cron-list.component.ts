@@ -7,11 +7,12 @@ import { TaskService } from '../../../../services/';
 
 @Component({
   selector: 'app-cron-list',
-  template: `<entity-table [conf]="this"></entity-table>`,
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService]
 })
 export class CronListComponent {
 
+  public title = "Cron Jobs";
   protected resource_name = 'tasks/cronjob';
   protected route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = "Add Cron Job";

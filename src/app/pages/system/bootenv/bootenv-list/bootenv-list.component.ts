@@ -6,10 +6,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-bootenv-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class BootEnvironmentListComponent {
 
+  public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
   protected entityList: any;

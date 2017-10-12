@@ -5,10 +5,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-group-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class GroupListComponent {
 
+  public title = "Groups";
   protected resource_name: string = 'account/groups/';
   protected route_add: string[] = ['account', 'groups', 'add' ];
   protected route_add_tooltip: string = "Add Group";

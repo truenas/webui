@@ -5,10 +5,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-afp-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class AFPListComponent {
 
+  public title = "AFP (Apple File Protocol)";
   protected resource_name: string = 'sharing/afp/';
   protected route_add: string[] = [ 'sharing', 'afp', 'add' ];
   protected route_add_tooltip: string = "Add Apple (AFP) Share";

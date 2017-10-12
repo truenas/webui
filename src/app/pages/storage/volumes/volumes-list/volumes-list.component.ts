@@ -6,10 +6,11 @@ import filesize from 'filesize';
 
 @Component({
   selector : 'app-volumes-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class VolumesListComponent implements OnInit {
 
+  public title = "Volumes";
   protected resource_name: string = 'storage/volume/';
   protected route_add: string[] = [ 'storage', 'volumes', 'manager' ];
   protected route_add_tooltip: string = "Volume Manager";

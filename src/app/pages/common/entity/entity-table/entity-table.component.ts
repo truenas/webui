@@ -23,7 +23,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   providers: [DialogService]
 })
 export class EntityTableComponent implements OnInit {
-
+  
+  @Input() title:string = '';
   @Input('conf') conf: any;
 
   public busy: Subscription;

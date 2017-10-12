@@ -7,9 +7,11 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector : 'app-alertservice-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class AlertServiceListComponent {
+
+  public title = "Alert Service";
   protected resource_name = 'system/ntpserver';
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];

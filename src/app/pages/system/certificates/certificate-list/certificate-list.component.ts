@@ -7,11 +7,12 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector: 'certificate-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 
 export class CertificateListComponent {
 
+  public title = "Certificates";
   protected resource_name: string = 'system/certificate';
   protected route_delete: string[] = ['system', 'certificates', 'delete'];
   protected route_edit: string[] = ['system', 'certificates', 'edit'];

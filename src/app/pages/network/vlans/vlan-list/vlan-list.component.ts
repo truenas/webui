@@ -5,10 +5,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-vlan-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class VlanListComponent {
 
+  public title = "Vlans";
   protected resource_name: string = 'network/vlan/';
   protected route_add: string[] = [ 'network', 'vlans', 'add' ];
   protected route_add_tooltip: string = "Add VLAN";

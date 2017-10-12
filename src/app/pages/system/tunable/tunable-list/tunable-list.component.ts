@@ -6,11 +6,12 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector: 'system-tunables-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 
 export class TunableListComponent {
 
+  public title = "Tunables";
   protected resource_name: string = 'system/tunable';
   protected route_delete: string[] = ['system', 'tunable', 'delete'];
   protected route_edit: string[] = ['system', 'tunable', 'edit'];

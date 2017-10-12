@@ -7,9 +7,11 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector : 'app-cloudcredentials-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class CloudCredentialsListComponent {
+
+  public title = "Cloud Credentials";
   protected queryCall = 'backup.credential.query';
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];

@@ -5,10 +5,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-interfaces-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class InterfacesListComponent {
 
+  public title = "Interfaces";
   protected resource_name: string = 'network/interface/';
   protected route_add: string[] = [ 'network', 'interfaces', 'add' ];
   protected route_add_tooltip: string = "Add Interface";

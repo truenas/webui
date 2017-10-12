@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
  
 @Component({
   selector : 'app-smb-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class SMBListComponent {
 
+  public title = "Samba";
   protected resource_name: string = 'sharing/cifs/';
   protected route_add: string[] = [ 'sharing', 'smb', 'add' ];
   protected route_add_tooltip: string = "Add Windows (SMB) Share";

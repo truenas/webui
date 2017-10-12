@@ -7,10 +7,11 @@ import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-lagg-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class LaggListComponent {
 
+  public title = "Link Aggregation";
   protected resource_name: string = 'network/lagg/';
   protected route_add: string[] = [ 'network', 'laggs', 'add' ];
   protected route_add_tooltip: string = "Add Link Aggregation";

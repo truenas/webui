@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
+<<<<<<< Updated upstream
   selector: 'app-jail-list',
   template: `<entity-table [conf]="this"></entity-table>`
 })
@@ -10,6 +11,16 @@ export class JailListComponent {
 
   protected queryCall = 'jail.query';
   protected route_add: string[] = ['jails', 'add'];
+=======
+  selector : 'app-jail-list',
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
+})
+export class JailListComponent {
+
+  public title = "Instances";
+  protected resource_name = 'jails/jails';
+  protected route_add: string[] = [ 'jails', 'add' ];
+>>>>>>> Stashed changes
   protected route_add_tooltip = "Add Jail";
   protected wsDelete = 'jail.do_delete';
   protected entityList: any;
