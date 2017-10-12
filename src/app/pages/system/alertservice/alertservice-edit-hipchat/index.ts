@@ -1,1 +1,1 @@
-export {AlertServiceEditAWSComponent} from './alertservice-edit-aws.component';
+export {AlertServiceEditHipchatComponent} from './alertservice-edit-hipchat.component';

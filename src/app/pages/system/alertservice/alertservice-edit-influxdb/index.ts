@@ -1,1 +1,1 @@
-export {AlertServiceEditAWSComponent} from './alertservice-edit-aws.component';
+export {AlertServiceEditInfluxdbComponent} from './alertservice-edit-influxdb.component';

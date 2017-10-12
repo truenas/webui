@@ -1,1 +1,1 @@
-export {AlertServiceAddAWSComponent} from './alertservice-add-aws.component';
+export {AlertServiceAddHipchatComponent} from './alertservice-add-hipchat.component';
