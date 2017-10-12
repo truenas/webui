@@ -78,7 +78,7 @@ export class AlertServiceListComponent {
       }
   },{
     label: "PagerDuty",
-    icon: "albulm",
+    icon: "album",
     onClick: () => {
       this.router.navigate(
         new Array('').concat(["system", "alertservice", "add-pagerduty"]));
