@@ -35,8 +35,15 @@ export class AlertServiceEditPagerdutyComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type'
+    },{
+      type : 'input',
+      name : 'client_name',
+      placeholder: 'client_name'
+    },{
+      type : 'input',
+      name : 'service_key',
+      placeholder: 'service_key'
     },
     {
       type : 'checkbox',
@@ -45,7 +52,11 @@ export class AlertServiceEditPagerdutyComponent {
     },
   ];
 
+
   resource_transformIncommingRestData(data:any): any {
+    data.client_name = data.attributes.client_name;
+    data.service_key = data.attributes.service_key;
+    
     return data;
   };
 

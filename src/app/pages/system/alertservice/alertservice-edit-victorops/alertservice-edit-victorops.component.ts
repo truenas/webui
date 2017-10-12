@@ -35,8 +35,16 @@ export class AlertServiceEditVictoropsComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type',
+      value: 'VictorOps'
+    },{
+      type : 'input',
+      name : 'routing_key',
+      placeholder: 'routing_key'
+    },{
+      type : 'input',
+      name : 'api_key',
+      placeholder: 'api_key'
     },
     {
       type : 'checkbox',
@@ -45,7 +53,11 @@ export class AlertServiceEditVictoropsComponent {
     },
   ];
 
+  
   resource_transformIncommingRestData(data:any): any {
+    data.routing_key = data.attributes.routing_key;
+    data.api_key = data.attributes.api_key;
+    
     return data;
   };
 

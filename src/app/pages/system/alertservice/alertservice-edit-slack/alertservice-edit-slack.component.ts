@@ -35,17 +35,48 @@ export class AlertServiceEditSlackComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'service name'
+    },{
+      type : 'input',
+      name : 'username',
+      placeholder: 'username'
+    },{
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'cluster_name'
+    },{
+      type : 'input',
+      name : 'url',
+      placeholder: 'url'
+    },{
+      type : 'input',
+      name : 'channel',
+      placeholder: 'channel'
+    },{
+      type : 'input',
+      name : 'icon_url',
+      placeholder: 'icon_url'
+    },{
+      type : 'checkbox',
+      name : 'detailed',
+      placeholder : 'detailed'
     },
     {
       type : 'checkbox',
       name : 'enabled',
       placeholder : 'Enabled'
-    },
+    }
   ];
 
   resource_transformIncommingRestData(data:any): any {
+    
+    data.username = data.attributes.username;
+    data.cluster_name = data.attributes.cluster_name;
+    data.url = data.attributes.url;
+    data.channel = data.attributes.channel;
+    data.icon_url = data.attributes.icon_url;
+    data.detailed = data.attributes.detailed;
+
     return data;
   };
 

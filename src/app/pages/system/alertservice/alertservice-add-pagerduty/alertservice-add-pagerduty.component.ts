@@ -38,6 +38,14 @@ export class AlertServiceAddPagerdutyComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'PagerDuty'
+    },{
+      type : 'input',
+      name : 'client_name',
+      placeholder: 'client_name'
+    },{
+      type : 'input',
+      name : 'service_key',
+      placeholder: 'service_key'
     },
     {
       type : 'checkbox',

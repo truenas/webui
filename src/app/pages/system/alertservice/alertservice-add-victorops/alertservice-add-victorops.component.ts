@@ -38,6 +38,14 @@ export class AlertServiceAddVictoropsComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'VictorOps'
+    },{
+      type : 'input',
+      name : 'routing_key',
+      placeholder: 'routing_key'
+    },{
+      type : 'input',
+      name : 'api_key',
+      placeholder: 'api_key'
     },
     {
       type : 'checkbox',
