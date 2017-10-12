@@ -58,7 +58,6 @@ export class AlertServiceListComponent {
       onClick: (row) => {
 
         if (row.consulalert_type === "AWSSNS") {
-          alert("AWSSNS HERE WE GO BIOTCH");
           const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-aws', row.id]);
           this.router.navigate(urlNav);
         }
