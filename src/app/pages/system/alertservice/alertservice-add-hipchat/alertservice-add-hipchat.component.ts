@@ -38,6 +38,23 @@ export class AlertServiceAddHipchatComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'HipChat'
+    },{
+      type: 'input',
+      name: 'cluster_name',
+      placeholder: 'Cluster Name'
+    },{
+      type: 'input',
+      name: 'base_url',
+      placeholder: 'Url',
+      value: 'https://api.hipchat.com/v2/'
+    },{
+      type: 'input',
+      name: 'room_id',
+      placeholder: 'Room'
+    },{
+      type: 'input',
+      name: 'auth_token',
+      placeholder: 'Auth Token'
     },
     {
       type : 'checkbox',

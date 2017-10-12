@@ -35,8 +35,24 @@ export class AlertServiceEditHipchatComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name',
-      disabled: true,
+      placeholder: 'consulalert_type'
+    },{
+      type: 'input',
+      name: 'cluster_name',
+      placeholder: 'Cluster Name'
+    },{
+      type: 'input',
+      name: 'base_url',
+      placeholder: 'Url',
+      value: 'https://api.hipchat.com/v2/'
+    },{
+      type: 'input',
+      name: 'room_id',
+      placeholder: 'Room'
+    },{
+      type: 'input',
+      name: 'auth_token',
+      placeholder: 'Auth Token'
     },
     {
       type : 'checkbox',
@@ -46,6 +62,12 @@ export class AlertServiceEditHipchatComponent {
   ];
 
   resource_transformIncommingRestData(data:any): any {
+    
+    data.cluster_name = data.attributes.cluster_name;
+    data.base_url = data.attributes.base_url;
+    data.room_id = data.attributes.room_id;
+    data.auth_token = data.attributes.auth_token;
+
     return data;
   };
 
