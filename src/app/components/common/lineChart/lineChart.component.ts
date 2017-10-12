@@ -27,8 +27,8 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
    *     ] 
    */
   @Input() series: any[][];
-  
-  
+
+
   @Input() legends: string[];
   @Input() type: string;
   @Input() divideBy: number;
@@ -37,6 +37,7 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
     labels: [],
     series: [],
   };
+  colorPattern = ["#2196f3", "#009688", "#ffc107", "#9c27b0", "#607d8b", "#00bcd4", "#8bc34a", "#ffeb3b", "#e91e63", "#3f51b5"];
 
   controlUid: string;
 
@@ -52,17 +53,17 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
     linechartData.series.forEach((dataSeriesArray) => {
 
       if (typeof (this.divideBy) !== 'undefined') {
-        const newArray = new Array();
-        dataSeriesArray.forEach((numberVal) => {
+	const newArray = new Array();
+	dataSeriesArray.forEach((numberVal) => {
 
-          if (numberVal > 0) {
-            newArray.push(numberVal / this.divideBy);
-          } else {
-            newArray.push(numberVal);
-          }
-        });
+	  if (numberVal > 0) {
+	    newArray.push(numberVal / this.divideBy);
+	  } else {
+	    newArray.push(numberVal);
+	  }
+	});
 
-        dataSeriesArray = newArray;
+	dataSeriesArray = newArray;
       }
       this.data.series.push(dataSeriesArray);
     });
@@ -83,32 +84,53 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
       const legend: string = this.legends[i];
       let series: any[] = this.data.series[i];
       if( typeof(series) !== 'undefined' && series.length > 0 ) {
-        series.unshift(legend);
+	series.unshift(legend);
       } else {
-        series = [legend];
+	series = [legend];
       }
       columns.push(series);
     }
 
     const chart = c3.generate({
       bindto: '#' + this.controlUid,
+      color: {
+	pattern: this.colorPattern
+      },
       data: {
-        columns: columns,
-        x: 'xValues',
-        //xFormat: '%H:%M',
-        type: 'area-spline'
+	columns: columns,
+	x: 'xValues',
+	//xFormat: '%H:%M',
+	type: 'area-spline'
       },
       axis: {
-        x: {
-          type: 'timeseries',
-          tick: {
-            format: '%H:%M:%S',
-            fit: true//,
-            //values: ['01:10', '03:10', '06:10']
-          }
-        }
+	x: {
+	  type: 'timeseries',
+	  tick: {
+	    format: '%H:%M:%S',
+	    fit: true//,
+	    //values: ['01:10', '03:10', '06:10']
+	  }
+	}
+      },
+      grid:{
+	x:{
+	  show: false
+	},
+	y:{
+	  show: true
+	}
+      },
+      subchart: {
+	show: true
+      },
+      legend: {
+	inset: {
+	  anchor: 'top-right',
+	  x: 20,
+	  y: 10,
+	  step: 2
+	}
       }
-
     });
 
   }
@@ -118,14 +140,14 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
     const chart = c3.generate({
       bindto: '#' + this.controlUid,
       data: {
-        columns: this.series,
-        type: 'pie'
+	columns: this.series,
+	type: 'pie'
       },
       pie: {
-        label: {
-            format: this.chartFormatter.format
-        }
-    }
+	label: {
+	  format: this.chartFormatter.format
+	}
+      }
     });
 
   }
@@ -141,11 +163,9 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
 
     } else {
       if (this.dataList.length > 0) {
-        this._lineChartService.getData(this, this.dataList);
+	this._lineChartService.getData(this, this.dataList);
       }
     }
-
-
   }
 
 }

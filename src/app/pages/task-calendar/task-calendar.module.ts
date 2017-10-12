@@ -20,6 +20,10 @@ import { InitshutdownListComponent } from './initshutdown/initshutdown-list/init
 import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
+import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
+import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
+import { SmartListComponent } from './smart/smart-list/smart-list.component';
+import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 
 @NgModule({
   imports: [
@@ -41,7 +45,11 @@ import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.co
     InitshutdownListComponent,
     InitshutdownFormComponent,
     SnapshotListComponent,
-    SnapshotFormComponent
+    SnapshotFormComponent,
+    RsyncListComponent,
+    RsyncFormComponent,
+    SmartListComponent,
+    SmartFormComponent
   ]
 })
 export class TaskCalendarModule {}

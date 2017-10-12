@@ -74,19 +74,18 @@ export class EntityTableComponent implements OnInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
-if (this.conf.queryCall){
-  this.getFunction = this.ws.call(this.conf.queryCall,[]);
-}
-else {
-  this.getFunction = this.rest.get(this.conf.resource_name, options);
-}
+    if (this.conf.queryCall) {
+      this.getFunction = this.ws.call(this.conf.queryCall, []);
+    } else {
+      this.getFunction = this.rest.get(this.conf.resource_name, options);
+    }
     this.busy =
-    this.getFunction.subscribe((res) => {
+      this.getFunction.subscribe((res) => {
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
-        if (res.data){
+        if (res.data) {
           this.length = res.total;
           this.rows = new EntityUtils().flattenData(res.data);
         } else {
@@ -96,7 +95,7 @@ else {
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
-        for (let i=0; i<this.rows.length; i++) {
+        for (let i = 0; i < this.rows.length; i++) {
           for (let attr in this.rows[i]) {
             if (this.rows[i].hasOwnProperty(attr)) {
               this.rows[i][attr] = this.rowValue(this.rows[i], attr);
@@ -104,7 +103,7 @@ else {
           }
         }
       });
-    
+
   }
 
   onChangeTable(
@@ -175,12 +174,21 @@ else {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-          (res) => {
-            this.getData();
-          },
-          (res) => { new EntityUtils().handleError(this, res); this.loader.close();}
-        );
+        if (this.conf.wsDelete) {
+          this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
+            (res) => { this.getData() },
+            (res) => { new EntityUtils().handleError(this, res);
+              this.loader.close(); }
+          );
+        } else {
+          this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
+            (res) => {
+              this.getData();
+            },
+            (res) => { new EntityUtils().handleError(this, res);
+              this.loader.close(); }
+          );
+        }
       }
     })
   }
