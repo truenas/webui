@@ -36,6 +36,8 @@ import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/a
 import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
 import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
 import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
+import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
+import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -145,6 +147,14 @@ export const routes: Routes = [
           path: 'edit-influxdb/:pk',
           component: AlertServiceEditInfluxdbComponent,
           data: { title: 'Edit Influxdb', breadcrumb: 'Edit Influxdb' },
+        },{
+          path: 'add-mattermost',
+          component: AlertServiceAddMattermostComponent,
+          data: { title: 'Add Mattermost', breadcrumb: 'Add Mattermost' },
+        },{
+          path: 'edit-mattermost/:pk',
+          component: AlertServiceEditMattermostComponent,
+          data: { title: 'Edit Mattermost', breadcrumb: 'Edit Mattermost' },
         }
       ]
     },{

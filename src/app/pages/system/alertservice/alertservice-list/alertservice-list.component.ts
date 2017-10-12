@@ -61,7 +61,13 @@ export class AlertServiceListComponent {
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-influxdb"]));
-      }
+      },{
+        label: "Mattermost",
+        icon: "vpn_lock",
+        onClick: () => {
+          this.router.navigate(
+            new Array('').concat(["system", "alertservice", "add-mattermost"]));
+        }
     }];
   }
 
@@ -79,6 +85,9 @@ export class AlertServiceListComponent {
           this.router.navigate(urlNav);
         } else if (row.consulalert_type === "InfluxDB") {
           const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-influxdb', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "Mattermost") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-mattermost', row.id]);
           this.router.navigate(urlNav);
         }
       }

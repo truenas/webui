@@ -41,6 +41,8 @@ import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/a
 import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
 import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
 import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
+import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
+import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
 
 @NgModule({
   imports: [
@@ -68,6 +70,8 @@ import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice
     AlertServiceEditHipchatComponent,
     AlertServiceAddInfluxdbComponent,
     AlertServiceEditInfluxdbComponent,
+    AlertServiceAddMattermostComponent,
+    AlertServiceEditMattermostComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsListComponent,
