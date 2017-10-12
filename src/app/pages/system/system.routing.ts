@@ -32,6 +32,10 @@ import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
 import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
 import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
+import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/alertservice-add-hipchat/alertservice-add-hipchat.component';
+import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
+import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
+import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -120,12 +124,28 @@ export const routes: Routes = [
         }, {
           path: 'add-aws',
           component: AlertServiceAddAWSComponent,
-          data: { title: 'AddAWS', breadcrumb: 'AddAWS' },
+          data: { title: 'Add AWSSNS', breadcrumb: 'Add AWS' },
         },{
           path: 'edit-aws/:pk',
           component: AlertServiceEditAWSComponent,
-          data: { title: 'EditAWS', breadcrumb: 'EditAWS' },
-        },
+          data: { title: 'Edit AWSSNS', breadcrumb: 'Edit AWS' },
+        },{
+          path: 'add-hipchat',
+          component: AlertServiceAddHipchatComponent,
+          data: { title: 'Add Hipchat', breadcrumb: 'Add Hipchat' },
+        },{
+          path: 'edit-hipchat/:pk',
+          component: AlertServiceEditHipchatComponent,
+          data: { title: 'Edit Hipchat', breadcrumb: 'Edit Hipchat' },
+        },{
+          path: 'add-influxdb',
+          component: AlertServiceAddInfluxdbComponent,
+          data: { title: 'Add Influxdb', breadcrumb: 'Add Influxdb' },
+        },{
+          path: 'edit-influxdb/:pk',
+          component: AlertServiceEditInfluxdbComponent,
+          data: { title: 'Edit Influxdb', breadcrumb: 'Edit Influxdb' },
+        }
       ]
     },{
       path: 'cloudcredentials',

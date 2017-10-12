@@ -37,6 +37,10 @@ import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
 import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
 import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
+import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/alertservice-add-hipchat/alertservice-add-hipchat.component';
+import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
+import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
+import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
 
 @NgModule({
   imports: [
@@ -60,6 +64,10 @@ import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/aler
     NTPServerEditComponent,
     AlertServiceAddAWSComponent,
     AlertServiceEditAWSComponent,
+    AlertServiceAddHipchatComponent,
+    AlertServiceEditHipchatComponent,
+    AlertServiceAddInfluxdbComponent,
+    AlertServiceEditInfluxdbComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsListComponent,

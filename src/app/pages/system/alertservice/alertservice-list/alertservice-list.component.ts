@@ -48,6 +48,20 @@ export class AlertServiceListComponent {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-aws"]));
       }
+    },{
+      label: "HipChat",
+      icon: "system_update_alt",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-hipchat"]));
+      }
+    },{
+      label: "InfluxDB",
+      icon: "vpn_lock",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-influxdb"]));
+      }
     }];
   }
 
@@ -59,6 +73,12 @@ export class AlertServiceListComponent {
 
         if (row.consulalert_type === "AWSSNS") {
           const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-aws', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "HipChat") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-hipchat', row.id]);
+          this.router.navigate(urlNav);
+        } else if (row.consulalert_type === "InfluxDB") {
+          const urlNav = new Array<String>('').concat(['system', 'alertservice', 'edit-influxdb', row.id]);
           this.router.navigate(urlNav);
         }
       }
