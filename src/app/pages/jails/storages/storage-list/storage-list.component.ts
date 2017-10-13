@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 
 @Component({
   selector : 'app-storage-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class StorageListComponent {
 
+  public title = "Storage";
   protected resource_name: string = 'jails/mountpoints';
   protected route_add: string[] = [ 'jails', 'storage', 'add' ];
   protected route_add_tooltip: string = "Add Storage";

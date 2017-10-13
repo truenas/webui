@@ -25,6 +25,7 @@ export class VmListComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService) {}
+  public title = "Virtual Machines"
 
   public columns: Array<any> = [
     {name : 'Name', prop : 'name', card: true},

@@ -5,10 +5,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-staticroute-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class StaticRouteListComponent {
 
+  public title = "Static Routes";
   protected resource_name: string = 'network/staticroute/';
   protected route_add: string[] = [ 'network', 'staticroutes', 'add' ];
   protected route_add_tooltip: string = "Add Static Route";

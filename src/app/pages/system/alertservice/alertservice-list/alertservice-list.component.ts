@@ -8,16 +8,17 @@ import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector: 'app-alertservice-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title"  [conf]="this"></entity-table>`
 })
 export class AlertServiceListComponent {
+  
+  public title = "Alert Service";
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = ['system', 'alertservice'];
   protected entityList: any;
 
   public busy: Subscription;
   public sub: Subscription;
-
   public columns: Array<any> = [
     { name: 'Service Name', prop: 'consulalert_type' },
     { name: 'Enabled', prop: 'enabled' },

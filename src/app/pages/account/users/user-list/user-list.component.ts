@@ -5,10 +5,11 @@ import { TourService } from '../../../../services/tour.service';
 
 @Component({
   selector: 'app-user-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class UserListComponent implements OnInit {
 
+  public title = "Users";
   protected resource_name: string = 'account/users';
   protected route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip: string = "Add User";

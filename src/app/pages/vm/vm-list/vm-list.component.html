@@ -1,9 +1,9 @@
-<md-tab-group>
+<md-tab-group class="tab-header-fixed">
     <md-tab label="Card View">
         <entity-card [conf]="this"></entity-card>
     </md-tab>
     <md-tab label="Table View">
-        <entity-table [conf]="this"></entity-table>
+        <entity-table [title]="title" [conf]="this"></entity-table>
     </md-tab>
 
 </md-tab-group>

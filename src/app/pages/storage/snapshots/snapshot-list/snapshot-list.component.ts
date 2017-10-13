@@ -6,10 +6,11 @@ import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-snapshot-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class SnapshotListComponent {
 
+  public title = "Snapshots";
   protected resource_name: string = 'storage/snapshot';
   protected entityList: any;
 
