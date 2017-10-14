@@ -16,15 +16,13 @@ import * as hopscotch from 'hopscotch';
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav;
   @Input() notificPanel;
-  
-  notifications: Notification[] = [];
-  runningAlertCheck = false;
 
-  @Output() onLangChange = new EventEmitter < any > ();
+  notifications: NotificationAlert[] = [];
 
-  notificationCount = 0;
+  @Output() onLangChange = new EventEmitter<any>();
+
   interval: any;
-  
+
   currentLang = 'en';
   availableLangs = [{
     name: 'English',
@@ -39,17 +37,17 @@ export class TopbarComponent implements OnInit, OnDestroy {
   freenasThemes;
 
   constructor(
-    private themeService: ThemeService, 
+    private themeService: ThemeService,
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
-    private ws: WebSocketService, 
+    private ws: WebSocketService,
     private dialogService: DialogService,
     private tour: TourService,
-    public snackBar: MdSnackBar,) {}
+    public snackBar: MdSnackBar, ) { }
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
-  
+
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
     if (showTour === "true") {
@@ -57,40 +55,30 @@ export class TopbarComponent implements OnInit, OnDestroy {
       localStorage.setItem(this.router.url, 'false');
     }
 
-    this.runningAlertCheck = true;
 
-    this.notificationsService.getNotifications(false).subscribe((notifications1)=>{
-      this.notifications = notifications1;
-      this.runningAlertCheck = false;
+    const notifications = this.notificationsService.getNotificationList();
 
-      this.interval = setInterval(()=>{
-        
-        // Im doing this because found on a super slow network.. (mine)
-        // if the alerts/ rest api is lagging.. These intervals still
-        // stack rest calls up,  This way.. I wait for a return.. before
-        // making another call. .Thus insuring.. Im not stacking requests
-        // So now the logic is.. Make a check run... But only if one
-        // is not in the process of already running.  In that case.. Wait
-        // for it to complete.. And then.. re-do the apis once completed.
-        if( this.runningAlertCheck === false  ) {
-          
-          this.runningAlertCheck = true;
-
-          this.notificationsService.getNotifications(false).subscribe((notifications2)=>{
-            this.notifications = notifications2;
-            this.runningAlertCheck = false;
-          });
-        }
-    
-      }, 8000);
+    notifications.forEach((notificationAlert: NotificationAlert) => {
+      if (notificationAlert.dismissed === false) {
+        this.notifications.push(notificationAlert);
+      }
     });
 
-    
+    this.notificationsService.getNotifications().subscribe((notifications1) => {
+      this.notifications = [];
+      notifications1.forEach((notificationAlert: NotificationAlert) => {
+        if (notificationAlert.dismissed === false) {
+          this.notifications.push(notificationAlert);
+        }
+      });
+    });
+
+
 
   }
 
   ngOnDestroy() {
-    if (typeof(this.interval) !== 'undefined') {
+    if (typeof (this.interval) !== 'undefined') {
       clearInterval(this.interval);
     }
   }
