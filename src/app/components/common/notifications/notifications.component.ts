@@ -13,19 +13,44 @@ import { NotificationsService, NotificationAlert } from 'app/services/notificati
   styleUrls: ['./notifications.component.css']
 })
 export class NotificationsComponent implements AfterViewInit {
+ 
   @Input() notificPanel;
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
 
-  constructor(private notificationsService: NotificationsService, private router: Router) { }
+  constructor(private notificationsService: NotificationsService, private router: Router) { 
+    this.initData();
+  }
 
+  
   ngAfterViewInit() {
     this.router.events.subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd) {
         this.notificPanel.close();
       }
     });
+
+    this.initData();
+    
+    this.notificationsService.getNotifications().subscribe((notifications)=>{
+      this.notifications = [];
+      this.dismissedNotifications = [];
+
+      notifications.forEach((notification: NotificationAlert) => {
+        if (notification.dismissed === false) {
+          this.notifications.push(notification);
+        } else {
+          this.dismissedNotifications.push(notification);
+        }
+      });
+  
+    });
+  }
+
+  initData() {
+    this.notifications = [];
+    this.dismissedNotifications = [];
 
     const notificationAlerts: NotificationAlert[] = this.notificationsService.getNotificationList();
     notificationAlerts.forEach((notification: NotificationAlert) => {
@@ -35,9 +60,7 @@ export class NotificationsComponent implements AfterViewInit {
         this.dismissedNotifications.push(notification);
       }
     });
-  
   }
-
 
   closeAll(e) {
     e.preventDefault();
