@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { RestService } from 'app/services';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
@@ -19,47 +19,73 @@ export interface NotificationAlert {
 export class NotificationsService {
 
   source: Observable<any>;
-  intervalPeriod: 8000;
+  intervalPeriod = 8000;
   interval;
   notifications: NotificationAlert[] = [];
+  running = false;
 
-  constructor(private restService: RestService) { 
+  constructor(private restService: RestService) {
 
-
-    this.source = Observable.create((observer) => {
-      this.restService.get("system/alert", {}).subscribe((res) => {
-        const notifications = this.alertsArrivedHandler(res);
-        observer.next(notifications);
-        observer.complete();
-
-        this.interval =  setInterval(()=>{
-          this.restService.get("system/alert", {}).subscribe((res) => {
-            this.notifications = this.alertsArrivedHandler(res);
-            observer.next(this.notifications);
-            observer.complete();
-          });
-        }, this.intervalPeriod);
-      });
-    });
+    this.initMe();
 
   }
 
+  initMe(): void {
+
+  
+    this.source = Observable.create((observer) => {
+      this.restService.get("system/alert", {}).subscribe((res) => {
+        this.notifications = this.alertsArrivedHandler(res);
+        observer.next(this.notifications);
+        //observer.complete();
+      });
+
+
+      this.interval = setInterval(() => {
+        
+        if (this.running === false) {
+          this.running = true;
+
+          this.restService.get("system/alert", {}).subscribe((res) => {
+            this.notifications = this.alertsArrivedHandler(res);
+            observer.next(this.notifications);
+            //observer.complete();
+            this.running = false;
+            console.log("got data from rest notificationAlerts");
+          });
+        } else {
+          observer.next(this.notifications);
+          //observer.complete();
+
+          console.log("got data from cache rest busy now notificationAlerts");
+        }
+      }, this.intervalPeriod);
+
+    });
+
+
+  }
 
   public getNotifications(): Observable<any> {
     return this.source;
   }
 
-  public clearNotifications(notifications: Array<NotificationAlert>, dismissedFlag: Boolean) {
+  public getNotificationList(): NotificationAlert[] {
+    return this.notifications;
+  }
+
+  public clearNotifications(notifications: Array<NotificationAlert>, dismissedFlag: boolean) {
     const oldNotifications = new Array<NotificationAlert>();
-    notifications.forEach((notification)=>{
+    notifications.forEach((notification) => {
       oldNotifications.push(notification);
     });
-    
+
     oldNotifications.forEach((notification) => {
+      notification.dismissed = dismissedFlag;
       this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: dismissedFlag }).subscribe((res) => {
-          console.log("alert dismissed id:" + notification.id );
+        console.log("alert dismissed id:" + notification.id);
       });
-      
+
     });
   }
 
@@ -72,20 +98,14 @@ export class NotificationsService {
   *   "message":"smartd is not running.\n",
   *   "timestamp":1504725447}
   */
-  private alertsArrivedHandler(res, returnAll?: boolean): NotificationAlert[] {
+  private alertsArrivedHandler(res): NotificationAlert[] {
     const returnAlerts = new Array<NotificationAlert>();
     const data: Array<any> = res.data;
 
     data.forEach((alertObj: NotificationAlert) => {
 
-      if( typeof(returnAll) === "undefined" || returnAll === true ) {
-        returnAlerts.push(this.addNotification(alertObj));
-      } else {
-        if( alertObj.dismissed === false) {
-          returnAlerts.push(this.addNotification(alertObj));
-        }
-      }
-     
+      returnAlerts.push(this.addNotification(alertObj));
+
     });
 
     return returnAlerts;

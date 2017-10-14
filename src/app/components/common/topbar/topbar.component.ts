@@ -16,14 +16,13 @@ import * as hopscotch from 'hopscotch';
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav;
   @Input() notificPanel;
-  
-  notifications: Notification[] = [];
 
-  @Output() onLangChange = new EventEmitter < any > ();
+  notifications: NotificationAlert[] = [];
 
-  notificationCount = 0;
+  @Output() onLangChange = new EventEmitter<any>();
+
   interval: any;
-  
+
   currentLang = 'en';
   availableLangs = [{
     name: 'English',
@@ -38,17 +37,17 @@ export class TopbarComponent implements OnInit, OnDestroy {
   freenasThemes;
 
   constructor(
-    private themeService: ThemeService, 
+    private themeService: ThemeService,
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
-    private ws: WebSocketService, 
+    private ws: WebSocketService,
     private dialogService: DialogService,
     private tour: TourService,
-    public snackBar: MdSnackBar,) {}
+    public snackBar: MdSnackBar, ) { }
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
-  
+
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
     if (showTour === "true") {
@@ -56,17 +55,30 @@ export class TopbarComponent implements OnInit, OnDestroy {
       localStorage.setItem(this.router.url, 'false');
     }
 
-    
-    this.notificationsService.getNotifications(false).subscribe((notifications1)=>{
-      this.notifications = notifications1;
+
+    const notifications = this.notificationsService.getNotificationList();
+
+    notifications.forEach((notificationAlert: NotificationAlert) => {
+      if (notificationAlert.dismissed === false) {
+        this.notifications.push(notificationAlert);
+      }
     });
 
-    
+    this.notificationsService.getNotifications().subscribe((notifications1) => {
+      this.notifications = [];
+      notifications1.forEach((notificationAlert: NotificationAlert) => {
+        if (notificationAlert.dismissed === false) {
+          this.notifications.push(notificationAlert);
+        }
+      });
+    });
+
+
 
   }
 
   ngOnDestroy() {
-    if (typeof(this.interval) !== 'undefined') {
+    if (typeof (this.interval) !== 'undefined') {
       clearInterval(this.interval);
     }
   }
