@@ -20,46 +20,37 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-alertservice-aws',
+  selector : 'app-alertservice-add-pagerduty',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class AlertServiceAWSComponent {
+export class AlertServiceAddPagerdutyComponent {
 
-  protected isEntity: boolean = true;
-  protected addCall = 'consul.do_create';
+  protected resource_name = 'system/consulalerts';
+  protected route_success: string[] = [ 'system', 'alertservice'];
+  protected isNew = true;
+  protected isEntity = true;
+  
+  
+  
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder : 'Service Name',
-      value: 'AWS-SNS',
-      isHidden: true
-    },
-    {
+      placeholder: 'consulalert_type',
+      value: 'PagerDuty'
+    },{
       type : 'input',
-      name : 'region',
-      placeholder : 'Region',
-    },
-    {
+      name : 'client_name',
+      placeholder: 'client_name'
+    },{
       type : 'input',
-      name : 'topic-arn',
-      placeholder : 'ARN',
-    },
-    {
-      type : 'input',
-      name : 'aws-access-key-id',
-      placeholder : 'Key Id',
-    },
-    {
-      type : 'input',
-      name : 'aws-secret-access-key',
-      placeholder : 'Secret Key',
+      name : 'service_key',
+      placeholder: 'service_key'
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled',
-      value: true
+      placeholder : 'Enabled'
     },
   ];
 
@@ -72,6 +63,5 @@ export class AlertServiceAWSComponent {
       protected _appRef: ApplicationRef
   ) {}
 
-  afterInit(entityForm: any) {
-  }
+  afterInit(entityAdd: any) {}
 }

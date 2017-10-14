@@ -7,11 +7,12 @@ import { TaskService } from '../../../../services/';
 
 @Component({
   selector: 'app-initshutdown-list',
-  template: `<entity-table [conf]="this"></entity-table>`,
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService]
 })
 export class InitshutdownListComponent {
 
+  public title = "Init/Shutdown Scripts"
   protected resource_name = 'tasks/initshutdown';
   protected route_add: string[] = ['tasks', 'initshutdown', 'add'];
   protected route_add_tooltip = "Add Init/Shutdown Scripts";

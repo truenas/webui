@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-jail-list',
-  template: `<entity-table [conf]="this"></entity-table>`
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class JailListComponent {
 
+  public title = "Instances";
   protected queryCall = 'jail.query';
   protected route_add: string[] = ['jails', 'add'];
   protected route_add_tooltip = "Add Jail";

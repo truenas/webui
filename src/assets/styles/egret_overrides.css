@@ -28,7 +28,7 @@ app-breadcrumb{
 }
 
 /* Tabbed navigation is fixed too */
-.mat-tab-header{
+.tab-header-fixed .mat-tab-header{
     overflow: hidden;
     position: fixed !important;
     top:104px;
@@ -42,4 +42,23 @@ app-breadcrumb{
     padding:64px 16px 16px;
 }
 
+/* Cards & Tables */
+.mat-card{
+  margin:24px;/* This will be deprecated once Grid System is implemented*/
+}
 
+.mat-card-table{
+  padding:0 !important;
+}
+
+.mat-card-table .ngx-datatable{
+  margin:0 !important;
+}
+
+ngx-datatable .mat-box-shadow{
+  box-shadow:none;
+}
+
+.mat-card-title-text{
+  margin:16px;
+}

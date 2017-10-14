@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 
 @Component({
   selector : 'app-nfs-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class NFSListComponent {
 
+  public title = "NFS";
   protected resource_name: string = 'sharing/nfs/';
   protected route_add: string[] = [ 'sharing', 'nfs', 'add' ];
   protected route_add_tooltip: string = "Add Unix (NFS) Share";

@@ -7,10 +7,12 @@ import { RestService } from '../../../../services/rest.service';
 
 @Component({
   selector : 'webdav-list',
-  template : `<entity-table [conf]="this"></entity-table>`
+  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 
 export class WebdavListComponent {
+
+    public title = "WebDAV";
     protected resource_name: string = 'sharing/webdav';
     public busy: Subscription;
     public sub: Subscription;

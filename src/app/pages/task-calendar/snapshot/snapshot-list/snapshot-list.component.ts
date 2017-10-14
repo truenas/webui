@@ -7,11 +7,12 @@ import { TaskService } from '../../../../services/';
 
 @Component({
   selector: 'app-snapshot-task-list',
-  template: `<entity-table [conf]="this"></entity-table>`,
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService]
 })
 export class SnapshotListComponent {
 
+  public title = "Snapshots";
   protected resource_name = 'storage/task';
   protected route_add: string[] = ['tasks', 'snapshot', 'add'];
   protected route_add_tooltip = "Add Periodic Snapshot Task";
