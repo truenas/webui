@@ -18,20 +18,35 @@ export interface NotificationAlert {
 @Injectable()
 export class NotificationsService {
 
+  source: Observable<any>;
+  intervalPeriod: 8000;
+  interval;
+  notifications: NotificationAlert[] = [];
+
   constructor(private restService: RestService) { 
+
+
+    this.source = Observable.create((observer) => {
+      this.restService.get("system/alert", {}).subscribe((res) => {
+        const notifications = this.alertsArrivedHandler(res);
+        observer.next(notifications);
+        observer.complete();
+
+        this.interval =  setInterval(()=>{
+          this.restService.get("system/alert", {}).subscribe((res) => {
+            this.notifications = this.alertsArrivedHandler(res);
+            observer.next(this.notifications);
+            observer.complete();
+          });
+        }, this.intervalPeriod);
+      });
+    });
 
   }
 
 
-  public getNotifications(returnAll?: boolean): Observable<any> {
-    const source = Observable.create((observer) => {
-      this.restService.get("system/alert", {}).subscribe((res) => {
-        const notifications = this.alertsArrivedHandler(res, returnAll);
-        observer.next(notifications);
-        observer.complete();
-      });
-    });
-    return source;
+  public getNotifications(): Observable<any> {
+    return this.source;
   }
 
   public clearNotifications(notifications: Array<NotificationAlert>, dismissedFlag: Boolean) {

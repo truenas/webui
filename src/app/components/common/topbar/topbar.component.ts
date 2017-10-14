@@ -18,7 +18,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   @Input() notificPanel;
   
   notifications: Notification[] = [];
-  runningAlertCheck = false;
 
   @Output() onLangChange = new EventEmitter < any > ();
 
@@ -57,32 +56,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
       localStorage.setItem(this.router.url, 'false');
     }
 
-    this.runningAlertCheck = true;
-
+    
     this.notificationsService.getNotifications(false).subscribe((notifications1)=>{
       this.notifications = notifications1;
-      this.runningAlertCheck = false;
-
-      this.interval = setInterval(()=>{
-        
-        // Im doing this because found on a super slow network.. (mine)
-        // if the alerts/ rest api is lagging.. These intervals still
-        // stack rest calls up,  This way.. I wait for a return.. before
-        // making another call. .Thus insuring.. Im not stacking requests
-        // So now the logic is.. Make a check run... But only if one
-        // is not in the process of already running.  In that case.. Wait
-        // for it to complete.. And then.. re-do the apis once completed.
-        if( this.runningAlertCheck === false  ) {
-          
-          this.runningAlertCheck = true;
-
-          this.notificationsService.getNotifications(false).subscribe((notifications2)=>{
-            this.notifications = notifications2;
-            this.runningAlertCheck = false;
-          });
-        }
-    
-      }, 8000);
     });
 
     
