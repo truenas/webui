@@ -117,6 +117,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
   }
+  onShowAbout() {
+    
+  }
   signOut() {
     this.dialogService.confirm("Logout", "You are about to LOGOUT of the FreeNAS WebUI. If unsure, hit 'Cancel', otherwise, press 'OK' to logout.").subscribe((res) => {
       if (res) {
