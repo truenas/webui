@@ -22,7 +22,7 @@ import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
-import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-b2/';
+import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
