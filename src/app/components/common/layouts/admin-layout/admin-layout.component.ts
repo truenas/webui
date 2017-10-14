@@ -49,9 +49,9 @@ export class AdminLayoutComponent implements OnInit {
     Ps.initialize(navigationHold, {
       suppressScrollX: true
     });
-
-
-
+    if (this.media.isActive('xs') || this.media.isActive('sm')) {
+      this.isSidenavOpen = false;
+    }
   }
   updateSidenav() {
     var self = this;
@@ -64,11 +64,11 @@ export class AdminLayoutComponent implements OnInit {
   }
 
 
-  public onOpen($event) {
+  public onOpen($event?) {
     this.isSidenavOpen = true;
   }
 
-  public onClose($event) {
+  public onClose($event?) {
     this.isSidenavOpen = false;
   }
 }
