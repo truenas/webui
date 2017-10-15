@@ -6,7 +6,7 @@ import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MdSnackBar } from '@angular/material';
+import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 
 @Component({
@@ -46,7 +46,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private ws: WebSocketService, 
     private dialogService: DialogService,
     private tour: TourService,
-    public snackBar: MdSnackBar,) {}
+    public snackBar: MdSnackBar,
+    public dialog: MdDialog,) {}
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
   
@@ -118,7 +119,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
   }
   onShowAbout() {
-    
+    let dialogRef = this.dialog.open(AboutModalDialog, {
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
   signOut() {
     this.dialogService.confirm("Logout", "You are about to LOGOUT of the FreeNAS WebUI. If unsure, hit 'Cancel', otherwise, press 'OK' to logout.").subscribe((res) => {
@@ -140,6 +147,24 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.ws.call('system.reboot', {});
       }
     });
+  }
+
+}
+
+/*
+* Angular Material Modal dialog
+*/
+@Component({
+  selector: 'about-dialog',
+  templateUrl: './about-dialog.html',
+})
+export class AboutModalDialog {
+
+  constructor(
+    public dialogRef: MdDialogRef<AboutModalDialog>,) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

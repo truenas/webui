@@ -23,7 +23,7 @@ import {
 } from '@angular/material';
 
 import {ChartistModule} from 'ng-chartist';
-import { TopbarComponent } from './topbar/topbar.component';
+import { TopbarComponent, AboutModalDialog } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
@@ -64,7 +64,8 @@ import { LineChartService } from './lineChart/lineChart.service';
   declarations: [
     AdminLayoutComponent,
     AuthLayoutComponent,
-    TopbarComponent, 
+    TopbarComponent,
+    AboutModalDialog, 
     NavigationComponent, 
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
   ],
