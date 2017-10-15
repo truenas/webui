@@ -121,7 +121,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
   onShowAbout() {
     let dialogRef = this.dialog.open(AboutModalDialog, {
-      width: '250px'
+      width: '600px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
