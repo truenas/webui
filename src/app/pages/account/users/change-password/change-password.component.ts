@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {RestService} from "../../../../services/rest.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
@@ -26,15 +26,15 @@ export class ChangePasswordComponent implements OnInit {
 
   buildPasswordForm(): void {
     this.passwordFormGroup = this.formBuilder.group({
-      bsdusr_username: [''],
-      bsdusr_currpassword: [''],
-      bsdusr_password: [''],
-      bsdusr_confirmpasswd: ['']
+      bsdusr_username: ['', Validators.required],
+      bsdusr_currpassword: ['', Validators.required],
+      bsdusr_password: ['', Validators.required],
+      bsdusr_confirmpasswd: ['', Validators.required]
     })
   }
 
   changePassword(body): void {
-    const changepasswd$ = this.rest.post(`account/users/25/password/`, {body}, true);
+    const changepasswd$ = this.rest.post(`account/users/1/password/`, {body}, true);
     this.loader.open();
     changepasswd$.subscribe((res) => {
       this.router.navigateByUrl('/account/users/edit/1');
