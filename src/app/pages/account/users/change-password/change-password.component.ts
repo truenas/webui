@@ -16,7 +16,7 @@ export class ChangePasswordComponent implements OnInit {
   passwordFormGroup: FormGroup;
 
   constructor(private formBuilder: FormBuilder, protected rest: RestService, protected router: Router,
-              protected loader: AppLoaderService, ,
+              protected loader: AppLoaderService,
               public snackBar: MdSnackBar) {
   }
 
