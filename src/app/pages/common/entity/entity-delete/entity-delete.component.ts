@@ -11,6 +11,7 @@ import {Subscription} from 'rxjs';
 
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {RestService} from '../../../../services/rest.service';
+import {WebSocketService} from '../../../../services/ws.service';
 import {EntityUtils} from '../utils';
 
 @Component({
@@ -30,8 +31,8 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
   public busy: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected _injector: Injector,
-              protected _appRef: ApplicationRef,
+              protected rest: RestService, protected ws: WebSocketService,  
+              protected _injector: Injector, protected _appRef: ApplicationRef,
               protected loader: AppLoaderService) {}
 
   ngOnInit() {
@@ -45,9 +46,22 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
         this.pk = params['pk'];
       }
       if (!this.conf.skipGet) {
+        if(this.conf.deletequery){
+          let payload = [];
+          payload.push("id");
+          payload.push("=");
+          payload.push(this.pk);
+          console.log(JSON.stringify([payload]));
+          //this.ws.call(this.conf.fetchquery, [payload])
+          this.ws.call(this.conf.fetchquery, [])
+              .subscribe((res) => { this.data = res.data; },
+                        () => { alert("Ooops! Failed to get!"); });
+
+        } else {
         this.rest.get(this.conf.resource_name + '/' + this.pk + '/', {})
             .subscribe((res) => { this.data = res.data; },
                        () => { alert("Ooops! Failed to get!"); });
+        }
       }
     });
   }
@@ -60,7 +74,20 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
       data = this.conf.clean.bind(this.conf)(data);
     }
     this.loader.open();
-    this.busy = this.rest.delete(this.conf.resource_name + '/' + this.pk, data)
+    if(this.conf.deletequery){
+      this.busy = this.ws.call(this.conf.deletequery, this.pk)
+      .subscribe(
+          (res) => {
+            this.loader.close();
+            this.router.navigate(new Array('/').concat(
+                this.conf.route_success));
+          },
+          (res) => {
+            this.loader.close(); 
+            new EntityUtils().handleError(this, res); });
+          }
+          else {
+            this.busy = this.rest.delete(this.conf.resource_name + '/' + this.pk, data)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -70,6 +97,7 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
                         (res) => {
                           this.loader.close(); 
                           new EntityUtils().handleError(this, res); });
+              }
   }
 
   doCancel() {
