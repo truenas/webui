@@ -42,6 +42,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public hasConf: boolean = true;
+  public wsResponse;
+  public wsfg;
+  public wsResponseIdx;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -119,7 +122,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
       if (this.conf.queryCall) {
         if(this.pk) {
-          this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
+          const filter = []
+          filter.push(this.conf.pk)
+          this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []);
         }
@@ -133,21 +138,48 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
       if (!this.isNew) {
         this.getFunction.subscribe((res) => {
-          this.data = res.data;
-          if( typeof(this.conf.resource_transformIncommingRestData) !== "undefined" ) {
-            this.data = this.conf.resource_transformIncommingRestData(this.data);
-          }
-          for (let i in this.data) {
-            let fg = this.formGroup.controls[i];
-            if (fg) {
-              let current_field = this.fieldConfig.find((control) => control.name === i);
-              if (current_field.type == "array") {
-                  this.setArrayValue(this.data[i], fg, i);
+          if (res.data){
+            this.data = res.data;
+            if( typeof(this.conf.resource_transformIncommingRestData) !== "undefined" ) {
+              this.data = this.conf.resource_transformIncommingRestData(this.data);
+            }
+            for (let i in this.data) {
+              let fg = this.formGroup.controls[i];
+              if (fg) {
+                let current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.type == "array") {
+                    this.setArrayValue(this.data[i], fg, i);
+                } else {
+                  fg.setValue(this.data[i]);
+                }
+              }
+            }
+          } else {
+            this.wsResponse = res[0];
+            for (let i in this.wsResponse){
+              this.wsfg = this.formGroup.controls[i];
+              this.wsResponseIdx = this.wsResponse[i];
+              if (this.wsfg) {
+                let current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.type == "array") {
+                    this.setArrayValue(this.wsResponse[i], this.wsfg, i);
+                } else {
+                  if (this.conf.dataHandler) {
+                    this.conf.dataHandler(this);
+                  }
+                  else {
+                    this.wsfg.setValue(this.wsResponse[i]);
+                  }
+                }
+
               } else {
-                fg.setValue(this.data[i]);
+                if (this.conf.dataAttributeHandler) {
+                  this.conf.dataAttributeHandler(this);
+                }
               }
             }
           }
+
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
