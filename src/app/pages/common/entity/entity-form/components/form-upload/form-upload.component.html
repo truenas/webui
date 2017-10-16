@@ -1,6 +1,11 @@
 <div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
-	<label>{{ config.placeholder }}</label>
-		<input type="file" ng2FileSelect [formControlName]="config.name" value="config.value" multiple />
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+    <label>{{ config.placeholder }}</label>
+    <md-card-content>
+        <input type="file" ngFileSelect [options]="options" (onUpload)="handleUpload($event)">
+    </md-card-content>
+    <md-card-actions>
+        <button md-raised-button color="primary" (click)="doSubmit($event)">Submit</button>
+    </md-card-actions>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+    <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>
