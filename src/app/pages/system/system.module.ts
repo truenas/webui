@@ -22,7 +22,10 @@ import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
+import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
+import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
+import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -90,7 +93,10 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     AlertServiceEditVictoropsComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
+    CloudCredentialsAmazonComponent,
+    CloudCredentialsB2Component,
     CloudCredentialsListComponent,
+    CloudCredentialsDeleteComponent,
     CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityImportComponent,

@@ -13,8 +13,8 @@ export class CloudCredentialsListComponent {
 
   public title = "Cloud Credentials";
   protected queryCall = 'backup.credential.query';
-  protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
-  protected route_success: string[] = [ 'system', 'ntpservers' ];
+  protected route_edit: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
+  protected route_success: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
     
   public columns: Array<any> = [
     {name : 'Account Name', prop : 'name'},
@@ -33,14 +33,67 @@ export class CloudCredentialsListComponent {
   getAddActions() {
     let actions = [];
     actions.push({
-      label: "GCS",
+      label: "GCLOUD",
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "cloudcredentials", "gcs"]));
       }
     });
+    actions.push({
+      label: "AMAZON",
+      icon: "card_membership",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "cloudcredentials", "amazon"]));
+      }
+    });
+    actions.push({
+      label: "BACKBLAZE",
+      icon: "card_membership",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "cloudcredentials", "b2"]));
+      }
+    });
+    
 
+    return actions;
+  }
+  getActions(row) {
+    
+    let actions = [];
+    if (!row.type) {
+      actions.push({
+        label : "Delete",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));}
+      });
+    }
+    if(row.provider == "GCLOUD"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs",row.id]));
+        }
+      });
+    }
+    if(row.provider == "AMAZON"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "amazon",row.id]));
+        }
+      });
+    }
+    if(row.provider == "BACKBLAZE"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
+        }
+      });
+    }
     return actions;
   }
 }
