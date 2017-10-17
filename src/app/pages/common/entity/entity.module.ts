@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule, MdTableModule } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
-
+import { NgUploaderModule } from 'ngx-uploader';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
@@ -42,7 +42,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule
+    Ng2DropdownModule, NgUploaderModule
   ],
   declarations: [
     EntityDeleteComponent,
