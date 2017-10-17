@@ -17,7 +17,7 @@ export class JailListComponent {
 
   public columns: Array < any > = [
     { name: 'Jail', prop: 'host_hostname' },
-    { name: 'Status', prop: 'jail_status' },
+    { name: 'Status', prop: 'state' },
     { name: 'Release', prop: 'release' },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
   ];
@@ -31,11 +31,9 @@ export class JailListComponent {
   afterInit(entityList: any) { this.entityList = entityList; }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'start' && row.jail_status === "Running") {
+    if (actionId === 'start' && row.state === "up") {
       return false;
-    } else if (actionId === 'stop' && row.jail_status === "Stopped") {
-      return false;
-    } else if (actionId === 'restart' && row.jail_status === "Stopped") {
+    } else if (actionId === 'stop' && row.state === "down") {
       return false;
     }
     return true;
@@ -57,7 +55,7 @@ export class JailListComponent {
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => { row.jail_status = 'Up'; },
+              (res) => { row.state = 'up'; },
               (res) => { console.log(res); });
         }
       },
@@ -67,21 +65,10 @@ export class JailListComponent {
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-              (res) => { row.jail_status = 'Down'; },
+              (res) => { row.state = 'down'; },
               (res) => { console.log(res); });
         }
       },
-      // {
-      //   id: "restart",
-      //   label: "Restart",
-      //   onClick: (row) => {
-      //     this.entityList.busy =
-      //       this.rest
-      //       .post(this.resource_name + '/' + row.id + '/restart/', {})
-      //       .subscribe((res) => { row.jail_status = 'Running'; },
-      //         (res) => { console.log(res); });
-      //   }
-      // },
       // {
       //   id : "shell",
       //   label : "Shell",
