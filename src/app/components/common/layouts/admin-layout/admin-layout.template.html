@@ -1,6 +1,6 @@
 <md-sidenav-container class="app-side-nav-container">
   <!-- Main side navigation -->
-  <md-sidenav #sidenav [opened]="isSidenavOpen" mode="side" class="sidebar-panel">
+  <md-sidenav #sidenav [opened]="isSidenavOpen" mode="over" class="sidebar-panel">
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div *ngFor="let theme of freenasThemes">
         <div *ngIf="theme.isActive">
@@ -23,19 +23,19 @@
           <img src="assets/images/face-7.jpg" alt="">
         </div>
         <span class="app-user-name">
-          <md-icon class="icon-xs text-muted">lock</md-icon> 
+          <md-icon class="icon-xs text-muted">lock</md-icon>
           root
         </span>
       </div>
-      <navigation></navigation>
+      <navigation (onStateChange)="changeState($event)"></navigation>
     </div>
   </md-sidenav>
 
   <!-- Top Bar -->
   <!-- Template reference variables of Left sidebar and Right notification is supplied -->
   <!-- Listens language change event -->
-  <topbar 
-  [sidenav]="sidenav" 
+  <topbar
+  [sidenav]="sidenav"
   [notificPanel]="notificationPanel"
   (onLangChange)="translate.use($event)"></topbar>
 

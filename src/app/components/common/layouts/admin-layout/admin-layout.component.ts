@@ -58,17 +58,26 @@ export class AdminLayoutComponent implements OnInit {
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
       self.sideNave.mode = self.isMobile ? 'over' : 'side';
-      if (self.isMobile)
+      if (self.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
+      }
     })
   }
 
 
-  public onOpen($event?) {
+  public onOpen($event) {
     this.isSidenavOpen = true;
   }
 
-  public onClose($event?) {
+  public onClose($event) {
     this.isSidenavOpen = false;
+  }
+
+  changeState($event) {
+    if($event.transfer) {
+      if (this.media.isActive('xs') || this.media.isActive('sm')) {
+        this.sideNave.close();
+      }
+    }
   }
 }
