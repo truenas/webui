@@ -51,13 +51,13 @@ export class NotificationsService {
             observer.next(this.notifications);
             //observer.complete();
             this.running = false;
-            console.log("got data from rest notificationAlerts");
+            //console.log("got data from rest notificationAlerts");
           });
         } else {
           observer.next(this.notifications);
           //observer.complete();
 
-          console.log("got data from cache rest busy now notificationAlerts");
+          //console.log("got data from cache rest busy now notificationAlerts");
         }
       }, this.intervalPeriod);
 
@@ -83,7 +83,7 @@ export class NotificationsService {
     oldNotifications.forEach((notification) => {
       notification.dismissed = dismissedFlag;
       this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: dismissedFlag }).subscribe((res) => {
-        console.log("alert dismissed id:" + notification.id);
+        //console.log("alert dismissed id:" + notification.id);
       });
 
     });
