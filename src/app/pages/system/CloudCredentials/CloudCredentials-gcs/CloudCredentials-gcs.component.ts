@@ -82,8 +82,7 @@ export class CloudCredentialsGCSComponent {
     payload['name'] = formvalue.name;
     const kf = formvalue.attributes;
     try{
-      //payload['attributes'] = { 'keyfile': JSON.parse(kf) };
-      payload['attributes'] = { 'keyfile': kf };
+      payload['attributes'] = { 'keyfile': JSON.parse(kf) };
     if (!this.pk){
       auxPayLoad.push(payload)
       return this.ws.call('backup.credential.create', auxPayLoad);
