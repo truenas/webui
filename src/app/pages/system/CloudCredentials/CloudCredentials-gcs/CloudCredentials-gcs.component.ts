@@ -31,6 +31,7 @@ export class CloudCredentialsGCSComponent {
   protected route_success: string[] = ['system', 'cloudcredentials'];
   public formGroup: FormGroup;
   protected pk: any;
+  protected queryPk: any;
   protected queryPayload = [];
   protected fieldConfig: FieldConfig[] = [
     {
@@ -50,6 +51,12 @@ export class CloudCredentialsGCSComponent {
       name : 'attributes',
       placeholder : 'JSON Service Account Key',
     },
+    {
+      type : 'textarea',
+      name : 'preview',
+      placeholder : 'Preview JSON Service Account Key',
+      disabled: true
+    },
   ];
 
   constructor(
@@ -68,10 +75,16 @@ export class CloudCredentialsGCSComponent {
       this.queryPayload.push("=")
       this.queryPayload.push(parseInt(params['pk']));
       this.pk = [this.queryPayload];
+      this.queryPk = parseInt(params['pk']);
+      
     });
   }
   }
   afterInit(entityForm: any) {
+    this.ws.call('backup.credential.query', [this.pk]).subscribe((res)=> {
+      const fg = entityForm.formGroup.controls['preview'];
+      fg.setValue(JSON.stringify(res[0].attributes.keyfile))
+    })
     entityForm.submitFunction = this.submitFunction;
   }
   submitFunction(){
