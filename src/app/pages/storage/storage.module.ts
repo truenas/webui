@@ -27,6 +27,9 @@ import {routing} from './storage.routing';
 import {ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
 import {ZvolAddComponent} from './volumes/zvol/zvol-add'
 import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
+import { ReplicationListComponent } from 'app/pages/storage/replication/replication-list/replication-list.component';
+import { ReplicationAddComponent } from 'app/pages/storage/replication/replication-add/replication-add.component';
+import { ReplicationEditComponent } from 'app/pages/storage/replication/replication-edit/replication-edit.component';
 
 @NgModule({
   imports : [
@@ -51,7 +54,10 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
     SnapshotAddComponent,
-    DatasetPermissionsComponent
+    DatasetPermissionsComponent,
+    ReplicationListComponent,
+    ReplicationAddComponent,
+    ReplicationEditComponent
   ],
   providers : [UserService, StorageService]
 })
