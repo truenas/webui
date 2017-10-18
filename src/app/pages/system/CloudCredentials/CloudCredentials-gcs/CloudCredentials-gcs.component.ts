@@ -47,15 +47,15 @@ export class CloudCredentialsGCSComponent {
       placeholder : 'Account Name',
     },
     {
-      type : 'readfile',
-      name : 'attributes',
-      placeholder : 'JSON Service Account Key',
-    },
-    {
       type : 'textarea',
       name : 'preview',
       placeholder : 'Preview JSON Service Account Key',
       disabled: true
+    },
+    {
+      type : 'readfile',
+      name : 'attributes',
+      placeholder : 'JSON Service Account Key',
     },
   ];
 
@@ -81,10 +81,18 @@ export class CloudCredentialsGCSComponent {
   }
   }
   afterInit(entityForm: any) {
-    this.ws.call('backup.credential.query', [this.pk]).subscribe((res)=> {
-      const fg = entityForm.formGroup.controls['preview'];
-      fg.setValue(JSON.stringify(res[0].attributes.keyfile))
-    })
+    /*reading from middleware*/
+    if (this.queryPk) {
+      this.ws.call('backup.credential.query', [this.pk]).subscribe((res)=> {
+        entityForm.formGroup.controls['preview'].setValue(JSON.stringify(res[0].attributes.keyfile));
+      })
+    }
+
+    /*reading from local json file*/
+    entityForm.formGroup.controls['attributes'].valueChanges.subscribe((value)=>{
+      entityForm.formGroup.controls['preview'].setValue(value);
+    });
+  
     entityForm.submitFunction = this.submitFunction;
   }
   submitFunction(){
