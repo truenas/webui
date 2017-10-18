@@ -9,7 +9,6 @@ import { EntityModule } from '../common/entity/entity.module';
 import { routing } from './jails.routing';
 import { JailsConfigurationComponent } from './configuration/';
 import { JailListComponent } from './jail-list/';
-import { JailFormComponent } from './jail-form/';
 import { StorageListComponent } from './storages/storage-list/';
 import { StorageFormComponent } from './storages/storage-form/';
 import { TemplateListComponent } from './templates/template-list/';
@@ -24,7 +23,6 @@ import { JailEditComponent } from './jail-edit/';
   declarations : [
     JailsConfigurationComponent,
     JailListComponent,
-    JailFormComponent,
     StorageListComponent,
     StorageFormComponent,
     TemplateListComponent,
