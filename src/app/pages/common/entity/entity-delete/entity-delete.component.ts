@@ -24,6 +24,7 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
   @Input('conf') conf: any;
 
   protected pk: any;
+  public isSubmitEnabled: boolean = false;
   public sub: any;
   public error: string;
   public data: Object = {};
@@ -67,6 +68,10 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() { this.sub.unsubscribe(); }
+
+  toggleSubmit(data) {
+    this.isSubmitEnabled = data.checked;
+  }
 
   doSubmit() {
     let data = {};
