@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '@angular/material';
 
 import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
@@ -13,10 +14,11 @@ import { StorageListComponent } from './storages/storage-list/';
 import { StorageFormComponent } from './storages/storage-form/';
 import { TemplateListComponent } from './templates/template-list/';
 import { TemplateFormComponent } from './templates/template-form/';
+import { JailAddComponent } from './jail-add/';
 
 @NgModule({
   imports : [
-    CommonModule, FormsModule, ReactiveFormsModule, routing, EntityModule
+    CommonModule, FormsModule, ReactiveFormsModule, routing, EntityModule, MaterialModule
   ],
   declarations : [
     JailsConfigurationComponent,
@@ -26,6 +28,7 @@ import { TemplateFormComponent } from './templates/template-form/';
     StorageFormComponent,
     TemplateListComponent,
     TemplateFormComponent,
+    JailAddComponent
   ],
   providers : [
     JailService,
