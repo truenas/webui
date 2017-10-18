@@ -34,11 +34,14 @@ export class JailAddComponent implements OnInit {
       placeholder: 'Jails Name',
     },
     {
-      type: 'input',
+      type: 'select',
       name: 'release',
       placeholder: 'Release',
+      options: [],
     },
   ];
+
+  protected releaseField: any;
 
   constructor(protected router: Router,
     protected jailService: JailService,
@@ -47,6 +50,12 @@ export class JailAddComponent implements OnInit {
     protected loader: AppLoaderService) {}
 
   ngOnInit() {
+    this.jailService.getReleaseChoices().subscribe((res) => {
+      this.releaseField = _.find(this.fieldConfig, {'name' : 'release'});
+      for(let i in res) {
+        this.releaseField.options.push({label: res[i], value: res[i]});
+      }
+    });
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
   }
 
