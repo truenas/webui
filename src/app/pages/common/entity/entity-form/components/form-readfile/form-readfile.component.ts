@@ -27,13 +27,13 @@ export class FormReadFileComponent implements Field {
     const fileType = inputValue.parentElement.id;
     fReader.onloadend = (e) => {
       this.fileString = fReader.result;
-      this.setPath(fReader.result);
+      this.contents(fReader.result);
    };
    return fReader.readAsText(file);
    
   }
 
-  setPath(result:any) {
+  contents(result:any) {
     this.group.controls[this.config.name].setValue(result);
   }
 }
