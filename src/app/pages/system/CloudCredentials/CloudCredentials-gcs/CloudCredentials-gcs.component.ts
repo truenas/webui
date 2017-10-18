@@ -46,7 +46,7 @@ export class CloudCredentialsGCSComponent {
       placeholder : 'Account Name',
     },
     {
-      type : 'textarea',
+      type : 'readfile',
       name : 'attributes',
       placeholder : 'JSON Service Account Key',
     },
