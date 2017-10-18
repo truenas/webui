@@ -15,6 +15,7 @@ import { StorageFormComponent } from './storages/storage-form/';
 import { TemplateListComponent } from './templates/template-list/';
 import { TemplateFormComponent } from './templates/template-form/';
 import { JailAddComponent } from './jail-add/';
+import { JailEditComponent } from './jail-edit/';
 
 @NgModule({
   imports : [
@@ -28,7 +29,8 @@ import { JailAddComponent } from './jail-add/';
     StorageFormComponent,
     TemplateListComponent,
     TemplateFormComponent,
-    JailAddComponent
+    JailAddComponent,
+    JailEditComponent
   ],
   providers : [
     JailService,
