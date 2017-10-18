@@ -12,7 +12,7 @@ import { NotificationsService, NotificationAlert } from 'app/services/notificati
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.css']
 })
-export class NotificationsComponent implements AfterViewInit, OnDestroy {
+export class NotificationsComponent implements OnInit, OnDestroy {
   
   @Input() notificPanel;
 
@@ -27,21 +27,23 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy {
   }
  
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.initData();
     
     this.notificationsService.getNotifications().subscribe((notifications)=>{
       this.notifications = [];
       this.dismissedNotifications = [];
-
-      notifications.forEach((notification: NotificationAlert) => {
-        if (notification.dismissed === false) {
-          this.notifications.push(notification);
-        } else {
-          this.dismissedNotifications.push(notification);
-        }
-      });
-  
+      
+      setTimeout(()=>{
+        notifications.forEach((notification: NotificationAlert) => {
+          if (notification.dismissed === false) {
+            this.notifications.push(notification);
+          } else {
+            this.dismissedNotifications.push(notification);
+          }
+        });
+    
+      }, -1);
     });
   }
 
@@ -66,7 +68,6 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy {
 
   reopenAll(e) {
     e.preventDefault();
-
     this.notificationsService.clearNotifications(this.dismissedNotifications, false);
   }
 

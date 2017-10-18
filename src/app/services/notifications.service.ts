@@ -46,15 +46,10 @@ export class NotificationsService {
           this.restService.get("system/alert", {}).subscribe((res) => {
             this.notifications = this.alertsArrivedHandler(res);
             this.subject.next(this.notifications);
-            //observer.complete();
             this.running = false;
-            console.log("got data from rest notificationAlerts");
           });
         } else {
           this.subject.next(this.notifications);
-          //observer.complete();
-
-          console.log("got data from cache rest busy now notificationAlerts");
         }
       }, this.intervalPeriod);
 
