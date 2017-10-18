@@ -58,7 +58,7 @@ export class AdminLayoutComponent implements OnInit {
     var self = this;
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
-      self.isSidenotOpen = !self.isMobile;
+      self.isSidenotOpen = false;
       self.sideNave.mode = self.isMobile ? 'over' : 'side';
       if (self.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
