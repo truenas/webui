@@ -44,13 +44,9 @@
   <div class="rightside-content-hold">
     <router-outlet></router-outlet>
   </div>
-  <!-- Notificaation bar 
-    (open)="onOpen($event)" (close)="onClose($event)" These flags are causing the 
-    notification open close to affect the left navigation bar. 
-  -->
-  <md-sidenav #notificationPanel mode="over" class="" align="end">
+  <md-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify($event)" (close)="onCloseNotify($event)">
     <div class="navigation-hold" fxLayout="column">
-      <app-notifications *ngIf="isSidenavOpen" [notificPanel]="notificationPanel"></app-notifications>
+      <app-notifications *ngIf="isSidenotOpen" [notificPanel]="notificationPanel"></app-notifications>
     </div>
   </md-sidenav>
 </md-sidenav-container>

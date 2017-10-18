@@ -16,7 +16,8 @@ export class AdminLayoutComponent implements OnInit {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
-
+  isSidenotOpen: Boolean = false;
+  
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   freenasThemes;
 
@@ -57,18 +58,30 @@ export class AdminLayoutComponent implements OnInit {
     var self = this;
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
+      self.isSidenotOpen = !self.isMobile;
       self.sideNave.mode = self.isMobile ? 'over' : 'side';
-      if (self.isMobile)
+      if (self.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
-    })
+      }
+      
+    }, -1);
+
   }
 
 
-  public onOpen($event) {
+  public onOpenNav($event) {
     this.isSidenavOpen = true;
   }
 
-  public onClose($event) {
+  public onCloseNav($event) {
     this.isSidenavOpen = false;
+  }
+
+  public onOpenNotify($event) {
+    this.isSidenotOpen = true;
+  }
+
+  public onCloseNotify($event) {
+    this.isSidenotOpen = false;
   }
 }
