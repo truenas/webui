@@ -88,6 +88,39 @@ export class AdvancedComponent {
       class: 'ascii-art-font',
       placeholder: 'MOTD Banner',
     },
+    {
+      type: 'checkbox',
+      name: 'adv_traceback',
+      placeholder: 'Show tracebacks in case of fatal errors',
+    },
+    {
+      type: 'checkbox',
+      name: 'adv_advancedmode',
+      placeholder: 'Show advanced fields by default',
+    },
+    {
+      type: 'checkbox',
+      name: 'adv_uploadcrash',
+      placeholder: 'Enable automatic upload of kernel crash dumps and daily telemetry',
+    },
+    {
+      type: 'select',
+      name: 'adv_periodic_notifyuser',
+      placeholder: 'Periodic Notification User',
+      options: [],
+    },
+    {
+      type: 'input',
+      name: 'adv_graphite',
+      placeholder: 'Remote Graphite Server Hostname',
+      inputType: 'text',
+      validation: [Validators.required]
+    },
+    {
+      type: 'checkbox',
+      name: 'adv_fqdn_syslog',
+      placeholder: 'Use FQDN for logging',
+    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
