@@ -88,7 +88,7 @@ export const routes: Routes = [
         children: [{
             path: '',
             component: ReplicationListComponent,
-            data: { title: 'Replication', breadcrumb: 'Replication },
+            data: { title: 'Replication', breadcrumb: 'Replication' },
           }, {
             path: 'add-replication',
             component: ReplicationAddComponent,

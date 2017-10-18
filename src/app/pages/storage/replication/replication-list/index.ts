@@ -1,1 +1,1 @@
-export {AlertServiceListComponent} from './alertservice-list.component';
+export {ReplicationListComponent} from './replication-list.component';
