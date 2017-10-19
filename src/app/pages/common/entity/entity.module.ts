@@ -25,6 +25,7 @@ import { FormSliderComponent } from './entity-form/components/form-slider/form-s
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
+import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
@@ -54,6 +55,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityTemplateDirective,
     DynamicFieldDirective,
     EntityFormComponent,
+    EntityFormEmbeddedComponent,
     FormButtonComponent,
     FormInputComponent,
     FormSelectComponent,
@@ -76,6 +78,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityDeleteComponent,
     EntityTemplateDirective,
     EntityFormComponent,
+    EntityFormEmbeddedComponent,
     EntityTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
