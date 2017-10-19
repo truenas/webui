@@ -14,26 +14,14 @@ export class ReplicationListComponent {
   
   public title = "Replication";
   protected resource_name = 'storage/task';
-  protected route_success: string[] = ['storage', 'replication'];
+  protected route_success: string[] = ['tasks', 'replication'];
   protected entityList: any;
 
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    { name: 'id', prop: 'id' },
-    { name: 'interv', prop: 'interv' },
-    { name: 'keepfor', prop: 'keepfor' },
-    { name: 'task_begin', prop: 'task_begin' },
-    { name: 'task_byweekday', prop: 'task_byweekday' },
-    { name: 'task_end', prop: 'task_end' },
-    { name: 'task_filesystem', prop: 'task_filesystem' },
-    { name: 'task_interval', prop: 'task_interval' },
-    { name: 'task_recursive', prop: 'task_recursive' },
-    { name: 'task_repeat_unit', prop: 'task_repeat_unit' },
-    { name: 'task_ret_count', prop: 'task_ret_count' },
-    { name: 'task_ret_unit', prop: 'task_ret_unit' },
-    { name: 'vmwaresync', prop: 'vmwaresync' },
-    { name: 'task_enabled', prop: 'task_enabled' }  ];
+    { name: 'Volume/Dataset', prop: 'task_filesystem' },
+    { name: 'Enabled', prop: 'task_enabled' }  ];
     
   public config: any = {
     paging: true,
@@ -59,7 +47,7 @@ export class ReplicationListComponent {
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
-          new Array('').concat(["storage", "replication", "add-replication"]));
+          new Array('').concat(["tasks", "replication", "add-replication"]));
       }
     }];
   }
@@ -69,7 +57,7 @@ export class ReplicationListComponent {
       id: "edit",
       label: "Edit",
       onClick: (row) => {
-        const urlNav = new Array<String>('').concat(['storage', 'replication', 'edit-replication', row.id]);
+        const urlNav = new Array<String>('').concat(['tasks', 'replication', 'edit-replication', row.id]);
         this.router.navigate(urlNav);
       }
     },

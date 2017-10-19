@@ -26,7 +26,7 @@ import {
 export class ReplicationAddComponent {
 
   protected resource_name = 'storage/task';
-  protected route_success: string[] = [ 'storage', 'replication'];
+  protected route_success: string[] = [ 'tasks', 'replication'];
   protected isNew = true;
   protected isEntity = true;
   

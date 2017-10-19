@@ -16,9 +16,6 @@ import {ZvolAddComponent} from './volumes/zvol/zvol-add/';
 import {ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
 import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
 import {VolumeImportListComponent} from './volumes/import-list/';
-import { ReplicationListComponent } from 'app/pages/storage/replication/replication-list/replication-list.component';
-import { ReplicationAddComponent } from 'app/pages/storage/replication/replication-add/replication-add.component';
-import { ReplicationEditComponent } from 'app/pages/storage/replication/replication-edit/replication-edit.component';
 
 export const routes: Routes = [
   {
@@ -81,23 +78,6 @@ export const routes: Routes = [
           {
             path : 'id/:pk/add', component : SnapshotAddComponent,
             data: {title: 'Add', breadcrumb:'Add' }}
-        ]
-      }, {
-        path: 'replication',
-        data: { title: 'Replication', breadcrumb: 'Replication' },
-        children: [{
-            path: '',
-            component: ReplicationListComponent,
-            data: { title: 'Replication', breadcrumb: 'Replication' },
-          }, {
-            path: 'add-replication',
-            component: ReplicationAddComponent,
-            data: { title: 'Add Replication', breadcrumb: 'Add Replication' },
-          },{
-            path: 'edit-replication/:pk',
-            component: ReplicationEditComponent,
-            data: { title: 'Edit Replication', breadcrumb: 'Edit Replication' },
-          }
         ]
       }
     ]
