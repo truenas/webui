@@ -49,6 +49,7 @@ export class ExtentFormComponent {
       name: 'iscsi_target_extent_disk',
       placeholder: 'Device',
       options: [],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -60,11 +61,13 @@ export class ExtentFormComponent {
       initial: '/mnt',
       name: 'iscsi_target_extent_path',
       placeholder: 'Path to the extent',
+      isHidden: false,
     },
     {
       type: 'input',
       name: 'iscsi_target_extent_filesize',
       placeholder: 'Extent size',
+      isHidden: false,
     },
     {
       type: 'select',
@@ -203,12 +206,12 @@ export class ExtentFormComponent {
     }
 
     this.fileFieldGroup.forEach(field => {
-      let control = _.find(this.fieldConfig, {'name': field});
+      let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = isDevice;
     });
 
     this.deviceFieldGroup.forEach(field => {
-      let control = _.find(this.fieldConfig, {'name': field});
+      let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = !isDevice;
     });
   }
