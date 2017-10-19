@@ -6,40 +6,43 @@
 
 	<ngx-datatable
 		 [ngBusy]="busy"
-		 class="material ml-1 mt-1 mb-1 mr-1 " 
+		 class="material ml-1 mt-1 mb-1 mr-1 p-1" 
 	 id="ngx-datatable"
 	[rows]="rows" 
 	[columns]="conf.columns" 
-	[headerHeight]="50" 
-	[rowHeight]="50"
-	[footerHeight]="50" 
-	[columnMode]="'force'" 
+	[headerHeight]="48" 
+	[rowHeight]="30"
+	[footerHeight]="48" 
+	[columnMode]="'flex'" 
 	[limit]="conf.config.pageLimit ? conf.config.pageLimit : 25" 
 	[selectionType]="conf.config.selectionType ? conf.config.selectionType : ''"
 	>
 	<ngx-datatable-column
-	[width]="conf.config.width ? conf.config.width : 50"
+	[width]="conf.config.width ? conf.config.width : 24"
+	[flexGrow]="1"
 	[sortable]="conf.config.sortable ? conf.config.sortable : false"
 	[canAutoResize]="conf.config.canAutoResize ? conf.config.canAutoResize : false"
 	[draggable]="conf.config.draggable ? conf.config.draggable : false"
 	[resizeable]="conf.config.resizeable ? conf.config : false"
 	[checkboxable]="conf.config.selectionType ? true : false">
 	</ngx-datatable-column>
-
 		<div *ngFor="let col of conf.columns">
-			<ngx-datatable-column 
-	prop="{{col.prop}}" 
- name="{{col.name}}">
+			<ngx-datatable-column
+			[canAutoResize]="true"
+			[flexGrow]="3"
+			prop="{{col.prop}}" 
+ 			name="{{col.name}}">
 			</ngx-datatable-column>
 		</div>
 
-		<ngx-datatable-column prop=" " [width]="25" >
+		<ngx-datatable-column 
+			[flexGrow]="1"
+			prop="  " 
+		    [width]="16" >
 			<ng-template let-row="row" ngx-datatable-cell-template>
 				<app-entity-table-actions [entity]="this" [row]="row">
 				</app-entity-table-actions>
-
 			</ng-template>
 		</ngx-datatable-column>
 	</ngx-datatable>
-
 </div>
