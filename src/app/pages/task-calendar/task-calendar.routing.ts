@@ -11,6 +11,9 @@ import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
 import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
+import { ReplicationListComponent } from 'app/pages/task-calendar/replication/replication-list';
+import { ReplicationAddComponent } from 'app/pages/task-calendar/replication/replication-add';
+import { ReplicationEditComponent } from 'app/pages/task-calendar/replication/replication-edit';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -67,6 +70,23 @@ export const TaskCalendarRoutes: Routes = [{
       component: SnapshotFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
+  }, {
+    path: 'replication',
+    data: { title: 'Replication', breadcrumb: 'Replication' },
+    children: [{
+        path: '',
+        component: ReplicationListComponent,
+        data: { title: 'Replication', breadcrumb: 'Replication' },
+      }, {
+        path: 'add-replication',
+        component: ReplicationAddComponent,
+        data: { title: 'Add Replication', breadcrumb: 'Add Replication' },
+      },{
+        path: 'edit-replication/:pk',
+        component: ReplicationEditComponent,
+        data: { title: 'Edit Replication', breadcrumb: 'Edit Replication' },
+      }
+    ]
   }, {
     path: 'rsync',
     data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
