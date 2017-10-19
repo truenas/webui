@@ -1275,3 +1275,8 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
         background: inherit !important;
     }
 }
+
+/*---- Modal Dialog ----*/
+.overflow-hide {
+    overflow: hidden !important;
+}

@@ -3,11 +3,12 @@ import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@ang
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
-import { MdSidenav } from '@angular/material';
+import { MdSidenav, MdDialog, MdDialogRef } from '@angular/material';
 import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
+import { ConsolePanelModalDialog } from '../../consolepanel/consolepanel-dialog.component';
 
 @Component({
   selector: 'app-admin-layout',
@@ -27,7 +28,8 @@ export class AdminLayoutComponent implements OnInit {
     public themeService: ThemeService,
     private media: ObservableMedia,
     protected rest: RestService,
-    public translate: TranslateService) {
+    public translate: TranslateService,
+    public dialog: MdDialog) {
     // Close sidenav after route change in mobile
     router.events.subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {
@@ -79,6 +81,12 @@ export class AdminLayoutComponent implements OnInit {
   getConsoleMsg() {
     this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
       this.isShowFooterConsole = res.data['adv_consolemsg'];
+    });
+  }
+
+  onShowConsolePanel() {
+    let dialogRef = this.dialog.open(ConsolePanelModalDialog, {
+      width: '600px'
     });
   }
 
