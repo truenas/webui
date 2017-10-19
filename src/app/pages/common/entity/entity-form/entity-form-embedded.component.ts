@@ -67,17 +67,17 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   public data: Object = {};
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
-              protected location: Location, private fb: FormBuilder,
-              protected entityFormService: EntityFormService,
-              protected fieldRelationService: FieldRelationService,
-              protected loader: AppLoaderService,
-              public snackBar: MdSnackBar) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected location: Location, private fb: FormBuilder,
+    protected entityFormService: EntityFormService,
+    protected fieldRelationService: FieldRelationService,
+    protected loader: AppLoaderService,
+    public snackBar: MdSnackBar) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
       if (item.type == 'TOP') {
-        this.templateTop = item.templateRef;
+	this.templateTop = item.templateRef;
       }
     });
   }
@@ -93,75 +93,75 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   }
 
   init(params){
-      this.resourceName = this.conf.resource_name;
-      if (this.resourceName && !this.resourceName.endsWith('/')) {
-        this.resourceName = this.resourceName + '/';
-      }
-      if (this.conf.isEntity) {
-        this.pk = params;
-        if (this.pk && !this.conf.isNew) {
-          if (this.conf.editCall) {
-            this.submitFunction = this.editCall;
-          } else {
-            this.submitFunction = this.editSubmit;
-            this.resourceName = this.resourceName + this.pk + '/';
-          }      
-        } else {
-          if (this.conf.addCall) {
-            this.submitFunction = this.addCall;
-          } else {
-            this.submitFunction = this.addSubmit;
-          }
-          this.isNew = true;
-        }
-      }
-
-      this.fieldConfig = this.conf.fieldConfig;
-      this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-      for (let i in this.fieldConfig) {
-        let config = this.fieldConfig[i];
-        if (config.relation.length > 0) {
-          this.setRelation(config);
-        }
-      }
-
-      if (this.conf.queryCall) {
-        if(this.pk) {
-          this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
-        } else {
-          this.getFunction = this.ws.call(this.conf.queryCall, []);
-        }
+    this.resourceName = this.conf.resource_name;
+    if (this.resourceName && !this.resourceName.endsWith('/')) {
+      this.resourceName = this.resourceName + '/';
+    }
+    if (this.conf.isEntity) {
+      this.pk = params;
+      if (this.pk && !this.conf.isNew) {
+	if (this.conf.editCall) {
+	  this.submitFunction = this.editCall;
+	} else {
+	  this.submitFunction = this.editSubmit;
+	  this.resourceName = this.resourceName + this.pk + '/';
+	}      
       } else {
-        let getQuery = this.resourceName;
-        if (this.conf.custom_get_query) {
-          getQuery = this.conf.custom_get_query;
-        }
-        this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
+	if (this.conf.addCall) {
+	  this.submitFunction = this.addCall;
+	} else {
+	  this.submitFunction = this.addSubmit;
+	}
+	this.isNew = true;
       }
+    }
 
-      if (!this.isNew) {
-        this.getFunction.subscribe((res) => {
-          this.data = res.data;
-          if( typeof(this.conf.resource_transformIncommingRestData) !== "undefined" ) {
-            this.data = this.conf.resource_transformIncommingRestData(this.data);
-          }
-          for (let i in this.data) {
-            let fg = this.formGroup.controls[i];
-            if (fg) {
-              let current_field = this.fieldConfig.find((control) => control.name === i);
-              if (current_field.type == "array") {
-                  this.setArrayValue(this.data[i], fg, i);
-              } else {
-                fg.setValue(this.data[i]);
-              }
-            }
-          }
-          if (this.conf.initial) {
-            this.conf.initial.bind(this.conf)(this);
-          }
-        });
+    this.fieldConfig = this.conf.fieldConfig;
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+    for (let i in this.fieldConfig) {
+      let config = this.fieldConfig[i];
+      if (config.relation.length > 0) {
+	this.setRelation(config);
       }
+    }
+
+    if (this.conf.queryCall) {
+      if(this.pk) {
+	this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
+      } else {
+	this.getFunction = this.ws.call(this.conf.queryCall, []);
+      }
+    } else {
+      let getQuery = this.resourceName;
+      if (this.conf.custom_get_query) {
+	getQuery = this.conf.custom_get_query;
+      }
+      this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
+    }
+
+    if (!this.isNew) {
+      this.getFunction.subscribe((res) => {
+	this.data = res.data;
+	if( typeof(this.conf.resource_transformIncommingRestData) !== "undefined" ) {
+	  this.data = this.conf.resource_transformIncommingRestData(this.data);
+	}
+	for (let i in this.data) {
+	  let fg = this.formGroup.controls[i];
+	  if (fg) {
+	    let current_field = this.fieldConfig.find((control) => control.name === i);
+	    if (current_field.type == "array") {
+	      this.setArrayValue(this.data[i], fg, i);
+	    } else {
+	      fg.setValue(this.data[i]);
+	    }
+	  }
+	}
+	if (this.conf.initial) {
+	  this.conf.initial.bind(this.conf)(this);
+	}
+      });
+    }
   }
 
   ngOnChanges() {
@@ -170,14 +170,14 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
       const configControls = this.controls.map((item) => item.name);
 
       controls.filter((control) => !configControls.includes(control))
-          .forEach((control) => this.formGroup.removeControl(control));
+	.forEach((control) => this.formGroup.removeControl(control));
 
       configControls.filter((control) => !controls.includes(control))
-          .forEach((name) => {
-            const config =
-                this.fieldConfig.find((control) => control.name === name);
-            this.formGroup.addControl(name, this.createControl(config));
-          });
+	.forEach((name) => {
+	  const config =
+	    this.fieldConfig.find((control) => control.name === name);
+	  this.formGroup.addControl(name, this.createControl(config));
+	});
     }
   }
 
@@ -225,9 +225,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
     let value = _.cloneDeep(this.formGroup.value);
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
-        if (this.conf['clean_' + i]) {
-          value = this.conf['clean_' + i](value, i);
-        }
+	if (this.conf['clean_' + i]) {
+	  value = this.conf['clean_' + i](value, i);
+	}
       }
     }
     if ('id' in value) {
@@ -244,20 +244,21 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
     this.loader.open();
     this.busy = this.submitFunction(value)
-                    .subscribe(
-                        (res) => {
-                          this.loader.close();
-                          if (this.conf.route_success) {
-                            this.router.navigate(new Array('/').concat(
-                                this.conf.route_success));
-                          } else {
-                            this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
-                            this.success = true;
-                          }
-                        },
-                        (res) => {
-                          this.loader.close();
-                          new EntityUtils().handleError(this, res); });
+      .subscribe(
+	(res) => {
+	  this.loader.close();
+	  if (this.conf.route_success) {
+	    //this.router.navigate(new Array('/').concat(
+	    //this.conf.route_success));
+	  } else {
+	    this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+	    this.success = true;
+	    this.conf.onSuccess();
+	  }
+	},
+	(res) => {
+	  this.loader.close();
+	  new EntityUtils().handleError(this, res); });
   }
 
   clearErrors() {
@@ -270,7 +271,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   isShow(id: any): any {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
-        return false;
+	return false;
       }
     }
     return true;
@@ -298,7 +299,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
-        item.disabled = disable;
+	item.disabled = disable;
       }
       return item;
     });
@@ -313,7 +314,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
     for (let i in this.fieldConfig) {
       let config = this.fieldConfig[i];
       if (config.name == name) {
-        array_controls = config.formarray;
+	array_controls = config.formarray;
       }
     }
 
@@ -327,8 +328,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
       let formGroup = this.entityFormService.createFormGroup(array_controls);
       for (let i in value) {
-        let formControl = formGroup.controls[i];
-        formControl.setValue(value[i]);
+	let formControl = formGroup.controls[i];
+	formControl.setValue(value[i]);
       }
       formArray.insert(index, formGroup);
     });
@@ -336,25 +337,27 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
   setRelation(config: FieldConfig) {
     let activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
+      this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
+	activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
+	.forEach(control => {
+	  control.valueChanges.subscribe(
+	    () => { this.relationUpdate(config, activations); });
+	});
     }
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
     let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
+      activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  ngOnDestroy() { this.sub.unsubscribe(); }
+  ngOnDestroy() { 
+    //this.sub.unsubscribe(); 
+  }
 }

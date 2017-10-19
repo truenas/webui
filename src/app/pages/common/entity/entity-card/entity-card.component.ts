@@ -30,6 +30,7 @@ export class EntityCardComponent implements OnInit {
   @Input() front: TemplateRef<any>;
   @Input() back: TemplateRef<any>;
   @Input() lazyLoaded: boolean = false;
+  public actions: boolean = false;
 
   public busy: Subscription;
 
@@ -145,9 +146,12 @@ export class EntityCardComponent implements OnInit {
   }
 
   getCardActions(row) {
-    if (this.conf.getCardActions) {
-      return this.conf.getCardActions(row);
+    if (this.conf.cardActions) {
+      this.actions = true;
+      return this.conf.cardActions;
     } else {
+      this.actions = false;
+      /*
       return [{
         id: "edit",
         label: "Edit",
@@ -157,7 +161,7 @@ export class EntityCardComponent implements OnInit {
 	  this.lazyLoaded = true;
 	  //this.conf.isFlipped = true;
 	},
-      }]
+      }]*/
     }
   }
 

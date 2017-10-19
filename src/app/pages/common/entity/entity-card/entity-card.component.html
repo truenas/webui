@@ -1,5 +1,5 @@
 <!-- <div *ngFor="let row of rows" class="card-item"> -->
-<div class="flip" style="height:420px;width:400px;">
+<div class="flip" style="width:480px; height:400pxwidth:480px; height:400pxwidth:480px; height:400pxwidth:480px; height:400px;">
 	<div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
 
 		<md-card class="card front face animated slideInUp">
@@ -17,7 +17,7 @@
 					</md-slide-toggle>
 				</div>
 		</md-card-content>-->
-			<md-card-footer class="card-footer">
+		<md-card-footer *ngIf="actions" class="card-footer">
 				<div class="">
 					<app-entity-card-actions [entity]="this"></app-entity-card-actions>
 					<!--<button md-raised-button color="primary" (click)="toggleFlip()">Edit</button>-->
