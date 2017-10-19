@@ -25,7 +25,7 @@ import {
 })
 export class ReplicationAddComponent {
 
-  protected resource_name = 'storage/task';
+  protected resource_name = 'storage/replication';
   protected route_success: string[] = [ 'tasks', 'replication'];
   protected isNew = true;
   protected isEntity = true;
@@ -34,69 +34,103 @@ export class ReplicationAddComponent {
   
   protected fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'interv',
-      placeholder : 'interv'
+      type: 'input',
+      name: 'repl_filesystem',
+      placeholder: 'Volume/Dataset',
     },
     {
       type: 'input',
-      name: 'keepfor',
-      placeholder: 'keepfor'
-    },
-    {
-      type : 'input',
-      name : 'task_begin',
-      placeholder : 'task_begin'
+      name: 'repl_zfs',
+      placeholder: "Remote ZFS Volume/Dataset"
     },
     {
       type : 'input',
-      name : 'task_byweekday',
-      placeholder : 'task_byweekday'
+      name : 'repl_remote_hostname',
+      placeholder : 'Remote Hostname'
+    },
+    {
+      type : 'input',
+      name : 'repl_remote_port',
+      placeholder : 'Remote Port'
     },
     {
       type: 'input',
-      name: 'task_end',
-      placeholder: 'task_end',
+      name: 'repl_remote_dedicateduser',
+      placeholder: 'Remote User'
+    },
+    {
+      type : 'input',
+      name : 'repl_remote_cipher',
+      placeholder : 'Remote Cipher'
+    }, 
+    { 
+      type: 'input',
+      name: 'repl_compression',
+      placeholder: 'Stream Compression'
+    },
+    { 
+      type: 'input',
+      name: 'repl_limit',
+      placeholder: 'Limit (KB/s)'
+    },
+    {
+      type: 'task',
+      name: 'repl_begin',
+      placeholder: 'Begin Time',
+      tabs: [{
+        type: 'slider',
+        name: 'repl_begin_slider',
+        tabName: 'Every N hour',
+        min: 1,
+        max: 12,
+      }, {
+        type: 'togglebutton',
+        name: 'repl_begin_togglebutton',
+        tabName: 'Each selected hour',
+        options: []
+      }]
+    },
+    {
+      type: 'task',
+      name: 'repl_end',
+      placeholder: 'End Time',
+      tabs: [{
+        type: 'slider',
+        name: 'repl_end_slider',
+        tabName: 'Every N hour',
+        min: 1,
+        max: 12,
+      }, {
+        type: 'togglebutton',
+        name: 'repl_end_togglebutton',
+        tabName: 'Each selected hour',
+        options: []
+      }]
     },
     {
       type: 'input',
-      name: 'task_filesystem',
-      placeholder: 'task_filesystem',
-    },
-    {
-      type: 'input',
-      name: 'task_interval',
-      placeholder: 'task_interval',
-    },
-    {
-      type: 'input',
-      name: 'task_recursive',
-      placeholder: 'task_recursive',
-    },
-    {
-      type: 'input',
-      name: 'task_repeat_unit',
-      placeholder: 'task_repeat_unit',
-    },
-    {
-      type: 'input',
-      name: 'task_ret_count',
-      placeholder: 'task_ret_count',
-    },
-    {
-      type: 'input',
-      name: 'task_ret_unit',
-      placeholder: 'task_ret_unit',
-    },
-    {
-      type: 'input',
-      name: 'vmwaresync',
-      placeholder: 'vmwaresync',
+      name: 'repl_remote_hostkey',
+      placeholder: 'Remote Hostkey'
     },
     {
       type : 'checkbox',
-      name : 'task_enabled',
-      placeholder : 'task_enabled'
+      name : 'repl_followdelete',
+      placeholder : 'Delete Stale Snapshots on Remote System'
+    },
+    {
+        type: 'checkbox',
+        name: 'repl_remote_dedicateduser_enabled',
+        placeholder: 'Dedicated User'
+    },
+    {
+      type : 'checkbox',
+      name : 'repl_userepl',
+      placeholder : 'Recursively Replicate Child Dataset Snapshot(s)'
+    },
+    {
+      type : 'checkbox',
+      name : 'repl_enabled',
+      placeholder : 'Replication Enabled'
     }
   ];
 

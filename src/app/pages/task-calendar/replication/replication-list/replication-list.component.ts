@@ -13,15 +13,15 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class ReplicationListComponent {
   
   public title = "Replication";
-  protected resource_name = 'storage/task';
+  protected resource_name = 'storage/replication';
   protected route_success: string[] = ['tasks', 'replication'];
   protected entityList: any;
 
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    { name: 'Volume/Dataset', prop: 'task_filesystem' },
-    { name: 'Enabled', prop: 'task_enabled' }  ];
+    { name: 'Volume/Dataset', prop: 'repl_filesystem' },
+    { name: 'Enabled', prop: 'repl_enabled' }  ];
     
   public config: any = {
     paging: true,
