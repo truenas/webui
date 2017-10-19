@@ -135,5 +135,13 @@ export class AdvancedComponent {
         adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
       });
     });
+
+    this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
+      let adv_periodic_notifyuser =
+        _.find(this.fieldConfig, { 'name': 'adv_periodic_notifyuser' });
+      res.data.forEach((item) => {
+        adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
+      });
+    });
   }
 }
