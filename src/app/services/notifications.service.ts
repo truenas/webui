@@ -71,7 +71,7 @@ export class NotificationsService {
       notification.dismissed = dismissedFlag;
       notificationMap.set(notification.id, notification);
       this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: dismissedFlag }).subscribe((res) => {
-        console.log("alert dismissed id:" + notification.id);
+        //console.log("alert dismissed id:" + notification.id);
       });
     });
 
