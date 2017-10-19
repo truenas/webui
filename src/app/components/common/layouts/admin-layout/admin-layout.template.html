@@ -44,10 +44,9 @@
   <div class="rightside-content-hold">
     <router-outlet></router-outlet>
   </div>
-  <!-- Notificaation bar -->
-  <md-sidenav #notificationPanel (open)="onOpen($event)" (close)="onClose($event)" mode="over" class="" align="end">
+  <md-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify($event)" (close)="onCloseNotify($event)">
     <div class="navigation-hold" fxLayout="column">
-      <app-notifications *ngIf="isSidenavOpen" [notificPanel]="notificationPanel"></app-notifications>
+      <app-notifications *ngIf="isSidenotOpen" [notificPanel]="notificationPanel"></app-notifications>
     </div>
   </md-sidenav>
 </md-sidenav-container>
