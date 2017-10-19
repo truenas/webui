@@ -41,8 +41,15 @@
 
   <!-- App content -->
   <app-breadcrumb></app-breadcrumb>
-  <div class="rightside-content-hold">
+  <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
     <router-outlet></router-outlet>
+  </div>
+  <div class="footer-console-bar" *ngIf="isShowFooterConsole">
+    <pre #footerBarScroll class="message">
+    Oct 19 09:28:31 freenas.local ugen0.1: at usbus0
+    Oct 19 09:28:31 freenas.local uhub0: on usbus0
+    Oct 19 09:28:31 freenas.local uhub0: 12 ports with 12 removable, self powered
+    </pre>
   </div>
   <!-- Notificaation bar -->
   <md-sidenav #notificationPanel (open)="onOpen($event)" (close)="onClose($event)" mode="over" class="" align="end">

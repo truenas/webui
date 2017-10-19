@@ -27,6 +27,31 @@ app-breadcrumb{
     width: 100%;
 }
 
+.rightside-content-hold.has-footer {
+    padding: 104px .03rem 10%;
+}
+
+.footer-console-bar {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 45px;
+}
+
+.footer-console-bar .message {
+    font-family: monospace,Courier New,Courier;
+    font-size: 9pt;
+    color: #00FF00;
+    padding: 0px 20px;
+    background-color: #000;
+    border: 1px solid #222;
+    height: 42px;
+    white-space: pre-wrap;
+    max-height: 42px;
+    overflow: hidden;
+    margin: 0px;
+}
+
 /* Tabbed navigation is fixed too */
 .tab-header-fixed .mat-tab-header{
     overflow: hidden;

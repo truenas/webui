@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { RestService } from '../../../../services';
+import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
@@ -16,13 +17,16 @@ export class AdminLayoutComponent implements OnInit {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
+  isShowFooterConsole: Boolean = false;
 
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
+  @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
   freenasThemes;
 
   constructor(private router: Router,
     public themeService: ThemeService,
     private media: ObservableMedia,
+    protected rest: RestService,
     public translate: TranslateService) {
     // Close sidenav after route change in mobile
     router.events.subscribe((routeChange) => {
@@ -41,7 +45,6 @@ export class AdminLayoutComponent implements OnInit {
     translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
   }
 
-
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
     // Initialize Perfect scrollbar for sidenav
@@ -50,9 +53,13 @@ export class AdminLayoutComponent implements OnInit {
       suppressScrollX: true
     });
 
-
-
+    this.getConsoleMsg();    
   }
+
+  ngAfterViewChecked() {        
+    this.scrollToBottomOnFooterBar();           
+  }
+
   updateSidenav() {
     var self = this;
     setTimeout(() => {
@@ -63,6 +70,17 @@ export class AdminLayoutComponent implements OnInit {
     })
   }
 
+  scrollToBottomOnFooterBar(): void {
+    try {
+      this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
+    } catch(err) { }                 
+  }
+
+  getConsoleMsg() {
+    this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
+      this.isShowFooterConsole = res.data['adv_consolemsg'];
+    });
+  }
 
   public onOpen($event) {
     this.isSidenavOpen = true;
