@@ -39,6 +39,36 @@ export class JailAddComponent implements OnInit {
       placeholder: 'Release',
       options: [],
     },
+    {
+      type: 'input',
+      name: 'ip4_addr',
+      placeholder: 'IPv4 Address',
+    },
+    {
+      type: 'input',
+      name: 'defaultrouter',
+      placeholder: 'Default Router',
+    },
+    {
+      type: 'input',
+      name: 'ip6_addr',
+      placeholder: 'IPv6 Address',
+    },
+    {
+      type: 'input',
+      name: 'defaultrouter6',
+      placeholder: 'Default Router For IPv6',
+    },
+    {
+      type: 'input',
+      name: 'notes',
+      placeholder: 'Note',
+    },
+    {
+      type: 'checkbox',
+      name: 'vnet',
+      placeholder: 'Vnet',
+    },
   ];
 
   protected releaseField: any;
@@ -51,9 +81,9 @@ export class JailAddComponent implements OnInit {
 
   ngOnInit() {
     this.jailService.getReleaseChoices().subscribe((res) => {
-      this.releaseField = _.find(this.fieldConfig, {'name' : 'release'});
-      for(let i in res) {
-        this.releaseField.options.push({label: res[i], value: res[i]});
+      this.releaseField = _.find(this.fieldConfig, { 'name': 'release' });
+      for (let i in res) {
+        this.releaseField.options.push({ label: res[i], value: res[i] });
       }
     });
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
@@ -65,9 +95,29 @@ export class JailAddComponent implements OnInit {
 
   onSubmit() {
     this.error = null;
+    let property: any = [];
+    let value = _.cloneDeep(this.formGroup.value);
+
+    for (let i in value) {
+      if (value.hasOwnProperty(i)) {
+        if (i != 'uuid' && i != 'release' && i != 'vnet') {
+          property.push(i + '=' + value[i]);
+          delete value[i];
+        }
+        if (i == 'vnet') {
+          if (value[i]) {
+            property.push(i + '=on');
+          } else {
+            property.push(i + '=off');
+          }
+          delete value[i];
+        }
+      }
+    }
+    value['props'] = property;
 
     this.loader.open();
-    this.ws.job(this.addCall, [this.formGroup.value]).subscribe(
+    this.ws.job(this.addCall, [value]).subscribe(
       (res) => {
         this.loader.close();
         if (res.error) {
