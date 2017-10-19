@@ -73,38 +73,14 @@ export class ReplicationEditComponent {
       placeholder: 'Limit (KB/s)'
     },
     {
-      type: 'task',
+      type: 'input',
       name: 'repl_begin',
-      placeholder: 'Begin Time',
-      tabs: [{
-        type: 'slider',
-        name: 'repl_begin_slider',
-        tabName: 'Every N hour',
-        min: 1,
-        max: 12,
-      }, {
-        type: 'togglebutton',
-        name: 'repl_begin_togglebutton',
-        tabName: 'Each selected hour',
-        options: []
-      }]
+      placeholder: 'Begin Time'
     },
     {
-      type: 'task',
+      type: 'input',
       name: 'repl_end',
-      placeholder: 'End Time',
-      tabs: [{
-        type: 'slider',
-        name: 'repl_end_slider',
-        tabName: 'Every N hour',
-        min: 1,
-        max: 12,
-      }, {
-        type: 'togglebutton',
-        name: 'repl_end_togglebutton',
-        tabName: 'Each selected hour',
-        options: []
-      }]
+      placeholder: 'End Time'
     },
     {
       type: 'input',
