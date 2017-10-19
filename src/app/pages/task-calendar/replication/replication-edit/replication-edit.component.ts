@@ -33,6 +33,11 @@ export class ReplicationEditComponent {
   
   protected fieldConfig: FieldConfig[] = [
     {
+      type: 'input',
+      name: 'task_filesystem',
+      placeholder: 'Volume/Dataset',
+    },
+    {
       type : 'input',
       name : 'interv',
       placeholder : 'interv'
@@ -45,22 +50,51 @@ export class ReplicationEditComponent {
     {
       type : 'input',
       name : 'task_begin',
-      placeholder : 'task_begin'
+      placeholder : 'Begin'
+    }, {
+      type: 'task',
+      name: 'task_begin',
+      placeholder: 'Hour',
+      tabs: [{
+        type: 'slider',
+        name: 'task_begin_slider',
+        tabName: 'Every N hour',
+        min: 1,
+        max: 12,
+      }, {
+        type: 'togglebutton',
+        name: 'task_begin_togglebutton',
+        tabName: 'Each selected hour',
+        options: []
+      }]
     },
     {
       type : 'input',
-      name : 'task_byweekday',
-      placeholder : 'task_byweekday'
-    },
-    {
-      type: 'input',
+      name : 'task_end',
+      placeholder : 'End'
+    }, {
+      type: 'task',
       name: 'task_end',
-      placeholder: 'task_end',
+      placeholder: 'Hour',
+      tabs: [{
+        type: 'slider',
+        name: 'task_end_slider',
+        tabName: 'Every N hour',
+        min: 1,
+        max: 12,
+      }, {
+        type: 'togglebutton',
+        name: 'task_end_togglebutton',
+        tabName: 'Each selected hour',
+        options: []
+      }]
     },
     {
-      type: 'input',
-      name: 'task_filesystem',
-      placeholder: 'task_filesystem',
+      type: 'togglebutton',
+      name: 'task_byweekday',
+      placeholder: 'Day of week',
+      multiple: true,
+      options: []
     },
     {
       type: 'input',
@@ -68,14 +102,9 @@ export class ReplicationEditComponent {
       placeholder: 'task_interval',
     },
     {
-      type: 'input',
+      type: 'checkbox',
       name: 'task_recursive',
-      placeholder: 'task_recursive',
-    },
-    {
-      type: 'input',
-      name: 'task_repeat_unit',
-      placeholder: 'task_repeat_unit',
+      placeholder: 'Recursively replicate child dataset snapshots',
     },
     {
       type: 'input',
