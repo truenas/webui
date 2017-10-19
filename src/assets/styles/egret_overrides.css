@@ -31,11 +31,30 @@ app-breadcrumb{
     padding: 104px .03rem 10%;
 }
 
+@-webkit-keyframes silde_to_top {
+    0% {
+        bottom: -60px;
+    }
+    100% {
+        bottom: 0px;
+        z-index: 1000000;
+    }
+}
+
 .footer-console-bar {
     position: absolute;
     bottom: 0px;
     width: 100%;
     height: 45px;
+
+    -webkit-animation-name: silde_to_top;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: ease;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-direction: normal;
+    -webkit-animation-delay: 0;
+    -webkit-animation-play-state: running;
+    -webkit-animation-fill-mode: forwards;
 }
 
 .footer-console-bar .message {
