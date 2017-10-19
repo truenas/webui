@@ -85,6 +85,7 @@ export class AdvancedComponent {
     {
       type: 'textarea',
       name: 'adv_motd',
+      class: 'ascii-art-font',
       placeholder: 'MOTD Banner',
     },
   ];
