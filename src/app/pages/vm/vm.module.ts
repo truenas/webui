@@ -7,34 +7,6 @@ import {EntityFormService} from '../../pages/common/entity/entity-form/services/
 import {
   VmService, NetworkService, SystemGeneralService
 } from '../../services'
-
-    @NgModule({
-      imports : [
-        EntityModule, CommonModule, FormsModule,
-        ReactiveFormsModule, routing, MaterialModule, MdTableModule
-      ],
-      declarations : [
-        VmListComponent,
-        VmFormComponent,
-        VmDeleteComponent,
-        DeviceListComponent,
-        DeviceCdromAddComponent,
-        DeviceAddComponent,
-        DeviceNicAddComponent,
-        DeviceDiskAddComponent,
-        DeviceVncAddComponent,
-        DeviceDeleteComponent,
-        DeviceEditComponent,
-        DeviceRawFileAddComponent,
-      ],
-      providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
-    })
-    /*
-    export class VmModule {} import {
-      NgaModule
-    } from '../../theme/nga.module';
-    */
-    export class VmModule {};
 import {EntityModule} from '../common/entity/entity.module';
 
 import {DeviceAddComponent} from './devices/device-add/device-add.component';
@@ -49,4 +21,36 @@ import {DeviceVncAddComponent} from './devices/device-vnc-add/';
 import {VmFormComponent} from './vm-form/';
 import {VmDeleteComponent} from './vm-delete/';
 import {VmListComponent} from './vm-list/';
+import {VmCardsComponent} from './vm-cards/vm-cards.component';
+import {VmCardEditComponent} from './vm-cards/vm-card-edit.component';
 import {routing} from './vm.routing';
+
+@NgModule({
+  imports : [
+    EntityModule, CommonModule, FormsModule,
+    ReactiveFormsModule, routing, MaterialModule, MdTableModule
+  ],
+  declarations : [
+    VmListComponent,
+    VmCardsComponent,
+    VmCardEditComponent,
+    VmFormComponent,
+    VmDeleteComponent,
+    DeviceListComponent,
+    DeviceCdromAddComponent,
+    DeviceAddComponent,
+    DeviceNicAddComponent,
+    DeviceDiskAddComponent,
+    DeviceVncAddComponent,
+    DeviceDeleteComponent,
+    DeviceEditComponent,
+    DeviceRawFileAddComponent,
+  ],
+  providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
+})
+/*
+    export class VmModule {} import {
+      NgaModule
+    } from '../../theme/nga.module';
+ */
+export class VmModule {};

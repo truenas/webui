@@ -1,8 +1,8 @@
-<div id="dashboardcontainerdiv" class="dashboard-wrap mt-1 mr-1 mb-05 ml-1">
+<div id="dashboardcontainerdiv" class="dashboard-wrap">
   <md-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
       <md-card-title>
-        <div class="card-title-text mat-bg-primary">
-          <span>System Information</span>
+        <div class="mat-toolbar mat-card-toolbar">
+				<div class="mat-card-title-text">System Information</div>
         </div>
       </md-card-title>
       <md-card-content>
@@ -56,11 +56,13 @@
   		*ngFor="let graph of graphs" 
   		class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
   	  <md-card-title>
-          <div class="card-title-text mat-bg-primary">
-            <span>{{ graph.title }}</span>
-          </div>
-        </md-card-title>
-  	  <md-card-content class="pb-1 pt-1">
+        <div class="mat-toolbar mat-card-toolbar">
+			<div class="mat-card-title-text">
+				<span>{{ graph.title }}</span>
+			</div>
+        </div>
+      </md-card-title>
+  	  <md-card-content>
   	  	<line-chart 
   	  	[dataList]="graph.dataList" 
   	  	[legends]="graph.legends" 

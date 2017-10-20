@@ -132,6 +132,12 @@ code {
 .m-1 {
     margin: 1rem !important;
 }
+.m-2 {
+    margin: 2rem !important;
+}
+.m-3 {
+    margin: 3rem !important;
+}
 .mt-1 {
     margin-top: 1rem !important;
 }
@@ -264,7 +270,7 @@ code {
 
 .mat-card {
     margin: .333333rem;
-    /*overflow: hidden;*/ /* Removing by Daisuke */
+    overflow: hidden;
 }
 .mat-card .mat-card-title .mat-divider, .mat-divider.full-width {
     margin-left: -24px;
@@ -293,6 +299,7 @@ code {
 .mat-card.p-0 .mat-card-content {
     padding:  0 1.5rem 1.5rem;
 }
+
 .mat-button,
 .mat-raised-button {
     font-weight: 400 !important;
@@ -490,7 +497,6 @@ body .mat-select-trigger {
     z-index: auto;
 }
 
-/*--- Data table ---*/
 .ngx-datatable.fullscreen {
     height: calc(100vh - 90px);
 }
@@ -500,11 +506,16 @@ body .mat-select-trigger {
     background: blue;
     z-index: 999;
 }
+.ngx-datatable.material {
+    background: rgba(255,255,255, 0.42);
+}
 .ngx-datatable.material .datatable-header {
     border-bottom: 1px solid rgba(0, 0, 0, .12);
+    background: rgba(255,255,255, 0.66);
 }
 .ngx-datatable.material .datatable-header .datatable-header-cell {
-    padding: .9rem 1.2rem;
+    padding: .5rem;
+    font-weight: 500;
 }
 .ngx-datatable.material .datatable-header .datatable-header-cell:hover {
     border-right: 1px solid rgba(0, 0, 0, .12);
@@ -520,10 +531,15 @@ body .mat-select-trigger {
     transition-timing-function: linear;
 }
 .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell {
-    padding: .9rem 1.2rem;
+    padding: .9rem .6rem;
+    line-height: 0rem;
+    border-bottom: 1px solid rgba(0,0,0, 0.08);
+}
+.ngx-datatable.material .datatable-body .datatable-body-row:last-child {
+    border-bottom: 0px solid black;
 }
 .ngx-datatable.material .datatable-footer {
-    border-top: 1px solid rgba(0, 0, 0, .12);
+    border-top: 1px solid rgba(255,255,255, 0);
 }
 .ngx-datatable.material .datatable-footer .page-count {
     line-height: 50px;
@@ -809,6 +825,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
 }
 .app-side-nav-container {
     height: 100vh;
+    height: 100%;
 }
 .sidebar-panel.mat-sidenav {
     width: 15rem;
