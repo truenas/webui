@@ -66,3 +66,15 @@ ngx-datatable .mat-box-shadow{
 .mat-card-title-text{
   margin:16px;
 }
+
+/* vm-cards */
+vm-cards md-card{
+  padding:0 !important;
+}
+
+vm-card-edit div.md-content{
+  padding: 5%;
+  width: 90%;
+  height: 90%;
+  position: fixed;
+}
