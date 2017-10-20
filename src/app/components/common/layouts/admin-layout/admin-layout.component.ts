@@ -19,6 +19,7 @@ export class AdminLayoutComponent implements OnInit {
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
   isShowFooterConsole: Boolean = false;
+  isSidenotOpen: Boolean = false;
 
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -66,10 +67,14 @@ export class AdminLayoutComponent implements OnInit {
     let self = this;
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
+      self.isSidenotOpen = false;
       self.sideNave.mode = self.isMobile ? 'over' : 'side';
-      if (self.isMobile)
+      if (self.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
-    })
+      }
+      
+    }, -1);
+
   }
 
   scrollToBottomOnFooterBar(): void {
@@ -95,11 +100,19 @@ export class AdminLayoutComponent implements OnInit {
     });
   }
 
-  public onOpen($event) {
+  public onOpenNav($event) {
     this.isSidenavOpen = true;
   }
 
-  public onClose($event) {
+  public onCloseNav($event) {
     this.isSidenavOpen = false;
+  }
+
+  public onOpenNotify($event) {
+    this.isSidenotOpen = true;
+  }
+
+  public onCloseNotify($event) {
+    this.isSidenotOpen = false;
   }
 }
