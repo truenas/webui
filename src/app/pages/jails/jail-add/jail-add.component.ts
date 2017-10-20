@@ -80,11 +80,19 @@ export class JailAddComponent implements OnInit {
     protected loader: AppLoaderService) {}
 
   ngOnInit() {
-    this.jailService.getReleaseChoices().subscribe((res) => {
-      this.releaseField = _.find(this.fieldConfig, { 'name': 'release' });
-      for (let i in res) {
-        this.releaseField.options.push({ label: res[i], value: res[i] });
+    this.releaseField = _.find(this.fieldConfig, { 'name': 'release' });
+    this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+      for (let j in res_local) {
+        this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
       }
+      this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+        for (let i in res_remote) {
+          console.log(res_remote[i], _.indexOf(res_local, res_remote[i]));
+          if (_.indexOf(res_local, res_remote[i]) < 0) {
+            this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+          }
+        }
+      });
     });
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
   }

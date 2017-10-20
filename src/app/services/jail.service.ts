@@ -82,7 +82,11 @@ export class JailService {
 
   listTemplates() { return this.rest.get(this.jailsTemplate, {}); }
 
-  getReleaseChoices() {
+  getLocalReleaseChoices() {
     return this.ws.call('jail.list_resource', ["RELEASE"]);
+  };
+
+  getRemoteReleaseChoices() {
+    return this.ws.call('jail.list_resource', ["RELEASE", true]);
   };
 }
