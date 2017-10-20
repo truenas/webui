@@ -55,7 +55,7 @@ export class AdminLayoutComponent implements OnInit {
       suppressScrollX: true
     });
 
-    this.getConsoleMsg();    
+    this.checkIfConsoleMsgShows();    
   }
 
   ngAfterViewChecked() {        
@@ -63,7 +63,7 @@ export class AdminLayoutComponent implements OnInit {
   }
 
   updateSidenav() {
-    var self = this;
+    let self = this;
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
       self.sideNave.mode = self.isMobile ? 'over' : 'side';
@@ -78,10 +78,15 @@ export class AdminLayoutComponent implements OnInit {
     } catch(err) { }                 
   }
 
-  getConsoleMsg() {
+  checkIfConsoleMsgShows() {
     this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
       this.isShowFooterConsole = res.data['adv_consolemsg'];
+      this.getLogConsoleMsg();
     });
+  }
+
+  getLogConsoleMsg() {
+    // Adding console messages API here
   }
 
   onShowConsolePanel() {
