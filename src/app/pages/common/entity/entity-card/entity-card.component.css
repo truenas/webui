@@ -59,7 +59,6 @@
   
   .card {
       /*margin: 10px 0 20px 0;*/
-      background-color: #fff;
       border-top-width: 0;
       border-bottom-width: 2px;
       -webkit-border-radius: 3px;
@@ -85,8 +84,8 @@
   /* Flip Card Animations */
   
   .flip {
-      perspective: 820px;
-      perspective-origin: 50% 50%;
+      perspective: 820px !important;
+      perspective-origin: 50% 50% !important;
       /*width: 400px;*/
       height: 420px;
       position: relative;
@@ -112,9 +111,6 @@
   .flip .card-container .back {
       transform: rotatey(-180deg);
       min-height: 250px;
-      /*background: white;*/
-      background: linear-gradient(135deg, #fff, #dfdfdf);
-      color: black;
   }
   
   .flip .card-container .face {
@@ -123,4 +119,5 @@
       position: absolute;
       -webkit-backface-visibility: hidden;
       z-index: 2;
+      margin:0;
   }

@@ -1,0 +1,76 @@
+<div class="entity-cards-container">
+	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
+		<!-- 
+		Create ng-templates that you inject into the entity-card component. 
+		Keep in mind, entity-card is injecting your ng-template into an <md-card> 
+		so you can use almost any of the usual components like <md-header>, 
+		<md-content> etc. except for md-footer. The entity-card will provide 
+		the controls there.
+		-->
+		<ng-template #cardfront let-name="name">
+			<div class="sidebar section">
+
+				<div class="name-info">
+					<h3> 
+						{{ cards[i].name  }} 
+					</h3>
+
+					<button md-fab class="vm-power-btn" color="warn"><md-icon>power_settings_new</md-icon></button>
+
+				</div>
+
+				<!--<div class="api-info">
+					{{ cards[i].info }}
+				</div>-->
+			</div>
+			<div class="side-content section">
+
+				<div class="side-content-header">
+					<h4>Virtual Machine Info</h4>
+				</div>
+				
+				<div class="stats-info">
+					<table><tbody>
+							<tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
+							<tr><td class="stat-label">State:</td><td class="stat">{{ cards[i].state }}</td></tr>
+							<tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
+							<tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
+							<tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
+						<!--
+					<ul class="stats">
+						<li>name: {{ cards[i].name }}</li>
+						<li>id: {{ cards[i].id }}</li>
+						<li>info: {{ cards[i].info }}</li>
+						<li>description: {{ cards[i].description }};</li>
+						<li>bootloader: {{ cards[i].bootloader }}</li>
+						<li>state: {{ cards[i].state }}</li>
+						<li>autostart: {{ cards[i].autostart }}</li>
+						<li>vcpus: {{ cards[i].vcpus }}</li>
+						<li>memory: {{ cards[i].memory }}</li>
+					</ul>
+						-->
+						</tbody></table>
+				</div>
+
+				<div class="vm-controls">
+					<button md-raised-button color="accent">VNC</button>
+					<button md-raised-button color="primary">Devices</button>
+					<!--<button md-raised-button color="warn">Delete</button>-->
+					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit')">Edit</button>
+				</div>
+			</div>
+		</ng-template>
+
+		<ng-template #cardback let-name="name" >
+			<vm-card-edit 
+				*ngIf="tpl == 'edit'" 
+				[machineId]="cards[i].id"  
+				(cancel)="toggleForm($event,cards[i],'none')"
+				(saved)="toggleForm($event,cards[i],'none')"
+				></vm-card-edit>
+		</ng-template>
+
+		<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="lazyLoaded"></entity-card>
+	</div>
+
+</div>
