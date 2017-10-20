@@ -24,6 +24,7 @@ import {FormExplorerComponent} from '../form-explorer/form-explorer.component';
 import {FormSliderComponent} from '../form-slider/form-slider.component';
 import {FormToggleButtonComponent} from '../form-toggle-button/form-toggle-button.component';
 import {FormTaskComponent} from '../form-task/form-task.component';
+import {FormReadFileComponent} from '../form-readfile/form-readfile.component'
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -38,6 +39,7 @@ const components: {[type: string] : Type<Field>} = {
   slider: FormSliderComponent,
   togglebutton: FormToggleButtonComponent,
   task: FormTaskComponent,
+  readfile: FormReadFileComponent
 };
 
 @Directive({selector : '[dynamicField]'})
