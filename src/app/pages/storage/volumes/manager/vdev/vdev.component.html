@@ -1,22 +1,18 @@
-<md-card>
-    <md-card-title>{{getTitle()}}</md-card-title>
-    <!--div [dragula]='"pool-vdev"' #dnd [style.minHeight]="'100px'" [style.width]="'100%'">
-    </div-->
-    <div class="row">
         <ngx-datatable
            #table
            class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow" 
            [rows]="getDisks()" 
-           [headerHeight]="50" 
-           [rowHeight]="50"
-           [footerHeight]="50" 
-           [columnMode]="'force'" 
+           [headerHeight]="48" 
+           [rowHeight]="30"
+           [footerHeight]="48" 
+           [columnMode]="'flex'" 
            [limit]="10"
            [selected] = "selected"
            [selectionType]="'checkbox'"
            (select)='onSelect($event)'>
            <ngx-datatable-column
-             [width]="30"
+           	 [flexGrow]="1"
+             [width]="24"
              [sortable]="false"
              [canAutoResize]="false"
              [draggable]="false"
@@ -24,8 +20,14 @@
              [headerCheckboxable]="true"
              [checkboxable]="true">
            </ngx-datatable-column>
-           <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
-           <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
+           <ngx-datatable-column 
+	           [flexGrow]="2"
+	           name="Disk" 
+	           prop="devname"></ngx-datatable-column>
+           <ngx-datatable-column 
+           	[flexGrow]="2"
+           	name="Capacity" 
+           	prop="capacity"></ngx-datatable-column>
         </ngx-datatable>
         <div class="col-md-11" *ngIf="group === 'data'">
             <md-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
@@ -42,5 +44,4 @@
                 <button md-raised-button class="btn btn-accent" (click)="removeSelectedDisks()" [disabled]="!selected.length">Remove disks</button>
                 <button md-raised-button class="btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
         </div>
-    </div>
-</md-card>
+    

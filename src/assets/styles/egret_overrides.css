@@ -37,7 +37,11 @@ app-breadcrumb{
     background:#efefef;
     width: 100%;
 }
-
+/*--- Data table ---*/
+.datatable-checkbox input[type='checkbox'] {
+    margin-top: -10px;
+    margin-left: -3px;
+}
 .mat-tab-body-wrapper{
     padding:64px 16px 16px;
 }
