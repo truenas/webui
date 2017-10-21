@@ -59,6 +59,31 @@ vm-cards md-card.front {
 .side-content .stats-info td.stat{
   text-align:left;
 }
+
+.vm-power-btn-on.mat-fab,
+.vm-power-btn-off.mat-fab{
+  box-shadow:none !important;
+}
+
+.vm-power-btn-on.mat-fab{
+ background-color:#0C0 !important;
+ color:#fff;
+}
+.vm-power-btn-off.mat-fab{
+  background-color:#C00 !important;
+  color: #fff;
+}
+
+.card-close{
+    background: none;
+    border: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: rgba(0,0,0,0.35);
+}
+
+
 /*
 vm-cards .section{
   padding:16px
