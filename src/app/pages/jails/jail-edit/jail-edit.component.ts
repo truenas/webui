@@ -41,6 +41,36 @@ export class JailEditComponent implements OnInit {
       placeholder: 'Release',
       options: [],
     },
+    {
+      type: 'input',
+      name: 'ip4_addr',
+      placeholder: 'IPv4 Address',
+    },
+    {
+      type: 'input',
+      name: 'defaultrouter',
+      placeholder: 'Default Router',
+    },
+    {
+      type: 'input',
+      name: 'ip6_addr',
+      placeholder: 'IPv6 Address',
+    },
+    {
+      type: 'input',
+      name: 'defaultrouter6',
+      placeholder: 'Default Router For IPv6',
+    },
+    {
+      type: 'input',
+      name: 'notes',
+      placeholder: 'Note',
+    },
+    {
+      type: 'checkbox',
+      name: 'vnet',
+      placeholder: 'Vnet',
+    },
   ];
 
   protected releaseField: any;
@@ -52,12 +82,21 @@ export class JailEditComponent implements OnInit {
     protected loader: AppLoaderService) {}
 
   ngOnInit() {
-    this.jailService.getReleaseChoices().subscribe((res) => {
-      this.releaseField = _.find(this.fieldConfig, { 'name': 'release' });
-      for (let i in res) {
-        this.releaseField.options.push({ label: res[i], value: res[i] });
+    this.releaseField = _.find(this.fieldConfig, { 'name': 'release' });
+    this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+      for (let j in res_local) {
+        this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
       }
+      this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+        for (let i in res_remote) {
+          console.log(res_remote[i], _.indexOf(res_local, res_remote[i]));
+          if (_.indexOf(res_local, res_remote[i]) < 0) {
+            this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+          }
+        }
+      });
     });
+
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
@@ -86,16 +125,5 @@ export class JailEditComponent implements OnInit {
   onSubmit() {
     this.error = null;
 
-    // this.loader.open();
-    // this.ws.job(this.addCall, [this.formGroup.value]).subscribe(
-    //   (res) => {
-    //     this.loader.close();
-    //     if (res.error) {
-    //       this.error = res.error;
-    //     } else {
-    //       this.router.navigate(new Array('/').concat(this.route_success));
-    //     }
-    //   }
-    // );
   }
 }
