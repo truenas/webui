@@ -80,6 +80,7 @@ export class JailAddComponent implements OnInit {
     protected loader: AppLoaderService) {}
 
   ngOnInit() {
+
     this.releaseField = _.find(this.fieldConfig, { 'name': 'release' });
     this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
       for (let j in res_local) {
