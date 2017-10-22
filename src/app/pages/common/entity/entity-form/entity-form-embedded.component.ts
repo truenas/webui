@@ -253,7 +253,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 	  } else {
 	    this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
 	    this.success = true;
-	    this.conf.onSuccess();
+	    this.conf.onSuccess(res);
 	  }
 	},
 	(res) => {
@@ -358,6 +358,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() { 
-    //this.sub.unsubscribe(); 
+    if(this.sub){
+      this.sub.unsubscribe(); 
+    }
   }
 }

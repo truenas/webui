@@ -53,7 +53,8 @@ export class VmCardEditComponent {
     this.cancel.emit(false); // <-- bool = isFlipped State
   }
 
-  onSuccess(){
+  onSuccess(message?:any){
     this.saved.emit(false);
+    console.log(message);
   }
 }
