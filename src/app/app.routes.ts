@@ -84,6 +84,11 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
       },
       {
+        path: 'systemprocesses',
+        loadChildren : 'app/pages/systemprocesses/system-processes.module#SystemProcessesModule',
+        data: { title: 'System Processes', breadcrumb: 'System Processes'}
+      },
+      {
         path : 'shell',
         loadChildren : './pages/shell/shell.module#ShellModule',
         data: { title: 'Shell', breadcrumb: 'SHELL'}
