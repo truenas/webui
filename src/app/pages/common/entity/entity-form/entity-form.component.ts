@@ -24,6 +24,9 @@ import {FieldConfig} from './models/field-config.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 
+import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
+
+
 @Component({
   selector : 'entity-form',
   templateUrl : './entity-form.component.html',
@@ -72,7 +75,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
-              public snackBar: MdSnackBar) {}
+              public snackBar: MdSnackBar,
+              public adminLayout: AdminLayoutComponent) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
@@ -285,6 +289,10 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
                             this.success = true;
                           }
+
+                          if (this.conf.resource_name == "system/advanced") {                            
+                            this.adminLayout.isShowFooterConsole = value['adv_consolemsg'];
+                          }                          
                         },
                         (res) => {
                           this.loader.close();
