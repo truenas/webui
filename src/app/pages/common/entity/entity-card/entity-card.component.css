@@ -84,7 +84,7 @@
   /* Flip Card Animations */
   
   .flip {
-      perspective: 820px !important;
+      perspective: 1520px !important;
       perspective-origin: 50% 50% !important;
       /*width: 400px;*/
       height: 420px;

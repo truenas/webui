@@ -16,6 +16,7 @@
 					</h3>
 
 					<button md-fab [ngClass]="{'vm-power-btn-on':cards[i].state == 'RUNNING','vm-power-btn-off':cards[i].state == 'STOPPED'}" (click)="toggleVmState(i)"><md-icon>power_settings_new</md-icon></button>
+					<div style="margin:16px;">{{ pwrBtnLabel }}</div>
 
 				</div>
 
@@ -46,21 +47,21 @@
 					<button md-raised-button color="accent">VNC</button>
 					<button md-raised-button color="default">Devices</button>
 					<!--<button md-raised-button color="warn">Delete</button>-->
-					<button md-raised-button color="warn" (click)="toggleForm(true,cards[i],'edit')">Edit</button>
+					<button md-raised-button color="warn" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
 				</div>
 			</div>
 		</ng-template>
 
 		<ng-template #cardback let-name="name" >
 			<vm-card-edit 
-				*ngIf="tpl == 'edit'" 
+				*ngIf="cards[i].template == 'edit'" 
 				[machineId]="cards[i].id"  
 				(cancel)="toggleForm($event,cards[i],'none')"
 				(saved)="toggleForm($event,cards[i],'none');refreshVM(i)"
 				></vm-card-edit>
 		</ng-template>
 
-		<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="lazyLoaded"></entity-card>
+		<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 	</div>
 
 	<!-- Add VM FAB -->
