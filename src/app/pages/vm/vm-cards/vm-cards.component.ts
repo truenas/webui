@@ -16,6 +16,8 @@ interface VmProfile {
   autostart:string;
   vcpus:string;
   memory:string;
+  lazyLoaded:boolean;
+  template:string; // for back face of card
   cardActions?:Array<any>;
 }
 
@@ -27,7 +29,7 @@ interface VmProfile {
 export class VmCardsComponent implements OnInit {
 
   @Input() cards = [];
-  public lazyLoaded = false;
+  //public lazyLoaded = false;
   public tpl = "edit";
   private pwrBtnLabel: string;
   private pwrBtnOptions = {
@@ -52,7 +54,9 @@ export class VmCardsComponent implements OnInit {
       state:data.state,
       autostart:data.autostart,
       vcpus:data.vcpus,
-      memory:data.memory
+      memory:data.memory,
+      lazyLoaded: false,
+      template:'none'
     }   
     return card;
   }
@@ -120,13 +124,28 @@ export class VmCardsComponent implements OnInit {
     })
   }
 
-  toggleForm(flipState, card, template){
-    // load #cardBack template with code here
-    this.tpl = template;
-    card.isFlipped = flipState;
-    this.lazyLoaded = !this.lazyLoaded;
+  focusVM(index){
+    console.log("FOCUSVM METHOD *******************");
+    for(var i = 0; i < this.cards.length; i++){
+      if(i !== index && this.cards[i].isFlipped ){
+	console.log("Index = " + index + " && i = " + i);
+	this.cards[i].isFlipped = false;
+	this.cards[i].lazyLoaded = false;
+	this.cards[i].template = 'none';
+      }
+    }
   }
 
+  toggleForm(flipState, card, template){
+    // load #cardBack template with code here
+    card.template = template;
+    card.isFlipped = flipState;
+    card.lazyLoaded = !card.lazyLoaded;
+    var index = this.cards.indexOf(card);
+    this.focusVM(index);
+  }
+
+  // toggles VM on/off
   toggleVmState(index){
     let vm = this.cards[index];
     let action: string;
