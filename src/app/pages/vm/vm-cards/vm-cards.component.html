@@ -16,6 +16,7 @@
 					</h3>
 
 					<button md-fab [ngClass]="{'vm-power-btn-on':cards[i].state == 'RUNNING','vm-power-btn-off':cards[i].state == 'STOPPED'}" (click)="toggleVmState(i)"><md-icon>power_settings_new</md-icon></button>
+					<div style="margin:16px;">{{ pwrBtnLabel }}</div>
 
 				</div>
 

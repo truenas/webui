@@ -15,8 +15,8 @@ vm-cards md-card.front {
 .sidebar{
   width: 40%;
   text-align: center;
-  background-color: #333;
-  background-image:url('https://www.globaletraining.ca/wp-content/uploads/2015/05/3d-abstract-black-dark-geometry-2501884-2560x1600.png');
+  background-color: #111;
+  /*background-image:url('https://www.globaletraining.ca/wp-content/uploads/2015/05/3d-abstract-black-dark-geometry-2501884-2560x1600.png');*/
   background-size:cover;
   position: absolute;
   top: 0;
@@ -62,16 +62,16 @@ vm-cards md-card.front {
 
 .vm-power-btn-on.mat-fab,
 .vm-power-btn-off.mat-fab{
-  box-shadow:none !important;
+  box-shadow:0px 3px 3px rgba(0,0,0,0.5)!important;
 }
 
 .vm-power-btn-on.mat-fab{
- background-color:#0C0 !important;
+ background-color:#C00 !important;
  color:#fff;
 }
 .vm-power-btn-off.mat-fab{
-  background-color:#C00 !important;
-  color: #fff;
+  background-color:#600 !important;
+  color: #999;
 }
 
 .card-close{
