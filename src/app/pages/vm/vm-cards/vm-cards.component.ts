@@ -29,6 +29,11 @@ export class VmCardsComponent implements OnInit {
   @Input() cards = [];
   public lazyLoaded = false;
   public tpl = "edit";
+  private pwrBtnLabel: string;
+  private pwrBtnOptions = {
+    STOPPED: "Start VM",
+    RUNNING: "Stop VM"
+  }
   protected loaderOpen: boolean = false;
 
   constructor(protected ws: WebSocketService,protected rest: RestService, private dialog: DialogService,protected loader: AppLoaderService){}
@@ -59,6 +64,7 @@ export class VmCardsComponent implements OnInit {
 	var card = this.parseResponse(res.data[i]);
 	//console.log(card);
 	this.cards.push(card);
+	this.pwrBtnLabel = this.pwrBtnOptions[this.cards[i].state];
       }   
     })  
   }
@@ -133,6 +139,7 @@ export class VmCardsComponent implements OnInit {
     this.ws.call(rpc, [ vm.id ]).subscribe((res) => {
       console.log([vm.id]);
       this.refreshVM(index);
+      this.pwrBtnLabel = this.pwrBtnOptions[this.cards[index].state];
     });
   }
 }
