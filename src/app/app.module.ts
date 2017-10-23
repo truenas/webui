@@ -15,6 +15,7 @@ import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { AboutModalDialog } from './components/common/about/about-dialog.component';
+import { ConsolePanelModalDialog } from './components/common/consolepanel/consolepanel-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
@@ -44,7 +45,7 @@ export function createTranslateLoader(http: Http) {
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false })
   ],
-  declarations: [AppComponent, ConfirmDialog, AboutModalDialog],
+  declarations: [AppComponent, ConfirmDialog, AboutModalDialog, ConsolePanelModalDialog],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -60,7 +61,8 @@ export function createTranslateLoader(http: Http) {
   entryComponents: [
     AppLoaderComponent,
     ConfirmDialog,
-    AboutModalDialog
+    AboutModalDialog,
+    ConsolePanelModalDialog
   ],
 })
 export class AppModule { }
