@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
+import { 
   MdDialogModule,
-  MdProgressBarModule
-} from '@angular/material';
+  MdProgressSpinnerModule
+ } from '@angular/material';
 
 import { AppLoaderService } from './app-loader.service';
 import { AppLoaderComponent } from './app-loader.component';
@@ -12,7 +12,7 @@ import { AppLoaderComponent } from './app-loader.component';
   imports: [
     CommonModule,
     MdDialogModule,
-    MdProgressBarModule
+    MdProgressSpinnerModule
   ],
   providers: [AppLoaderService],
   declarations: [AppLoaderComponent],
