@@ -49,6 +49,7 @@ export class DeviceDiskAddComponent {
       name : 'sectorsize',
       placeholder : 'Disk sectorsize',
       type: 'input',
+      value: 0
     },
   ];
 
