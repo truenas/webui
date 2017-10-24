@@ -1,6 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
-import {AppLoaderService} from "./app-loader.service";
+import { Component, OnInit } from '@angular/core';
+import { MdDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-app-loader',
@@ -8,18 +7,11 @@ import {AppLoaderService} from "./app-loader.service";
   styleUrls: ['./app-loader.component.css']
 })
 export class AppLoaderComponent implements OnInit {
-
   title;
   message;
-  progress;
-
-  constructor(public dialogRef: MdDialogRef<AppLoaderComponent>,
-              public service: AppLoaderService) {
-  }
+  constructor(public dialogRef: MdDialogRef<AppLoaderComponent>) {}
 
   ngOnInit() {
-    this.service.events.subscribe((event: any) => {
-      this.progress = event;
-    });
   }
+
 }
