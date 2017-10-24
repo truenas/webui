@@ -18,8 +18,8 @@ import { DialogService } from 'app/services';
 
 export class GenericAnyDataSource extends DataSource<any> {
   dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-  
-  set data(newData: any[] ) {
+
+  set data(newData: any[]) {
     this.dataChange.next(newData);
   }
 
@@ -28,7 +28,7 @@ export class GenericAnyDataSource extends DataSource<any> {
   }
 
   constructor(private _paginator: MdPaginator) {
-      super();
+    super();
   }
 
   connect(): Observable<any[]> {
@@ -48,26 +48,13 @@ export class GenericAnyDataSource extends DataSource<any> {
   }
 
   disconnect(): void {
-  
-  }
-  
-  
-
-  
-}
-
-export class MdCdkTableComponent {
-
-  displayedColumns: string[] = [];
-
-  constructor(public dataSource: GenericAnyDataSource) {
 
   }
 
-  
-  
-}
 
+
+
+}
 
 @Component({
   selector: 'entity-table',
@@ -76,23 +63,18 @@ export class MdCdkTableComponent {
   providers: [DialogService]
 })
 export class EntityTableComponent implements OnInit {
-  
-  @Input() title:string = '';
+
+  @Input() title = '';
   @Input('conf') conf: any;
 
+  @ViewChild('filter') filter: ElementRef;
   @ViewChild(MdPaginator) paginator: MdPaginator;
-  public cdkTableComponent: MdCdkTableComponent;
-
-
+  public dataSource: GenericAnyDataSource;
+  public displayedColumns: string[] = [];
+  public initialItemsPerPage = 10;
   public busy: Subscription;
-
-  public rows: Array < any > = [];
-  public columns: Array < any > = [];
-  public page: number = 1;
-  public itemsPerPage: number = 10;
-  public maxSize: number = 5;
-  public numPages: number = 1;
-  public length: number = 0;
+  public columns: Array<any> = [];
+  public allRows: any = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -101,7 +83,7 @@ export class EntityTableComponent implements OnInit {
   protected loaderOpen: boolean = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) {}
+    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
     if (this.conf.preInit) {
@@ -112,18 +94,43 @@ export class EntityTableComponent implements OnInit {
       this.conf.afterInit(this);
     }
 
-    this.cdkTableComponent = new MdCdkTableComponent(new GenericAnyDataSource(this.paginator));
+    this.dataSource = new GenericAnyDataSource(this.paginator);
 
-    this.conf.columns.forEach((column)=>{
-      this.cdkTableComponent.displayedColumns.push(column.prop);
+    this.conf.columns.forEach((column) => {
+      this.displayedColumns.push(column.prop);
     });
 
-    this.cdkTableComponent.displayedColumns.push("action");
+    this.displayedColumns.push("action");
+
+    Observable.fromEvent(this.filter.nativeElement, 'keyup')
+      .debounceTime(150)
+      .distinctUntilChanged()
+      .subscribe(() => {
+        const filterValue: string = this.filter.nativeElement.value;
+        let newData: any[] = [];
+
+        if (filterValue.length > 0) {
+          this.dataSource.data.forEach((dataElement) => {
+            for (const dataElementProp in dataElement) {
+              const value: any = dataElement[dataElementProp];
+
+              if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
+                newData.push(dataElement);
+                break;
+              }
+            }
+
+          });
+        } else {
+          newData = this.allRows;
+        }
+        
+        this.dataSource.data = newData;
+      });
   }
 
   getData() {
-    let offset = this.itemsPerPage * (this.page - 1);
-    let sort: Array < String > = [];
+    let sort: Array<String> = [];
     let options: Object = new Object();
 
     for (let i in this.config.sorting.columns) {
@@ -147,50 +154,35 @@ export class EntityTableComponent implements OnInit {
     }
     this.busy =
       this.getFunction.subscribe((res) => {
+        let rows: any[] = [];
+
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
         if (res.data) {
-          this.length = res.total;
-          this.rows = new EntityUtils().flattenData(res.data);
+          rows = new EntityUtils().flattenData(res.data);
         } else {
-          this.length = res.length;
-          this.rows = new EntityUtils().flattenData(res);
+          rows = new EntityUtils().flattenData(res);
         }
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
-        for (let i = 0; i < this.rows.length; i++) {
-          for (let attr in this.rows[i]) {
-            if (this.rows[i].hasOwnProperty(attr)) {
-              this.rows[i][attr] = this.rowValue(this.rows[i], attr);
+        for (let i = 0; i < rows.length; i++) {
+          for (let attr in rows[i]) {
+            if (rows[i].hasOwnProperty(attr)) {
+              rows[i][attr] = this.rowValue(rows[i], attr);
             }
           }
         }
 
-        const data = this.rows.slice();
-        // Grab the page's slice of data.
-        const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-        let newData = data.splice(startIndex, this.paginator.pageSize);
-        this.cdkTableComponent.dataSource.data = newData;
-        
+        this.allRows = rows;
+        this.dataSource.data = rows;
+
       });
 
   }
 
-  onChangeTable(
-    config,
-    page: any = { page: this.page, itemsPerPage: this.itemsPerPage }) {
-    if (config.filtering) {
-      Object.assign(this.config.filtering, config.filtering);
-    }
-    if (config.sorting) {
-      Object.assign(this.config.sorting, config.sorting);
-    }
-    this.page = page.page;
-    this.getData();
-  }
 
   trClass(row) {
     let classes = [];
@@ -213,7 +205,7 @@ export class EntityTableComponent implements OnInit {
         id: "delete",
         label: "Delete",
         onClick: (row) => { this.doDelete(row.id); },
-      }, ]
+      },]
     }
   }
 
@@ -250,16 +242,20 @@ export class EntityTableComponent implements OnInit {
         if (this.conf.wsDelete) {
           this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
             (res) => { this.getData() },
-            (res) => { new EntityUtils().handleError(this, res);
-              this.loader.close(); }
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
           );
         } else {
           this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
             (res) => {
               this.getData();
             },
-            (res) => { new EntityUtils().handleError(this, res);
-              this.loader.close(); }
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
           );
         }
       }

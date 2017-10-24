@@ -3,38 +3,57 @@
 		<div class="mat-card-title-text">{{ title }}</div>
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
-	<md-paginator #paginator [length]="rows.length" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[5, 10, 25, 100]">
-	</md-paginator>
-	<md-table #table [dataSource]="cdkTableComponent.dataSource">
 
-		<!--- Note that these columns can be defined in any order.
+	<div>
+		<br/>
+	</div>
+
+	<div class="padding_all">
+		<md-input-container floatPlaceholder="never">
+			<input mdInput #filter placeholder="Filter Item(s)">
+		</md-input-container>
+	</div>
+
+	<div>
+		<md-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="initialItemsPerPage" [pageSizeOptions]="[5, 10, 25, 100]">
+		</md-paginator>
+	</div>
+
+	<div>
+		<br/>
+	</div>
+
+	<div *ngIf="dataSource.data.length > 0">
+		<md-table #table [dataSource]="dataSource">
+
+			<!--- Note that these columns can be defined in any order.
 		The actual rendered columns are set as a property on the row definition" -->
 
-		<!-- Position Column -->
-		<div *ngFor="let col of conf.columns">
-			<ng-container cdkColumnDef="{{col.prop}}">
-				<md-header-cell *cdkHeaderCellDef> {{col.name}} </md-header-cell>
+			<!-- Position Column -->
+			<div *ngFor="let col of conf.columns">
+				<ng-container cdkColumnDef="{{col.prop}}">
+					<md-header-cell *cdkHeaderCellDef> {{col.name}} </md-header-cell>
+					<md-cell *cdkCellDef="let row">
+						<div style="overflow: hidden; height: 20px;">
+							{{row[col.prop]}}
+						</div>
+					</md-cell>
+				</ng-container>
+			</div>
+
+			<ng-container cdkColumnDef="action">
+				<md-header-cell *cdkHeaderCellDef> Action </md-header-cell>
 				<md-cell *cdkCellDef="let row">
-					<div style="overflow: hidden; height: 20px;">
-						{{row[col.prop]}}
+					<div class="padding_top">
+						<app-entity-table-actions [entity]="this" [row]="row">
+						</app-entity-table-actions>
 					</div>
 				</md-cell>
 			</ng-container>
-		</div>
 
-		<ng-container cdkColumnDef="action">
-			<md-header-cell *cdkHeaderCellDef> Action </md-header-cell>
-			<md-cell *cdkCellDef="let row">
-				<div style="padding-top: 30px;">
-					<app-entity-table-actions [entity]="this" [row]="row">
-					</app-entity-table-actions>
-				</div>
-			</md-cell>
-		</ng-container>
-
-		<md-header-row *cdkHeaderRowDef="cdkTableComponent.displayedColumns"></md-header-row>
-		<md-row *cdkRowDef="let row; columns: cdkTableComponent.displayedColumns;"></md-row>
-	</md-table>
-
+			<md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+			<md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+		</md-table>
+	</div>
 
 </div>
