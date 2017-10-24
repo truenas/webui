@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule, MdTableModule } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
-
+import { NgUploaderModule } from 'ngx-uploader';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
@@ -25,12 +25,14 @@ import { FormSliderComponent } from './entity-form/components/form-slider/form-s
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
+import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
+import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
@@ -42,7 +44,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule
+    Ng2DropdownModule, NgUploaderModule
   ],
   declarations: [
     EntityDeleteComponent,
@@ -54,6 +56,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityTemplateDirective,
     DynamicFieldDirective,
     EntityFormComponent,
+    EntityFormEmbeddedComponent,
     FormButtonComponent,
     FormInputComponent,
     FormSelectComponent,
@@ -67,15 +70,17 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormTaskComponent,
     FormArrayComponent,
     FormUploadComponent,
+    FormReadFileComponent,
     EntityJobComponent,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
-    SmdFabSpeedDialComponent
+    SmdFabSpeedDialComponent,
   ],
   exports: [
     EntityDeleteComponent,
     EntityTemplateDirective,
     EntityFormComponent,
+    EntityFormEmbeddedComponent,
     EntityTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
@@ -93,6 +98,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormPermissionsComponent,
     FormArrayComponent,
     FormUploadComponent,
+    FormReadFileComponent,
     FormExplorerComponent,
     EntityJobComponent,
     FormSliderComponent,

@@ -4,9 +4,10 @@ import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
+import { AboutModalDialog } from '../about/about-dialog.component';
 import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MdSnackBar } from '@angular/material';
+import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 
 @Component({
@@ -44,17 +45,17 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private tour: TourService,
+    public dialog: MdDialog,
     public snackBar: MdSnackBar, ) { }
+
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
-
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
     if (showTour === "true") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
       localStorage.setItem(this.router.url, 'false');
     }
-
 
     const notifications = this.notificationsService.getNotificationList();
 
@@ -72,9 +73,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
-
-
-
   }
 
   ngOnDestroy() {
@@ -91,20 +89,33 @@ export class TopbarComponent implements OnInit, OnDestroy {
   setLang() {
     this.onLangChange.emit(this.currentLang);
   }
+
   changeTheme(theme) {
     this.themeService.changeTheme(theme);
   }
+
   toggleNotific() {
     this.notificPanel.toggle();
   }
+
   toggleSidenav() {
     this.sidenav.toggle();
   }
+
   toggleCollapse() {
     let appBody = document.body;
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
   }
+
+  onShowAbout() {
+    let dialogRef = this.dialog.open(AboutModalDialog, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
   signOut() {
     this.dialogService.confirm("Logout", "You are about to LOGOUT of the FreeNAS WebUI. If unsure, hit 'Cancel', otherwise, press 'OK' to logout.").subscribe((res) => {
       if (res) {
@@ -112,6 +123,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   onShutdown() {
     this.dialogService.confirm("Shutdown", "You are about to SHUTDOWN the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to shutdown the system.").subscribe((res) => {
       if (res) {
@@ -119,6 +131,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   onReboot() {
     this.dialogService.confirm("Reboot", "You are about to REBOOT the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to reboot the system.").subscribe((res) => {
       if (res) {
@@ -126,5 +139,4 @@ export class TopbarComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 }

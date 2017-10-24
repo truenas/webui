@@ -5,7 +5,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { Http, HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader, TranslateStaticLoader } from 'ng2-translate/ng2-translate';
-
+import { MaterialModule } from '@angular/material';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from "./components/common/app-common.module";
 import { AppComponent } from './app.component';
@@ -14,6 +14,8 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
+import { AboutModalDialog } from './components/common/about/about-dialog.component';
+import { ConsolePanelModalDialog } from './components/common/consolepanel/consolepanel-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
@@ -40,9 +42,10 @@ export function createTranslateLoader(http: Http) {
       useFactory: (createTranslateLoader),
       deps: [Http]
     }),
+    MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false })
   ],
-  declarations: [AppComponent, ConfirmDialog],
+  declarations: [AppComponent, ConfirmDialog, AboutModalDialog, ConsolePanelModalDialog],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -58,6 +61,8 @@ export function createTranslateLoader(http: Http) {
   entryComponents: [
     AppLoaderComponent,
     ConfirmDialog,
+    AboutModalDialog,
+    ConsolePanelModalDialog
   ],
 })
 export class AppModule { }

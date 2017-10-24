@@ -31,6 +31,7 @@ export class CloudCredentialsGCSComponent {
   protected route_success: string[] = ['system', 'cloudcredentials'];
   public formGroup: FormGroup;
   protected pk: any;
+  protected queryPk: any;
   protected queryPayload = [];
   protected fieldConfig: FieldConfig[] = [
     {
@@ -47,6 +48,12 @@ export class CloudCredentialsGCSComponent {
     },
     {
       type : 'textarea',
+      name : 'preview',
+      placeholder : 'Preview JSON Service Account Key',
+      disabled: true
+    },
+    {
+      type : 'readfile',
       name : 'attributes',
       placeholder : 'JSON Service Account Key',
     },
@@ -68,10 +75,24 @@ export class CloudCredentialsGCSComponent {
       this.queryPayload.push("=")
       this.queryPayload.push(parseInt(params['pk']));
       this.pk = [this.queryPayload];
+      this.queryPk = parseInt(params['pk']);
+      
     });
   }
   }
   afterInit(entityForm: any) {
+    /*reading from middleware*/
+    if (this.queryPk) {
+      this.ws.call('backup.credential.query', [this.pk]).subscribe((res)=> {
+        entityForm.formGroup.controls['preview'].setValue(JSON.stringify(res[0].attributes.keyfile));
+      })
+    }
+
+    /*reading from local json file*/
+    entityForm.formGroup.controls['attributes'].valueChanges.subscribe((value)=>{
+      entityForm.formGroup.controls['preview'].setValue(value);
+    });
+  
     entityForm.submitFunction = this.submitFunction;
   }
   submitFunction(){
@@ -82,8 +103,7 @@ export class CloudCredentialsGCSComponent {
     payload['name'] = formvalue.name;
     const kf = formvalue.attributes;
     try{
-      //payload['attributes'] = { 'keyfile': JSON.parse(kf) };
-      payload['attributes'] = { 'keyfile': kf };
+      payload['attributes'] = { 'keyfile': JSON.parse(kf) };
     if (!this.pk){
       auxPayLoad.push(payload)
       return this.ws.call('backup.credential.create', auxPayLoad);
