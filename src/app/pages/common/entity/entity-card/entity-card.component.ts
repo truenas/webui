@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ElementRef, ViewEncapsulation, ViewChild, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk';
 import { MdPaginator, MdSort } from '@angular/material';
@@ -25,7 +25,12 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 export class EntityCardComponent implements OnInit {
 
   @Input('conf') conf: any;
-  @Input() isFlipped = false;  
+  @Input() isFlipped = false;
+  @Output() editCard: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Input() front: TemplateRef<any>;
+  @Input() back: TemplateRef<any>;
+  @Input() lazyLoaded: boolean = false;
+  public actions: boolean = false;
 
   public busy: Subscription;
 
@@ -50,11 +55,21 @@ export class EntityCardComponent implements OnInit {
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    this.getData();
+    //this.getData();
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
   }
+
+  ngAfterViewInit(){
+    if(this.conf){
+      this.isFlipped = this.conf.isFlipped;
+      //console.log("conf exists!!")
+    } else {
+      alert("conf doesn't exist!!");
+    }
+  }
+
   toggle(row: any) {
     
     let rpc: string;
@@ -131,18 +146,22 @@ export class EntityCardComponent implements OnInit {
   }
 
   getCardActions(row) {
-    if (this.conf.getCardActions) {
-      return this.conf.getCardActions(row);
+    if (this.conf.cardActions) {
+      this.actions = true;
+      return this.conf.cardActions;
     } else {
+      this.actions = false;
+      /*
       return [{
         id: "edit",
         label: "Edit",
-        onClick: (row) => { this.doEdit(row.id); },
-      }, {
-        id: "delete",
-        label: "Delete",
-        onClick: (row) => { this.doDelete(row.id); },
-      }, ]
+	onClick: (row) => { 
+	  this.editCard.emit(true);
+	  this.toggleFlip();
+	  this.lazyLoaded = true;
+	  //this.conf.isFlipped = true;
+	},
+      }]*/
     }
   }
 
@@ -165,14 +184,20 @@ export class EntityCardComponent implements OnInit {
     this.router.navigate(new Array('/').concat(this.conf.route_add));
   }
 
-  doEdit(id) {
+  doSave() {
+    this.toggleFlip();
+    /*
     this.router.navigate(
-      new Array('/').concat(this.conf.route_edit).concat(id));
+      new Array('/').concat(this.conf.route_edit).concat(id)
+    );
+    */
   }
 
-  doDelete(id) {
+  doDelete() {
+    
     this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
       if (res) {
+	/*
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
@@ -182,11 +207,14 @@ export class EntityCardComponent implements OnInit {
           },
           (res) => { new EntityUtils().handleError(this, res); this.loader.close();}
         );
+	*/
       }
     })
+
+    this.toggleFlip();
   }
   toggleFlip(){
-    this.isFlipped = !this.isFlipped;
+  this.conf.isFlipped = !this.conf.isFlipped;
   }
 }
 

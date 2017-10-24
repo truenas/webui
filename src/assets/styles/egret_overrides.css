@@ -27,6 +27,50 @@ app-breadcrumb{
     width: 100%;
 }
 
+.rightside-content-hold.has-footer {
+    padding: 104px .03rem 10%;
+}
+
+@-webkit-keyframes silde_to_top {
+    0% {
+        bottom: -60px;
+    }
+    100% {
+        bottom: 0px;
+        z-index: 1000000;
+    }
+}
+
+.footer-console-bar {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 45px;
+
+    -webkit-animation-name: silde_to_top;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: ease;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-direction: normal;
+    -webkit-animation-delay: 0;
+    -webkit-animation-play-state: running;
+    -webkit-animation-fill-mode: forwards;
+}
+
+.footer-console-bar .message {
+    font-family: monospace,Courier New,Courier;
+    font-size: 9pt;
+    color: #00FF00;
+    padding: 0px 20px;
+    background-color: #000;
+    border: 1px solid #222;
+    height: 42px;
+    white-space: pre-wrap;
+    max-height: 42px;
+    overflow: hidden;
+    margin: 0px;
+}
+
 /* Tabbed navigation is fixed too */
 .tab-header-fixed .mat-tab-header{
     overflow: hidden;
@@ -37,7 +81,11 @@ app-breadcrumb{
     background:#efefef;
     width: 100%;
 }
-
+/*--- Data table ---*/
+.datatable-checkbox input[type='checkbox'] {
+    margin-top: -10px;
+    margin-left: -3px;
+}
 .mat-tab-body-wrapper{
     padding:64px 16px 16px;
 }
@@ -61,4 +109,16 @@ ngx-datatable .mat-box-shadow{
 
 .mat-card-title-text{
   margin:16px;
+}
+
+/* vm-cards */
+vm-cards md-card{
+  padding:0 !important;
+}
+
+vm-card-edit div.md-content{
+  padding: 5%;
+  width: 90%;
+  height: 90%;
+  position: fixed;
 }
