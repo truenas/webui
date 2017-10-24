@@ -33,7 +33,13 @@ export class JailEditComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'host_hostuuid',
-      placeholder: 'Jails Name',
+      placeholder: 'UUID',
+      disabled: true,
+    },
+    {
+      type: 'input',
+      name: 'host_hostname',
+      placeholder: 'Name',
     },
     {
       type: 'select',
@@ -110,7 +116,15 @@ export class JailEditComponent implements OnInit {
             if (i == 'release') {
               _.find(this.fieldConfig, { 'name': 'release' }).options.push({ label: res[0][i], value: res[0][i] });
             }
+            if (i == 'vnet') {
+              if (res[0][i] == 'on') {
+                 res[0][i] = true;
+              } else {
+                res[0][i] = false;
+              }
+            }
             this.formGroup.controls[i].setValue(res[0][i]);
+
           }
         }
       });
@@ -124,6 +138,36 @@ export class JailEditComponent implements OnInit {
 
   onSubmit() {
     this.error = null;
+
+    let value = _.cloneDeep(this.formGroup.value);
+
+    for (let i in value) {
+      if (value.hasOwnProperty(i)) {
+        if (i == 'release') {
+          delete value[i];
+        }
+        if (i == 'vnet') {
+          console.log(value[i]);
+          if (value[i]) {
+            value[i] = 'on';
+          } else {
+            value[i] ='off';
+          }
+        }
+      }
+    }
+
+    this.loader.open();
+    this.ws.call(this.updateCall, [this.pk, value]).subscribe(
+      (res) => {
+        this.loader.close();
+        if (res.error) {
+          this.error = res.error;
+        } else {
+          this.router.navigate(new Array('/').concat(this.route_success));
+        }
+      }
+    );
 
   }
 }
