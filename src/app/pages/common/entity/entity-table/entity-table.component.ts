@@ -27,8 +27,24 @@ export class GenericAnyDataSource extends DataSource<any> {
     return this.dataChange.value;
   }
 
+  constructor(private _paginator: MdPaginator) {
+      super();
+  }
+
   connect(): Observable<any[]> {
-    return this.dataChange.asObservable();
+    const displayDataChanges = [
+      this.dataChange,
+      this._paginator.page
+    ];
+
+    return Observable.merge(...displayDataChanges).map(() => {
+      const data = this.data.slice();
+
+      // Grab the page's slice of data.
+      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
+      const newData = data.splice(startIndex, this._paginator.pageSize);
+      return newData;
+    });
   }
 
   disconnect(): void {
@@ -42,8 +58,13 @@ export class GenericAnyDataSource extends DataSource<any> {
 
 export class MdCdkTableComponent {
 
-  dataSource: GenericAnyDataSource = new GenericAnyDataSource();
-  displayedColumns = ['id'];
+  displayedColumns: string[] = [];
+
+  constructor(public dataSource: GenericAnyDataSource) {
+
+  }
+
+  
   
 }
 
@@ -59,7 +80,8 @@ export class EntityTableComponent implements OnInit {
   @Input() title:string = '';
   @Input('conf') conf: any;
 
-  public cdkTableComponent = new MdCdkTableComponent();
+  @ViewChild(MdPaginator) paginator: MdPaginator;
+  public cdkTableComponent: MdCdkTableComponent;
 
 
   public busy: Subscription;
@@ -89,6 +111,14 @@ export class EntityTableComponent implements OnInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+
+    this.cdkTableComponent = new MdCdkTableComponent(new GenericAnyDataSource(this.paginator));
+
+    this.conf.columns.forEach((column)=>{
+      this.cdkTableComponent.displayedColumns.push(column.prop);
+    });
+
+    this.cdkTableComponent.displayedColumns.push("action");
   }
 
   getData() {
@@ -139,7 +169,12 @@ export class EntityTableComponent implements OnInit {
           }
         }
 
-        this.cdkTableComponent.dataSource.data = this.rows;
+        const data = this.rows.slice();
+        // Grab the page's slice of data.
+        const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+        let newData = data.splice(startIndex, this.paginator.pageSize);
+        this.cdkTableComponent.dataSource.data = newData;
+        
       });
 
   }
