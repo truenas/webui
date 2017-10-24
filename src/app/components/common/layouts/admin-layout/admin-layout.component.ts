@@ -73,10 +73,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       self.sideNave.mode = self.isMobile ? 'over' : 'side';
       if (self.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
-    }
-   }, -1 )
-  }
+      }
 
+    }, -1);
+
+  }
 
   scrollToBottomOnFooterBar(): void {
     try {
@@ -89,24 +90,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isShowFooterConsole = res.data['adv_consolemsg'];
       this.getLogConsoleMsg();
     });
-
-  }
-
-
-  public onOpen($event) {
-    this.isSidenavOpen = true;
-  }
-
-  public onClose($event) {
-    this.isSidenavOpen = false;
-  }
-
-  changeState($event) {
-    if ($event.transfer) {
-      if (this.media.isActive('xs') || this.media.isActive('sm')) {
-        this.sideNave.close();
-      }
-    }
   }
 
   getLogConsoleMsg() {
@@ -133,5 +116,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   public onCloseNotify($event) {
     this.isSidenotOpen = false;
+  }
+
+  changeState($event) {
+    if ($event.transfer) {
+      if (this.media.isActive('xs') || this.media.isActive('sm')) {
+        this.sideNave.close();
+      }
+    }
   }
 }

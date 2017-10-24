@@ -89,6 +89,9 @@
     <md-icon>settings</md-icon>
   </button>
   <md-menu #accountMenu="mdMenu">
+    <button md-menu-item (click)="onShowAbout()">
+      <md-icon>info_outline</md-icon>
+      <span>About</span>
 
     <button md-menu-item [routerLink]="['/account/users/edit/1']">
       <md-icon>account_box</md-icon>
