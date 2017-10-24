@@ -77,11 +77,7 @@ export class ActiveDirectoryComponent {
       type : 'select',
       name : 'ad_ssl',
       placeholder : 'Encryption Mode',
-      options : [
-        {label : 'Off', value : 'off'}, 
-        {label : 'SSL', value : 'on'},
-        {label : 'TLS', value : 'start_tls'}
-      ]
+      options : []
     },
     {
       type : 'select',
@@ -229,6 +225,10 @@ export class ActiveDirectoryComponent {
   ];
 
   protected ad_certificate: any;
+  protected ad_ssl: any;
+  protected ad_idmap_backend: any;
+  protected ad_nss_info: any;  
+  protected ad_ldap_sasl_wrapping: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -243,5 +243,38 @@ export class ActiveDirectoryComponent {
             {label : item.cert_name, value : item.id});
       });
     });
+
+    this.ws.call('notifier.choices', ['LDAP_SSL_CHOICES']).subscribe((res) => {
+      this.ad_ssl = _.find(this.fieldConfig, {name : 'ad_ssl'});
+      res.forEach((item) => {
+        this.ad_ssl.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
+    this.ws.call('notifier.choices', ['IDMAP_CHOICES']).subscribe((res) => {
+      this.ad_idmap_backend = _.find(this.fieldConfig, {name : 'ad_idmap_backend'});
+      res.forEach((item) => {
+        this.ad_idmap_backend.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
+    this.ws.call('notifier.choices', ['NSS_INFO_CHOICES']).subscribe((res) => {
+      this.ad_nss_info = _.find(this.fieldConfig, {name : 'ad_nss_info'});
+      res.forEach((item) => {
+        this.ad_nss_info.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
+    this.ws.call('notifier.choices', ['LDAP_SASL_WRAPPING_CHOICES']).subscribe((res) => {
+      this.ad_ldap_sasl_wrapping = _.find(this.fieldConfig, {name : 'ad_ldap_sasl_wrapping'});
+      res.forEach((item) => {
+        this.ad_ldap_sasl_wrapping.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
   }
 }
