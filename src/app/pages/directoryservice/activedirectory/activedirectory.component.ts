@@ -225,6 +225,7 @@ export class ActiveDirectoryComponent {
   ];
 
   protected ad_certificate: any;
+  protected ad_kerberos_realm: any;
   protected ad_ssl: any;
   protected ad_idmap_backend: any;
   protected ad_nss_info: any;  
@@ -236,6 +237,15 @@ export class ActiveDirectoryComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {
+
+    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+      this.ad_kerberos_realm = _.find(this.fieldConfig, {name : 'ad_kerberos_realm'});
+      res.data.forEach((item) => {
+        this.ad_kerberos_realm.options.push(
+            {label : item.krb_realm, value : item.id});
+      });
+    });
+
     this.systemGeneralService.getCA().subscribe((res) => {
       this.ad_certificate = _.find(this.fieldConfig, {name : 'ad_certificate'});
       res.forEach((item) => {
@@ -275,6 +285,5 @@ export class ActiveDirectoryComponent {
             {label : item[1], value : item[0]});
       });
     });
-
   }
 }
