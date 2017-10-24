@@ -45,7 +45,7 @@
         <span fxFlex></span>
         <md-icon class="menu-caret">arrow_drop_down</md-icon>
       </a>
-      <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank">
+      <a href="{{item.state}}" *ngIf="item.type === 'extLink'" target="_blank">
         <span
         class="menu-item-tooltip"
         [mdTooltip]="item.tooltip"
@@ -60,6 +60,7 @@
           <a (click)="transferToState(item.state, subItem.state)">{{subItem.name | translate}}</a>
         </md-list-item>
       </md-nav-list>
+      <a md-button style="height: 0; position: absolute;"> <!-- 'absorbs' the foucs behavior --></a>
     </md-list-item>
 
     <!-- If item type is separator -->
