@@ -110,7 +110,7 @@ export class EntityTableComponent implements OnInit {
         let newData: any[] = [];
 
         if (filterValue.length > 0) {
-          this.dataSource.data.forEach((dataElement) => {
+          this.allRows.forEach((dataElement) => {
             for (const dataElementProp in dataElement) {
               const value: any = dataElement[dataElementProp];
 
