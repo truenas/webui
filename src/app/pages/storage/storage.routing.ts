@@ -16,6 +16,8 @@ import {ZvolAddComponent} from './volumes/zvol/zvol-add/';
 import {ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
 import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
 import {VolumeImportListComponent} from './volumes/import-list/';
+import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
+import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
 
 export const routes: Routes = [
   {
@@ -77,6 +79,18 @@ export const routes: Routes = [
             data: {title: 'Rollback', breadcrumb:'Rollback' }},
           {
             path : 'id/:pk/add', component : SnapshotAddComponent,
+            data: {title: 'Add', breadcrumb:'Add' }}
+        ]
+      },
+      {
+        path: 'vmware-Snapshots',
+        data: {title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots'},
+        children: [
+          {
+            path : '', component : VMwareSnapshotListComponent,
+            data: {title: 'vmware-Snapshots', breadcrumb:'vmware-Snapshots' }},
+          {
+            path : 'id/:pk/add', component : VMwareSnapshotFormComponent,
             data: {title: 'Add', breadcrumb:'Add' }}
         ]
       }
