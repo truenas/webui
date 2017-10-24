@@ -12,9 +12,41 @@ import 'rxjs/add/operator/map';
 //local libs
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
-import { DialogService } from '../../../../services/dialog.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from 'app/services';
+
+export class GenericAnyDataSource extends DataSource<any> {
+  dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+  
+  set data(newData: any[] ) {
+    this.dataChange.next(newData);
+  }
+
+  get data(): any[] {
+    return this.dataChange.value;
+  }
+
+  connect(): Observable<any[]> {
+    return this.dataChange.asObservable();
+  }
+
+  disconnect(): void {
+  
+  }
+  
+  
+
+  
+}
+
+export class MdCdkTableComponent {
+
+  dataSource: GenericAnyDataSource = new GenericAnyDataSource();
+  displayedColumns = ['id'];
+  
+}
+
 
 @Component({
   selector: 'entity-table',
@@ -26,6 +58,9 @@ export class EntityTableComponent implements OnInit {
   
   @Input() title:string = '';
   @Input('conf') conf: any;
+
+  public cdkTableComponent = new MdCdkTableComponent();
+
 
   public busy: Subscription;
 
@@ -103,6 +138,8 @@ export class EntityTableComponent implements OnInit {
             }
           }
         }
+
+        this.cdkTableComponent.dataSource.data = this.rows;
       });
 
   }
