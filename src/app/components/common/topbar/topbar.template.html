@@ -1,26 +1,26 @@
 <md-toolbar class="topbar">
   <!-- Sidenav toggle button -->
-  <button 
+  <button
   md-icon-button
-  id="sidenavToggle" 
+  id="sidenavToggle"
   (click)="toggleSidenav()"
   md-tooltip="Toggle Hide/Open">
   <md-icon>menu</md-icon>
   </button>
   <!-- Sidenav toggle collapse -->
-  <button 
+  <button
   md-icon-button
   id="collapseToggle"
-  fxHide.lt-md="true" 
+  fxHide.lt-md="true"
   (click)="toggleCollapse()"
   md-tooltip="Toggle Collapse"
   class="toggle-collapsed">
   <md-icon>chevron_left</md-icon>
   </button>
-  <!-- Search form 
-  <div 
+  <!-- Search form
+  <div
   fxFlex
-  fxHide.lt-sm="true" 
+  fxHide.lt-sm="true"
   class="search-bar">
     <form class="top-search-form">
       <md-icon role="img">search</md-icon>
@@ -29,20 +29,20 @@
   </div -->
   <span fxFlex></span>
   <!-- Language Switcher -->
-  <md-select 
+  <md-select
   id="currentLang"
   placeholder=""
   name="currentLang"
-  [(ngModel)]="currentLang" 
+  [(ngModel)]="currentLang"
   (change)="setLang()">
-    <md-option 
-    *ngFor="let lang of availableLangs" 
+    <md-option
+    *ngFor="let lang of availableLangs"
     [value]="lang.code" ngDefaultControl>{{ lang.name }}</md-option>
   </md-select>
   <!-- Theme Switcher -->
-  <button 
+  <button
   md-icon-button
-  id="schemeToggle" 
+  id="schemeToggle"
   [style.overflow]="'visible'"
   mdTooltip="FreeNAS Themes"
   [mdMenuTriggerFor]="themeMenu"
@@ -51,10 +51,10 @@
   </button>
   <md-menu #themeMenu="mdMenu" >
     <md-grid-list
-    class="theme-list" 
-    cols="1" 
+    class="theme-list"
+    cols="1"
     rowHeight="24px">
-      <md-grid-tile 
+      <md-grid-tile
       *ngFor="let theme of freenasThemes"
       (click)="changeTheme(theme)">
         <div md-menu-item [title]="theme.name">
@@ -65,21 +65,21 @@
       </md-grid-tile>
     </md-grid-list>
   </md-menu>
-  <button 
-  md-icon-button 
+  <button
+  md-icon-button
   (click)="startTour()"
   class="topbar-button-right"
   mdTooltip="Guide Tour"
-  [style.overflow]="'visible'" 
+  [style.overflow]="'visible'"
   >
     <md-icon>flight_takeoff</md-icon>
   </button>
   <!-- Notification toggle button -->
-  <button 
+  <button
   md-icon-button
-  mdTooltip="Notifications" 
+  mdTooltip="Notifications"
   (click)="toggleNotific()"
-  [style.overflow]="'visible'" 
+  [style.overflow]="'visible'"
   class="topbar-button-right">
     <md-icon>notifications</md-icon>
     <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
@@ -89,9 +89,17 @@
     <md-icon>settings</md-icon>
   </button>
   <md-menu #accountMenu="mdMenu">
-    <button md-menu-item (click)="onShowAbout()">
-      <md-icon>info_outline</md-icon>
-      <span>About</span>
+    <button md-menu-item [routerLink]="['/account/users/edit/1']">
+      <md-icon>account_box</md-icon>
+      <span>Account</span>
+    </button>
+    <button md-menu-item [routerLink]="['/account/users/change-password']">
+      <md-icon>dialpad</md-icon>
+      <span>Change Password</span>
+    </button>
+    <button md-menu-item [routerLink]="['/system/general']">
+      <md-icon>settings</md-icon>
+      <span>Settings</span>
     </button>
     <!-- button md-menu-item>
       <md-icon>notifications_off</md-icon>
@@ -108,6 +116,10 @@
     <button md-menu-item (click)="onShutdown()">
       <md-icon>power_settings_new</md-icon>
       <span>Shutdown</span>
+    </button>
+    <button md-menu-item (click)="onShowAbout()">
+      <md-icon>info_outline</md-icon>
+      <span>About</span>
     </button>
   </md-menu>
 </md-toolbar>

@@ -14,7 +14,7 @@ import { ConsolePanelModalDialog } from '../../consolepanel/consolepanel-dialog.
   selector: 'app-admin-layout',
   templateUrl: './admin-layout.template.html'
 })
-export class AdminLayoutComponent implements OnInit {
+export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
@@ -55,12 +55,14 @@ export class AdminLayoutComponent implements OnInit {
     Ps.initialize(navigationHold, {
       suppressScrollX: true
     });
-
-    this.checkIfConsoleMsgShows();    
+    if (this.media.isActive('xs') || this.media.isActive('sm')) {
+      this.isSidenavOpen = false;
+    }
+    this.checkIfConsoleMsgShows();
   }
 
-  ngAfterViewChecked() {        
-    this.scrollToBottomOnFooterBar();           
+  ngAfterViewChecked() {
+    this.scrollToBottomOnFooterBar();
   }
 
   updateSidenav() {
@@ -72,7 +74,7 @@ export class AdminLayoutComponent implements OnInit {
       if (self.isMobile) {
         domHelper.removeClass(document.body, 'collapsed-menu');
       }
-      
+
     }, -1);
 
   }
@@ -80,7 +82,7 @@ export class AdminLayoutComponent implements OnInit {
   scrollToBottomOnFooterBar(): void {
     try {
       this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch(err) { }                 
+    } catch(err) { }
   }
 
   checkIfConsoleMsgShows() {
@@ -114,5 +116,13 @@ export class AdminLayoutComponent implements OnInit {
 
   public onCloseNotify($event) {
     this.isSidenotOpen = false;
+  }
+
+  changeState($event) {
+    if ($event.transfer) {
+      if (this.media.isActive('xs') || this.media.isActive('sm')) {
+        this.sideNave.close();
+      }
+    }
   }
 }
