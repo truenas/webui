@@ -1,0 +1,13 @@
+.message {
+	max-width: 900px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: none;
+  word-wrap: break-word;
+  background: #000000;
+  padding: 20px 5px 20px 10px;
+  font-size: 100%;
+  color: #00ff00;
+  font-family: "Courier New", Courier, monospace;
+  white-space: pre-wrap;
+}

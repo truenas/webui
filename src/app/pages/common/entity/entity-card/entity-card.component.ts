@@ -64,7 +64,7 @@ export class EntityCardComponent implements OnInit {
   ngAfterViewInit(){
     if(this.conf){
       this.isFlipped = this.conf.isFlipped;
-      console.log("conf exists!!")
+      //console.log("conf exists!!")
     } else {
       alert("conf doesn't exist!!");
     }
