@@ -94,7 +94,7 @@ export class EntityTableComponent implements OnInit {
   public initialItemsPerPage = 10;
   public busy: Subscription;
   public columns: Array<any> = [];
-  public allRows: any = [];
+  public rows: any = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -130,7 +130,7 @@ export class EntityTableComponent implements OnInit {
         let newData: any[] = [];
 
         if (filterValue.length > 0) {
-          this.allRows.forEach((dataElement) => {
+          this.rows.forEach((dataElement) => {
             for (const dataElementProp in dataElement) {
               const value: any = dataElement[dataElementProp];
 
@@ -142,7 +142,7 @@ export class EntityTableComponent implements OnInit {
 
           });
         } else {
-          newData = this.allRows;
+          newData = this.rows;
         }
 
         
@@ -198,7 +198,7 @@ export class EntityTableComponent implements OnInit {
           }
         }
 
-        this.allRows = rows;
+        this.rows = rows;
         this.dataSource.data = rows;
 
       });
