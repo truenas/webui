@@ -241,7 +241,12 @@ export class EntityTableComponent implements OnInit {
 
   rowValue(row, attr) {
     if (this.conf.rowValue) {
-      return this.conf.rowValue(row, attr);
+      try {
+        return this.conf.rowValue(row, attr);
+      } catch(e) {
+        console.log("Conversion issue defaulting to straight value (calling rowValue in conf", this.conf );
+        return row[attr];
+      }
     }
     return row[attr];
   }
