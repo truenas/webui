@@ -2,6 +2,8 @@ import { RestService, WebSocketService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+
 @Component({
   selector: 'app-jail-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -26,7 +28,7 @@ export class JailListComponent {
     sorting: { columns: this.columns },
   };
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
@@ -69,11 +71,19 @@ export class JailListComponent {
               (res) => { console.log(res); });
         }
       },
-      // {
-      //   id : "shell",
-      //   label : "Shell",
-      //   onClick : (row) => {}
-      // },
+      {
+        id: "update",
+        label: "Update",
+        onClick: (row) => {
+          this.loader.open();
+          this.entityList.busy =
+            this.ws.job('jail.update_to_latest_patch', [row.host_hostuuid]).subscribe(
+              (res) => {
+                console.log(res);
+                this.loader.close();
+              });
+        }
+      },
       {
         id: "delete",
         label: "Delete",
