@@ -33,8 +33,8 @@ export class VmCardsComponent implements OnInit {
   public tpl = "edit";
   private pwrBtnLabel: string;
   private pwrBtnOptions = {
-    STOPPED: "Start VM",
-    RUNNING: "Stop VM"
+    stopped: "Start VM",
+    running: "Stop VM"
   }
   protected loaderOpen: boolean = false;
 
@@ -51,7 +51,7 @@ export class VmCardsComponent implements OnInit {
       description:data.description,
       info:data.info,
       bootloader:data.bootloader,
-      state:data.state,
+      state:data.state.toLowerCase(),
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
