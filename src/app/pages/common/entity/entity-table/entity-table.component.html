@@ -16,7 +16,7 @@
 
 	<div class="padding_all">
 		<md-input-container floatPlaceholder="never">
-			<input mdInput #filter placeholder="Filter Item(s)">
+			<input mdInput #filter placeholder="Filter {{title}}">
 		</md-input-container>
 	</div>
 
@@ -24,8 +24,8 @@
 		<br/>
 	</div>
 
-	<div *ngIf="dataSource.data.length > 0">
-		<md-table #table [dataSource]="dataSource">
+	<div>
+		<md-table #table [dataSource]="dataSource" mdSort>
 
 			<!--- Note that these columns can be defined in any order.
 		The actual rendered columns are set as a property on the row definition" -->
@@ -33,7 +33,7 @@
 			<!-- Position Column -->
 			<div *ngFor="let col of conf.columns">
 				<ng-container cdkColumnDef="{{col.prop}}">
-					<md-header-cell *cdkHeaderCellDef> {{col.name}} </md-header-cell>
+					<md-header-cell *cdkHeaderCellDef md-sort-header> {{col.name}} </md-header-cell>
 					<md-cell *cdkCellDef="let row">
 						<div style="overflow: hidden; height: 20px;">
 							{{row[col.prop]}}

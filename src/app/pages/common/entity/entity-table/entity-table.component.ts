@@ -17,6 +17,10 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from 'app/services';
 
 export class GenericAnyDataSource extends DataSource<any> {
+
+  _filterChange = new BehaviorSubject('');
+  get filter(): string { return this._filterChange.value; }
+  set filter(filter: string) { this._filterChange.next(filter); }
   dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
   set data(newData: any[]) {
@@ -27,14 +31,16 @@ export class GenericAnyDataSource extends DataSource<any> {
     return this.dataChange.value;
   }
 
-  constructor(private _paginator: MdPaginator) {
+  constructor(private _paginator: MdPaginator, private _sort: MdSort) {
     super();
   }
 
   connect(): Observable<any[]> {
     const displayDataChanges = [
       this.dataChange,
-      this._paginator.page
+      this._paginator.page,
+      this._filterChange,
+      this._sort.mdSortChange
     ];
 
     return Observable.merge(...displayDataChanges).map(() => {
@@ -42,7 +48,18 @@ export class GenericAnyDataSource extends DataSource<any> {
 
       // Grab the page's slice of data.
       const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-      const newData = data.splice(startIndex, this._paginator.pageSize);
+      let newData = data.splice(startIndex, this._paginator.pageSize);
+
+      if( typeof(this._sort.active) === "string" && this._sort.active.length > 0 ) {
+        newData = newData.sort((a, b) => {
+          let propertyA: number|string = a[this._sort.active];
+          let propertyB: number|string = b[this._sort.active];
+          let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
+          let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
+          return (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1);
+        });
+      }
+
       return newData;
     });
   }
@@ -67,8 +84,11 @@ export class EntityTableComponent implements OnInit {
   @Input() title = '';
   @Input('conf') conf: any;
 
+  @ViewChild(MdSort) sort: MdSort;
+
   @ViewChild('filter') filter: ElementRef;
   @ViewChild(MdPaginator) paginator: MdPaginator;
+  
   public dataSource: GenericAnyDataSource;
   public displayedColumns: string[] = [];
   public initialItemsPerPage = 10;
@@ -94,7 +114,7 @@ export class EntityTableComponent implements OnInit {
       this.conf.afterInit(this);
     }
 
-    this.dataSource = new GenericAnyDataSource(this.paginator);
+    this.dataSource = new GenericAnyDataSource(this.paginator, this.sort);
 
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
@@ -124,6 +144,8 @@ export class EntityTableComponent implements OnInit {
         } else {
           newData = this.allRows;
         }
+
+        
         
         this.dataSource.data = newData;
       });
