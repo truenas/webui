@@ -1,3 +1,9 @@
+<!-- 
+	POWER COLORS
+	#41bd45  
+	#900
+-->
+
 <div class="entity-cards-container">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
 		<!-- 
@@ -11,12 +17,15 @@
 			<div class="sidebar section">
 
 				<div class="name-info">
-					<h3> 
-						{{ cards[i].name  }} 
-					</h3>
-
-					<button md-fab [ngClass]="{'vm-power-btn-on':cards[i].state == 'RUNNING','vm-power-btn-off':cards[i].state == 'STOPPED'}" (click)="toggleVmState(i)"><md-icon>power_settings_new</md-icon></button>
-					<div style="margin:16px;">{{ pwrBtnLabel }}</div>
+					<button 
+						md-fab 
+						[ngClass]="{'vm-power-btn-off':cards[i].state == 'running','vm-power-btn-on':cards[i].state == 'stopped'}" 
+						(click)="toggleVmState(i)"
+				 mdTooltip="{{ pwrBtnLabel }}" mdTooltipPosition="above"
+						>
+						<md-icon>power_settings_new</md-icon>
+						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
+					</button>
 
 				</div>
 
@@ -28,14 +37,13 @@
 
 				<div class="side-content-header">
 					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
-					<h4>Virtual Machine Info</h4>
+					<h3>{{ cards[i].name }}</h3>
+					<md-chip  [ngClass]="{'vm-state-on':cards[i].state == 'running','vm-state-off':cards[i].state == 'stopped'}">{{ cards[i].state }}</md-chip>
 				</div>
 				
 				<div class="stats-info">
 					<table><tbody>
-							<tr><td class="stat-label">Name:</td><td class="stat"> {{ cards[i].name }}</td></tr>
 							<tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
-							<tr><td class="stat-label">State:</td><td class="stat">{{ cards[i].state }}</td></tr>
 							<tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
 							<tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
 							<tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
@@ -44,10 +52,9 @@
 				</div>
 
 				<div class="vm-controls">
-					<button md-raised-button color="accent">VNC</button>
-					<button md-raised-button color="default">Devices</button>
-					<!--<button md-raised-button color="warn">Delete</button>-->
-					<button md-raised-button color="warn" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+					<button md-raised-button color="primary">VNC</button>
+					<button md-raised-button color="primary">Devices</button>
+					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
 				</div>
 			</div>
 		</ng-template>
