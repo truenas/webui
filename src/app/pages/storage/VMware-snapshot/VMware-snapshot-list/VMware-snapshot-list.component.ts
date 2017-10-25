@@ -11,28 +11,17 @@ import {RestService} from '../../../../services/rest.service';
 export class VMwareSnapshotListComponent {
 
   public title = "Snapshots";
-  protected resource_name: string = 'storage/snapshot';
+  protected resource_name: string = 'storage/vmwareplugin';
   protected entityList: any;
 
   public columns: Array<any> = [
-    {name : 'Fullname', prop : 'fullname'}, {name : 'Used', prop : 'used'},
-    {name : 'Refer', prop : 'refer'}
+    {name : 'Hostname', prop : 'hostname'}, {name : 'Username', prop : 'username'},
+    {name : 'filesystem', prop : 'filesystem'}, {name : 'datastore', prop : 'datastore'}
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
   };
-
-  rowValue(row, attr) {
-    switch (attr) {
-    case 'used':
-      return filesize(row[attr], {standard : "iec"});
-    case 'refer':
-      return filesize(row[attr], {standard : "iec"});
-    default:
-      return row[attr];
-    }
-  }
 
   constructor(_rest: RestService, private _router: Router,
               _eRef: ElementRef) {}
@@ -49,18 +38,16 @@ export class VMwareSnapshotListComponent {
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.entityList.doDelete(row.id );
+        this.entityList.doDelete(row.id);
       }
     });
-    if (row.mostrecent) {
       actions.push({
         label : "Edit",
         onClick : (row) => {
           this._router.navigate(new Array('/').concat(
-              [ "storage", "vmware_snapshots", "edit", row.id ]));
+              [ "storage", "vmwareplugin", "edit", row.id ]));
         }
       });
-    }
     return actions;
   }
 
