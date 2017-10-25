@@ -1,10 +1,9 @@
 import { Component,OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-
+import { Subscription } from 'rxjs/Subscription';
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import {MdDialog, MdDialogRef, MdSnackBar} from '@angular/material';
+import {MdDialog, MdSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-update',
@@ -28,9 +27,13 @@ export class UpdateComponent implements OnInit {
   public busy: Subscription;
   public busy2: Subscription;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected snackBar: MdSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {}
+  constructor(protected router: Router,
+              protected route: ActivatedRoute,
+              protected snackBar: MdSnackBar,
+              protected rest: RestService,
+              protected ws: WebSocketService,
+              protected dialog: MdDialog) {}
+
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
