@@ -1,48 +1,50 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {RestService} from "../../../../services/rest.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
 import {MdSnackBar} from "@angular/material";
-import {EntityUtils} from "../../../common/entity/utils";
-
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component({
-  templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.css']
+  template: `<entity-form [conf]="this"></entity-form>`,
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent {
 
-  passwordFormGroup: FormGroup;
+  protected resource_name = 'account/users/1/password/';
+  protected route_success: string[] = ['sessions', 'signin'];
+  protected isEntity: boolean = true;
 
-  constructor(private formBuilder: FormBuilder, protected rest: RestService, protected router: Router,
+  public fieldConfig: FieldConfig[] = [
+    {
+      type : 'input',
+      name : 'bsdusr_username',
+      placeholder : 'Username',
+    },
+    {
+      type : 'input',
+      name : 'bsdusr_passwd_currnt',
+      placeholder : 'Current Password',
+      inputType : 'password',
+    },
+    {
+      type : 'input',
+      name : 'bsdusr_password',
+      placeholder : 'New Password',
+      inputType : 'password',
+    },
+    {
+      type : 'input',
+      name : 'bsdusr_password_conf',
+      placeholder : 'Confirm Password',
+      inputType : 'password',
+      validation : [ matchOtherValidator('bsdusr_password') ]
+    },
+  ];
+
+  constructor(protected rest: RestService, protected router: Router,
               protected loader: AppLoaderService,
               public snackBar: MdSnackBar) {
   }
 
-  ngOnInit() {
-    this.buildPasswordForm();
-  }
-
-  buildPasswordForm(): void {
-    this.passwordFormGroup = this.formBuilder.group({
-      bsdusr_username: ['', Validators.required],
-      bsdusr_currpassword: ['', Validators.required],
-      bsdusr_password: ['', Validators.required],
-      bsdusr_confirmpasswd: ['', Validators.required]
-    })
-  }
-
-  changePassword(body): void {
-    const changepasswd$ = this.rest.post(`account/users/1/password/`, {body}, true);
-    this.loader.open();
-    changepasswd$.subscribe((res) => {
-      this.router.navigateByUrl('/account/users/edit/1');
-      this.loader.open();
-      this.snackBar.open("Password changed successfully.", 'close', { duration: 3000 })
-    }, (err) => {
-      this.loader.close();
-      new EntityUtils().handleError(this, err);
-    });
-  }
 }
