@@ -4,45 +4,57 @@
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
 
-	<ngx-datatable
-		 [ngBusy]="busy"
-		 class="material ml-1 mt-1 mb-1 mr-1 p-1" 
-	 id="ngx-datatable"
-	[rows]="rows" 
-	[columns]="conf.columns" 
-	[headerHeight]="48" 
-	[rowHeight]="30"
-	[footerHeight]="48" 
-	[columnMode]="'flex'" 
-	[limit]="conf.config.pageLimit ? conf.config.pageLimit : 25" 
-	[selectionType]="conf.config.selectionType ? conf.config.selectionType : ''"
-	>
-	<ngx-datatable-column
-	[width]="conf.config.width ? conf.config.width : 24"
-	[flexGrow]="1"
-	[sortable]="conf.config.sortable ? conf.config.sortable : false"
-	[canAutoResize]="conf.config.canAutoResize ? conf.config.canAutoResize : false"
-	[draggable]="conf.config.draggable ? conf.config.draggable : false"
-	[resizeable]="conf.config.resizeable ? conf.config : false"
-	[checkboxable]="conf.config.selectionType ? true : false">
-	</ngx-datatable-column>
-		<div *ngFor="let col of conf.columns">
-			<ngx-datatable-column
-			[canAutoResize]="true"
-			[flexGrow]="3"
-			prop="{{col.prop}}" 
- 			name="{{col.name}}">
-			</ngx-datatable-column>
-		</div>
+	<div>
+		<br/>
+	</div>
 
-		<ngx-datatable-column 
-			[flexGrow]="1"
-			prop="  " 
-		    [width]="16" >
-			<ng-template let-row="row" ngx-datatable-cell-template>
-				<app-entity-table-actions [entity]="this" [row]="row">
-				</app-entity-table-actions>
-			</ng-template>
-		</ngx-datatable-column>
-	</ngx-datatable>
+	<div>
+		<md-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="initialItemsPerPage" [pageSizeOptions]="[5, 10, 25, 100]">
+		</md-paginator>
+	</div>
+
+
+	<div class="padding_all">
+		<md-input-container floatPlaceholder="never">
+			<input mdInput #filter placeholder="Filter {{title}}">
+		</md-input-container>
+	</div>
+
+	<div>
+		<br/>
+	</div>
+
+	<div>
+		<md-table #table [dataSource]="dataSource" mdSort>
+
+			<!--- Note that these columns can be defined in any order.
+		The actual rendered columns are set as a property on the row definition" -->
+
+			<!-- Position Column -->
+			<div *ngFor="let col of conf.columns">
+				<ng-container cdkColumnDef="{{col.prop}}">
+					<md-header-cell *cdkHeaderCellDef md-sort-header> {{col.name}} </md-header-cell>
+					<md-cell *cdkCellDef="let row">
+						<div style="overflow: hidden; height: 20px;">
+							{{row[col.prop]}}
+						</div>
+					</md-cell>
+				</ng-container>
+			</div>
+
+			<ng-container cdkColumnDef="action">
+				<md-header-cell *cdkHeaderCellDef> Action </md-header-cell>
+				<md-cell *cdkCellDef="let row">
+					<div class="padding_top">
+						<app-entity-table-actions [entity]="this" [row]="row">
+						</app-entity-table-actions>
+					</div>
+				</md-cell>
+			</ng-container>
+
+			<md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+			<md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+		</md-table>
+	</div>
+
 </div>

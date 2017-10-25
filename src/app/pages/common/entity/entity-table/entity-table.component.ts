@@ -12,9 +12,66 @@ import 'rxjs/add/operator/map';
 //local libs
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
-import { DialogService } from '../../../../services/dialog.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from 'app/services';
+
+export class GenericAnyDataSource extends DataSource<any> {
+
+  _filterChange = new BehaviorSubject('');
+  get filter(): string { return this._filterChange.value; }
+  set filter(filter: string) { this._filterChange.next(filter); }
+  dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+
+  set data(newData: any[]) {
+    this.dataChange.next(newData);
+  }
+
+  get data(): any[] {
+    return this.dataChange.value;
+  }
+
+  constructor(private _paginator: MdPaginator, private _sort: MdSort) {
+    super();
+  }
+
+  connect(): Observable<any[]> {
+    const displayDataChanges = [
+      this.dataChange,
+      this._paginator.page,
+      this._filterChange,
+      this._sort.mdSortChange
+    ];
+
+    return Observable.merge(...displayDataChanges).map(() => {
+      const data = this.data.slice();
+
+      // Grab the page's slice of data.
+      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
+      let newData = data.splice(startIndex, this._paginator.pageSize);
+
+      if( typeof(this._sort.active) === "string" && this._sort.active.length > 0 ) {
+        newData = newData.sort((a, b) => {
+          let propertyA: number|string = a[this._sort.active];
+          let propertyB: number|string = b[this._sort.active];
+          let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
+          let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
+          return (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1);
+        });
+      }
+
+      return newData;
+    });
+  }
+
+  disconnect(): void {
+
+  }
+
+
+
+
+}
 
 @Component({
   selector: 'entity-table',
@@ -23,19 +80,21 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   providers: [DialogService]
 })
 export class EntityTableComponent implements OnInit {
-  
-  @Input() title:string = '';
+
+  @Input() title = '';
   @Input('conf') conf: any;
 
-  public busy: Subscription;
+  @ViewChild(MdSort) sort: MdSort;
 
-  public rows: Array < any > = [];
-  public columns: Array < any > = [];
-  public page: number = 1;
-  public itemsPerPage: number = 10;
-  public maxSize: number = 5;
-  public numPages: number = 1;
-  public length: number = 0;
+  @ViewChild('filter') filter: ElementRef;
+  @ViewChild(MdPaginator) paginator: MdPaginator;
+  
+  public dataSource: GenericAnyDataSource;
+  public displayedColumns: string[] = [];
+  public initialItemsPerPage = 10;
+  public busy: Subscription;
+  public columns: Array<any> = [];
+  public allRows: any = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -44,7 +103,7 @@ export class EntityTableComponent implements OnInit {
   protected loaderOpen: boolean = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) {}
+    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
     if (this.conf.preInit) {
@@ -54,11 +113,46 @@ export class EntityTableComponent implements OnInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+
+    this.dataSource = new GenericAnyDataSource(this.paginator, this.sort);
+
+    this.conf.columns.forEach((column) => {
+      this.displayedColumns.push(column.prop);
+    });
+
+    this.displayedColumns.push("action");
+
+    Observable.fromEvent(this.filter.nativeElement, 'keyup')
+      .debounceTime(150)
+      .distinctUntilChanged()
+      .subscribe(() => {
+        const filterValue: string = this.filter.nativeElement.value;
+        let newData: any[] = [];
+
+        if (filterValue.length > 0) {
+          this.allRows.forEach((dataElement) => {
+            for (const dataElementProp in dataElement) {
+              const value: any = dataElement[dataElementProp];
+
+              if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
+                newData.push(dataElement);
+                break;
+              }
+            }
+
+          });
+        } else {
+          newData = this.allRows;
+        }
+
+        
+        
+        this.dataSource.data = newData;
+      });
   }
 
   getData() {
-    let offset = this.itemsPerPage * (this.page - 1);
-    let sort: Array < String > = [];
+    let sort: Array<String> = [];
     let options: Object = new Object();
 
     for (let i in this.config.sorting.columns) {
@@ -82,43 +176,35 @@ export class EntityTableComponent implements OnInit {
     }
     this.busy =
       this.getFunction.subscribe((res) => {
+        let rows: any[] = [];
+
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
         }
         if (res.data) {
-          this.length = res.total;
-          this.rows = new EntityUtils().flattenData(res.data);
+          rows = new EntityUtils().flattenData(res.data);
         } else {
-          this.length = res.length;
-          this.rows = new EntityUtils().flattenData(res);
+          rows = new EntityUtils().flattenData(res);
         }
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
-        for (let i = 0; i < this.rows.length; i++) {
-          for (let attr in this.rows[i]) {
-            if (this.rows[i].hasOwnProperty(attr)) {
-              this.rows[i][attr] = this.rowValue(this.rows[i], attr);
+        for (let i = 0; i < rows.length; i++) {
+          for (let attr in rows[i]) {
+            if (rows[i].hasOwnProperty(attr)) {
+              rows[i][attr] = this.rowValue(rows[i], attr);
             }
           }
         }
+
+        this.allRows = rows;
+        this.dataSource.data = rows;
+
       });
 
   }
 
-  onChangeTable(
-    config,
-    page: any = { page: this.page, itemsPerPage: this.itemsPerPage }) {
-    if (config.filtering) {
-      Object.assign(this.config.filtering, config.filtering);
-    }
-    if (config.sorting) {
-      Object.assign(this.config.sorting, config.sorting);
-    }
-    this.page = page.page;
-    this.getData();
-  }
 
   trClass(row) {
     let classes = [];
@@ -141,7 +227,7 @@ export class EntityTableComponent implements OnInit {
         id: "delete",
         label: "Delete",
         onClick: (row) => { this.doDelete(row.id); },
-      }, ]
+      },]
     }
   }
 
@@ -178,16 +264,20 @@ export class EntityTableComponent implements OnInit {
         if (this.conf.wsDelete) {
           this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
             (res) => { this.getData() },
-            (res) => { new EntityUtils().handleError(this, res);
-              this.loader.close(); }
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
           );
         } else {
           this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
             (res) => {
               this.getData();
             },
-            (res) => { new EntityUtils().handleError(this, res);
-              this.loader.close(); }
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
           );
         }
       }
