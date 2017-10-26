@@ -598,6 +598,7 @@ export class JailEditComponent implements OnInit {
   ];
 
   protected currentReleaseVersion: any;
+  protected currentServerVersion: any;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected jailService: JailService,
@@ -606,7 +607,7 @@ export class JailEditComponent implements OnInit {
     protected loader: AppLoaderService) {}
 
   isLowerVersion(version: any) {
-    if (Number(_.split(version, '-')[0]) < Number(this.currentReleaseVersion[0])) {
+    if (version < this.currentReleaseVersion) {
       return true;
     }
     return false;
@@ -614,20 +615,26 @@ export class JailEditComponent implements OnInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-    this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-      for (let j in res_local) {
-        if (!this.isLowerVersion(res_local[j])) {
-          this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-        }
-      }
-      this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-        for (let i in res_remote) {
-          if (_.indexOf(res_local, res_remote[i]) < 0) {
-            if (!this.isLowerVersion(res_remote[i])) {
-              this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-            }
+
+    this.ws.call('system.info').subscribe((res) => {
+      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
+      this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+        for (let j in res_local) {
+          let rlVersion = Number(_.split(res_local[j], '-')[0]);
+          if (!this.isLowerVersion(rlVersion) && this.currentServerVersion >= Math.floor(rlVersion)) {
+            this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
           }
         }
+        this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+          for (let i in res_remote) {
+            if (_.indexOf(res_local, res_remote[i]) < 0) {
+              let rsVersion = Number(_.split(res_remote[i], '-')[0]);
+              if (!this.isLowerVersion(rsVersion) && this.currentServerVersion >= Math.floor(rsVersion)) {
+                this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+              }
+            }
+          }
+        });
       });
     });
 
@@ -646,7 +653,7 @@ export class JailEditComponent implements OnInit {
           if (this.formGroup.controls[i]) {
             if (i == 'release') {
               _.find(this.basicfieldConfig, { 'name': 'release' }).options.push({ label: res[0][i], value: res[0][i] });
-              this.currentReleaseVersion = _.split(res[0][i], '-');
+              this.currentReleaseVersion = Number(_.split(res[0][i], '-')[0]);
             }
             if (_.indexOf(this.TFfields, i) > 0) {
               if (res[0][i] == '1') {
