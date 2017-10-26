@@ -18,7 +18,7 @@ export class JailListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Jail', prop: 'host_hostname' },
+    { name: 'Jail', prop: 'host_hostuuid' },
     { name: 'Status', prop: 'state' },
     { name: 'Release', prop: 'release' },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
