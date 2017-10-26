@@ -21,6 +21,8 @@ export class ReplicationListComponent {
   public sub: Subscription;
   public columns: Array<any> = [
     { name: 'Volume/Dataset', prop: 'repl_filesystem' },
+    { name: 'Begin Time', prop:'repl_begin'},
+    { name: 'End Time', prop:'repl_end'},
     { name: 'Enabled', prop: 'repl_enabled' }  ];
     
   public config: any = {
