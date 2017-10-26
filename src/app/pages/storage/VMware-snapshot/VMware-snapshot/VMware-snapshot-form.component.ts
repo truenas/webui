@@ -23,11 +23,12 @@ import {EntityUtils} from '../../../common/entity/utils';
 
 export class VMwareSnapshotFormComponent {
 
-  protected resource_name: string = 'storage/snapshot';
+  protected resource_name: string = 'storage/vmwareplugin';
   protected route_success: string[] = [ 'storage', 'vmware-Snapshots' ];
   protected isEntity: boolean = true;
   protected isNew: boolean = true;
   protected pk: any;
+  public formGroup: FormGroup;
 
   protected entityForm: any;
   private datastore: any;
@@ -107,13 +108,19 @@ export class VMwareSnapshotFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    entityForm.formGroup.controls['password'].valueChanges.subscribe((value)=>{
-      // console.log(entityForm.formGroup.controls['password'].value);
-      // console.log(entityForm.formGroup.controls['hostname'].value);
-      // console.log(entityForm.formGroup.controls['username'].value);
-      this.ws.call("vmware.get_datastores",[]);
-      //entityForm.formGroup.controls['preview'].setValue(value);
-    });
+    //entityForm.submitFunction = this.submitFunction;
   
+  }
+  submitFunction(){
+    let formvalue = _.cloneDeep(this.formGroup.value);
+    formvalue.filesystem = formvalue.filesystem.slice(5)
+    formvalue = JSON.stringify(formvalue);
+    return this.rest.post('storage/vmwareplugin/', formvalue);
+  }
+
+  beforeSubmit(entityForm: any){
+    entityForm.filesystem = entityForm.filesystem.slice(5)
+    console.log(entityForm)
+
   }
 }
