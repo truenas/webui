@@ -46,7 +46,6 @@ export class JailListComponent {
         id: "edit",
         label: "Edit",
         onClick: (row) => {
-          console.log(row.host_hostuuid);
           this.router.navigate(
             new Array('').concat(["jails", "edit", row.host_hostuuid]));
         }
