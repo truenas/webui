@@ -82,9 +82,11 @@ export class VMwareSnapshotFormComponent {
           payload['username'] = this.entityForm.formGroup.controls['username'].value;
           payload['password'] = this.entityForm.formGroup.controls['password'].value;
           this.ws.call("vmware.get_datastores", [payload]).subscribe((res)=>{
-            const datastores = res["localhost.localdomain"]
-            for (const key in datastores) {
-              this.datastore.options.push({label : key, value : key})
+            for (const key in res) {
+              const datastores = res[key]
+              for (const datastore in datastores){
+                this.datastore.options.push({label : datastore, value : datastore})
+              }      
             }
           });
         }
