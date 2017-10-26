@@ -201,12 +201,11 @@ export class VmCardsComponent implements OnInit {
   }
 
   vnc(index){
-    var vm = this.cards[index];
-    this.ws.call('vm.get_vnc_web', [ vm.id ]).subscribe((res) => {
-      for (let item in res){
-	window.open(res[item]);
-      }   
-    }); 
+  var vm = this.cards[index];
+  this.ws.call('vm.get_vnc_web', [ vm.id ]).subscribe((res) => {
+          for (let item in res){
+            window.open(res[item]);
+          }   
+        }); 
   }
-
 }
