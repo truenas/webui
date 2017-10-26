@@ -69,7 +69,7 @@ export class AlertServiceEditMattermostComponent {
     },
   ];
 
-  resource_transformIncommingRestData(data:any): any {
+  resourceTransformIncomingRestData(data:any): any {
 
     data.username = data.attributes.username;
     data.password = data.attributes.password;
