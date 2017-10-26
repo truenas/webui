@@ -596,6 +596,7 @@ export class JailAddComponent implements OnInit {
     'host_time',
   ];
 
+  protected currentServerVersion: any;
   constructor(protected router: Router,
     protected jailService: JailService,
     protected ws: WebSocketService,
@@ -604,16 +605,25 @@ export class JailAddComponent implements OnInit {
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
-    this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-      for (let j in res_local) {
-        this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-      }
-      this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-        for (let i in res_remote) {
-          if (_.indexOf(res_local, res_remote[i]) < 0) {
-            this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+    this.ws.call('system.info').subscribe((res) => {
+      this.currentServerVersion = Number(_.split(res.version, '-')[1]);
+      this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+        for (let j in res_local) {
+          let rlVersion = Number(_.split(res_local[j], '-')[0]);
+          if (this.currentServerVersion >= Math.floor(rlVersion)) {
+            this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
           }
         }
+        this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+          for (let i in res_remote) {
+            if (_.indexOf(res_local, res_remote[i]) < 0) {
+              let rmVersion = Number(_.split(res_remote[i], '-')[0]);
+              if (this.currentServerVersion >= Math.floor(rmVersion)) {
+                this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+              }
+            }
+          }
+        });
       });
     });
 
