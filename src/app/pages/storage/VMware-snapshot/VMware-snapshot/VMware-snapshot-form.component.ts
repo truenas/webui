@@ -24,12 +24,46 @@ import {EntityUtils} from '../../../common/entity/utils';
 export class VMwareSnapshotFormComponent {
 
   protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'vmware-Snapshots' ];
   protected isEntity: boolean = true;
   protected isNew: boolean = true;
   protected pk: any;
 
+  protected entityForm: any;
+  private datastore: any;
+
   protected fieldConfig: FieldConfig[];
+  public custActions: Array<any> = [
+    {
+      id : 'FetchDataStores',
+      name : 'Fetch DataStores',
+      function : () => {
+        this.datastore = _.find(this.fieldConfig, {'name' : 'datastore'});
+        this.datastore.type = 'select';
+        this.datastore.options = [];
+
+        if (
+          this.entityForm.formGroup.controls['hostname'].value === undefined ||
+          this.entityForm.formGroup.controls['username'].value === undefined ||
+          this.entityForm.formGroup.controls['password'].value === undefined
+        ) { alert("Please enter valid vmware ESXI/vsphere credentials to fetch datastores.")}
+        else {
+          const payload = {};
+          payload['hostname'] = this.entityForm.formGroup.controls['hostname'].value;
+          payload['username'] = this.entityForm.formGroup.controls['username'].value;
+          payload['password'] = this.entityForm.formGroup.controls['password'].value;
+          this.ws.call("vmware.get_datastores", [payload]).subscribe((res)=>{
+            const datastores = res["localhost.localdomain"]
+            for (const key in datastores) {
+              this.datastore.options.push({label : key, value : key})
+            }
+          });
+        }
+
+       }
+    },
+  ];
+
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -68,5 +102,18 @@ export class VMwareSnapshotFormComponent {
         },
       ];
     });
+  }
+  
+
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+    entityForm.formGroup.controls['password'].valueChanges.subscribe((value)=>{
+      // console.log(entityForm.formGroup.controls['password'].value);
+      // console.log(entityForm.formGroup.controls['hostname'].value);
+      // console.log(entityForm.formGroup.controls['username'].value);
+      this.ws.call("vmware.get_datastores",[]);
+      //entityForm.formGroup.controls['preview'].setValue(value);
+    });
+  
   }
 }
