@@ -31,7 +31,7 @@ export class CertificateAuthorityListComponent {
     { name: 'Lifetime', prop: 'cert_lifetime' },
     { name: 'Common Name', prop: 'cert_common' },
     { name: 'From', prop: 'cert_from' },
-    { name: 'Until', prop: 'cert_from' },
+    { name: 'Until', prop: 'cert_until' },
   ];
 
   public config: any = {
