@@ -26,7 +26,6 @@ export class VMwareSnapshotFormComponent {
   protected resource_name: string = 'storage/vmwareplugin';
   protected route_success: string[] = [ 'storage', 'vmware-Snapshots' ];
   protected isEntity: boolean = true;
-  //protected isNew: boolean;
   protected pk: any;
   public formGroup: FormGroup;
 
@@ -94,6 +93,11 @@ export class VMwareSnapshotFormComponent {
     },
   ];
 
+  resourceTransformIncomingRestData(data:any): any {
+    data.password = '';
+    data.filesystem = '/mnt/'+data.filesystem;
+    return data;
+  };
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
