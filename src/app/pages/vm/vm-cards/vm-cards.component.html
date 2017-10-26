@@ -3,6 +3,17 @@
 	#41bd45  
 	#900
 -->
+<md-card class="card-filter">
+	<md-card-content>
+		<md-input-container floatPlaceholder="Filter VMs">
+			<div class="card-filter-field">
+				<input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+			</div>
+		</md-input-container>
+	</md-card-content>
+</md-card>
+
+<!--<div *ngFor="let item of display;">{{item.name}}</div>-->
 
 <div class="entity-cards-container">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
@@ -18,20 +29,20 @@
 
 				<div class="name-info">
 					<button 
-						md-fab 
-						[ngClass]="{'vm-power-btn-off':cards[i].state == 'running','vm-power-btn-on':cards[i].state == 'stopped'}" 
-						(click)="toggleVmState(i)"
+				 md-fab 
+				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'running','vm-power-btn-on':cards[i].state == 'stopped'}" 
+				 (click)="toggleVmState(i)"
 				 mdTooltip="{{ pwrBtnLabel }}" mdTooltipPosition="above"
-						>
-						<md-icon>power_settings_new</md-icon>
+																	 >
+																	 <md-icon>power_settings_new</md-icon>
 						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
 					</button>
 
 				</div>
 
 				<!--<div class="api-info">
-					{{ cards[i].info }}
-				</div>-->
+			{{ cards[i].info }}
+			</div>-->
 			</div>
 			<div class="side-content section">
 
@@ -40,7 +51,7 @@
 					<h3>{{ cards[i].name }}</h3>
 					<md-chip  [ngClass]="{'vm-state-on':cards[i].state == 'running','vm-state-off':cards[i].state == 'stopped'}">{{ cards[i].state }}</md-chip>
 				</div>
-				
+
 				<div class="stats-info">
 					<table><tbody>
 							<tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
@@ -61,14 +72,14 @@
 
 		<ng-template #cardback let-name="name" >
 			<vm-card-edit 
-				*ngIf="cards[i].template == 'edit'" 
-				[machineId]="cards[i].id"  
-				(cancel)="toggleForm($event,cards[i],'none')"
-				(saved)="toggleForm($event,cards[i],'none');refreshVM(i)"
-				></vm-card-edit>
+												 *ngIf="cards[i].template == 'edit'" 
+												 [machineId]="cards[i].id"  
+												 (cancel)="toggleForm($event,cards[i],'none')"
+												 (saved)="toggleForm($event,cards[i],'none');refreshVM(i)"
+												 ></vm-card-edit>
 		</ng-template>
 
-		<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+			<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 	</div>
 
 	<!-- Add VM FAB -->
