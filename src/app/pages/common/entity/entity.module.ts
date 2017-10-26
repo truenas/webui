@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule, MdTableModule } from '@angular/material';
+import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
@@ -44,7 +44,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule
+    Ng2DropdownModule, NgUploaderModule, MdSortModule 
   ],
   declarations: [
     EntityDeleteComponent,
