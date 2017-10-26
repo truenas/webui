@@ -5,6 +5,7 @@ import { GroupListComponent } from './groups/group-list/';
 import { GroupFormComponent } from './groups/group-form/';
 import { UserListComponent } from './users/user-list/';
 import { UserFormComponent } from './users/user-form/';
+import { ChangePasswordComponent } from "./users/change-password/change-password.component";
 
 export const routes: Routes = [{
   path: '',
@@ -25,6 +26,10 @@ export const routes: Routes = [{
         path: 'edit/:pk',
         component: UserFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
+      },{
+        path: 'change-password',
+        component: ChangePasswordComponent,
+        data: { title: 'Change Password', breadcrumb: 'Change Password' },
       }
     ]
   }, {

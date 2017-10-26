@@ -1292,3 +1292,24 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
         background: inherit !important;
     }
 }
+
+/*---- Modal Dialog ----*/
+.overflow-hide {
+    overflow: hidden !important;
+}
+
+.system-info .mat-list .mat-list-item-content {
+    height: 40px !important;
+}
+
+@media (max-width: 415px) {
+    .system-info .mat-list .mat-list-item-content {
+        height: 50px !important;
+    }
+}
+
+.system-info .mat-list .mat-list-item-content label, .system-info .mat-list .mat-list-item-content p {
+    overflow: visible;
+    word-break: keep-all;
+    white-space: normal;
+}

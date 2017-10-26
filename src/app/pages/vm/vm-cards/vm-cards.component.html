@@ -1,3 +1,20 @@
+<!-- 
+	POWER COLORS
+	#41bd45  
+	#900
+-->
+<md-card class="card-filter">
+	<md-card-content>
+		<md-input-container floatPlaceholder="Filter VMs">
+			<div class="card-filter-field">
+				<input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+			</div>
+		</md-input-container>
+	</md-card-content>
+</md-card>
+
+<!--<div *ngFor="let item of display;">{{item.name}}</div>-->
+
 <div class="entity-cards-container">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
 		<!-- 
@@ -11,66 +28,63 @@
 			<div class="sidebar section">
 
 				<div class="name-info">
-					<h3> 
-						{{ cards[i].name  }} 
-					</h3>
-
-					<button md-fab class="vm-power-btn" color="warn"><md-icon>power_settings_new</md-icon></button>
+					<button 
+				 md-fab 
+				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'running','vm-power-btn-on':cards[i].state == 'stopped'}" 
+				 (click)="toggleVmState(i)"
+				 mdTooltip="{{ pwrBtnLabel }}" mdTooltipPosition="above"
+																	 >
+																	 <md-icon>power_settings_new</md-icon>
+						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
+					</button>
 
 				</div>
 
 				<!--<div class="api-info">
-					{{ cards[i].info }}
-				</div>-->
+			{{ cards[i].info }}
+			</div>-->
 			</div>
 			<div class="side-content section">
 
 				<div class="side-content-header">
-					<h4>Virtual Machine Info</h4>
+					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
+					<h3>{{ cards[i].name }}</h3>
+					<md-chip  [ngClass]="{'vm-state-on':cards[i].state == 'running','vm-state-off':cards[i].state == 'stopped'}">{{ cards[i].state }}</md-chip>
 				</div>
-				
+
 				<div class="stats-info">
 					<table><tbody>
 							<tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
-							<tr><td class="stat-label">State:</td><td class="stat">{{ cards[i].state }}</td></tr>
 							<tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
 							<tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
 							<tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
-						<!--
-					<ul class="stats">
-						<li>name: {{ cards[i].name }}</li>
-						<li>id: {{ cards[i].id }}</li>
-						<li>info: {{ cards[i].info }}</li>
-						<li>description: {{ cards[i].description }};</li>
-						<li>bootloader: {{ cards[i].bootloader }}</li>
-						<li>state: {{ cards[i].state }}</li>
-						<li>autostart: {{ cards[i].autostart }}</li>
-						<li>vcpus: {{ cards[i].vcpus }}</li>
-						<li>memory: {{ cards[i].memory }}</li>
-					</ul>
-						-->
+							<tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
 						</tbody></table>
 				</div>
 
 				<div class="vm-controls">
-					<button md-raised-button color="accent">VNC</button>
+					<button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
 					<button md-raised-button color="primary">Devices</button>
-					<!--<button md-raised-button color="warn">Delete</button>-->
-					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit')">Edit</button>
+					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
 				</div>
 			</div>
 		</ng-template>
 
 		<ng-template #cardback let-name="name" >
 			<vm-card-edit 
-				*ngIf="tpl == 'edit'" 
-				[machineId]="cards[i].id"  
-				(cancel)="toggleForm($event,cards[i],'none')"
-				(saved)="toggleForm($event,cards[i],'none')"
-				></vm-card-edit>
+												 *ngIf="cards[i].template == 'edit'" 
+												 [machineId]="cards[i].id"  
+												 (cancel)="toggleForm($event,cards[i],'none')"
+												 (saved)="toggleForm($event,cards[i],'none');refreshVM(i)"
+												 ></vm-card-edit>
 		</ng-template>
 
-		<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="lazyLoaded"></entity-card>
+			<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 	</div>
+
+	<!-- Add VM FAB -->
+	<!--<button md-fab (click)="addVM()"><md-icon>add</md-icon></button>-->
+
+
 
 </div>
