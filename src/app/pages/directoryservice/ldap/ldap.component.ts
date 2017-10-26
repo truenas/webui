@@ -90,10 +90,7 @@ export class LdapComponent {
       type : 'select',
       name : 'ldap_ssl',
       placeholder : 'Encryption Mode',
-      options : [
-        {label : 'Off', value : 'off'}, {label : 'SSL', value : 'on'},
-        {label : 'TLS', value : 'start_tls'}
-      ]
+      options : []
     },
     {
       type : 'select',
@@ -206,6 +203,22 @@ export class LdapComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {
+    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+      this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'ldap_kerberos_realm'});
+      res.data.forEach((item) => {
+        this.ldap_kerberos_realm.options.push(
+            {label : item.krb_realm, value : item.id});
+      });
+    });
+
+    this.ws.call('notifier.choices', ['LDAP_SSL_CHOICES']).subscribe((res) => {
+      this.ldap_ssl = _.find(this.fieldConfig, {name : 'ldap_ssl'});
+      res.forEach((item) => {
+        this.ldap_ssl.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
     this.systemGeneralService.getCA().subscribe((res) => {
       this.ldapCertificate =
           _.find(this.fieldConfig, {name : 'ldap_certificate'});
@@ -213,9 +226,23 @@ export class LdapComponent {
         this.ldapCertificate.options.push(
             {label : item.cert_name, value : item.id});
       });
+    });    
+
+    this.ws.call('notifier.choices', ['IDMAP_CHOICES']).subscribe((res) => {
+      this.ldap_idmap_backend = _.find(this.fieldConfig, {name : 'ldap_idmap_backend'});
+      res.forEach((item) => {
+        this.ldap_idmap_backend.options.push(
+            {label : item[1], value : item[0]});
+      });
     });
 
-
+    this.ws.call('notifier.choices', ['LDAP_SCHEMA_CHOICES']).subscribe((res) => {
+      this.ldap_schema = _.find(this.fieldConfig, {name: 'ldap_schema'});
+      res.forEach((item => {
+        this.ldap_schema.options.push(
+            {label : item[1], value : item[0]});
+      }));
+    });
 
   }
 }
