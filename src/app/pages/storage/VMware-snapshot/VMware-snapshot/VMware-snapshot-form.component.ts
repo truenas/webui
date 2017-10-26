@@ -10,7 +10,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Rx';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -26,14 +26,43 @@ export class VMwareSnapshotFormComponent {
   protected resource_name: string = 'storage/vmwareplugin';
   protected route_success: string[] = [ 'storage', 'vmware-Snapshots' ];
   protected isEntity: boolean = true;
-  protected isNew: boolean = true;
+  //protected isNew: boolean;
   protected pk: any;
   public formGroup: FormGroup;
 
   protected entityForm: any;
   private datastore: any;
 
-  protected fieldConfig: FieldConfig[];
+  protected fieldConfig: FieldConfig[] =[
+    {
+      type: 'input', 
+      name: 'hostname', 
+      placeholder: 'Hostname',
+    },
+    {
+      type: 'input', 
+      name: 'username', 
+      placeholder: 'Username',
+    },
+    {
+      type: 'input', 
+      name: 'password', 
+      placeholder: 'Password',
+      inputType: 'password'
+    },
+    {
+      type: 'explorer', 
+      name: 'filesystem', 
+      placeholder: 'ZFS Filesystem',
+      initial: '/mnt'
+    },
+    {
+      type: 'select', 
+      name: 'datastore', 
+      placeholder: 'Datastore',
+    },
+
+  ]
   public custActions: Array<any> = [
     {
       id : 'FetchDataStores',
@@ -70,44 +99,10 @@ export class VMwareSnapshotFormComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  preInit(entityForm: any) {
-    this.route.params.subscribe(params => { 
-      this.pk = params['pk'];
-      this.fieldConfig = [
-        {
-          type: 'input', 
-          name: 'hostname', 
-          placeholder: 'Hostname',
-        },
-        {
-          type: 'input', 
-          name: 'username', 
-          placeholder: 'Username',
-        },
-        {
-          type: 'input', 
-          name: 'password', 
-          placeholder: 'Password',
-          inputType: 'password'
-        },
-        {
-          type: 'explorer', 
-          name: 'filesystem', 
-          placeholder: 'ZFS Filesystem',
-          initial: '/mnt'
-        },
-        {
-          type: 'select', 
-          name: 'datastore', 
-          placeholder: 'Datastore',
-        },
-      ];
-    });
-  }
   
 
   afterInit(entityForm: any) {
-    this.entityForm = entityForm;  
+    this.entityForm = entityForm;
   }
 
   beforeSubmit(entityForm: any){
