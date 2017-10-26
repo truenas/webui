@@ -20,6 +20,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 export class JailEditComponent implements OnInit {
 
   protected updateCall = 'jail.do_update';
+  protected upgradeCall = 'jail.upgrade';
   protected queryCall = 'jail.query';
   public route_success: string[] = ['jails', 'jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
@@ -596,6 +597,7 @@ export class JailEditComponent implements OnInit {
     'host_time',
   ];
 
+  protected currentReleaseVersion: any;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected jailService: JailService,
@@ -603,16 +605,27 @@ export class JailEditComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService) {}
 
+  isLowerVersion(version: any) {
+    if (Number(_.split(version, '-')[0]) < Number(this.currentReleaseVersion[0])) {
+      return true;
+    }
+    return false;
+  }
+
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
     this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
       for (let j in res_local) {
-        this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
+        if (!this.isLowerVersion(res_local[j])) {
+          this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
+        }
       }
       this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
         for (let i in res_remote) {
           if (_.indexOf(res_local, res_remote[i]) < 0) {
-            this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+            if (!this.isLowerVersion(res_remote[i])) {
+              this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+            }
           }
         }
       });
@@ -633,6 +646,7 @@ export class JailEditComponent implements OnInit {
           if (this.formGroup.controls[i]) {
             if (i == 'release') {
               _.find(this.basicfieldConfig, { 'name': 'release' }).options.push({ label: res[0][i], value: res[0][i] });
+              this.currentReleaseVersion = _.split(res[0][i], '-');
             }
             if (_.indexOf(this.TFfields, i) > 0) {
               if (res[0][i] == '1') {
@@ -669,7 +683,8 @@ export class JailEditComponent implements OnInit {
 
   onSubmit() {
     this.error = null;
-
+    let updateRelease: boolean = false;
+    let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
 
     for (let i in value) {
@@ -679,6 +694,9 @@ export class JailEditComponent implements OnInit {
       }
       if (value.hasOwnProperty(i)) {
         if (i == 'release') {
+          // upgrade release
+          updateRelease = true;
+          newRelease = value[i];
           delete value[i];
         }
         if (_.indexOf(this.TFfields, i) > 0) {
@@ -704,13 +722,27 @@ export class JailEditComponent implements OnInit {
     }
 
     this.loader.open();
+
     this.ws.call(this.updateCall, [this.pk, value]).subscribe(
       (res) => {
-        this.loader.close();
-        if (res.error) {
-          this.error = res.error;
+        if (updateRelease) {
+          this.ws.job(this.upgradeCall, [this.pk, newRelease]).subscribe(
+            (res_upgrade) => {
+              this.loader.close();
+              if (res_upgrade.error) {
+                this.error = res_upgrade.error;
+              } else {
+                this.router.navigate(new Array('/').concat(this.route_success));
+              }
+            }
+          );
         } else {
-          this.router.navigate(new Array('/').concat(this.route_success));
+          this.loader.close();
+          if (res.error) {
+            this.error = res.error;
+          } else {
+            this.router.navigate(new Array('/').concat(this.route_success));
+          }
         }
       }
     );

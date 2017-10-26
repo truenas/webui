@@ -77,15 +77,11 @@
       </div>
       <md-action-row>
         <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
       </md-action-row>
     </md-expansion-panel>
     <md-card-actions>
       <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" md-raised-button color="accent">Cancel</button>
-      <span *ngFor="let custBtn of custActions">
-      <button md-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" (click)="custBtn['function']()">{{custBtn.name}}</button>
-    </span>
+      <button *ngIf="route_success" (click)="goBack()" md-raised-button color="accent" type="button">Cancel</button>
     </md-card-actions>
   </form>
 </md-card>
