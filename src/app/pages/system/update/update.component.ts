@@ -58,6 +58,7 @@ export class UpdateComponent implements OnInit {
       this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
+          console.log('this is the res', res);
           this.status = res.status;
           if (res.status == 'AVAILABLE') {
             this.packages = [];
