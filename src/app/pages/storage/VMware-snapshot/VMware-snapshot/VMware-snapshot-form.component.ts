@@ -107,20 +107,10 @@ export class VMwareSnapshotFormComponent {
   
 
   afterInit(entityForm: any) {
-    this.entityForm = entityForm;
-    //entityForm.submitFunction = this.submitFunction;
-  
-  }
-  submitFunction(){
-    let formvalue = _.cloneDeep(this.formGroup.value);
-    formvalue.filesystem = formvalue.filesystem.slice(5)
-    formvalue = JSON.stringify(formvalue);
-    return this.rest.post('storage/vmwareplugin/', formvalue);
+    this.entityForm = entityForm;  
   }
 
   beforeSubmit(entityForm: any){
     entityForm.filesystem = entityForm.filesystem.slice(5)
-    console.log(entityForm)
-
   }
 }
