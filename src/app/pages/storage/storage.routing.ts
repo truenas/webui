@@ -90,8 +90,12 @@ export const routes: Routes = [
             path : '', component : VMwareSnapshotListComponent,
             data: {title: 'vmware-Snapshots', breadcrumb:'vmware-Snapshots' }},
           {
-            path : 'id/:pk/add', component : VMwareSnapshotFormComponent,
-            data: {title: 'Add', breadcrumb:'Add' }}
+            path : 'add', component : VMwareSnapshotFormComponent,
+            data: {title: 'Add', breadcrumb:'Add' }},
+            {
+              path : 'edit/:id', component : VMwareSnapshotFormComponent,
+              data: {title: 'Edit', breadcrumb:'Edit' }}
+
         ]
       }
     ]
