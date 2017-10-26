@@ -33,6 +33,19 @@ export class VMwareSnapshotListComponent {
     return true;
   }
 
+  getAddActions() {
+    let actions = [];
+    actions.push({
+      label: "Add",
+      icon: "card_membership",
+      onClick: () => {
+        this._router.navigate(
+          new Array('').concat(["storage", "vmware-Snapshots", "add"]));
+      }
+    });
+    return actions;
+  }
+
   getActions(row) {
     let actions = [];
     actions.push({
@@ -45,7 +58,7 @@ export class VMwareSnapshotListComponent {
         label : "Edit",
         onClick : (row) => {
           this._router.navigate(new Array('/').concat(
-              [ "storage", "vmwareplugin", "edit", row.id ]));
+              [ "storage", "vmware-Snapshots", "edit", row.id ]));
         }
       });
     return actions;
