@@ -170,4 +170,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-color-warn {
         color: #f44336;
     }
+    .mat-sidenav-container{
+      background-color:#ddd;
+    }
 }

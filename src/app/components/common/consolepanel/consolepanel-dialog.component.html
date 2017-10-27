@@ -1,0 +1,13 @@
+<div md-dialog-content>
+
+	<pre class="message">Oct 19 09:28:31 freenas.local ugen0.1: at usbus0
+Oct 19 09:28:31 freenas.local uhub0: on usbus0
+Oct 19 09:28:31 freenas.local uhub0: 12 ports with 12 removable, self powered
+	</pre>
+
+	<div md-dialog-content class="overflow-hide"><md-checkbox (change)="onStopRefresh($event)">Stop refresh</md-checkbox></div>
+</div>
+<div md-dialog-actions>
+  <span fxFlex></span>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">Close</button>
+</div>
