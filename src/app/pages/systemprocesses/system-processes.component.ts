@@ -38,6 +38,7 @@ export class SystemProcessesComponent implements OnInit {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
         this.xterm.write(value);
+        this.xterm.setOption('disableStdin', true);
       });
       this.initializeTerminal();
     });
@@ -60,7 +61,6 @@ export class SystemProcessesComponent implements OnInit {
     this.xterm._initialized = true;
     // excute 'top' command
     this.xterm.send('top\n');
-    this.xterm.cursorNextLine();
   }
 
   initializeWebShell(res: string) {
