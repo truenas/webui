@@ -187,6 +187,13 @@ export class NavigationService {
 //    state: 'wizard'
 //  }
     {
+      name: 'System Processes',
+      type: 'link',
+      tooltip: 'System Processes',
+      icon: 'code',
+      state: 'systemprocesses'
+    },
+    {
       name: 'SHELL',
       type: 'link',
       tooltip: 'Shell',
