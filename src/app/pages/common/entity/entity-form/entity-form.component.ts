@@ -144,8 +144,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         this.getFunction.subscribe((res) => {
           if (res.data){
             this.data = res.data;
-            if( typeof(this.conf.resource_transformIncommingRestData) !== "undefined" ) {
-              this.data = this.conf.resource_transformIncommingRestData(this.data);
+            if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+              this.data = this.conf.resourceTransformIncomingRestData(this.data);
             }
             for (let i in this.data) {
               let fg = this.formGroup.controls[i];
