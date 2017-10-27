@@ -12,6 +12,7 @@ import * as hopscotch from 'hopscotch';
 
 @Component({
   selector: 'topbar',
+  styleUrls: ['./topbar.component.css'],
   templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
@@ -138,5 +139,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.ws.call('system.reboot', {}).subscribe(res => {});
       }
     });
+  }
+
+  showResilveringDetails() {
+    this.snackBar.open('Resilvering name - X% Complete', 'OK');
   }
 }

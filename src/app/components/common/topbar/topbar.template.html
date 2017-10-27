@@ -28,6 +28,15 @@
     </form>
   </div -->
   <span fxFlex></span>
+  <!--loading icon-->
+  <button
+    md-icon-button
+    id="loading"
+    mdTooltip="resilvering"
+    (click)="showResilveringDetails()"
+    class="topbar-button-right">
+    <md-icon class="fa-spin">autorenew</md-icon>
+  </button>
   <!-- Language Switcher -->
   <md-select
   id="currentLang"
