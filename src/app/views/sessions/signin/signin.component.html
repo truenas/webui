@@ -19,34 +19,34 @@
                 placeholder="Username"
                 value="">
             </md-input-container>
-            <small 
-              *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)" 
-              class="form-error-msg"> Username is required </small>
+            <small
+              *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)"
+              class="form-error-msg"> Please enter your Username </small>
           </div>
 
           <div class="">
             <md-input-container class="full-width">
-              <input 
+              <input
                 type="password"
                 name="password"
                 required
                 mdInput
                 [(ngModel)]="signinData.password"
                 #password="ngModel"
-                placeholder="Password" 
+                placeholder="Password"
                 value="">
             </md-input-container>
-            <small 
-              *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)" 
-              class="form-error-msg"> Password is required </small>
+            <small
+              *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)"
+              class="form-error-msg"> Please enter your password <span *ngIf="failed">again</span></small>
           </div>
-          
+
           <!--div class="pb-1">
             <md-checkbox
               name="rememberMe"
               class="pb-1">Remember this computer</md-checkbox>
           </div-->
-          
+
           <button md-raised-button class="mat-accent full-width mb-1" [disabled]="signinForm.invalid">Sign in</button>
           <!--div class="text-center">
             <a [routerLink]="['/sessions/forgot-password']" class="mat-primary text-center full-width">Forgot password</a>
