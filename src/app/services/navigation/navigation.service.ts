@@ -102,7 +102,8 @@ export class NavigationService {
       state: 'storage',
       sub: [
         {name: 'Volumes', state: 'volumes'},
-        {name: 'Snapshots', state: 'snapshots'}
+        {name: 'Snapshots', state: 'snapshots'},
+        {name: 'vmware-Snapshots', state: 'vmware-Snapshots'}
       ]
     },
     {
@@ -153,9 +154,9 @@ export class NavigationService {
       state: 'jails',
       sub: [
         {name: 'Instances', state: 'jails'},
-        {name: 'Storage', state: 'storage'},
-        {name: 'Templates', state: 'templates'},
-        {name: 'Configuration', state: 'configuration'},
+        // {name: 'Storage', state: 'storage'},
+        // {name: 'Templates', state: 'templates'},
+        // {name: 'Configuration', state: 'configuration'},
       ]
     },
     {
@@ -185,6 +186,13 @@ export class NavigationService {
 //     icon: 'cake',
 //    state: 'wizard'
 //  }
+    {
+      name: 'System Processes',
+      type: 'link',
+      tooltip: 'System Processes',
+      icon: 'code',
+      state: 'systemprocesses'
+    },
     {
       name: 'SHELL',
       type: 'link',

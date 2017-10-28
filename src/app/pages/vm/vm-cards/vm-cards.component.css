@@ -1,3 +1,21 @@
+/* Search Field */
+
+md-card.card-filter.mat-card{
+  width: 85%;
+  margin: 0 auto;
+}
+
+md-card.card-filter.mat-card .mat-card-content{
+  padding:8px 24px;
+}
+
+.card-filter md-input-container.mat-input-container{
+ width:100%;
+}
+
+
+
+/* cards */
 .entity-cards-container .entity-card-wrapper{
   display:inline-flex;
   padding:0 32px;
@@ -17,7 +35,9 @@ vm-cards md-card.front {
   text-align: center;
   background-color: #111;
   /*background-image:url('https://www.globaletraining.ca/wp-content/uploads/2015/05/3d-abstract-black-dark-geometry-2501884-2560x1600.png');*/
+  background-image:url('~/assets/images/vm-card-bg.jpg');
   background-size:cover;
+  background-position:50%;
   position: absolute;
   top: 0;
   bottom: 0;
