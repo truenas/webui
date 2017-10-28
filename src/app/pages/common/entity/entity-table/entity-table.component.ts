@@ -131,8 +131,12 @@ export class EntityTableComponent implements OnInit {
 
         if (filterValue.length > 0) {
           this.rows.forEach((dataElement) => {
-            for (const dataElementProp in dataElement) {
-              const value: any = dataElement[dataElementProp];
+            for (const dataElementProp of this.conf.columns) {
+              let value: any = dataElement[dataElementProp.prop];
+              
+              if( typeof(value) === "boolean" || typeof(value) === "number") {
+                value = String(value);
+              }
 
               if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
                 newData.push(dataElement);
