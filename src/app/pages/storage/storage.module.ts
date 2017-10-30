@@ -27,6 +27,8 @@ import {routing} from './storage.routing';
 import {ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
 import {ZvolAddComponent} from './volumes/zvol/zvol-add'
 import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
+import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
+import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
 
 @NgModule({
   imports : [
@@ -51,7 +53,9 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
     SnapshotAddComponent,
-    DatasetPermissionsComponent
+    DatasetPermissionsComponent,
+    VMwareSnapshotFormComponent,
+    VMwareSnapshotListComponent
   ],
   providers : [UserService, StorageService]
 })

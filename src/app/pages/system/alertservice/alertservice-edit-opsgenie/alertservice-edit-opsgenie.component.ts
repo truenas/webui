@@ -52,7 +52,7 @@ export class AlertServiceEditOpsgenieComponent {
     },
   ];
 
-  resource_transformIncommingRestData(data:any): any {
+  resourceTransformIncomingRestData(data:any): any {
     data.cluster_name = data.attributes.cluster_name;
     data.api_key = data.attributes.api_key;
 

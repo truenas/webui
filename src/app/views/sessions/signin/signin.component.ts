@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {Router} from '@angular/router';
-import { MdProgressBar, MdButton } from '@angular/material';
+import {MdProgressBar, MdButton, MdSnackBar} from '@angular/material';
 
 import {WebSocketService} from '../../../services/ws.service';
 
@@ -19,7 +19,7 @@ export class SigninComponent implements OnInit {
     username: 'root',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router) {
+  constructor(private ws: WebSocketService, private router: Router, private snackBar: MdSnackBar) {
     this.ws = ws;
    }
 
@@ -58,9 +58,12 @@ export class SigninComponent implements OnInit {
     }
   }
 
-  errorLogin() { 
+  errorLogin() {
     this.failed = true;
     this.progressBar.mode = 'determinate';
+    this.signinData.password = '';
+    this.signinData.username = 'root';
+    this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
   }
 
 }

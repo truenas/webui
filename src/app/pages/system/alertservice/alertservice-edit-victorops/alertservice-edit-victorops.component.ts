@@ -54,7 +54,7 @@ export class AlertServiceEditVictoropsComponent {
   ];
 
   
-  resource_transformIncommingRestData(data:any): any {
+  resourceTransformIncomingRestData(data:any): any {
     data.routing_key = data.attributes.routing_key;
     data.api_key = data.attributes.api_key;
     

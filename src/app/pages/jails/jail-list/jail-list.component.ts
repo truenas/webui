@@ -2,6 +2,8 @@ import { RestService, WebSocketService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+
 @Component({
   selector: 'app-jail-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -16,8 +18,8 @@ export class JailListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Jail', prop: 'host_hostname' },
-    { name: 'Status', prop: 'jail_status' },
+    { name: 'Jail', prop: 'host_hostuuid' },
+    { name: 'Status', prop: 'state' },
     { name: 'Release', prop: 'release' },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
   ];
@@ -26,16 +28,14 @@ export class JailListComponent {
     sorting: { columns: this.columns },
   };
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'start' && row.jail_status === "Running") {
+    if (actionId === 'start' && row.state === "up") {
       return false;
-    } else if (actionId === 'stop' && row.jail_status === "Stopped") {
-      return false;
-    } else if (actionId === 'restart' && row.jail_status === "Stopped") {
+    } else if (actionId === 'stop' && row.state === "down") {
       return false;
     }
     return true;
@@ -46,7 +46,6 @@ export class JailListComponent {
         id: "edit",
         label: "Edit",
         onClick: (row) => {
-          console.log(row.host_hostuuid);
           this.router.navigate(
             new Array('').concat(["jails", "edit", row.host_hostuuid]));
         }
@@ -57,7 +56,7 @@ export class JailListComponent {
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => { row.jail_status = 'Up'; },
+              (res) => { row.state = 'up'; },
               (res) => { console.log(res); });
         }
       },
@@ -67,26 +66,23 @@ export class JailListComponent {
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-              (res) => { row.jail_status = 'Down'; },
+              (res) => { row.state = 'down'; },
               (res) => { console.log(res); });
         }
       },
-      // {
-      //   id: "restart",
-      //   label: "Restart",
-      //   onClick: (row) => {
-      //     this.entityList.busy =
-      //       this.rest
-      //       .post(this.resource_name + '/' + row.id + '/restart/', {})
-      //       .subscribe((res) => { row.jail_status = 'Running'; },
-      //         (res) => { console.log(res); });
-      //   }
-      // },
-      // {
-      //   id : "shell",
-      //   label : "Shell",
-      //   onClick : (row) => {}
-      // },
+      {
+        id: "update",
+        label: "Update",
+        onClick: (row) => {
+          this.loader.open();
+          this.entityList.busy =
+            this.ws.job('jail.update_to_latest_patch', [row.host_hostuuid]).subscribe(
+              (res) => {
+                console.log(res);
+                this.loader.close();
+              });
+        }
+      },
       {
         id: "delete",
         label: "Delete",
