@@ -8,7 +8,7 @@ import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
-import { ConsolePanelModalDialog } from '../../consolepanel/consolepanel-dialog.component';
+import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 
 @Component({
   selector: 'app-admin-layout',

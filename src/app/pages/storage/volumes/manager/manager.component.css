@@ -1,3 +1,8 @@
+.mat-card>.mat-card-actions {
+	margin: 0px !important;
+	padding-left: 3rem;
+	padding-bottom: 3rem;
+}
 .datatable-checkbox {
   padding: 0 !important;
   margin: 0 0 0 0 !important;
