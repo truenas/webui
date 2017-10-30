@@ -23,6 +23,7 @@ import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
 import {FieldConfig} from './models/field-config.interface';
+import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 
@@ -39,6 +40,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
   protected pk: any;
   public formGroup: FormGroup;
+  public fieldSets:FieldSet[]
   public fieldConfig: FieldConfig[];
   protected resourceName: string;
   public getFunction;
@@ -117,14 +119,15 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
     }
 
     this.fieldConfig = this.conf.fieldConfig;
+    this.fieldSets = this.conf.fieldSets;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    for (let i in this.fieldConfig) {
-      let config = this.fieldConfig[i];
-      if (config.relation.length > 0) {
-	this.setRelation(config);
+      for (let i in this.fieldConfig) {
+	let config = this.fieldConfig[i];
+	if (config.relation.length > 0) {
+	  this.setRelation(config);
+	}
       }
-    }
 
     if (this.conf.queryCall) {
       if(this.pk) {

@@ -143,7 +143,7 @@ export class VmCardsComponent implements OnInit {
    */
 
   deleteVM(index) {
-    this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+	  this.dialog.confirm("Delete", "Are you sure you want to delete " + this.cards[index].name + "?").subscribe((res) => {
       if (res) {
 	this.loader.open();
 	this.loaderOpen = true;
