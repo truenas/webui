@@ -61,7 +61,7 @@ export class AlertServiceEditHipchatComponent {
     },
   ];
 
-  resource_transformIncommingRestData(data:any): any {
+  resourceTransformIncomingRestData(data:any): any {
     
     data.cluster_name = data.attributes.cluster_name;
     data.base_url = data.attributes.base_url;

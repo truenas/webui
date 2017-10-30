@@ -7,6 +7,15 @@
   min-width: 600px;
 }
 
+.copyright-txt {
+  font-size: 11px;
+  text-align: center;
+}
+
+.copyright-txt a:link {
+  color: #396f9d;
+}
+
 @media (max-width: 1025px) {
   .bg-photo {
   	background-size: auto 50%;
@@ -18,7 +27,7 @@
 @media (max-width: 769px) {
   .bg-photo {
   	background-size: auto 40%;
-	  padding-right: 10%;
+	  padding-right: 15%;
   }
 
   .mat-icon.mat-primary {
