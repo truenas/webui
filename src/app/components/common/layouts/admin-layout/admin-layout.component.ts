@@ -1,4 +1,4 @@
-import { RestService } from '../../../../services';
+import { RestService, WebSocketService } from '../../../../services';
 import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
@@ -9,6 +9,7 @@ import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../consolepanel/consolepanel-dialog.component';
+import {UUID} from 'angular2-uuid';
 
 @Component({
   selector: 'app-admin-layout',
@@ -20,6 +21,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenavOpen: Boolean = true;
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
+  intervalPing;
+  consoleMsg: String = "Loading....";
 
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -29,6 +32,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public themeService: ThemeService,
     private media: ObservableMedia,
     protected rest: RestService,
+    protected ws: WebSocketService,
     public translate: TranslateService,
     public dialog: MdDialog) {
     // Close sidenav after route change in mobile
@@ -67,6 +71,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   updateSidenav() {
     let self = this;
+
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
       self.isSidenotOpen = false;
@@ -93,12 +98,23 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   getLogConsoleMsg() {
-    // Adding console messages API here
+    let subName = "filesystem.file_tail_follow:/var/log/messages";
+
+    this.intervalPing = setInterval( () => {
+      this.ws.sub(subName).subscribe((res) => {
+        this.consoleMsg = res.data;
+      });
+    }, 5000);
   }
 
   onShowConsolePanel() {
-    let dialogRef = this.dialog.open(ConsolePanelModalDialog, {
-      width: '600px'
+    clearInterval(this.intervalPing);
+
+    let dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
+
+    dialogRef.afterClosed().subscribe((result) => {
+      clearInterval(dialogRef.componentInstance.intervalPing);
+      this.getLogConsoleMsg();
     });
   }
 
