@@ -19,6 +19,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
 
 @Component({
   selector : 'app-replication-add',
@@ -131,114 +132,125 @@ export class ReplicationAddComponent {
   ];
   
   
-  protected fieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'repl_filesystem',
-      placeholder: 'Volume/Dataset',
-    },
-    {
-      type: 'input',
-      name: 'repl_zfs',
-      placeholder: "Remote ZFS Volume/Dataset"
-    },
-    {
-      type : 'input',
-      name : 'repl_remote_hostname',
-      placeholder : 'Remote Hostname'
-    },
-    {
-      type : 'input',
-      name : 'repl_remote_port',
-      placeholder : 'Remote Port'
-    },
-    {
-      type: 'input',
-      name: 'repl_remote_dedicateduser',
-      placeholder: 'Remote User'
-    },
-    {
-      type : 'select',
-      name : 'repl_remote_cipher',
-      placeholder : 'Remote Cipher',
-      options : [
-        {label : 'standard', value : 'standard'}, 
-        {label : 'fast', value : 'fast'},
-        {label : 'disabled', value : 'disabled'}
-      ]
-    }, 
-    { 
-      type: 'select',
-      name: 'repl_compression',
-      placeholder: 'Stream Compression',
-      options : [
-        {label : 'Off', value : 'off'}, 
-        {label : 'lz4 (fastest)', value : 'lz4'},
-        {label : 'pigz (all rounder)', value : 'pigz'},
-        {label : 'pizip (all rounder)', value : 'pizip'}
-      ]
-    },
-    { 
-      type: 'input',
-      name: 'repl_limit',
-      placeholder: 'Limit (KB/s)'
-    },
-    {
-      type: 'select',
-      name: 'repl_begin',
-      placeholder: 'Begin Time',
-      options : this.times
-    },
-    {
-      type: 'select',
-      name: 'repl_end',
-      placeholder: 'End Time',
-      options : this.times
-    },
-    {
-      type: 'textareabutton',
-      name: 'repl_remote_hostkey',
-      placeholder: 'Remote Hostkey',
-      customEventActionLabel: 'Remote SSH Key',
-      customEventMethod: this.customEventMethod
-    },
-    {
-      type : 'checkbox',
-      name : 'repl_followdelete',
-      placeholder : 'Delete Stale Snapshots on Remote System'
-    },
-    {
-        type: 'checkbox',
-        name: 'repl_remote_dedicateduser_enabled',
-        placeholder: 'Dedicated User'
-    },
-    {
-      type : 'checkbox',
-      name : 'repl_userepl',
-      placeholder : 'Recursively Replicate Child Dataset Snapshot(s)'
-    },
-    {
-      type : 'checkbox',
-      name : 'repl_enabled',
-      placeholder : 'Replication Enabled'
-    }
-  ];
+  protected fieldConfig: FieldConfig[];
 
   constructor(
       protected router: Router,
       protected route: ActivatedRoute,
       protected rest: RestService,
       protected ws: WebSocketService,
+      protected replicationService: ReplicationService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef
-  ) {}
+  ) {
+    
+    const theThis = this;
+
+    this.fieldConfig =
+    [
+      {
+        type: 'input',
+        name: 'repl_filesystem',
+        placeholder: 'Volume/Dataset',
+      },
+      {
+        type: 'input',
+        name: 'repl_zfs',
+        placeholder: "Remote ZFS Volume/Dataset"
+      },
+      {
+        type : 'input',
+        name : 'repl_remote_hostname',
+        placeholder : 'Remote Hostname'
+      },
+      {
+        type : 'input',
+        name : 'repl_remote_port',
+        placeholder : 'Remote Port'
+      },
+      {
+        type: 'input',
+        name: 'repl_remote_dedicateduser',
+        placeholder: 'Remote User'
+      },
+      {
+        type : 'select',
+        name : 'repl_remote_cipher',
+        placeholder : 'Remote Cipher',
+        options : [
+          {label : 'standard', value : 'standard'}, 
+          {label : 'fast', value : 'fast'},
+          {label : 'disabled', value : 'disabled'}
+        ]
+      }, 
+      { 
+        type: 'select',
+        name: 'repl_compression',
+        placeholder: 'Stream Compression',
+        options : [
+          {label : 'Off', value : 'off'}, 
+          {label : 'lz4 (fastest)', value : 'lz4'},
+          {label : 'pigz (all rounder)', value : 'pigz'},
+          {label : 'pizip (all rounder)', value : 'pizip'}
+        ]
+      },
+      { 
+        type: 'input',
+        name: 'repl_limit',
+        placeholder: 'Limit (KB/s)'
+      },
+      {
+        type: 'select',
+        name: 'repl_begin',
+        placeholder: 'Begin Time',
+        options : this.times
+      },
+      {
+        type: 'select',
+        name: 'repl_end',
+        placeholder: 'End Time',
+        options : this.times
+      },
+      {
+        type: 'textareabutton',
+        name: 'repl_remote_hostkey',
+        placeholder: 'Remote Hostkey',
+        customEventActionLabel: 'Remote SSH Key',
+        customEventMethod: function(data) {
+          theThis.customEventMethod(data);
+        }
+      },
+      {
+        type : 'checkbox',
+        name : 'repl_followdelete',
+        placeholder : 'Delete Stale Snapshots on Remote System'
+      },
+      {
+          type: 'checkbox',
+          name: 'repl_remote_dedicateduser_enabled',
+          placeholder: 'Dedicated User'
+      },
+      {
+        type : 'checkbox',
+        name : 'repl_userepl',
+        placeholder : 'Recursively Replicate Child Dataset Snapshot(s)'
+      },
+      {
+        type : 'checkbox',
+        name : 'repl_enabled',
+        placeholder : 'Replication Enabled'
+      }
+    ];
+  }
 
   afterInit(entityAdd: any) {}
 
   customEventMethod( data: any ) {
     const textAreaSSH: ElementRef = (<ElementRef>data.textAreaSSH);
     
-    console.log("I was called custom chain action complete:" + textAreaSSH.nativeElement.value);   
+    this.replicationService.getSSHPublicKeyscan().subscribe((sshKeyData)=>{
+      textAreaSSH.nativeElement.value = sshKeyData;   
+    });
   }
 
 }

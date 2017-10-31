@@ -16,7 +16,7 @@ export class ReplicationService {
 
 
   public getSSHPublicKeyscan(): Observable<any> {
-    return this._ws.call('replication.public_key', [[], {}]);
+    return this._ws.call('replication.public_key');
   }
 
 
