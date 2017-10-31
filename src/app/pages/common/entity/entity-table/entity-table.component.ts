@@ -292,4 +292,21 @@ export class EntityTableComponent implements OnInit {
       }
     })
   }
+  doActivate(id) {
+    this.dialog.confirm("Activate", "Are you sure you want to activate it?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call(this.conf.wsActivate, [id]).subscribe(
+          (res) => { this.getData() },
+          (res) => {
+            new EntityUtils().handleError(this, res);
+            this.loader.close();
+          }
+          );
+        
+      }
+    })
+  }
 }

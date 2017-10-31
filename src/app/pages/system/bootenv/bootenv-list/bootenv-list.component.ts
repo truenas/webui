@@ -14,6 +14,7 @@ export class BootEnvironmentListComponent {
   protected resource_name: string = 'system/bootenv';
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
   protected entityList: any;
+  protected wsActivate = 'bootenv.activate';
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -74,6 +75,13 @@ export class BootEnvironmentListComponent {
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
             [ "system", "bootenv", "rename", row.id ]));
+      }
+    });
+    actions.push({
+      label : "Activate",
+      id: "activate",
+      onClick : (row) => {
+        this.entityList.doActivate(row.id);
       }
     });
     return actions;
