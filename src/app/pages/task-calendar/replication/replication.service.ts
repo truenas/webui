@@ -10,8 +10,8 @@ export class ReplicationService {
  
   constructor(private _ws: WebSocketService) {}
 
-  public getSSHKeyscan(title: string, port: number): Observable<any> {
-    return this._ws.call('replication.ssh_keyscan', [[title, port], {}]);
+  public getSSHKeyscan(host: string, port: number): Observable<any> {
+    return this._ws.call('replication.ssh_keyscan', [host, port]);
   }
 
 

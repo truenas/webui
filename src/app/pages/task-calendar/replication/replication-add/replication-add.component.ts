@@ -20,6 +20,7 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector : 'app-replication-add',
@@ -31,6 +32,7 @@ export class ReplicationAddComponent {
   protected route_success: string[] = [ 'tasks', 'replication'];
   protected isNew = true;
   protected isEntity = true;
+  protected entityForm: EntityFormComponent;
   
   private times = [
     {label : '00:00:00', value : '00:00:00'}, 
@@ -146,6 +148,8 @@ export class ReplicationAddComponent {
     
     const theThis = this;
 
+    
+
     this.fieldConfig =
     [
       {
@@ -243,12 +247,16 @@ export class ReplicationAddComponent {
     ];
   }
 
-  afterInit(entityAdd: any) {}
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+  }
 
   customEventMethod( data: any ) {
     const textAreaSSH: ElementRef = (<ElementRef>data.textAreaSSH);
+    const hostName: string = this.entityForm.value.repl_remote_hostname;
+    const port: number = Number(this.entityForm.value.repl_remote_port);
     
-    this.replicationService.getSSHPublicKeyscan().subscribe((sshKeyData)=>{
+    this.replicationService.getSSHKeyscan( hostName, port).subscribe((sshKeyData)=>{
       textAreaSSH.nativeElement.value = sshKeyData;   
     });
   }
