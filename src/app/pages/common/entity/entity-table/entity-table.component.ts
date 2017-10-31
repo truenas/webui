@@ -305,7 +305,22 @@ export class EntityTableComponent implements OnInit {
             this.loader.close();
           }
           );
-        
+      }
+    })
+  }
+  doKeep(id) {
+    this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call(this.conf.wsKeep, [id, { "keep" : true }]).subscribe(
+          (res) => { this.getData() },
+          (res) => {
+            new EntityUtils().handleError(this, res);
+            this.loader.close();
+          }
+          );
       }
     })
   }

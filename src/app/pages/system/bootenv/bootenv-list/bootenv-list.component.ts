@@ -15,6 +15,7 @@ export class BootEnvironmentListComponent {
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
   protected entityList: any;
   protected wsActivate = 'bootenv.activate';
+  protected wsKeep = 'bootenv.set_attribute';
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -82,6 +83,13 @@ export class BootEnvironmentListComponent {
       id: "activate",
       onClick : (row) => {
         this.entityList.doActivate(row.id);
+      }
+    });
+    actions.push({
+      label : "Keep",
+      id: "keep",
+      onClick : (row) => {
+        this.entityList.doKeep(row.id);
       }
     });
     return actions;
