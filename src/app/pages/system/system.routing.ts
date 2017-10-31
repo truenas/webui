@@ -96,7 +96,7 @@ export const routes: Routes = [
       {
         path: 'rename/:pk',
         component: BootEnvironmentRenameComponent,
-        data: { title: 'Clone', breadcrumb: 'Clone' },
+        data: { title: 'Rename', breadcrumb: 'Rename' },
       }
     ]
     }, {
