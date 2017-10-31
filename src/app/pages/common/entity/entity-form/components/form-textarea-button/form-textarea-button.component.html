@@ -1,6 +1,6 @@
 <div class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <md-input-container class="full-width">
-    <textarea mdInput [placeholder]="config.placeholder" [formControlName]="config.name" rows="4" [ngClass]="config.class">
+    <textarea #textAreaSSH mdInput [placeholder]="config.placeholder" [formControlName]="config.name" rows="4" [ngClass]="config.class">
     </textarea>
   </md-input-container>
   <md-card-actions>

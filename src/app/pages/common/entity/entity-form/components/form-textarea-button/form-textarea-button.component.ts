@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import {Component, ViewContainerRef, ViewChild, ElementRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -15,10 +15,13 @@ export class FormTextareaButtonComponent implements Field {
   group: FormGroup;
   fieldShow: string;
 
+  @ViewChild("textAreaSSH")
+  textAreaSSH: ElementRef;
+
   customEventMethod($event) {
 
     if( this.config.customEventMethod !== undefined && this.config.customEventMethod != null) {
-      this.config.customEventMethod({ event:  $event, data: {}  });
+      this.config.customEventMethod({ event:  $event, textAreaSSH: this.textAreaSSH  });
     }
 
     $event.preventDefault();

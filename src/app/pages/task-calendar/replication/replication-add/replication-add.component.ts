@@ -3,7 +3,8 @@ import {
   Component,
   Injector,
   OnInit,
-  ViewContainerRef
+  ViewContainerRef,
+  ElementRef
 } from '@angular/core';
 import {
   AbstractControl,
@@ -235,7 +236,9 @@ export class ReplicationAddComponent {
   afterInit(entityAdd: any) {}
 
   customEventMethod( data: any ) {
-    alert("I was called custom chain action complete");   
+    const textAreaSSH: ElementRef = (<ElementRef>data.textAreaSSH);
+    
+    console.log("I was called custom chain action complete:" + textAreaSSH.nativeElement.value);   
   }
 
 }
