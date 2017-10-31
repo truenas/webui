@@ -9,4 +9,5 @@ export interface FieldConfig {
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
   initialCount?: number, readonly?: boolean, initial?: string,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
+  customEventMethod?(data:any)
 }
