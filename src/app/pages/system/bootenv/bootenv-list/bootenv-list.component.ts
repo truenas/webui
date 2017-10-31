@@ -68,6 +68,14 @@ export class BootEnvironmentListComponent {
             [ "system", "bootenv", "clone", row.id ]));
       }
     });
+    actions.push({
+      label : "Rename",
+      id: "rename",
+      onClick : (row) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "rename", row.id ]));
+      }
+    });
     return actions;
   }
 }
