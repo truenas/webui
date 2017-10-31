@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import {MdDialog, MdDialogRef, MdSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-update',
@@ -14,6 +14,8 @@ export class UpdateComponent implements OnInit {
 
   public packages: any[] = [];
   public status: string;
+  public releaseNotes: any = '';
+  public changeLog: any = '';
   public updating: boolean = false;
   public updated: boolean = false;
   public progress: Object = {};
@@ -27,6 +29,7 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
+    protected snackBar: MdSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {}
 
   ngOnInit() {
@@ -58,6 +61,7 @@ export class UpdateComponent implements OnInit {
       this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
+          console.log('this is the res', res);
           this.status = res.status;
           if (res.status == 'AVAILABLE') {
             this.packages = [];
@@ -92,6 +96,13 @@ export class UpdateComponent implements OnInit {
                 console.error("Unknown operation:", item.operation)
               }
             });
+            if(res.notes.ChangeLog) {
+              this.rest.get(res.notes.ChangeLog.toString(), {}, false).subscribe(logs => this.changeLog = logs.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            }
+
+            if(res.notes.ReleaseNotes) {
+              this.rest.get(res.notes.ReleaseNotes.toString(), {}, false).subscribe(notes => this.releaseNotes = notes.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            }
           }
         },
         (err) => { this.error = err.error; });
