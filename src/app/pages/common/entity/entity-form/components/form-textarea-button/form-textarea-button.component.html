@@ -4,7 +4,7 @@
     </textarea>
   </md-input-container>
   <md-card-actions>
-    <button md-raised-button color="primary" (click)="customEventMethod($event)">Submit</button>
+    <button md-raised-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>
   </md-card-actions>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>

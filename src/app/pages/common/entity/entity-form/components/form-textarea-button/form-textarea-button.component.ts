@@ -21,5 +21,7 @@ export class FormTextareaButtonComponent implements Field {
       this.config.customEventMethod({ event:  $event, data: {}  });
     }
 
+    $event.preventDefault();
+
   }
 }

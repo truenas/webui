@@ -24,7 +24,7 @@ import {
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class ReplicationAddComponent {
-
+  
   protected resource_name = 'storage/replication';
   protected route_success: string[] = [ 'tasks', 'replication'];
   protected isNew = true;
@@ -195,9 +195,11 @@ export class ReplicationAddComponent {
       options : this.times
     },
     {
-      type: 'textarea-button',
+      type: 'textareabutton',
       name: 'repl_remote_hostkey',
-      placeholder: 'Remote Hostkey'
+      placeholder: 'Remote Hostkey',
+      customEventActionLabel: 'Remote SSH Key',
+      customEventMethod: this.customEventMethod
     },
     {
       type : 'checkbox',
@@ -231,4 +233,9 @@ export class ReplicationAddComponent {
   ) {}
 
   afterInit(entityAdd: any) {}
+
+  customEventMethod( data: any ) {
+    alert("I was called custom chain action complete");   
+  }
+
 }
