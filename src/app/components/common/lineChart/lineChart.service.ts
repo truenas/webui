@@ -314,38 +314,18 @@ export class LineChartService {
         legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
         type: LineChartService.lineChart,
         dataList: [
-          {
-            'source': 'aggregation-cpu-sum',
-            'type': 'cpu-user',
-            'dataset': 'value'
-          },
-          {
-            'source': 'aggregation-cpu-sum',
-            'type': 'cpu-interrupt',
-            'dataset': 'value'
-          },
-          {
-            'source': 'aggregation-cpu-sum',
-            'type': 'cpu-system',
-            'dataset': 'value'
-          },
-          {
-            'source': 'aggregation-cpu-sum',
-            'type': 'cpu-idle',
-            'dataset': 'value'
-          },
-          {
-            'source': 'aggregation-cpu-sum',
-            'type': 'cpu-nice',
-            'dataset': 'value'
-          },
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-system', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-idle', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-nice', 'dataset': 'value'},
         ],
       }, {
         title: "Load",
         type: LineChartService.lineChart,
         legends: ['Short Term', ' Mid Term', 'Long Term'],
         dataList: [
-          {source: 'load', type: 'load', dataset: 'shortterm'},
+          {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
           {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
           {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
         ],
