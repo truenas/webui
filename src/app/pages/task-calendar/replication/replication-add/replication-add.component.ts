@@ -163,6 +163,36 @@ export class ReplicationAddComponent {
         placeholder: "Remote ZFS Volume/Dataset"
       },
       {
+        type : 'checkbox',
+        name : 'repl_userepl',
+        placeholder : 'Recursively Replicate Child Dataset Snapshot(s)',
+        value: false
+      },
+      {
+        type : 'checkbox',
+        name : 'repl_followdelete',
+        placeholder : 'Delete Stale Snapshots on Remote System',
+        value: false
+      },
+      { 
+        type: 'input',
+        name: 'repl_limit',
+        placeholder: 'Limit (KB/s)',
+        inputType: 'number'
+      },
+      {
+        type: 'select',
+        name: 'repl_begin',
+        placeholder: 'Begin Time',
+        options : this.times
+      },
+      {
+        type: 'select',
+        name: 'repl_end',
+        placeholder: 'End Time',
+        options : this.times
+      },
+      {
         type : 'input',
         name : 'repl_remote_hostname',
         placeholder : 'Remote Hostname'
@@ -170,7 +200,8 @@ export class ReplicationAddComponent {
       {
         type : 'input',
         name : 'repl_remote_port',
-        placeholder : 'Remote Port'
+        placeholder : 'Remote Port',
+        inputType: 'number'
       },
       {
         type: 'input',
@@ -186,6 +217,15 @@ export class ReplicationAddComponent {
           {label : 'fast', value : 'fast'},
           {label : 'disabled', value : 'disabled'}
         ]
+      },{
+
+        type : 'select',
+        name : 'repl_remote_mode',
+        placeholder : 'Remote Mode',
+        options : [
+          {label : 'MANUAL', value : 'MANUAL'}, 
+          {label : 'SEMIAUTOMATIC', value : 'SEMIAUTOMATIC'}
+        ]
       }, 
       { 
         type: 'select',
@@ -198,23 +238,6 @@ export class ReplicationAddComponent {
           {label : 'pizip (all rounder)', value : 'pizip'}
         ]
       },
-      { 
-        type: 'input',
-        name: 'repl_limit',
-        placeholder: 'Limit (KB/s)'
-      },
-      {
-        type: 'select',
-        name: 'repl_begin',
-        placeholder: 'Begin Time',
-        options : this.times
-      },
-      {
-        type: 'select',
-        name: 'repl_end',
-        placeholder: 'End Time',
-        options : this.times
-      },
       {
         type: 'textareabutton',
         name: 'repl_remote_hostkey',
@@ -225,24 +248,22 @@ export class ReplicationAddComponent {
         }
       },
       {
-        type : 'checkbox',
-        name : 'repl_followdelete',
-        placeholder : 'Delete Stale Snapshots on Remote System'
-      },
-      {
           type: 'checkbox',
           name: 'repl_remote_dedicateduser_enabled',
-          placeholder: 'Dedicated User'
+          placeholder: 'Dedicated User(Root used if false)',
+          value: false
       },
       {
-        type : 'checkbox',
-        name : 'repl_userepl',
-        placeholder : 'Recursively Replicate Child Dataset Snapshot(s)'
+        type: 'input',
+        name: 'repl_remote_dedicateduser',
+        placeholder: 'Remote User',
+        value: "root"
       },
       {
         type : 'checkbox',
         name : 'repl_enabled',
-        placeholder : 'Replication Enabled'
+        placeholder : 'Replication Enabled',
+        value: false
       }
     ];
   }
@@ -257,7 +278,8 @@ export class ReplicationAddComponent {
     const port: number = Number(this.entityForm.value.repl_remote_port);
     
     this.replicationService.getSSHKeyscan( hostName, port).subscribe((sshKeyData)=>{
-      textAreaSSH.nativeElement.value = sshKeyData;   
+      textAreaSSH.nativeElement.value = sshKeyData;
+      this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(sshKeyData);   
     });
   }
 
