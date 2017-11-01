@@ -9,16 +9,17 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-bootenv-add',
+  selector : 'app-bootenv-rename',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class BootEnvironmentRenameComponent {
 
   protected route_success: string[] = [ 'system', 'bootenv' ];
-  protected resource_name: string = 'system/bootenv';
+  protected editCall: string = 'bootenv.update';
   protected pk: any;
-  protected isNew: boolean = true;
+  protected isNew: boolean = false;
   protected isEntity: boolean = true;
+  protected entityForm: any;
 
   protected fieldConfig: FieldConfig[];
 
@@ -36,5 +37,14 @@ export class BootEnvironmentRenameComponent {
         },
       ];
     });
+    this.entityForm = entityForm;
+  }
+  afterInit(entityForm: any) {
+    entityForm.submitFunction = this.submitFunction;
+  }
+  submitFunction(entityForm){
+    const payload = {};
+    payload['name'] = entityForm.name;
+    return this.ws.call('bootenv.update', [this.pk, payload]);
   }
 }
