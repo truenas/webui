@@ -55,13 +55,15 @@ export class BootEnvironmentListComponent {
 
   getActions(row) {
     let actions = [];
-    actions.push({
-      label : "Delete",
-      id: "delete",
-      onClick : (row) => {
-        this.entityList.doDelete(row.id);
-      }
-    });
+    if (row.active === '-'){
+      actions.push({
+        label : "Delete",
+        id: "delete",
+        onClick : (row) => {
+          this.entityList.doDelete(row.id);
+        }
+      });
+    }
     actions.push({
       label : "Clone",
       id: "clone",
