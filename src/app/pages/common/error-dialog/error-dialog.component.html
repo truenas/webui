@@ -1,0 +1,20 @@
+<h1 md-dialog-title>
+  <md-icon class="warning-icon">report_problem</md-icon>
+  {{ title }}
+</h1>
+<div md-dialog-content>
+  <p>{{message}}</p>
+  <div class="more-info" (click)="toggleOpen($event)">
+    <md-icon *ngIf="isCloseMoreInfo">add_circle_outline</md-icon>
+    <md-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</md-icon>
+    <span>More info...</span>
+  </div>
+  <div class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}">
+    <textarea mdInput>{{backtrace}}</textarea>
+  </div>  
+</div>
+<div md-dialog-actions>
+  &nbsp;
+  <span fxFlex></span>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">Close</button>
+</div>

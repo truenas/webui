@@ -19,6 +19,8 @@ import { FormInputComponent } from './entity-form/components/form-input/form-inp
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
+import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
+
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
@@ -62,6 +64,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
+    FormTextareaButtonComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
@@ -95,6 +98,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
+    FormTextareaButtonComponent,
     FormPermissionsComponent,
     FormArrayComponent,
     FormUploadComponent,

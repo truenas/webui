@@ -25,6 +25,7 @@ import {FormSliderComponent} from '../form-slider/form-slider.component';
 import {FormToggleButtonComponent} from '../form-toggle-button/form-toggle-button.component';
 import {FormTaskComponent} from '../form-task/form-task.component';
 import {FormReadFileComponent} from '../form-readfile/form-readfile.component'
+import { FormTextareaButtonComponent } from 'app/pages/common/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -32,6 +33,7 @@ const components: {[type: string] : Type<Field>} = {
   select : FormSelectComponent,
   checkbox : FormCheckboxComponent,
   textarea : FormTextareaComponent,
+  textareabutton: FormTextareaButtonComponent,
   permissions : FormPermissionsComponent,
   array : FormArrayComponent,
   upload : FormUploadComponent,
