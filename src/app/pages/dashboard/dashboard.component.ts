@@ -56,33 +56,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       type: LineChartService.lineChart,
       legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
       dataList: [
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-user',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-interrupt',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-system',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-idle',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-nice',
-          'dataset': 'value'
-        },
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-system', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-idle', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-nice', 'dataset': 'value'},
       ],
     },
+    {
+      title: "Uptime",
+      type: LineChartService.lineChart,
+      legends: ['Uptime'],
+      dataList: [
+        {'source': 'uptime', 'type': 'uptime', 'dataset': 'value'}
+      ],
+    }
   ];
 
   private erd: any = null;
