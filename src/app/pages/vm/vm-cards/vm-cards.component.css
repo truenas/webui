@@ -95,8 +95,8 @@ md-chip.vm-state-off{
 }
 
 md-chip.vm-state{  
- background-color:#333 !important;
- color:#fff !important;
+ background-color:#ccc !important;
+ /*color:#fff !important;*/
 }
 
 md-chip.vm-state-on,

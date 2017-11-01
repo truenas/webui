@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MaterialModule } from '@angular/material';
 import { EntityModule } from '../../common/entity/entity.module';
 import { WebSocketService, RestService } from '../../../services/';
@@ -46,7 +47,7 @@ export class VmCardsComponent implements OnInit {
   }
   protected loaderOpen: boolean = false;
 
-  constructor(protected ws: WebSocketService,protected rest: RestService, private dialog: DialogService,protected loader: AppLoaderService){}
+  constructor(protected ws: WebSocketService,protected rest: RestService, private dialog: DialogService,protected loader: AppLoaderService,protected router: Router){}
 
   ngOnInit() {
     this.getVmList('init');
@@ -172,6 +173,12 @@ export class VmCardsComponent implements OnInit {
 	this.cards[i].template = 'none';
       }
     }
+  }
+
+  goToDevices(index){
+    this.router.navigate(
+      new Array('').concat([ "vm", this.cards[index].id, "devices", this.cards[index].name ])
+    );
   }
 
   toggleForm(flipState, card, template){
