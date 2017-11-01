@@ -12,6 +12,7 @@ export class BootEnvironmentListComponent {
 
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
+  protected queryCall = 'bootenv.query';
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
   protected entityList: any;
   protected wsActivate = 'bootenv.activate';
@@ -29,16 +30,24 @@ export class BootEnvironmentListComponent {
     sorting : {columns : this.columns},
   };
 
-  /*rowValue(row, attr) {
-    switch(attr) {
-      case 'used':
-        return filesize(row[attr]);
-      case 'refer':
-        return filesize(row[attr]);
-      default:
-        return row[attr];
+  // rowValue(row, attr) {
+  //   switch(attr) {
+  //     case 'used':
+  //       return filesize(row[attr]);
+  //     case 'refer':
+  //       return filesize(row[attr]);
+  //     default:
+  //       return row[attr];
+  //   }
+  // }
+
+
+  rowValue(row, attr) {
+    if (attr === 'created'){
+      return row.created.$date
     }
-  }*/
+    return row[attr];
+  }
 
   constructor(_rest: RestService, private _router: Router) {}
 
@@ -87,13 +96,25 @@ export class BootEnvironmentListComponent {
         this.entityList.doActivate(row.id);
       }
     });
-    actions.push({
-      label : "Keep",
-      id: "keep",
-      onClick : (row) => {
-        this.entityList.doKeep(row.id);
-      }
-    });
+    if (row.keep === true){
+      actions.push({
+        label : "Unkeep",
+        id: "keep",
+        onClick : (row) => {
+          this.entityList.toggleKeep(row.id, row.keep);
+        }
+      });
+
+    } else {
+      actions.push({
+        label : "Keep",
+        id: "keep",
+        onClick : (row) => {
+          this.entityList.toggleKeep(row.id, row.keep);
+        }
+      });
+    }
+
     return actions;
   }
 }
