@@ -9,11 +9,30 @@ md-card.card-filter.mat-card .mat-card-content{
   padding:8px 24px;
 }
 
-.card-filter md-input-container.mat-input-container{
- width:100%;
+md-card.card-filter.mat-card .mat-card-content > div{
+  display:inline-block;
 }
 
 
+md-card.card-filter .filter-field{
+  width:72%;
+}
+
+md-card.card-filter .filter-field md-icon{
+  width:2%;
+  position:absolute;
+  top:24px;
+}
+
+md-card.card-filter .view-controls{
+  width:24%;
+  text-align:center;
+}
+
+.card-filter md-input-container.mat-input-container{
+ width:97%;
+ padding-left:32px;
+}
 
 /* cards */
 .entity-cards-container .entity-card-wrapper{
@@ -95,8 +114,8 @@ md-chip.vm-state-off{
 }
 
 md-chip.vm-state{  
- background-color:#ccc !important;
- /*color:#fff !important;*/
+ background-color:#666 !important;
+ color:#fff !important;
 }
 
 md-chip.vm-state-on,
