@@ -292,4 +292,55 @@ export class EntityTableComponent implements OnInit {
       }
     })
   }
+  doActivate(id) {
+    this.dialog.confirm("Activate", "Are you sure you want to activate it?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call(this.conf.wsActivate, [id]).subscribe(
+          (res) => { this.getData() },
+          (res) => {
+            new EntityUtils().handleError(this, res);
+            this.loader.close();
+          }
+          );
+      }
+    })
+  }
+  toggleKeep(id, status) {
+    if (!status){
+      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?").subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.loaderOpen = true;
+          let data = {};
+          this.busy = this.ws.call(this.conf.wsKeep, [id, { "keep" : true }]).subscribe(
+            (res) => { this.getData() },
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
+            );
+        }
+      })
+    } else {
+      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?").subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.loaderOpen = true;
+          let data = {};
+          this.busy = this.ws.call(this.conf.wsKeep, [id, { "keep" : false }]).subscribe(
+            (res) => { this.getData() },
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
+            );
+        }
+      })
+
+    }
+
+  }
 }
