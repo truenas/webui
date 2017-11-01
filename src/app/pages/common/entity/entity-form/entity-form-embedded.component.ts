@@ -30,7 +30,7 @@ import {FieldRelationService} from './services/field-relation.service';
 @Component({
   selector : 'entity-form-embedded',
   templateUrl : './entity-form-embedded.component.html',
-  styleUrls : [ './entity-form.component.scss' ],
+  styleUrls : [ './entity-form-embedded.component.css' ],
   providers : [ EntityFormService, FieldRelationService ]
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
@@ -40,7 +40,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
   protected pk: any;
   public formGroup: FormGroup;
-  public fieldSets:FieldSet[]
+  public fieldSetDisplay: string;
+  public fieldSets: FieldSet[]
   public fieldConfig: FieldConfig[];
   protected resourceName: string;
   public getFunction;
@@ -119,6 +120,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
     }
 
     this.fieldConfig = this.conf.fieldConfig;
+    this.fieldSetDisplay = this.conf.fieldSetDisplay;
     this.fieldSets = this.conf.fieldSets;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 

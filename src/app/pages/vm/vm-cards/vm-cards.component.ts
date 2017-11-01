@@ -194,7 +194,7 @@ export class VmCardsComponent implements OnInit {
       rpc = 'vm.stop';
     }
     this.ws.call(rpc, [ vm.id ]).subscribe((res) => {
-      console.log([vm.id]);
+      console.log(this.cards[index].state);
       this.refreshVM(index);
       this.pwrBtnLabel = this.pwrBtnOptions[this.cards[index].state];
     });

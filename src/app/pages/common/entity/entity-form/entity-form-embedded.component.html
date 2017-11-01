@@ -7,7 +7,7 @@ Please <button md-raised-button color="primary" class="btn btn-link" type="butto
 
 <div class="md-content">
 	<form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap">
-		<div class="fieldset-container">
+		<div class="fieldset-container fieldset-display-{{ fieldSetDisplay }}">
 			<ng-container *ngFor="let fieldSet of fieldSets; let i = index">
 				<div [ngClass]="fieldSet.class" class="fieldset">
 					<div *ngFor="let field of fieldSet.config; let ii = index" [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">

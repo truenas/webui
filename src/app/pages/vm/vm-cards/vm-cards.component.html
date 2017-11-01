@@ -30,9 +30,9 @@
 				<div class="name-info">
 					<button 
 				 md-fab 
-				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'running','vm-power-btn-on':cards[i].state == 'stopped'}" 
+				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
 				 (click)="toggleVmState(i)"
-				 mdTooltip="{{ pwrBtnLabel }}" mdTooltipPosition="above"
+				 mdTooltip="{{ powerBtnLabel }}" mdTooltipPosition="above"
 																	 >
 																	 <md-icon>power_settings_new</md-icon>
 						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
@@ -49,7 +49,7 @@
 				<div class="side-content-header">
 					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
 					<h3>{{ cards[i].name }}</h3>
-					<md-chip  [ngClass]="{'vm-state-on':cards[i].state == 'running','vm-state-off':cards[i].state == 'stopped'}">{{ cards[i].state }}</md-chip>
+					<md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
 				</div>
 
 				<div class="stats-info">

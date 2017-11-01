@@ -26,23 +26,31 @@ export class VmCardEditComponent {
   protected isEntity: boolean = true;
 
   public fieldConfig:FieldConfig[] = [];
+
+  public fieldSetDisplay:string = 'default';//default | carousel | stepper
   public fieldSets: FieldSet[] = [
-    {
-      name:'Basic Info',
-      class:'basic-info',
-      config:[
-	{ type: 'input', name: 'name', placeholder: 'Name'},
-	{ type: 'input', name : 'description', placeholder : 'Description'},
-	{ type: 'checkbox', name : 'autostart', placeholder : 'Start on Boot'},
-      ]
-    },
     {
       name:'Config',
       class:'config',
       config:[
-	{ type : 'input', name: 'vcpus'  ,placeholder : 'Virtual CPUs'},
-	{ type: 'input', name : 'memory', placeholder : 'Memory Size (MiB)'},
-	{ type: 'select', name : 'bootloader', placeholder : 'Boot Loader Type', options: [] }
+	{ type: 'input', name: 'name', placeholder: 'Name'},
+	{ type: 'input', name : 'description', placeholder : 'Description'}
+      ]
+    },
+    {
+      name:'Boot Options',
+      class:'boot-options',
+      config:[
+	{ type: 'checkbox', name : 'autostart', placeholder : 'Start on Boot', class:'inline'},
+	{ type: 'select', name : 'bootloader', placeholder : 'Boot Loader Type', options: [] , class:'inline'}
+      ]
+    },
+    {
+      name:'Resources',
+      class:'resources',
+      config:[
+	{ type : 'input', name: 'vcpus'  ,placeholder : 'Virtual CPUs',class:'inline'},
+	{ type: 'input', name : 'memory', placeholder : 'Memory Size (MiB)', class:'inline'}
       ]
     }
   ];

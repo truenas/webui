@@ -88,9 +88,15 @@ vm-cards md-card.front {
   position: absolute;
 }
 
+md-chip.vm-state,
 md-chip.vm-state-on,
 md-chip.vm-state-off{
   padding:4px 10px;
+}
+
+md-chip.vm-state{  
+ background-color:#333 !important;
+ color:#fff !important;
 }
 
 md-chip.vm-state-on,
