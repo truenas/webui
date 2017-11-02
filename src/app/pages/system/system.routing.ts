@@ -10,6 +10,7 @@ import { ConfigResetComponent } from './general/config-reset/config-reset.compon
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
+import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
@@ -96,6 +97,11 @@ export const routes: Routes = [
       {
         path: 'rename/:pk',
         component: BootEnvironmentRenameComponent,
+        data: { title: 'Rename', breadcrumb: 'Rename' },
+      },
+      {
+        path: 'create',
+        component: BootEnvironmentCreateComponent,
         data: { title: 'Rename', breadcrumb: 'Rename' },
       }
     ]

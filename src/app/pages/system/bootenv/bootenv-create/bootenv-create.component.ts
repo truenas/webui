@@ -9,7 +9,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-bootenv-rename',
+  selector : 'app-bootenv-create',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class BootEnvironmentCreateComponent {
