@@ -61,7 +61,33 @@ export class BootEnvironmentListComponent {
     }
     return true;
   }
-
+  getAddActions() {
+    let actions = [];
+    actions.push({
+      label : "create",
+      icon: "album",
+      onClick : () => {
+        this.entityList.doCreate();
+      }
+    });
+    actions.push({
+      label : "scrub",
+      icon: "device_hub",
+      onClick : () => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "scrub" ]));
+      }
+    });
+    actions.push({
+      label : "status",
+      icon: "local_laundry_service",
+      onClick : () => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "status" ]));
+      }
+    });
+    return actions;
+  }
   getActions(row) {
     let actions = [];
     if (row.active === '-'){

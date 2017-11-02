@@ -343,4 +343,20 @@ export class EntityTableComponent implements OnInit {
     }
 
   }
+  doCreate(input){
+    this.dialog.modalDialog("create").subscribe((res)=>{
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call('bootenv.create', [input]).subscribe(
+          (res) => { this.getData() },
+          (res) => {
+            new EntityUtils().handleError(this, res);
+            this.loader.close();
+          }
+        );
+      }
+    })
+  }
 }

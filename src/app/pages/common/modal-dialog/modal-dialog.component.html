@@ -1,0 +1,16 @@
+<h1 md-dialog-title>
+    {{ title }}</h1>
+
+<div md-dialog-content>
+    <form (ngSubmit)="onSubmit($event)">
+        <md-input-container>
+            <input mdInput id="input" placeholder="Name">
+        </md-input-container>
+    </form>
+</div>
+
+<div md-dialog-actions>
+    <button class="mat-raised-button mat-primary" (click)="dialogRef.close(true)" type="submit">OK</button> &nbsp;
+    <span fxFlex></span>
+    <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)" type="button">Cancel</button>
+</div>
