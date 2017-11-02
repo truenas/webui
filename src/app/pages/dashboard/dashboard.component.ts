@@ -105,6 +105,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = res;
       }
     });
+    this.ws.call('stats.get_sources').subscribe((res) => {
+      for (const prop in res) {
+        if (prop.startsWith("disk-")) {
+          this.graphs.push({
+            title: prop + " (disk_ops)",
+            type: LineChartService.lineChart,
+            legends: ["read", "write"],
+            dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
+            {source: prop, type: 'disk_ops', dataset: 'write'}]
+          });
+        }
+      }
+    });
 
 
     // This invokes the element-resize-detector js library under node_modules
