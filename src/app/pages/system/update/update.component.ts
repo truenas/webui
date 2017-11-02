@@ -1,10 +1,12 @@
 import { Component,OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MdDialog, MdDialogRef } from '@angular/material';
+import * as _ from 'lodash';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-update',
@@ -26,8 +28,18 @@ export class UpdateComponent implements OnInit {
   public busy: Subscription;
   public busy2: Subscription;
 
+  protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {}
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {
+    router.events.subscribe((res)=>{
+      if (res instanceof NavigationStart) {
+        if (res.url == '/sessions/signin' && !this.ws.connected) {
+          this.dialogRef.close();
+          router.navigate(['/reboot']);
+        }
+      }
+    })
+  }
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
@@ -40,7 +52,7 @@ export class UpdateComponent implements OnInit {
         this.trains.push({ name: i });
       }
       this.train = res.selected;
-    })
+    });
   }
 
   toggleAutoCheck() {
@@ -98,9 +110,9 @@ export class UpdateComponent implements OnInit {
   }
 
   update() {
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" } });
-    dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: true }]);
-    dialogRef.componentInstance.submit();
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: true }]);
+    this.dialogRef.componentInstance.submit();
   }
 
 }
