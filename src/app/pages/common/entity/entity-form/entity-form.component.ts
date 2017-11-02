@@ -291,7 +291,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                           }
 
                           if (this.conf.resource_name == "system/advanced") {                            
-                            this.adminLayout.isShowFooterConsole = value['adv_consolemsg'];
+                            this.adminLayout.onShowConsoleFooterBar(value['adv_consolemsg']);
                           }                          
                         },
                         (res) => {
