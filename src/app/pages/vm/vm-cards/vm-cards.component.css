@@ -2,7 +2,8 @@
 
 md-card.card-filter.mat-card{
   width: 85%;
-  margin: 0 auto;
+  margin: 24px auto 0;
+  overflow:visible;
 }
 
 md-card.card-filter.mat-card .mat-card-content{
@@ -15,7 +16,7 @@ md-card.card-filter.mat-card .mat-card-content > div{
 
 
 md-card.card-filter .filter-field{
-  width:72%;
+  width:84%;
 }
 
 md-card.card-filter .filter-field md-icon{
@@ -25,8 +26,13 @@ md-card.card-filter .filter-field md-icon{
 }
 
 md-card.card-filter .view-controls{
-  width:24%;
+  width:14%;
   text-align:center;
+}
+
+md-card.card-filter .view-controls .add-vm{
+  position: absolute;
+  right: 16px;  
 }
 
 .card-filter md-input-container.mat-input-container{

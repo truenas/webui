@@ -20,10 +20,13 @@ export class VmCardEditComponent {
 
   @Input() machineId: string = '';
   @Output() cancel: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() saved: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() saved: EventEmitter<any> = new EventEmitter<any>();
+  @Input() isNew: boolean = false;
 
   protected resource_name: string = 'vm/vm/' + this.machineId;
   protected isEntity: boolean = true;
+  protected addCall = 'vm.create';
+  //protected route_add: string[] = [ 'vm', 'add' ];
 
   public fieldConfig:FieldConfig[] = [];
 
@@ -88,7 +91,18 @@ goBack(){
 }
 
 onSuccess(message?:any){
-  this.saved.emit(false);
-  console.log(message);
+
+  let result: {flipState:boolean;id?:any} = {flipState:false,id:message};
+  if(message.data){
+    //console.log(message);
+    result.id = message.data.id;
+  } else {
+    result.id = message;
+  }
+  if(result.id){
+    this.saved.emit(result);
+  }
+
+  //console.log(message);
 }
 }

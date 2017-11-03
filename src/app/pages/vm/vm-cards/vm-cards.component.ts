@@ -13,18 +13,19 @@ import 'rxjs/add/observable/fromEvent';
 
 
 interface VmProfile {
-  name:string;
-  id:string;
-  description:string;
-  info:string;
-  bootloader:string;
-  state:string;
-  autostart:string;
-  vcpus:string;
-  memory:string;
-  lazyLoaded:boolean;
-  template:string; // for back face of card
+  name?:string;
+  id?:string;
+  description?:string;
+  info?:string;
+  bootloader?:string;
+  state?:string;
+  autostart?:string;
+  vcpus?:string;
+  memory?:string;
+  lazyLoaded?:boolean;
+  template?:string; // for back face of card
   cardActions?:Array<any>;
+  isNew:boolean;
 }
 
 @Component({
@@ -38,6 +39,7 @@ export class VmCardsComponent implements OnInit {
   @Input() searchTerm:string = '';
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List: 
+  @Input() viewMode = "cards"; // cards || table
 
   public tpl = "edit";
   private pwrBtnLabel: string;
@@ -68,8 +70,8 @@ export class VmCardsComponent implements OnInit {
 	console.log(card[key]);
 	var result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
 	//if(result !== -1){ 
-	  console.log(result)
-	  return result;
+	console.log(result)
+	return result;
 	//}
       });
       console.log("**** this.display ****");
@@ -89,7 +91,8 @@ export class VmCardsComponent implements OnInit {
       vcpus:data.vcpus,
       memory:data.memory,
       lazyLoaded: false,
-      template:'none'
+      template:'none',
+      isNew:false
     }   
     return card;
   }
@@ -109,7 +112,13 @@ export class VmCardsComponent implements OnInit {
     })  
   }
 
-  getVm(index) {
+  getVm(index,id?:any) {
+    if(this.cards[index].isNew && id){
+      console.log(id);
+      this.cards[index].isNew = false;
+      this.cards[index].id = id;
+    } 
+    
     this.rest.get('vm/vm/'+this.cards[index].id, {}).subscribe((res) => {
       var card = this.parseResponse(res.data);
       this.cards[index] = card;
@@ -118,33 +127,46 @@ export class VmCardsComponent implements OnInit {
   }
 
   updateCache(){
-      this.cache = [];
-      this.getVmList();
+    this.cache = [];
+    this.getVmList();
   }
 
-  refreshVM(index){
-    this.getVm(index);
+  refreshVM(index,id:any){
+    //let id: any;
+    //console.log(id);
+    /*
+    if(evnt.data.id){
+      id = evnt.data.id
+    } else {
+      id = evnt;
+    }
+     */
+      this.getVm(index,id);
   }
 
-  /*
+
   addVM(){
-    var card: VmProfile = { 
+    let index = this.cards.length;
+    let card: VmProfile = { 
       name:"",
-      id:"",
       description:"",
       info:"",
       bootloader:"",
       state:"",
       autostart:"",
       vcpus:"",
-      memory:""
-    }   
+      memory:"",
+      lazyLoaded: false,
+      template:'',
+      isNew:true
+    }
     this.cards.push(card);
+    this.toggleForm(true,this.cards[index],'edit');
   }
-   */
+
 
   deleteVM(index) {
-	  this.dialog.confirm("Delete", "Are you sure you want to delete " + this.cards[index].name + "?").subscribe((res) => {
+    this.dialog.confirm("Delete", "Are you sure you want to delete " + this.cards[index].name + "?").subscribe((res) => {
       if (res) {
 	this.loader.open();
 	this.loaderOpen = true;
@@ -167,7 +189,7 @@ export class VmCardsComponent implements OnInit {
   focusVM(index){
     for(var i = 0; i < this.cards.length; i++){
       if(i !== index && this.cards[i].isFlipped ){
-	console.log("Index = " + index + " && i = " + i);
+	//console.log("Index = " + index + " && i = " + i);
 	this.cards[i].isFlipped = false;
 	this.cards[i].lazyLoaded = false;
 	this.cards[i].template = 'none';
@@ -183,6 +205,7 @@ export class VmCardsComponent implements OnInit {
 
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
+    //console.log(flipState);
     card.template = template;
     card.isFlipped = flipState;
     card.lazyLoaded = !card.lazyLoaded;
@@ -202,17 +225,17 @@ export class VmCardsComponent implements OnInit {
     }
     this.ws.call(rpc, [ vm.id ]).subscribe((res) => {
       console.log(this.cards[index].state);
-      this.refreshVM(index);
+      this.refreshVM(index,vm.id);
       this.pwrBtnLabel = this.pwrBtnOptions[this.cards[index].state];
     });
   }
 
   vnc(index){
-  var vm = this.cards[index];
-  this.ws.call('vm.get_vnc_web', [ vm.id ]).subscribe((res) => {
-          for (let item in res){
-            window.open(res[item]);
-          }   
-        }); 
+    var vm = this.cards[index];
+    this.ws.call('vm.get_vnc_web', [ vm.id ]).subscribe((res) => {
+      for (let item in res){
+	window.open(res[item]);
+      }   
+    }); 
   }
 }

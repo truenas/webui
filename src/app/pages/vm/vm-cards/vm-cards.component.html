@@ -18,15 +18,16 @@
 		<div class="view-controls">
 			<md-button-toggle-group >
 				<md-button-toggle value="cards">Cards</md-button-toggle>
-				<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>
+				<!--<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>-->
 				<md-button-toggle value="Table" disabled>Table</md-button-toggle>
 			</md-button-toggle-group>
+			<button md-mini-fab class="add-vm" (click)="addVM()">
+				<md-icon>add</md-icon>
+			</button>
 		</div>
 
 	</md-card-content>
 </md-card>
-
-<!--<div *ngFor="let item of display;">{{item.name}}</div>-->
 
 <div class="entity-cards-container">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
@@ -86,9 +87,10 @@
 		<ng-template #cardback let-name="name" >
 			<vm-card-edit 
 												 *ngIf="cards[i].template == 'edit'" 
+												 [isNew]="cards[i].isNew"
 												 [machineId]="cards[i].id"  
 												 (cancel)="toggleForm($event,cards[i],'none')"
-												 (saved)="toggleForm($event,cards[i],'none');refreshVM(i)"
+												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
 												 ></vm-card-edit>
 		</ng-template>
 
