@@ -174,7 +174,11 @@ export class EntityTableComponent implements OnInit {
       options['sort'] = sort.join(',');
     }
     if (this.conf.queryCall) {
-      this.getFunction = this.ws.call(this.conf.queryCall, []);
+      if (this.conf.queryCallOption) {
+        this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+      } else {
+        this.getFunction = this.ws.call(this.conf.queryCall, []);
+      }
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
