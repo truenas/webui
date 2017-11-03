@@ -1,13 +1,9 @@
-import { ApplicationRef, Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import * as _ from 'lodash';
+import { ApplicationRef, Component, Injector} from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
-import { RestService, UserService, WebSocketService } from '../../../services/';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FileUploader } from 'ng2-file-upload';
+import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import {MdDialog} from '@angular/material';
 
 @Component({
   selector : 'app-support',
@@ -24,15 +20,17 @@ export class SupportComponent {
   body: any;
   type: any;
   category: any;
+  attachment: File;
   payload = {};
   busy: Subscription;
+  isAttachmentValid: boolean = true;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MdDialog)
               {
               }
-  
+
   onSubmit(): void{
     this.payload['username'] = this.username;
     this.payload['password'] = this.password;
@@ -41,14 +39,16 @@ export class SupportComponent {
     this.payload['title'] = this.title;
     this.payload['body'] = this.body;
     this.payload['type'] = this.type;
+    this.payload['attachment'] = this.attachment;
 
     this.openDialog();
   };
 
   openDialog() {
-    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
-    dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
-    dialogRef.componentInstance.submit();
+    console.log('this si the pat ====> ', this.payload);
+    // let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
+    // dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+    // dialogRef.componentInstance.submit();
   }
 
   onBlurMethod(){
@@ -66,4 +66,11 @@ export class SupportComponent {
     }
   }
 
+
+  selectFile(event: any) {
+    const fileList: File[] = event.target.files;
+    this.attachment = fileList[0];
+    this.isAttachmentValid = this.attachment.size < 20000000;
+
+  }
 }

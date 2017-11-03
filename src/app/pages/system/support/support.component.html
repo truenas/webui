@@ -40,8 +40,13 @@
             <textarea mdInput mdAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
         </md-input-container>
         <br>
-        <input type="file" ng2FileSelect multiple />
+        <input type="file"
+               (change)="selectFile($event)"
+               multiple />
         <br>
-        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">Submit Ticket</button>
+        <div class="alert alert-danger" *ngIf="!isAttachmentValid">
+          <p>Attached document should not be less than 20MB</p>
+        </div>
+        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit" [disabled]="!isAttachmentValid">Submit Ticket</button>
     </div>
 </md-card>
