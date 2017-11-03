@@ -74,6 +74,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
+
+    this.showResilveringDetails();
   }
 
   ngOnDestroy() {
@@ -142,6 +144,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   showResilveringDetails() {
-    this.snackBar.open('Resilvering name - X% Complete', 'OK');
+    this.ws.call('zfs.pool.scan').subscribe(res => {
+      console.log('res =====>', res);
+    }, err => {
+      console.log('err =====>', err);
+    })
   }
 }
