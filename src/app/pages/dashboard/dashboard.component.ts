@@ -105,19 +105,38 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = res;
       }
     });
+    // this.ws.call('stats.get_sources').subscribe((res) => {
+    //   for (const prop in res) {
+    //     if (prop.startsWith("disk-")) {
+    //       this.graphs.push({
+    //         title: prop + " (disk_ops)",
+    //         type: LineChartService.lineChart,
+    //         legends: ["read", "write"],
+    //         dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
+    //         {source: prop, type: 'disk_ops', dataset: 'write'}]
+    //       });
+    //     }
+    //   }
+    // });
+
     this.ws.call('stats.get_sources').subscribe((res) => {
+      let gLegends = [], gDataList = [];
       for (const prop in res) {
         if (prop.startsWith("disk-")) {
-          this.graphs.push({
-            title: prop + " (disk_ops)",
-            type: LineChartService.lineChart,
-            legends: ["read", "write"],
-            dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
-            {source: prop, type: 'disk_ops', dataset: 'write'}]
-          });
+          gLegends.push(prop + " (read)");
+          gLegends.push(prop + " (write)");
+          gDataList.push({source: prop, type: 'disk_ops', dataset: 'read'});
+          gDataList.push({source: prop, type: 'disk_ops', dataset: 'write'});
         }
       }
-    });
+
+      this.graphs.push({
+        title: "Disk OPS",
+        type: LineChartService.lineChart,
+        legends: gLegends,
+        dataList: gDataList
+      });
+     });
 
 
     // This invokes the element-resize-detector js library under node_modules
