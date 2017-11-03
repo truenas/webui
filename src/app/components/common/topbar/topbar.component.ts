@@ -127,7 +127,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onShutdown() {
     this.dialogService.confirm("Shutdown", "You are about to SHUTDOWN the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to shutdown the system.").subscribe((res) => {
       if (res) {
-        this.ws.call('system.shutdown', {});
+        this.ws.call('system.shutdown', {}).subscribe(res => {});
       }
     });
   }
@@ -135,7 +135,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onReboot() {
     this.dialogService.confirm("Reboot", "You are about to REBOOT the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to reboot the system.").subscribe((res) => {
       if (res) {
-        this.ws.call('system.reboot', {});
+        this.ws.call('system.reboot', {}).subscribe(res => {});
       }
     });
   }
