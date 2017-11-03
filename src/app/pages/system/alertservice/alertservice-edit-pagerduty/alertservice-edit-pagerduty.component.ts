@@ -53,7 +53,7 @@ export class AlertServiceEditPagerdutyComponent {
   ];
 
 
-  resource_transformIncommingRestData(data:any): any {
+  resourceTransformIncomingRestData(data:any): any {
     data.client_name = data.attributes.client_name;
     data.service_key = data.attributes.service_key;
     

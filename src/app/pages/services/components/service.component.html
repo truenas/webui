@@ -1,8 +1,9 @@
 <md-card class="m-0 p-0">
 <md-toolbar class="mat-bg-primary" >
   <md-slide-toggle
-    [checked]="status.state == 'RUNNING' ? 'checked' : ''"
-    (click)="toggle()">
+    #serviceStatus
+    [checked]="status.state === 'RUNNING'"
+    (change)="toggle()">
   </md-slide-toggle>
   <md-card-title class="mb-05 ml-1 service-item-title">
     {{status.label}}
@@ -20,7 +21,7 @@
         <label mdLine class="mr-1"><strong>Auto-start:</strong></label>
         <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox>
       </md-list-item>
-    </md-list>      
+    </md-list>
   <md-divider></md-divider>
   <md-card-actions class="mt-1 mr-1 mb-1 ml-1">
   <button md-raised-button color="primary" (click)="editService(this.status.service)">

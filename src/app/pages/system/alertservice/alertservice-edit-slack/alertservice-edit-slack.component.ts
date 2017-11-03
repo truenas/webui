@@ -68,7 +68,7 @@ export class AlertServiceEditSlackComponent {
     }
   ];
 
-  resource_transformIncommingRestData(data:any): any {
+  resourceTransformIncomingRestData(data:any): any {
     
     data.username = data.attributes.username;
     data.cluster_name = data.attributes.cluster_name;

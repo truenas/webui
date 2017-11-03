@@ -4,6 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
 
 import {EntityModule} from '../common/entity/entity.module';
+import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
 
 import {ServiceAFPComponent} from './components/service-afp';
 import {ServiceCIFSComponent} from './components/service-cifs';
@@ -26,7 +27,7 @@ import {Services} from './services.component';
 import {routing} from './services.routing';
 
 @NgModule({
-  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule ],
+  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule ],
   declarations : [
     Service, Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,
