@@ -107,11 +107,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
     this.ws.call('stats.get_sources').subscribe((res) => {
       let gLegends = [], gDataList = [];
-      
+
       for (const prop in res) {
         if (prop.startsWith("disk-") && !prop.startsWith("disk-cd")) {
-          gLegends.push(prop + " (read)");
-          gLegends.push(prop + " (write)");
+          gLegends.push(prop.replace("disk-", "") + " (read)");
+          gLegends.push(prop.replace("disk-", "") + " (write)");
           gDataList.push({source: prop, type: 'disk_ops', dataset: 'read'});
           gDataList.push({source: prop, type: 'disk_ops', dataset: 'write'});
         }
