@@ -2,19 +2,12 @@ import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
-
-import {
-  RestService,
-  SystemGeneralService,
-  WebSocketService
-} from '../../../services/';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
+import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
+import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'activedirectory',
-  template : ` <entity-form [conf]="this"></entity-form>`,
+  template : '<entity-form [conf]="this"></entity-form>',
 })
 
 export class ActiveDirectoryComponent {
@@ -49,29 +42,9 @@ export class ActiveDirectoryComponent {
       placeholder : 'How many recovery attempts',
     },
     {
-      type : 'input',
-      name : 'ad_dcname',
-      placeholder : 'Domain Controller',
-    },
-    {
-      type : 'input', 
-      name : 'ad_gcname', 
-      placeholder : 'Global Catalog Server'
-    },
-    {
-      type : 'input', 
-      name : 'ad_site', 
-      placeholder : 'Site Name'
-    },
-    {
-      type : 'input', 
-      name : 'ad_timeout', 
-      placeholder : 'AD Timeout'
-    },
-    {
-      type : 'input', 
-      name : 'ad_dns_timeout', 
-      placeholder : 'DNS Timeout'
+      type : 'checkbox',
+      name : 'ad_enable_monitor',
+      placeholder : 'Enable AD Monitoring'
     },
     {
       type : 'select',
@@ -84,56 +57,6 @@ export class ActiveDirectoryComponent {
       name : 'ad_certificate',
       placeholder : 'Certificate',
       options : []
-    },
-    {
-      type : 'input',
-      name : 'ad_userdn',
-      placeholder : 'User Base',
-    },
-    {
-      type : 'input',
-      name : 'ad_groupdn',
-      placeholder : 'Group Base',
-    },
-    {
-      type : 'select',
-      name : 'ad_kerberos_realm',
-      placeholder : 'Kerberos Realm',
-      options : []
-    },
-    {
-      type : 'select',
-      name : 'ad_kerberos_principal',
-      placeholder : 'Kerberos Principal',
-      options : []
-    },
-    {
-      type : 'select',
-      name : 'ad_idmap_backend',
-      placeholder : 'Idmap backend',
-      options : []
-    },
-    {
-      type : 'select',
-      name : 'ad_nss_info',
-      placeholder : 'Winbind NSS Info',
-      options : []
-    },
-    {
-      type : 'select',
-      name : 'ad_ldap_sasl_wrapping',
-      placeholder : 'SASL wrapping',
-      options : []
-    },
-    {
-      type : 'input',
-      name : 'ad_netbiosname_a',
-      placeholder : 'Netbios Name',
-    },
-    {
-      type : 'input',
-      name : 'ad_netbiosalias',
-      placeholder : 'NetBIOS alias',
     },
     {
       type : 'checkbox',
@@ -166,40 +89,110 @@ export class ActiveDirectoryComponent {
       placeholder : 'Disable FreeNAS Cache',
     },
     {
-      type : 'checkbox',
-      name : 'ad_enable_monitor',
-      placeholder : 'Enable AD Monitoring'
+      type : 'input',
+      name : 'ad_userdn',
+      placeholder : 'User Base',
+    },
+    {
+      type : 'input',
+      name : 'ad_groupdn',
+      placeholder : 'Group Base',
+    },
+    {
+      type : 'input', 
+      name : 'ad_site', 
+      placeholder : 'Site Name'
+    },
+    {
+      type : 'input',
+      name : 'ad_dcname',
+      placeholder : 'Domain Controller',
+    },
+    {
+      type : 'input', 
+      name : 'ad_gcname', 
+      placeholder : 'Global Catalog Server'
+    },
+    {
+      type : 'select',
+      name : 'ad_kerberos_realm',
+      placeholder : 'Kerberos Realm',
+      options : []
+    },
+    {
+      type : 'select',
+      name : 'ad_kerberos_principal',
+      placeholder : 'Kerberos Principal',
+      options : []
+    }, 
+    {
+      type : 'input', 
+      name : 'ad_timeout', 
+      placeholder : 'AD Timeout'
+    },
+    {
+      type : 'input', 
+      name : 'ad_dns_timeout', 
+      placeholder : 'DNS Timeout'
+    },
+    {
+      type : 'select',
+      name : 'ad_idmap_backend',
+      placeholder : 'Idmap backend',
+      options : []
+    },
+    {
+      type : 'select',
+      name : 'ad_nss_info',
+      placeholder : 'Winbind NSS Info',
+      options : []
+    },
+    {
+      type : 'select',
+      name : 'ad_ldap_sasl_wrapping',
+      placeholder : 'SASL wrapping',
+      options : []
     },
     {
       type : 'checkbox',
       name : 'ad_enable',
       placeholder : 'Enable',
     },
+    {
+      type : 'input',
+      name : 'ad_netbiosname_a',
+      placeholder : 'Netbios Name',
+    },
+    {
+      type : 'input',
+      name : 'ad_netbiosalias',
+      placeholder : 'NetBIOS alias',
+    }
   ];
 
   protected advanced_field: Array<any> = [
-    'ad_gcname',
-    'ad_dcname',
-    'ad_site',
-    'ad_timeout',
-    'ad_dns_timeout',
     'ad_ssl',
     'ad_certificate',
-    'ad_userdn',
-    'ad_groupdn',
-    'ad_kerberos_realm',
-    'ad_kerberos_principal',
-    'ad_idmap_backend',
-    'ad_nss_info',
-    'ad_ldap_sasl_wrapping',
-    'ad_netbiosname_a',
-    'ad_netbiosalias',
     'ad_verbose_logging',
     'ad_unix_extensions',
     'ad_allow_trusted_doms',
     'ad_use_default_domain',
     'ad_allow_dns_updates',
     'ad_disable_freenas_cache',
+    'ad_userdn',
+    'ad_groupdn',
+    'ad_site',
+    'ad_dcname',
+    'ad_gcname',
+    'ad_kerberos_realm',
+    'ad_kerberos_principal',
+    'ad_timeout',
+    'ad_dns_timeout',
+    'ad_idmap_backend',
+    'ad_nss_info',
+    'ad_ldap_sasl_wrapping',
+    'ad_netbiosname_a',
+    'ad_netbiosalias',    
   ];
 
   isCustActionVisible(actionname: string) {
@@ -213,19 +206,20 @@ export class ActiveDirectoryComponent {
 
   public custActions: Array<any> = [
     {
-      id : 'basic_mode',
-      name : 'Basic Mode',
+      'id' : 'basic_mode',
+      'name' : 'Basic Mode',
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      'name' : 'Advanced Mode',
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
 
   protected ad_certificate: any;
   protected ad_kerberos_realm: any;
+  protected ad_kerberos_principal: any;
   protected ad_ssl: any;
   protected ad_idmap_backend: any;
   protected ad_nss_info: any;  
@@ -237,12 +231,19 @@ export class ActiveDirectoryComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   afterInit(entityEdit: any) {
-
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ad_kerberos_realm = _.find(this.fieldConfig, {name : 'ad_kerberos_realm'});
       res.data.forEach((item) => {
         this.ad_kerberos_realm.options.push(
             {label : item.krb_realm, value : item.id});
+      });
+    });
+
+    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+      this.ad_kerberos_principal = _.find(this.fieldConfig, {name : 'ad_kerberos_principal'});
+      res.data.forEach((item) => {
+        this.ad_kerberos_principal.options.push(
+            {label : item.principal_name, value : item.id});
       });
     });
 
