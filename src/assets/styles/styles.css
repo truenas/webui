@@ -270,7 +270,7 @@ code {
 
 .mat-card {
     margin: .333333rem;
-    overflow: hidden;
+    /*overflow: hidden;*/ /* Removed by Daisuke */
 }
 .mat-card .mat-card-title .mat-divider, .mat-divider.full-width {
     margin-left: -24px;

@@ -66,7 +66,6 @@ export class WebSocketService {
   }
 
   onmessage(msg) {
-
     try {
       var data = JSON.parse(msg.data);
     } catch (e) {
@@ -99,7 +98,6 @@ export class WebSocketService {
       }
       if (subObserver) {
         subObserver.next(data.fields);
-        subObserver.complete();
       }
     } else if (data.msg == "changed") {
       this.subscriptions.forEach((v, k) => {

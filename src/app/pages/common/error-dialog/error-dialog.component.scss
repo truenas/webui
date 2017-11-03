@@ -1,0 +1,49 @@
+.mat-dialog-title {
+  .warning-icon {
+    color: #ffc107;
+    position: relative;
+    top: 8px;
+    font-size: 35px;
+    margin-right: 10px;
+  }
+}
+
+.mat-dialog-content {
+  max-width: 600px;
+
+  .more-info {
+    cursor: pointer;
+    margin-bottom: 10px;
+
+    .mat-icon {
+      position: relative;
+      top: 7px;
+    }
+  }
+
+  .backtrace-panel {
+    max-height: 0;
+    padding: 0px;
+    border: 0px;
+    overflow: hidden;
+    -webkit-transition: max-height 0.3s linear;
+    -moz-transition: max-height 0.3s linear;
+    -o-transition: max-height 0.3s linear;
+    -ms-transition: max-height 0.3s linear;
+    transition: max-height 0.5s linear;
+
+    &.open {
+      max-height: calc( 100px + 2rem + 4px );
+      padding: 2px;
+    }
+
+    textarea {
+      overflow: auto;
+      background: #eee;
+      border: 1px solid #ddd;
+      min-height: 100px;
+      padding: 1rem;
+      width: calc( 100% - 2rem );
+    }
+  }
+}

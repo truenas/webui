@@ -35,7 +35,7 @@
 				<ng-container cdkColumnDef="{{col.prop}}">
 					<md-header-cell *cdkHeaderCellDef md-sort-header> {{col.name}} </md-header-cell>
 					<md-cell *cdkCellDef="let row">
-						<div style="overflow: hidden; height: 20px;">
+						<div style="overflow: hidden; height: 20px;" title="{{row[col.prop]}}">
 							{{row[col.prop]}}
 						</div>
 					</md-cell>
