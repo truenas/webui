@@ -208,7 +208,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
     this.paginationPageIndex = 0;
     this.paginationPageSize = 5;
-   this.setPaginationInfo( this.tabChartsMappingDataSelected );
+    this.setPaginationInfo( this.tabChartsMappingDataSelected );
     
   }
   
