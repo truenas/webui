@@ -1,11 +1,21 @@
 <md-card title="Are You Sure?">
-	<form>
-  	<div *ngIf="error" class="error">
-    		<span>{{ error }}</span>
-  	</div>
-  	<p><md-checkbox (change)="toggleSubmit($event)">Are you sure you want to delete?</md-checkbox></p>
-   	<button md-raised-button color="primary" class="btn btn-outline-danger" [disabled]="!isSubmitEnabled" (click)="doSubmit()">Yes</button>
-   	<button md-raised-button color="accent" class="btn btn-outline-warning" (click)="doCancel()">Cancel</button>
-	</form>
-
+  <form>
+    <div *ngIf="error" class="error">
+      <span>{{ error }}</span>
+    </div>
+    <p>
+      <md-checkbox (change)="toggleSubmit($event)">Are you sure you want to delete?</md-checkbox>
+    </p>
+    <div *ngIf="conf.deleteSnapshot; else else_condition">
+      <p>
+        <md-checkbox (change)="toggleExtraCheck($event)">I'm aware this will destory snapshots within this dataset</md-checkbox>
+      </p>
+      <button md-raised-button color="primary" class="btn btn-outline-danger" [disabled]="!isSubmitEnabled || !extraWarning" (click)="doSubmit()">Yes</button>
+      <button md-raised-button color="accent" class="btn btn-outline-warning" (click)="doCancel()">Cancel</button>
+    </div>
+    <ng-template #else_condition>
+      <button md-raised-button color="primary" class="btn btn-outline-danger" [disabled]="!isSubmitEnabled" (click)="doSubmit()">Yes</button>
+      <button md-raised-button color="accent" class="btn btn-outline-warning" (click)="doCancel()">Cancel</button>
+    </ng-template>
+  </form>
 </md-card>

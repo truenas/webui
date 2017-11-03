@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule, MdTableModule } from '@angular/material';
+import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
@@ -19,6 +19,8 @@ import { FormInputComponent } from './entity-form/components/form-input/form-inp
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
+import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
+
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
@@ -44,7 +46,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule
+    Ng2DropdownModule, NgUploaderModule, MdSortModule 
   ],
   declarations: [
     EntityDeleteComponent,
@@ -62,6 +64,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
+    FormTextareaButtonComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
@@ -95,6 +98,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormSelectComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
+    FormTextareaButtonComponent,
     FormPermissionsComponent,
     FormArrayComponent,
     FormUploadComponent,

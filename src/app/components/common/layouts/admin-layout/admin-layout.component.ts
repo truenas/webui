@@ -1,4 +1,4 @@
-import { RestService } from '../../../../services';
+import { RestService, WebSocketService } from '../../../../services';
 import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
@@ -9,6 +9,7 @@ import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../consolepanel/consolepanel-dialog.component';
+import {UUID} from 'angular2-uuid';
 
 @Component({
   selector: 'app-admin-layout',
@@ -20,6 +21,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenavOpen: Boolean = true;
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
+  consoleMsg: String = "";
+  consoleMSgList: any[] = [];
 
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -29,6 +32,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public themeService: ThemeService,
     private media: ObservableMedia,
     protected rest: RestService,
+    protected ws: WebSocketService,
     public translate: TranslateService,
     public dialog: MdDialog) {
     // Close sidenav after route change in mobile
@@ -67,6 +71,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   updateSidenav() {
     let self = this;
+
     setTimeout(() => {
       self.isSidenavOpen = !self.isMobile;
       self.isSidenotOpen = false;
@@ -87,18 +92,61 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   checkIfConsoleMsgShows() {
     this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
-      this.isShowFooterConsole = res.data['adv_consolemsg'];
-      this.getLogConsoleMsg();
+      this.onShowConsoleFooterBar(res.data['adv_consolemsg']);    
     });
   }
 
   getLogConsoleMsg() {
-    // Adding console messages API here
+    let subName = "filesystem.file_tail_follow:/var/log/messages:500";
+    let neededNumberconsoleMsg = 3; // Just 3 messages for footer bar
+
+    this.ws.sub(subName).subscribe((res) => {
+      if(res.data != ""){
+        this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
+      }      
+    });
+  }
+
+  accumulateConsoleMsg(msg, num) {
+    let msgs = "";
+
+    if(msg != "") {
+      // consoleMSgList will store just 500 messages.
+      this.consoleMSgList.push(msg);
+      if(this.consoleMSgList.length > 500) {
+        this.consoleMSgList.shift();
+      }
+    }    
+    if(num > 500) {
+      num = 500;
+    }
+    if(num > this.consoleMSgList.length) {
+      num = this.consoleMSgList.length;
+    }
+    for (let i = this.consoleMSgList.length - 1; i >= this.consoleMSgList.length - num; --i) {
+      msgs = this.consoleMSgList[i] + msgs;
+    }
+
+    return msgs;
+  }
+
+  onShowConsoleFooterBar(data) {
+    if(data && this.consoleMsg == "") {
+      this.getLogConsoleMsg();      
+    }
+
+    this.isShowFooterConsole = data;
   }
 
   onShowConsolePanel() {
-    let dialogRef = this.dialog.open(ConsolePanelModalDialog, {
-      width: '600px'
+    let dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
+    const sub = dialogRef.componentInstance.onEventEmitter.subscribe(() => {
+      dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg("", 500);
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      clearInterval(dialogRef.componentInstance.intervalPing);
+      sub.unsubscribe();
     });
   }
 
