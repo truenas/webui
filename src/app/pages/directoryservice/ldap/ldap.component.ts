@@ -23,21 +23,20 @@ export class LdapComponent {
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input', 
-      name : 'ldap_hostname', 
+      type : 'input',
+      name : 'ldap_hostname',
       placeholder : 'Hostname'
     },
     {
-      type : 'input', 
-      name : 'ldap_basedn', 
+      type : 'input',
+      name : 'ldap_basedn',
       placeholder : 'Base DN'
     },
     {
-      type : 'input', 
-      name : 'ldap_binddn', 
+      type : 'input',
+      name : 'ldap_binddn',
       placeholder : 'Bind DN'
     },
-
     {
       type : 'input',
       name : 'ldap_bindpw',
@@ -50,13 +49,13 @@ export class LdapComponent {
       placeholder : 'Allow Anonymous Binding',
     },
     {
-      type : 'input', 
-      name : 'ldap_usersuffix', 
+      type : 'input',
+      name : 'ldap_usersuffix',
       placeholder : 'User Suffix'
     },
     {
-      type : 'input', 
-      name : 'ldap_groupsuffix', 
+      type : 'input',
+      name : 'ldap_groupsuffix',
       placeholder : 'Group Suffix'
     },
     {
@@ -65,13 +64,13 @@ export class LdapComponent {
       placeholder : 'Password Suffix'
     },
     {
-      type : 'input', 
-      name : 'ldap_machinesuffix', 
+      type : 'input',
+      name : 'ldap_machinesuffix',
       placeholder : 'Machine Suffix'
     },
     {
-      type : 'input', 
-      name : 'ldap_sudosuffix', 
+      type : 'input',
+      name : 'ldap_sudosuffix',
       placeholder : 'SUDO Suffix'
     },
     {
@@ -99,13 +98,13 @@ export class LdapComponent {
       options : []
     },
     {
-      type : 'input', 
-      name : 'ldap_timeout', 
+      type : 'input',
+      name : 'ldap_timeout',
       placeholder : 'LDAP timeout'
     },
     {
-      type : 'input', 
-      name : 'ldap_dns_timeout', 
+      type : 'input',
+      name : 'ldap_dns_timeout',
       placeholder : 'DNS timeout'
     },
     {
@@ -113,6 +112,11 @@ export class LdapComponent {
       name : 'ldap_idmap_backend',
       placeholder : 'Idmap Backend',
       options : []
+    },
+    {
+      type : 'checkbox',
+      name : 'ldap_has_samba_schema',
+      placeholder : 'Samba Schema',
     },
     {
       type : 'textarea',
@@ -126,6 +130,11 @@ export class LdapComponent {
       options : []
     },
     {
+      type : 'checkbox',
+      name : 'ldap_enable',
+      placeholder : 'Enable',
+    },
+    {
       type : 'input',
       name : 'ldap_netbiosname_a',
       placeholder : 'Netbios Name',
@@ -134,17 +143,7 @@ export class LdapComponent {
       type : 'input',
       name : 'ldap_netbiosalias',
       placeholder : 'NetBIOS alias',
-    },
-    {
-      type : 'checkbox',
-      name : 'ldap_has_samba_schema',
-      placeholder : 'Samba Schema',
-    },
-    {
-      type : 'checkbox',
-      name : 'ldap_enable',
-      placeholder : 'Enable',
-    },
+    }
   ];
 
   protected advanced_field: Array<any> = [
@@ -152,20 +151,20 @@ export class LdapComponent {
     'ldap_usersuffix',
     'ldap_groupsuffix',
     'ldap_passwordsuffix',
-    'ldap_machinesuffix', 
-    'ldap_sudosuffix', 
-    'ldap_kerberos_realm', 
+    'ldap_machinesuffix',
+    'ldap_sudosuffix',
+    'ldap_kerberos_realm',
     'ldap_kerberos_principal',
     'ldap_ssl',
     'ldap_certificate',
-    'ldap_timeout', 
-    'ldap_dns_timeout', 
-    'ldap_idmap_backend', 
-    'ldap_auxiliary_parameters', 
-    'ldap_schema', 
-    'ldap_netbiosalias',        
-    'ldap_netbiosname_a',
-    'ldap_has_samba_schema'
+    'ldap_timeout',
+    'ldap_dns_timeout',
+    'ldap_idmap_backend',
+    'ldap_has_samba_schema',
+    'ldap_auxiliary_parameters',
+    'ldap_schema',
+    'ldap_netbiosalias',
+    'ldap_netbiosname_a'
   ];
 
   isCustActionVisible(actionId: string) {
@@ -184,7 +183,7 @@ export class LdapComponent {
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      'id' : 'advanced_mode',
+      id : 'advanced_mode',
       name : 'Advanced Mode',
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
@@ -207,7 +206,15 @@ export class LdapComponent {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'ldap_kerberos_realm'});
       res.data.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
-            {label : item.krb_realm, value : item.id});
+          {label : item.krb_realm, value : item.id});
+      });
+    });
+
+    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+      this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'ldap_kerberos_principal'});
+      res.data.forEach((item) => {
+        this.ldap_kerberos_principal.options.push(
+          {label : item.principal_name, value : item.id});
       });
     });
 
@@ -215,7 +222,7 @@ export class LdapComponent {
       this.ldap_ssl = _.find(this.fieldConfig, {name : 'ldap_ssl'});
       res.forEach((item) => {
         this.ldap_ssl.options.push(
-            {label : item[1], value : item[0]});
+          {label : item[1], value : item[0]});
       });
     });
 
@@ -224,7 +231,7 @@ export class LdapComponent {
           _.find(this.fieldConfig, {name : 'ldap_certificate'});
       res.forEach((item) => {
         this.ldapCertificate.options.push(
-            {label : item.cert_name, value : item.id});
+          {label : item.cert_name, value : item.id});
       });
     });    
 
@@ -232,7 +239,7 @@ export class LdapComponent {
       this.ldap_idmap_backend = _.find(this.fieldConfig, {name : 'ldap_idmap_backend'});
       res.forEach((item) => {
         this.ldap_idmap_backend.options.push(
-            {label : item[1], value : item[0]});
+          {label : item[1], value : item[0]});
       });
     });
 
@@ -240,7 +247,7 @@ export class LdapComponent {
       this.ldap_schema = _.find(this.fieldConfig, {name: 'ldap_schema'});
       res.forEach((item => {
         this.ldap_schema.options.push(
-            {label : item[1], value : item[0]});
+          {label : item[1], value : item[0]});
       }));
     });
 
