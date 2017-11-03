@@ -14,7 +14,7 @@ import {
 
 @Component({
   selector : 'ldap',
-  template : `<entity-form [conf]="this"></entity-form>`,
+  template : '<entity-form [conf]="this"></entity-form>',
 })
 
 export class LdapComponent {
