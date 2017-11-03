@@ -41,8 +41,15 @@ export class EntityUtils {
     }
   }
 
+  isObject = function(a) {
+    return (!!a) && (a.constructor === Object);
+  };
+
   flattenData(data, level = 0, parent?: any) {
     let ndata = [];
+    if (this.isObject(data)){
+      data = [data]
+    }
     data.forEach((item) => {
       item._level = level;
       if (parent) {
