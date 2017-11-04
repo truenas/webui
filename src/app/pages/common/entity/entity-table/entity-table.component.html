@@ -32,10 +32,10 @@
 
 			<!-- Position Column -->
 			<div *ngFor="let col of conf.columns">
-				<ng-container cdkColumnDef="{{col.prop}}">
+				<ng-container cdkColumnDef="{{col.prop}}"> 
 					<md-header-cell *cdkHeaderCellDef md-sort-header> {{col.name}} </md-header-cell>
-					<md-cell *cdkCellDef="let row">
-						<div style="overflow: hidden; height: 20px;" title="{{row[col.prop]}}">
+					<md-cell style="overflow: hidden; height: 20px; width: 100%; padding-left: 5px;" title="{{row[col.prop]}}" *cdkCellDef="let row">
+						<div>
 							{{row[col.prop]}}
 						</div>
 					</md-cell>
