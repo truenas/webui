@@ -89,7 +89,7 @@
 												 *ngIf="cards[i].template == 'edit'" 
 												 [isNew]="cards[i].isNew"
 												 [machineId]="cards[i].id"  
-												 (cancel)="toggleForm($event,cards[i],'none')"
+												 (cancel)="cancel(i)"
 												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
 												 ></vm-card-edit>
 		</ng-template>

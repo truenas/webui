@@ -186,6 +186,17 @@ export class VmCardsComponent implements OnInit {
     })
   }
 
+  cancel(index){
+    let card = this.cards[index];
+    if(card.isNew){
+      this.cards.splice(index,1);
+      this.updateCache();
+    } else {
+      this.toggleForm(false,card,'none')
+    }
+
+  }
+
   focusVM(index){
     for(var i = 0; i < this.cards.length; i++){
       if(i !== index && this.cards[i].isFlipped ){

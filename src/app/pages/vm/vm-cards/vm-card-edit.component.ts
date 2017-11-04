@@ -19,7 +19,7 @@ import {RestService, WebSocketService} from '../../../services/';
 export class VmCardEditComponent {
 
   @Input() machineId: string = '';
-  @Output() cancel: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
   @Output() saved: EventEmitter<any> = new EventEmitter<any>();
   @Input() isNew: boolean = false;
 
@@ -87,7 +87,8 @@ generateFieldConfig(){
 }
 
 goBack(){
-  this.cancel.emit(false); // <-- bool = isFlipped State
+  let result: {flipState: boolean;} = {flipState: false}
+  this.cancel.emit(result); // <-- bool = isFlipped State
 }
 
 onSuccess(message?:any){
