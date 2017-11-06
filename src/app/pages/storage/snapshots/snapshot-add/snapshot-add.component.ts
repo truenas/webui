@@ -4,7 +4,8 @@ import {
   Injector,
   Input,
   QueryList,
-  ViewChildren
+  ViewChildren,
+  AfterViewInit
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -17,47 +18,50 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({
-   selector : 'snapshot-add',
-   template : `<entity-form [conf]="this"></entity-form>`
-})
+   selector : 'app-snapshot-add',
+   templateUrl : './snapshot-add.component.html'})
 
-export class SnapshotAddComponent {
+export class SnapshotAddComponent implements AfterViewInit {
+  
 
   protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = [ 'storage', 'volumes' ];
-  protected isEntity: boolean = true;
-  protected isNew: boolean = true;
-  protected pk: any;
-
-  protected fieldConfig: FieldConfig[];
+  protected route_success: string[] = [ 'storage', 'snapshots' ];
+  protected isEntity = true;
+  protected isNew = true;
+  protected fieldConfig: FieldConfig[] = [];
+  public initialized = true;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef) {}
+              protected _injector: Injector, protected _appRef: ApplicationRef) {
 
-  preInit(entityForm: any) {
-    this.route.params.subscribe(params => { 
-      this.pk = params['pk'];
-      this.fieldConfig = [
-        {
-          type: 'input', 
-          name: 'name', 
-          placeholder: 'Snapshot Name',
-          value: "manual-" + moment().format('YYYYMMDD')
-        },
-        {
-          type: 'input', 
-          name: 'dataset', 
-          placeholder: 'Dataset',
-          value: this.pk,
-          readonly: true
-        },
-        {
-          type: 'checkbox',
-          name : 'recursive',
-          placeholder: 'Recursive'
-        },
-      ];
-    });
+                this.fieldConfig = [
+                  {
+                    type: 'input', 
+                    name: 'id', 
+                    placeholder: 'Snapshot Name'
+                  },
+                  {
+                    type: 'input', 
+                    name: 'fullname', 
+                    placeholder: 'Snapshot Full Name'
+                  },
+                  {
+                    type: 'checkbox',
+                    name : 'recursive',
+                    placeholder: 'Recursive'
+                  },
+                ];
+
+
+  }
+
+  ngAfterViewInit(): void {
+
+    
+    setTimeout(()=>{
+      this.initialized = true;
+      
+    } ,1);
   }
 }

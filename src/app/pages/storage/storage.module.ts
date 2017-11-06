@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 import { StorageService } from '../../services/storage.service';
 
 import {SnapshotAddComponent} from './snapshots/snapshot-add/';
+import {SnapshotEditComponent} from './snapshots/snapshot-edit/';
 import {SnapshotCloneComponent} from './snapshots/snapshot-clone/';
 import {SnapshotListComponent} from './snapshots/snapshot-list/';
 import {SnapshotRollbackComponent} from './snapshots/snapshot-rollback/';
@@ -53,6 +54,7 @@ import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-lis
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
     SnapshotAddComponent,
+    SnapshotEditComponent,
     DatasetPermissionsComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent
