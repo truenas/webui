@@ -44,9 +44,12 @@
                (change)="selectFile($event)"
                multiple />
         <br>
-        <div class="alert alert-danger" *ngIf="!isAttachmentValid">
+        <md-error *ngIf="!isAttachmentValid">
           <p>Attached document should not be less than 20MB</p>
-        </div>
-        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit" [disabled]="!isAttachmentValid">Submit Ticket</button>
+        </md-error>
+        <md-error *ngIf="!isDebugValid">
+          <p>Debug file can't be attached (reason: larger than 20 mb)</p>
+        </md-error>
+        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit" [disabled]="!isAttachmentValid || !isDebugValid">Submit Ticket</button>
     </div>
 </md-card>

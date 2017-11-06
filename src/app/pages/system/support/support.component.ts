@@ -1,9 +1,10 @@
-import { ApplicationRef, Component, Injector} from '@angular/core';
+import {ApplicationRef, Component, Injector} from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import {MdDialog} from '@angular/material';
+import {MdDialog, MdSnackBar} from '@angular/material';
+import {Http, Response} from "@angular/http";
 
 @Component({
   selector : 'app-support',
@@ -24,8 +25,10 @@ export class SupportComponent {
   payload = {};
   busy: Subscription;
   isAttachmentValid: boolean = true;
+  isDebugValid: boolean = true;
 
   constructor(protected router: Router, protected rest: RestService,
+              protected http: Http, protected snackBar: MdSnackBar,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MdDialog)
               {
@@ -41,15 +44,38 @@ export class SupportComponent {
     this.payload['type'] = this.type;
     this.payload['attachment'] = this.attachment;
 
-    this.openDialog();
+    if(this.attach_debug) {
+      this.checkDebugFileValid();
+    } else {
+      this.openDialog();
+    }
   };
 
-  openDialog() {
-    console.log('this si the pat ====> ', this.payload);
-    // let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
-    // dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
-    // dialogRef.componentInstance.submit();
+  checkDebugFileValid() {
+    const obs1 = this.rest.post('/api/v1.0/system/debug/', {}, false);
+    obs1.subscribe((res: any) => {
+      const url = res.data.url.toString(), xhr: XMLHttpRequest = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            const fileSize = xhr.getResponseHeader('content-length');
+            this.isDebugValid = Number(fileSize) < 20000000;
+            if(this.isDebugValid) this.openDialog();
+          }
+        }
+      };
+      xhr.open('HEAD', url, true);
+      xhr.send();
+    })
   }
+
+  openDialog() {
+     let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
+     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
+     dialogRef.componentInstance.submit();
+  }
+
+
 
   onBlurMethod(){
     if (this.username !== '' && this.password !== '') {
@@ -71,6 +97,5 @@ export class SupportComponent {
     const fileList: File[] = event.target.files;
     this.attachment = fileList[0];
     this.isAttachmentValid = this.attachment.size < 20000000;
-
   }
 }
