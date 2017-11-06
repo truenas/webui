@@ -28,14 +28,13 @@
     </form>
   </div -->
   <span fxFlex></span>
-  <!--loading icon-->
   <button
+    *ngIf="showReplication"
     md-icon-button
     id="loading"
-    mdTooltip="resilvering"
-    (click)="showResilveringDetails()"
+    mdTooltip="replication"
     class="topbar-button-right">
-    <md-icon class="fa-spin">autorenew</md-icon>
+    <md-icon class="movement">content_copy</md-icon>
   </button>
   <!-- Language Switcher -->
   <md-select

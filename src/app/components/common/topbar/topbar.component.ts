@@ -1,14 +1,17 @@
-import { Component, OnInit, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
-import { ThemeService } from '../../../services/theme/theme.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { DialogService } from '../../../services/dialog.service';
-import { AboutModalDialog } from '../about/about-dialog.component';
-import { TourService } from '../../../services/tour.service';
-import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
+import {ThemeService} from '../../../services/theme/theme.service';
+import {WebSocketService} from '../../../services/ws.service';
+import {DialogService} from '../../../services/dialog.service';
+import {AboutModalDialog} from '../about/about-dialog.component';
+import {TourService} from '../../../services/tour.service';
+import {NotificationAlert, NotificationsService} from '../../../services/notifications.service';
+import {MdDialog, MdSnackBar} from '@angular/material';
 import * as hopscotch from 'hopscotch';
+import {RestService} from "../../../services/rest.service";
+import {Observable} from "rxjs/Observable";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'topbar',
@@ -16,6 +19,7 @@ import * as hopscotch from 'hopscotch';
   templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
+
   @Input() sidenav;
   @Input() notificPanel;
 
@@ -37,6 +41,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     code: 'zh',
   }]
   freenasThemes;
+  continuosStreaming: Subscription;
+  showReplication: boolean = false;
 
   constructor(
     private themeService: ThemeService,
@@ -44,10 +50,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
     private ws: WebSocketService,
+    private rest: RestService,
     private dialogService: DialogService,
     private tour: TourService,
     public dialog: MdDialog,
-    public snackBar: MdSnackBar, ) { }
+    public snackBar: MdSnackBar ) { }
 
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
@@ -75,13 +82,17 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.showResilveringDetails();
+    this.continuosStreaming = Observable.interval(60000).subscribe(x => {
+      this.showReplicationStatus();
+    });
   }
 
   ngOnDestroy() {
     if (typeof (this.interval) !== 'undefined') {
       clearInterval(this.interval);
     }
+
+    this.continuosStreaming.unsubscribe();
   }
 
   startTour() {
@@ -143,11 +154,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  showResilveringDetails() {
-    this.ws.call('zfs.pool.scan').subscribe(res => {
-      console.log('res =====>', res);
+  showReplicationStatus() {
+    this.rest.get('storage/replication/', {}).subscribe(res => {
+      let found = res.data.find(x => x.repl_status === 'in_progress');
+      if(found) this.showReplication = true;
     }, err => {
-      console.log('err =====>', err);
+      console.log(err);
     })
   }
 }
