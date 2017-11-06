@@ -25,7 +25,7 @@ import { ReplicationAddComponent } from 'app/pages/task-calendar/replication/rep
 
 @Component({
   selector: 'app-replication-edit',
-  template: `<entity-form [conf]="this"></entity-form>`
+  templateUrl : '../replication-add/replication-add.component.html'
 })
 export class ReplicationEditComponent extends ReplicationAddComponent {
 
