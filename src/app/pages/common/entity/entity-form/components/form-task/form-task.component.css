@@ -1,3 +1,7 @@
+.dynamic-field.hide {
+    display: none;
+}
+
 .form-task {
 	padding: 0.4375em 0;
 }
