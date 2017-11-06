@@ -76,7 +76,7 @@ export class GenericAnyDataSource extends DataSource<any> {
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
-  styleUrls: ['./entity-table.component.css'],
+  styleUrls: ['./entity-table.component.scss'],
   providers: [DialogService]
 })
 export class EntityTableComponent implements OnInit {
