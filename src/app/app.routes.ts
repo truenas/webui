@@ -17,6 +17,11 @@ export const rootRouterConfig: Routes = [{
       path: 'sessions',
       loadChildren: './views/sessions/sessions.module#SessionsModule',
       data: { title: 'Session' }
+    },
+    {
+      path: 'reboot',
+      loadChildren: './views/others/others.module#OthersModule',
+      data: { title: 'System Rebooting', breadcrumb: 'System Rebooting'}
     }]
   },
   {
