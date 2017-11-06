@@ -33,7 +33,7 @@ export class ReplicationAddComponent implements AfterViewInit {
   protected route_success: string[] = [ 'tasks', 'replication'];
   protected isNew = true;
   protected isEntity = true;
-  protected initialized = false;
+  public initialized = false;
   protected entityForm: EntityFormComponent;
   
   private times = [
