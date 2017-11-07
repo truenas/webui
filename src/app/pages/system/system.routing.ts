@@ -11,6 +11,7 @@ import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
+import { BootStatusListComponent } from './bootenv/bootenv-status/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
@@ -102,7 +103,12 @@ export const routes: Routes = [
       {
         path: 'create',
         component: BootEnvironmentCreateComponent,
-        data: { title: 'Rename', breadcrumb: 'Rename' },
+        data: { title: 'create', breadcrumb: 'create' },
+      },
+      {
+        path: 'status',
+        component: BootStatusListComponent,
+        data: { title: 'BootStatus', breadcrumb: 'BootStatus' },
       }
     ]
     }, {
