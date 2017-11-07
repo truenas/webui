@@ -14,6 +14,7 @@ import {
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppBlankComponent } from './app-blank/app-blank.component';
 import { OthersRoutes } from "./others.routing";
+import { RebootComponent } from "./reboot/reboot.component";
 
 @NgModule({
   imports: [
@@ -29,6 +30,6 @@ import { OthersRoutes } from "./others.routing";
     FlexLayoutModule,
     RouterModule.forChild(OthersRoutes)
   ],
-  declarations: [AppBlankComponent]
+  declarations: [AppBlankComponent, RebootComponent]
 })
 export class OthersModule { }

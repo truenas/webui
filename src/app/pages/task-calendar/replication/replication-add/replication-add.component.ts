@@ -4,7 +4,8 @@ import {
   Injector,
   OnInit,
   ViewContainerRef,
-  ElementRef
+  ElementRef,
+  AfterViewInit
 } from '@angular/core';
 import {
   AbstractControl,
@@ -24,14 +25,15 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector : 'app-replication-add',
-  template : `<entity-form [conf]="this"></entity-form>`
+  templateUrl : './replication-add.component.html' 
 })
-export class ReplicationAddComponent {
+export class ReplicationAddComponent implements AfterViewInit {
   
   protected resource_name = 'storage/replication';
   protected route_success: string[] = [ 'tasks', 'replication'];
   protected isNew = true;
   protected isEntity = true;
+  public initialized = false;
   protected entityForm: EntityFormComponent;
   
   private times = [
@@ -150,12 +152,14 @@ export class ReplicationAddComponent {
 
     
 
+
     this.fieldConfig =
     [
       {
-        type: 'input',
+        type: 'select',
         name: 'repl_filesystem',
         placeholder: 'Volume/Dataset',
+        options: []
       },
       {
         type: 'input',
@@ -270,6 +274,21 @@ export class ReplicationAddComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+  }
+
+  ngAfterViewInit() {
+
+    // Get snapshots for repl_filesystem this.fieldConfig[0]
+    this.rest.get("storage/task", {}).subscribe((res)=>{
+       res.data.forEach((dataItem)=>{
+          this.fieldConfig[0].options.push({
+              label:  dataItem.task_filesystem,
+              value:  dataItem.task_filesystem
+          });
+        })
+
+        this.initialized = true;
+    });
   }
 
   customEventMethod( data: any ) {

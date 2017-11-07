@@ -8,6 +8,7 @@ import { AboutModalDialog } from '../about/about-dialog.component';
 import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
+import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
 
 @Component({
@@ -46,12 +47,27 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private tour: TourService,
     public dialog: MdDialog,
-    public snackBar: MdSnackBar, ) { }
+    public snackBar: MdSnackBar, 
+    private idle: Idle ) {
+
+    idle.setIdle(10); // 10 seconds for delaying
+    idle.setTimeout(900); // 15 minutes for waiting of activity
+    idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
+
+    idle.onTimeoutWarning.subscribe((countdown:number) => {
+      // Countdown - console.log('TimeoutWarning: ' + countdown);
+    });
+    idle.onTimeout.subscribe(() => {
+      this.ws.logout();
+    });
+    idle.watch();
+  }
 
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
+
     if (showTour === "true") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
       localStorage.setItem(this.router.url, 'false');
@@ -64,7 +80,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.notifications.push(notificationAlert);
       }
     });
-
     this.notificationsService.getNotifications().subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
@@ -104,6 +119,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   toggleCollapse() {
     let appBody = document.body;
+
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
   }
@@ -112,11 +128,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
     let dialogRef = this.dialog.open(AboutModalDialog, {});
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      // The dialog was closed
     });
   }
 
   signOut() {
+    this.idle.ngOnDestroy();
     this.dialogService.confirm("Logout", "You are about to LOGOUT of the FreeNAS WebUI. If unsure, hit 'Cancel', otherwise, press 'OK' to logout.").subscribe((res) => {
       if (res) {
         this.ws.logout();
