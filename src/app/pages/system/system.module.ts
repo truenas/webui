@@ -18,6 +18,7 @@ import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
+import { BootModifyListComponent } from './/bootenv/bootenv-modify/';
 import { BootStatusListComponent } from './bootenv/bootenv-status/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
@@ -75,6 +76,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,
     BootEnvironmentCreateComponent,
+    BootModifyListComponent,
     BootStatusListComponent,
     TunableListComponent,
     TunableFormComponent,

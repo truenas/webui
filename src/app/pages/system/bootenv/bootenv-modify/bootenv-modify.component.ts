@@ -9,7 +9,7 @@ import {RestService} from '../../../../services/rest.service';
   selector : 'app-bootstatus-list',
   template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class BootStatusListComponent {
+export class BootModifyListComponent {
 
   public title = "Boot Status";
   protected resource_name: string = 'system/bootenv';
@@ -18,7 +18,7 @@ export class BootStatusListComponent {
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
-    {name: 'type', prop: 'type'},    
+    {name: 'type', prop: 'type'},   
     {name: 'Read', prop: 'read_errors'},
     {name: 'Write', prop: 'write_errors'},
     {name: 'Checksum', prop: 'checksum_errors'},
@@ -52,15 +52,14 @@ export class BootStatusListComponent {
     }
 
   }
-
   getActions(row) {
     let actions = [];
     actions.push({
       label : "Modify",
-      id: "modify",
+      id: "properties",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "status","modify", row.name ]));
+            [ "system", "bootenv", "status","modify", row.id ]));
       }
     });
     return actions;
@@ -83,7 +82,6 @@ export class BootStatusListComponent {
     }
     return data
   };
-
   constructor(_rest: RestService, private _router: Router) {}
 
   afterInit(entityList: any) {
