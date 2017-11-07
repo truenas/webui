@@ -18,7 +18,6 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
 import {VolumeImportListComponent} from './volumes/import-list/';
 import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
 import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
-import { SnapshotEditComponent } from 'app/pages/storage/snapshots/snapshot-edit/snapshot-edit.component';
 
 export const routes: Routes = [
   {
@@ -79,9 +78,6 @@ export const routes: Routes = [
             path : 'rollback/:pk', component : SnapshotRollbackComponent,
             data: {title: 'Rollback', breadcrumb:'Rollback' }},
           {
-            path : 'edit/:pk', component : SnapshotEditComponent,
-            data: {title: 'Edit', breadcrumb:'Edit' }},
-            {
               path : 'add', component : SnapshotAddComponent,
               data: {title: 'Add', breadcrumb:'Add' }}
         ]

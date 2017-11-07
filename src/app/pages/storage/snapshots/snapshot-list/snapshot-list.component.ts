@@ -49,13 +49,7 @@ export class SnapshotListComponent {
 
   getActions(parentRow) {
     const actions = [];
-    actions.push({
-      label: "Edit",
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "snapshots", "edit", row1.id]));
-      }
-    });
+    
     actions.push({
       label: "Delete",
       onClick: (row1) => {
