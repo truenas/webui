@@ -6,6 +6,7 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { MaterialModule } from '@angular/material';
+import { MarkdownModule } from 'angular2-markdown';
 import { routing } from './system.routing';
 
 import { GeneralComponent } from './general/general.component';
@@ -60,7 +61,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule
+    MaterialModule, MarkdownModule.forRoot(),
   ],
   declarations: [
     GeneralComponent,
