@@ -50,9 +50,10 @@ export class CronFormComponent {
       placeholder: 'Time'
     },
     {
-      type: 'input',
+      type: 'datepicker',
       name: 'cron_date',
-      placeholder: 'Date'
+      placeholder: 'Date',
+      readonly: true
     },
     {
       type: 'select',
