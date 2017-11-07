@@ -12,6 +12,7 @@ export class WebSocketService {
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
   pendingCalls: any;
+  pendingSub: any;
   pendingMessages: any[] = [];
   socket: WebSocket;
   connected: boolean = false;
@@ -54,7 +55,7 @@ export class WebSocketService {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
-    this._router.navigate([ '/login' ]);
+    this._router.navigate(['/sessions/signin']);
   }
 
   ping() {
@@ -65,7 +66,6 @@ export class WebSocketService {
   }
 
   onmessage(msg) {
-
     try {
       var data = JSON.parse(msg.data);
     } catch (e) {
@@ -75,6 +75,7 @@ export class WebSocketService {
 
     if (data.msg == "result") {
       let call = this.pendingCalls.get(data.id);
+
       this.pendingCalls.delete(data.id);
       if (data.error) {
         console.log("Error: ", data.error);
@@ -89,7 +90,15 @@ export class WebSocketService {
       setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
     } else if (data.msg == "added") {
-      // pass
+      let subObserver = this.pendingSub;
+
+      if (data.error) {
+        console.log("Error: ", data.error);
+        subObserver.error(data.error);
+      }
+      if (subObserver) {
+        subObserver.next(data.fields);
+      }
     } else if (data.msg == "changed") {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
@@ -98,8 +107,10 @@ export class WebSocketService {
       });
     } else if (data.msg == "pong") {
       // pass
+    } else if (data.msg == "sub") {
+      // pass
     } else {
-      console.log("Unknown message: ", data);
+      // console.log("Unknown message: ", data);
     }
   }
 
@@ -138,7 +149,6 @@ export class WebSocketService {
     let uuid = UUID.UUID();
     let payload =
         {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
-
     let source = Observable.create((observer) => {
       this.pendingCalls.set(uuid, {
         "method" : method,
@@ -147,6 +157,20 @@ export class WebSocketService {
       });
 
       this.send(payload);
+    });
+
+    return source;
+  }
+
+  sub(name): Observable<any> {
+
+    let uuid = UUID.UUID();
+    let payload =
+        {"id" : uuid, "name" : name, "msg" : "sub" };
+
+    let source = Observable.create((observer) => {
+      this.pendingSub = observer;
+      this.send(payload);      
     });
 
     return source;

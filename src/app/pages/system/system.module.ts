@@ -14,6 +14,7 @@ import { ConfigUploadComponent } from './general/config-upload/config-upload.com
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
+import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
@@ -69,6 +70,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     AdvancedComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
+    BootEnvironmentRenameComponent,
     TunableListComponent,
     TunableFormComponent,
     UpdateComponent,

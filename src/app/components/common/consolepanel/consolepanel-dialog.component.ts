@@ -1,5 +1,5 @@
 import { MdDialog, MdDialogRef} from '@angular/material';
-import { Component } from '@angular/core';
+import { Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 import {
   WebSocketService
 } from '../../../services/';
@@ -11,20 +11,58 @@ import {
 })
 export class ConsolePanelModalDialog {
 
-  public info: any = {};
+  public intervalPing;
+  public consoleMsg: String = "Loading...";
+  @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
+  onEventEmitter = new EventEmitter();
 
   constructor(
     public dialogRef: MdDialogRef<ConsolePanelModalDialog>,
     private ws: WebSocketService) { }
 
   ngOnInit() {
-    this.ws.call('system.info').subscribe((res) => {
-      this.info = res;
-    });
+    this.getLogConsoleMsg();
+  }
+
+  ngAfterViewChecked() {
+  }
+
+  scrollToBottomOnFooterBar(): void {
+    try {
+      this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
+    } catch(err) { }
+  }
+
+  getLogConsoleMsg() {
+    this.intervalPing = setInterval( () => {
+      let isScrollBottom = false;
+      let delta = 3;
+      
+      if(this.footerBarScroll.nativeElement.scrollTop + this.footerBarScroll.nativeElement.offsetHeight + delta >= this.footerBarScroll.nativeElement.scrollHeight) {
+        isScrollBottom = true;
+      }
+      this.onEventEmitter.emit();
+      if(isScrollBottom) {
+        let timeout = setTimeout(() => {  
+          this.scrollToBottomOnFooterBar();
+          clearTimeout(timeout);
+        }, 500);
+      }
+    }, 1000); 
+    
+    // First, will load once.
+    let timeout = setTimeout(() => {  
+      this.scrollToBottomOnFooterBar();
+      clearTimeout(timeout);
+    }, 1500);   
   }
 
   onStopRefresh(data) {
-    
+    if(data.checked) {
+      clearInterval(this.intervalPing);
+    }
+    else {
+      this.getLogConsoleMsg();
+    }    
   }
-
 }

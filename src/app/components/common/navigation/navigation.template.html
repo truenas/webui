@@ -1,72 +1,51 @@
 <md-nav-list class="" role="list">
-  <!--==== Side menu items ====-->
-  <div class="icon-menu" *ngIf="hasIconTypeMenuItem">
-    <!-- Icon menu separator -->
-    <div class="mt-1 mb-1 icon-menu-separator">
-       <md-divider [style.margin]="'0 -24px'"></md-divider>
-      <span [ngStyle]="{paddingLeft: 0, marginLeft: '-6px'}" class="nav-section-title text-muted" >{{iconTypeMenuTitle}}</span>
+    <!--==== Side menu items ====-->
+    <div class="icon-menu" *ngIf="hasIconTypeMenuItem">
+        <!-- Icon menu separator -->
+        <div class="mt-1 mb-1 icon-menu-separator">
+            <md-divider [style.margin]="'0 -24px'"></md-divider>
+            <span [ngStyle]="{paddingLeft: 0, marginLeft: '-6px'}" class="nav-section-title text-muted">{{iconTypeMenuTitle}}</span>
+        </div>
+        <!-- Icon menu items -->
+        <div class="icon-menu-item" *ngFor="let item of menuItems">
+            <button *ngIf="!item.disabled && item.type === 'icon'" md-raised-button [mdTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"><md-icon>{{item.icon}}</md-icon></button>
+        </div>
     </div>
-    <!-- Icon menu items -->
-    <div class="icon-menu-item" *ngFor="let item of menuItems">
-      <button
-      *ngIf="!item.disabled && item.type === 'icon'"
-      md-raised-button
-      [mdTooltip]="item.tooltip"
-      (click)="transferToState(item.state)"
-      routerLinkActive="mat-bg-primary"><md-icon>{{item.icon}}</md-icon></button>
-    </div>
-  </div>
-  <!-- Regular menu items -->
-  <div *ngFor="let item of menuItems">
-    <!-- if it's not disabled and not a separator and not icon -->
-    <md-list-item
-    sideNavAccordion
-    class="sidebar-list-item"
-    role="listitem"
-    *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'"
-    [ngClass]="{'has-submenu': item.type === 'dropDown'}"
-    routerLinkActive="open">
-      <a (click)="transferToState(item.state)" *ngIf="item.type === 'link'">
-        <span
-        class="menu-item-tooltip"
-        [mdTooltip]="item.tooltip"
-        id="{{item.name}}"
-        mdTooltipPosition="right"></span>
-        <md-icon>{{item.icon}}</md-icon>
-        <span>{{item.name | translate}}</span>
-      </a>
-      <a *ngIf="item.type === 'dropDown'">
-        <span
-        class="menu-item-tooltip"
-        [mdTooltip]="item.tooltip"
-        mdTooltipPosition="above"></span>
-        <md-icon>{{item.icon}}</md-icon>
-        <span>{{item.name | translate}}</span>
-        <span fxFlex></span>
-        <md-icon class="menu-caret">arrow_drop_down</md-icon>
-      </a>
-      <a href="{{item.state}}" *ngIf="item.type === 'extLink'" target="_blank">
-        <span
-        class="menu-item-tooltip"
-        [mdTooltip]="item.tooltip"
-        mdTooltipPosition="right"></span>
-        <md-icon>{{item.icon}}</md-icon>
-        <span>{{item.name | translate}}</span>
-      </a>
-      <md-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
-        <md-list-item
-        routerLinkActive="selected"
-        *ngFor="let subItem of item.sub">
-          <a (click)="transferToState(item.state, subItem.state)">{{subItem.name | translate}}</a>
+    <!-- Regular menu items -->
+    <div *ngFor="let item of menuItems; let i = index">
+        <!-- if it's not disabled and not a separator and not icon -->
+        <md-list-item sideNavAccordion class="sidebar-list-item" role="listitem" *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="{{i}}">
+            <a (click)="transferToState(item.state)" *ngIf="item.type === 'link'">
+                <span class="menu-item-tooltip" [mdTooltip]="item.tooltip" id="{{item.name}}" mdTooltipPosition="right"></span>
+                <md-icon>{{item.icon}}</md-icon>
+                <span>{{item.name | translate}}</span>
+            </a>
+            <a *ngIf="item.type === 'dropDown'">
+                <span class="menu-item-tooltip" [mdTooltip]="item.tooltip" mdTooltipPosition="above"></span>
+                <md-icon>{{item.icon}}</md-icon>
+                <span>{{item.name | translate}}</span>
+                <span fxFlex></span>
+                <md-icon class="menu-caret">arrow_drop_down</md-icon>
+            </a>
+            <a href="{{item.state}}" *ngIf="item.type === 'extLink'" target="_blank">
+                <span class="menu-item-tooltip" [mdTooltip]="item.tooltip" mdTooltipPosition="right"></span>
+                <md-icon>{{item.icon}}</md-icon>
+                <span>{{item.name | translate}}</span>
+            </a>
+            <md-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
+                <md-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index">
+                    <a (click)="transferToState(item.state, subItem.state)" id="{{i}}-{{j}}">{{subItem.name | translate}}</a>
+                </md-list-item>
+            </md-nav-list>
+            <a md-button style="height: 0; position: absolute;">
+                <!-- 'absorbs' the foucs behavior -->
+            </a>
         </md-list-item>
-      </md-nav-list>
-      <a md-button style="height: 0; position: absolute;"> <!-- 'absorbs' the foucs behavior --></a>
-    </md-list-item>
 
-    <!-- If item type is separator -->
-    <div class="mt-1 mb-1" *ngIf="!item.disabled && item.type === 'separator'">
-      <md-divider></md-divider>
-      <span class="nav-section-title text-muted" *ngIf="!!item.name">{{item.name | translate}}</span>
+        <!-- If item type is separator -->
+        <div class="mt-1 mb-1" *ngIf="!item.disabled && item.type === 'separator'">
+            <md-divider></md-divider>
+            <span class="nav-section-title text-muted" *ngIf="!!item.name">{{item.name | translate}}</span>
+        </div>
     </div>
-  </div>
 </md-nav-list>

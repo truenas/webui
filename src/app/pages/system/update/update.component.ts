@@ -1,10 +1,12 @@
 import { Component,OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MdDialog, MdDialogRef, MdSnackBar } from '@angular/material';
+import * as _ from 'lodash';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-update',
@@ -14,6 +16,8 @@ export class UpdateComponent implements OnInit {
 
   public packages: any[] = [];
   public status: string;
+  public releaseNotes: any = '';
+  public changeLog: any = '';
   public updating: boolean = false;
   public updated: boolean = false;
   public progress: Object = {};
@@ -26,8 +30,18 @@ export class UpdateComponent implements OnInit {
   public busy: Subscription;
   public busy2: Subscription;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {}
+  protected dialogRef: any;
+  constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MdSnackBar,
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {
+    router.events.subscribe((res)=>{
+      if (res instanceof NavigationStart) {
+        if (res.url == '/sessions/signin' && !this.ws.connected) {
+          this.dialogRef.close();
+          router.navigate(['/reboot']);
+        }
+      }
+    })
+  }
 
   ngOnInit() {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
@@ -40,7 +54,7 @@ export class UpdateComponent implements OnInit {
         this.trains.push({ name: i });
       }
       this.train = res.selected;
-    })
+    });
   }
 
   toggleAutoCheck() {
@@ -58,6 +72,7 @@ export class UpdateComponent implements OnInit {
       this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
+          console.log('this is the res', res);
           this.status = res.status;
           if (res.status == 'AVAILABLE') {
             this.packages = [];
@@ -92,15 +107,22 @@ export class UpdateComponent implements OnInit {
                 console.error("Unknown operation:", item.operation)
               }
             });
+            if(res.notes.ChangeLog) {
+              this.rest.get(res.notes.ChangeLog.toString(), {}, false).subscribe(logs => this.changeLog = logs.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            }
+
+            if(res.notes.ReleaseNotes) {
+              this.rest.get(res.notes.ReleaseNotes.toString(), {}, false).subscribe(notes => this.releaseNotes = notes.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            }
           }
         },
         (err) => { this.error = err.error; });
   }
 
   update() {
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" } });
-    dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: true }]);
-    dialogRef.componentInstance.submit();
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
+    this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: true }]);
+    this.dialogRef.componentInstance.submit();
   }
 
 }

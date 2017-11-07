@@ -56,33 +56,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       type: LineChartService.lineChart,
       legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
       dataList: [
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-user',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-interrupt',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-system',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-idle',
-          'dataset': 'value'
-        },
-        {
-          'source': 'aggregation-cpu-sum',
-          'type': 'cpu-nice',
-          'dataset': 'value'
-        },
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-system', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-idle', 'dataset': 'value'},
+        {'source': 'aggregation-cpu-sum', 'type': 'cpu-nice', 'dataset': 'value'},
       ],
     },
+    {
+      title: "Uptime",
+      type: LineChartService.lineChart,
+      legends: ['Uptime'],
+      dataList: [
+        {'source': 'uptime', 'type': 'uptime', 'dataset': 'value'}
+      ],
+    }
   ];
 
   private erd: any = null;
@@ -117,6 +105,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = res;
       }
     });
+    this.ws.call('stats.get_sources').subscribe((res) => {
+      let gLegends = [], gDataList = [];
+      
+      for (const prop in res) {
+        if (prop.startsWith("disk-") && !prop.startsWith("disk-cd")) {
+          gLegends.push(prop + " (read)");
+          gLegends.push(prop + " (write)");
+          gDataList.push({source: prop, type: 'disk_ops', dataset: 'read'});
+          gDataList.push({source: prop, type: 'disk_ops', dataset: 'write'});
+        }
+      }
+      this.graphs.push({
+        title: "Disk IOPS",
+        type: LineChartService.lineChart,
+        legends: gLegends,
+        dataList: gDataList
+      });
+     });
 
 
     // This invokes the element-resize-detector js library under node_modules
