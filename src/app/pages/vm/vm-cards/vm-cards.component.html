@@ -1,21 +1,33 @@
-<!-- 
-	POWER COLORS
-	#41bd45  
-	#900
--->
 <md-card class="card-filter">
 	<md-card-content>
-		<md-input-container floatPlaceholder="Filter VMs">
+		<!--<div class="filter-icon"><h3>Virtual Machines</h3></div>-->
+
+		<div class="filter-field">
+			<md-icon role="img">search</md-icon>
 			<div class="card-filter-field">
-				<input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+				<md-input-container floatPlaceholder="Filter VMs">
+					<input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+				</md-input-container>
 			</div>
-		</md-input-container>
+		</div>
+		<div class="view-controls" >
+			<md-button-toggle-group #viewMode="mdButtonToggleGroup" >
+				<md-button-toggle value="cards">Cards</md-button-toggle>
+				<!--<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>-->
+				<md-button-toggle value="table" >Table</md-button-toggle>
+			</md-button-toggle-group>
+			<button md-mini-fab class="add-vm" (click)="addVM()">
+				<md-icon>add</md-icon>
+			</button>
+		</div>
+
+		<div *ngIf="viewMode.value == 'table'">
+			<vm-table [data]="cards"></vm-table>
+		</div>
 	</md-card-content>
 </md-card>
 
-<!--<div *ngFor="let item of display;">{{item.name}}</div>-->
-
-<div class="entity-cards-container">
+<div class="entity-cards-container" *ngIf="viewMode.value == 'cards' ">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
 		<!-- 
 		Create ng-templates that you inject into the entity-card component. 
@@ -30,11 +42,11 @@
 				<div class="name-info">
 					<button 
 				 md-fab 
-				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'running','vm-power-btn-on':cards[i].state == 'stopped'}" 
+				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
 				 (click)="toggleVmState(i)"
-				 mdTooltip="{{ pwrBtnLabel }}" mdTooltipPosition="above"
-																	 >
-																	 <md-icon>power_settings_new</md-icon>
+				 mdTooltip="{{ powerBtnLabel }}" mdTooltipPosition="above"
+																		 >
+																		 <md-icon>power_settings_new</md-icon>
 						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
 					</button>
 
@@ -49,7 +61,7 @@
 				<div class="side-content-header">
 					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
 					<h3>{{ cards[i].name }}</h3>
-					<md-chip  [ngClass]="{'vm-state-on':cards[i].state == 'running','vm-state-off':cards[i].state == 'stopped'}">{{ cards[i].state }}</md-chip>
+					<md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
 				</div>
 
 				<div class="stats-info">
@@ -64,7 +76,7 @@
 
 				<div class="vm-controls">
 					<button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
-					<button md-raised-button color="primary">Devices</button>
+					<button md-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
 					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
 				</div>
 			</div>
@@ -73,18 +85,14 @@
 		<ng-template #cardback let-name="name" >
 			<vm-card-edit 
 												 *ngIf="cards[i].template == 'edit'" 
+												 [isNew]="cards[i].isNew"
 												 [machineId]="cards[i].id"  
-												 (cancel)="toggleForm($event,cards[i],'none')"
-												 (saved)="toggleForm($event,cards[i],'none');refreshVM(i)"
+												 (cancel)="cancel(i)"
+												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
 												 ></vm-card-edit>
 		</ng-template>
 
 			<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 	</div>
-
-	<!-- Add VM FAB -->
-	<!--<button md-fab (click)="addVM()"><md-icon>add</md-icon></button>-->
-
-
 
 </div>
