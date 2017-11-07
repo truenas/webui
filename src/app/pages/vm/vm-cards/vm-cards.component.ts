@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MaterialModule } from '@angular/material';
+import { MaterialModule, MdButtonToggleGroup } from '@angular/material';
 import { EntityModule } from '../../common/entity/entity.module';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
@@ -39,7 +39,8 @@ export class VmCardsComponent implements OnInit {
   @Input() searchTerm:string = '';
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List: 
-  @Input() viewMode = "cards"; // cards || table
+  @ViewChild('viewMode') viewMode:MdButtonToggleGroup;
+  
 
   public tpl = "edit";
   private pwrBtnLabel: string;
@@ -53,6 +54,7 @@ export class VmCardsComponent implements OnInit {
 
   ngOnInit() {
     this.getVmList('init');
+    this.viewMode.value = "cards";
   }
 
   displayAll(){
@@ -99,7 +101,8 @@ export class VmCardsComponent implements OnInit {
 
   getVmList(init?:string) {
     this.rest.get('vm/vm', {}).subscribe((res) => {
-      //console.log(res);
+      console.log('getVmList');
+      console.log(res);
       for(var i = 0; i < res.data.length; i++){
 	var card = this.parseResponse(res.data[i]);
 	//console.log(card);

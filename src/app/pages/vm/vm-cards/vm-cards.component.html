@@ -1,8 +1,3 @@
-<!-- 
-	POWER COLORS
-	#41bd45  
-	#900
--->
 <md-card class="card-filter">
 	<md-card-content>
 		<!--<div class="filter-icon"><h3>Virtual Machines</h3></div>-->
@@ -15,21 +10,24 @@
 				</md-input-container>
 			</div>
 		</div>
-		<div class="view-controls">
-			<md-button-toggle-group >
+		<div class="view-controls" >
+			<md-button-toggle-group #viewMode="mdButtonToggleGroup" >
 				<md-button-toggle value="cards">Cards</md-button-toggle>
 				<!--<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>-->
-				<md-button-toggle value="Table" disabled>Table</md-button-toggle>
+				<md-button-toggle value="table" >Table</md-button-toggle>
 			</md-button-toggle-group>
 			<button md-mini-fab class="add-vm" (click)="addVM()">
 				<md-icon>add</md-icon>
 			</button>
 		</div>
 
+		<div *ngIf="viewMode.value == 'table'">
+			<vm-table [data]="cards"></vm-table>
+		</div>
 	</md-card-content>
 </md-card>
 
-<div class="entity-cards-container">
+<div class="entity-cards-container" *ngIf="viewMode.value == 'cards' ">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
 		<!-- 
 		Create ng-templates that you inject into the entity-card component. 
@@ -96,10 +94,5 @@
 
 			<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 	</div>
-
-	<!-- Add VM FAB -->
-	<!--<button md-fab (click)="addVM()"><md-icon>add</md-icon></button>-->
-
-
 
 </div>
