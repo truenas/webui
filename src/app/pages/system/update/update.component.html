@@ -66,6 +66,8 @@
     </div>
   </md-card-title>
   <md-card-content>
-    <div [innerHTML]="changeLog"></div>
+      <markdown>
+          {{changeLog}}
+      </markdown>
   </md-card-content>
 </md-card>
