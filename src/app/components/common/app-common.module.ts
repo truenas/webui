@@ -19,7 +19,8 @@ import {
   MdRadioModule,
   MdCheckboxModule,
   MdCardModule,
-  MdDialogModule
+  MdDialogModule,
+  MdNativeDateModule
 } from '@angular/material';
 
 import {ChartistModule} from 'ng-chartist';
@@ -59,7 +60,8 @@ import { LineChartService } from './lineChart/lineChart.service';
     MdDialogModule,
     CommonDirectivesModule,
     TranslateModule,
-    ChartistModule
+    ChartistModule,
+    MdNativeDateModule
   ],
   declarations: [
     AdminLayoutComponent,

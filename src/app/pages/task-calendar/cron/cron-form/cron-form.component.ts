@@ -11,7 +11,7 @@ import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'cron-job-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, UserService, EntityFormService]
 })
 export class CronFormComponent {
