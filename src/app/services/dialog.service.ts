@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs/Rx';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
-import { ModalDialog } from '../pages/common/modal-dialog/modal-dialog.component';
 import { MdDialogRef, MdDialog, MdDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 
@@ -34,16 +33,5 @@ export class DialogService {
 
         return dialogRef.afterClosed();
     }
-
-    public modalDialog(title: string): Observable<boolean> {
-        
-                let dialogRef: MdDialogRef<ModalDialog>;
-        
-                dialogRef = this.dialog.open(ModalDialog);
-        
-                dialogRef.componentInstance.title = title;
-
-                return dialogRef.afterClosed();
-            }
 
 }
