@@ -1,7 +1,7 @@
 import {Component, ViewContainerRef, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {EntityFormService} from '../../services/entity-form.service';
-import { TreeNode, TREE_ACTIONS, KEYS, IActionMapping } from 'angular-tree-component';
+import {TreeNode, TREE_ACTIONS, KEYS, IActionMapping} from 'angular-tree-component';
 
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -13,8 +13,10 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 @Component({
   selector : 'form-explorer',
   templateUrl : './form-explorer.component.html',
-  styleUrls : [ '../dynamic-field/dynamic-field.css',
-                './form-explorer.component.scss'],
+  styleUrls : [ 
+                '../dynamic-field/dynamic-field.css',
+                './form-explorer.component.scss'
+              ],
 })
 export class FormExplorerComponent implements Field, OnInit {
   config: FieldConfig;
@@ -29,7 +31,7 @@ export class FormExplorerComponent implements Field, OnInit {
         $event.preventDefault();
       },
       dblClick: (tree, node, $event) => {
-        if (node.hasChildren) TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
+        TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
       },
       click: (tree, node, $event) => {
         this.setPath(node);
@@ -37,7 +39,7 @@ export class FormExplorerComponent implements Field, OnInit {
       }
     },
     keys: {
-      [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
+      [KEYS.ENTER]: (tree, node, $event) => alert('This is ${node.data.mountpoint}')
     }
   }
 
@@ -45,20 +47,20 @@ constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
     this.nodes = [{
-        name: this.config.initial,
-        subTitle: this.config.initial,
-        hasChildren: true
-      }];
+      mountpoint: this.config.initial,
+      name: this.config.initial,
+      hasChildren: true
+    }];
   }
 
   getChildren(node:any) {
     return new Promise((resolve, reject) => {
-      resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
     });
   }
 
   customTemplateStringOptions = {
-    displayField: 'subTitle',
+    displayField: 'name',
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),
@@ -73,7 +75,10 @@ constructor (private entityFormService : EntityFormService){}
   }
 
   setPath(node:any) {
-    this.group.controls[this.config.name].setValue(node.data.name);
+    if(!node.data.mountpoint) {
+      node.data.mountpoint = this.config.initial + "/" + node.data.path;
+    }
+    this.group.controls[this.config.name].setValue(node.data.mountpoint);
   }
 }
 
