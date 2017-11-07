@@ -180,6 +180,16 @@ export class EntityTableComponent implements OnInit {
     }
     this.busy =
       this.getFunction.subscribe((res) => {
+        if (res.data) {
+          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+            res.data = this.conf.resourceTransformIncomingRestData(res.data);
+          }
+        } else {
+          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+            res = this.conf.resourceTransformIncomingRestData(res);
+          }
+        }
+
         let rows: any[] = [];
 
         if (this.loaderOpen) {
