@@ -37,6 +37,12 @@ export class SnapshotAddComponent implements AfterViewInit {
 
                 this.fieldConfig = [
                   {
+                    type: 'select',
+                    name: 'filesystem',
+                    placeholder: 'Volume/Dataset',
+                    options: []
+                  },
+                  {
                     type: 'input', 
                     name: 'id', 
                     placeholder: 'Snapshot Name'
@@ -59,9 +65,23 @@ export class SnapshotAddComponent implements AfterViewInit {
   ngAfterViewInit(): void {
 
     
-    setTimeout(()=>{
-      this.initialized = true;
-      
-    } ,1);
+  this.rest.get("storage/volume/", {}).subscribe((res)=>{
+      let rows = new EntityUtils().flattenData(res.data);
+
+      rows.forEach((dataItem)=>{
+         let calculatedPath = dataItem.name;
+
+         if( typeof(dataItem.path) !== "undefined" && dataItem.path.length > 0 ) {
+            calculatedPath += "/" + dataItem.path;
+         }
+
+         this.fieldConfig[0].options.push({
+             label:  calculatedPath,
+             value:  calculatedPath
+         });
+       })
+
+       this.initialized = true;
+   });
   }
 }
