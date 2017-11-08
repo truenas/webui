@@ -97,7 +97,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.continuosStreaming = Observable.interval(60000).subscribe(x => {
+    this.continuosStreaming = Observable.interval(3000).subscribe(x => {
       this.showReplicationStatus();
     });
   }
@@ -173,7 +173,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showReplicationStatus() {
     this.rest.get('storage/replication/', {}).subscribe(res => {
-      let found = res.data.find(x => x.repl_status === 'in_progress');
+      let found = res.data.find(x => x.repl_status === 'sending');
       if(found) this.showReplication = true;
     }, err => {
       console.log(err);
