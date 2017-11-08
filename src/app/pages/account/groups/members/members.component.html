@@ -1,0 +1,25 @@
+<div class="material mat-card mat-card-table">
+  <div class="mat-toolbar mat-card-toolbar">
+    <div class="mat-card-title-text">Members</div>
+  </div>
+
+  <div>
+    <br/>
+  </div>
+
+  <div class="padding-16" *ngIf="members.length > 0">
+    <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers" (selectedItemsChange)="OnItemChange($event)">
+      <ng-template #templateItem let-item="data">
+          <md-list-item class="pointer">{{item.bsdusr_full_name}}</md-list-item>
+      </ng-template>
+    </app-dual-listbox>
+  </div>
+</div>
+<section class="fab">
+  <button md-fab class="md-fab-bottom-right-1" color="primary" (click)="updateUsers()">
+    <md-icon class="md-16 ">save</md-icon>
+  </button>
+  <button md-fab class="md-fab-bottom-right-2" color="primary" (click)="cancel()">
+    <md-icon class="md-16">clear</md-icon>
+  </button>
+</section>
