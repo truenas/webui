@@ -12,14 +12,15 @@ import {RestService, WebSocketService} from '../../../services/';
   selector : 'vm-table',
   //templateURL: 'vm-table.component.html' // Why does this throw a missing template error?
   template : `
-  <div>
+  <md-card>
+  <md-card-content>
     <ngx-datatable
-      class="material"
-      [rows]="data"
-      [columns]="columns"
-      [rowHeight]="'auto'">>
+      class='material'
+      [rows]='data'
+      [columnMode]="'flex'"
+      [rowHeight]="'auto'">
 
-      <ngx-datatable-column name="State">
+      <ngx-datatable-column name="State" [flexGrow]="1">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -28,7 +29,7 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Name">
+      <ngx-datatable-column name="Name" [flexGrow]="3" [minWidth]="200">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -37,7 +38,7 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Description">
+      <ngx-datatable-column name="Description" [flexGrow]="3">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -46,16 +47,7 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Info">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	  <div>Info goes here! {{value}}</div>
-	</ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column name="vCPUs">
+      <ngx-datatable-column name="Info" [flexGrow]="3">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -64,7 +56,7 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Memory">
+      <ngx-datatable-column name="vCPUs" [flexGrow]="1">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -73,7 +65,7 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Bootloader">
+      <ngx-datatable-column name="Memory" [flexGrow]="2">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -82,7 +74,16 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Actions">
+      <ngx-datatable-column name="Bootloader" [flexGrow]="2">
+	<ng-template let-column="column" ngx-datatable-header-template>
+	  {{column.name}}
+	</ng-template>
+	<ng-template let-value="value" ngx-datatable-cell-template>
+	  <div>{{value}}</div>
+	</ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Actions" [flexGrow]="3">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -92,7 +93,8 @@ import {RestService, WebSocketService} from '../../../services/';
       </ngx-datatable-column>
 
     </ngx-datatable>
-  </div>
+  </md-card-content>
+  </md-card>
   `
 })
 export class VmTableComponent {
@@ -107,7 +109,7 @@ export class VmTableComponent {
   protected toggleStop: string = "vm.stop";
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService) {}
+    protected ws: WebSocketService) {}
   public title = "Virtual Machines"
 
   public columns: Array<any> = [
@@ -133,51 +135,51 @@ export class VmTableComponent {
     this.config.rows = this.data;
     this.config.columns = this.columns;
   }
-    /*
+  /*
   getActions(row) {
     let actions = [];
     actions.push({
       id : "start",
       label : row.state == "RUNNING" ? "Stop" : "Start",
       onClick : (row) => {
-        let rpc: string;
-        if (row.state != 'RUNNING') {
-          rpc = 'vm.start';
-        } else {
-          rpc = 'vm.stop';
-        }
-        this.ws.call(rpc, [ row.id ]).subscribe((res) => {});
+	let rpc: string;
+	if (row.state != 'RUNNING') {
+	  rpc = 'vm.start';
+	} else {
+	  rpc = 'vm.stop';
+	}
+	this.ws.call(rpc, [ row.id ]).subscribe((res) => {});
       }
     });
     actions.push({
       label : "Edit",
       onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", "edit", row.id ]));
+	this.router.navigate(
+	    new Array('').concat([ "vm", "edit", row.id ]));
       }
     });
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.entityTable.doDelete(row.id );
+	this.entityTable.doDelete(row.id );
       },
     });
     actions.push({
       label : "Devices",
       onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", row.id, "devices", row.name ]));
+	this.router.navigate(
+	    new Array('').concat([ "vm", row.id, "devices", row.name ]));
       }
     });
     actions.push({
       label : "Web VNC",
       onClick : (row) => {
-        let rpc: string;
-        this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-          for (let item in res){
-            window.open(res[item])
-          }
-        });
+	let rpc: string;
+	this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
+	  for (let item in res){
+	    window.open(res[item])
+	  }
+	});
       }
     });
     return actions;
@@ -187,35 +189,35 @@ export class VmTableComponent {
     actions.push({
       label : "Edit",
       onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", "edit", row.id ]));
+	this.router.navigate(
+	    new Array('').concat([ "vm", "edit", row.id ]));
       }
     });
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.entityTable.doDelete(row.id );
+	this.entityTable.doDelete(row.id );
       },
     });
     actions.push({
       label : "Devices",
       onClick : (row) => {
-        this.router.navigate(
-            new Array('').concat([ "vm", row.id, "devices", row.name ]));
+	this.router.navigate(
+	    new Array('').concat([ "vm", row.id, "devices", row.name ]));
       }
     });
     actions.push({
       label : "Web VNC",
       onClick : (row) => {
-        let rpc: string;
-        this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-          for (let item in res){
-            window.open(res[item])
-          }
-        });
+	let rpc: string;
+	this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
+	  for (let item in res){
+	    window.open(res[item])
+	  }
+	});
       }
     });
     return actions;
   }
-    */
+  */
 }

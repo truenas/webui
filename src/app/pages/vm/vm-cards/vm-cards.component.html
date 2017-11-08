@@ -20,12 +20,13 @@
 				<md-icon>add</md-icon>
 			</button>
 		</div>
+	</md-card-content>
+</md-card>
+
 
 		<div *ngIf="viewMode.value == 'table'">
 			<vm-table [data]="cards"></vm-table>
 		</div>
-	</md-card-content>
-</md-card>
 
 <div class="entity-cards-container" *ngIf="viewMode.value == 'cards' ">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
