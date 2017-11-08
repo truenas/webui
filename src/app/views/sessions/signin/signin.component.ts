@@ -14,6 +14,7 @@ export class SigninComponent implements OnInit {
   @ViewChild(MdButton) submitButton: MdButton;
 
   private failed: Boolean = false;
+  public is_freenas: Boolean = false;
 
   signinData = {
     username: 'root',
@@ -21,6 +22,9 @@ export class SigninComponent implements OnInit {
   }
   constructor(private ws: WebSocketService, private router: Router, private snackBar: MdSnackBar) {
     this.ws = ws;
+    this.ws.call('system.is_freenas').subscribe((res)=>{
+      this.is_freenas = res;
+    });
    }
 
   ngOnInit() {
