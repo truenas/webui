@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { RestService, WebSocketService } from '../../../services/';
+import { MarkdownModule } from 'angular2-markdown';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MdDialog, MdDialogRef, MdSnackBar } from '@angular/material';
 import * as _ from 'lodash';
@@ -107,10 +108,12 @@ export class UpdateComponent implements OnInit {
                 console.error("Unknown operation:", item.operation)
               }
             });
-            if(res.notes.ChangeLog) {
-              this.rest.get(res.notes.ChangeLog.toString(), {}, false).subscribe(logs => this.changeLog = logs.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            // if(res.notes.ChangeLog) {
+            //   this.rest.get(res.notes.ChangeLog.toString(), {}, false).subscribe(logs => this.changeLog = logs.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            // }
+            if(res.changelog) {
+              this.changeLog = res.changelog;
             }
-
             if(res.notes.ReleaseNotes) {
               this.rest.get(res.notes.ReleaseNotes.toString(), {}, false).subscribe(notes => this.releaseNotes = notes.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
             }
