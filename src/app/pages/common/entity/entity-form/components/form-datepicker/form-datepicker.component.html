@@ -1,12 +1,13 @@
 <div class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <md-input-container class="full-width">
 	  <input mdInput
-	  			 (click)="picker.open()"
+	  			 [type]="config.inputType ? config.inputType : 'text'"
 	  			 [mdDatepicker]="picker"
 	  			 [attr.value]="config.value"
 					 [formControlName]="config.name"
 	  			 [placeholder]="config.placeholder"
-	  			 [readonly]="config.readonly">
+	  			 [readonly]="config.readonly"
+	  			 (click)="picker.open()">
 	  <button mdSuffix [mdDatepickerToggle]="picker"></button>
 	</md-input-container>
 	<md-datepicker #picker></md-datepicker>
