@@ -67,8 +67,6 @@ export class ShellService {
   onmessage(msg) {
     let data: any;
 
-    console.log("-----service:", msg.data);
-
     try {
       data = JSON.parse(msg.data);
     } catch (e) {

@@ -41,7 +41,6 @@ export class ShellComponent implements OnInit, OnChanges {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        console.log("--value:", value);
         if(value !== undefined){
           this.xterm.write(value);
         }
