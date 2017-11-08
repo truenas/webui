@@ -66,12 +66,12 @@ export class ShellService {
 
   onmessage(msg) {
     let data: any;
-    let shellMsg: string;
+
+    console.log("-----service:", msg.data);
 
     try {
       data = JSON.parse(msg.data);
     } catch (e) {
-      shellMsg = msg.data;
       data = { 'msg': 'please discard this' };
     }
 
@@ -85,7 +85,7 @@ export class ShellService {
       return;
     }
     if (data.msg === "ping") {} else {
-      this.shellCmdOutput = shellMsg;
+      this.shellCmdOutput = msg.data;
       this.shellOutput.emit(this.shellCmdOutput);
     }
   }

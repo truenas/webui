@@ -28,8 +28,6 @@ export class ShellComponent implements OnInit, OnChanges {
   @Input() prompt: string = '';
   //xter container
   @ViewChild('terminal') container: ElementRef;
-
-
   // xterm variables
   cols: string;
   rows: string;
@@ -43,7 +41,10 @@ export class ShellComponent implements OnInit, OnChanges {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        this.xterm.write(value);
+        console.log("--value:", value);
+        if(value !== undefined){
+          this.xterm.write(value);
+        }
       });
       this.initializeTerminal();
     });
