@@ -23,7 +23,8 @@ export class VolumesListComponent implements OnInit {
   ) {}
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'path'},
+    {name : 'Name', prop : 'name'},
+    {name : 'Path', prop : 'path'},
     {name : 'Status', prop : 'status'},
     {name : 'Available', prop : 'avail'},
     {name : 'Used', prop : 'used'},
