@@ -497,6 +497,15 @@ body .mat-select-trigger {
     z-index: auto;
 }
 
+
+
+.empty-row {
+    padding: 20px;
+}
+.ngx-datatable.material .datatable-header .datatable-header-cell  {
+    padding: .5rem;
+    font-weight: 500;
+}
 .ngx-datatable.fullscreen {
     height: calc(100vh - 90px);
 }
@@ -534,6 +543,7 @@ body .mat-select-trigger {
     padding: .9rem .6rem;
     line-height: 0rem;
     border-bottom: 1px solid rgba(0,0,0, 0.08);
+    overflow: hidden;
 }
 .ngx-datatable.material .datatable-body .datatable-body-row:last-child {
     border-bottom: 0px solid black;
