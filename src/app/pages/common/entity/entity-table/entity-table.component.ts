@@ -32,7 +32,7 @@ export class EntityTableComponent implements OnInit {
   @ViewChild('filter') filter: ElementRef;
   
   public displayedColumns: string[] = [];
-  public initialItemsPerPage = 10;
+  public initialItemsPerPage = 5;
   public busy: Subscription;
   public columns: Array<any> = [];
   public rows: any[] = [];

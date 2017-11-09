@@ -497,14 +497,21 @@ body .mat-select-trigger {
     z-index: auto;
 }
 
+.datatable-header-cell-wrapper{
+    padding: .5rem;
+}
 
+.datatable-body-cell-label {
+    padding: .5rem;
+    overflow: hidden;
+}
 
 .empty-row {
-    padding: 20px;
+    padding: 1rem;
 }
 .ngx-datatable.material .datatable-header .datatable-header-cell  {
     padding: .5rem;
-    font-weight: 500;
+    font-weight: 330;
 }
 .ngx-datatable.fullscreen {
     height: calc(100vh - 90px);
