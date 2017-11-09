@@ -1,3 +1,5 @@
-body {
-	/*font-family: Roboto, "Helvetica Neue", sans-serif;*/
+.guide {
+  position: absolute;
+  width: 100%;
+  height: 90%;
 }

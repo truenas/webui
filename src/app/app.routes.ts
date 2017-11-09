@@ -100,7 +100,7 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path : 'guide',
-        loadChildren : './pages/shell/shell.module#ShellModule',
+        loadChildren : './pages/guide/guide.module#GuideModule',
         data: { title: 'Guide', breadcrumb: 'Guide'}
       }
     ]
