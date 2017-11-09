@@ -97,6 +97,11 @@ export const rootRouterConfig: Routes = [{
         path : 'shell',
         loadChildren : './pages/shell/shell.module#ShellModule',
         data: { title: 'Shell', breadcrumb: 'SHELL'}
+      },
+      {
+        path : 'guide',
+        loadChildren : './pages/shell/shell.module#ShellModule',
+        data: { title: 'Guide', breadcrumb: 'Guide'}
       }
     ]
   },
