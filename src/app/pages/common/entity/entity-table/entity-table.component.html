@@ -4,16 +4,6 @@
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
 
-	<div>
-		<br/>
-	</div>
-
-	<div>
-		<md-paginator #paginator [length]="dataSource.data.length" [pageIndex]="0" [pageSize]="initialItemsPerPage" [pageSizeOptions]="[5, 10, 25, 100]">
-		</md-paginator>
-	</div>
-
-
 	<div class="padding_all">
 		<md-input-container floatPlaceholder="never">
 			<input mdInput #filter placeholder="Filter {{title}}">
@@ -25,36 +15,18 @@
 	</div>
 
 	<div>
-		<md-table #table [dataSource]="dataSource" mdSort>
-
-			<!--- Note that these columns can be defined in any order.
-		The actual rendered columns are set as a property on the row definition" -->
-
-			<!-- Position Column -->
-			<div *ngFor="let col of conf.columns">
-				<ng-container cdkColumnDef="{{col.prop}}"> 
-					<md-header-cell *cdkHeaderCellDef md-sort-header> {{col.name}} </md-header-cell>
-					<md-cell class="custom_cell_styling" title="{{row[col.prop]}}" *cdkCellDef="let row">
-						<div>
-							{{row[col.prop]}}
-						</div>
-					</md-cell>
-				</ng-container>
-			</div>
-
-			<ng-container cdkColumnDef="action">
-				<md-header-cell *cdkHeaderCellDef> Action </md-header-cell>
-				<md-cell *cdkCellDef="let row">
-					<div class="padding_top">
-						<app-entity-table-actions [entity]="this" [row]="row">
-						</app-entity-table-actions>
-					</div>
-				</md-cell>
-			</ng-container>
-
-			<md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-			<md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-		</md-table>
+			<ngx-datatable
+			class='material'
+			[rows]='currentRows'
+			[columns]="conf.columns"
+			[columnMode]="'force'"
+			[columnWidth]="'auto'"
+			[headerHeight]="50"
+			[footerHeight]="50"
+			[limit]="initialItemsPerPage"
+			[rowHeight]="'auto'"
+			[reorderable]="'true'">
+			</ngx-datatable>
 	</div>
 
 </div>
