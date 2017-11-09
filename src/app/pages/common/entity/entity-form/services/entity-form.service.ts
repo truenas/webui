@@ -7,7 +7,7 @@ import {
   FormGroup,
   Validators
 } from "@angular/forms";
-import { WebSocketService } from '../../../../../services/';
+import {WebSocketService, RestService} from '../../../../../services/';
 import 'rxjs/add/operator/toPromise';
 
 import {FieldConfig} from '../models/field-config.interface';
@@ -16,7 +16,7 @@ import {FieldConfig} from '../models/field-config.interface';
 export class EntityFormService {
 
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
-              protected ws: WebSocketService) {}
+              protected ws: WebSocketService, private rest: RestService) {}
 
   createFormGroup(controls: FieldConfig[]) {
     let formGroup: {[id: string] : AbstractControl;} = {};
@@ -67,6 +67,7 @@ export class EntityFormService {
 
   getFilesystemListdirChildren(node: any) {
     let children = [];
+
     return this.ws.call('filesystem.listdir', [node.data.name]).toPromise().then(res => {
       for (let i = 0; i < res.length; i++) {
         let child = {};
@@ -79,6 +80,17 @@ export class EntityFormService {
           children.push(child);
         }
       }
+      return children;
+    });
+  }
+
+  getDatasetsAndZvolsListChildren(node: any) {
+    let children = [];
+
+    return this.rest.get('storage/volume/', {}).toPromise().then(res => {
+      res.data.forEach((vol) => {           
+        children.push(vol.children[0]);
+      });
       return children;
     });
   }

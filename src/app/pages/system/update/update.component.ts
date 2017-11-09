@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -34,7 +34,7 @@ export class UpdateComponent implements OnInit {
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MdSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {
-    router.events.subscribe((res)=>{
+    router.events.subscribe((res) => {
       if (res instanceof NavigationStart) {
         if (res.url == '/sessions/signin' && !this.ws.connected) {
           this.dialogRef.close();
@@ -111,11 +111,11 @@ export class UpdateComponent implements OnInit {
             // if(res.notes.ChangeLog) {
             //   this.rest.get(res.notes.ChangeLog.toString(), {}, false).subscribe(logs => this.changeLog = logs.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
             // }
-            if(res.changelog) {
+            if (res.changelog) {
               this.changeLog = res.changelog;
             }
-            if(res.notes.ReleaseNotes) {
-              this.rest.get(res.notes.ReleaseNotes.toString(), {}, false).subscribe(notes => this.releaseNotes = notes.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
+            if (res.notes.ReleaseNotes) {
+              this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
         },
