@@ -168,83 +168,35 @@ export class CronFormComponent {
       ],
     },
     {
-      type: 'task',
+      type: 'select',
       name: 'cron_minute',
       placeholder: 'Minute',
-      tabs: [{
-        type: 'slider',
-        name: 'cron_minute_slider',
-        tabName: 'Every N minute',
-        min: 1,
-        max: 30,
-      },
-      {
-        type: 'togglebutton',
-        name: 'cron_minute_togglebutton',
-        tabName: 'Each selected minute',
-        options: []
-      }]
+      options: [],
     },
     {
-      type: 'task',
+      type: 'select',
       name: 'cron_hour',
       placeholder: 'Hour',
-      tabs: [{
-        type: 'slider',
-        name: 'cron_hour_slider',
-        tabName: 'Every N hour',
-        min: 1,
-        max: 12,
-      },
-      {
-        type: 'togglebutton',
-        name: 'cron_hour_togglebutton',
-        tabName: 'Each selected hour',
-        options: []
-      }]
+      options: [],
     },
     {
-      type: 'task',
+      type: 'select',
       name: 'cron_daymonth',
       placeholder: 'Day of month',
-      tabs: [{
-        type: 'slider',
-        name: 'cron_daymonth_slider',
-        tabName: 'Every N day of month',
-        min: 1,
-        max: 15,
-      },
-      {
-        type: 'togglebutton',
-        name: 'cron_daymonth_togglebutton',
-        tabName: 'Each selected day of month',
-        options: []
-      }]
+      options: [],
     },
     {
-      type: 'togglebutton',
+      type: 'select',
       name: 'cron_month',
       placeholder: 'Month',
-      multiple: true,
-      options: []
+      options: [],
     },
     {
-      type: 'togglebutton',
+      type: 'select',
       name: 'cron_dayweek',
       placeholder: 'Day of week',
-      options: []
+      options: [],
     },
-    // {
-    //   type: 'checkbox',
-    //   name: 'cron_stdout',
-    //   placeholder: 'Redirect Stdout',
-    //   value: true,
-    // },
-    // {
-    //   type: 'checkbox',
-    //   name: 'cron_stderr',
-    //   placeholder: 'Redirect Stderr'
-    // },
     {
       type: 'checkbox',
       name: 'cron_enabled',
@@ -289,53 +241,52 @@ export class CronFormComponent {
     }
   ];
 
-  protected user_field: any;
-  protected month_field: any;
-  protected day_field: any;
-  protected mintue_field: any;
-  protected hour_field: any;
-  protected daymonth_field: any;
+  protected cron_user: any;
+  protected cron_minute: any;
+  protected cron_hour: any;
+  protected cron_month: any;
+  protected cron_daymonth: any;
+  protected cron_dayweek: any;
 
   constructor(protected router: Router, protected taskService: TaskService, 
               protected userService: UserService, protected entityFormService: EntityFormService, ) {
-    this.user_field = _.find(this.fieldConfig, { 'name': 'cron_user' });
+    this.cron_user = _.find(this.fieldConfig, { 'name': 'cron_user' });
     this.userService.listUsers().subscribe((res) => {
       res.data.forEach((item) => {
-        this.user_field.options.push({ label: item.bsdusr_username, value: item.bsdusr_username })
+        this.cron_user.options.push(
+          {label: item.bsdusr_username, value: item.bsdusr_username})
       });
     });
 
-    this.month_field = _.find(this.fieldConfig, { 'name': 'cron_month' });
+    this.cron_minute = _.find(this.fieldConfig, { 'name': 'cron_minute' });
+    for (let i = 0; i < 60; i++) {
+      this.cron_minute.options.push(
+        {label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})});
+    }
+
+    this.cron_hour = _.find(this.fieldConfig, { 'name': 'cron_hour' });
+    for (let i = 0; i < 24; i++) {
+      this.cron_hour.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
+    }    
+
+    this.cron_month = _.find(this.fieldConfig, { 'name': 'cron_month' });
     this.taskService.getMonthChoices().subscribe((res) => {
       res.forEach((item) => {
-        this.month_field.options.push({ label: item[1], value: item[0] });
+        this.cron_month.options.push(
+          {label: item[1], value: item[0]});
       });
     });
 
-    this.day_field = _.find(this.fieldConfig, { 'name': 'cron_dayweek' });
+    this.cron_daymonth = _.find(this.fieldConfig, { 'name': 'cron_daymonth' });
+    for (let i = 1; i < 32; i++) {
+      this.cron_daymonth.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
+    }
+
+    this.cron_dayweek = _.find(this.fieldConfig, { 'name': 'cron_dayweek' });
     this.taskService.getWeekdayChoices().subscribe((res) => {
       res.forEach((item) => {
-        this.day_field.options.push({ label: item[1], value: item[0] });
+        this.cron_dayweek.options.push({ label: item[1], value: item[0] });
       });
     });
-
-    let cron_minute = _.find(this.fieldConfig, { 'name': 'cron_minute' });
-    this.mintue_field = _.find(cron_minute.tabs, { 'name': 'cron_minute_togglebutton' });
-    for (let i = 0; i < 60; i++) {
-      this.mintue_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
-    }
-
-    let cron_hour = _.find(this.fieldConfig, { 'name': 'cron_hour' });
-    this.hour_field = _.find(cron_hour.tabs, { 'name': 'cron_hour_togglebutton' });
-    for (let i = 0; i < 24; i++) {
-      this.hour_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
-    }
-
-    let cron_daymonth = _.find(this.fieldConfig, { 'name': 'cron_daymonth' });
-    this.daymonth_field = _.find(cron_daymonth.tabs, { 'name': 'cron_daymonth_togglebutton' });
-    for (let i = 1; i < 32; i++) {
-      this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
-    }
-
   }
 }
