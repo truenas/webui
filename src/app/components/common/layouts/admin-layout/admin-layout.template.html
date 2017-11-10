@@ -5,16 +5,26 @@
       <div *ngFor="let theme of freenasThemes">
         <div *ngIf="theme.isActive">
           <div *ngIf="theme.hasDarkLogo; else lightLogo">
-            <div class="branding mat-bg-primary">
+            <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasDark">
               <img src="assets/images/logo.png" alt="" class="app-logo">
               <img src="assets/images/logo-text.png" alt="" class="app-logo-text">
             </div>
+            <ng-template #isTruenasDark>
+              <div class="branding mat-bg-primary">
+                <img src="assets/images/truenas-logo-ondark.png" alt="truenas-logo">
+              </div>
+          </ng-template>
 	  </div>
   	  <ng-template #lightLogo>
-            <div class="branding mat-bg-primary">
+            <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasLight">
               <img src="assets/images/light-logo.png" alt="" class="app-logo">
               <img src="assets/images/light-logo-text.png" alt="" class="app-logo-text">
             </div>
+            <ng-template #isTruenasLight>
+              <div class="branding mat-bg-primary">
+                <img src="assets/images/truenas-logo.png" alt="truenas-logo">
+              </div>
+          </ng-template>
 	  </ng-template>
         </div>
       </div>
