@@ -10,13 +10,14 @@ md-card.card-filter.mat-card .mat-card-content{
   padding:8px 24px;
 }
 
-md-card.card-filter.mat-card .mat-card-content > div{
-  display:inline-block;
+md-card.card-filter.mat-card .mat-card-header > div{
+  /*display:inline-block;*/
 }
 
 
 md-card.card-filter .filter-field{
-  width:84%;
+  width:70%;
+  margin-right:5%
 }
 
 md-card.card-filter .filter-field md-icon{
@@ -26,13 +27,22 @@ md-card.card-filter .filter-field md-icon{
 }
 
 md-card.card-filter .view-controls{
-  width:14%;
-  text-align:center;
+  width:22%;
+  position:relative;
+  text-align:right;
+  min-width: 274px;
+  margin-right: 16px;
+}
+
+md-card.card-filter .view-controls .mat-button-toggle-group{
+  top:10px;
+  position:relative;
+  margin:0 16px;
 }
 
 md-card.card-filter .view-controls .add-vm{
-  position: absolute;
-  right: 16px;  
+  position: relative;
+  top: 16px;  
 }
 
 .card-filter md-input-container.mat-input-container{
@@ -55,7 +65,7 @@ vm-cards md-card.front {
   padding:0 !important;
 }
 
-.sidebar{
+.vm-bg{
   width: 40%;
   text-align: center;
   background-color: #111;
@@ -70,12 +80,10 @@ vm-cards md-card.front {
   color: #efefef;
 }
 
-.sidebar .name-info{
-  width:100%;
-  margin-top:70%;
+.side-content-header{
+  position:relative;
 }
-
-.sidebar button.vm-power-btn {
+.side-content button.vm-power-btn {
  box-shadow:none; 
 }
 
@@ -108,8 +116,8 @@ vm-cards md-card.front {
 .vm-power-btn-on.mat-fab,
 .vm-power-btn-off.mat-fab{
   box-shadow:0px 3px 3px rgba(0,0,0,0.5)!important;
-  top: 40px;
-  right: -28px;
+  top: 16px;
+  left: -28px;
   position: absolute;
 }
 
@@ -139,7 +147,7 @@ md-chip.vm-state-on,
 .card-close{
     background: none;
     border: none;
-    position: absolute;
+    position: fixed;
     top: 5px;
     right:0px;
     color: rgba(0,0,0,0.35);
