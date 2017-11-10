@@ -20,6 +20,7 @@ import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootModifyListComponent } from './/bootenv/bootenv-modify/';
 import { BootStatusListComponent } from './bootenv/bootenv-status/';
+import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
@@ -78,6 +79,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     BootEnvironmentCreateComponent,
     BootModifyListComponent,
     BootStatusListComponent,
+    BootEnvAttachFormComponent,
     TunableListComponent,
     TunableFormComponent,
     UpdateComponent,

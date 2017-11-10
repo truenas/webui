@@ -13,6 +13,7 @@ import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootStatusListComponent } from './bootenv/bootenv-status/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
+import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
 import { BootModifyListComponent } from './bootenv/bootenv-modify/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
@@ -115,6 +116,11 @@ export const routes: Routes = [
         path: 'status/modify/:pk',
         component: BootModifyListComponent,
         data: { title: 'Modify', breadcrumb: 'modify' },
+      },
+      {
+        path: 'status/modify/:pk/attach',
+        component: BootEnvAttachFormComponent,
+        data: { title: 'Attach', breadcrumb: 'attach' },
       }
     ]
     }, {
