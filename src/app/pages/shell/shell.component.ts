@@ -67,11 +67,17 @@ export class ShellComponent implements OnInit, OnChanges {
   }
 
   initializeTerminal() {
+    let domHeight = document.body.offsetHeight;
+    let rowNum = (domHeight * 0.75 - 104)/21;
+    if(rowNum < 10) {
+      rowNum = 10;
+    }
+
     this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 4,
       'cols': 80,
-      'rows': 50,
+      'rows': parseInt(rowNum.toFixed()),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
