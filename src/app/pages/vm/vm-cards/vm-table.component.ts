@@ -12,13 +12,14 @@ import {RestService, WebSocketService} from '../../../services/';
   selector : 'vm-table',
   //templateURL: 'vm-table.component.html' // Why does this throw a missing template error?
   template : `
-  <md-card>
-  <md-card-content>
     <ngx-datatable
       class='material'
       [rows]='data'
       [columnMode]="'flex'"
-      [rowHeight]="'auto'">
+      [rowHeight]="'auto'"
+      [headerHeight]="'50px'"
+      [footerHeight]="'50px'"
+      [limit]="10">
 
       <ngx-datatable-column name="State" [flexGrow]="1">
 	<ng-template let-column="column" ngx-datatable-header-template>
@@ -29,7 +30,7 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Name" [flexGrow]="3" [minWidth]="200">
+      <ngx-datatable-column name="Name" [flexGrow]="3" [minWidth]="100">
 	<ng-template let-column="column" ngx-datatable-header-template>
 	  {{column.name}}
 	</ng-template>
@@ -38,63 +39,44 @@ import {RestService, WebSocketService} from '../../../services/';
 	</ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Description" [flexGrow]="3">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	  <div>{{value}}</div>
-	</ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column name="Info" [flexGrow]="3">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	  <div>{{value}}</div>
-	</ng-template>
+            <ngx-datatable-column name="Description" [flexGrow]="3">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
       </ngx-datatable-column>
 
       <ngx-datatable-column name="vCPUs" [flexGrow]="1">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	  <div>{{value}}</div>
-	</ng-template>
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
       </ngx-datatable-column>
 
       <ngx-datatable-column name="Memory" [flexGrow]="2">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	  <div>{{value}}</div>
-	</ng-template>
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
       </ngx-datatable-column>
 
       <ngx-datatable-column name="Bootloader" [flexGrow]="2">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	  <div>{{value}}</div>
-	</ng-template>
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column name="Actions" [flexGrow]="3">
-	<ng-template let-column="column" ngx-datatable-header-template>
-	  {{column.name}}
-	</ng-template>
-	<ng-template let-value="value" ngx-datatable-cell-template>
-	 <div>Actions go in here!</div>
-	</ng-template>
-      </ngx-datatable-column>
 
     </ngx-datatable>
-  </md-card-content>
-  </md-card>
   `
 })
 export class VmTableComponent {
@@ -116,12 +98,12 @@ export class VmTableComponent {
     {name : 'State', prop : 'state'},
     {name : 'Name', prop : 'name'} ,
     {name : 'Description', prop : 'description'},
-    {name : 'Info', prop : 'info' },
+    //{name : 'Info', prop : 'info' },
     {name : 'vCPUs', prop : 'vcpus'},
     {name : 'Memory', prop : 'memory'},
     {name : 'Bootloader', prop : 'bootloader'},
     {name: 'Autostart', prop : 'autostart'},
-    {name: 'Actions', prop : 'cardActions'},
+    /*{name: 'Actions', prop : 'cardActions'}*/
   ];
 
   @Input() data: any[];
