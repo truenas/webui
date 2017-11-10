@@ -4,7 +4,10 @@
     <md-card>
       <md-card-content>
         <div class="text-center pb-1">
-          <img src="assets/images/logo-full.png" alt="">
+          <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.png" alt="freenas-log">
+          <ng-template #isTruenas>
+            <img src="assets/images/truenas-logo.png" alt="truenas-logo">
+          </ng-template>
           <!--p class="text-muted">Sign in to your account</p-->
         </div>
         <form #signinForm="ngForm" (ngSubmit)="signin()">
@@ -55,7 +58,7 @@
           </div-->
         </form>
         <div>
-          <a md-button color="primary" routerLink="/">Back to the Old UI</a>
+          <a md-button color="primary" href="/">Back to the Old UI</a>
         </div>
       </md-card-content>
     </md-card>
