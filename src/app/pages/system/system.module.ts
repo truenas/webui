@@ -6,6 +6,7 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { MaterialModule } from '@angular/material';
+import { MarkdownModule } from 'angular2-markdown';
 import { routing } from './system.routing';
 
 import { GeneralComponent } from './general/general.component';
@@ -14,6 +15,7 @@ import { ConfigUploadComponent } from './general/config-upload/config-upload.com
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
+import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
@@ -59,7 +61,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule
+    MaterialModule, MarkdownModule.forRoot(),
   ],
   declarations: [
     GeneralComponent,
@@ -69,6 +71,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     AdvancedComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
+    BootEnvironmentRenameComponent,
     TunableListComponent,
     TunableFormComponent,
     UpdateComponent,

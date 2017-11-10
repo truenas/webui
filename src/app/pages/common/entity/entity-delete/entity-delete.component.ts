@@ -22,9 +22,10 @@ import {EntityUtils} from '../utils';
 export class EntityDeleteComponent implements OnInit, OnDestroy {
 
   @Input('conf') conf: any;
-
   protected pk: any;
   public isSubmitEnabled: boolean = false;
+  public extraWarning: boolean = false;
+  public test = false;
   public sub: any;
   public error: string;
   public data: Object = {};
@@ -71,6 +72,10 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
 
   toggleSubmit(data) {
     this.isSubmitEnabled = data.checked;
+  }
+
+  toggleExtraCheck(data) {
+    this.extraWarning = data.checked;
   }
 
   doSubmit() {

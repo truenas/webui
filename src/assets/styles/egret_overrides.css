@@ -1,7 +1,10 @@
 /* Universal Overrides for Egret */
 
+.hidden{
+  display:none;
+}
 
-/* Navigation fixed to Top */
+/* Navigation shorter and fixed to Top */
 topbar, app-breadcrumb{
     position:fixed;
     width:100%;
@@ -12,8 +15,20 @@ topbar{
     top:0;
 }
 
+.mat-toolbar{
+  min-height:48px;
+}
+
+.mat-toolbar-row{
+  height:48px !important;
+}
+
+.branding{
+  height:48px;
+}
+
 app-breadcrumb{
-    top:64px;
+    top:48px;
 }
 
 .rightside-content-hold {
@@ -61,14 +76,15 @@ app-breadcrumb{
     font-family: monospace,Courier New,Courier;
     font-size: 9pt;
     color: #00FF00;
-    padding: 0px 20px;
+    padding: 3px 20px 0px;
     background-color: #000;
     border: 1px solid #222;
-    height: 42px;
+    height: 39px;
     white-space: pre-wrap;
     max-height: 42px;
     overflow: hidden;
     margin: 0px;
+    line-height: 1;
 }
 
 /* Tabbed navigation is fixed too */

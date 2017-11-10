@@ -21,8 +21,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenavOpen: Boolean = true;
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
-  intervalPing;
-  consoleMsg: String = "Loading....";
+  consoleMsg: String = "";
+  consoleMSgList: any[] = [];
+  public is_freenas: Boolean = false;
 
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -35,6 +36,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected ws: WebSocketService,
     public translate: TranslateService,
     public dialog: MdDialog) {
+    // detect server type
+    ws.call('system.is_freenas').subscribe((res)=>{
+      this.is_freenas = res;
+    });
+
     // Close sidenav after route change in mobile
     router.events.subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {
@@ -92,29 +98,61 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   checkIfConsoleMsgShows() {
     this.rest.get('system/advanced', { limit: 0 }).subscribe((res) => {
-      this.isShowFooterConsole = res.data['adv_consolemsg'];
-      this.getLogConsoleMsg();
+      this.onShowConsoleFooterBar(res.data['adv_consolemsg']);    
     });
   }
 
   getLogConsoleMsg() {
-    let subName = "filesystem.file_tail_follow:/var/log/messages";
+    let subName = "filesystem.file_tail_follow:/var/log/messages:500";
+    let neededNumberconsoleMsg = 3; // Just 3 messages for footer bar
 
-    this.intervalPing = setInterval( () => {
-      this.ws.sub(subName).subscribe((res) => {
-        this.consoleMsg = res.data;
-      });
-    }, 5000);
+    this.ws.sub(subName).subscribe((res) => {
+      if(res.data != ""){
+        this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
+      }      
+    });
+  }
+
+  accumulateConsoleMsg(msg, num) {
+    let msgs = "";
+
+    if(msg != "") {
+      // consoleMSgList will store just 500 messages.
+      this.consoleMSgList.push(msg);
+      if(this.consoleMSgList.length > 500) {
+        this.consoleMSgList.shift();
+      }
+    }    
+    if(num > 500) {
+      num = 500;
+    }
+    if(num > this.consoleMSgList.length) {
+      num = this.consoleMSgList.length;
+    }
+    for (let i = this.consoleMSgList.length - 1; i >= this.consoleMSgList.length - num; --i) {
+      msgs = this.consoleMSgList[i] + msgs;
+    }
+
+    return msgs;
+  }
+
+  onShowConsoleFooterBar(data) {
+    if(data && this.consoleMsg == "") {
+      this.getLogConsoleMsg();      
+    }
+
+    this.isShowFooterConsole = data;
   }
 
   onShowConsolePanel() {
-    clearInterval(this.intervalPing);
-
     let dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
+    const sub = dialogRef.componentInstance.onEventEmitter.subscribe(() => {
+      dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg("", 500);
+    })
 
     dialogRef.afterClosed().subscribe((result) => {
       clearInterval(dialogRef.componentInstance.intervalPing);
-      this.getLogConsoleMsg();
+      sub.unsubscribe();
     });
   }
 

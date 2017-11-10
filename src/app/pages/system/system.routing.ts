@@ -9,6 +9,7 @@ import { ConfigUploadComponent } from './general/config-upload/config-upload.com
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
+import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
@@ -91,7 +92,13 @@ export const routes: Routes = [
         path: 'clone/:pk',
         component: BootEnvironmentCloneComponent,
         data: { title: 'Clone', breadcrumb: 'Clone' },
-      }]
+      },
+      {
+        path: 'rename/:pk',
+        component: BootEnvironmentRenameComponent,
+        data: { title: 'Rename', breadcrumb: 'Rename' },
+      }
+    ]
     }, {
       path: 'tunable',
       data: { title: 'Tunable', breadcrumb: 'Tunable' },

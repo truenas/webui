@@ -37,6 +37,7 @@
             </tr>
           </tbody>
         </table>
+        <div *ngIf="status == 'UNAVAILABLE'">No Updates Availabel</div>
         <div *ngIf="updated">
           Update is complete, reboot the machine yourself because I'm tired!
         </div>
@@ -54,7 +55,7 @@
     </div>
   </md-card-title>
   <md-card-content>
-    <div [innerHTML]="releaseNotes"></div>
+    <a md-button href="{{releaseNotes}}" target="_blank">Check Release Notes</a>
   </md-card-content>
 </md-card>
 
@@ -65,6 +66,8 @@
     </div>
   </md-card-title>
   <md-card-content>
-    <div [innerHTML]="changeLog"></div>
+      <markdown>
+          {{changeLog}}
+      </markdown>
   </md-card-content>
 </md-card>

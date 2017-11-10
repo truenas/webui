@@ -17,6 +17,11 @@ export const rootRouterConfig: Routes = [{
       path: 'sessions',
       loadChildren: './views/sessions/sessions.module#SessionsModule',
       data: { title: 'Session' }
+    },
+    {
+      path: 'reboot',
+      loadChildren: './views/others/others.module#OthersModule',
+      data: { title: 'System Rebooting', breadcrumb: 'System Rebooting'}
     }]
   },
   {
@@ -92,6 +97,11 @@ export const rootRouterConfig: Routes = [{
         path : 'shell',
         loadChildren : './pages/shell/shell.module#ShellModule',
         data: { title: 'Shell', breadcrumb: 'SHELL'}
+      },
+      {
+        path : 'guide',
+        loadChildren : './pages/guide/guide.module#GuideModule',
+        data: { title: 'Guide', breadcrumb: 'Guide'}
       }
     ]
   },

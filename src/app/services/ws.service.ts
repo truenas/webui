@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
-import {LocalStorage} from 'ng2-webstorage';
+import {LocalStorage} from 'ngx-webstorage';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
@@ -55,7 +55,7 @@ export class WebSocketService {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
-    this._router.navigate([ '/login' ]);
+    this._router.navigate(['/sessions/signin']);
   }
 
   ping() {
@@ -66,7 +66,6 @@ export class WebSocketService {
   }
 
   onmessage(msg) {
-
     try {
       var data = JSON.parse(msg.data);
     } catch (e) {
@@ -99,7 +98,6 @@ export class WebSocketService {
       }
       if (subObserver) {
         subObserver.next(data.fields);
-        subObserver.complete();
       }
     } else if (data.msg == "changed") {
       this.subscriptions.forEach((v, k) => {
