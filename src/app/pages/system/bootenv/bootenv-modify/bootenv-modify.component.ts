@@ -57,12 +57,12 @@ export class BootModifyListComponent {
     this.entityList = entityList;
   }
 
-  isActionVisible(actionId: string, row: any) {
-    if (actionId == 'edit' || actionId == 'add') {
-      return false;
-    }
-    return true;
-  }
+  // isActionVisible(actionId: string, row: any) {
+  //   if (actionId == 'edit' || actionId == 'add') {
+  //     return false;
+  //   }
+  //   return true;
+  // }
   getActions(row) {
     let actions = [];
     actions.push({
@@ -70,7 +70,7 @@ export class BootModifyListComponent {
       id: "attach",
       onClick : (row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "status","modify", row.id, "attach" ]));
+            [ "system", "bootenv", "status","modify", row.name, "attach" ]));
       }
     });
     return actions;

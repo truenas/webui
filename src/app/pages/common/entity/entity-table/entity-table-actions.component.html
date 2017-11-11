@@ -1,11 +1,10 @@
-<md-menu #appMenu="mdMenu"  >
-	<span *ngFor="let action of actions">
-	<button md-menu-item *ngIf="!entity.conf.isActionVisible
-	    || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+<md-menu #appMenu="mdMenu">
+    <span *ngFor="let action of actions">
+	<button md-menu-item *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
 	    (click)="action.onClick(this.row)">
 		<span>{{ action?.label }}</span>
-	</button>
-	</span>
+    </button>
+    </span>
 </md-menu>
 <button md-icon-button [mdMenuTriggerFor]="appMenu" class="action-menu text-muted" id="tour-fab-buttons">
 	<md-icon>more_vert</md-icon>

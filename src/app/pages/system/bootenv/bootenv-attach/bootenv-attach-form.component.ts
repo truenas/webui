@@ -16,6 +16,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 import { debounce } from 'rxjs/operator/debounce';
+import { debug } from 'util';
 
 @Component({
    selector : 'bootenv-attach-form',
@@ -27,17 +28,19 @@ export class BootEnvAttachFormComponent {
   //protected resource_name: string = 'storage/vmwareplugin';
   protected route_success: string[] = [ 'bootenv', 'status' ];
   protected isEntity: boolean = true;
+  protected addCall = 'boot.attach';
   protected pk: any;
-  public formGroup: FormGroup;
+  protected isNew: boolean = true;
+
 
   protected entityForm: any;
-  private datastore: any;
 
-  protected fieldConfig: FieldConfig[] =[
+  public fieldConfig: FieldConfig[] =[
     {
       type: 'select', 
       name: 'dev', 
       placeholder: 'Member Disk',
+      options :[]
     },
     {
       type: 'checkbox', 
@@ -46,23 +49,34 @@ export class BootEnvAttachFormComponent {
     },
 
   ]
-  private diskChoice:  any;
+  protected diskChoice: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  
+preInit(entityForm: any) {
+  this.route.params.subscribe(params => {
+    this.pk = params['pk'];
+  });
+  this.entityForm = entityForm;
+}
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
-      this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
-      for(let diskIdx = 0; diskIdx < res.length; diskIdx++){
-        debugger;
-      }
-
-    })
+      res.forEach((item) => {
+        this.diskChoice.options.push({label : item.name, value : item.name});
+      });
+    });
+    entityForm.submitFunction = this.submitFunction;
+  }
+  submitFunction(entityForm){
+    const payload = {};
+    payload['dev'] = entityForm.dev;
+    payload['expand'] = entityForm.expand;
+    return this.ws.call('boot.attach', [JSON.stringify(payload)]);
   }
 
 }
