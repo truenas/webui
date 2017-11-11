@@ -1,6 +1,5 @@
-<div class="margin-tricky-div">
 	<button md-icon-button [mdMenuTriggerFor]="appMenu" class="text-muted" id="tour-fab-buttons">
-		<md-icon style="font-size:20px;">more_vert</md-icon>
+		<md-icon [mdMenuTriggerFor]="appMenu">more_vert</md-icon>
 	</button>
 	<md-menu #appMenu="mdMenu">
 		<span *ngFor="let action of actions">
@@ -10,6 +9,5 @@
 			</button>
 		</span>
 	</md-menu>
-</div>
 
 

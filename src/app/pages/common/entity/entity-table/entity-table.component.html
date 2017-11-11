@@ -11,22 +11,34 @@
 	</div>
 
 	<div>
-		<ngx-datatable class='material' [rows]='currentRows' [columns]="conf.columns" [columnMode]="'force'" [columnWidth]="'auto'"
-		 [headerHeight]="50" [footerHeight]="50" [limit]="initialItemsPerPage" [rowHeight]="'auto'" [reorderable]="'true'">
+		<ngx-datatable class='material' 
+					   [rows]='currentRows' 
+					   [columns]="conf.columns" 
+					   [columnMode]="'standard'" 
+					   [columnWidth]="'auto'"
+					   [headerHeight]="50" 
+					   [footerHeight]="50" 
+					   [limit]="initialItemsPerPage" 
+					   [rowHeight]="50" 
+					   [reorderable]="'true'">
 		    
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
 				prop="{{col.prop}}" 
 				 name="{{col.name}}">
-				 <ng-template let-row="row" ngx-datatable-cell-template>
+				 <ng-template let-row="row" ngx-datatable-cell-template> 
+					 <div>
 						{{row[col.prop]}}
+					  </div>
 					</ng-template>
 			</ngx-datatable-column>
 
 			<ngx-datatable-column>
 				<ng-template let-row="row" ngx-datatable-cell-template>
-					<app-entity-table-actions [entity]="this" [row]="row">
-					</app-entity-table-actions>
+					<div style="margin-top: -18px;">
+						<app-entity-table-actions [entity]="this" [row]="row">
+						</app-entity-table-actions>
+					</div>
 				</ng-template>
 			</ngx-datatable-column>
 		
