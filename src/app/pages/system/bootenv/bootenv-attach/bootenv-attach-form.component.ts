@@ -24,8 +24,6 @@ import { debug } from 'util';
 })
 
 export class BootEnvAttachFormComponent {
-
-  //protected resource_name: string = 'storage/vmwareplugin';
   protected route_success: string[] = [ 'bootenv', 'status' ];
   protected isEntity: boolean = true;
   protected addCall = 'boot.attach';

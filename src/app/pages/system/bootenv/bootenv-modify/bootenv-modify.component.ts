@@ -73,6 +73,13 @@ export class BootModifyListComponent {
             [ "system", "bootenv", "status","modify", row.name, "attach" ]));
       }
     });
+    actions.push({
+      label : "detach",
+      id: "attach",
+      onClick : (row) => {
+        [this.detach(row.name)];
+      }
+    });
     return actions;
   }
   
@@ -93,7 +100,10 @@ export class BootModifyListComponent {
     }
     return data
   };
-  constructor(_rest: RestService, private _router: Router) {}
+  detach(bootEnv:any){
+
+  }
+  constructor(_rest: RestService, private _router: Router,) {}
 
 
 }
