@@ -107,13 +107,6 @@ export class VolumesListComponent implements OnInit {
         }
       });
       actions.push({
-        label : "Create Snapshot",
-        onClick : (row) => {
-          this._router.navigate(new Array('/').concat(
-              [ "storage", "snapshots", "id", row.path.split('/')[0], "add" ]));
-        }
-      });
-       actions.push({
         label : "Edit Options",
         onClick : (row) => {
           this._router.navigate(new Array('/').concat([
