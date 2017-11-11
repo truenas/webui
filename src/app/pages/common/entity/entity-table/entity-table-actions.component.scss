@@ -1,6 +1,10 @@
 .ion-android-more-vertical:before {
     color: black;
 }
-.action-menu  {
-  max-height: 12px;
-}   
+
+.margin-tricky-div {
+    border: 1px solid black;
+    height: 14px;
+    overflow: visible;
+}
+
