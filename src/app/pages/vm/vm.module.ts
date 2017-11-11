@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule, MdTableModule } from '@angular/material';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
@@ -32,7 +33,7 @@ import {routing} from './vm.routing';
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
-	  ReactiveFormsModule, routing, MaterialModule, MdTableModule,NgxDatatableModule//, BrowserModule
+	  ReactiveFormsModule, routing, MaterialModule, MdTableModule,NgxDatatableModule, FlexLayoutModule//, BrowserModule
   ],
   declarations : [
     VmListComponent,
