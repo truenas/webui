@@ -11,7 +11,7 @@ import {
 })
 export class DownloadKeyModalDialog {
 
-  public info: any = {};
+  public volumeId: any;
   public isDownloaded: Boolean = false;
 
   constructor(
@@ -22,4 +22,9 @@ export class DownloadKeyModalDialog {
     
   }
 
+  downloadKey() {
+    this.ws.call("pool.download_encryption_key", [this.volumeId]).subscribe((res) => {
+      console.log("-----res: ", res);
+    });
+  }
 }

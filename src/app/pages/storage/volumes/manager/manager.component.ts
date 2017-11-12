@@ -153,12 +153,18 @@ export class ManagerComponent implements OnInit, OnDestroy {
           })
           .subscribe(
             (res) => {
-              this.loader.close()
-              let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+              this.loader.close();
+              if(this.isEncrypted) {
+                let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
 
-              dialogRef.afterClosed().subscribe(result => {
+                dialogRef.componentInstance.volumeId = res.data.id;
+                dialogRef.afterClosed().subscribe(result => {
+                  this.router.navigate(['/', 'storage', 'volumes']);
+                });
+              }
+              else {
                 this.router.navigate(['/', 'storage', 'volumes']);
-              });              
+              }      
             },
             (res) => {
               this.loader.close();
