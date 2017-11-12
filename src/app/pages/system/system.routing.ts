@@ -14,6 +14,7 @@ import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootStatusListComponent } from './bootenv/bootenv-status/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
+import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
@@ -115,6 +116,11 @@ export const routes: Routes = [
         path: 'attach/:pk',
         component: BootEnvAttachFormComponent,
         data: { title: 'Attach', breadcrumb: 'attach' },
+      },
+      {
+        path: 'replace/:pk',
+        component: BootEnvReplaceFormComponent,
+        data: { title: 'replace', breadcrumb: 'replace' },
       }
     ]
     }, {
