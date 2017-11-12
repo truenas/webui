@@ -2,8 +2,12 @@ import {Component, ElementRef} from '@angular/core';
 import {Router} from '@angular/router';
 import filesize from 'filesize';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
-import {RestService} from '../../../../services/rest.service';
+import { RestService } from '../../../../services/rest.service';
+import { WebSocketService } from '../../../../services/ws.service';
+import { debug } from 'util';
+
 
 @Component({
   selector : 'app-bootstatus-list',
@@ -15,6 +19,7 @@ export class BootStatusListComponent {
   protected resource_name: string = 'system/bootenv';
   protected queryCall = 'boot.get_state';
   protected entityList: any;
+  public busy: Subscription;
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -55,14 +60,36 @@ export class BootStatusListComponent {
 
   getActions(row) {
     let actions = [];
-    actions.push({
-      label : "Modify",
-      id: "modify",
-      onClick : (row) => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "status","modify", row.name ]));
-      }
-    });
+    if (row.name === 'freenas-boot'){
+      actions.push({
+        label : "attach",
+        id: "attach",
+        onClick : (row) => {
+          this._router.navigate(new Array('').concat(
+              [ "system", "bootenv", "attach", row.name ]));
+        }
+      });
+
+    } else {
+      actions.push({
+        label : "replace",
+        id: "replace",
+        onClick : (row) => {
+          this._router.navigate(new Array('').concat(
+              [ "system", "bootenv", "replace", row.name ]));
+        }
+      });
+      actions.push({
+        label : "detach",
+        id: "attach",
+        onClick : (row) => {
+          [this.detach(row.name)];
+        }
+      });
+
+    }
+    
+
     return actions;
   }
   
@@ -75,19 +102,42 @@ export class BootStatusListComponent {
     if (data.type === 'mirror')
     {
       for (let cindex = 0; cindex < data.groups.data[0].children.length; cindex++){
-        data.path.push[data.groups.data[0].children[cindex].path]
+        data.path.push(data.groups.data[0].children[cindex].path)
       }
     } else {
       data.type = 'stripe'
-      data.path.push[data.groups.data[0].path]
+      data.path.push(data.groups.data[0].path)
     }
     return data
   };
+  detach(disk:any){
+    this.entityList.ws.call('boot.detach', [disk] ).subscribe((res)=>{
+      console.log(res);
+    });;
+    
+      }
 
-  constructor(_rest: RestService, private _router: Router) {}
+  constructor(_rest: RestService, private _router: Router, ws: WebSocketService,) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
+  }
+  addRows(rows: any){
+    rows.ws.call(this.queryCall).subscribe((res)=>{
+      const transformedData = this.resourceTransformIncomingRestData(res);
+      for(let transformedDataIdx=0; transformedDataIdx <transformedData.path.length; transformedDataIdx++){
+        this.entityList.rows.push(
+          {
+            "name":transformedData.path[transformedDataIdx],
+            "status":transformedData.status,
+            "read_errors":transformedData.read_errors,
+            "write_errors":transformedData.write_errors,
+            "checksum_errors":transformedData.checksum_errors,
+            "type":transformedData.type
+        })
+      }
+    })
+
   }
 
 }
