@@ -1315,10 +1315,10 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
 }
 
 /*---- Embeded page ----*/
-.ix-embeded .sidebar-panel, .ix-embeded topbar, .ix-embeded app-breadcrumb{
+.embeding-active .sidebar-panel, .embeding-active topbar, .embeding-active app-breadcrumb{
     display: none;
 }
-.ix-embeded .rightside-content-hold {
+.embeding-active .rightside-content-hold {
     padding-top: 0px !important;
 }
 /*---- End ----*/

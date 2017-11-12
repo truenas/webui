@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
         let isEmbeded = params.get('embeded');
 
         if(isEmbeded) {
-          document.body.className += " ix-embeded";
+          document.body.className += " embeding-active";
         }
       }
     });
