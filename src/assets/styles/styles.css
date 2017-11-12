@@ -1313,3 +1313,12 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     word-break: keep-all;
     white-space: normal;
 }
+
+/*---- Embeded page ----*/
+.ix-embeded .sidebar-panel, .ix-embeded topbar, .ix-embeded app-breadcrumb{
+    display: none;
+}
+.ix-embeded .rightside-content-hold {
+    padding-top: 0px !important;
+}
+/*---- End ----*/

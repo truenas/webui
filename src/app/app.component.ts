@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { URLSearchParams, } from '@angular/http';
 
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MdSnackBar } from '@angular/material';
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
   appTitle = 'FreeNAS Material UI';
   pageTitle = '';
   protected accountUserResource: string = 'account/users/1';
+  protected user: any;
 
   constructor(public title: Title,
     private router: Router,
@@ -25,13 +27,23 @@ export class AppComponent implements OnInit {
     private routePartsService: RoutePartsService,
     public snackBar: MdSnackBar,
     private rest: RestService,
-    private tour: TourService) {}
-    protected user: any;
+    private tour: TourService) {
+
+    router.events.subscribe(s => {
+      if (s instanceof NavigationCancel) {
+        let params = new URLSearchParams(s.url.split('#')[1]);
+        let isEmbeded = params.get('embeded');
+
+        if(isEmbeded) {
+          document.body.className += " ix-embeded";
+        }
+      }
+    });
+  }
 
   ngOnInit() {
     this.changePageTitle();
   }
-
 
   changePageTitle() {
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
