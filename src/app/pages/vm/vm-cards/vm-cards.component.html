@@ -1,6 +1,5 @@
 <md-card class="card-filter">
-	<md-card-content>
-		<!--<div class="filter-icon"><h3>Virtual Machines</h3></div>-->
+	<md-card-header>
 
 		<div class="filter-field">
 			<md-icon role="img">search</md-icon>
@@ -13,19 +12,29 @@
 		<div class="view-controls" >
 			<md-button-toggle-group #viewMode="mdButtonToggleGroup" >
 				<md-button-toggle value="cards">Cards</md-button-toggle>
-				<!--<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>-->
+				<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>
 				<md-button-toggle value="table" >Table</md-button-toggle>
 			</md-button-toggle-group>
 			<button md-mini-fab class="add-vm" (click)="addVM()">
 				<md-icon>add</md-icon>
 			</button>
 		</div>
+	</md-card-header>
 
-		<div *ngIf="viewMode.value == 'table'">
-			<vm-table [data]="cards"></vm-table>
+	<md-card-content>
+		<div *ngIf="viewMode.value == 'table'"
+			fxLayout="row"
+	 		fxLayoutWrap
+			fxLayoutAlign="space-between start"
+			fxLayoutGap="5%"
+			>
+			<vm-table [data]="cards" fxFlex="60" fxLayout="column"></vm-table>
+			<div class="dynamic-content" fxFlex="35"><h2>Charts Go Here!</h2></div>
 		</div>
 	</md-card-content>
 </md-card>
+
+
 
 <div class="entity-cards-container" *ngIf="viewMode.value == 'cards' ">
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
@@ -37,28 +46,19 @@
 		the controls there.
 		-->
 		<ng-template #cardfront let-name="name">
-			<div class="sidebar section">
-
-				<div class="name-info">
+			<div class="vm-bg">
+			</div>
+			<div class="side-content section">
+				<div class="side-content-header">
 					<button 
 				 md-fab 
 				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
 				 (click)="toggleVmState(i)"
-				 mdTooltip="{{ powerBtnLabel }}" mdTooltipPosition="above"
-																		 >
-																		 <md-icon>power_settings_new</md-icon>
+				 mdTooltip="{{ powerBtnLabel }}" mdTooltipPosition="above">
+						<md-icon>power_settings_new</md-icon>
 						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
 					</button>
 
-				</div>
-
-				<!--<div class="api-info">
-			{{ cards[i].info }}
-			</div>-->
-			</div>
-			<div class="side-content section">
-
-				<div class="side-content-header">
 					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
 					<h3>{{ cards[i].name }}</h3>
 					<md-chip  class="vm-state">{{ cards[i].state }}</md-chip>

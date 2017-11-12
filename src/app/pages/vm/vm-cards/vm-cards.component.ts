@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+//import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule, MdButtonToggleGroup } from '@angular/material';
 import { EntityModule } from '../../common/entity/entity.module';
 import { WebSocketService, RestService } from '../../../services/';
