@@ -36,6 +36,17 @@ export class BootEnvironmentListComponent {
     if (attr === 'created'){
       return row.created.$date
     }
+    if (attr === 'active'){
+      if (row.active === 'N'){
+        return "Now";
+      } else if(row.active === 'R'){
+        return "Reboot";
+      } else if(row.active === 'NR'){
+        return "Now/Reboot";
+      }
+      return row.active
+
+    }
     return row[attr];
   }
 
