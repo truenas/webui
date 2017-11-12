@@ -213,6 +213,11 @@ export class EntityTableComponent implements OnInit {
         }
 
         this.rows = rows;
+    
+        if (this.conf.addRows) {
+          this.conf.addRows(this);
+        }
+        
         this.dataSource.data = rows;
 
       });
