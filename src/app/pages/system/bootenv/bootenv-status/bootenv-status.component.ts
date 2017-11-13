@@ -8,7 +8,6 @@ import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import {  DialogService } from '../../../../services/';
 import { debug } from 'util';
-import {EntityUtils} from '../../../common/entity/utils';
 
 
 @Component({
