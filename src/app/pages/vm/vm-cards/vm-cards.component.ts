@@ -32,7 +32,7 @@ interface VmProfile {
 @Component({
   selector: 'vm-cards',
   templateUrl: './vm-cards.component.html',
-  styleUrls: ['./vm-cards.component.css']
+  styleUrls: ['./vm-cards.component.css'],
 })
 export class VmCardsComponent implements OnInit {
 
@@ -41,10 +41,10 @@ export class VmCardsComponent implements OnInit {
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List: 
   @ViewChild('viewMode') viewMode:MdButtonToggleGroup;
-  
+
 
   public tpl = "edit";
-  private pwrBtnLabel: string;
+  //private pwrBtnLabel: string;
   private pwrBtnOptions = {
     stopped: "Start VM",
     running: "Stop VM"
@@ -108,7 +108,7 @@ export class VmCardsComponent implements OnInit {
 	var card = this.parseResponse(res.data[i]);
 	//console.log(card);
 	this.cache.push(card);
-	this.pwrBtnLabel = this.pwrBtnOptions[this.cache[i].state];
+	//this.pwrBtnLabel = this.pwrBtnOptions[this.cache[i].state];
       }   
       if(init){
 	this.displayAll()
@@ -122,7 +122,7 @@ export class VmCardsComponent implements OnInit {
       this.cards[index].isNew = false;
       this.cards[index].id = id;
     } 
-    
+
     this.rest.get('vm/vm/'+this.cards[index].id, {}).subscribe((res) => {
       var card = this.parseResponse(res.data);
       this.cards[index] = card;
@@ -145,7 +145,7 @@ export class VmCardsComponent implements OnInit {
       id = evnt;
     }
      */
-      this.getVm(index,id);
+    this.getVm(index,id);
   }
 
 
@@ -241,8 +241,25 @@ export class VmCardsComponent implements OnInit {
     this.ws.call(rpc, [ vm.id ]).subscribe((res) => {
       console.log(this.cards[index].state);
       this.refreshVM(index,vm.id);
-      this.pwrBtnLabel = this.pwrBtnOptions[this.cards[index].state];
+      //this.pwrBtnLabel = this.pwrBtnOptions[this.cards[index].state];
     });
+  }
+
+  powerBtnLabel(state){
+    if(state == 'stopped'){
+      return "Start VM";
+    } else if(state == 'running'){
+      return "Stop VM";
+    }
+  }
+
+  cardStyles(){
+    let cardStyles = {
+      'width':this.viewMode.value == 'slim' ? '288px' : '480px',  
+      'height': '400px',
+      'margin': '50px auto'
+    }
+      return cardStyles;
   }
 
   vnc(index){

@@ -78,8 +78,8 @@ export const routes: Routes = [
             path : 'rollback/:pk', component : SnapshotRollbackComponent,
             data: {title: 'Rollback', breadcrumb:'Rollback' }},
           {
-            path : 'id/:pk/add', component : SnapshotAddComponent,
-            data: {title: 'Add', breadcrumb:'Add' }}
+              path : 'add', component : SnapshotAddComponent,
+              data: {title: 'Add', breadcrumb:'Add' }}
         ]
       },
       {
