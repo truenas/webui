@@ -1,6 +1,14 @@
+<!-- 
+  This component is the parent for all the views on the page.
+  It's role is management of data and creating/destroying
+  views. 
+-->
 <md-card class="card-filter">
 	<md-card-header>
-
+	<!--
+		This is the filter bar which shares an md-card 
+		with the table view
+	-->
 		<div class="filter-field">
 			<md-icon role="img">search</md-icon>
 			<div class="card-filter-field">
@@ -22,6 +30,7 @@
 	</md-card-header>
 
 	<md-card-content>
+		<!-- Inject table view here -->
 		<div *ngIf="viewMode.value == 'table'"
 			fxLayout="row"
 	 		fxLayoutWrap
@@ -29,6 +38,8 @@
 			fxLayoutGap="5%"
 			>
 			<vm-table [data]="cards" fxFlex="60" fxLayout="column"></vm-table>
+
+			<!-- Summary and forms for table view go here -->
 			<div class="dynamic-content" fxFlex="35"><h2>Charts Go Here!</h2></div>
 		</div>
 	</md-card-content>
@@ -40,13 +51,17 @@
 	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" 
 		[ngClass]="{'slim':viewMode.value == 'slim'}">
 		<!-- 
+		This is where both the regular and slim cards are created. The difference between
+		slim and regular card views are generated purely via css there is no
+		ng-template for slim cards.
+
 		Create ng-templates that you inject into the entity-card component. 
 		Keep in mind, entity-card is injecting your ng-template into an <md-card> 
-		so you can use almost any of the usual components like <md-header>, 
-		<md-content> etc. except for md-footer. The entity-card will provide 
-		the controls there.
+		so you can use any of the usual md-card internal selectors like <md-header>, 
+		<md-content> etc.
 		-->
 		<ng-template #cardfront let-name="name">
+			<!-- Template for front face of card -->
 			<div *ngIf="viewMode.value == 'cards'" class="vm-bg"></div>
 			<div class="side-content section">
 
@@ -95,6 +110,7 @@
 		</ng-template>
 
 		<ng-template #cardback let-name="name" >
+			<!-- Template for back face of card -->
 			<vm-card-edit 
 												 *ngIf="cards[i].template == 'edit'" 
 												 [isNew]="cards[i].isNew"
@@ -103,7 +119,10 @@
 												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
 												 ></vm-card-edit>
 		</ng-template>
+
+			<!-- Create your cards here -->
 			<entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+
 	</div>
 
 </div>
