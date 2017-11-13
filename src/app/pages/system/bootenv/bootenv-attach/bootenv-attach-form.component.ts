@@ -72,9 +72,11 @@ preInit(entityForm: any) {
   }
   submitFunction(entityForm){
     const payload = {};
-    payload['dev'] = entityForm.dev;
     payload['expand'] = entityForm.expand;
-    return this.ws.call('boot.attach', [JSON.stringify(payload)]);
+    return this.ws.call('boot.attach', [entityForm.dev, payload]);
+  }
+  doCancel() {
+    this.router.navigate(new Array('').concat(this.route_success));
   }
 
 }
