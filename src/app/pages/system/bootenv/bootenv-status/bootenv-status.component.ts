@@ -6,7 +6,9 @@ import { Subscription } from 'rxjs';
 
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import {  DialogService } from '../../../../services/';
 import { debug } from 'util';
+import {EntityUtils} from '../../../common/entity/utils';
 
 
 @Component({
@@ -111,13 +113,19 @@ export class BootStatusListComponent {
     return data
   };
   detach(disk:any){
-    this.entityList.ws.call('boot.detach', [disk] ).subscribe((res)=>{
-      console.log(res);
-    });;
-    
-      }
+    disk = disk.substring(5, disk.length)
+    this.entityList.ws.call('boot.detach', [disk]).subscribe(
+      (res) => {
+        this._router.navigate(
+          new Array('').concat('bootenv','status')
+        )
+      },
+      (res) => {
+        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+      });
+  }
 
-  constructor(_rest: RestService, private _router: Router, ws: WebSocketService,) {}
+  constructor(_rest: RestService, private _router: Router, ws: WebSocketService, private dialog:DialogService,) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
