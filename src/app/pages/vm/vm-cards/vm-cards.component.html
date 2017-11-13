@@ -12,7 +12,7 @@
 		<div class="view-controls" >
 			<md-button-toggle-group #viewMode="mdButtonToggleGroup" >
 				<md-button-toggle value="cards">Cards</md-button-toggle>
-				<md-button-toggle value="Slim" disabled>Slim</md-button-toggle>
+				<md-button-toggle value="slim" >Slim</md-button-toggle>
 				<md-button-toggle value="table" >Table</md-button-toggle>
 			</md-button-toggle-group>
 			<button md-mini-fab class="add-vm" (click)="addVM()">
@@ -36,8 +36,9 @@
 
 
 
-<div class="entity-cards-container" *ngIf="viewMode.value == 'cards' ">
-	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
+<div class="entity-cards-container" *ngIf="viewMode.value == 'cards' || viewMode.value == 'slim'">
+	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" 
+		[ngClass]="{'slim':viewMode.value == 'slim'}">
 		<!-- 
 		Create ng-templates that you inject into the entity-card component. 
 		Keep in mind, entity-card is injecting your ng-template into an <md-card> 
@@ -46,20 +47,30 @@
 		the controls there.
 		-->
 		<ng-template #cardfront let-name="name">
-			<div class="vm-bg">
-			</div>
+			<div *ngIf="viewMode.value == 'cards'" class="vm-bg"></div>
 			<div class="side-content section">
-				<div class="side-content-header">
-					<button 
-				 md-fab 
-				 [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
-				 (click)="toggleVmState(i)"
-				 mdTooltip="{{ powerBtnLabel }}" mdTooltipPosition="above">
+
+					<button md-fab
+						*ngIf="viewMode.value == 'slim'"
+						class="vm-power-btn"
+				 		[ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
+				 		(click)="toggleVmState(i)"
+				 		mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
 						<md-icon>power_settings_new</md-icon>
-						<!--<span [mdTooltip]="pwrBtnLabel" mdTooltipPosition="above"></span>-->
 					</button>
 
+
+				<div class="side-content-header">
 					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
+					<button md-fab 
+						*ngIf="viewMode.value == 'cards'"
+						class="vm-power-btn"
+				 		[ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
+				 		(click)="toggleVmState(i)"
+				 		mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
+						<md-icon>power_settings_new</md-icon>
+					</button>
+
 					<h3>{{ cards[i].name }}</h3>
 					<md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
 				</div>
@@ -73,6 +84,7 @@
 							<tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
 						</tbody></table>
 				</div>
+
 
 				<div class="vm-controls">
 					<button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
@@ -91,8 +103,7 @@
 												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
 												 ></vm-card-edit>
 		</ng-template>
-
-			<entity-card  [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+			<entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 	</div>
 
 </div>

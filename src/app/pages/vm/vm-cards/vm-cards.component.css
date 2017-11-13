@@ -17,7 +17,8 @@ md-card.card-filter.mat-card .mat-card-header > div{
 
 md-card.card-filter .filter-field{
   width:70%;
-  margin-right:5%
+  margin-right:5%;
+  MARGIN-TOP:10px;
 }
 
 md-card.card-filter .filter-field md-icon{
@@ -97,10 +98,12 @@ vm-cards md-card.front {
 }
 
 .side-content .vm-controls{
+  border-top:solid 1px rgba(0,0,0,0.1);
   position:absolute;
-  bottom:16px;
+  padding:16px 0;
   width:60%;
   text-align:center;
+  bottom:0;
 }
 
 .side-content .stats-info table{
@@ -158,9 +161,24 @@ md-chip.vm-state-on,
   cursor:pointer;
 }
 
+/* Slim Cards */
 
-/*
-vm-cards .section{
-  padding:16px
+/*.slim .flip{
+  width:288px !important;
+  background-color:red;
+}*/
+
+.slim .side-content{
+  margin:0;
 }
-*/
+
+.slim .vm-controls{
+  width:100%;
+}
+
+.slim .vm-power-btn{  
+  top: initial;
+  bottom: 90px;
+  left: 116px;
+  position: fixed;
+}
