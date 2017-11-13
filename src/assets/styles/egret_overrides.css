@@ -1,7 +1,10 @@
 /* Universal Overrides for Egret */
 
+.hidden{
+  display:none;
+}
 
-/* Navigation fixed to Top */
+/* Navigation shorter and fixed to Top */
 topbar, app-breadcrumb{
     position:fixed;
     width:100%;
@@ -12,8 +15,20 @@ topbar{
     top:0;
 }
 
+.mat-toolbar{
+  min-height:48px;
+}
+
+.mat-toolbar-row{
+  height:48px !important;
+}
+
+.branding{
+  height:48px;
+}
+
 app-breadcrumb{
-    top:64px;
+    top:48px;
 }
 
 .rightside-content-hold {
