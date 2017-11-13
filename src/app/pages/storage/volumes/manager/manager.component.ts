@@ -149,7 +149,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
         this.busy =
           this.rest
           .post('storage/volume/', {
-            body: JSON.stringify({ volume_name: this.name, layout: layout })
+            body: JSON.stringify({ volume_name: this.name, encryption: this.vol_encrypt, layout: layout })
           })
           .subscribe(
             (res) => {

@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import {
   WebSocketService
 } from '../../../../services/';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import {environment} from '../../../../../environments/environment';
 
 @Component({
   selector: 'downloadkey-dialog',
@@ -16,15 +18,21 @@ export class DownloadKeyModalDialog {
 
   constructor(
     public dialogRef: MdDialogRef<DownloadKeyModalDialog>,
-    private ws: WebSocketService) { }
+    private ws: WebSocketService,
+    private loader:AppLoaderService) { }
 
   ngOnInit() {
     
   }
 
   downloadKey() {
+    this.loader.open();
     this.ws.call("pool.download_encryption_key", [this.volumeId]).subscribe((res) => {
-      console.log("-----res: ", res);
+      this.loader.close();
+      if(res !== null && res !== "") {
+        window.open("http://" + environment.remote + res);
+        this.isDownloaded = true;
+      }
     });
   }
 }
