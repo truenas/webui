@@ -25,6 +25,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 export class EntityCardComponent implements OnInit {
 
   @Input('conf') conf: any;
+  @Input() width: string;
+  @Input() height: string;
   @Input() isFlipped = false;
   @Output() editCard: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() front: TemplateRef<any>;
