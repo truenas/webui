@@ -67,10 +67,8 @@ preInit(entityForm: any) {
     entityForm.submitFunction = this.submitFunction;
   }
   submitFunction(entityForm){
-    const payload = {};
-    payload['dev'] = entityForm.dev;
-    payload['label'] = this.pk;
-    return this.ws.call('boot.replace', [JSON.stringify(payload)]);
+    const payload = this.pk.substring(5, this.pk.length);
+    return this.ws.call('boot.replace', [payload, entityForm.dev]);
   }
 
 }
