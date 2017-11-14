@@ -29,6 +29,10 @@ export class AppComponent implements OnInit {
     private rest: RestService,
     private tour: TourService) {
 
+    if (this.detectBrowser("Safari")) {
+      document.body.className += " safari-platform";
+    }
+
     router.events.subscribe(s => {
       if (s instanceof NavigationCancel) {
         let params = new URLSearchParams(s.url.split('#')[1]);
@@ -58,5 +62,18 @@ export class AppComponent implements OnInit {
       this.pageTitle += ` | ${this.appTitle}`;
       this.title.setTitle(this.pageTitle);
     });
+  }
+
+  private detectBrowser(name){
+    let N = navigator.appName;
+    let UA = navigator.userAgent;
+    let temp;
+    let browserVersion = UA.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+    if(browserVersion && (temp = UA.match(/version\/([\.\d]+)/i))!= null)
+      browserVersion[2]= temp[1];
+    let browserName = browserVersion? browserVersion[1]: N;
+
+    if(name == browserName) return true;
+    else return false;
   }
 }
