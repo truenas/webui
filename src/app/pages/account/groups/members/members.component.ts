@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {RestService} from "../../../../services/rest.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
+import {WebSocketService} from "../../../../services/ws.service";
 
 @Component({
   selector: 'app-members',
@@ -15,22 +16,32 @@ export class MembersComponent implements OnInit {
     id: '',
     name: ''
   };
+  users: any[] = [];
 
   constructor(private rest: RestService,
+              private ws: WebSocketService,
               private activatedRoute: ActivatedRoute,
               private router: Router) {
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((res: Params) => this.group.id = res.pk);
-    this.getGroupDetails();
+    //this.getGroupDetails();
     this.getMembers();
   }
 
   getGroupDetails() {
-   this.rest.get(`/account/groups/${this.group.id}`, {}).subscribe(res => {
-     this.group.name = res.data.bsdgrp_group;
-   }, err => console.log(err))
+    this.ws.call('group.query').subscribe(res => {
+      const groupUsersDetails = res.find(x => x.id == this.group.id);
+      if (groupUsersDetails) {
+        for (const user of groupUsersDetails.users) {
+          const usr = this.members.find(x => x.id == user);
+          this.addToSelectedMembers(usr, false);
+        }
+      }
+    }, err => {
+      console.log('group err', err);
+    })
   }
 
   getMembers() {
@@ -39,6 +50,7 @@ export class MembersComponent implements OnInit {
       return this.rest.get(`/account/users/`, {limit: res.total})
     }).subscribe(res => {
       this.members = res.data;
+      this.getGroupDetails();
     }, err => {
       console.log(err);
     })
@@ -46,6 +58,19 @@ export class MembersComponent implements OnInit {
 
   cancel() {
     this.router.navigate(['/', 'account', 'groups']);
+  }
+
+  OnItemChange(event) {
+
+    console.log('sel mem ---> ', this.selectedMembers);
+
+    // for(const item of event.items) {
+    //   console.log('---------item--------');
+    //   //const found = this.selectedMembers.find(x => x.id == item.id);
+    //   console.log('i ---->', found);
+    // }
+
+    //this.addToSelectedMembers(event.items, true);
   }
 
   updateUsers() {
@@ -58,4 +83,17 @@ export class MembersComponent implements OnInit {
     }, err => console.log(err))
   }
 
+  addToSelectedMembers(payload, isArray) {
+    if (!isArray) {
+      this.selectedMembers.push(payload);
+    } else {
+      this.selectedMembers.concat(...payload);
+    }
+    this.selectedMembers = this.selectedMembers.filter(this.onlyUnique);
+
+    console.log('selected', this.selectedMembers);
+
+  }
+
+  onlyUnique = (value, index, self) => ( self.indexOf(value) === index )
 }
