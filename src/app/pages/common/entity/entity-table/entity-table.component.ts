@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk';
-import { MdPaginator, MdSort } from '@angular/material';
+import { MdPaginator, MdSort, PageEvent } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs';
@@ -16,62 +16,6 @@ import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
 
-export class GenericAnyDataSource extends DataSource<any> {
-
-  _filterChange = new BehaviorSubject('');
-  get filter(): string { return this._filterChange.value; }
-  set filter(filter: string) { this._filterChange.next(filter); }
-  dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-
-  set data(newData: any[]) {
-    this.dataChange.next(newData);
-  }
-
-  get data(): any[] {
-    return this.dataChange.value;
-  }
-
-  constructor(private _paginator: MdPaginator, private _sort: MdSort) {
-    super();
-  }
-
-  connect(): Observable<any[]> {
-    const displayDataChanges = [
-      this.dataChange,
-      this._paginator.page,
-      this._filterChange,
-      this._sort.mdSortChange
-    ];
-
-    return Observable.merge(...displayDataChanges).map(() => {
-      const data = this.data.slice();
-
-      // Grab the page's slice of data.
-      const startIndex = this._paginator.pageIndex * this._paginator.pageSize;
-      let newData = data.splice(startIndex, this._paginator.pageSize);
-
-      if( typeof(this._sort.active) === "string" && this._sort.active.length > 0 ) {
-        newData = newData.sort((a, b) => {
-          let propertyA: number|string = a[this._sort.active];
-          let propertyB: number|string = b[this._sort.active];
-          let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
-          let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
-          return (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1);
-        });
-      }
-
-      return newData;
-    });
-  }
-
-  disconnect(): void {
-
-  }
-
-
-
-
-}
 
 @Component({
   selector: 'entity-table',
@@ -79,22 +23,28 @@ export class GenericAnyDataSource extends DataSource<any> {
   styleUrls: ['./entity-table.component.scss'],
   providers: [DialogService]
 })
-export class EntityTableComponent implements OnInit {
+export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
   @Input('conf') conf: any;
 
-  @ViewChild(MdSort) sort: MdSort;
-
-  @ViewChild('filter') filter: ElementRef;
-  @ViewChild(MdPaginator) paginator: MdPaginator;
   
-  public dataSource: GenericAnyDataSource;
+  @ViewChild('filter') filter: ElementRef;
+  private erd: any = null;
+
+  // MdPaginator Inputs
+  public paginationPageSize = 5;
+  public paginationPageSizeOptions = [5, 10, 20];
+  public paginationPageIndex = 0;
+  public paginationPageEvent: any;
+  
+  
   public displayedColumns: string[] = [];
-  public initialItemsPerPage = 10;
   public busy: Subscription;
   public columns: Array<any> = [];
-  public rows: any = [];
+  public rows: any[] = [];
+  public currentRows: any[] = []; // Rows applying filter
+  public seenRows: any[] = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -106,6 +56,10 @@ export class EntityTableComponent implements OnInit {
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
+    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
+      this.erd = window['elementResizeDetectorMaker'].call();
+    }
+
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -114,8 +68,7 @@ export class EntityTableComponent implements OnInit {
       this.conf.afterInit(this);
     }
 
-    this.dataSource = new GenericAnyDataSource(this.paginator, this.sort);
-
+   
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
     });
@@ -151,8 +104,16 @@ export class EntityTableComponent implements OnInit {
 
         
         
-        this.dataSource.data = newData;
+        this.currentRows = newData;
+        this.paginationPageIndex  = 0;
+        this.setPaginationInfo();
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
+      (<any>window).dispatchEvent(new Event('resize'));
+    });
   }
 
   getData() {
@@ -203,7 +164,9 @@ export class EntityTableComponent implements OnInit {
         }
 
         this.rows = rows;
-        this.dataSource.data = rows;
+        this.currentRows = rows;
+        this.paginationPageIndex  = 0;
+        this.setPaginationInfo();
 
       });
 
@@ -342,5 +305,38 @@ export class EntityTableComponent implements OnInit {
 
     }
 
+  }
+
+
+  setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
+    this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
+  }
+
+ 
+  paginationUpdate($pageEvent: any) {
+    this.paginationPageEvent = $pageEvent;
+    
+    this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
+    ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
+
+    this.paginationPageSize = this.paginationPageEvent.pageSize;
+    this.setPaginationInfo();
+  }
+
+  private setPaginationInfo() {
+    
+    const beginIndex = this.paginationPageIndex * this.paginationPageSize;
+    const endIndex = beginIndex + this.paginationPageSize ;
+
+    if( beginIndex < this.currentRows.length && endIndex > this.currentRows.length ) {
+      this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
+    } else if( endIndex < this.currentRows.length ) {
+      this.seenRows = this.currentRows.slice(beginIndex, endIndex);
+    } 
+
+  }
+
+  reorderEvent($event) {
+    this.paginationPageIndex = 0;
   }
 }
