@@ -4,7 +4,10 @@
     <md-card>
       <md-card-content>
         <div class="text-center pb-1">
-          <img src="assets/images/logo-full.png" alt="">
+          <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.png" alt="freenas-log">
+          <ng-template #isTruenas>
+            <img src="assets/images/truenas-logo.png" alt="truenas-logo">
+          </ng-template>
           <!--p class="text-muted">Sign in to your account</p-->
         </div>
         <form #signinForm="ngForm" (ngSubmit)="signin()">
@@ -18,10 +21,10 @@
                 #username="ngModel"
                 placeholder="Username"
                 value="">
+              <md-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
+                Please enter your password <span *ngIf="failed">again</span>
+              </md-error>
             </md-input-container>
-            <small
-              *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)"
-              class="form-error-msg"> Please enter your Username </small>
           </div>
 
           <div class="">
@@ -35,10 +38,10 @@
                 #password="ngModel"
                 placeholder="Password"
                 value="">
+              <md-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
+                Please enter your password <span *ngIf="failed">again</span>
+              </md-error>
             </md-input-container>
-            <small
-              *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)"
-              class="form-error-msg"> Please enter your password <span *ngIf="failed">again</span></small>
           </div>
 
           <!--div class="pb-1">
@@ -54,6 +57,9 @@
             <a [routerLink]="['/sessions/signup']" class="mat-primary text-center full-width">Create a new account</a>
           </div-->
         </form>
+        <div>
+          <a md-button color="primary" href="/">Back to the Old UI</a>
+        </div>
       </md-card-content>
     </md-card>
   </div>

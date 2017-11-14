@@ -6,6 +6,7 @@ import { Http, HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader, TranslateStaticLoader } from 'ng2-translate/ng2-translate';
 import { MaterialModule } from '@angular/material';
+import { NgIdleModule } from '@ng-idle/core';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from "./components/common/app-common.module";
 import { AppComponent } from './app.component';
@@ -21,10 +22,11 @@ import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
 
-import {ENV_PROVIDERS} from '../environments/environment';
+import { ENV_PROVIDERS } from '../environments/environment';
 import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 import { AppLoaderModule } from './services/app-loader/app-loader.module';
 import { NotificationsService } from 'app/services/notifications.service';
+import { MarkdownModule } from 'angular2-markdown';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
@@ -44,7 +46,9 @@ export function createTranslateLoader(http: Http) {
       deps: [Http]
     }),
     MaterialModule,
-    RouterModule.forRoot(rootRouterConfig, { useHash: false })
+    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+    NgIdleModule.forRoot(),
+    MarkdownModule.forRoot(),
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog],
   providers: [

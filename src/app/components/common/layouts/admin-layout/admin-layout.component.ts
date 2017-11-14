@@ -23,6 +23,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenotOpen: Boolean = false;
   consoleMsg: String = "";
   consoleMSgList: any[] = [];
+  public is_freenas: Boolean = false;
 
   @ViewChild(MdSidenav) private sideNave: MdSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -35,6 +36,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected ws: WebSocketService,
     public translate: TranslateService,
     public dialog: MdDialog) {
+    // detect server type
+    ws.call('system.is_freenas').subscribe((res)=>{
+      this.is_freenas = res;
+    });
+
     // Close sidenav after route change in mobile
     router.events.subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {

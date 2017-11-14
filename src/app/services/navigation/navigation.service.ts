@@ -205,10 +205,10 @@ export class NavigationService {
     },
     {
       name: 'Guide',
-      type: 'extLink',
+      type: 'link',
       tooltip: 'Guide',
       icon: 'info',
-      state: 'http://doc.freenas.org/11/freenas.html',
+      state: 'guide',
     }
   ]
   
