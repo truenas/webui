@@ -32,11 +32,10 @@ export class EntityTableComponent implements OnInit {
   @ViewChild('filter') filter: ElementRef;
 
   // MdPaginator Inputs
-  public paginationLength = 0;
   public paginationPageSize = 5;
   public paginationPageSizeOptions = [5, 10, 20];
   public paginationPageIndex = 0;
-  public paginationPageEvent: PageEvent;
+  public paginationPageEvent: any;
   
   
   public displayedColumns: string[] = [];
@@ -44,7 +43,7 @@ export class EntityTableComponent implements OnInit {
   public columns: Array<any> = [];
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
-  public paginatedSeenRows: any[] = [];  // THe visible rows.
+  public seenRows: any[] = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -301,9 +300,12 @@ export class EntityTableComponent implements OnInit {
   }
 
  
-  paginationUpdate($pageEvent: PageEvent) {
+  paginationUpdate($pageEvent: any) {
     this.paginationPageEvent = $pageEvent;
-    this.paginationPageIndex = this.paginationPageEvent.pageIndex;
+    
+    this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
+    ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
+
     this.paginationPageSize = this.paginationPageEvent.pageSize;
     this.setPaginationInfo();
   }
@@ -314,13 +316,10 @@ export class EntityTableComponent implements OnInit {
     const endIndex = beginIndex + this.paginationPageSize ;
 
     if( beginIndex < this.currentRows.length && endIndex > this.currentRows.length ) {
-      this.paginatedSeenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
+      this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
-      this.paginatedSeenRows = this.currentRows.slice(beginIndex, endIndex);
-    } else {
-      this.paginatedSeenRows = this.currentRows;
-    }
+      this.seenRows = this.currentRows.slice(beginIndex, endIndex);
+    } 
 
-    this.paginationLength = this.currentRows.length;
   }
 }

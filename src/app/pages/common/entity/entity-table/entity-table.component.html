@@ -6,8 +6,8 @@
 	<div>
 		<br/>
 	</div>
-	<div *ngIf="paginationLength > paginationPageSize">
-		<md-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
+	<div *ngIf="currentRows.length > paginationPageSize">
+		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
 	<div class="padding_all">
@@ -18,15 +18,19 @@
 
 	<div>
 		<ngx-datatable class='material' 
-					   [rows]='paginatedSeenRows' 
+					   [rows]='seenRows' 
 					   [columns]="conf.columns" 
 					   [columnMode]="'force'" 
 					   [columnWidth]="'auto'"
 					   [headerHeight]="50" 
 					   [footerHeight]="50" 
-					   [limit]="paginationPageSize" 
 					   [rowHeight]="50" 
-					   [reorderable]="'true'">
+					   [reorderable]="true"
+					   [limit]="paginationPageSize" 
+					   [externalPaging]="true"
+					   [count]="currentRows.length"
+					   [offset]="paginationPageIndex"
+					   (page)='paginationUpdate($event)'>
 		    
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
