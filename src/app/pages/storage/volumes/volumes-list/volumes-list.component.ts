@@ -23,7 +23,8 @@ export class VolumesListComponent implements OnInit {
   ) {}
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'path'},
+    {name : 'Name', prop : 'name'},
+    {name : 'Path', prop : 'path'},
     {name : 'Status', prop : 'status'},
     {name : 'Available', prop : 'avail'},
     {name : 'Used', prop : 'used'},
@@ -113,13 +114,6 @@ export class VolumesListComponent implements OnInit {
         }
       });
       actions.push({
-        label : "Create Snapshot",
-        onClick : (row) => {
-          this._router.navigate(new Array('/').concat(
-              [ "storage", "snapshots", "id", row.path.split('/')[0], "add" ]));
-        }
-      });
-       actions.push({
         label : "Edit Options",
         onClick : (row) => {
           this._router.navigate(new Array('/').concat([
