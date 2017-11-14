@@ -18,10 +18,11 @@ import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
 import {VolumeImportListComponent} from './volumes/import-list/';
 import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
 import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
+import { StatusComponent } from './volumes/status/status.component';
 
 export const routes: Routes = [
   {
-    path : '', 
+    path : '',
     data: {title:'Storage'},
     children: [
       { path: 'volumes',
@@ -59,6 +60,8 @@ export const routes: Routes = [
         {
           path : 'import_list', component: VolumeImportListComponent,
           data: {title: 'Import Volume', breadcrumb:'Import Volume' }},
+        {"path": 'status/:pk', component: StatusComponent,
+          data: {title: 'Scrub Status', breadcrumb:'Scrub Status' }},
         //{ path: 'edit/:pk', component: VolumesEditComponent },
         {
           path : 'delete/:pk', component : VolumeDeleteComponent,
