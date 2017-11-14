@@ -100,6 +100,7 @@ export class EntityTableComponent implements OnInit {
         
         
         this.currentRows = newData;
+        this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
   }
@@ -153,6 +154,7 @@ export class EntityTableComponent implements OnInit {
 
         this.rows = rows;
         this.currentRows = rows;
+        this.paginationPageIndex  = 0;
         this.setPaginationInfo();
 
       });
@@ -321,5 +323,9 @@ export class EntityTableComponent implements OnInit {
       this.seenRows = this.currentRows.slice(beginIndex, endIndex);
     } 
 
+  }
+
+  reorderEvent($event) {
+    this.paginationPageIndex = 0;
   }
 }

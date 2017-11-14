@@ -30,7 +30,8 @@
 					   [externalPaging]="true"
 					   [count]="currentRows.length"
 					   [offset]="paginationPageIndex"
-					   (page)='paginationUpdate($event)'>
+					   (page)='paginationUpdate($event)'
+					   (sort)='reorderEvent($event)'>
 		    
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
