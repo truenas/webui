@@ -8,6 +8,7 @@ import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import {  DialogService } from '../../../../services/';
 import { debug } from 'util';
+import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 
 
 @Component({
@@ -113,18 +114,22 @@ export class BootStatusListComponent {
   };
   detach(disk:any){
     disk = disk.substring(5, disk.length)
-    this.entityList.ws.call('boot.detach', [disk]).subscribe(
+    this.loader.open();
+    this.busy = this.entityList.ws.call('boot.detach', [disk]).subscribe(
       (res) => {
-        this._router.navigate(
-          new Array('').concat('bootenv','status')
+        this.loader.close();
+         this._router.navigate(
+          new Array('').concat('system','bootenv','status')
         )
       },
       (res) => {
+        this.loader.close();
         this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
       });
   }
 
-  constructor(_rest: RestService, private _router: Router, ws: WebSocketService, private dialog:DialogService,) {}
+  constructor(_rest: RestService, private _router: Router, ws: WebSocketService,
+    private dialog:DialogService, protected loader: AppLoaderService,) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;

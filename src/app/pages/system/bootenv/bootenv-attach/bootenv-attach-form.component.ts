@@ -24,7 +24,7 @@ import { debug } from 'util';
 })
 
 export class BootEnvAttachFormComponent {
-  protected route_success: string[] = [ 'bootenv', 'status' ];
+  protected route_success: string[] = [ 'system', 'bootenv', 'status' ];
   protected isEntity: boolean = true;
   protected addCall = 'boot.attach';
   protected pk: any;
@@ -74,9 +74,6 @@ preInit(entityForm: any) {
     const payload = {};
     payload['expand'] = entityForm.expand;
     return this.ws.call('boot.attach', [entityForm.dev, payload]);
-  }
-  doCancel() {
-    this.router.navigate(new Array('').concat(this.route_success));
   }
 
 }

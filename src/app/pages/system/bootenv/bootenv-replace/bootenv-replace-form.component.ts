@@ -25,7 +25,7 @@ import { coerceBooleanProperty } from '@angular/cdk';
 })
 
 export class BootEnvReplaceFormComponent {
-  protected route_success: string[] = [ 'bootenv', 'status' ];
+  protected route_success: string[] = [ 'system', 'bootenv', 'status' ];
   protected isEntity: boolean = true;
   protected addCall = 'boot.replace';
   protected pk: any;
