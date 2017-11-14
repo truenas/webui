@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk';
-import { MdPaginator, MdSort } from '@angular/material';
+import { MdPaginator, MdSort, PageEvent } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs';
@@ -30,13 +30,20 @@ export class EntityTableComponent implements OnInit {
 
   
   @ViewChild('filter') filter: ElementRef;
+
+  // MdPaginator Inputs
+  public paginationPageSize = 5;
+  public paginationPageSizeOptions = [5, 10, 20];
+  public paginationPageIndex = 0;
+  public paginationPageEvent: any;
+  
   
   public displayedColumns: string[] = [];
-  public initialItemsPerPage = 5;
   public busy: Subscription;
   public columns: Array<any> = [];
   public rows: any[] = [];
-  public currentRows: any[] = [];
+  public currentRows: any[] = []; // Rows applying filter
+  public seenRows: any[] = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -93,6 +100,8 @@ export class EntityTableComponent implements OnInit {
         
         
         this.currentRows = newData;
+        this.paginationPageIndex  = 0;
+        this.setPaginationInfo();
       });
   }
 
@@ -145,6 +154,8 @@ export class EntityTableComponent implements OnInit {
 
         this.rows = rows;
         this.currentRows = rows;
+        this.paginationPageIndex  = 0;
+        this.setPaginationInfo();
 
       });
 
@@ -283,5 +294,38 @@ export class EntityTableComponent implements OnInit {
 
     }
 
+  }
+
+
+  setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
+    this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
+  }
+
+ 
+  paginationUpdate($pageEvent: any) {
+    this.paginationPageEvent = $pageEvent;
+    
+    this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
+    ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
+
+    this.paginationPageSize = this.paginationPageEvent.pageSize;
+    this.setPaginationInfo();
+  }
+
+  private setPaginationInfo() {
+    
+    const beginIndex = this.paginationPageIndex * this.paginationPageSize;
+    const endIndex = beginIndex + this.paginationPageSize ;
+
+    if( beginIndex < this.currentRows.length && endIndex > this.currentRows.length ) {
+      this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
+    } else if( endIndex < this.currentRows.length ) {
+      this.seenRows = this.currentRows.slice(beginIndex, endIndex);
+    } 
+
+  }
+
+  reorderEvent($event) {
+    this.paginationPageIndex = 0;
   }
 }
