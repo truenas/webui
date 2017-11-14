@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk';
 import { MdPaginator, MdSort, PageEvent } from '@angular/material';
@@ -23,13 +23,14 @@ import { DialogService } from 'app/services';
   styleUrls: ['./entity-table.component.scss'],
   providers: [DialogService]
 })
-export class EntityTableComponent implements OnInit {
+export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
   @Input('conf') conf: any;
 
   
   @ViewChild('filter') filter: ElementRef;
+  private erd: any = null;
 
   // MdPaginator Inputs
   public paginationPageSize = 5;
@@ -55,6 +56,10 @@ export class EntityTableComponent implements OnInit {
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
+    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
+      this.erd = window['elementResizeDetectorMaker'].call();
+    }
+
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -103,6 +108,12 @@ export class EntityTableComponent implements OnInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
+      (<any>window).dispatchEvent(new Event('resize'));
+    });
   }
 
   getData() {
