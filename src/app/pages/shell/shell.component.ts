@@ -28,8 +28,6 @@ export class ShellComponent implements OnInit, OnChanges {
   @Input() prompt: string = '';
   //xter container
   @ViewChild('terminal') container: ElementRef;
-
-
   // xterm variables
   cols: string;
   rows: string;
@@ -43,7 +41,9 @@ export class ShellComponent implements OnInit, OnChanges {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        this.xterm.write(value);
+        if(value !== undefined){
+          this.xterm.write(value);
+        }
       });
       this.initializeTerminal();
     });
@@ -67,11 +67,17 @@ export class ShellComponent implements OnInit, OnChanges {
   }
 
   initializeTerminal() {
+    let domHeight = document.body.offsetHeight;
+    let rowNum = (domHeight * 0.75 - 104)/21;
+    if(rowNum < 10) {
+      rowNum = 10;
+    }
+
     this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 4,
       'cols': 80,
-      'rows': 50,
+      'rows': parseInt(rowNum.toFixed()),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
