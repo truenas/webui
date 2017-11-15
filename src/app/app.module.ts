@@ -15,9 +15,10 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
+import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
+import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
+import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
-import { AboutModalDialog } from './components/common/about/about-dialog.component';
-import { ConsolePanelModalDialog } from './components/common/consolepanel/consolepanel-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
@@ -50,7 +51,7 @@ export function createTranslateLoader(http: Http) {
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -68,7 +69,8 @@ export function createTranslateLoader(http: Http) {
     ConfirmDialog,
     ErrorDialog,
     AboutModalDialog,
-    ConsolePanelModalDialog
+    ConsolePanelModalDialog,
+    DownloadKeyModalDialog
   ],
 })
 export class AppModule { }

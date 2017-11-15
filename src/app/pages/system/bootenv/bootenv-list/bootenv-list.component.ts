@@ -30,21 +30,22 @@ export class BootEnvironmentListComponent {
     sorting : {columns : this.columns},
   };
 
-  // rowValue(row, attr) {
-  //   switch(attr) {
-  //     case 'used':
-  //       return filesize(row[attr]);
-  //     case 'refer':
-  //       return filesize(row[attr]);
-  //     default:
-  //       return row[attr];
-  //   }
-  // }
 
 
   rowValue(row, attr) {
     if (attr === 'created'){
       return row.created.$date
+    }
+    if (attr === 'active'){
+      if (row.active === 'N'){
+        return "Now";
+      } else if(row.active === 'R'){
+        return "Reboot";
+      } else if(row.active === 'NR'){
+        return "Now/Reboot";
+      }
+      return row.active
+
     }
     return row[attr];
   }
@@ -61,7 +62,34 @@ export class BootEnvironmentListComponent {
     }
     return true;
   }
-
+  getAddActions() {
+    let actions = [];
+    actions.push({
+      label : "create",
+      icon: "album",
+      onClick : () => {
+         this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "create" ]));
+       }
+    });
+    // actions.push({
+    //   label : "scrub",
+    //   icon: "device_hub",
+    //   onClick : () => {
+    //     this._router.navigate(new Array('').concat(
+    //         [ "system", "bootenv", "scrub" ]));
+    //   }
+    // });
+    actions.push({
+      label : "status",
+      icon: "local_laundry_service",
+      onClick : () => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "status" ]));
+      }
+    });
+    return actions;
+  }
   getActions(row) {
     let actions = [];
     if (row.active === '-'){
