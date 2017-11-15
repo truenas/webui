@@ -141,6 +141,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
     this.busy =
       this.getFunction.subscribe((res) => {
+        if (res.data) {
+          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+            res.data = this.conf.resourceTransformIncomingRestData(res.data);
+          }
+        } else {
+          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+            res = this.conf.resourceTransformIncomingRestData(res);
+          }
+        }
+
         let rows: any[] = [];
 
         if (this.loaderOpen) {
@@ -164,6 +174,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         }
 
         this.rows = rows;
+    
+        if (this.conf.addRows) {
+          this.conf.addRows(this);
+        }
+        
         this.currentRows = rows;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
