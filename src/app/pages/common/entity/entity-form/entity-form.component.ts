@@ -23,6 +23,7 @@ import {EntityUtils} from '../utils';
 import {FieldConfig} from './models/field-config.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
+import {  DialogService } from '../../../../services/';
 
 import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
 
@@ -76,7 +77,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
               public snackBar: MdSnackBar,
-              public adminLayout: AdminLayoutComponent) {}
+              public adminLayout: AdminLayoutComponent,
+              private dialog:DialogService) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
@@ -296,7 +298,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                         },
                         (res) => {
                           this.loader.close();
-                          new EntityUtils().handleError(this, res); });
+                          this.dialog.errorReport(res.error, res.reason, res.trace.formatted); });
   }
 
   clearErrors() {

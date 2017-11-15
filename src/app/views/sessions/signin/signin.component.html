@@ -21,10 +21,10 @@
                 #username="ngModel"
                 placeholder="Username"
                 value="">
+              <md-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
+                Please enter your password <span *ngIf="failed">again</span>
+              </md-error>
             </md-input-container>
-            <small
-              *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)"
-              class="form-error-msg"> Please enter your Username </small>
           </div>
 
           <div class="">
@@ -38,10 +38,10 @@
                 #password="ngModel"
                 placeholder="Password"
                 value="">
+              <md-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
+                Please enter your password <span *ngIf="failed">again</span>
+              </md-error>
             </md-input-container>
-            <small
-              *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)"
-              class="form-error-msg"> Please enter your password <span *ngIf="failed">again</span></small>
           </div>
 
           <!--div class="pb-1">

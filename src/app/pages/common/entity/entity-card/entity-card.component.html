@@ -1,52 +1,23 @@
-<!-- <div *ngFor="let row of rows" class="card-item"> -->
-<div class="flip" style="width:480px; height:400pxwidth:480px; height:400pxwidth:480px; height:400pxwidth:480px; height:400px;">
+<div class="flip" style="width:inherit; height:inherit;">
 	<div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
 
 		<md-card class="card front face animated slideInUp">
-				  <ng-template [ngTemplateOutlet]="front" [ngOutletContext]="{name: 'Child'}"></ng-template>
-		<!--	<md-card-content class="">
-				<div *ngFor="let col of conf.columns">
-					<div *ngIf="col.card">
-						{{ col.name }}: {{ row[col.prop] }}
-					</div>
-
-				</div>
-				<div *ngIf="conf.toggleProp">
-					<md-slide-toggle [checked]="row[conf.toggleProp] == conf.runnningState ? 'checked' : ''" (click)="toggle(row)">
-						{{ row[conf.toggleProp] }}
-					</md-slide-toggle>
-				</div>
-		</md-card-content>-->
-		<md-card-footer *ngIf="actions" class="card-footer">
+			<ng-template [ngTemplateOutlet]="front" [ngOutletContext]="{name: 'Child'}"></ng-template>
+			<md-card-footer *ngIf="actions" class="card-footer">
 				<div class="">
 					<app-entity-card-actions [entity]="this"></app-entity-card-actions>
-					<!--<button md-raised-button color="primary" (click)="toggleFlip()">Edit</button>-->
 				</div>
 			</md-card-footer>
 		</md-card>
 
 		<md-card class="card back face" style="overflow-y:auto;">
 
-				  <ng-template *ngIf="lazyLoaded" [ngTemplateOutlet]="back" [ngOutletContext]="{name: 'Child'}"></ng-template>
-			<!--
-		 <md-card-header>
-				<md-card-title class="">Back Side</md-card-title>
-			</md-card-header>
-			<md-card-content>			
-			</md-card-content>
-			-->
-			<!--<md-card-footer class="card-footer">
-				<div class="">
-					<button md-raised-button color="primary" (click)="toggleFlip()">Cancel</button>
-					<app-entity-card-actions [entity]="this"></app-entity-card-actions>
-				</div>
-			</md-card-footer>-->
+			<ng-template *ngIf="lazyLoaded" [ngTemplateOutlet]="back" [ngOutletContext]="{name: 'Child'}"></ng-template>
 		</md-card>
 
 	</div>
 </div>
 
-<!-- </div> -->
 <div>
 	<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 </div>
