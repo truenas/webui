@@ -16,7 +16,7 @@ export class VolumesListComponent implements OnInit {
   protected route_add_tooltip: string = "Volume Manager";
 
   constructor(
-    protected _rest: RestService, 
+    protected _rest: RestService,
     private _router: Router,
     protected _eRef: ElementRef,
     private tour: TourService
@@ -84,6 +84,13 @@ export class VolumesListComponent implements OnInit {
         onClick : (row) => {
           this._router.navigate(new Array('/').concat(
               [ "storage", "volumes", "delete", row.id ]));
+        }
+      });
+      actions.push({
+        label : "Status",
+        onClick : (row) => {
+          this._router.navigate(new Array('/').concat(
+            [ "storage", "volumes", "status", row.id ]));
         }
       });
     }
