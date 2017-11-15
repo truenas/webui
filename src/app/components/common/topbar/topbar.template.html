@@ -4,7 +4,7 @@
   md-icon-button
   id="sidenavToggle"
   (click)="toggleSidenav()"
-  md-tooltip="Toggle Hide/Open">
+  md-tooltip="{{'Toggle Hide/Open' | translate}}">
   <md-icon>menu</md-icon>
   </button>
   <!-- Sidenav toggle collapse -->
@@ -13,7 +13,7 @@
   id="collapseToggle"
   fxHide.lt-md="true"
   (click)="toggleCollapse()"
-  md-tooltip="Toggle Collapse"
+  md-tooltip="{{'Toggle Collapse' | translate}}"
   class="toggle-collapsed">
   <md-icon>chevron_left</md-icon>
   </button>
@@ -44,7 +44,7 @@
   md-icon-button
   id="schemeToggle"
   [style.overflow]="'visible'"
-  mdTooltip="FreeNAS Themes"
+  mdTooltip="{{'FreeNAS Themes' | translate}}"
   [mdMenuTriggerFor]="themeMenu"
   class="topbar-button-right">
     <md-icon>format_color_fill</md-icon>
@@ -69,7 +69,7 @@
   md-icon-button
   (click)="startTour()"
   class="topbar-button-right"
-  mdTooltip="Guide Tour"
+  mdTooltip="{{'Guide Tour' | translate}}"
   [style.overflow]="'visible'"
   >
     <md-icon>flight_takeoff</md-icon>
@@ -77,7 +77,7 @@
   <!-- Notification toggle button -->
   <button
   md-icon-button
-  mdTooltip="Notifications"
+  mdTooltip="{{'Notifications' | translate}}"
   (click)="toggleNotific()"
   [style.overflow]="'visible'"
   class="topbar-button-right">

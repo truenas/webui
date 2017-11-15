@@ -59,7 +59,12 @@
   "Logout": "Logout",
   "Reboot": "Reboot",
   "Shutdown": "Shutdown",
-  "About": "About"
+  "About": "About",
+  "Toggle Hide/Open": "Toggle Hide/Open",
+  "Toggle Collapse": "Toggle Collapse",
+  "FreeNAS Themes": "FreeNAS Themes",
+  "Guide Tour": "Guide Tour",
+  "Notifications": "Notifications"
 }
 
 

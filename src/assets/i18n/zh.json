@@ -59,5 +59,10 @@
   "Logout": "登出",
   "Reboot": "重启",
   "Shutdown": "关掉",
-  "About": "关于"
+  "About": "关于",
+  "Toggle Hide/Open": "切换 隐藏/打开",
+  "Toggle Collapse": "切换折叠",
+  "FreeNAS Themes": "FreeNAS主题",
+  "Guide Tour": "导游",
+  "Notifications": "通知"
 }

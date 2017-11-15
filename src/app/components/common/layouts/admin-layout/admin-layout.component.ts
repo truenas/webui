@@ -9,7 +9,7 @@ import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
-import {UUID} from 'angular2-uuid';
+import { UUID } from 'angular2-uuid';
 
 @Component({
   selector: 'app-admin-layout',

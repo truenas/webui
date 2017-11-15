@@ -59,5 +59,10 @@
   "Logout": "Cerrar sesión",
   "Reboot": "Reiniciar",
   "Shutdown": "Apagar",
-  "About": "Acerca de"
+  "About": "Acerca de",
+  "Toggle Hide/Open": "Alternar Ocultar/Abrir",
+  "Toggle Collapse": "Alternar Colapsar",
+  "FreeNAS Themes": "Temas de FreeNAS",
+  "Guide Tour": "La guía turística",
+  "Notifications": "Notifications"
 }
