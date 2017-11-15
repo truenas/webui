@@ -17,8 +17,7 @@ export class PluginsAvailabelListComponent {
 
   public columns: Array < any > = [
     { name: 'Name', prop: '0' },
-    { name: 'Description', prop: '1' },
-    { name: 'Plguin name', prop: '2' },
+    { name: 'Description', prop: '1' }
   ];
   public config: any = {
     paging: true,
@@ -32,8 +31,9 @@ export class PluginsAvailabelListComponent {
         id: "instal",
         label: "instal",
         onClick: (row) => {
-          // this.router.navigate(
-          //   new Array('').concat(["jails", "edit", row.host_hostuuid]));
+          console.log(row[2]);
+          this.router.navigate(
+            new Array('').concat(["plugins", "add", row[2]]));
         }
       }
     ]

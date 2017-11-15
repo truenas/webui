@@ -8,6 +8,7 @@ import {EntityModule} from '../common/entity/entity.module';
 
 import {routing} from './plugins.routing';
 import { PluginsAvailabelListComponent } from './plugins-available/plugins-available-list/plugins-available-list.component';
+import { PluginAddComponent } from './plugin-add/plugin-add.component';
 
 @NgModule({
   imports : [
@@ -15,7 +16,8 @@ import { PluginsAvailabelListComponent } from './plugins-available/plugins-avail
     ReactiveFormsModule, NgUploaderModule, routing, MaterialModule
   ],
   declarations : [
-  	PluginsAvailabelListComponent
+  	PluginsAvailabelListComponent,
+  	PluginAddComponent
   ]
 })
 export class PluginsModule {
