@@ -5,7 +5,7 @@ import {
   RestService,
   SystemGeneralService,
   WebSocketService
-} from '../../../services/';
+} from '../../../../services/';
 
 @Component({
   selector: 'about-dialog',

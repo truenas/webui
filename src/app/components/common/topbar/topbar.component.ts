@@ -4,7 +4,7 @@ import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
-import { AboutModalDialog } from '../about/about-dialog.component';
+import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';

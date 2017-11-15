@@ -10,16 +10,13 @@ import { Router } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import filesize from 'filesize';
-
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
-
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
-import { MdSnackBar } from '@angular/material';
+import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 
 @Component({
   selector: 'app-manager',
@@ -56,10 +53,16 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   public busy: Subscription;
 
-  constructor(private rest: RestService, private ws: WebSocketService,
-    private router: Router, private dragulaService: DragulaService, 
-    private dialog:DialogService, public snackBar: MdSnackBar,
-    private loader:AppLoaderService) {
+  constructor(
+    private rest: RestService, 
+    private ws: WebSocketService,
+    private router: Router, 
+    private dragulaService: DragulaService, 
+    private dialog:DialogService, 
+    public snackBar: MdSnackBar,
+    private loader:AppLoaderService,
+    public mdDialog: MdDialog ) {
+
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
     });
@@ -146,12 +149,22 @@ export class ManagerComponent implements OnInit, OnDestroy {
         this.busy =
           this.rest
           .post('storage/volume/', {
-            body: JSON.stringify({ volume_name: this.name, layout: layout })
+            body: JSON.stringify({ volume_name: this.name, encryption: this.vol_encrypt, layout: layout })
           })
           .subscribe(
             (res) => {
-              this.loader.close()
-              this.router.navigate(['/', 'storage', 'volumes']);
+              this.loader.close();
+              if(this.isEncrypted) {
+                let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+
+                dialogRef.componentInstance.volumeId = res.data.id;
+                dialogRef.afterClosed().subscribe(result => {
+                  this.router.navigate(['/', 'storage', 'volumes']);
+                });
+              }
+              else {
+                this.router.navigate(['/', 'storage', 'volumes']);
+              }      
             },
             (res) => {
               this.loader.close();
