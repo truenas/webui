@@ -102,7 +102,7 @@ export class PluginAddComponent implements OnInit {
         this.setRelation(config);
       }
     }
-    
+
     this.aroute.params.subscribe(params => {
       this.pluginName = params['name'];
       this.formGroup.controls['name'].setValue(this.pluginName);
@@ -121,7 +121,13 @@ export class PluginAddComponent implements OnInit {
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
         if (value[i] != undefined && value[i] != '') {
-          property.push(i + '=' + value[i]);
+          if (value[i] == true) {
+            property.push('bpf=yes');
+            property.push('dhcp=on');
+            property.push('vnet=on');
+          } else {
+            property.push(i + '=' + value[i]);
+          }
         }
         delete value[i];
       }
@@ -135,6 +141,11 @@ export class PluginAddComponent implements OnInit {
         this.loader.close();
         if (res.error) {
           this.error = res.error;
+          console.log(res);
+          this.ws.call('jail.delete', [this.pluginName]).subscribe(
+            (jailDeleteRes) => {},
+            (jailDeleteRes) => {}
+          );
         } else {
           this.router.navigate(new Array('/').concat(this.route_success));
         }
@@ -177,10 +188,5 @@ export class PluginAddComponent implements OnInit {
     let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
-
-    // if (tobeDisabled) {
-    //   this.formGroup.controls['ip4_addr'].setValue('');
-    //   this.formGroup.controls['ip6_addr'].setValue('');
-    // }
   }
 }
