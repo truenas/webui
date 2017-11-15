@@ -1,8 +1,8 @@
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-plugins-available-list',
