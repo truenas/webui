@@ -147,6 +147,7 @@ export class NavigationService {
       state: 'plugins',
       sub: [
         {name: 'Available', state: 'available'},
+        {name: 'Installed', state: 'installed'},
       ]
     },
     {

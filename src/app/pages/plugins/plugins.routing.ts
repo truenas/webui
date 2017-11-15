@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { PluginsAvailabelListComponent } from './plugins-available/plugins-available-list/plugins-available-list.component';
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
+import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,11 @@ export const routes: Routes = [
       path: 'add/:name',
       component: PluginAddComponent,
       data: { title: 'Add', breadcrumb: 'Add' },
+    },
+    {
+      path: 'installed',
+      component: PluginsInstalledListComponent,
+      data: { title: 'Installed', breadcrumb: 'Installed' },
     }
     ]
   }

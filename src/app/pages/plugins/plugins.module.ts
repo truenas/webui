@@ -9,6 +9,7 @@ import {EntityModule} from '../common/entity/entity.module';
 import {routing} from './plugins.routing';
 import { PluginsAvailabelListComponent } from './plugins-available/plugins-available-list/plugins-available-list.component';
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
+import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
 
 @NgModule({
   imports : [
@@ -17,7 +18,8 @@ import { PluginAddComponent } from './plugin-add/plugin-add.component';
   ],
   declarations : [
   	PluginsAvailabelListComponent,
-  	PluginAddComponent
+  	PluginAddComponent,
+  	PluginsInstalledListComponent
   ]
 })
 export class PluginsModule {
