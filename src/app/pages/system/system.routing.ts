@@ -10,7 +10,11 @@ import { ConfigResetComponent } from './general/config-reset/config-reset.compon
 import { AdvancedComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
+import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
+import { BootStatusListComponent } from './bootenv/bootenv-status/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
+import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
+import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
@@ -97,6 +101,26 @@ export const routes: Routes = [
         path: 'rename/:pk',
         component: BootEnvironmentRenameComponent,
         data: { title: 'Rename', breadcrumb: 'Rename' },
+      },
+      {
+        path: 'create',
+        component: BootEnvironmentCreateComponent,
+        data: { title: 'create', breadcrumb: 'create' },
+      },
+      {
+        path: 'status',
+        component: BootStatusListComponent,
+        data: { title: 'BootStatus', breadcrumb: 'BootStatus' },
+      },
+      {
+        path: 'attach/:pk',
+        component: BootEnvAttachFormComponent,
+        data: { title: 'Attach', breadcrumb: 'attach' },
+      },
+      {
+        path: 'replace/:pk',
+        component: BootEnvReplaceFormComponent,
+        data: { title: 'replace', breadcrumb: 'replace' },
       }
     ]
     }, {
