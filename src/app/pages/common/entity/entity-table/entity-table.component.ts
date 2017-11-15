@@ -367,6 +367,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
    */
   pushNewRow(row:any) {
     this.rows.push(row);
+    this.currentRows = this.rows;
     this.setPaginationInfo();
 
   }
