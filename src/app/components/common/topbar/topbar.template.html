@@ -91,15 +91,15 @@
   <md-menu #accountMenu="mdMenu">
     <button md-menu-item [routerLink]="['/account/users/edit/1']">
       <md-icon>account_box</md-icon>
-      <span>Account</span>
+      <span>{{"Account" | translate}}</span>
     </button>
     <button md-menu-item [routerLink]="['/account/users/change-password']">
       <md-icon>dialpad</md-icon>
-      <span>Change Password</span>
+      <span>{{"Change Password" | translate}}</span>
     </button>
     <button md-menu-item [routerLink]="['/system/general']">
       <md-icon>settings</md-icon>
-      <span>Settings</span>
+      <span>{{"Settings" | translate}}</span>
     </button>
     <!-- button md-menu-item>
       <md-icon>notifications_off</md-icon>
@@ -107,19 +107,19 @@
     </button -->
     <button md-menu-item (click)="signOut()">
       <md-icon>exit_to_app</md-icon>
-      <span>Logout</span>
+      <span>{{"Logout" | translate}}</span>
     </button>
     <button md-menu-item (click)="onReboot()">
       <md-icon>replay</md-icon>
-      <span>Reboot</span>
+      <span>{{"Reboot" | translate}}</span>
     </button>
     <button md-menu-item (click)="onShutdown()">
       <md-icon>power_settings_new</md-icon>
-      <span>Shutdown</span>
+      <span>{{"Shutdown" | translate}}</span>
     </button>
     <button md-menu-item (click)="onShowAbout()">
       <md-icon>info_outline</md-icon>
-      <span>About</span>
+      <span>{{"About" | translate}}</span>
     </button>
   </md-menu>
 </md-toolbar>
