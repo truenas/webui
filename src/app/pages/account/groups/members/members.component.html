@@ -8,9 +8,9 @@
   </div>
 
   <div class="padding-16" *ngIf="members.length > 0">
-    <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers" (selectedItemsChange)="OnItemChange($event)">
+    <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">
       <ng-template #templateItem let-item="data">
-          <md-list-item class="pointer">{{item.bsdusr_full_name}}</md-list-item>
+          <md-list-item class="pointer">{{item.username}}</md-list-item>
       </ng-template>
     </app-dual-listbox>
   </div>

@@ -36,7 +36,7 @@ export class DualListboxComponent implements OnInit {
     const { from, to } = transfer(this.availableItems, this.selectedItems);
     this.availableItems = from;
     this.selectedItems = to;
-    this.selectedItemsChange.emit({action: 'add', items: this.selectedItems.totalItems});
+    this.selectedItemsChange.emit(this.selectedItems.totalItems);
   }
 
   return() {
@@ -44,7 +44,7 @@ export class DualListboxComponent implements OnInit {
     const { from, to } = transfer(this.selectedItems, this.availableItems);
     this.selectedItems = from;
     this.availableItems = to;
-    this.selectedItemsChange.emit({action: 'remove', items: this.selectedItems.totalItems});
+    this.selectedItemsChange.emit(this.selectedItems.totalItems);
   }
 }
 
