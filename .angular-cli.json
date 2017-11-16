@@ -1,11 +1,9 @@
 {
     "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-    "project":
-    {
+    "project": {
         "name": "freenas-material-ui"
     },
-    "apps": [
-    {
+    "apps": [{
         "root": "src",
         "outDir": "dist",
         "assets": [
@@ -51,40 +49,33 @@
             "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"
         ],
         "environmentSource": "environments/environment.ts",
-        "environments":
-        {
+        "environments": {
             "dev": "environments/environment.ts",
-            "prod": "environments/environment.prod.ts"
+            "prod": "environments/environment.ts"
         }
     }],
-    "e2e":
-    {
-        "protractor":
-        {
+    "e2e": {
+        "protractor": {
             "config": "./protractor.conf.js"
         }
     },
-    "lint": [
-    {
-        "project": "src/tsconfig.app.json"
-    },
-    {
-        "project": "src/tsconfig.spec.json"
-    },
-    {
-        "project": "e2e/tsconfig.e2e.json"
-    }],
-    "test":
-    {
-        "karma":
+    "lint": [{
+            "project": "src/tsconfig.app.json"
+        },
         {
+            "project": "src/tsconfig.spec.json"
+        },
+        {
+            "project": "e2e/tsconfig.e2e.json"
+        }
+    ],
+    "test": {
+        "karma": {
             "config": "./karma.conf.js"
         }
     },
-    "defaults":
-    {
+    "defaults": {
         "styleExt": "css",
-        "component":
-        {}
+        "component": {}
     }
 }
