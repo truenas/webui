@@ -28,7 +28,7 @@ export class VolumesListComponent implements OnInit {
   ) {}
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name'},
+    {name : 'Name', prop : 'path'},
     {name : 'Used', prop : 'used'},
     {name : 'Available', prop : 'avail'},
     {name : 'Type', prop : 'type'},
@@ -184,6 +184,7 @@ export class VolumesListComponent implements OnInit {
     for (let i= 0; i<data.length; i++){
       if (data[i].status !== '-'){
         data[i].type = 'zpool'
+        data[i].path = data[i].name
       }
       if (data[i].type === 'dataset'){
         for (let k = 0; k< this.dataset_data.data.length;k++){
