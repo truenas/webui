@@ -2,7 +2,7 @@ import { MdDialog, MdDialogRef} from '@angular/material';
 import { Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 import {
   WebSocketService
-} from '../../../services/';
+} from '../../../../services/';
 
 @Component({
   selector: 'consolepanel-dialog',

@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk';
-import { MdPaginator, MdSort } from '@angular/material';
+import { MdPaginator, MdSort, PageEvent } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs';
@@ -23,20 +23,28 @@ import { DialogService } from 'app/services';
   styleUrls: ['./entity-table.component.scss'],
   providers: [DialogService]
 })
-export class EntityTableComponent implements OnInit {
+export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
   @Input('conf') conf: any;
 
   
   @ViewChild('filter') filter: ElementRef;
+  private erd: any = null;
+
+  // MdPaginator Inputs
+  public paginationPageSize = 5;
+  public paginationPageSizeOptions = [5, 10, 20];
+  public paginationPageIndex = 0;
+  public paginationPageEvent: any;
+  
   
   public displayedColumns: string[] = [];
-  public initialItemsPerPage = 5;
   public busy: Subscription;
   public columns: Array<any> = [];
   public rows: any[] = [];
-  public currentRows: any[] = [];
+  public currentRows: any[] = []; // Rows applying filter
+  public seenRows: any[] = [];
   public getFunction;
   public config: any = {
     paging: true,
@@ -48,6 +56,10 @@ export class EntityTableComponent implements OnInit {
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
+    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
+      this.erd = window['elementResizeDetectorMaker'].call();
+    }
+
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -93,7 +105,15 @@ export class EntityTableComponent implements OnInit {
         
         
         this.currentRows = newData;
+        this.paginationPageIndex  = 0;
+        this.setPaginationInfo();
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
+      (<any>window).dispatchEvent(new Event('resize'));
+    });
   }
 
   getData() {
@@ -121,6 +141,16 @@ export class EntityTableComponent implements OnInit {
     }
     this.busy =
       this.getFunction.subscribe((res) => {
+        if (res.data) {
+          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+            res.data = this.conf.resourceTransformIncomingRestData(res.data);
+          }
+        } else {
+          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+            res = this.conf.resourceTransformIncomingRestData(res);
+          }
+        }
+
         let rows: any[] = [];
 
         if (this.loaderOpen) {
@@ -144,7 +174,14 @@ export class EntityTableComponent implements OnInit {
         }
 
         this.rows = rows;
+    
+        if (this.conf.addRows) {
+          this.conf.addRows(this);
+        }
+        
         this.currentRows = rows;
+        this.paginationPageIndex  = 0;
+        this.setPaginationInfo();
 
       });
 
@@ -282,6 +319,56 @@ export class EntityTableComponent implements OnInit {
       })
 
     }
+
+  }
+
+
+  setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
+    this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
+  }
+
+ 
+  paginationUpdate($pageEvent: any) {
+    this.paginationPageEvent = $pageEvent;
+    
+    this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
+    ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
+
+    this.paginationPageSize = this.paginationPageEvent.pageSize;
+    this.setPaginationInfo();
+  }
+
+  private setPaginationInfo() {
+    
+    const beginIndex = this.paginationPageIndex * this.paginationPageSize;
+    const endIndex = beginIndex + this.paginationPageSize ;
+
+    if( beginIndex < this.currentRows.length && endIndex > this.currentRows.length ) {
+      this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
+    } else if( endIndex < this.currentRows.length ) {
+      this.seenRows = this.currentRows.slice(beginIndex, endIndex);
+    } else {
+      this.seenRows = this.currentRows;
+    }
+
+  }
+
+  reorderEvent($event) {
+    this.paginationPageIndex = 0;
+  }
+
+  /**
+   * some structure... should be the same as the other rows.
+   * which are field maps.  
+   * 
+   * this method can be called to externally push rows on to the tables.
+   * 
+   * @param param0 
+   */
+  pushNewRow(row:any) {
+    this.rows.push(row);
+    this.currentRows = this.rows;
+    this.setPaginationInfo();
 
   }
 }

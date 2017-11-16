@@ -1,9 +1,15 @@
-<div class="material mat-card mat-card-table">
+<div id="entity-table-component" class="material mat-card mat-card-table">
 	<div class="mat-toolbar mat-card-toolbar">
 		<div class="mat-card-title-text">{{ title }}</div>
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
-
+	<div>
+		<br/>
+	</div>
+	<div *ngIf="currentRows.length > paginationPageSize">
+		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+		</md-paginator>
+	</div>
 	<div class="padding_all">
 		<md-input-container floatPlaceholder="never">
 			<input mdInput #filter placeholder="Filter {{title}}">
@@ -12,22 +18,27 @@
 
 	<div>
 		<ngx-datatable class='material' 
-					   [rows]='currentRows' 
+					   [rows]='seenRows' 
 					   [columns]="conf.columns" 
 					   [columnMode]="'force'" 
 					   [columnWidth]="'auto'"
 					   [headerHeight]="50" 
 					   [footerHeight]="50" 
-					   [limit]="initialItemsPerPage" 
 					   [rowHeight]="50" 
-					   [reorderable]="'true'">
+					   [reorderable]="true"
+					   [limit]="paginationPageSize" 
+					   [externalPaging]="true"
+					   [count]="currentRows.length"
+					   [offset]="paginationPageIndex"
+					   (page)='paginationUpdate($event)'
+					   (sort)='reorderEvent($event)'>
 		    
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
 				prop="{{col.prop}}" 
 				 name="{{col.name}}">
 				 <ng-template let-row="row" ngx-datatable-cell-template> 
-					 <div>
+					 <div title="{{row[col.prop]}}">
 						{{row[col.prop]}}
 					  </div>
 					</ng-template>
