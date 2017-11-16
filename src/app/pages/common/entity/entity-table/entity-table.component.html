@@ -38,7 +38,7 @@
 				prop="{{col.prop}}" 
 				 name="{{col.name}}">
 				 <ng-template let-row="row" ngx-datatable-cell-template> 
-					 <div>
+					 <div title="{{row[col.prop]}}">
 						{{row[col.prop]}}
 					  </div>
 					</ng-template>
