@@ -13,6 +13,7 @@ export class PluginsInstalledListComponent {
   public title = "Installed Plugins";
   protected queryCall = 'jail.list_resource';
   protected queryCallOption = ["PLUGIN"];
+  protected wsDelete = 'jail.do_delete';
   protected entityList: any;
 
   public columns: Array < any > = [
@@ -32,4 +33,45 @@ export class PluginsInstalledListComponent {
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
+  afterInit(entityList: any) { this.entityList = entityList; }
+
+  isActionVisible(actionId: string, row: any) {
+    if (actionId === 'start' && row[3] === "up") {
+      return false;
+    } else if (actionId === 'stop' && row[3] === "down") {
+      return false;
+    }
+    return true;
+  }
+
+  getActions(parentRow) {
+    return [{
+        id: "start",
+        label: "Start",
+        onClick: (row) => {
+          this.entityList.busy =
+            this.ws.call('jail.start', [row[1]]).subscribe(
+              (res) => { row[3] = 'up'; },
+              (res) => { console.log(res); });
+        }
+      },
+      {
+        id: "stop",
+        label: "Stop",
+        onClick: (row) => {
+          this.entityList.busy =
+            this.ws.call('jail.stop', [row[1]]).subscribe(
+              (res) => { row[3] = 'down'; },
+              (res) => { console.log(res); });
+        }
+      },
+      {
+        id: "delete",
+        label: "Delete",
+        onClick: (row) => {
+          this.entityList.doDelete(row[1]);
+        }
+      }
+    ]
+  }
 }
