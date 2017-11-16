@@ -6,7 +6,7 @@
 	<div>
 		<br/>
 	</div>
-	<div *ngIf="currentRows.length > paginationPageSize">
+	<div>
 		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
