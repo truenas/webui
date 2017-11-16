@@ -138,7 +138,7 @@ export class BootStatusListComponent {
     rows.ws.call(this.queryCall).subscribe((res)=>{
       const transformedData = this.resourceTransformIncomingRestData(res);
       for(let transformedDataIdx=0; transformedDataIdx <transformedData.path.length; transformedDataIdx++){
-        this.entityList.rows.push(
+        this.entityList.pushNewRow(
           {
             "name":transformedData.path[transformedDataIdx],
             "status":transformedData.status,
@@ -146,7 +146,7 @@ export class BootStatusListComponent {
             "write_errors":transformedData.write_errors,
             "checksum_errors":transformedData.checksum_errors,
             "type":transformedData.type
-        })
+        });
       }
     })
 

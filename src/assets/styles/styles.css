@@ -1331,11 +1331,11 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     white-space: normal;
 }
 
-/*---- Embeded page ----*/
-.embeding-active .sidebar-panel, .embeding-active topbar, .embeding-active app-breadcrumb{
+/*---- Embedded page ----*/
+.embedding-active .sidebar-panel, .embedding-active topbar, .embedding-active app-breadcrumb{
     display: none;
 }
-.embeding-active .rightside-content-hold {
+.embedding-active .rightside-content-hold {
     padding-top: 0px !important;
 }
 /*---- End ----*/
