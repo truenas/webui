@@ -31,6 +31,8 @@ export class ListSelectionImpl implements ListSelection {
   select(item: any): void {
     if (!this.isSelected(item)) {
       this._selectedItems.push(item);
+    } else {
+      this.unselect(item);
     }
   }
 

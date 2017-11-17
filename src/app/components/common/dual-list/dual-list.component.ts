@@ -32,7 +32,6 @@ export class DualListboxComponent implements OnInit {
   }
 
   select() {
-    console.log('selected items called');
     const { from, to } = transfer(this.availableItems, this.selectedItems);
     this.availableItems = from;
     this.selectedItems = to;
@@ -40,7 +39,6 @@ export class DualListboxComponent implements OnInit {
   }
 
   return() {
-    console.log('return items called');
     const { from, to } = transfer(this.selectedItems, this.availableItems);
     this.selectedItems = from;
     this.availableItems = to;
