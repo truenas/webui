@@ -34,12 +34,14 @@ export class WebSocketService {
     this.socket = new WebSocket(
         (window.location.protocol == 'https:' ? 'wss://' : 'ws://') +
         environment.remote + '/websocket');
+    console.log(this.socket);
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);
   }
 
   onopen(event) {
+    console.log('onpen event happened');
     this.onOpenSubject.next(true);
     this.send({"msg" : "connect", "version" : "1", "support" : [ "1" ]});
   }
@@ -117,6 +119,7 @@ export class WebSocketService {
   send(payload) {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
+      console.log('send payload', this.socket.readyState, payload);
     } else {
       this.pendingMessages.push(payload);
     }
