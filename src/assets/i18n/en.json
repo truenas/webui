@@ -53,7 +53,6 @@
   "SHELL": "SHELL",
   "Guide": "Guide",
 
-  "Account": "Account",
   "Change Password": "Change Password",
   "Settings": "Settings",
   "Logout": "Logout",
@@ -66,7 +65,18 @@
   "Guide Tour": "Guide Tour",
   "Notifications": "Notifications",
 
-  "Uptime": "Uptime"
+  "System Information": "System Information",
+  "Volume Usage": "Volume Usage",
+  "Average Load": "Average Load",
+  "Memory (gigabytes)": "Memory (gigabytes)",
+  "CPU Usage": "CPU Usage",
+  "Uptime": "Uptime",
+  "Disk IOPS": "Disk IOPS",
+  "Version": "Version",
+  "Model": "Model",
+  "Physical Memory": "Physical Memory",
+  "Hostname": "Hostname",
+  "IP": "IP"
 }
 
 

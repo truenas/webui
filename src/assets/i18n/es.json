@@ -53,7 +53,6 @@
   "SHELL": "SHELL",
   "Guide": "Guía",
 
-  "Account": "Cuenta",
   "Change Password": "Cambia la contraseña",
   "Settings": "Configuraciones",
   "Logout": "Cerrar sesión",
@@ -66,5 +65,17 @@
   "Guide Tour": "La guía turística",
   "Notifications": "Notifications",
 
-  "Uptime": "Tiempo de actividad"
+  "System Information": "Información del sistema",
+  "Volume Usage": "Uso del volumen",
+  "Average Load": "Carga promedio",
+  "Memory (gigabytes)": "Memoria (gigabytes)",
+  "CPU Usage": "Uso de CPU",
+  "Uptime": "Tiempo de actividad",
+  "Disk IOPS": "IOPS de disco",
+  "Version": "Versión",
+  "Model": "Modelo",
+  "Physical Memory": "Memoria física",
+  "Hostname": "Nombre de host",
+  "IP": "IP"
+
 }
