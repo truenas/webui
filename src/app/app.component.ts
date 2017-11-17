@@ -8,6 +8,7 @@ import { MdSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { TourService } from './services/tour.service';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,8 @@ export class AppComponent implements OnInit {
     private routePartsService: RoutePartsService,
     public snackBar: MdSnackBar,
     private rest: RestService,
-    private tour: TourService) {
+    private tour: TourService,
+    public translate: TranslateService) {
 
     router.events.subscribe(s => {
       if (s instanceof NavigationCancel) {
@@ -39,6 +41,13 @@ export class AppComponent implements OnInit {
         }
       }
     });
+
+    // Translator init
+    translate.addLangs(["en", "es", "zh"]);
+    translate.setDefaultLang("en");
+
+    let browserLang = translate.getBrowserLang();
+    translate.use(browserLang.match(/en|es|zh/) ? browserLang : 'en');
   }
 
   ngOnInit() {

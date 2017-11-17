@@ -22,7 +22,7 @@ import {
   MdDialogModule
 } from '@angular/material';
 
-import {ChartistModule} from 'ng-chartist';
+import { ChartistModule } from 'ng-chartist';
 import { TopbarComponent } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
