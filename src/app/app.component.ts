@@ -34,10 +34,10 @@ export class AppComponent implements OnInit {
     router.events.subscribe(s => {
       if (s instanceof NavigationCancel) {
         let params = new URLSearchParams(s.url.split('#')[1]);
-        let isEmbeded = params.get('embeded');
+        let isEmbedded = params.get('embedded');
 
-        if(isEmbeded) {
-          document.body.className += " embeding-active";
+        if(isEmbedded) {
+          document.body.className += " embedding-active";
         }
       }
     });
