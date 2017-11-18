@@ -134,6 +134,12 @@ export class PluginAddComponent implements OnInit {
     }
     value['name'] = this.pluginName;
     value['props'] = property;
+
+    // only for plugin bru-server
+    if (this.pluginName == 'bru-server') {
+      value['accept'] = true;
+    }
+
     console.log(value);
     this.loader.open();
     this.ws.job(this.addCall, [value]).subscribe(
