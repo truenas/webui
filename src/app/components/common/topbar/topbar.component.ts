@@ -98,7 +98,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   startTour() {
     hopscotch.startTour(this.tour.startTour(this.router.url));
-    localStorage.setItem(this.router.url, 'false');
+    localStorage.setItem(this.router.url, 'true');
   }
 
   setLang() {
