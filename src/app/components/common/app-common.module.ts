@@ -4,7 +4,8 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from 'ng2-translate/ng2-translate';
-import { 
+import {
+  MaterialModule,
   MdSidenavModule,
   MdListModule,
   MdTooltipModule,
@@ -42,6 +43,7 @@ import { LineChartService } from './lineChart/lineChart.service';
     FormsModule,
     RouterModule,
     FlexLayoutModule,
+    MaterialModule,
     MdSidenavModule,
     MdIconModule,
     MdListModule,
@@ -69,6 +71,31 @@ import { LineChartService } from './lineChart/lineChart.service';
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
   ],
   providers: [ThemeService, DialogService, LineChartService],
-  exports: [LineChartComponent]
+  exports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    FlexLayoutModule,
+    MaterialModule,
+    MdSidenavModule,
+    MdIconModule,
+    MdListModule,
+    MdTooltipModule,
+    MdOptionModule,
+    MdSelectModule,
+    MdMenuModule,
+    MdSnackBarModule,
+    MdGridListModule,
+    MdToolbarModule,
+    MdButtonModule,
+    MdRadioModule,
+    MdCheckboxModule,
+    MdCardModule,
+    MdDialogModule,
+    CommonDirectivesModule,
+    TranslateModule,
+    ChartistModule,
+    LineChartComponent
+  ]
 })
 export class AppCommonModule {}

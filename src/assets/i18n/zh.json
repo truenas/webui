@@ -76,5 +76,25 @@
   "Model": "模型",
   "Physical Memory": "物理内存",
   "Hostname": "主机名",
-  "IP": "IP"
+  "IP": "IP",
+  "Short Term": "短期",
+  "Mid Term": "中期",
+  "Long Term": "长期",
+  "Free": "自由",
+  "Active": "活性",
+  "Cache": "高速缓存",
+  "Wired": "有线",
+  "Inactive": "待用",
+  "User": "用户",
+  "Interrupt": "打断",
+  "System": "系统",
+  "Idle": "闲",
+  "Nice": "尼斯",
+  "Available": "可得到",
+  "Used": "用过的",
+  "read": "读",
+  "write": "写"
+
+
+
 }

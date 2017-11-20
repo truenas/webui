@@ -76,7 +76,28 @@
   "Model": "Model",
   "Physical Memory": "Physical Memory",
   "Hostname": "Hostname",
-  "IP": "IP"
+  "IP": "IP",
+  "Short Term": "Short Term",
+  "Mid Term": "Mid Term",
+  "Long Term": "Long Term",
+  "Free": "Free",
+  "Active": "Active",
+  "Cache": "Cache",
+  "Wired": "Wired",
+  "Inactive": "Inactive",
+  "User": "User",
+  "Interrupt": "Interrupt",
+  "System": "System",
+  "Idle": "Idle",
+  "Nice": "Nice",
+  "Available": "Available",
+  "Used": "Used",
+  "read": "read",
+  "write": "write"
+
+
+
+
 }
 
 

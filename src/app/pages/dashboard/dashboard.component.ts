@@ -10,7 +10,6 @@ import {
 } from '../../services/';
 import { ChartConfigData, LineChartService } from 'app/components/common/lineChart/lineChart.service';
 
-
 @Component({
   selector: 'dashboard',
   styleUrls: ['./dashboard.scss'],
@@ -18,7 +17,6 @@ import { ChartConfigData, LineChartService } from 'app/components/common/lineCha
   providers: [SystemGeneralService]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-
 
   public info: any = {};
   public ipAddress: any = [];
@@ -30,7 +28,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public graphs: ChartConfigData[] = [
     {
       title: "Average Load",
-      legends: ['Short Term', ' Mid Term', 'Long Term'],
+      legends: ['{{"Short Term" | translate}}', ' Mid Term', 'Long Term'],
       type: LineChartService.lineChart,
       dataList: [
         {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},

@@ -76,6 +76,23 @@
   "Model": "Modelo",
   "Physical Memory": "Memoria física",
   "Hostname": "Nombre de host",
-  "IP": "IP"
+  "IP": "IP",
+  "Short Term": "",
+  "Mid Term": "",
+  "Long Term": "",
+  "Free": "",
+  "Active": "",
+  "Cache": "",
+  "Wired": "",
+  "Inactive": "",
+  "User": "",
+  "Interrupt": "",
+  "System": "",
+  "Idle": "",
+  "Nice": "",
+  "Available": "",
+  "Used": "",
+  "read": "",
+  "write": ""
 
 }

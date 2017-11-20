@@ -119,7 +119,6 @@ export class WebSocketService {
   send(payload) {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
-      console.log('send payload', this.socket.readyState, payload);
     } else {
       this.pendingMessages.push(payload);
     }
