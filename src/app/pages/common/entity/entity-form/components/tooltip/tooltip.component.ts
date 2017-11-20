@@ -28,8 +28,6 @@ export class TooltipComponent {
     else {
       let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
       this.tooltipMsgStyle = {'left' : diffX};
-
-      console.log("------", screenW, diffX);
     }    
   }
 
