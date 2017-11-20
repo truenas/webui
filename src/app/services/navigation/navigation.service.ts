@@ -172,7 +172,7 @@ export class NavigationService {
     },{
       name: 'Reporting',
       type: 'link',
-      tooltip: 'Services',
+      tooltip: 'Reports',
       icon: 'insert_chart',
       state: 'reportsdashboard',
     },

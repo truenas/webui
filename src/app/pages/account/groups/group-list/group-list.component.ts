@@ -1,13 +1,13 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router} from '@angular/router';
-
-import {RestService} from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-group-list',
   template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class GroupListComponent {
+
+  constructor(private _router: Router) { }
 
   public title = "Groups";
   protected resource_name: string = 'account/groups/';
@@ -31,5 +31,18 @@ export class GroupListComponent {
       return false;
     }
     return true;
+  }
+
+  getActions(row) {
+    let actions = [];
+    actions.push({
+      label : "Members",
+      id: "members",
+      onClick : (row) => {
+        this._router.navigate(new Array('/').concat(
+          [ "account", "groups", "members", row.id ]));
+      }
+    });
+    return actions;
   }
 }
