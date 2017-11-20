@@ -6,7 +6,7 @@
 	<div>
 		<br/>
 	</div>
-	<div *ngIf="currentRows.length > paginationPageSize">
+	<div>
 		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
@@ -46,10 +46,8 @@
 
 			<ngx-datatable-column>
 				<ng-template let-row="row" ngx-datatable-cell-template>
-					<div style="margin-top: -18px;">
 						<app-entity-table-actions [entity]="this" [row]="row">
 						</app-entity-table-actions>
-					</div>
 				</ng-template>
 			</ngx-datatable-column>
 		
