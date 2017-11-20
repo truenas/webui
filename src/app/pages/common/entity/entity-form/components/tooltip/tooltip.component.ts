@@ -1,5 +1,5 @@
-import {Component, Input} from '@angular/core';
-import {TooltipPosition} from '@angular/material';
+import { Component, Input } from '@angular/core';
+import { TooltipPosition } from '@angular/material';
 
 @Component({
   selector : 'tooltip',
@@ -9,8 +9,10 @@ import {TooltipPosition} from '@angular/material';
 export class TooltipComponent {
   @Input('message') message: string;
 
-  position: TooltipPosition = 'below';
-  disabled = false;
-  showDelay = 0;
-  hideDelay = 1000;
+  public isShowTooltip: Boolean;
+
+  showTooltip($event) {
+    this.isShowTooltip = $event;
+  }
+
 }

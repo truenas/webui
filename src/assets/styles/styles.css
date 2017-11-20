@@ -1338,4 +1338,19 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
 .embedding-active .rightside-content-hold {
     padding-top: 0px !important;
 }
-/*---- End ----*/
+
+/*---- tooltip ----*/
+tooltip {
+    position: relative;
+    display: inline-block;
+}
+.has-tooltip md-input-container.full-width,
+.has-tooltip md-select.full-width {
+    width: calc( 100% - 25px );
+}
+.has-tooltip .tooltip .material-icons {
+    vertical-align: middle;
+}
+
+
+

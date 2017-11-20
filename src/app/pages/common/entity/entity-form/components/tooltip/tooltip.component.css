@@ -6,20 +6,29 @@
 
 /* Tooltip text */
 .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 400px;
+    position: absolute;    
     background-color: black;
+    max-width: 400px;
+    width: 90vw;
+    margin: auto;
+    right: 0px;
+    padding: 10px 5px;
+    border-radius: 6px;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
- 
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
     z-index: 1;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.33s, opacity 0.33s linear;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
+.tooltip .tooltiptext.show {
     visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.tooltip .material-icons {
+    font-size: 20px;
 }
