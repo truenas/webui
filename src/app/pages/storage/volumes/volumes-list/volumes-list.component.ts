@@ -3,6 +3,8 @@ import {Router, ActivatedRoute} from '@angular/router';
 import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
 import filesize from 'filesize';
+import { debug } from 'util';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-volumes-list',
@@ -11,23 +13,32 @@ import filesize from 'filesize';
 export class VolumesListComponent implements OnInit {
 
   public title = "Volumes";
+  protected flattenedVolData: any;
   protected resource_name: string = 'storage/volume/';
   protected route_add: string[] = [ 'storage', 'volumes', 'manager' ];
   protected route_add_tooltip: string = "Volume Manager";
+  public dataset_data: any;
 
   constructor(
     protected _rest: RestService,
     private _router: Router,
     protected _eRef: ElementRef,
-    private tour: TourService
+    private tour: TourService,
+    
   ) {}
 
   public columns: Array<any> = [
-    {name : 'Name', prop : 'name'},
-    {name : 'Path', prop : 'path'},
-    {name : 'Status', prop : 'status'},
-    {name : 'Available', prop : 'avail'},
+    {name : 'Name', prop : 'path'},
     {name : 'Used', prop : 'used'},
+    {name : 'Available', prop : 'avail'},
+    {name : 'Type', prop : 'type'},
+    {name : 'Status', prop : 'status'},
+    {name : 'Compression', prop : 'compression'},
+    {name : 'Readonly', prop : 'readonly'},
+    {name : 'Dedup', prop : 'dedup'},
+
+    
+    
   ];
   public config: any = {
     paging : true,
@@ -40,6 +51,9 @@ export class VolumesListComponent implements OnInit {
       hopscotch.startTour(this.tour.startTour(this._router.url));
       localStorage.setItem(this._router.url, 'true');
     }
+    this._rest.get('storage/dataset/',{}).subscribe((res)=>{
+      this.dataset_data = res;
+    })
   }
 
   dataHandler(EntityTable:any) {
@@ -78,7 +92,7 @@ export class VolumesListComponent implements OnInit {
   getActions(row) {
     let actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
-    if (!row.type) {
+    if (row.type === 'zpool') {
       actions.push({
         label : "Delete",
         onClick : (row) => {
@@ -165,4 +179,24 @@ export class VolumesListComponent implements OnInit {
     }
     return actions;
   }
+  resourceTransformIncomingRestData(data:any): any {
+    data = new EntityUtils().flattenData(data);
+    for (let i= 0; i<data.length; i++){
+      if (data[i].status !== '-'){
+        data[i].type = 'zpool'
+        data[i].path = data[i].name
+      }
+      if (data[i].type === 'dataset'){
+        for (let k = 0; k< this.dataset_data.data.length;k++){
+          if (this.dataset_data.data[k].name === data[i].path){
+            data[i].compression = this.dataset_data.data[k].compression;
+            data[i].readonly = this.dataset_data.data[k].readonly;
+            data[i].dedup = this.dataset_data.data[k].dedup;
+          }
+          
+        }
+      }
+    }
+    return data;
+  };
 }
