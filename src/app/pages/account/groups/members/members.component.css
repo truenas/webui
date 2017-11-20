@@ -1,0 +1,23 @@
+.padding-16 {
+  padding:16px;
+}
+.pointer{
+  cursor: pointer;
+}
+.md-fab-bottom-right-1 {
+  top: auto !important;
+  right: 30px !important;
+  bottom: 48px !important;
+  left: auto !important;
+  position: fixed !important;
+  z-index: 1;
+}
+
+.md-fab-bottom-right-2 {
+  top: auto !important;
+  right: 90px !important;
+  bottom: 48px !important;
+  left: auto !important;
+  position: fixed !important;
+  z-index: 1;
+}
