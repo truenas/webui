@@ -34,7 +34,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   // MdPaginator Inputs
   public paginationPageSize = 5;
-  public paginationPageSizeOptions = [5, 10, 20];
+  public paginationPageSizeOptions = [5, 10, 20, 100];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
   
