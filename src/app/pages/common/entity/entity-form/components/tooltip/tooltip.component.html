@@ -1,6 +1,6 @@
-<div class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
+<div #tooltip class="tooltip" (mouseenter)="showTooltip(true)" (mouseleave)="showTooltip(false)">
   <i class="material-icons">info</i>
-  <div class="tooltiptext" [class.show]="isShowTooltip"
+  <div class="tooltiptext" [class.show]="isShowTooltip" [ngStyle]="tooltipMsgStyle"
     [innerHTML]="message">
   </div>
 </div>
