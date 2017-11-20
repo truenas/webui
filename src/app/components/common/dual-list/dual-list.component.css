@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+}
+
+.container-dualListBox {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.container-dualListBox > div {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  place-content: flex-start;
+}
+
+.container-items {
+  align-items: flex-start;
+  width: 40%;
+  border: 1px solid #ccc8c8;
+  overflow-y: scroll;
+}
+
+.container-buttons {
+  align-items: center;
+  width: 20%;
+}
+
+.btn-arrow {
+  border: 1px solid #afa7a7;
+  background: #9c9797;
+  color: white;
+  padding: 3px;
+  margin: 5px;
+  width: 90px;
+  text-align: center;
+}
+
+.choosed {
+  width: 100%;
+  background: #91949c;
+  color: white;
+}
