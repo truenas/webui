@@ -1,6 +1,5 @@
-<button md-icon-button [mdMenuTriggerFor]="appMenu" class="text-muted" id="tour-fab-buttons">
-		<md-icon [mdMenuTriggerFor]="appMenu">more_vert</md-icon>
-	</button>
+<div class="panel_container">
+		<md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</md-icon>
 <md-menu #appMenu="mdMenu">
     <span *ngFor="let action of actions">
 			<button md-menu-item *ngIf="!entity.conf.isActionVisible
@@ -9,3 +8,4 @@
     </button>
     </span>
 </md-menu>
+</div>

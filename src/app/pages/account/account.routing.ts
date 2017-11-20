@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { GroupListComponent } from './groups/group-list/';
 import { GroupFormComponent } from './groups/group-form/';
+import { MembersComponent } from './groups/members/members.component';
 import { UserListComponent } from './users/user-list/';
 import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
@@ -48,8 +49,12 @@ export const routes: Routes = [{
         path: 'edit/:pk',
         component: GroupFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
+      }, {
+        path: 'members/:pk',
+        component: MembersComponent,
+        data: {title: 'Update Members', breadcrumb: 'Members'}
       }
     ]
   }]
-}]
+}];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
