@@ -34,7 +34,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   // MdPaginator Inputs
   public paginationPageSize = 5;
-  public paginationPageSizeOptions = [5, 10, 20];
+  public paginationPageSizeOptions = [5, 10, 20, 100];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
   
@@ -347,11 +347,28 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
       this.seenRows = this.currentRows.slice(beginIndex, endIndex);
-    } 
+    } else {
+      this.seenRows = this.currentRows;
+    }
 
   }
 
   reorderEvent($event) {
     this.paginationPageIndex = 0;
+  }
+
+  /**
+   * some structure... should be the same as the other rows.
+   * which are field maps.  
+   * 
+   * this method can be called to externally push rows on to the tables.
+   * 
+   * @param param0 
+   */
+  pushNewRow(row:any) {
+    this.rows.push(row);
+    this.currentRows = this.rows;
+    this.setPaginationInfo();
+
   }
 }
