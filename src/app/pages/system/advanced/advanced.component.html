@@ -1,0 +1,77 @@
+<md-card>
+  <div class="md-content">
+    <form class="form-wrap">
+      <div class="form-checkbox">
+        <md-checkbox>Enable Console Menu</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox>Enable Serial Console</md-checkbox>
+      </div>
+      <div class="form-select">
+        <md-select class="form-control full-width" placeholder="Serial Port">
+          <md-option>None</md-option>
+          <md-option>Option 1</md-option>
+          <md-option>Option 2</md-option>
+          <md-option>Option 3</md-option>
+        </md-select>
+      </div>
+      <div class="form-select">
+        <md-select class="form-control full-width" placeholder="Serial Speed">
+          <md-option>None</md-option>
+          <md-option>Option 1</md-option>
+          <md-option>Option 2</md-option>
+          <md-option>Option 3</md-option>
+        </md-select>
+      </div>
+      <md-input-container class="full-width">
+        <input mdInput [type]="'number'" placeholder="Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).">
+      </md-input-container>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Enable Console Screensaver</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Enable Power Saving Daemon</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Enable autotune</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Enable Debug Kernel</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Show console messages in the footer</md-checkbox>
+      </div>
+
+      <md-input-container class="full-width">
+        <textarea placeholder="MOTD Banner" mdInput></textarea>
+      </md-input-container>
+
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Show tracebacks in case of fatal errors</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Show advanced fields by default</md-checkbox>
+      </div>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Enable automatic upload of kernel crash dumps and daily telemetry</md-checkbox>
+      </div>
+      <div class="">
+        <md-select class="form-control full-width" placeholder="Periodic Notification User">
+          <md-option>None</md-option>
+          <md-option>Option 1</md-option>
+          <md-option>Option 2</md-option>
+          <md-option>Option 3</md-option>
+        </md-select>
+      </div>
+      <md-input-container class="full-width">
+        <input mdInput [type]="'text'" placeholder="Remote Graphite Server Hostname">
+      </md-input-container>
+      <div class="form-checkbox">
+        <md-checkbox checked="true">Use FQDN for logging</md-checkbox>
+      </div>
+      <md-card-actions>
+        <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
+      </md-card-actions>
+    </form>
+  </div>
+</md-card>
