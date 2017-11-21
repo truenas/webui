@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public graphs: ChartConfigData[] = [
     {
       title: "Average Load",
-      legends: ['{{"Short Term" | translate}}', ' Mid Term', 'Long Term'],
+      legends: ['Short Term', 'Mid Term', 'Long Term'],
       type: LineChartService.lineChart,
       dataList: [
         {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},

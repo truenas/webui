@@ -30,7 +30,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     name: 'English',
     code: 'en',
   }, {
-    name: 'Spanish',
+    name: 'Español',
     code: 'es',
   }, {
     name: '中文',
