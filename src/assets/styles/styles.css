@@ -1345,15 +1345,25 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     padding-top: 0px !important;
 }
 
+/*---- tooltip ----*/
+tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.has-tooltip md-input-container.full-width,
+.has-tooltip md-select.full-width {
+    width: calc( 100% - 25px );
+}
+
+.has-tooltip .tooltip .material-icons {
+    vertical-align: middle;
+}
+
 /*---- Safari compatibility - to overwrite the current css style ----*/
 body.safari-platform .mat-fab, 
 body.safari-platform .mat-mini-fab, 
 body.safari-platform .mat-raised-button {
     transform: none;
 }
-
-
-
-
-
 
