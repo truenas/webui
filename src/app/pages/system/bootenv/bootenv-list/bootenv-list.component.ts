@@ -80,13 +80,14 @@ export class BootEnvironmentListComponent {
             [ "system", "bootenv", "create" ]));
        }
     });
-    actions.push({
-      label : "scrub",
-      icon: "device_hub",
-      onClick : () => {
-        this.entityList.scrub();
-      }
-    });
+    // uncommit me when we have a fix for #26779
+    // actions.push({
+    //   label : "scrub",
+    //   icon: "device_hub",
+    //   onClick : () => {
+    //     this.entityList.scrub();
+    //   }
+    // });
     actions.push({
       label : "status",
       icon: "local_laundry_service",
@@ -210,21 +211,21 @@ export class BootEnvironmentListComponent {
     }
 
   }
-  scrub() {
-    this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
-      if (res) {
-        this.loader.open();
-        this.loaderOpen = true;
-        let data = {};
-        this.busy = this._rest.post('', {}).subscribe((res) => {
-          this.loader.close();
-          },
-          (res) => {
-            this.dialog.errorReport(res.error, res.reason, res);
-            this.loader.close();
-          }
-          );
-      }
-    })
-  }
+  // scrub() {
+  //   this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
+  //     if (res) {
+  //       this.loader.open();
+  //       this.loaderOpen = true;
+  //       let data = {};
+  //       this.busy = this._rest.post('', {}).subscribe((res) => {
+  //         this.loader.close();
+  //         },
+  //         (res) => {
+  //           this.dialog.errorReport(res.error, res.reason, res);
+  //           this.loader.close();
+  //         }
+  //         );
+  //     }
+  //   })
+  // }
 }
