@@ -44,6 +44,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   freenasThemes;
   continuosStreaming: Subscription;
   showReplication: boolean = false;
+  replicationDetails;
 
   constructor(
     private themeService: ThemeService,
@@ -173,10 +174,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showReplicationStatus() {
     this.rest.get('storage/replication/', {}).subscribe(res => {
-      let idx = res.data.findIndex(x => x.repl_status == 'sending');
-      if(idx !== -1) this.showReplication = true;
+      let idx = res.data.forEach(x => {
+        if(x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
+          this.showReplication = true;
+          this.replicationDetails = x;
+        }
+      });
     }, err => {
       console.log(err);
     })
+  }
+
+  showReplicationDetails(){
+    this.snackBar.open(this.replicationDetails.repl_status.toString(), 'OKAY');
   }
 }
