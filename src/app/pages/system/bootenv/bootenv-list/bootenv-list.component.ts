@@ -161,7 +161,8 @@ export class BootEnvironmentListComponent {
         let data = {};
         this.busy = this.ws.call(this.wsActivate, [id]).subscribe(
           (res) => { 
-            this.entityList.getData() },
+            this.entityList.getData();
+            this.loader.close(); },
           (res) => {
             new EntityUtils().handleError(this, res);
             this.loader.close();
@@ -178,7 +179,9 @@ export class BootEnvironmentListComponent {
           this.loaderOpen = true;
           let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
-            (res) => { this.entityList.getData() },
+            (res) => { this.entityList.getData();
+              this.loader.close(); 
+            },
             (res) => {
               new EntityUtils().handleError(this, res);
               this.loader.close();
@@ -193,7 +196,9 @@ export class BootEnvironmentListComponent {
           this.loaderOpen = true;
           let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : false }]).subscribe(
-            (res) => { this.entityList.getData() },
+            (res) => { this.entityList.getData();
+              this.loader.close();
+            },
             (res) => {
               new EntityUtils().handleError(this, res);
               this.loader.close();
@@ -211,8 +216,8 @@ export class BootEnvironmentListComponent {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.busy = this._rest.post('storage/volume/freenas-boot/scrub/', {}).subscribe((res) => {
-            console.log(res);
+        this.busy = this._rest.post('', {}).subscribe((res) => {
+          this.loader.close();
           },
           (res) => {
             this.dialog.errorReport(res.error, res.reason, res);
