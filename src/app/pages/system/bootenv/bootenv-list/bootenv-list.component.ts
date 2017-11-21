@@ -1,8 +1,13 @@
 import {Component, ElementRef} from '@angular/core';
 import {Router} from '@angular/router';
 import filesize from 'filesize';
+import { Subscription } from 'rxjs';
 
 import {RestService} from '../../../../services/rest.service';
+import { WebSocketService } from '../../../../services/ws.service';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from 'app/services';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -17,6 +22,8 @@ export class BootEnvironmentListComponent {
   protected entityList: any;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
+  protected loaderOpen: boolean = false;
+  public busy: Subscription;
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -50,7 +57,8 @@ export class BootEnvironmentListComponent {
     return row[attr];
   }
 
-  constructor(_rest: RestService, private _router: Router) {}
+  constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
+    private dialog: DialogService, protected loader: AppLoaderService ) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
@@ -72,14 +80,13 @@ export class BootEnvironmentListComponent {
             [ "system", "bootenv", "create" ]));
        }
     });
-    // actions.push({
-    //   label : "scrub",
-    //   icon: "device_hub",
-    //   onClick : () => {
-    //     this._router.navigate(new Array('').concat(
-    //         [ "system", "bootenv", "scrub" ]));
-    //   }
-    // });
+    actions.push({
+      label : "scrub",
+      icon: "device_hub",
+      onClick : () => {
+        this.entityList.scrub();
+      }
+    });
     actions.push({
       label : "status",
       icon: "local_laundry_service",
@@ -121,7 +128,7 @@ export class BootEnvironmentListComponent {
       label : "Activate",
       id: "activate",
       onClick : (row) => {
-        this.entityList.doActivate(row.id);
+        this.doActivate(row.id);
       }
     });
     if (row.keep === true){
@@ -129,7 +136,7 @@ export class BootEnvironmentListComponent {
         label : "Unkeep",
         id: "keep",
         onClick : (row) => {
-          this.entityList.toggleKeep(row.id, row.keep);
+          this.toggleKeep(row.id, row.keep);
         }
       });
 
@@ -138,11 +145,81 @@ export class BootEnvironmentListComponent {
         label : "Keep",
         id: "keep",
         onClick : (row) => {
-          this.entityList.toggleKeep(row.id, row.keep);
+          this.toggleKeep(row.id, row.keep);
         }
       });
     }
 
     return actions;
+  }
+
+  doActivate(id) {
+    this.dialog.confirm("Activate", "Are you sure you want to activate it?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call(this.wsActivate, [id]).subscribe(
+          (res) => { 
+            this.entityList.getData() },
+          (res) => {
+            new EntityUtils().handleError(this, res);
+            this.loader.close();
+          }
+          );
+      }
+    })
+  }
+  toggleKeep(id, status) {
+    if (!status){
+      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?").subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.loaderOpen = true;
+          let data = {};
+          this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
+            (res) => { this.entityList.getData() },
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
+            );
+        }
+      })
+    } else {
+      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?").subscribe((res) => {
+        if (res) {
+          this.loader.open();
+          this.loaderOpen = true;
+          let data = {};
+          this.busy = this.ws.call(this.wsKeep, [id, { "keep" : false }]).subscribe(
+            (res) => { this.entityList.getData() },
+            (res) => {
+              new EntityUtils().handleError(this, res);
+              this.loader.close();
+            }
+            );
+        }
+      })
+
+    }
+
+  }
+  scrub() {
+    this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this._rest.post('storage/volume/freenas-boot/scrub/', {}).subscribe((res) => {
+            console.log(res);
+          },
+          (res) => {
+            this.dialog.errorReport(res.error, res.reason, res);
+            this.loader.close();
+          }
+          );
+      }
+    })
   }
 }
