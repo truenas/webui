@@ -22,7 +22,7 @@ export class JailEditComponent implements OnInit {
   protected updateCall = 'jail.do_update';
   protected upgradeCall = 'jail.upgrade';
   protected queryCall = 'jail.query';
-  public route_success: string[] = ['jails', 'jails'];
+  public route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;
