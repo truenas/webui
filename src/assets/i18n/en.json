@@ -1,4 +1,5 @@
 {
+  "--- Left Side Menubar ---": "",
   "Dashboard": "Dashboard",
   "Account": "Account",
   "Users": "Users",
@@ -53,6 +54,7 @@
   "SHELL": "SHELL",
   "Guide": "Guide",
 
+  "--- Topbar ---": "",
   "Change Password": "Change Password",
   "Settings": "Settings",
   "Logout": "Logout",
@@ -65,6 +67,25 @@
   "Guide Tour": "Guide Tour",
   "Notifications": "Notifications",
 
+  "--- Dialog Pages ---": "",
+  "Close": "Close",
+  "Stop refresh": "Stop refresh",
+  "Done": "Done",
+  "WARNING": "WARNING",
+  "Download Recovery Key": "Download Recovery Key",
+  "downloadkey": {
+    "warning1": "Backup your recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.",
+    "warning2": "Click the 'Download Recovery Key' button to download your key",
+    "warning3": "This type of encryption is primarily targeted at users who are storing sensitive data and want the ability to remove disks from the pool and dispose of/re-use them without concern for erasure. iXsystems, Inc. can not be held responsible for any lost or unrecoverable data as a consequence of using this feature."
+  },
+  "Closed": "Closed",
+  "Clear All Notifications": "Clear All Notifications",
+  "Re-Open All Notifications": "Re-Open All Notifications",
+  "_notifications": {
+    "message1": "There are no alert notifications."
+  },
+
+  "--- Dashboard Page ---": "",
   "System Information": "System Information",
   "Volume Usage": "Volume Usage",
   "Average Load": "Average Load",
@@ -92,6 +113,7 @@
   "Nice": "Nice",
   "Available": "Available",
   "Used": "Used",
+  "disk": "disk",
   "read": "read",
   "write": "write"
 

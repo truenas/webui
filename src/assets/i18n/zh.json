@@ -1,4 +1,5 @@
 {
+  "--- Left Side Menubar ---": "",
   "Dashboard": "仪表板",
   "Account": "帐户",
   "Users": "用户",
@@ -53,6 +54,7 @@
   "SHELL": "SHELL",
   "Guide": "指南",
 
+  "--- Topbar ---": "",
   "Change Password": "更改密码",
   "Settings": "设置",
   "Logout": "登出",
@@ -65,6 +67,25 @@
   "Guide Tour": "导游",
   "Notifications": "通知",
 
+  "--- Dialog Pages ---": "",
+  "Close": "关",
+  "Stop refresh": "停止刷新",
+  "Done": "完成",
+  "WARNING": "警告",
+  "Download Recovery Key": "下载恢复密钥",
+  "_downloadkey": {
+    "warning1": "立即备份您的恢复密钥！如果密钥丢失，磁盘上的数据也将丢失，无法恢复。",
+    "warning2": "点击“下载恢复密钥”按钮下载您的密钥",
+    "warning3": "这种类型的加密主要针对正在存储敏感数据的用户，并希望能够从池中删除磁盘并丢弃/重新使用磁盘而不用担心删除。由于使用此功能，iXsystems，Inc.不承担任何丢失或不可恢复的数据责任。"
+  },
+  "Closed": "关闭",
+  "Clear All Notifications": "清除所有通知",
+  "Re-Open All Notifications": "重新打开所有通知",
+  "_notifications": {
+    "message1": "没有警报通知。"
+  },
+
+  "--- Dashboard Page ---": "",
   "System Information": "系统信息",
   "Volume Usage": "体积使用",
   "Average Load": "平均负载",
@@ -92,6 +113,7 @@
   "Nice": "尼斯",
   "Available": "可得到",
   "Used": "用过的",
+  "disk": "磁盘",
   "read": "读",
   "write": "写"
 

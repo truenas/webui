@@ -23,6 +23,7 @@ import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component'
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
+import { RxCommunicatingService } from './services/rx-communicating.service';
 
 import { ENV_PROVIDERS } from '../environments/environment';
 import { AppLoaderComponent } from './services/app-loader/app-loader.component';
@@ -63,6 +64,7 @@ export function createTranslateLoader(http: HttpClient) {
     RestService,
     AppLoaderService, 
     NotificationsService,
+    RxCommunicatingService,
     ENV_PROVIDERS],
   bootstrap: [
     AppComponent

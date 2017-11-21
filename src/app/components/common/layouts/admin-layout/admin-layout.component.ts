@@ -10,6 +10,8 @@ import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import { UUID } from 'angular2-uuid';
 import { TranslateService } from '@ngx-translate/core';
+import { RxCommunicatingService } from '../../../../services/rx-communicating.service';
+
 
 @Component({
   selector: 'app-admin-layout',
@@ -35,7 +37,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected rest: RestService,
     protected ws: WebSocketService,
     public dialog: MdDialog,
-    public translate: TranslateService) {
+    public translate: TranslateService,
+    private rxcomService: RxCommunicatingService) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;
@@ -178,5 +181,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   onLanguageChange($event) {
     this.translate.use($event);
+    this.rxcomService.sendDataToAll({ type: 'language', lang: $event });
   }
 }
