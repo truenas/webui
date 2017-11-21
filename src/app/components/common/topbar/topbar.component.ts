@@ -112,7 +112,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   startTour() {
     hopscotch.startTour(this.tour.startTour(this.router.url));
-    localStorage.setItem(this.router.url, 'false');
+    localStorage.setItem(this.router.url, 'true');
   }
 
   setLang() {
@@ -148,7 +148,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   signOut() {
     this.idle.ngOnDestroy();
-    this.dialogService.confirm("Logout", "You are about to LOGOUT of the FreeNAS WebUI. If unsure, hit 'Cancel', otherwise, press 'OK' to logout.").subscribe((res) => {
+    this.dialogService.confirm("Log Out", "Log out of the WebUI?").subscribe((res) => {
       if (res) {
         this.ws.logout();
       }
@@ -156,7 +156,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onShutdown() {
-    this.dialogService.confirm("Shutdown", "You are about to SHUTDOWN the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to shutdown the system.").subscribe((res) => {
+    this.dialogService.confirm("Shut Down", "Shut down the system?").subscribe((res) => {
       if (res) {
         this.ws.call('system.shutdown', {}).subscribe(res => {});
       }
@@ -164,7 +164,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onReboot() {
-    this.dialogService.confirm("Reboot", "You are about to REBOOT the FreeNAS system. If unsure, hit 'Cancel', otherwise, press 'OK' to reboot the system.").subscribe((res) => {
+    this.dialogService.confirm("Reboot", "Reboot the system?").subscribe((res) => {
       if (res) {
         this.ws.call('system.reboot', {}).subscribe(res => {});
       }
