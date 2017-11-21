@@ -101,6 +101,25 @@ export class DatasetFormComponent implements OnInit{
     },
     {
       type: 'select',
+      name: 'snapdir',
+      placeholder: 'Snapshots',
+      options: [
+        { label: 'Hidden', value: "0" },
+        { label: 'Visible', value: "1" },
+      ],
+    },
+    {
+      type: 'select',
+      name: 'copies',
+      placeholder: 'How many copies of data does ZFS allow?',
+      options: [
+        { label: '1', value: "1" },
+        { label: '2', value: "2" },
+        { label: '3', value: "3" }
+      ],
+    },
+    {
+      type: 'select',
       name: 'recordsize',
       placeholder: 'Record Size',
       options: [],
@@ -119,6 +138,8 @@ export class DatasetFormComponent implements OnInit{
     'refreservation',
     'reservation',
     'readonly',
+    'snapdir',
+    'copies',
     'recordsize',
   ];
 
