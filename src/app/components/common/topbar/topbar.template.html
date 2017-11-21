@@ -28,6 +28,15 @@
     </form>
   </div -->
   <span fxFlex></span>
+  <button
+    *ngIf="showReplication"
+    md-icon-button
+    id="loading"
+    mdTooltip="replication"
+    (click)="showReplicationDetails()"
+    class="topbar-button-right">
+    <md-icon class="movement">content_copy</md-icon>
+  </button>
   <!-- Language Switcher -->
   <md-select
   id="currentLang"

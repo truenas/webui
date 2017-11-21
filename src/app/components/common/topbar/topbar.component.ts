@@ -1,5 +1,5 @@
-import { Component, OnInit, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -10,12 +10,17 @@ import { NotificationAlert, NotificationsService } from '../../../services/notif
 import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
+import {RestService} from "../../../services/rest.service";
+import {Observable} from "rxjs/Observable";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'topbar',
+  styleUrls: ['./topbar.component.css'],
   templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
+
   @Input() sidenav;
   @Input() notificPanel;
 
@@ -37,6 +42,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
     code: 'zh',
   }]
   freenasThemes;
+  continuosStreaming: Subscription;
+  showReplication: boolean = false;
+  replicationDetails;
 
   constructor(
     private themeService: ThemeService,
@@ -44,6 +52,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
     private ws: WebSocketService,
+    private rest: RestService,
     private dialogService: DialogService,
     private tour: TourService,
     public dialog: MdDialog,
@@ -88,12 +97,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
         }
       });
     });
+
+    this.continuosStreaming = Observable.interval(10000).subscribe(x => {
+      this.showReplicationStatus();
+    });
   }
 
   ngOnDestroy() {
     if (typeof (this.interval) !== 'undefined') {
       clearInterval(this.interval);
     }
+
+    this.continuosStreaming.unsubscribe();
   }
 
   startTour() {
@@ -155,5 +170,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.ws.call('system.reboot', {}).subscribe(res => {});
       }
     });
+  }
+
+  showReplicationStatus() {
+    this.rest.get('storage/replication/', {}).subscribe(res => {
+      let idx = res.data.forEach(x => {
+        if(x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
+          this.showReplication = true;
+          this.replicationDetails = x;
+        }
+      });
+    }, err => {
+      console.log(err);
+    })
+  }
+
+  showReplicationDetails(){
+    this.snackBar.open(this.replicationDetails.repl_status.toString(), 'OKAY');
   }
 }
