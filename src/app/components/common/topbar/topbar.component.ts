@@ -41,7 +41,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     name: '中文',
     code: 'zh',
   }]
-  freenasThemes;
   continuosStreaming: Subscription;
   showReplication: boolean = false;
   replicationDetails;
@@ -73,8 +72,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.freenasThemes = this.themeService.freenasThemes;
-
+    
     const showTour = localStorage.getItem(this.router.url) || 'true';
 
     if (showTour === "true") {
@@ -175,7 +173,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showReplicationStatus() {
     this.rest.get('storage/replication/', {}).subscribe(res => {
       let idx = res.data.forEach(x => {
-        if(x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
+        if(typeof(x.repl_status) !== "undefined" && 
+            x.repl_status != null && x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
           this.showReplication = true;
           this.replicationDetails = x;
         }
