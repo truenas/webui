@@ -1,6 +1,4 @@
-
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
 import {WebSocketService} from "../../../services/ws.service";
 import {RestService} from "../../../services/rest.service";
 import {Observable} from "rxjs/Observable";
@@ -12,24 +10,36 @@ import {Observable} from "rxjs/Observable";
 export class AdvancedComponent implements OnInit {
 
   systemAdvancedSettings: any;
+  isReady: boolean = false;
+  error: string;success: string;
+  users: any; ports: any;
 
-  constructor(private formBuilder: FormBuilder,
-              private rest: RestService,
+  constructor(private rest: RestService,
               protected ws: WebSocketService) {
   }
 
   ngOnInit(): void {
-    this.buildForm();
+    this.buildPageData();
+  }
+
+  buildPageData() {
     const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);
     const users = this.rest.get('account/users/', {limit: 0});
     const systemSettings = this.rest.get('system/advanced', {limit: 0});
     Observable.forkJoin([deviceInfo, users, systemSettings]).subscribe(results => {
-
-      this.systemAdvancedSettings = results[2].data;
-    })
+      // listing serial ports
+      this.ports = results[0];
+      // users with their data
+      this.users = results[1].data;
+      // setting current system data
+      this.buildForm(results[2].data);
+    }, res => {
+      this.isReady = true;
+      this.error = 'Something went wrong, please try again later.';
+    });
   }
 
-  buildForm(system?:any) {
+  buildForm(system?: any) {
     this.systemAdvancedSettings = {
       adv_consolemenu: system.adv_consolemenu,
       adv_serialconsole: system.adv_serialconsole,
@@ -49,10 +59,16 @@ export class AdvancedComponent implements OnInit {
       adv_graphite: system.adv_graphite,
       adv_fqdn_syslog: system.adv_fqdn_syslog
     };
+    this.isReady = true;
   }
 
   onFormSubmit() {
-
+    this.rest.put('system/advanced', {body: this.systemAdvancedSettings})
+      .subscribe(res => {
+        this.systemAdvancedSettings = res.data;
+        this.success = 'System settings updated';
+        setTimeout(() => this.success = '', 5000);
+      })
   }
 }
 
