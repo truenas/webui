@@ -50,7 +50,7 @@
   "Instances": "实例",
   "Virtualization": "虚拟化",
   "Reporting": "报告",
-  "System Processes": "系统进程",
+  "Display System Processes": "显示系统进程",
   "SHELL": "SHELL",
   "Guide": "指南",
 
@@ -115,8 +115,39 @@
   "Used": "用过的",
   "disk": "磁盘",
   "read": "读",
-  "write": "写"
+  "write": "写",
 
+  "--- Account Page ---": "",
+  "Filter": "过滤",
+  "Group": "组",
+  "Members": "会员",
+  "Add User": "添加用户",
+  "GID": "GID",
+  "Name": "名称",
+  "Permit Sudo": "许可须藤",
+  "Allow repeated GIDs": "允许重复的GIDs",
+
+  "Username": "用户名",
+  "UID": "UID",
+  "GID": "GID",
+  "Home directory": "主目录",
+  "Shell": "Shell",
+  "Builtin": "内建",
+  "Edit":"编辑",
+  "Add Group":"添加组",
+  "User ID": "用户名",
+  "Create a new Primary Group for the user.": "为用户创建一个新的主要组。",
+  "Primary Group": "小学组",
+  "Home Directory": "主目录",
+  "Home Directory Mode": "主目录模式",
+  "Full Name": "全名",
+  "Email": "电子邮件",
+  "Password": "密码",
+  "Confirm Password": "确认密码",
+  "Disable password login": "禁用密码登录",
+  "Lock user": "锁定用户",
+  "Microsoft Account": "微软帐户",
+  "SSH Public Key": "SSH公钥"
 
 
 }

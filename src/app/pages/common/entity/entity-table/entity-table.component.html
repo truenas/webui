@@ -1,6 +1,6 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
 	<div class="mat-toolbar mat-card-toolbar">
-		<div class="mat-card-title-text">{{ title }}</div>
+		<div class="mat-card-title-text">{{ title | translate }}</div>
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
 	<div>
@@ -12,7 +12,7 @@
 	</div>
 	<div class="padding_all">
 		<md-input-container floatPlaceholder="never">
-			<input mdInput #filter placeholder="Filter {{title}}">
+			<input mdInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
 		</md-input-container>
 	</div>
 
@@ -36,7 +36,7 @@
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
 				prop="{{col.prop}}" 
-				 name="{{col.name}}">
+				 name="{{col.name | translate}}">
 				 <ng-template let-row="row" ngx-datatable-cell-template> 
 					 <div title="{{row[col.prop]}}">
 						{{row[col.prop]}}

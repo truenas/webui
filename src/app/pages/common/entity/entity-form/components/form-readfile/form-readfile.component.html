@@ -1,5 +1,5 @@
 <div class="dynamic-field form-readfile" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
     <input type="file" id="input" (change)="changeListener($event)">I
-    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-    <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip | translate"></tooltip>
+    <md-error *ngIf="config.hasErrors">{{config.errors | translate}}</md-error>
 </div>

@@ -5,6 +5,7 @@ import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort } fro
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
@@ -46,7 +47,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, MdSortModule 
+    Ng2DropdownModule, NgUploaderModule, MdSortModule, TranslateModule
   ],
   declarations: [
     EntityDeleteComponent,
@@ -90,7 +91,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     DynamicFieldDirective,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
-    SmdFabSpeedDialComponent
+    SmdFabSpeedDialComponent,
+    TranslateModule
   ],
   entryComponents: [
     FormButtonComponent,

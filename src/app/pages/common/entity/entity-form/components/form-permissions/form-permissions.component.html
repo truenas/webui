@@ -10,13 +10,13 @@
 		<table>
 			<tr>
 				<td></td>
-				<td>Owner</td>
-				<td>Group</td>
-				<td>Other</td>
+				<td>{{"Owner" | translate}}</td>
+				<td>{{"Group" | translate}}</td>
+				<td>{{"Other" | translate}}</td>
 			</tr>
 			<tr>
 				<td>
-					Read
+					{{"Read" | translate}}
 				</td>
 				<td>
 					<md-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()">
@@ -33,7 +33,7 @@
 			</tr>
 			<tr>
 				<td>
-					Write
+					{{"Write" | translate}}
 				</td>
 				<td>
 					<md-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()">
@@ -50,7 +50,7 @@
 			</tr>
 			<tr>
 				<td>
-					Execute
+					{{"Execute" | translate}}
 				</td>
 				<td>
 					<md-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()">
@@ -66,6 +66,6 @@
 				</td>
 			</tr>
 		</table>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip | translate"></tooltip>
+	<md-error *ngIf="config.hasErrors">{{config.errors | translate}}</md-error>
 </div>

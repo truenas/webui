@@ -1,11 +1,11 @@
 <div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 	<md-input-container class="full-width">
 		<input mdInput [type]="config.inputType ? config.inputType : 'text'" 
-			[placeholder]="config.placeholder"
+			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
 			[formControlName]="config.name"
 			[readonly]="config.readonly">
 	</md-input-container>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip | translate"></tooltip>
+	<md-error *ngIf="config.hasErrors">{{config.errors | translate}}</md-error>
 </div>

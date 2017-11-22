@@ -50,7 +50,7 @@
   "Instances": "Instances",
   "Virtualization": "Virtualization",
   "Reporting": "Reporting",
-  "System Processes": "System Processes",
+  "Display System Processes": "Display System Processes",
   "SHELL": "SHELL",
   "Guide": "Guide",
 
@@ -115,9 +115,39 @@
   "Used": "Used",
   "disk": "disk",
   "read": "read",
-  "write": "write"
+  "write": "write",
 
+  "--- Account Page ---": "",
+  "Filter":"Filter",
+  "Group":"Group",
+  "Members":"Members",
+  "Add User": "Add User",
+  "GID": "GID",
+  "Name": "Name",
+  "Permit Sudo": "Permit Sudo",
+  "Allow repeated GIDs": "Allow repeated GIDs",
 
+  "Username":"Username",
+  "UID":"UID",
+  "GID":"GID",
+  "Home directory":"Home directory",
+  "Shell":"Shell",
+  "Builtin":"Builtin",  
+  "Edit":"Edit",
+  "Add Group":"Add Group",
+  "User ID": "User ID",
+  "Create a new Primary Group for the user.": "Create a new Primary Group for the user.",
+  "Primary Group": "Primary Group",
+  "Home Directory": "Home Directory",
+  "Home Directory Mode": "Home Directory Mode",
+  "Full Name": "Full Name",
+  "Email": "Email",
+  "Password": "Password",
+  "Confirm Password": "Confirm Password",
+  "Disable password login": "Disable password login",
+  "Lock user": "Lock user",
+  "Microsoft Account": "Microsoft Account",
+  "SSH Public Key": "SSH Public Key"
 
 
 }

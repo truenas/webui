@@ -17,7 +17,7 @@ import {EntityTableComponent} from './entity-table.component';
 			</smd-fab-trigger>
 
 			<smd-fab-actions>
-				<button *ngIf="this.entity.conf.route_add" md-mini-fab (click)="this.entity.doAdd()" mdTooltip="{{this.entity.conf.route_add_tooltip}}">
+				<button *ngIf="this.entity.conf.route_add" md-mini-fab (click)="this.entity.doAdd()" mdTooltip="{{this.entity.conf.route_add_tooltip | translate}}">
 					<md-icon>add</md-icon>
 				</button>
 				<button *ngFor="let action of actions" md-mini-fab (click)="action.onClick()" mdTooltip="{{action.label}}">

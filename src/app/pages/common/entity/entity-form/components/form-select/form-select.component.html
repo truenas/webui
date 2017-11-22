@@ -1,11 +1,11 @@
 <div class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <md-select class="form-control full-width" [formControlName]="config.name"
       [multiple]="config.multiple"
-      [placeholder]="config.placeholder"> 
+      [placeholder]="config.placeholder | translate"> 
     <md-option *ngFor="let option of config.options" [value]="option.value">
       {{ option.label }}
     </md-option>
   </md-select>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip | translate"></tooltip>
+  <md-error *ngIf="config.hasErrors">{{config.errors | translate}}</md-error>
 </div>

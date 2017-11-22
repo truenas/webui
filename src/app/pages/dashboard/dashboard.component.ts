@@ -3,7 +3,6 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 import filesize from 'filesize';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 import { RxCommunicatingService } from '../../services/rx-communicating.service';
 
@@ -37,8 +36,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private ws: WebSocketService,
     protected systemGeneralService: SystemGeneralService,
     public translate: TranslateService,
-    private rxcomService: RxCommunicatingService,
-    private router: Router) {    
+    private rxcomService: RxCommunicatingService) {    
     this.onInitDashboardChart();
 
     // i18n Translate
