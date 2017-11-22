@@ -126,6 +126,9 @@
   "Name": "Name",
   "Permit Sudo": "Permit Sudo",
   "Allow repeated GIDs": "Allow repeated GIDs",
+  "Add": "Add",
+  "Save": "Save",
+  "Cancel": "Cancel",
 
   "Username":"Username",
   "UID":"UID",

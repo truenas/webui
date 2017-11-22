@@ -126,6 +126,9 @@
   "Name": "名称",
   "Permit Sudo": "许可须藤",
   "Allow repeated GIDs": "允许重复的GIDs",
+  "Add": "加",
+  "Save": "保存",
+  "Cancel": "取消",
 
   "Username": "用户名",
   "UID": "UID",
