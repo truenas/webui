@@ -70,21 +70,31 @@ export class ConfigurationComponent implements OnInit {
       type : 'checkbox',
       name : 'gc_netwait_enabled',
       placeholder : 'Enable netwait feature',
-      tooltip :
-          'If enabled, delays the start of network-reliant services until interface is up and ICMP packets to a destination defined in netwait ip list are flowing. Link state is examined first, followed by "pinging" an IP address to verify network usability. If no destination can be reached or timeouts are exceeded, network services are started anyway with no guarantee that the network is usable.'
+      tooltip : 'If enabled, delays the start of network-reliant\
+ services until the interface is up and ICMP packets to a destination\
+ defined in <i>netwait ip list</i> are flowing. Link state is examined\
+ first, followed by "pinging" an IP address to verify network usability.\
+ If no destination can be reached or timeouts are exceeded, network\
+ services are started anyway with no guarantee the network is usable.'
     },
     {
       type : 'input',
       name : 'gc_netwait_ip',
       placeholder : 'Netwait IP list',
-      tooltip : ''
+      tooltip : 'Space-delimited list of IP addresses to\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank"><ins>ping(8)</ins></a>.\
+ If multiple IP addresses are specified, each is tried until one is\
+ successful or the list is exhausted. If empty the default gateway is\
+ used.'
     },
     {
       type : 'textarea',
       name : 'gc_hosts',
       placeholder : 'Host name data base',
       tooltip :
-          'This field is appended to /etc/hosts which contains information regarding known hosts on the network. hosts(5)'
+          'This field is appended to <i>/etc/hosts</i> which contains\
+ information regarding known hosts on the network. See\
+ <a href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports" target="_blank"><ins>hosts(5)</ins></a>.'
     },
   ];
   private entityEdit: EntityFormComponent;
