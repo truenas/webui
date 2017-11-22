@@ -5,7 +5,8 @@ import {Observable} from "rxjs/Observable";
 
 @Component({
   selector: 'app-system-advanced',
-  templateUrl: 'advanced.component.html'
+  templateUrl: 'advanced.component.html',
+  styleUrls: ['advanced.component.css']
 })
 export class AdvancedComponent implements OnInit {
 
