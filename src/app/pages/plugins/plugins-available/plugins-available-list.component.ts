@@ -28,8 +28,8 @@ export class PluginsAvailabelListComponent {
 
   getActions(parentRow) {
     return [{
-        id: "instal",
-        label: "instal",
+        id: "install",
+        label: "install",
         onClick: (row) => {
           console.log(row[2]);
           this.router.navigate(
