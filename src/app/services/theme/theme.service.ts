@@ -3,7 +3,7 @@ import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 @Injectable()
 export class ThemeService {
-  freenasThemes = [{
+  public freenasThemes = [{
     name: 'egret-dark-purple',
     label: 'Dark Purple',
     baseColor: '#9c27b0',

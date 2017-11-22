@@ -46,7 +46,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   replicationDetails;
 
   constructor(
-    private themeService: ThemeService,
+    public themeService: ThemeService,
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
