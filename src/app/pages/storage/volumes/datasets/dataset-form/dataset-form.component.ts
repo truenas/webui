@@ -90,33 +90,34 @@ export class DatasetFormComponent implements OnInit{
     {
       type: 'select',
       name: 'dedup',
-      placeholder: 'ZFS Deduplication',
+      placeholder: 'Deduplication',
       options: [],
     },
     {
       type: 'select',
       name: 'readonly',
-      placeholder: 'Read-Only',
+      placeholder: 'Read-only',
       options: [],
     },
     {
       type: 'select',
       name: 'snapdir',
-      placeholder: 'Snapshots',
+      placeholder: 'Snapshot directory',
       options: [
-        { label: 'Hidden', value: "0" },
-        { label: 'Visible', value: "1" },
+        { label: 'Visible', value: "0" },
+        { label: 'Invisible', value: "1" },
       ],
     },
     {
       type: 'select',
       name: 'copies',
-      placeholder: 'How many copies of data does ZFS allow?',
+      placeholder: 'Copies',
       options: [
         { label: '1', value: "1" },
         { label: '2', value: "2" },
         { label: '3', value: "3" }
       ],
+      tooltip: 'How many copies of data does ZFS allow?',
     },
     {
       type: 'select',
