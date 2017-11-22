@@ -16,7 +16,7 @@ export class PluginsAvailabelListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Name', prop: '0' },
+    { name: 'Name', prop: '0', icon: '4' },
     { name: 'Description', prop: '1' }
   ];
   public config: any = {
