@@ -23,9 +23,4 @@ export class NavigationComponent {
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
     });
   }
-
-  transferToState(state, subState?): void {
-    subState ? this.router.navigate(['/', state, subState]) : this.router.navigate(['/', state])
-    this.onStateChange.emit({transfer: true});
-  }
 }
