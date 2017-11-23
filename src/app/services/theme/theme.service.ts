@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
+import { RestService, WebSocketService } from 'app/services';
 @Injectable()
 export class ThemeService {
-  freenasThemes = [{
+  public freenasThemes = [{
     name: 'egret-dark-purple',
     label: 'Dark Purple',
     baseColor: '#9c27b0',
@@ -45,13 +46,37 @@ export class ThemeService {
     isActive: false,
     hasDarkLogo: false
   }];
-  constructor() { }
+
+  savedUserTheme = "";
+
+  constructor(private rest: RestService, private ws: WebSocketService) {
+
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.savedUserTheme = res.data.bsdusr_attributes.usertheme;
+      this.freenasThemes.forEach((t) => {
+        t.isActive = (t.name === this.savedUserTheme);
+      });
+
+      if( typeof(this.savedUserTheme) !== "undefined" && this.savedUserTheme !== "" ) {
+        domHelper.changeTheme(this.freenasThemes, this.savedUserTheme);
+      }
+
+    });
+  }
+
+
   changeTheme(theme) {
     domHelper.changeTheme(this.freenasThemes, theme.name);
     this.freenasThemes.forEach((t) => {
-      t.isActive = false;
-      if(t.name === theme.name)
-        t.isActive = true;
+      t.isActive = (t.name === theme.name);
+    });
+
+    this.ws.call('user.update', [1, {
+      attributes: {
+        usertheme: theme.name
+      }
+    }]).subscribe((res_ws) => {
+      console.log("Saved usertheme:", res_ws, theme.name);
     });
   }
 }
