@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {WebSocketService} from "../../../services/ws.service";
 import {RestService} from "../../../services/rest.service";
 import {Observable} from "rxjs/Observable";
+import {AppLoaderService} from "../../../services/app-loader/app-loader.service";
+import {DialogService} from "../../../services/dialog.service";
 
 @Component({
   selector: 'app-system-advanced',
@@ -12,11 +14,15 @@ export class AdvancedComponent implements OnInit {
 
   systemAdvancedSettings: any;
   isReady: boolean = false;
-  error: string;success: string;
-  users: any; ports: any;
+  error: string;
+  success: string;
+  users: any;
+  ports: any;
 
   constructor(private rest: RestService,
-              protected ws: WebSocketService) {
+              private load: AppLoaderService,
+              private dialog: DialogService,
+              private ws: WebSocketService) {
   }
 
   ngOnInit(): void {
@@ -65,11 +71,16 @@ export class AdvancedComponent implements OnInit {
   }
 
   onFormSubmit() {
+    this.load.open('Updating settings...');
     this.rest.put('system/advanced', {body: this.systemAdvancedSettings})
       .subscribe(res => {
         this.systemAdvancedSettings = res.data;
         this.success = 'System settings updated';
         setTimeout(() => this.success = '', 5000);
+        this.load.close();
+      }, res => {
+        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+        this.load.close();
       })
   }
 }
