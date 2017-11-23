@@ -32,7 +32,7 @@ export class GroupFormComponent {
     },
     {
       type: 'checkbox',
-      name: 'bsdusr_sudo',
+      name: 'bsdgrp_sudo',
       placeholder: 'Permit Sudo',
       tooltip: 'Allows group members to use\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank"><ins>sudo</ins></a>.\
@@ -43,6 +43,7 @@ export class GroupFormComponent {
       name: 'allow',
       placeholder: 'Allow repeated GIDs',
       tooltip: 'Allows multiple groups to share the same group ID.',
+      disabled: false
     },
   ];
   public users: any[];
@@ -52,10 +53,6 @@ export class GroupFormComponent {
   constructor(protected router: Router, protected rest: RestService,
     protected ws: WebSocketService) {}
   preInit(entityForm: any) {
-    if (!entityForm.isNew) {
-      this.allow = _.find(this.fieldConfig, { name: "allow" });
-      this.allow.isHidden = true;
-    }
   }
   afterInit(entityForm: any) {
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
@@ -71,6 +68,7 @@ export class GroupFormComponent {
       });
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdgrp_gid', true);
+        entityForm.setDisabled('allow', true);
       } else {
         gid += 1;
         entityForm.formGroup.controls['bsdgrp_gid'].setValue(gid);
