@@ -24,7 +24,7 @@
   class="search-bar">
     <form class="top-search-form">
       <md-icon role="img">search</md-icon>
-      <input autofocus="true" placeholder="Search" type="text">
+      <input autofocus="true" placeholder="Search" type="text"> 
     </form>
   </div -->
   <span fxFlex></span>
@@ -37,17 +37,7 @@
     class="topbar-button-right">
     <md-icon class="movement">content_copy</md-icon>
   </button>
-  <!-- Language Switcher -->
-  <md-select
-  id="currentLang"
-  placeholder=""
-  name="currentLang"
-  [(ngModel)]="currentLang"
-  (change)="setLang()">
-    <md-option
-    *ngFor="let lang of availableLangs"
-    [value]="lang.code" ngDefaultControl>{{ lang.name }}</md-option>
-  </md-select>
+  
   <!-- Theme Switcher -->
   <button
   md-icon-button
@@ -74,6 +64,7 @@
       </md-grid-tile>
     </md-grid-list>
   </md-menu>
+
   <button
   md-icon-button
   (click)="startTour()"
@@ -83,6 +74,7 @@
   >
     <md-icon>flight_takeoff</md-icon>
   </button>
+
   <!-- Notification toggle button -->
   <button
   md-icon-button
@@ -93,11 +85,18 @@
     <md-icon>notifications</md-icon>
     <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
   </button>
+
   <!-- Top left user menu -->
   <button md-icon-button [mdMenuTriggerFor]="accountMenu" class="topbar-button-right">
     <md-icon>settings</md-icon>
   </button>
   <md-menu #accountMenu="mdMenu">
+    <button md-menu-item [mdMenuTriggerFor]="languageMenu">
+      <md-icon>translate</md-icon>
+      <ng-container *ngFor="let lang of availableLangs">
+        <span *ngIf="lang.code == currentLang">{{ lang.name }}</span>
+      </ng-container>
+    </button>
     <button md-menu-item [routerLink]="['/account/users/edit/1']">
       <md-icon>account_box</md-icon>
       <span>Account</span>
@@ -130,5 +129,13 @@
       <md-icon>info_outline</md-icon>
       <span>About</span>
     </button>
+  </md-menu>
+
+  <md-menu #languageMenu="mdMenu">
+    <ng-container *ngFor="let lang of availableLangs">
+      <button md-menu-item (click)="setLang(lang.code)">
+        <span>{{ lang.name }}</span>
+      </button>
+    </ng-container>
   </md-menu>
 </md-toolbar>

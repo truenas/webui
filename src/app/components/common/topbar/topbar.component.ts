@@ -114,7 +114,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     localStorage.setItem(this.router.url, 'true');
   }
 
-  setLang() {
+  setLang(lang) {
+    this.currentLang = lang;
     this.onLangChange.emit(this.currentLang);
   }
 
