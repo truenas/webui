@@ -1,14 +1,14 @@
 <div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
     <md-input-container class="full-width">
-        <input mdInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
+        <input mdInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name">
     </md-input-container>
-    <button md-button (click)="toggleTree()" type="button">Browse</button>
+    <button md-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
         <ng-template #treeNodeTemplate let-node>
             <md-icon>folder</md-icon>
             <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
         </ng-template>
     </tree-root>
-    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip | translate"></tooltip>
     <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>

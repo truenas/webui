@@ -36,7 +36,7 @@
   "Snapshots": "Snapshots",
   "vmware-Snapshots": "vmware-Snapshots",
   "Directory Service": "Directory Service",
-  "ActiveDirectory": "ActiveDirectory",
+  "Active Directory": "Active Directory",
   "LDAP": "LDAP",
   "NIS": "NIS",
   "Sharing": "Sharing",
@@ -68,6 +68,7 @@
   "Notifications": "Notifications",
 
   "--- Dialog Pages ---": "",
+  "Loading...": "Loading...",
   "Close": "Close",
   "Stop refresh": "Stop refresh",
   "Done": "Done",
@@ -84,6 +85,7 @@
   "_notifications": {
     "message1": "There are no alert notifications."
   },
+  "Please wait": "Please wait",
 
   "--- Dashboard Page ---": "",
   "System Information": "System Information",
@@ -129,11 +131,16 @@
   "Add": "Add",
   "Save": "Save",
   "Cancel": "Cancel",
+  "Delete": "Delete",
+  "Successfully updated": "Successfully updated",
+  "Entering a name is required": "Entering a name is required",
+  "Please": "Please",
+  "Click here": "Click here",
+  "to setup configuration first.": "to setup configuration first.",
 
   "Username":"Username",
   "UID":"UID",
   "GID":"GID",
-  "Home directory":"Home directory",
   "Shell":"Shell",
   "Builtin":"Builtin",  
   "Edit":"Edit",
@@ -150,8 +157,13 @@
   "Disable password login": "Disable password login",
   "Lock user": "Lock user",
   "Microsoft Account": "Microsoft Account",
-  "SSH Public Key": "SSH Public Key"
-
+  "SSH Public Key": "SSH Public Key",
+  "Browse": "Browse",
+  "Read": "Read",
+  "Write": "Write",
+  "Execute": "Execute",
+  "Owner": "Owner",
+  "Other": "Other"
 
 }
 

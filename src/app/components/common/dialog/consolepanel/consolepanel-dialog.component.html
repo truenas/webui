@@ -1,6 +1,6 @@
 <div md-dialog-content>
 
-	<pre #footerBarScroll class="message">{{consoleMsg}}</pre>
+	<pre #footerBarScroll class="message">{{consoleMsg | translate}}</pre>
 
 	<div md-dialog-content class="overflow-hide"><md-checkbox (change)="onStopRefresh($event)">{{"Stop refresh" | translate}}</md-checkbox></div>
 </div>

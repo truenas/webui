@@ -36,7 +36,7 @@
   "Snapshots": "快照",
   "vmware-Snapshots": "vmware-快照",
   "Directory Service": "目录服务",
-  "ActiveDirectory": "活动目录",
+  "Active Directory": "活动目录",
   "LDAP": "LDAP",
   "NIS": "NIS",
   "Sharing": "分享",
@@ -68,6 +68,7 @@
   "Notifications": "通知",
 
   "--- Dialog Pages ---": "",
+  "Loading...": "Loading...",
   "Close": "关",
   "Stop refresh": "停止刷新",
   "Done": "完成",
@@ -84,6 +85,7 @@
   "_notifications": {
     "message1": "没有警报通知。"
   },
+  "Please wait": "请稍候",
 
   "--- Dashboard Page ---": "",
   "System Information": "系统信息",
@@ -129,11 +131,16 @@
   "Add": "加",
   "Save": "保存",
   "Cancel": "取消",
+  "Delete": "Delete",
+  "Successfully updated": "Successfully updated",
+  "Entering a name is required": "输入名称是必需的",
+  "Please": "请",
+  "Click here": "点击这里",
+  "to setup configuration first.": "先设置配置。",
 
   "Username": "用户名",
   "UID": "UID",
   "GID": "GID",
-  "Home directory": "主目录",
   "Shell": "Shell",
   "Builtin": "内建",
   "Edit":"编辑",
@@ -150,7 +157,12 @@
   "Disable password login": "禁用密码登录",
   "Lock user": "锁定用户",
   "Microsoft Account": "微软帐户",
-  "SSH Public Key": "SSH公钥"
-
+  "SSH Public Key": "SSH公钥",
+  "Browse": "浏览",
+  "Read": "读",
+  "Write": "写",
+  "Execute": "执行",
+  "Owner": "所有者",
+  "Other": "其他"
 
 }
