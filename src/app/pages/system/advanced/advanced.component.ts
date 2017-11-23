@@ -34,6 +34,8 @@ export class AdvancedComponent implements OnInit {
       this.users = results[1].data;
       // setting current system data
       this.buildForm(results[2].data);
+      // readying the page
+      this.isReady = true;
     }, res => {
       this.isReady = true;
       this.error = 'Something went wrong, please try again later.';
@@ -60,7 +62,6 @@ export class AdvancedComponent implements OnInit {
       adv_graphite: system.adv_graphite,
       adv_fqdn_syslog: system.adv_fqdn_syslog
     };
-    this.isReady = true;
   }
 
   onFormSubmit() {
