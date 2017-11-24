@@ -2,75 +2,75 @@
   <div class="md-content">
     <form class="form-wrap">
       <div class="form-checkbox">
-        <md-checkbox>Enable Console Menu</md-checkbox>
+        <md-checkbox>{{"Enable Console Menu" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox>Enable Serial Console</md-checkbox>
+        <md-checkbox>{{"Enable Serial Console" | translate}}</md-checkbox>
       </div>
       <div class="form-select">
-        <md-select class="form-control full-width" placeholder="Serial Port">
-          <md-option>None</md-option>
-          <md-option>Option 1</md-option>
-          <md-option>Option 2</md-option>
-          <md-option>Option 3</md-option>
+        <md-select class="form-control full-width" placeholder="{{'Serial Port' | translate}}">
+          <md-option>{{"None" | translate}}</md-option>
+          <md-option>{{"Option 1" | translate}}</md-option>
+          <md-option>{{"Option 2" | translate}}</md-option>
+          <md-option>{{"Option 3" | translate}}</md-option>
         </md-select>
       </div>
       <div class="form-select">
-        <md-select class="form-control full-width" placeholder="Serial Speed">
-          <md-option>None</md-option>
-          <md-option>Option 1</md-option>
-          <md-option>Option 2</md-option>
-          <md-option>Option 3</md-option>
+        <md-select class="form-control full-width" placeholder="{{'Serial Speed' | translate}}">
+          <md-option>{{"None" | translate}}</md-option>
+          <md-option>{{"Option 1" | translate}}</md-option>
+          <md-option>{{"Option 2" | translate}}</md-option>
+          <md-option>{{"Option 3" | translate}}</md-option>
         </md-select>
       </div>
       <md-input-container class="full-width">
-        <input mdInput [type]="'number'" placeholder="Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).">
+        <input mdInput [type]="'number'" placeholder="{{'Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).' | translate}}">
       </md-input-container>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Enable Console Screensaver</md-checkbox>
+        <md-checkbox checked="true">{{"Enable Console Screensaver" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Enable Power Saving Daemon</md-checkbox>
+        <md-checkbox checked="true">{{"Enable Power Saving Daemon" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Enable autotune</md-checkbox>
+        <md-checkbox checked="true">{{"Enable autotune" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Enable Debug Kernel</md-checkbox>
+        <md-checkbox checked="true">{{"Enable Debug Kernel" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Show console messages in the footer</md-checkbox>
+        <md-checkbox checked="true">{{"Show console messages in the footer" | translate}}</md-checkbox>
       </div>
 
       <md-input-container class="full-width">
-        <textarea placeholder="MOTD Banner" mdInput></textarea>
+        <textarea placeholder="{{'MOTD Banner' | translate}}" mdInput></textarea>
       </md-input-container>
 
       <div class="form-checkbox">
-        <md-checkbox checked="true">Show tracebacks in case of fatal errors</md-checkbox>
+        <md-checkbox checked="true">{{"Show tracebacks in case of fatal errors" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Show advanced fields by default</md-checkbox>
+        <md-checkbox checked="true">{{"Show advanced fields by default" | translate}}</md-checkbox>
       </div>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Enable automatic upload of kernel crash dumps and daily telemetry</md-checkbox>
+        <md-checkbox checked="true">{{"Enable automatic upload of kernel crash dumps and daily telemetry" | translate}}</md-checkbox>
       </div>
       <div class="">
-        <md-select class="form-control full-width" placeholder="Periodic Notification User">
-          <md-option>None</md-option>
-          <md-option>Option 1</md-option>
-          <md-option>Option 2</md-option>
-          <md-option>Option 3</md-option>
+        <md-select class="form-control full-width" placeholder="{{'Periodic Notification User' | translate}}">
+          <md-option>{{"None" | translate}}</md-option>
+          <md-option>{{"Option 1" | translate}}</md-option>
+          <md-option>{{"Option 2" | translate}}</md-option>
+          <md-option>{{"Option 3" | translate}}</md-option>
         </md-select>
       </div>
       <md-input-container class="full-width">
-        <input mdInput [type]="'text'" placeholder="Remote Graphite Server Hostname">
+        <input mdInput [type]="'text'" placeholder="{{'Remote Graphite Server Hostname' | translate}}">
       </md-input-container>
       <div class="form-checkbox">
-        <md-checkbox checked="true">Use FQDN for logging</md-checkbox>
+        <md-checkbox checked="true">{{"Use FQDN for logging" | translate}}</md-checkbox>
       </div>
       <md-card-actions>
-        <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
+        <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">{{"Save" | translate}}</button>
       </md-card-actions>
     </form>
   </div>

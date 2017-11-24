@@ -2,44 +2,44 @@
   <div>
     <div>
       <md-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
-        (change)="toggleAutoCheck()">Automatically check for new updates</md-checkbox>
+        (change)="toggleAutoCheck()">{{"Automatically check for new updates" | translate}}</md-checkbox>
     </div>
     <div>
       <md-select class="form-control full-width" [(ngModel)]="train">
-        <md-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</md-option>
+        <md-option *ngFor="let train of trains" [value]="train.name">{{ train.name  | translate}}</md-option>
       </md-select>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <button md-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">Check Now</button>
-        <button md-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">Update and Reboot</button>
+        <button md-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Check Now" | translate}}</button>
+        <button md-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">{{"Update and Reboot" | translate}}</button>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         <div *ngIf="status == 'REBOOT_REQUIRED'">
-          An update has already been applied. Please reboot.
+          {{"An update has already been applied. Please reboot." | translate}}
         </div>
         <table *ngIf="status == 'AVAILABLE' && !updating" class="table table-striped table-sm">
           <thead>
             <tr>
-              <th>Operation</th>
-              <th>Name</th>
+              <th>{{"Operation" | translate}}</th>
+              <th>{{"Name" | translate}}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let p of packages">
-              <td>{{ p.operation }}</td>
-              <td>{{ p.name }}</td>
+              <td>{{ p.operation  | translate }}</td>
+              <td>{{ p.name  | translate }}</td>
             </tr>
             <tr *ngIf="packages.length == 0">
-              <td>No update has been found</td>
+              <td>{{"No update has been found" | translate}}</td>
             </tr>
           </tbody>
         </table>
-        <div *ngIf="status == 'UNAVAILABLE'">No Updates Availabel</div>
+        <div *ngIf="status == 'UNAVAILABLE'">{{"No Updates Availabel" | translate}}</div>
         <div *ngIf="updated">
-          Update is complete, reboot the machine yourself because I'm tired!
+          {{"Update is complete, reboot the machine yourself because I'm tired!" | translate}}
         </div>
         <div *ngIf="error">
           {{ error }}
@@ -51,17 +51,17 @@
 <md-card class="p-0" *ngIf="releaseNotes">
   <md-card-title>
     <div class="mat-toolbar mat-card-toolbar">
-      <div class="mat-card-title-text">Release Notes</div>
+      <div class="mat-card-title-text">{{"Release Notes" | translate}}</div>
     </div>
   </md-card-title>
   <md-card-content>
-    <a md-button href="{{releaseNotes}}" target="_blank">Check Release Notes</a>
+    <a md-button href="{{releaseNotes}}" target="_blank">{{"Check Release Notes" | translate}}</a>
   </md-card-content>
 </md-card>
 <md-card class="p-0" *ngIf="changeLog">
   <md-card-title>
     <div class="mat-toolbar mat-card-toolbar">
-      <div class="mat-card-title-text">Change log</div>
+      <div class="mat-card-title-text">{{"Change log" | translate}}</div>
     </div>
   </md-card-title>
   <md-card-content>

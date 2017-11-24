@@ -1,14 +1,14 @@
 <md-card>
   <md-card-title>
-    The system will reboot to perform this operation!
+    {{"The system will reboot to perform this operation!" | translate}}
   </md-card-title>
   <md-card-subtitle>
-    All password will be reset in case your configuration bundle does not include the password secret seed.
+    {{"All password will be reset in case your configuration bundle does not include the password secret seed." | translate}}
   </md-card-subtitle>
   <md-card-content>
     <input type="file" ngFileSelect [options]="options" (onUpload)="handleUpload($event)">
   </md-card-content>
   <md-card-actions>
-    <button md-raised-button color="primary" (click)="doSubmit($event)">Submit</button>
+    <button md-raised-button color="primary" (click)="doSubmit($event)">{{"Submit" | translate}}</button>
   </md-card-actions>
 </md-card>

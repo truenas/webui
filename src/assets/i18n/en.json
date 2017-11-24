@@ -137,9 +137,6 @@
   "Yes": "Yes",
   "Successfully updated": "Successfully updated",
   "Entering a name is required": "Entering a name is required",
-  "Please": "Please",
-  "Click here": "Click here",
-  "to setup configuration first.": "to setup configuration first.",
 
   "Username":"Username",
   "UID":"UID",
@@ -168,7 +165,12 @@
   "Owner": "Owner",
   "Other": "Other",
   "Are you sure you want to delete?": "Are you sure you want to delete?",
-  "I'm aware this will destory snapshots within this dataset": "I'm aware this will destory snapshots within this dataset"
+  "I'm aware this will destory snapshots within this dataset": "I'm aware this will destory snapshots within this dataset",
+
+  "--- System General ---": "",
+  "GUI Protocol": "GUI Protocol",
+  "Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).": "Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED)."
+
 
 }
 

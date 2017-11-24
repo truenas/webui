@@ -10,38 +10,38 @@
         </p>
         <br>
         <md-input-container class="full-width">
-            <input mdInput placeholder="username" (blur)="onBlurMethod()" [(ngModel)]="username" name="username">
+            <input mdInput placeholder="{{'username' | translate}}" (blur)="onBlurMethod()" [(ngModel)]="username" name="username">
         </md-input-container>
         <br>
         <md-input-container class="full-width">
-            <input mdInput placeholder="password" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password">
+            <input mdInput placeholder="{{'password' | translate}}" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password">
         </md-input-container>
         <br>
-        <md-select name="type" placeholder="Type" class="full-width" [(ngModel)]="type">
-            <md-option value="BUG">Bug</md-option>
-            <md-option value="FEATURE">Feature</md-option>
+        <md-select name="type" placeholder="{{'Type' | translate}}" class="full-width" [(ngModel)]="type">
+            <md-option value="BUG">{{"Bug" | translate}}</md-option>
+            <md-option value="FEATURE">{{"Feature" | translate}}</md-option>
         </md-select>
         <br>
-        <md-select name="category" placeholder="Category" class="full-width" [(ngModel)]="category">
+        <md-select name="category" placeholder="{{'Category' | translate}}" class="full-width" [(ngModel)]="category">
             <md-option *ngFor="let category of categories" [value]="category.value">
-                {{ category.label }}
+                {{ category.label  | translate }}
             </md-option>
         </md-select>
         <br>
         <md-checkbox name="attach_debug" class="full-width" [(ngModel)]="attach_debug">
-            Attach Debug
+            {{"Attach Debug" | translate}}
         </md-checkbox>
         <br>
         <md-input-container class="full-width">
-            <input mdInput placeholder="Subject" name="title" [(ngModel)]="title">
+            <input mdInput placeholder="{{'Subject' | translate}}" name="title" [(ngModel)]="title">
         </md-input-container>
         <br>
         <md-input-container class="full-width">
-            <textarea mdInput mdAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
+            <textarea mdInput mdAutosizeMinRows minRows="6" placeholder="{{'Description' | translate}}" name="body" [(ngModel)]="body"></textarea>
         </md-input-container>
         <br>
         <input type="file" ng2FileSelect multiple />
         <br>
-        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">Submit Ticket</button>
+        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">{{"Submit Ticket" | translate}}</button>
     </div>
 </md-card>

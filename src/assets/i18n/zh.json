@@ -137,9 +137,6 @@
   "Yes": "是",
   "Successfully updated": "Successfully updated",
   "Entering a name is required": "输入名称是必需的",
-  "Please": "请",
-  "Click here": "点击这里",
-  "to setup configuration first.": "先设置配置。",
 
   "Username": "用户名",
   "UID": "UID",
@@ -168,6 +165,11 @@
   "Owner": "所有者",
   "Other": "其他",
   "Are you sure you want to delete?": "你确定你要删除？",
-  "I'm aware this will destory snapshots within this dataset": "我知道这将使这个数据集内的快照无效"
+  "I'm aware this will destory snapshots within this dataset": "我知道这将使这个数据集内的快照无效",
+
+  "--- System General ---": "",
+  "GUI Protocol": "GUI协议",
+  "Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).": "在GiB中的每个驱动器上交换大小，仅影响新的磁盘。将其设置为0将完全禁用交换创建（强烈DISCOURAGED）。"
+
 
 }

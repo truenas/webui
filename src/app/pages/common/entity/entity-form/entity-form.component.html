@@ -1,6 +1,6 @@
 <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
 <p *ngIf="!hasConf">
-    {{"Please | translate"}} <button md-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">{{"Click here" | translate}}</button> {{"to setup configuration first." | translate}}
+    Please <button md-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to setup configuration first.
 </p>
 <p *ngIf="success" type="success">{{"Successfully updated." | translate}}</p>
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
@@ -20,8 +20,8 @@
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-      <button md-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
-    </span>
+                  <button md-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+                </span>
                 <button md-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete | translate"}}</button>
                 <!-- </div> -->
             </md-card-actions>
