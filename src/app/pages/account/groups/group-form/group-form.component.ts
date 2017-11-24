@@ -35,7 +35,7 @@ export class GroupFormComponent {
       name: 'bsdgrp_sudo',
       placeholder: 'Permit Sudo',
       tooltip: 'Allows group members to use\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank"><ins>sudo</ins></a>.\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank">sudo</a>.\
  While using <b>sudo</b>, a user is prompted for their own password.',
     },
     {
