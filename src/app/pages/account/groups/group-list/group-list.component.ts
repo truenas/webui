@@ -9,12 +9,16 @@ export class GroupListComponent {
 
   constructor(private _router: Router) { }
 
+
   public title = "Groups";
   protected resource_name: string = 'account/groups/';
   protected route_add: string[] = ['account', 'groups', 'add' ];
   protected route_add_tooltip: string = "Add Group";
   protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
+  protected entityList: any;
+
+  afterInit(entityList: any) { this.entityList = entityList; }
 
   public columns: Array<any> = [
     {name : 'Group', prop : 'bsdgrp_group'},
@@ -43,6 +47,24 @@ export class GroupListComponent {
           [ "account", "groups", "members", row.id ]));
       }
     });
+    if (row.bsdgrp_builtin === !true){
+      actions.push({
+        label : "Edit",
+        id: "edit",
+        onClick : (row) => {
+          this._router.navigate(new Array('/').concat(
+            [ "account", "groups", "edit", row.id ]));
+        }
+      })
+      actions.push({
+        label : "Delete",
+        onClick : (row) => {
+          this.entityList.doDelete(row.id );
+        },
+      });
+
+    }
+
     return actions;
   }
 }
