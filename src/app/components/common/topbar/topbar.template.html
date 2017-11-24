@@ -1,21 +1,11 @@
 <md-toolbar class="topbar">
   <!-- Sidenav toggle button -->
-  <button
-  md-icon-button
-  id="sidenavToggle"
-  (click)="toggleSidenav()"
-  md-tooltip="Toggle Hide/Open">
-  <md-icon>menu</md-icon>
+  <button md-icon-button id="sidenavToggle" (click)="toggleSidenav()" md-tooltip="Toggle Hide/Open">
+    <md-icon>menu</md-icon>
   </button>
   <!-- Sidenav toggle collapse -->
-  <button
-  md-icon-button
-  id="collapseToggle"
-  fxHide.lt-md="true"
-  (click)="toggleCollapse()"
-  md-tooltip="Toggle Collapse"
-  class="toggle-collapsed">
-  <md-icon>chevron_left</md-icon>
+  <button md-icon-button id="collapseToggle" fxHide.lt-md="true" (click)="toggleCollapse()" md-tooltip="Toggle Collapse" class="toggle-collapsed">
+    <md-icon>chevron_left</md-icon>
   </button>
   <!-- Search form
   <div
@@ -28,34 +18,17 @@
     </form>
   </div -->
   <span fxFlex></span>
-  <button
-    *ngIf="showReplication"
-    md-icon-button
-    id="loading"
-    mdTooltip="replication"
-    (click)="showReplicationDetails()"
-    class="topbar-button-right">
+  <button *ngIf="showReplication" md-icon-button id="loading" mdTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
     <md-icon class="movement">content_copy</md-icon>
   </button>
   
   <!-- Theme Switcher -->
-  <button
-  md-icon-button
-  id="schemeToggle"
-  [style.overflow]="'visible'"
-  mdTooltip="FreeNAS Themes"
-  [mdMenuTriggerFor]="themeMenu"
-  class="topbar-button-right">
+  <button md-icon-button id="schemeToggle" [style.overflow]="'visible'" mdTooltip="FreeNAS Themes" [mdMenuTriggerFor]="themeMenu" class="topbar-button-right">
     <md-icon>format_color_fill</md-icon>
   </button>
   <md-menu #themeMenu="mdMenu" >
-    <md-grid-list
-    class="theme-list"
-    cols="1"
-    rowHeight="24px">
-      <md-grid-tile
-      *ngFor="let theme of themeService.freenasThemes"
-      (click)="changeTheme(theme)">
+    <md-grid-list class="theme-list" cols="1" rowHeight="24px">
+      <md-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme)">
         <div md-menu-item [title]="theme.name">
           <div [style.background]="theme.baseColor" class="egret-swatch"></div>
           <md-icon class="active-icon" *ngIf="theme.isActive">check</md-icon>
@@ -65,23 +38,12 @@
     </md-grid-list>
   </md-menu>
 
-  <button
-  md-icon-button
-  (click)="startTour()"
-  class="topbar-button-right"
-  mdTooltip="Guide Tour"
-  [style.overflow]="'visible'"
-  >
+  <button md-icon-button (click)="startTour()" class="topbar-button-right" mdTooltip="Guide Tour" [style.overflow]="'visible'">
     <md-icon>flight_takeoff</md-icon>
   </button>
 
   <!-- Notification toggle button -->
-  <button
-  md-icon-button
-  mdTooltip="Notifications"
-  (click)="toggleNotific()"
-  [style.overflow]="'visible'"
-  class="topbar-button-right">
+  <button md-icon-button mdTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
     <md-icon>notifications</md-icon>
     <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
   </button>
@@ -91,7 +53,7 @@
     <md-icon>settings</md-icon>
   </button>
   <md-menu #accountMenu="mdMenu">
-    <button md-menu-item [mdMenuTriggerFor]="languageMenu">
+    <button md-menu-item (click)="$event.stopPropagation()" [mdMenuTriggerFor]="languageMenu">
       <md-icon>translate</md-icon>
       <ng-container *ngFor="let lang of availableLangs">
         <span *ngIf="lang.code == currentLang">{{ lang.name }}</span>
@@ -131,7 +93,7 @@
     </button>
   </md-menu>
 
-  <md-menu #languageMenu="mdMenu">
+  <md-menu #languageMenu="mdMenu" [overlapTrigger]="false" xPosition="after">
     <ng-container *ngFor="let lang of availableLangs">
       <button md-menu-item (click)="setLang(lang.code)">
         <span>{{ lang.name }}</span>
