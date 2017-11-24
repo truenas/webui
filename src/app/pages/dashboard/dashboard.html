@@ -83,7 +83,21 @@
       </div>
     </md-card-title>
     <md-card-content>
-      <p>this is a note</p>
+      <div *ngIf="!showNote && !note">
+        <p>
+          <button md-raised-button class="btn btn-block btn-warning" (click)="showNote = true">Add Note</button>
+        </p>
+      </div>
+      <div *ngIf="showNote || note ">
+        <p>
+          <md-input-container class="full-width">
+            <textarea matInput rows="4" placeholder="Leave a note here" [(ngModel)]="note"></textarea>
+          </md-input-container>
+        </p>
+        <div>
+          <button md-raised-button class="btn btn-block btn-warning" type="submit" color="primary" (click)="updateNote()">Save</button>
+        </div>
+      </div>
     </md-card-content>
   </md-card>
 </div>
