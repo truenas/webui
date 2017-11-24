@@ -86,6 +86,7 @@
     "message1": "There are no alert notifications."
   },
   "Please wait": "Please wait",
+  "More info...": "More info...",
 
   "--- Dashboard Page ---": "",
   "System Information": "Información del sistema",
@@ -132,6 +133,8 @@
   "Save": "Save",
   "Cancel": "Cancel",
   "Delete": "Delete",
+  "OK": "OK",
+  "Yes": "Yes",
   "Successfully updated": "Successfully updated",
   "Entering a name is required": "Entering a name is required",
   "Please": "Please",
@@ -163,6 +166,8 @@
   "Write": "Write",
   "Execute": "Execute",
   "Owner": "Owner",
-  "Other": "Other"
+  "Other": "Other",
+  "Are you sure you want to delete?": "Are you sure you want to delete?",
+  "I'm aware this will destory snapshots within this dataset": "I'm aware this will destory snapshots within this dataset"
 
 }
