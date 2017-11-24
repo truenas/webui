@@ -10,7 +10,7 @@
 				</div>
 
 				<md-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-					<md-card-title>{{ chartConfigData.title }}</md-card-title>
+					<md-card-title>{{ chartConfigData.title  | translate}}</md-card-title>
 					<md-card-content>
 						<line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
 					</md-card-content>

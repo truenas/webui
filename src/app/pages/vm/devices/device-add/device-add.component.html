@@ -5,7 +5,7 @@
 
         <dynamic-form-bootstrap-control #component *ngFor="let controlModel of conf.formModel" [group]="formGroup" [model]="controlModel" [hasErrorMessaging]="controlModel.hasErrorMessages">
         </dynamic-form-bootstrap-control>
-        <button class="btn btn-primary" type="submit">Add</button>
-        <button class="btn btn-primary" type="button" (click)="goBack()">Back</button>
+        <button class="btn btn-primary" type="submit">{{"Add" | translate}}</button>
+        <button class="btn btn-primary" type="button" (click)="goBack()">{{"Back" | translate}}</button>
     </form>
 </ba-card>
