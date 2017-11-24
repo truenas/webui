@@ -1,8 +1,7 @@
 <div id="dashboardcontainerdiv">
 	<md-tab-group class="tab-header-fixed" *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
 		<md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName }}">
-			<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
-				
+			<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">			
 
 				<div *ngIf="paginationLength > paginationPageSize">
 					<md-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
@@ -25,6 +24,5 @@
 
 	<!-- Silly but stops the footer from scrunching up into my action. -->
 	<div class="give_me_space_bottom"></div>
-
 
 </div>

@@ -1,18 +1,18 @@
 
 <md-card class="p-0 mt-1 mb-05 ml-1 mr-1">
   <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">ZFS Storage Pools</div>
+    <div class="mat-card-title-text">{{"ZFS Storage Pools" | translate}}</div>
   </div>
   <div class="m-3">
     <md-input-container>
-      <input mdInput placeholder="Name" [(ngModel)]="name" required>
+      <input mdInput placeholder="{{'Name' | translate}}" [(ngModel)]="name" required>
     </md-input-container>    
     <md-checkbox 
     [(ngModel)]="isEncrypted" 
     class="form-control" 
     placeholder="Encryption" 
     (change)="isEncryptedChecked()" 
-    > Encryption
+    > {{"Encryption" | translate}}
     </md-checkbox>
   </div>
   <md-tab-group color="accent">
@@ -21,14 +21,14 @@
         <input mdInput
         id="nameFilter"
         type='text'
-        placeholder='Filter by device name'
+        placeholder="{{'Filter by device name' | translate}}"
         (keyup)='updateFilter($event)' />
       </md-input-container>
       <md-input-container>
         <input mdInput
         id="capacityFilter"
         type='text'
-        placeholder='Filter by storage capacity'
+        placeholder="{{'Filter by storage capacity' | translate}}"
         (keyup)='updateFilter($event)' />
       </md-input-container>
       <md-error *ngIf="re_has_errors">{{re_errors}}</md-error>
@@ -56,36 +56,36 @@
       </ngx-datatable-column>
       <ngx-datatable-column
       [flexGrow]="4"
-      name="Disk" 
+      name="{{'Disk' | translate}}" 
       prop="devname"> 
       </ngx-datatable-column>
       <ngx-datatable-column            
       [flexGrow]="2"
-      name="Capacity" 
+      name="{{'Capacity' | translate}}" 
       prop="capacity">
       </ngx-datatable-column>
       </ngx-datatable>
     </md-tab>
     <md-tab label="Disk Groups (vdevs)">
       <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
-      <button md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('data')" md-raised-button color="primary">Add Data</button>
+      <button md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('data')" md-raised-button color="primary">{{"Add Data" | translate}}</button>
     </md-tab>
     <md-tab label="Cache Groups (L2ARC vdevs)">
       <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
-      <button *ngIf="vdevs.cache.length === 0" md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('cache')" md-raised-button color="primary">Add Cache</button>   
+      <button *ngIf="vdevs.cache.length === 0" md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('cache')" md-raised-button color="primary">{{"Add Cache" | translate}}</button>   
     </md-tab>
     <md-tab label="Log Groups (ZIL vdevs)">
       <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
-      <button *ngIf="vdevs.log.length === 0" md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('log')" md-raised-button color="primary">Add Log</button>
+      <button *ngIf="vdevs.log.length === 0" md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('log')" md-raised-button color="primary">{{"Add Log" | translate}}</button>
     </md-tab>
     <md-tab label="Spare Groups">
     <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
-    <button *ngIf="vdevs.spare.length === 0" md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('spare')" md-raised-button color="primary">Add Spare</button>
+    <button *ngIf="vdevs.spare.length === 0" md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" (click)="addVdev('spare')" md-raised-button color="primary">{{"Add Spare" | translate}}</button>
     </md-tab>
   </md-tab-group>
   <md-card-actions class="full-width m-3">
     <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
-    <button md-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Create</button>
-    <button md-raised-button class="btn btn-accent" type="button" (click)="goBack()" color="accent">Cancel</button>
+    <button md-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">{{"Create" | translate}}</button>
+    <button md-raised-button class="btn btn-accent" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
   </md-card-actions>
 </md-card>
