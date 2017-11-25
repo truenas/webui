@@ -30,7 +30,8 @@ import { NotificationsService } from 'app/services/notifications.service';
 import { MarkdownModule } from 'angular2-markdown';
 
 // Core Module and Services
-import { CoreModule } from './core/core.module';
+import { ViewController } from 'app/core/components/view-controller/view-controller.component';
+import { CoreModule } from 'app/core/core.module';
 //import { SubComponent } from './core/decorators/subcomponent';
 //import { CoreService } from './core/services/core.service';
 //import { ApiService } from './core/services/api.service';
@@ -57,7 +58,7 @@ export function createTranslateLoader(http: Http) {
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
-    CoreModule.forRoot()
+    CoreModule
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
