@@ -1,17 +1,12 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { View } from 'app/core/components/view/view.component';
+import { ViewController } from 'app/core/components/view-controller/view-controller';
+import { Page } from 'app/core/components/page/page.component';
+import { CoreService } from 'app/core/services/core.service';
+import { ApiService } from 'app/core/services/api.service';
 //import { SubComponent } from './decorators/subcomponent';
 
-// Views
-import { View } from './components/view/view.component';
-
-// ViewControllers
-import { ViewController } from './components/view-controller/view-controller.component';
-import { Page } from './components/page/page.component';
-
-// Services
-import { CoreService } from './services/core.service';
-import { ApiService } from './services/api.service';
 
 
 
