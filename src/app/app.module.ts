@@ -31,10 +31,10 @@ import { MarkdownModule } from 'angular2-markdown';
 
 // Core Module and Services
 import { ViewController } from 'app/core/components/view-controller/view-controller.component';
-import { CoreModule } from 'app/core/core.module';
+//import { CoreModule } from 'app/core/core.module';
 //import { SubComponent } from './core/decorators/subcomponent';
-//import { CoreService } from './core/services/core.service';
-//import { ApiService } from './core/services/api.service';
+import { CoreService } from './core/services/core.service';
+import { ApiService } from './core/services/api.service';
 //import { ViewController } from './core/components/view-controller/view-controller.component';
 
 export function createTranslateLoader(http: Http) {
@@ -58,17 +58,17 @@ export function createTranslateLoader(http: Http) {
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
-    CoreModule
+    //CoreModule
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
-    //CoreService,
+    CoreService,
     RoutePartsService,
     NavigationService,
     AuthService,
     WebSocketService,
     RestService,
-    //ApiService,
+    ApiService,
     AppLoaderService, 
     NotificationsService,
     ENV_PROVIDERS],

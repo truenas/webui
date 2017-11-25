@@ -9,7 +9,8 @@ import { TestPage } from './page/test-page.component';
 @NgModule({
   imports: [
     CommonModule,
-    routing
+    routing,
+    CoreModule
   ],
   declarations: [TestPage]
 })
