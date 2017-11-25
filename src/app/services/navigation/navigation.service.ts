@@ -27,6 +27,13 @@ export class NavigationService {
       state: 'dashboard',
     },
     {
+      name: 'Test',
+      type: 'link',
+      tooltip: 'Test',
+      icon: 'people',
+      state: 'test',
+    },
+    {
       name: 'Account',
       type: 'dropDown',
       tooltip: 'Account',
