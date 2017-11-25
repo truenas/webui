@@ -35,6 +35,7 @@ import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { LineChartComponent } from './lineChart';
 import { LineChartService } from './lineChart/lineChart.service';
+import { TestPageModule } from 'app/pages/test/test-page.module';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ import { LineChartService } from './lineChart/lineChart.service';
     MdDialogModule,
     CommonDirectivesModule,
     TranslateModule,
-    ChartistModule
+    ChartistModule,
+    TestPageModule
   ],
   declarations: [
     AdminLayoutComponent,
