@@ -12,10 +12,12 @@ export interface PageOptions {
 
 export abstract class Page extends ViewController {
 
-  private displayList: any[] = []; // (This is a copy of the <viewsData>. If filtering view nodes, this is what gets altered instead of the actual viewsData)
+  private displayList: any[]; // (This is a copy of the <viewsData>. If filtering view nodes, this is what gets altered instead of the actual viewsData)
   public url: string; // Give the page a url
 
   constructor(private options: PageOptions) {
-    super({events:options.events, data:options.data,});
+    super({events:options.events, data:options.data});
+    this.url = options.url;
+    this.displayList = [];
   }
 }

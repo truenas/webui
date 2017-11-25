@@ -69,9 +69,9 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' }
       },
       {
-        path: 'test',
-        loadChildren: 'app/pages/test/test-page.module#TestPageModule',
-        data: { title: 'Test Page', breadcrumb: 'Test Page' }
+        path: 'test-page',
+	loadChildren: 'app/pages/test/test-page.module#TestPageModule',
+	data: { title: 'Test Page', breadcrumb: 'Test Page' }
       },
       {
         path: 'sharing',

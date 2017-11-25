@@ -26,13 +26,13 @@ export class NavigationService {
       icon: 'dashboard',
       state: 'dashboard',
     },
-    {
+    /*{
       name: 'Test',
       type: 'link',
       tooltip: 'Test',
       icon: 'people',
       state: 'test',
-    },
+    },*/
     {
       name: 'Account',
       type: 'dropDown',
@@ -143,6 +143,13 @@ export class NavigationService {
       tooltip: 'Services',
       icon: 'tune',
       state: 'services'
+    },
+    {
+      name: 'Test Page',
+      type: 'link',
+      tooltip: 'Test Page',
+      icon: 'tune',
+      state: 'test-page'
     },
     // {
     //   name: 'Plugins',

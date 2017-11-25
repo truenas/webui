@@ -33,7 +33,7 @@ import { MarkdownModule } from 'angular2-markdown';
 //import { CoreModule } from './core/core.module';
 import { CoreService } from './core/services/core.service';
 import { ApiService } from './core/services/api.service';
-import { TestPageModule } from './pages/test/test-page.module';
+//import { TestPageModule } from './pages/test/test-page.module';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
@@ -56,7 +56,7 @@ export function createTranslateLoader(http: Http) {
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
-    TestPageModule
+	  //TestPageModule
     //CoreModule
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
