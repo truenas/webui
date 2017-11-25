@@ -29,6 +29,11 @@ import { AppLoaderModule } from './services/app-loader/app-loader.module';
 import { NotificationsService } from 'app/services/notifications.service';
 import { MarkdownModule } from 'angular2-markdown';
 
+//import { SubComponent } from './core/decorators/subcomponent';
+//import { CoreService } from './core/services/core.service';
+//import { ApiService } from './core/services/api.service';
+//import { ViewController } from './core/components/view-controller/view-controller.component';
+
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
 }
@@ -49,15 +54,17 @@ export function createTranslateLoader(http: Http) {
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgIdleModule.forRoot(),
-    MarkdownModule.forRoot(),
+    MarkdownModule.forRoot()
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
+    //CoreService,
     RoutePartsService,
     NavigationService,
     AuthService,
     WebSocketService,
     RestService,
+    //ApiService,
     AppLoaderService, 
     NotificationsService,
     ENV_PROVIDERS],

@@ -22,6 +22,9 @@ import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/';
 import {DeviceListComponent} from './devices/device-list';
 import {DeviceNicAddComponent} from './devices/device-nic-add/';
 import {DeviceVncAddComponent} from './devices/device-vnc-add/';
+
+//import { Card } from '../../components/core/card/card.component';
+
 import {VmFormComponent} from './vm-form/';
 import {VmDeleteComponent} from './vm-delete/';
 import {VmListComponent} from './vm-list/';
@@ -42,6 +45,7 @@ import {routing} from './vm.routing';
     VmTableComponent,
     VmFormComponent,
     VmDeleteComponent,
+    //Card,
     DeviceListComponent,
     DeviceCdromAddComponent,
     DeviceAddComponent,
