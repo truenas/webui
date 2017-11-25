@@ -12,7 +12,7 @@ export interface PageOptions {
 }
 
 @Component({
-  selector: 'page'  
+  selector: 'page',
   template: '<div>This is a page!</div>'
 })
 export class Page extends ViewController {
