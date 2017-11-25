@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { Page, PageOptions } from '../../../core/classes/page';
+//import { SubComponent } from '../../../core/decorators/subcomponent';
+
+//import { Page, PageOptions } from '../../../core/components/page/page.component';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
@@ -7,9 +9,9 @@ import { Subject } from 'rxjs/Subject';
   templateUrl: './test-page.component.html',
   styleUrls: ['./test-page.component.css']
 })
-export class TestPage extends Page {
+export class TestPage {
 
   constructor(){
-    super({ events:new Subject(), data:[], url:"Test Page" });
+	  //super({ events:new Subject(), data:[], url:"Test Page" });
   }
 }

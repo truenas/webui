@@ -6,7 +6,11 @@ export interface Action {
   eventName: string;
 }
 
-export abstract class View {
+@Component({
+  selector:'view',
+  template:'<div>This is a view!</div>'
+})
+export class View {
 
   private actions?: Action[];
   private primaryAction?: Action;// (this should be your only FAB button in template) 
