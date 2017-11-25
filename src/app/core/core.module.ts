@@ -1,10 +1,10 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { View } from 'app/core/components/view/view.component';
 import { ViewController } from 'app/core/components/view-controller/view-controller';
 import { Page } from 'app/core/components/page/page.component';
-import { CoreService } from 'app/core/services/core.service';
-import { ApiService } from 'app/core/services/api.service';
+//import { CoreService } from 'app/core/services/core.service';
+//import { ApiService } from 'app/core/services/api.service';
 //import { SubComponent } from './decorators/subcomponent';
 
 
@@ -30,8 +30,8 @@ import { ApiService } from 'app/core/services/api.service';
     Page
   ],
   providers: [
-    CoreService,
-    ApiService
+    //CoreService,
+    //ApiService
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -41,13 +41,4 @@ import { ApiService } from 'app/core/services/api.service';
   ]
 })
 export class CoreModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: CoreModule,
-      providers: [ // Services here
-	CoreService,
-	ApiService
-      ]
-    }
-  }
 }
