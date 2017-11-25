@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 //import { SubComponent } from '../../decorators/subcomponent';
 import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';
@@ -17,12 +17,10 @@ export interface PageOptions {
 })
 export class Page extends ViewController {
 
-  private displayList: any[]; // (This is a copy of the <viewsData>. If filtering view nodes, this is what gets altered instead of the actual viewsData)
-  public url: string; // Give the page a url
+  @Input("displayList") displayList: any[]; // (This is a copy of the <viewsData>. If filtering view nodes, this is what gets altered instead of the actual viewsData)
+  @Input("url") url: string; // Give the page a url
 
-  constructor(private options: PageOptions) {
-    super({events:options.events, data:options.data});
-    this.url = options.url;
-    this.displayList = [];
+  constructor() {
+    super();
   }
 }

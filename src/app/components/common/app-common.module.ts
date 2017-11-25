@@ -36,6 +36,9 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { LineChartComponent } from './lineChart';
 import { LineChartService } from './lineChart/lineChart.service';
 import { TestPageModule } from 'app/pages/test/test-page.module';
+import { CoreModule } from 'app/core/core.module';
+import { Page } from 'app/core/components/page/page.component';
+
 
 @NgModule({
   imports: [
@@ -61,6 +64,7 @@ import { TestPageModule } from 'app/pages/test/test-page.module';
     CommonDirectivesModule,
     TranslateModule,
     ChartistModule,
+    CoreModule,
     TestPageModule
   ],
   declarations: [
@@ -68,7 +72,7 @@ import { TestPageModule } from 'app/pages/test/test-page.module';
     AuthLayoutComponent,
     TopbarComponent, 
     NavigationComponent, 
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
+    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent 
   ],
   providers: [ThemeService, DialogService, LineChartService],
   exports: [LineChartComponent]
