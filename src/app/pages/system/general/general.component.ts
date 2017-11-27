@@ -25,7 +25,7 @@ export class GeneralComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'stg_guiprotocol',
-      placeholder: 'GUI Protocol',
+      placeholder: 'Protocol',
       tooltip : 'Define the web protocol to use when connecting to the\
  administrative GUI from a browser. To change the default <i>HTTP</i> to\
  <i>HTTPS</i> or <i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be\
@@ -39,7 +39,7 @@ export class GeneralComponent {
     {
       type: 'select',
       name: 'stg_guiaddress',
-      placeholder: 'GUI IPv4 Bind Address',
+      placeholder: 'WebGUI IPv4 Address',
       tooltip : 'Choose a recent IP address to limit the usage when\
  accessing the administrative GUI. The built-in HTTP server binds to the\
  wildcard address of <i>0.0.0.0</i> (any address) and issues an alert if\
@@ -49,7 +49,7 @@ export class GeneralComponent {
     {
       type: 'select',
       name: 'stg_guiv6address',
-      placeholder: 'GUI IPv6 Bind Address',
+      placeholder: 'WebGUI IPv6 Address',
       tooltip : 'Choose a recent IPv6 address to limit the usage when\
  accessing the administrative GUI. The built-in HTTP server binds to the\
  wildcard address of <i>0.0.0.0</i> (any address) and issues an alert if\
@@ -59,7 +59,7 @@ export class GeneralComponent {
     {
       type: 'input',
       name: 'stg_guiport',
-      placeholder: 'GUI HTTP Port',
+      placeholder: 'WebGUI HTTP Port',
       tooltip : 'Allow configuring a non-standard port to access the GUI\
  over <i>HTTP</i>. Changing this setting may require changing a\
  <a href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted" target="_blank"><ins>Firefox configuration setting</ins></a>.',
@@ -69,7 +69,7 @@ export class GeneralComponent {
     {
       type: 'input',
       name: 'stg_guihttpsport',
-      placeholder: 'GUI HTTPS Port',
+      placeholder: 'WebGUI HTTPS Port',
       tooltip : 'Allow configuring a non-standard port to access the GUI\
  over <i>HTTPS</i>.',
       inputType: 'number',
@@ -90,14 +90,14 @@ export class GeneralComponent {
     {
       type: 'checkbox',
       name: 'stg_guihttpsredirect',
-      placeholder: 'GUI HTTP -> HTTPS Redirect',
+      placeholder: 'WebGUI HTTP -> HTTPS Redirect',
       tooltip : 'Check this to redirect <i>HTTP</i> connections to\
  <i>HTTPS</i>. <i>HTTPS</i> must be selected in <b>Protocol</b>.'
     },
     {
       type: 'select',
       name: 'stg_language',
-      placeholder: 'GUI Language',
+      placeholder: 'Language (Require UI reload)',
       tooltip : 'Select a localization and reload the browser.\
  Localization progress is viewable on\
  <a href="https://weblate.trueos.org/projects/freenas/#languages" target="_blank"><ins>Weblate</ins></a>.',
@@ -106,7 +106,7 @@ export class GeneralComponent {
     {
       type: 'select',
       name: 'stg_kbdmap',
-      placeholder: 'Console Keyboard map',
+      placeholder: 'Console Keyboard Map',
       tooltip : 'Select a keyboard layout.',
       options: []
     },
@@ -120,7 +120,7 @@ export class GeneralComponent {
     {
       type: 'select',
       name: 'stg_sysloglevel',
-      placeholder: 'Syslog Level',
+      placeholder: 'Syslog level',
       tooltip : 'When <b>Syslog server</b> is defined, only logs matching\
  this level are sent.',
       options: []
@@ -128,7 +128,7 @@ export class GeneralComponent {
     {
       type: 'input',
       name: 'stg_syslogserver',
-      placeholder: 'Syslog Server',
+      placeholder: 'Syslog server',
       tooltip : 'Define an\
  <i>IP address_or_hostname:optional_port_number</i> to send logs. When\
  set, log entries write to both the console and remote server.',
