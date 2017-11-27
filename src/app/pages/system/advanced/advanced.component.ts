@@ -12,12 +12,30 @@ import {DialogService} from "../../../services/dialog.service";
 })
 export class AdvancedComponent implements OnInit {
 
-  systemAdvancedSettings: any;
   isReady: boolean = false;
   error: string;
   success: string;
   users: any;
   ports: any;
+  systemAdvancedSettings = {
+    adv_consolemenu: '',
+    adv_serialconsole: '',
+    adv_serialport: '',
+    adv_serialspeed: '',
+    adv_swapondrive: '',
+    adv_consolescreensaver: '',
+    adv_powerdaemon: '',
+    adv_autotune: '',
+    adv_debugkernel: '',
+    adv_consolemsg: '',
+    adv_motd: '',
+    adv_traceback: '',
+    adv_advancedmode: '',
+    adv_uploadcrash: '',
+    adv_periodic_notifyuser: '',
+    adv_graphite: '',
+    adv_fqdn_syslog: ''
+  };
 
   constructor(private rest: RestService,
               private load: AppLoaderService,
@@ -26,10 +44,6 @@ export class AdvancedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.buildPageData();
-  }
-
-  buildPageData() {
     const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);
     const users = this.rest.get('account/users/', {limit: 0});
     const systemSettings = this.rest.get('system/advanced', {limit: 0});
@@ -48,7 +62,7 @@ export class AdvancedComponent implements OnInit {
     });
   }
 
-  buildForm(system?: any) {
+  buildForm(system: any) {
     this.systemAdvancedSettings = {
       adv_consolemenu: system.adv_consolemenu,
       adv_serialconsole: system.adv_serialconsole,
