@@ -16,7 +16,7 @@ import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'topbar',
-  styleUrls: ['./topbar.component.css'],
+  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
   templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
@@ -114,7 +114,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     localStorage.setItem(this.router.url, 'true');
   }
 
-  setLang() {
+  setLang(lang) {
+    this.currentLang = lang;
     this.onLangChange.emit(this.currentLang);
   }
 
