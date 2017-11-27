@@ -2,6 +2,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule} from '@angular/material';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
@@ -27,7 +28,7 @@ import {Services} from './services.component';
 import {routing} from './services.routing';
 
 @NgModule({
-  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule ],
+  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, NgxDatatableModule, AppConfirmModule ],
   declarations : [
     Service, Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,

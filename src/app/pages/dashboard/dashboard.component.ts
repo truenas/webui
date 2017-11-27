@@ -159,7 +159,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   updateNote() {
     this.user.bsdusr_attributes.user_dashboard_note = this.note;
-    this.rest.put('account/users/1', {body: this.user})
+    this.ws.call('user.update', [ this.user.id, this.user])
       .subscribe(res => console.log('res', res), err => console.log(err))
   }
 }

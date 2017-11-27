@@ -1,3 +1,73 @@
 <div class="services-wrap">
-	<service *ngFor="let service of services" [status]="service" class="service-item mt-1 mb-05 ml-1"></service>
+  <div>
+    <!--[rows]='data'-->
+    <ngx-datatable
+      class='material'
+      [columnMode]="'flex'"
+      [rowHeight]="'auto'"
+      [headerHeight]="'50px'"
+      [footerHeight]="'50px'"
+      [limit]="20">
+
+      <ngx-datatable-column name="Name" [flexGrow]="3">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <md-icon color="primary">power_settings_new</md-icon>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Status" [flexGrow]="3" [minWidth]="100">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div><strong>{{value}}</strong></div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Auto Start" [flexGrow]="3">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Configure" [flexGrow]="3">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          {{column.name}}
+        </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <div>{{value}}</div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <!--   <ngx-datatable-column name="Memory" [flexGrow]="2">
+           <ng-template let-column="column" ngx-datatable-header-template>
+             {{column.name}}
+           </ng-template>
+           <ng-template let-value="value" ngx-datatable-cell-template>
+             <div>{{value}}</div>
+           </ng-template>
+         </ngx-datatable-column>
+
+         <ngx-datatable-column name="Bootloader" [flexGrow]="2">
+           <ng-template let-column="column" ngx-datatable-header-template>
+             {{column.name}}
+           </ng-template>
+           <ng-template let-value="value" ngx-datatable-cell-template>
+             <div>{{value}}</div>
+           </ng-template>
+         </ngx-datatable-column> -->
+
+
+    </ngx-datatable>
+  </div>
+
+
+
+	<service *ngFor="let service of services" [status]="service" [view]="view" class="service-item mt-1 mb-05 ml-1"></service>
 </div>

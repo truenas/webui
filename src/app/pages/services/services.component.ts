@@ -13,6 +13,7 @@ export class Services implements OnInit {
 
   public services: any[];
   public busy: Subscription;
+  public view: string = 'slim';
 
   public name_MAP: Object = {
     'afp': 'AFP',

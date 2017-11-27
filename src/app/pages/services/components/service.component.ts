@@ -15,6 +15,7 @@ import {MdSlideToggleChange, MdSlideToggle} from "@angular/material";
 export class Service {
 
   @Input('status') status: any;
+  @Input('view') view: any;
   @ViewChild('serviceStatus') serviceStatus: MdSlideToggle;
 
   public busy: Subscription;
