@@ -15,3 +15,8 @@
     transform: translate(-10px, 0);
   }
 }
+
+.mat-menu-item  span.flag-icon {
+  padding-left: 30px;
+  background-position-x: left;
+}

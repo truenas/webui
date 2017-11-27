@@ -96,7 +96,9 @@
   <md-menu #languageMenu="mdMenu" [overlapTrigger]="false" xPosition="after">
     <ng-container *ngFor="let lang of availableLangs">
       <button md-menu-item (click)="setLang(lang.code)">
-        <span>{{ lang.name }}</span>
+        <span class="flag-icon" [ngClass]="{'flag-icon-us': lang.code === 'en'}" *ngIf="lang.code == 'en'">{{ lang.name }}</span>
+        <span class="flag-icon" [ngClass]="{'flag-icon-es': lang.code === 'es'}" *ngIf="lang.code == 'es'">{{ lang.name }}</span>
+        <span class="flag-icon" [ngClass]="{'flag-icon-cn': lang.code === 'zh'}" *ngIf="lang.code == 'zh'">{{ lang.name }}</span>
       </button>
     </ng-container>
   </md-menu>
