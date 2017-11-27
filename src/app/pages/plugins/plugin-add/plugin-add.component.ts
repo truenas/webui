@@ -17,7 +17,7 @@ import { WebSocketService } from '../../../services/';
 export class PluginAddComponent implements OnInit {
 
   protected addCall: string = 'jail.fetch';
-  protected route_success: string[] = ['plugins', 'available'];
+  public route_success: string[] = ['plugins', 'available'];
   protected isEntity: boolean = false;
 
   public fieldConfig: FieldConfig[] = [{
