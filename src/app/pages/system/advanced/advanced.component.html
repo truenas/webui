@@ -9,14 +9,13 @@
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_serialconsole" name="adv_serialconsole">Enable Serial
-            Console
-          </md-checkbox>
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_serialconsole" name="adv_serialconsole">Enable Serial Console </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-select">
           <md-select class="form-control full-width" placeholder="Serial Port"
+                     [disabled]="!systemAdvancedSettings.adv_serialconsole"
                      [(ngModel)]="systemAdvancedSettings.adv_serialport" name="adv_serialport">
             <md-option *ngFor="let port of ports" [value]="port.start">{{port.name + '(' + port.start + ')'}}</md-option>
           </md-select>
@@ -25,6 +24,7 @@
       <div class="form-line">
         <div class="form-select">
           <md-select class="form-control full-width" placeholder="Serial Speed"
+                     [disabled]="!systemAdvancedSettings.adv_serialconsole"
                      [(ngModel)]="systemAdvancedSettings.adv_serialspeed" name="adv_serialspeed">
             <md-option [value]="'9600'">9600</md-option>
             <md-option [value]="'19200'">19200</md-option>
