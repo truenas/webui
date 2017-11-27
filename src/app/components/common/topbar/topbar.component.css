@@ -1,0 +1,17 @@
+.movement {
+  animation: nudge 3s infinite linear;
+}
+
+@keyframes nudge {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(10px, 0);
+  }
+
+  80% {
+    transform: translate(-10px, 0);
+  }
+}

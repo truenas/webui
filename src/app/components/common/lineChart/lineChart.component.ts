@@ -21,10 +21,10 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
   /**   First element is Name of the Field a string
    *    Followed by the other elements being a number.
    *    This fits in with how C3 charts work.
-   * 
+   *
    *     [ ["nameOfField_1", number, number, number, number],
    *       ["nameOfField_2", number, number, number, number]
-   *     ] 
+   *     ]
    */
   @Input() series: any[][];
 
@@ -130,6 +130,9 @@ export class LineChartComponent implements OnInit, AfterViewInit, HandleDataFunc
       	  y: 10,
       	  step: 2
       	}
+      },
+      zoom: {
+        enabled: true
       }
     });
 

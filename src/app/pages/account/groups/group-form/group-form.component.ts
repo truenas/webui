@@ -19,14 +19,32 @@ export class GroupFormComponent {
       type: 'input',
       name: 'bsdgrp_gid',
       placeholder: 'GID',
+      tooltip: 'String value for the Group ID. The UNIX convention is to\
+ number user account groups higher than 1000 and the ID of a group\
+ required by a service is equal to the default port number used by that\
+ service (the sshd group ID is 22).',
     },
     {
       type: 'input',
       name: 'bsdgrp_group',
       placeholder: 'Name',
+      tooltip: 'Entering a name is required',
     },
-    { type: 'checkbox', name: 'bsdusr_sudo', placeholder: 'Permit Sudo' },
-    { type: 'checkbox', name: 'allow', placeholder: 'Allow repeated GIDs' },
+    {
+      type: 'checkbox',
+      name: 'bsdgrp_sudo',
+      placeholder: 'Permit Sudo',
+      tooltip: 'Allows group members to use\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank">sudo</a>.\
+ While using <b>sudo</b>, a user is prompted for their own password.',
+    },
+    {
+      type: 'checkbox',
+      name: 'allow',
+      placeholder: 'Allow repeated GIDs',
+      tooltip: 'Allows multiple groups to share the same group ID.',
+      disabled: false
+    },
   ];
   public users: any[];
   private bsdgrp_gid: any;
@@ -35,10 +53,6 @@ export class GroupFormComponent {
   constructor(protected router: Router, protected rest: RestService,
     protected ws: WebSocketService) {}
   preInit(entityForm: any) {
-    if (!entityForm.isNew) {
-      this.allow = _.find(this.fieldConfig, { name: "allow" });
-      this.allow.isHidden = true;
-    }
   }
   afterInit(entityForm: any) {
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
@@ -54,6 +68,7 @@ export class GroupFormComponent {
       });
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdgrp_gid', true);
+        entityForm.setDisabled('allow', true);
       } else {
         gid += 1;
         entityForm.formGroup.controls['bsdgrp_gid'].setValue(gid);

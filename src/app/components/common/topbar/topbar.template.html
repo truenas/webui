@@ -28,6 +28,15 @@
     </form>
   </div -->
   <span fxFlex></span>
+  <button
+    *ngIf="showReplication"
+    md-icon-button
+    id="loading"
+    mdTooltip="replication"
+    (click)="showReplicationDetails()"
+    class="topbar-button-right">
+    <md-icon class="movement">content_copy</md-icon>
+  </button>
   <!-- Language Switcher -->
   <md-select
   id="currentLang"
@@ -55,7 +64,7 @@
     cols="1"
     rowHeight="24px">
       <md-grid-tile
-      *ngFor="let theme of freenasThemes"
+      *ngFor="let theme of themeService.freenasThemes"
       (click)="changeTheme(theme)">
         <div md-menu-item [title]="theme.name">
           <div [style.background]="theme.baseColor" class="egret-swatch"></div>

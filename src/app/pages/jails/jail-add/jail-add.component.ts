@@ -20,7 +20,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 export class JailAddComponent implements OnInit {
 
   protected addCall = 'jail.create';
-  public route_success: string[] = ['jails', 'jails'];
+  public route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
   public formGroup: any;

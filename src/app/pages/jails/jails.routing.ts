@@ -11,11 +11,8 @@ import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 
 export const routes: Routes = [
-  {
-    path: '',
-    data: { title: 'Jails' },
-    children: [{
-      path: 'jails',
+    {
+      path: '',
       component: JailListComponent,
       data: { title: 'Instances', breadcrumb: 'Instances'}
     }, {
@@ -26,7 +23,7 @@ export const routes: Routes = [
       path: 'edit/:pk',
       component: JailEditComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' },
-    }, 
+    },
     // {
     //   path: 'storage',
     //   data: { title: 'Storage', breadcrumb: 'Storage'},
@@ -65,7 +62,5 @@ export const routes: Routes = [
     //     data: { title: 'Edit', breadcrumb: 'Edit' },
     //   }]
     // }
-    ]
-  }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
