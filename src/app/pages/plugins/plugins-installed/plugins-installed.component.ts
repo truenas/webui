@@ -20,7 +20,7 @@ export class PluginsInstalledListComponent {
     { name: 'Name', prop: '1' },
     { name: 'Boot', prop: '2' },
     { name: 'State', prop: '3' },
-    { name: 'Type', prop: '4' },
+    // { name: 'Type', prop: '4' },
     { name: 'Release', prop: '5' },
     { name: 'IP4 address', prop: '6' },
     { name: 'IP6 address', prop: '7' },
@@ -39,6 +39,8 @@ export class PluginsInstalledListComponent {
     if (actionId === 'start' && row[3] === "up") {
       return false;
     } else if (actionId === 'stop' && row[3] === "down") {
+      return false;
+    } else if (actionId === 'management' && row[3] === "down") {
       return false;
     }
     return true;
@@ -63,6 +65,13 @@ export class PluginsInstalledListComponent {
             this.ws.call('jail.stop', [row[1]]).subscribe(
               (res) => { row[3] = 'down'; },
               (res) => { console.log(res); });
+        }
+      },
+      {
+        id: "management",
+        label: "Managment",
+        onClick: (row) => {
+          window.open(row[9]);
         }
       },
       {
