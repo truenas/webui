@@ -8,7 +8,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-volumes-list',
-  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template : `<entity-group-table [title]="title" [conf]="this"></entity-group-table>`
 })
 export class VolumesListComponent implements OnInit {
 

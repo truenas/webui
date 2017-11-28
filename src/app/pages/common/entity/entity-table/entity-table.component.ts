@@ -53,7 +53,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   protected loaderOpen: boolean = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
