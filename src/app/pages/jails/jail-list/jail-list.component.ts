@@ -19,9 +19,10 @@ export class JailListComponent {
 
   public columns: Array < any > = [
     { name: 'Jail', prop: 'host_hostuuid' },
-    { name: 'Status', prop: 'state' },
-    { name: 'Release', prop: 'release' },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
+    { name: 'Status', prop: 'state' },
+    { name: 'Type', prop: 'type' },
+    { name: 'Release', prop: 'release' },
   ];
   public config: any = {
     paging: true,
