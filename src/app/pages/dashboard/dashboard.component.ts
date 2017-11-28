@@ -89,6 +89,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onInitDashboardChart() {
     this.graphs = [
       {
+        keyValue: "Average Load",
         title: this.translate.instant("Average Load"),
         legends: [
           this.translate.instant('Short Term'),
@@ -103,6 +104,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         ],
       },
       {
+        keyValue: "Memory (gigabytes)",
         title: this.translate.instant("Memory (gigabytes)"),
         type: LineChartService.lineChart,
         legends: [
@@ -122,6 +124,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         divideBy: 1073741824 // Gigs worth of bytes
       },
       {
+        keyValue: "CPU Usage",
         title: this.translate.instant("CPU Usage"),
         type: LineChartService.lineChart,
         legends: [
@@ -140,6 +143,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         ],
       },
       {
+        keyValue: "Uptime",
         title: this.translate.instant("Uptime"),
         type: LineChartService.lineChart,
         legends: [this.translate.instant('Uptime')],
@@ -152,6 +156,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.rest.get('storage/volume/', {}).subscribe((res) => {
       res.data.forEach((vol) => {
         this.graphs.splice(0, 0, {
+          keyValue: vol.vol_name + " Volume Usage",
           title: vol.vol_name + " " + this.translate.instant("Volume Usage"),
           type: LineChartService.pieChart,
           legends: [this.translate.instant("Available"), this.translate.instant("Used")],
@@ -174,6 +179,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       this.graphs.push({
+        keyValue: "Disk IOPS",
         title: this.translate.instant("Disk IOPS"),
         type: LineChartService.lineChart,
         legends: gLegends,

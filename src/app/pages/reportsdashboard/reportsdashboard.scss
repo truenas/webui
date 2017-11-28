@@ -6,15 +6,16 @@
   align-items: stretch;
   align-content: stretch;
 }
+
 .dashboard-item {
   flex-basis: 33.3333%;
   -webkit-box-flex: 1;
   flex-grow: 1;
 }
+
 ul.ct-legend {
   top: -2em !important;
 }
-
 
 .give_me_space_bottom {
   padding-bottom: 20px;

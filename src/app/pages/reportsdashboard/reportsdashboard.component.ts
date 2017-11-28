@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import * as _ from 'lodash';
 import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
+import { Subscription } from 'rxjs/Subscription';
+import { RxCommunicatingService } from '../../services/rx-communicating.service';
 
 import {
   RestService,
@@ -32,21 +34,31 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
    paginationPageIndex = 0;
    paginationPageEvent: PageEvent;
    
-   setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
-     this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
-   }
-
+  setPaginationPageSizeOptions(setPaginationPageSizeOptionsInput: string) {
+    this.paginationPageSizeOptions = setPaginationPageSizeOptionsInput.split(',').map(str => +str);
+  }
    
   public info: any = {};
   public ipAddress: any = [];
   public drawTabs = false;
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
+  private subscription: Subscription;
   
   private erd: any = null;
 
-  constructor(private _lineChartService: LineChartService) {
-    
+  constructor(private _lineChartService: LineChartService,
+    private rxcomService: RxCommunicatingService) {
+    // i18n Translate
+    this.subscription = this.rxcomService.getDataFromOrigin().subscribe((res) => {
+      if(res && res.type == "language") {
+        let timeout = setTimeout(() => {  
+          //this._lineChartService.getChartConfigData(this);
+          console.log("---------thanks---------");
+          clearTimeout(timeout);
+        }, 100);        
+      }
+    });
   }
 
   private setPaginationInfo(tabChartsMappingDataSelected: TabChartsMappingData) {
@@ -63,7 +75,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData;
 
-
     this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
   }
 
@@ -77,9 +88,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
-
-   
-
   }
 
   ngOnDestroy() {
@@ -103,7 +111,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       keyName: "CPU",
       chartConfigData: [],
       paginatedChartConfigData: []
-
     });
 
     map.set("Disk", {
@@ -123,7 +130,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       chartConfigData: [],
       paginatedChartConfigData: []
     });
-
 
     map.set("Partition", {
       keyName: "Partition",
@@ -153,35 +159,35 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // The non known buckets.. Just get one tab/one chart. (for now).. Will eventually 
     // move towards.. just knowing the ones Im wanting.
     chartConfigData.forEach((chartConfigDataItem: ChartConfigData) => {
-      if (chartConfigDataItem.title === "CPU" || chartConfigDataItem.title === "Load") {
+      if (chartConfigDataItem.keyValue === "CPU" || chartConfigDataItem.keyValue === "Load") {
         const tab: TabChartsMappingData = map.get("CPU");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.toLowerCase().startsWith("memory") || chartConfigDataItem.title.toLowerCase().startsWith("swap")) {
+      } else if (chartConfigDataItem.keyValue.toLowerCase().startsWith("memory") || chartConfigDataItem.keyValue.toLowerCase().startsWith("swap")) {
         const tab: TabChartsMappingData = map.get("Memory");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.toLowerCase() === "processes" || chartConfigDataItem.title.toLowerCase() === "uptime") {
+      } else if (chartConfigDataItem.keyValue.toLowerCase() === "processes" || chartConfigDataItem.keyValue.toLowerCase() === "uptime") {
         const tab: TabChartsMappingData = map.get("System");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("df-")) {
+      } else if (chartConfigDataItem.keyValue.startsWith("df-")) {
         const tab: TabChartsMappingData = map.get("Partition");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("disk")) {
+      } else if (chartConfigDataItem.keyValue.startsWith("disk")) {
         const tab: TabChartsMappingData = map.get("Disk");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("interface-")) {
+      } else if (chartConfigDataItem.keyValue.startsWith("interface-")) {
         const tab: TabChartsMappingData = map.get("Network");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("ctl-tpc")) {
+      } else if (chartConfigDataItem.keyValue.startsWith("ctl-tpc")) {
         const tab: TabChartsMappingData = map.get("Target");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      } else if (chartConfigDataItem.title.startsWith("ZFS ")) {
+      } else if (chartConfigDataItem.keyValue.startsWith("ZFS ")) {
         const tab: TabChartsMappingData = map.get("ZFS");
         tab.chartConfigData.push(chartConfigDataItem);
 
@@ -190,7 +196,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
     map.forEach((value: TabChartsMappingData) => {
-
       if (this.tabChartsMappingDataSelected === undefined) {
         this.tabChartsMappingDataSelected = value;
         this.setPaginationInfo( this.tabChartsMappingDataSelected );
@@ -198,9 +203,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       this.tabChartsMappingDataArray.push(value);
     });
     
-
     this.drawTabs = true;
-
   }
 
   tabSelectChangeHandler($event) {
@@ -208,8 +211,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
     this.paginationPageIndex = 0;
     this.paginationPageSize = 5;
-    this.setPaginationInfo( this.tabChartsMappingDataSelected );
-    
+    this.setPaginationInfo( this.tabChartsMappingDataSelected );    
   }
   
   paginationUpdate($pageEvent: PageEvent) {
@@ -218,8 +220,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.paginationPageSize = this.paginationPageEvent.pageSize;
     this.setPaginationInfo( this.tabChartsMappingDataSelected );
   }
-
-
 
   private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
     let foundTabChartsMappingData: TabChartsMappingData = null;
