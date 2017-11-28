@@ -103,13 +103,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
-      //if(res && res.fields.scan.function.indexOf('RESILVER') > -1) {
+      if(res && res.fields.scan.function.indexOf('RESILVER') > -1) {
         this.resilveringDetails = res.fields;
         this.showResilvering = true;
         setInterval(() => {
           if(res) this.showResilvering = false; this.resilveringDetails = {};
         }, 1500)
-      //}
+      }
     }, err => {
       console.log('err =====>', err);
     })
