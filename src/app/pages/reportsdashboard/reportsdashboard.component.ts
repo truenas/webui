@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import * as _ from 'lodash';
-import {LineChartService, ChartConfigData, HandleChartConfigDataFunc} from '../../components/common/lineChart/lineChart.service';
+import { LineChartService, ChartConfigData, HandleChartConfigDataFunc } from '../../components/common/lineChart/lineChart.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/Subscription';
 import { RxCommunicatingService } from '../../services/rx-communicating.service';
 
@@ -10,7 +11,6 @@ import {
   WebSocketService
 } from '../../services/';
 import { PageEvent } from '@angular/material';
-
 
 interface TabChartsMappingData {
   keyName: string;
@@ -25,7 +25,6 @@ interface TabChartsMappingData {
   providers: [SystemGeneralService]
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChartConfigDataFunc, AfterViewInit {
-
 
    // MdPaginator Inputs
    paginationLength = 0;
@@ -48,6 +47,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   private erd: any = null;
 
   constructor(private _lineChartService: LineChartService,
+    public translate: TranslateService,
     private rxcomService: RxCommunicatingService) {
     // i18n Translate
     this.subscription = this.rxcomService.getDataFromOrigin().subscribe((res) => {
@@ -108,49 +108,49 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
     map.set("CPU", {
-      keyName: "CPU",
+      keyName: this.translate.instant("CPU"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Disk", {
-      keyName: "Disk",
+      keyName: this.translate.instant("Disk"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Memory", {
-      keyName: "Memory",
+      keyName: this.translate.instant("Memory"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Network", {
-      keyName: "Network",
+      keyName: this.translate.instant("Network"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Partition", {
-      keyName: "Partition",
+      keyName: this.translate.instant("Partition"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("System", {
-      keyName: "System",
+      keyName: this.translate.instant("System"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Target", {
-      keyName: "Target",
+      keyName: this.translate.instant("Target"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("ZFS", {
-      keyName: "ZFS",
+      keyName: this.translate.instant("ZFS"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
