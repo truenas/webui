@@ -88,7 +88,9 @@
           <button md-raised-button class="btn btn-block btn-warning" (click)="showNote = true">Add Note</button>
         </p>
       </div>
-      <div *ngIf="showNote || note ">
+      <pre>{{showNote | json}}</pre>
+      <pre>{{note | json}}</pre>
+      <div *ngIf="showNote && note">
         <p>
           <md-input-container class="full-width">
             <textarea matInput rows="4" placeholder="Leave a note here" [(ngModel)]="note"></textarea>

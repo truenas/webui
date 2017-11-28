@@ -144,8 +144,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     this.rest.get("account/users/1", {}).subscribe((res) => {
       this.user = res.data;
-      if(this.user.bsdusr_attributes.user_dashboard_note && this.user.bsdusr_attributes.hasOwnProperty('user_dashboard_note')) {
-        this.note = this.user.bsdusr_attributes.user_dashboard_note;
+      console.log('tihi', this.user);
+      if(this.user.bsdusr_attributes.userdashboardnote && this.user.bsdusr_attributes.hasOwnProperty('userdashboardnote')) {
+        console.log('asdasd');
+        this.note = this.user.bsdusr_attributes.userdashboardnote;
+        this.showNote = true;
       }
     });
 
@@ -158,8 +161,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   updateNote() {
-    this.user.bsdusr_attributes.user_dashboard_note = this.note;
-    this.ws.call('user.update', [ this.user.id, this.user])
+    this.user.bsdusr_attributes.userdashboardnote = this.note;
+    console.log('user obj', this.user);
+
+    this.ws.call('user.update', [this.user.id, {attributes: this.user}])
       .subscribe(res => console.log('res', res), err => console.log(err))
   }
 }
