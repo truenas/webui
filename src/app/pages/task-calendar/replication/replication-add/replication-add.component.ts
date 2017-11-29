@@ -259,7 +259,7 @@ export class ReplicationAddComponent implements AfterViewInit {
         options: [],
         relation:[ {
           action: "DISABLE", 
-          when:[ {name:'repl_remote_dedicateduser_enabled', value: 'true'}]
+          when:[ {name:'repl_remote_dedicateduser_enabled', value: true }]
         } ]
       },
       {
