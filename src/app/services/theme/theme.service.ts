@@ -3,6 +3,8 @@ import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 @Injectable()
 export class ThemeService {
+  readonly freeThemeDefaultIndex = 3;
+
   public freenasThemes = [{
     name: 'egret-dark-purple',
     label: 'Dark Purple',
@@ -59,7 +61,9 @@ export class ThemeService {
 
       if( typeof(this.savedUserTheme) !== "undefined" && this.savedUserTheme !== "" ) {
         domHelper.changeTheme(this.freenasThemes, this.savedUserTheme);
-      }
+      } else {{
+        this.freenasThemes[this.freeThemeDefaultIndex].isActive = true;
+      }}
 
     });
   }
