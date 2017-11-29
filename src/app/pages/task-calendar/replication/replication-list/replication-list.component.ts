@@ -93,14 +93,12 @@ export class ReplicationListComponent {
 
   getReplicationKeys(){
     this.ws.call('replication.public_key').subscribe((res)=> {
-      console.log(res);
       this.dialog.Info('Replication Keys',res);
     });
   }
 
   getReplicationToken(){
     this.ws.call('auth.generate_token').subscribe((res)=> {
-      console.log(res);
       this.dialog.Info('Replication Keys',res);
     });
   }
