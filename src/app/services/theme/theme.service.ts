@@ -1,11 +1,20 @@
 import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
+
+export interface Theme {
+  name: string;
+  label: string;
+  baseColor: string;
+  isActive: boolean;
+  hasDarkLogo: boolean
+}
+
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 3;
 
-  public freenasThemes = [{
+  public freenasThemes: Theme[] = [{
     name: 'egret-dark-purple',
     label: 'Dark Purple',
     baseColor: '#9c27b0',
