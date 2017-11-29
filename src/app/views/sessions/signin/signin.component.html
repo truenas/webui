@@ -3,7 +3,7 @@
     <md-progress-bar mode="determinate" class="session-progress"></md-progress-bar>
     <md-card>
       <md-card-content>
-        <div class="text-center pb-1">
+        <div class="text-center pb-1" *ngIf="logo_ready">
           <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.png" alt="freenas-log">
           <ng-template #isTruenas>
             <img src="assets/images/truenas-logo.png" alt="truenas-logo">

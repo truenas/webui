@@ -1,9 +1,20 @@
 import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
+
+export interface Theme {
+  name: string;
+  label: string;
+  baseColor: string;
+  isActive: boolean;
+  hasDarkLogo: boolean
+}
+
 @Injectable()
 export class ThemeService {
-  public freenasThemes = [{
+  readonly freeThemeDefaultIndex = 3;
+
+  public freenasThemes: Theme[] = [{
     name: 'egret-dark-purple',
     label: 'Dark Purple',
     baseColor: '#9c27b0',
@@ -59,7 +70,9 @@ export class ThemeService {
 
       if( typeof(this.savedUserTheme) !== "undefined" && this.savedUserTheme !== "" ) {
         domHelper.changeTheme(this.freenasThemes, this.savedUserTheme);
-      }
+      } else {{
+        this.freenasThemes[this.freeThemeDefaultIndex].isActive = true;
+      }}
 
     });
   }

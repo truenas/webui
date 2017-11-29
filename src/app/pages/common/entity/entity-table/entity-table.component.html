@@ -37,8 +37,9 @@
 				*ngFor="let col of conf.columns"
 				prop="{{col.prop}}" 
 				 name="{{col.name | translate}}">
-				 <ng-template let-row="row" ngx-datatable-cell-template> 
-					 <div title="{{row[col.prop]}}">
+				 <ng-template let-row="row" ngx-datatable-cell-template>
+					<div title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
+						<img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
 						{{row[col.prop]}}
 					  </div>
 					</ng-template>

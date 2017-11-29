@@ -79,6 +79,11 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Storage', breadcrumb: 'Storage' }
       },
       {
+        path: 'plugins',
+        loadChildren: './pages/plugins/plugins.module#PluginsModule',
+        data: { title: 'Plugins', breadcrumb: 'Plugins' },
+      },
+      {
         path: 'jails',
         loadChildren: './pages/jails/jails.module#JailsModule',
         data: { title: 'Jails', breadcrumb: 'Jails' },
