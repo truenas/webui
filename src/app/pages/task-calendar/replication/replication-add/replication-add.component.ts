@@ -179,10 +179,22 @@ export class ReplicationAddComponent implements AfterViewInit {
         value: false
       },
       { 
+        type: 'select',
+        name: 'repl_compression',
+        placeholder: 'Replication Stream Compression',
+        options : [
+          {label : 'Off', value : 'off'}, 
+          {label : 'lz4 (fastest)', value : 'lz4'},
+          {label : 'pigz (all rounder)', value : 'pigz'},
+          {label : 'pizip (best compression)', value : 'pizip'}
+        ]
+      },
+      { 
         type: 'input',
         name: 'repl_limit',
         placeholder: 'Limit (KB/s)',
-        inputType: 'number'
+        inputType: 'number', 
+        value: 0
       },
       {
         type: 'select',
@@ -197,6 +209,21 @@ export class ReplicationAddComponent implements AfterViewInit {
         options : this.times
       },
       {
+        type : 'checkbox',
+        name : 'repl_enabled',
+        placeholder : 'Enabled',
+        value: true
+      },
+      {
+        type : 'select',
+        name : 'repl_remote_mode',
+        placeholder : 'Remote Mode',
+        options : [
+          {label : 'Manual', value : 'MANUAL'}, 
+          {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
+        ]
+      }, 
+      {
         type : 'input',
         name : 'repl_remote_hostname',
         placeholder : 'Remote Hostname'
@@ -205,12 +232,8 @@ export class ReplicationAddComponent implements AfterViewInit {
         type : 'input',
         name : 'repl_remote_port',
         placeholder : 'Remote Port',
-        inputType: 'number'
-      },
-      {
-        type: 'input',
-        name: 'repl_remote_dedicateduser',
-        placeholder: 'Remote User'
+        inputType: 'number',
+        value : 22
       },
       {
         type : 'select',
@@ -221,26 +244,18 @@ export class ReplicationAddComponent implements AfterViewInit {
           {label : 'fast', value : 'fast'},
           {label : 'disabled', value : 'disabled'}
         ]
-      },{
-
-        type : 'select',
-        name : 'repl_remote_mode',
-        placeholder : 'Remote Mode',
-        options : [
-          {label : 'MANUAL', value : 'MANUAL'}, 
-          {label : 'SEMIAUTOMATIC', value : 'SEMIAUTOMATIC'}
-        ]
-      }, 
-      { 
+      },
+      {
+        type: 'checkbox',
+        name: 'repl_remote_dedicateduser_enabled',
+        placeholder: 'Dedicated User Enabled',
+        value: false
+    },
+      {
         type: 'select',
-        name: 'repl_compression',
-        placeholder: 'Stream Compression',
-        options : [
-          {label : 'Off', value : 'off'}, 
-          {label : 'lz4 (fastest)', value : 'lz4'},
-          {label : 'pigz (all rounder)', value : 'pigz'},
-          {label : 'pizip (all rounder)', value : 'pizip'}
-        ]
+        name: 'repl_remote_dedicateduser',
+        placeholder: 'Dedicated User',
+        options: []
       },
       {
         type: 'textareabutton',
@@ -251,24 +266,6 @@ export class ReplicationAddComponent implements AfterViewInit {
           theThis.customEventMethod(data);
         }
       },
-      {
-          type: 'checkbox',
-          name: 'repl_remote_dedicateduser_enabled',
-          placeholder: 'Dedicated User(Root used if false)',
-          value: false
-      },
-      {
-        type: 'input',
-        name: 'repl_remote_dedicateduser',
-        placeholder: 'Remote User',
-        value: "root"
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_enabled',
-        placeholder : 'Replication Enabled',
-        value: false
-      }
     ];
   }
 
