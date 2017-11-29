@@ -14,14 +14,18 @@
   class="search-bar">
     <form class="top-search-form">
       <md-icon role="img">search</md-icon>
-      <input autofocus="true" placeholder="Search" type="text"> 
+      <input autofocus="true" placeholder="Search" type="text">
     </form>
   </div -->
   <span fxFlex></span>
-  <button *ngIf="showReplication" md-icon-button id="loading" mdTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
+  <!--loading icon-->
+  <button *ngIf="showResilvering" md-icon-button id="resilver" mdTooltip="resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
+    <md-icon class="fa-spin">autorenew</md-icon>
+  </button>
+  <button *ngIf="showReplication" md-icon-button id="replication" mdTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
     <md-icon class="movement">content_copy</md-icon>
   </button>
-  
+
   <!-- Theme Switcher -->
   <button md-icon-button id="schemeToggle" [style.overflow]="'visible'" mdTooltip="FreeNAS Themes" [mdMenuTriggerFor]="themeMenu" class="topbar-button-right">
     <md-icon>format_color_fill</md-icon>
