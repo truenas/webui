@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs/Rx';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
+import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
 import { MdDialogRef, MdDialog, MdDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 
@@ -30,6 +31,18 @@ export class DialogService {
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
         dialogRef.componentInstance.backtrace = backtrace;
+
+        return dialogRef.afterClosed();
+    }
+
+    public Info(title: string, info: string ): Observable<boolean> {
+        
+        let dialogRef: MdDialogRef<InfoDialog>;
+
+        dialogRef = this.dialog.open(InfoDialog);
+
+        dialogRef.componentInstance.title = title;
+        dialogRef.componentInstance.info = info;
 
         return dialogRef.afterClosed();
     }

@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services/';
+import {  DialogService } from '../../../../services/';
 
 
 @Component({
@@ -32,7 +33,8 @@ export class ReplicationListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) { }
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    private dialog: DialogService) { }
 
 
   afterInit(entityList: any) {
@@ -44,14 +46,30 @@ export class ReplicationListComponent {
   }
 
   getAddActions() {
-    return [{
+    let actions = [];
+    actions.push({
       label: "Replication",
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["tasks", "replication", "add-replication"]));
       }
-    }];
+    });
+    actions.push({
+      label: "Replication Keys",
+      icon: "card_membership",
+      onClick: () => {
+        this.getReplicationKeys();
+      }
+    });
+    actions.push({
+      label: "Replication Token",
+      icon: "card_membership",
+      onClick: () => {
+        this.getReplicationToken();
+      }
+    });
+    return actions;
   }
 
   getActions(parentRow) {
@@ -71,6 +89,20 @@ export class ReplicationListComponent {
       }
     }
     ]
+  }
+
+  getReplicationKeys(){
+    this.ws.call('replication.public_key').subscribe((res)=> {
+      console.log(res);
+      this.dialog.Info('Replication Keys',res);
+    });
+  }
+
+  getReplicationToken(){
+    this.ws.call('auth.generate_token').subscribe((res)=> {
+      console.log(res);
+      this.dialog.Info('Replication Keys',res);
+    });
   }
 
 }
