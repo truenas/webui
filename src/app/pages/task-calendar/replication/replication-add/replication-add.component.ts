@@ -135,7 +135,7 @@ export class ReplicationAddComponent implements AfterViewInit {
     {label : '23:45:00', value : '23:45:00'}
   ];
   
-  
+  private repl_remote_dedicateduser: any;
   protected fieldConfig: FieldConfig[];
 
   constructor(
@@ -251,13 +251,16 @@ export class ReplicationAddComponent implements AfterViewInit {
         type: 'checkbox',
         name: 'repl_remote_dedicateduser_enabled',
         placeholder: 'Dedicated User Enabled',
-        value: false
     },
       {
         type: 'select',
         name: 'repl_remote_dedicateduser',
         placeholder: 'Dedicated User',
-        options: []
+        options: [],
+        relation:[ {
+          action: "DISABLE", 
+          when:[ {name:'repl_remote_dedicateduser_enabled', value: 'true'}]
+        } ]
       },
       {
         type: 'textareabutton',
@@ -273,6 +276,12 @@ export class ReplicationAddComponent implements AfterViewInit {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.repl_remote_dedicateduser = _.find(this.fieldConfig, {'name' : 'repl_remote_dedicateduser'});
+    this.ws.call('user.query').subscribe((res)=>{
+      res.forEach((item) => {
+        this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
+      });
+    })
   }
 
   ngAfterViewInit() {
