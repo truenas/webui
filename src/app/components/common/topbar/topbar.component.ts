@@ -103,16 +103,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
     });
 
     this.ws.subscribe('zfs.pool.scan').subscribe(res => {
-      if(res && res.fields.scan.function.indexOf('RESILVER') > -1) {
+      if(res && res.fields.scan.function.indexOf('RESILVER') > -1 ) {
         this.resilveringDetails = res.fields;
         this.showResilvering = true;
-        setInterval(() => {
-          if(res) this.showResilvering = false; this.resilveringDetails = {};
-        }, 1500)
       }
-    }, err => {
-      console.log('err =====>', err);
-    })
+    });
+
+    setInterval(() => {
+      if(this.resilveringDetails && this.resilveringDetails.scan.state == 'FINISHED') {
+        this.showResilvering = false;
+        this.resilveringDetails = '';
+      }
+    }, 2500);
   }
 
   ngOnDestroy() {
@@ -204,6 +206,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   showResilveringDetails() {
-    this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}`, 'OKAY');
+    this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, 'OKAY');
   }
 }
