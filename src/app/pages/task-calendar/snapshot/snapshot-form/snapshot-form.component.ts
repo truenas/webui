@@ -32,10 +32,12 @@ export class SnapshotFormComponent {
     name: 'task_recursive',
     placeholder: 'Recursive',
   }, {
+    placeholder:'Snapshot Lifetime',
     type: 'input',
     name: 'task_ret_count',
     inputType: 'number',
     class: 'inline',
+    value: 2
   }, {
     type: 'select',
     name: 'task_ret_unit',
