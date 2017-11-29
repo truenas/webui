@@ -235,7 +235,41 @@ export class ReplicationAddComponent implements AfterViewInit {
         placeholder : 'Remote Port',
         inputType: 'number',
         value : 22,
-        validation: [Validators.min(0)]
+        validation: [Validators.min(0)],
+        relation:[ {
+          action: "DISABLE", 
+          when:[ {name:'repl_remote_mode', value: 'SEMIAUTOMATIC' }]
+        } ]
+      },
+      {
+        type : 'input',
+        name : 'repl_remote_http_port',
+        placeholder : 'Remote HTTP/HTTPS Port',
+        inputType: 'number',
+        value : 80,
+        validation: [Validators.min(0)],
+        relation:[ {
+          action: "DISABLE", 
+          when:[ {name:'repl_remote_mode', value: 'MANUAL' }]
+        } ]
+      },
+      {
+        type : 'checkbox',
+        name : 'repl_remote_https',
+        placeholder : 'Remote HTTPS',
+        relation:[ {
+          action: "DISABLE", 
+          when:[ {name:'repl_remote_mode', value: 'MANUAL' }]
+        } ]
+      },
+      {
+        type : 'input',
+        name : 'repl_remote_token',
+        placeholder : 'Remote Auth Token',
+        relation:[ {
+          action: "DISABLE", 
+          when:[ {name:'repl_remote_mode', value: 'MANUAL' }]
+        } ]
       },
       {
         type : 'select',
