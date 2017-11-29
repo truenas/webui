@@ -194,7 +194,8 @@ export class ReplicationAddComponent implements AfterViewInit {
         name: 'repl_limit',
         placeholder: 'Limit (KB/s)',
         inputType: 'number', 
-        value: 0
+        value: 0,
+        validation: [Validators.min(0)]
       },
       {
         type: 'select',
@@ -233,7 +234,8 @@ export class ReplicationAddComponent implements AfterViewInit {
         name : 'repl_remote_port',
         placeholder : 'Remote Port',
         inputType: 'number',
-        value : 22
+        value : 22,
+        validation: [Validators.min(0)]
       },
       {
         type : 'select',
