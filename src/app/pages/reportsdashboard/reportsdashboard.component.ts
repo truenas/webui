@@ -52,9 +52,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     // i18n Translate
     this.subscription = this.rxcomService.getDataFromOrigin().subscribe((res) => {
       if(res && res.type == "language") {
-        let timeout = setTimeout(() => {  
-          //this._lineChartService.getChartConfigData(this);
-          console.log("---------thanks---------");
+        let timeout = setTimeout(() => {
+          this.tabChartsMappingDataArray = [];
+          this.tabChartsMappingDataSelected = null;
+          this._lineChartService.getChartConfigData(this);
           clearTimeout(timeout);
         }, 100);        
       }
@@ -196,7 +197,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
     map.forEach((value: TabChartsMappingData) => {
-      if (this.tabChartsMappingDataSelected === undefined) {
+      if (!this.tabChartsMappingDataSelected) {
         this.tabChartsMappingDataSelected = value;
         this.setPaginationInfo( this.tabChartsMappingDataSelected );
       }
@@ -207,11 +208,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   tabSelectChangeHandler($event) {
-    const selectedTabName: string = $event.tab.textLabel;
-    this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
-    this.paginationPageIndex = 0;
-    this.paginationPageSize = 5;
-    this.setPaginationInfo( this.tabChartsMappingDataSelected );    
+    if($event.tab) {
+      const selectedTabName: string = $event.tab.textLabel;
+      this.tabChartsMappingDataSelected = this.getTabChartsMappingDataByName(selectedTabName);
+      this.paginationPageIndex = 0;
+      this.paginationPageSize = 5;
+      this.setPaginationInfo( this.tabChartsMappingDataSelected );  
+    }
   }
   
   paginationUpdate($pageEvent: PageEvent) {
