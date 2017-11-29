@@ -28,6 +28,9 @@ import { ReplicationListComponent } from 'app/pages/task-calendar/replication/re
 import { ReplicationAddComponent } from 'app/pages/task-calendar/replication/replication-add';
 import { ReplicationEditComponent } from 'app/pages/task-calendar/replication/replication-edit';
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
+import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
+import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
+
 
 @NgModule({
   imports: [
@@ -56,7 +59,9 @@ import { ReplicationService } from 'app/pages/task-calendar/replication/replicat
     SmartFormComponent,
     ReplicationListComponent,
     ReplicationAddComponent,
-    ReplicationEditComponent
+    ReplicationEditComponent,
+    ScrubListComponent,
+    ScrubFormComponent
   ],
   providers: [ ReplicationService ]
 })
