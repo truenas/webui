@@ -316,6 +316,12 @@ export class ReplicationAddComponent implements AfterViewInit {
         this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
       });
     })
+    if (entityForm.isNew){
+      entityForm.formGroup.controls['repl_remote_mode'].setValue('MANUAL');
+      entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
+      entityForm.formGroup.controls['repl_end'].setValue('23:45:00');
+      entityForm.formGroup.controls['repl_remote_cipher'].setValue('standard');
+    }
   }
 
   ngAfterViewInit() {
