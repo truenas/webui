@@ -10,7 +10,7 @@
 		<div fxFlex="40" fxLayout="row">
 			<div *ngIf="selected.length > 0 ? true : false" >
 				<span *ngFor="let maction of conf.multiActions">
-					<button md-raised-button (click)="maction.onClick(this.row);">
+					<button md-raised-button (click)="maction.onClick(this.selected);">
 						<span>{{ maction?.label }}</span>
 				    </button>
 			    </span>
