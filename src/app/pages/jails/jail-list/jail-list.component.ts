@@ -27,8 +27,64 @@ export class JailListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelected: true,
   };
-
+  public multiActions: Array < any > = [{
+      label: "Start",
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.loader.open();
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
+            (res) => {
+              for (let i in selected) {
+                selected[i].state = 'up';
+              }
+              this.loader.close();
+            },
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            });
+      }
+    },
+    {
+      label: "Stop",
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.loader.open();
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
+            (res) => {
+              for (let i in selected) {
+                selected[i].state = 'down';
+              }
+              this.loader.close();
+            },
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            });
+      }
+    },
+    {
+      label: "Update",
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.loader.open();
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            },
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            });
+      }
+    },
+  ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
@@ -92,5 +148,13 @@ export class JailListComponent {
         }
       }
     ]
+  }
+
+  getSelectedNames(selectedJails) {
+    let selected: any = [];
+    for (let i in selectedJails) {
+      selected.push(selectedJails[i].host_hostuuid);
+    }
+    return selected;
   }
 }
