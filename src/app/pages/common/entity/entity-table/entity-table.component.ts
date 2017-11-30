@@ -330,6 +330,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 
-    this.conf.updateMultiAction(this.selected);
+    if (this.conf.updateMultiAction) {
+      this.conf.updateMultiAction(this.selected);
+    }
   }
 }
