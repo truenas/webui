@@ -1,7 +1,7 @@
 import { RestService, WebSocketService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
+import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
@@ -30,7 +30,9 @@ export class JailListComponent {
     multiSelected: true,
   };
   public multiActions: Array < any > = [{
+      id: "mstart",
       label: "Start",
+      enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -40,6 +42,7 @@ export class JailListComponent {
               for (let i in selected) {
                 selected[i].state = 'up';
               }
+              this.updateMultiAction(selected);
               this.loader.close();
             },
             (res) => {
@@ -49,7 +52,9 @@ export class JailListComponent {
       }
     },
     {
+      id: "mstop",
       label: "Stop",
+      enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -59,6 +64,7 @@ export class JailListComponent {
               for (let i in selected) {
                 selected[i].state = 'down';
               }
+              this.updateMultiAction(selected);
               this.loader.close();
             },
             (res) => {
@@ -68,7 +74,9 @@ export class JailListComponent {
       }
     },
     {
+      id: "mupdate",
       label: "Update",
+      enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -156,5 +164,19 @@ export class JailListComponent {
       selected.push(selectedJails[i].host_hostuuid);
     }
     return selected;
+  }
+
+  updateMultiAction(selected: any) {
+    if (_.find(selected, ['state', 'up'])) {
+     _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
+    } else {
+      _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
+    }
+
+    if (_.find(selected, ['state', 'down'])) {
+     _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
+    } else {
+      _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
+    }
   }
 }
