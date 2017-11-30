@@ -16,7 +16,7 @@ import { FormGroup } from '@angular/forms';
 })
 export class ScrubFormComponent {
 
-  protected resource_name: string = 'tasks/scrubtask';
+  protected resource_name: string = 'storage/scrub';
   protected route_success: string[] = ['tasks', 'scrub'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
