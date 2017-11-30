@@ -37,7 +37,7 @@
           <div [style.background]="theme.baseColor" class="egret-swatch"></div>
           <md-icon class="active-icon" *ngIf="theme.isActive">check</md-icon>
         </div>
-        <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{theme.label}}</span>
+        <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{theme.label | translate}}</span>
       </md-grid-tile>
     </md-grid-list>
   </md-menu>
