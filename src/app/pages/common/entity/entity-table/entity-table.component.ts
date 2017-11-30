@@ -51,6 +51,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   protected loaderOpen: boolean = false;
+  public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
@@ -323,5 +324,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.currentRows = this.rows;
     this.setPaginationInfo();
 
+  }
+
+  onSelect({ selected }) {
+    this.selected.splice(0, this.selected.length);
+    this.selected.push(...selected);
   }
 }
