@@ -91,7 +91,6 @@
   "Back": "Back",
   "Done": "Done",
   "Skip": "Skip",
-  "Close": "Close",
 
   "--- Theme dialog ---": "",
   "Dark Purple": "Dark Purple",
@@ -109,17 +108,13 @@
   "Done": "Done",
   "WARNING": "WARNING",
   "Download Recovery Key": "Download Recovery Key",
-  "downloadkey": {
-    "warning1": "Backup your recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.",
-    "warning2": "Click the 'Download Recovery Key' button to download your key",
-    "warning3": "This type of encryption is primarily targeted at users who are storing sensitive data and want the ability to remove disks from the pool and dispose of/re-use them without concern for erasure. iXsystems, Inc. can not be held responsible for any lost or unrecoverable data as a consequence of using this feature."
-  },
+  "Backup your recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.": "Backup your recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.",
+  "Click the 'Download Recovery Key' button to download your key": "Click the 'Download Recovery Key' button to download your key",
+  "This type of encryption is primarily targeted at users who are storing sensitive data and want the ability to remove disks from the pool and dispose of/re-use them without concern for erasure. iXsystems, Inc. can not be held responsible for any lost or unrecoverable data as a consequence of using this feature.": "This type of encryption is primarily targeted at users who are storing sensitive data and want the ability to remove disks from the pool and dispose of/re-use them without concern for erasure. iXsystems, Inc. can not be held responsible for any lost or unrecoverable data as a consequence of using this feature.",
   "Closed": "Closed",
   "Clear All Notifications": "Clear All Notifications",
   "Re-Open All Notifications": "Re-Open All Notifications",
-  "_notifications": {
-    "message1": "There are no alert notifications."
-  },
+  "There are no alert notifications.": "There are no alert notifications.",
   "Please wait": "Please wait",
   "More info...": "More info...",
 
@@ -171,6 +166,7 @@
   "Yes": "Yes",
   "Successfully updated": "Successfully updated",
   "Entering a name is required": "Entering a name is required",
+  "Items per page": "Items per page",
 
   "Username":"Username",
   "UID":"UID",

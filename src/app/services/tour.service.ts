@@ -27,7 +27,6 @@ export class TourService {
   public StorageTour: any;
   public SharingTour: any;
 
-
   getTour(steps ? ): any {
     let self = this;
     return {
@@ -58,31 +57,27 @@ export class TourService {
         target: "sidenavToggle", // Element ID
         placement: "bottom",
         xOffset: 10
-      },
-      {
+      }, {
         title: this.translate.instant("Available Themes"),
         content: this.translate.instant("Choose a color scheme."),
         target: "schemeToggle", // Element ID
         placement: "left",
         xOffset: 20
-      },
-      {
+      }, {
         title: this.translate.instant("Language"),
         content: this.translate.instant("Choose your language."),
         target: "currentLang",
         placement: "left",
         xOffset: 10,
         yOffset: -5
-      },
-      {
+      }, {
         title: this.translate.instant("Users & Groups"),
         content: this.translate.instant("Setup Users and Groups."),
         target: "Dashboard",
         placement: "right",
         xOffset: 200,
         yOffset: 20
-      },
-      {
+      }, {
         title: this.translate.instant("Volumes & Snapshots"),
         content: this.translate.instant("Create a new Volume."),
         target: document.querySelector(".sidebar-list-item .mat-list-item-ripple"),
@@ -97,30 +92,26 @@ export class TourService {
         target: "sidenavToggle", // Element ID
         placement: "bottom",
         xOffset: 10
-      },
-      {
+      }, {
         title: this.translate.instant("Available Themes"),
         content: this.translate.instant("Choose a color scheme."),
         target: "schemeToggle", // Element ID
         placement: "left",
         xOffset: 20
-      },
-      {
+      }, {
         title: this.translate.instant("Language"),
         content: this.translate.instant("Choose your language."),
         target: document.querySelector(".topbar .mat-select"),
         placement: "left",
         xOffset: 10,
         yOffset: -5
-      },
-      {
+      }, {
         title: this.translate.instant("Users & Groups"),
         content: this.translate.instant("Setup Users and Groups."),
         target: document.querySelector(".sidebar-list-item .mat-list-item-ripple"),
         placement: "right",
         yOffset: 50
-      },
-      {
+      }, {
         title: this.translate.instant("Volumes & Snapshots"),
         content: this.translate.instant("Create a new Volume."),
         target: document.querySelector(".sidebar-list-item .mat-list-item-ripple"),
@@ -135,8 +126,7 @@ export class TourService {
         target: "ngx-datatable",
         placement: "bottom",
         yOffset: 20
-      },
-      {
+      }, {
         title: this.translate.instant("Hover to expand"),
         content: this.translate.instant("Create new Volume"),
         target: "tour-fab-buttons",
@@ -151,8 +141,7 @@ export class TourService {
         target: "sidenavToggle", // Element ID
         placement: "bottom",
         xOffset: 10
-      },
-      {
+      }, {
         title: this.translate.instant("Available Themes"),
         content: this.translate.instant("Choose a color scheme."),
         target: "schemeToggle", // Element ID
@@ -203,31 +192,27 @@ export class TourService {
           target: "sidenavToggle", // Element ID
           placement: "bottom",
           xOffset: 10
-        },
-        {
+        }, {
           title: this.translate.instant("Available Themes"),
           content: this.translate.instant("Choose a color scheme."),
           target: "schemeToggle", // Element ID
           placement: "left",
           xOffset: 20
-        },
-        {
+        }, {
           title: this.translate.instant("Language"),
           content: this.translate.instant("Choose your language."),
           target: "currentLang",
           placement: "left",
           xOffset: 10,
           yOffset: -5
-        },
-        {
+        }, {
           title: this.translate.instant("Users & Groups"),
           content: this.translate.instant("Setup Users and Groups."),
           target: "Dashboard",
           placement: "right",
           xOffset: 200,
           yOffset: 20
-        },
-        {
+        }, {
           title: this.translate.instant("Volumes & Snapshots"),
           content: this.translate.instant("Create a new Volume."),
           target: document.querySelector(".sidebar-list-item .mat-list-item-ripple"),

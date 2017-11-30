@@ -108,19 +108,15 @@
   "Done": "完成",
   "WARNING": "警告",
   "Download Recovery Key": "下载恢复密钥",
-  "_downloadkey": {
-    "warning1": "立即备份您的恢复密钥！如果密钥丢失，磁盘上的数据也将丢失，无法恢复。",
-    "warning2": "点击“下载恢复密钥”按钮下载您的密钥",
-    "warning3": "这种类型的加密主要针对正在存储敏感数据的用户，并希望能够从池中删除磁盘并丢弃/重新使用磁盘而不用担心删除。由于使用此功能，iXsystems，Inc.不承担任何丢失或不可恢复的数据责任。"
-  },
+  "Backup your recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.": "立即备份您的恢复密钥！如果密钥丢失，磁盘上的数据也将丢失，无法恢复。",
+  "Click the 'Download Recovery Key' button to download your key": "点击“下载恢复密钥”按钮下载您的密钥",
+  "This type of encryption is primarily targeted at users who are storing sensitive data and want the ability to remove disks from the pool and dispose of/re-use them without concern for erasure. iXsystems, Inc. can not be held responsible for any lost or unrecoverable data as a consequence of using this feature.": "这种类型的加密主要针对正在存储敏感数据的用户，并希望能够从池中删除磁盘并丢弃/重新使用磁盘而不用担心删除。由于使用此功能，iXsystems，Inc.不承担任何丢失或不可恢复的数据责任。",
   "Closed": "关闭",
   "Clear All Notifications": "清除所有通知",
   "Re-Open All Notifications": "重新打开所有通知",
-  "_notifications": {
-    "message1": "没有警报通知。"
-  },
+  "There are no alert notifications.": "没有警报通知。",
   "Please wait": "请稍候",
-  "More info...": "More info...",
+  "More info...": "更多信息...",
 
   "--- Dashboard Page ---": "",
   "System Information": "系统信息",
@@ -170,6 +166,7 @@
   "Yes": "是",
   "Successfully updated": "Successfully updated",
   "Entering a name is required": "输入名称是必需的",
+  "Items per page": "每页项目",
 
   "Username": "用户名",
   "UID": "UID",
