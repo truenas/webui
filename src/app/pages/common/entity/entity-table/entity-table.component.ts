@@ -15,6 +15,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   
   @ViewChild('filter') filter: ElementRef;
+  @ViewChild(MdPaginator) paginator: MdPaginator;
   private erd: any = null;
 
   // MdPaginator Inputs
@@ -37,7 +39,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public paginationPageSizeOptions = [5, 10, 20, 100];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
-  
   
   public displayedColumns: string[] = [];
   public busy: Subscription;
@@ -52,10 +53,19 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   };
   protected loaderOpen: boolean = false;
 
-  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
+  constructor(protected rest: RestService,
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected _eRef: ElementRef,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,) { }
 
   ngOnInit() {
+    this.paginator._intl.itemsPerPageLabel = this.translate.instant("Items per page") + ":";
+    this.paginator._intl.nextPageLabel = this.translate.instant("Next page");
+    this.paginator._intl.previousPageLabel = this.translate.instant("Previous page");
+
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
@@ -67,7 +77,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-
    
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
@@ -100,9 +109,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           });
         } else {
           newData = this.rows;
-        }
-
-        
+        }        
         
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
@@ -188,9 +195,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
 
       });
-
   }
-
 
   trClass(row) {
     let classes = [];

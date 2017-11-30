@@ -7,7 +7,7 @@
 		<br/>
 	</div>
 	<div>
-		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+		<md-paginator #paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
 	<div class="padding_all">
