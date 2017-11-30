@@ -27,7 +27,7 @@ export class JailListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelected: true,
+    multiSelect: true,
   };
   public multiActions: Array < any > = [{
       id: "mstart",
