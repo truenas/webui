@@ -24,14 +24,14 @@ import { ReplicationService } from 'app/pages/task-calendar/replication/replicat
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
-  selector : 'app-replication-add',
-  templateUrl : './replication-add.component.html' 
+  selector : 'app-replication-form',
+  templateUrl : './replication-form.component.html' 
 })
-export class ReplicationAddComponent implements AfterViewInit {
+export class ReplicationFormComponent implements AfterViewInit {
   
   protected resource_name = 'storage/replication';
   protected route_success: string[] = [ 'tasks', 'replication'];
-  protected isNew = true;
+  protected isNew = false;
   protected isEntity = true;
   public initialized = false;
   protected entityForm: EntityFormComponent;
