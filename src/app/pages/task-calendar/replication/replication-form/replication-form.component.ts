@@ -35,6 +35,7 @@ export class ReplicationFormComponent implements AfterViewInit {
   protected isEntity = true;
   public initialized = false;
   protected entityForm: EntityFormComponent;
+  private subscription;
   
   private times = [
     {label : '00:00:00', value : '00:00:00'}, 
@@ -227,7 +228,8 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'input',
         name : 'repl_remote_hostname',
-        placeholder : 'Remote Hostname'
+        placeholder : 'Remote Hostname',
+        validation: Validators.required
       },
       {
         type : 'input',
@@ -236,10 +238,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         inputType: 'number',
         value : 22,
         validation: [Validators.min(0)],
-        relation:[ {
-          action: "DISABLE", 
-          when:[ {name:'repl_remote_mode', value: 'SEMIAUTOMATIC' }]
-        } ]
+        isHidden: false
       },
       {
         type : 'input',
@@ -248,28 +247,19 @@ export class ReplicationFormComponent implements AfterViewInit {
         inputType: 'number',
         value : 80,
         validation: [Validators.min(0)],
-        relation:[ {
-          action: "DISABLE", 
-          when:[ {name:'repl_remote_mode', value: 'MANUAL' }]
-        } ]
+        isHidden: true,
       },
       {
         type : 'checkbox',
         name : 'repl_remote_https',
         placeholder : 'Remote HTTPS',
-        relation:[ {
-          action: "DISABLE", 
-          when:[ {name:'repl_remote_mode', value: 'MANUAL' }]
-        } ]
+        isHidden: true,
       },
       {
         type : 'input',
         name : 'repl_remote_token',
         placeholder : 'Remote Auth Token',
-        relation:[ {
-          action: "DISABLE", 
-          when:[ {name:'repl_remote_mode', value: 'MANUAL' }]
-        } ]
+        isHidden: true,
       },
       {
         type : 'select',
@@ -293,7 +283,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         options: [],
         relation:[ {
           action: "DISABLE", 
-          when:[ {name:'repl_remote_dedicateduser_enabled', value: true }]
+          when:[ {name:'repl_remote_dedicateduser_enabled', value: false }]
         } ]
       },
       {
@@ -303,25 +293,59 @@ export class ReplicationFormComponent implements AfterViewInit {
         customEventActionLabel: 'Remote SSH Key',
         customEventMethod: function(data) {
           theThis.customEventMethod(data);
-        }
+        },
+        isHidden: false
       },
     ];
   }
 
-  afterInit(entityForm: any) {
-    this.entityForm = entityForm;
-    this.repl_remote_dedicateduser = _.find(this.fieldConfig, {'name' : 'repl_remote_dedicateduser'});
-    this.ws.call('user.query').subscribe((res)=>{
-      res.forEach((item) => {
-        this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
+  preInit(entityForm: any){
+
+    if (!entityForm.data){
+      this.rest.get(this.resource_name, {}).subscribe((res)=>{
+        _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_mode'}));
+        for (const key in this.entityForm.data){
+          if (key === 'repl_remote_port'){
+            _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_port'}));
+            _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_https'}));
+            _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_token'}));
+          }
+        }
       });
-    })
+    }
+
+  }
+
+  afterInit(entityForm: any) {
+    this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
+      if (res === 'SEMIAUTOMATIC'){
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = false;
+      } else {
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = true;
+         
+      }
+
+    });
     if (entityForm.isNew){
       entityForm.formGroup.controls['repl_remote_mode'].setValue('MANUAL');
       entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
       entityForm.formGroup.controls['repl_end'].setValue('23:45:00');
       entityForm.formGroup.controls['repl_remote_cipher'].setValue('standard');
     }
+    this.repl_remote_dedicateduser = _.find(this.fieldConfig, {'name' : 'repl_remote_dedicateduser'});
+    this.ws.call('user.query').subscribe((res)=>{
+      res.forEach((item) => {
+        this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
+      });
+    })
   }
 
   ngAfterViewInit() {
@@ -350,4 +374,7 @@ export class ReplicationFormComponent implements AfterViewInit {
     });
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }
