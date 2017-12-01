@@ -19,6 +19,7 @@ import { AboutModalDialog } from './components/common/dialog/about/about-dialog.
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
+import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
 import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
@@ -51,7 +52,7 @@ export function createTranslateLoader(http: Http) {
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -68,6 +69,7 @@ export function createTranslateLoader(http: Http) {
     AppLoaderComponent,
     ConfirmDialog,
     ErrorDialog,
+    InfoDialog,
     AboutModalDialog,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog
