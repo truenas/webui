@@ -25,8 +25,7 @@ import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 import { ReplicationListComponent } from 'app/pages/task-calendar/replication/replication-list';
-import { ReplicationAddComponent } from 'app/pages/task-calendar/replication/replication-add';
-import { ReplicationEditComponent } from 'app/pages/task-calendar/replication/replication-edit';
+import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/replication-form';
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
 
 @NgModule({
@@ -55,8 +54,7 @@ import { ReplicationService } from 'app/pages/task-calendar/replication/replicat
     SmartListComponent,
     SmartFormComponent,
     ReplicationListComponent,
-    ReplicationAddComponent,
-    ReplicationEditComponent
+    ReplicationFormComponent,
   ],
   providers: [ ReplicationService ]
 })
