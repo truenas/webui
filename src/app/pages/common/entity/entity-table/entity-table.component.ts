@@ -28,7 +28,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
   @Input('conf') conf: any;
-
   
   @ViewChild('filter') filter: ElementRef;
   @ViewChild(MdPaginator) paginator: MdPaginator;
