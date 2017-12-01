@@ -7,7 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
@@ -32,10 +32,13 @@ export class SnapshotFormComponent {
     name: 'task_recursive',
     placeholder: 'Recursive',
   }, {
+    placeholder:'Snapshot Lifetime',
     type: 'input',
     name: 'task_ret_count',
     inputType: 'number',
     class: 'inline',
+    value: 2,
+    validation: [Validators.min(0)]
   }, {
     type: 'select',
     name: 'task_ret_unit',

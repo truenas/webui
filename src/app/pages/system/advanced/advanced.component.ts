@@ -1,35 +1,68 @@
-
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
 import {WebSocketService} from "../../../services/ws.service";
 import {RestService} from "../../../services/rest.service";
 import {Observable} from "rxjs/Observable";
+import {AppLoaderService} from "../../../services/app-loader/app-loader.service";
+import {DialogService} from "../../../services/dialog.service";
 
 @Component({
   selector: 'app-system-advanced',
-  templateUrl: 'advanced.component.html'
+  templateUrl: 'advanced.component.html',
+  styleUrls: ['advanced.component.css']
 })
 export class AdvancedComponent implements OnInit {
 
-  systemAdvancedSettings: any;
+  isReady: boolean = false;
+  error: string;
+  success: string;
+  users: any;
+  ports: any;
+  systemAdvancedSettings = {
+    adv_consolemenu: '',
+    adv_serialconsole: '',
+    adv_serialport: '',
+    adv_serialspeed: '',
+    adv_swapondrive: '',
+    adv_consolescreensaver: '',
+    adv_powerdaemon: '',
+    adv_autotune: '',
+    adv_debugkernel: '',
+    adv_consolemsg: '',
+    adv_motd: '',
+    adv_traceback: '',
+    adv_advancedmode: '',
+    adv_uploadcrash: '',
+    adv_periodic_notifyuser: '',
+    adv_graphite: '',
+    adv_fqdn_syslog: ''
+  };
 
-  constructor(private formBuilder: FormBuilder,
-              private rest: RestService,
-              protected ws: WebSocketService) {
+  constructor(private rest: RestService,
+              private load: AppLoaderService,
+              private dialog: DialogService,
+              private ws: WebSocketService) {
   }
 
   ngOnInit(): void {
-    this.buildForm();
     const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);
     const users = this.rest.get('account/users/', {limit: 0});
     const systemSettings = this.rest.get('system/advanced', {limit: 0});
     Observable.forkJoin([deviceInfo, users, systemSettings]).subscribe(results => {
-
-      this.systemAdvancedSettings = results[2].data;
-    })
+      // listing serial ports
+      this.ports = results[0];
+      // users with their data
+      this.users = results[1].data;
+      // setting current system data
+      this.buildForm(results[2].data);
+      // readying the page
+      this.isReady = true;
+    }, res => {
+      this.isReady = true;
+      this.error = 'Something went wrong, please try again later.';
+    });
   }
 
-  buildForm(system?:any) {
+  buildForm(system: any) {
     this.systemAdvancedSettings = {
       adv_consolemenu: system.adv_consolemenu,
       adv_serialconsole: system.adv_serialconsole,
@@ -52,7 +85,17 @@ export class AdvancedComponent implements OnInit {
   }
 
   onFormSubmit() {
-
+    this.load.open('Updating settings...');
+    this.rest.put('system/advanced', {body: this.systemAdvancedSettings})
+      .subscribe(res => {
+        this.systemAdvancedSettings = res.data;
+        this.success = 'System settings updated';
+        setTimeout(() => this.success = '', 5000);
+        this.load.close();
+      }, res => {
+        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+        this.load.close();
+      })
   }
 }
 
