@@ -1,24 +1,25 @@
-import {ModuleWithProviders} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import { ModuleWithProviders} from '@angular/core';
+import { RouterModule, Routes} from '@angular/router';
 
-import {DatasetPermissionsComponent} from './volumes/datasets/dataset-permissions/'
-import {SnapshotAddComponent} from './snapshots/snapshot-add/';
-import {SnapshotCloneComponent} from './snapshots/snapshot-clone/';
-import {SnapshotListComponent} from './snapshots/snapshot-list/';
-import {SnapshotRollbackComponent} from './snapshots/snapshot-rollback/';
-import {DatasetFormComponent} from './volumes/datasets/dataset-form/';
-import {DatasetDeleteComponent} from './volumes/datasets/dataset-delete/';
-import {ManagerComponent} from './volumes/manager/';
+import { DatasetPermissionsComponent} from './volumes/datasets/dataset-permissions/'
+import { SnapshotAddComponent} from './snapshots/snapshot-add/';
+import { SnapshotCloneComponent} from './snapshots/snapshot-clone/';
+import { SnapshotListComponent} from './snapshots/snapshot-list/';
+import { SnapshotRollbackComponent} from './snapshots/snapshot-rollback/';
+import { DatasetFormComponent} from './volumes/datasets/dataset-form/';
+import { DatasetDeleteComponent} from './volumes/datasets/dataset-delete/';
+import { ManagerComponent} from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
-import {VolumeDeleteComponent} from './volumes/volume-delete/index';
-import {VolumesListComponent} from './volumes/volumes-list/';
-import {ZvolAddComponent} from './volumes/zvol/zvol-add/';
-import {ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
-import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
-import {VolumeImportListComponent} from './volumes/import-list/';
-import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
-import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
+import { VolumeDeleteComponent} from './volumes/volume-delete/index';
+import { VolumesListComponent} from './volumes/volumes-list/';
+import { ZvolAddComponent} from './volumes/zvol/zvol-add/';
+import { ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
+import { ZvolEditComponent} from './volumes/zvol/zvol-edit/';
+import { VolumeImportListComponent} from './volumes/import-list/';
+import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
+import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { StatusComponent } from './volumes/status/status.component';
+import { DisksListComponent } from './volumes/disks-list/';
 
 export const routes: Routes = [
   {
@@ -49,8 +50,7 @@ export const routes: Routes = [
           data: {title: 'Delete Dataset', breadcrumb:'Delete Dataset' }},
         {
           path : 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
-          data: {title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
-        },
+          data: {title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }},
         {
           path : 'id/:pk/zvol/delete/:path', component : ZvolDeleteComponent,
           data: {title: 'Delete Zvol', breadcrumb:'Delete Zvol' }},
@@ -60,12 +60,16 @@ export const routes: Routes = [
         {
           path : 'import_list', component: VolumeImportListComponent,
           data: {title: 'Import Volume', breadcrumb:'Import Volume' }},
-        {"path": 'status/:pk', component: StatusComponent,
+        {
+          path: 'status/:pk', component: StatusComponent,
           data: {title: 'Scrub Status', breadcrumb:'Scrub Status' }},
         //{ path: 'edit/:pk', component: VolumesEditComponent },
         {
           path : 'delete/:pk', component : VolumeDeleteComponent,
           data: {title: 'Delete Volume', breadcrumb:'Delete Volume' }},
+        {
+          path : 'disks_list', component: DisksListComponent,
+          data: {title: 'View Disks', breadcrumb:'View Disks' }},
       ]},
       {
         path: 'snapshots',
