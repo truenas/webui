@@ -15,7 +15,11 @@
 			<input mdInput #filter placeholder="Filter {{title}}">
 		</md-input-container>
 	</div>
-	========================  entity-group-table is working =================
+	========================  entity-group-table is Under Construction =================
+	
+	<div *ngIf="this.nodes.length > 0">
+		<tree-root [nodes]="nodes"></tree-root>
+	</div>
 	<div>
 		<ngx-datatable class='material' 
 					   [rows]='seenRows' 

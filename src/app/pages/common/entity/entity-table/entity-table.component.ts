@@ -109,6 +109,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
   }
+  
 
   ngAfterViewInit(): void {
     this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
@@ -144,53 +145,56 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
     this.busy =
-      this.getFunction.subscribe((res) => {
-        if (res.data) {
-          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
-            res.data = this.conf.resourceTransformIncomingRestData(res.data);
-          }
-        } else {
-          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
-            res = this.conf.resourceTransformIncomingRestData(res);
-          }
-        }
-
-        let rows: any[] = [];
-
-        if (this.loaderOpen) {
-          this.loader.close();
-          this.loaderOpen = false;
-        }
-        if (res.data) {
-          rows = new EntityUtils().flattenData(res.data);
-        } else {
-          rows = new EntityUtils().flattenData(res);
-        }
-        if (this.conf.dataHandler) {
-          this.conf.dataHandler(this);
-        }
-        for (let i = 0; i < rows.length; i++) {
-          for (let attr in rows[i]) {
-            if (rows[i].hasOwnProperty(attr)) {
-              rows[i][attr] = this.rowValue(rows[i], attr);
-            }
-          }
-        }
-
-        this.rows = rows;
-    
-        if (this.conf.addRows) {
-          this.conf.addRows(this);
-        }
-        
-        this.currentRows = rows;
-        this.paginationPageIndex  = 0;
-        this.setPaginationInfo();
-
+      this.getFunction.subscribe((res)=>{
+        this.handleData(res);
       });
 
   }
 
+  handleData(res) {
+    if (res.data) {
+      if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+        res.data = this.conf.resourceTransformIncomingRestData(res.data);
+      }
+    } else {
+      if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+        res = this.conf.resourceTransformIncomingRestData(res);
+      }
+    }
+
+    let rows: any[] = [];
+
+    if (this.loaderOpen) {
+      this.loader.close();
+      this.loaderOpen = false;
+    }
+    if (res.data) {
+      rows = new EntityUtils().flattenData(res.data);
+    } else {
+      rows = new EntityUtils().flattenData(res);
+    }
+    if (this.conf.dataHandler) {
+      this.conf.dataHandler(this);
+    }
+    for (let i = 0; i < rows.length; i++) {
+      for (let attr in rows[i]) {
+        if (rows[i].hasOwnProperty(attr)) {
+          rows[i][attr] = this.rowValue(rows[i], attr);
+        }
+      }
+    }
+
+    this.rows = rows;
+
+    if (this.conf.addRows) {
+      this.conf.addRows(this);
+    }
+    
+    this.currentRows = rows;
+    this.paginationPageIndex  = 0;
+    this.setPaginationInfo();
+
+  }
 
   trClass(row) {
     let classes = [];
