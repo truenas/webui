@@ -1,9 +1,25 @@
-.mat-card>.mat-card-actions {
-	margin: 0px !important;
-	padding-left: 3rem;
-	padding-bottom: 3rem;
+.custom_cell_styling {
+	overflow: hidden; 
+	height: 20px; 
+	width: 100%; 
+	padding-left: 5px;
 }
-.datatable-checkbox {
-  padding: 0 !important;
-  margin: 0 0 0 0 !important;
+
+.wrapper {
+	display: flex;
+	flex-flow: row wrap;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
 }
+
+.disks {
+	flex-basis: auto;
+	-webkit-box-flex: 1;
+	min-width: 400px; 
+}
+.pool {
+	flex-basis: auto;
+	-webkit-box-flex: 1;
+	min-width: 450px; 
+}
+

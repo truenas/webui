@@ -1,0 +1,26 @@
+.vdev-wrapper {
+    display: flex;
+}
+.vdev-table {
+	flex: 1 1 auto;
+}
+
+.vdev-actions {
+    display: flex;
+    padding: 70px 0;
+    flex-direction: column;
+    flex: 0 0 auto;
+}
+
+.vdev-action-btn {
+    border: none;
+    outline: none;
+}
+
+.vdev-type {
+	flex: 1 1 auto;
+}
+
+.vdev-close {
+    flex: 0 0 auto;
+}
