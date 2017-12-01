@@ -302,6 +302,7 @@ export class ReplicationFormComponent implements AfterViewInit {
   }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
       if (res === 'SEMIAUTOMATIC'){
         _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = true;
