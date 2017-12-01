@@ -161,12 +161,14 @@ export class ReplicationFormComponent implements AfterViewInit {
         type: 'select',
         name: 'repl_filesystem',
         placeholder: 'Volume/Dataset',
-        options: []
+        options: [],
+        validation: Validators.required
       },
       {
         type: 'input',
         name: 'repl_zfs',
-        placeholder: "Remote ZFS Volume/Dataset"
+        placeholder: "Remote ZFS Volume/Dataset",
+        validation: Validators.required
       },
       {
         type : 'checkbox',
@@ -188,7 +190,7 @@ export class ReplicationFormComponent implements AfterViewInit {
           {label : 'Off', value : 'off'}, 
           {label : 'lz4 (fastest)', value : 'lz4'},
           {label : 'pigz (all rounder)', value : 'pigz'},
-          {label : 'pizip (best compression)', value : 'pizip'}
+          {label : 'plzip (best compression)', value : 'plzip'}
         ]
       },
       { 
