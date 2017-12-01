@@ -109,7 +109,7 @@ export class ScrubFormComponent {
     this.volume_field = _.find(this.fieldConfig, { 'name': 'scrub_volume' });
     this.taskService.getVolumeList().subscribe((res) => {
       res.data.forEach((item) => {
-        this.volume_field.options.push({ label: item.vol_name, value: item.vol_name });
+        this.volume_field.options.push({ label: item.vol_name, value: item.id });
       })
     });
 
