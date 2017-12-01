@@ -15,6 +15,7 @@ export class JailListComponent {
   protected route_add: string[] = ['jails', 'add'];
   protected route_add_tooltip = "Add Jail";
   protected wsDelete = 'jail.do_delete';
+  protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
   public columns: Array < any > = [
@@ -90,6 +91,14 @@ export class JailListComponent {
               console.log(res);
               this.loader.close();
             });
+      }
+    },
+    {
+      id: "mdelete",
+      label: "Delete",
+      enable: true,
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
       }
     },
   ];
@@ -178,5 +187,11 @@ export class JailListComponent {
     } else {
       _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
     }
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['jail.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
   }
 }
