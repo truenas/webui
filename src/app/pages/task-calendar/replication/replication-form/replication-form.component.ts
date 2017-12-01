@@ -133,7 +133,8 @@ export class ReplicationFormComponent implements AfterViewInit {
     {label : '23:00:00', value : '23:00:00'}, 
     {label : '23:15:00', value : '23:15:00'}, 
     {label : '23:30:00', value : '23:35:00'}, 
-    {label : '23:45:00', value : '23:45:00'}
+    {label : '23:45:00', value : '23:45:00'},
+    {label : '23:59:00', value : '23:59:00'},
   ];
   
   private repl_remote_dedicateduser: any;
@@ -223,7 +224,8 @@ export class ReplicationFormComponent implements AfterViewInit {
         options : [
           {label : 'Manual', value : 'MANUAL'}, 
           {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
-        ]
+        ],
+        isHidden: false
       }, 
       {
         type : 'input',
@@ -299,23 +301,6 @@ export class ReplicationFormComponent implements AfterViewInit {
     ];
   }
 
-  preInit(entityForm: any){
-
-    if (!entityForm.data){
-      this.rest.get(this.resource_name, {}).subscribe((res)=>{
-        _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_mode'}));
-        for (const key in this.entityForm.data){
-          if (key === 'repl_remote_port'){
-            _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_port'}));
-            _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_https'}));
-            _.remove(this.fieldConfig, _.find(this.fieldConfig, {'name' : 'repl_remote_token'}));
-          }
-        }
-      });
-    }
-
-  }
-
   afterInit(entityForm: any) {
     this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
       if (res === 'SEMIAUTOMATIC'){
@@ -337,8 +322,20 @@ export class ReplicationFormComponent implements AfterViewInit {
     if (entityForm.isNew){
       entityForm.formGroup.controls['repl_remote_mode'].setValue('MANUAL');
       entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
-      entityForm.formGroup.controls['repl_end'].setValue('23:45:00');
+      entityForm.formGroup.controls['repl_end'].setValue('23:59:00');
       entityForm.formGroup.controls['repl_remote_cipher'].setValue('standard');
+      entityForm.formGroup.controls['repl_compression'].setValue('lz4');
+    }
+    else {
+      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'}).isHidden = true;
+      this.rest.get(this.resource_name, {}).subscribe((res)=>{
+        for (const key in entityForm.data){
+          if (key === 'repl_remote_port'){
+            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
+            _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
+          }
+        }
+      });
     }
     this.repl_remote_dedicateduser = _.find(this.fieldConfig, {'name' : 'repl_remote_dedicateduser'});
     this.ws.call('user.query').subscribe((res)=>{
