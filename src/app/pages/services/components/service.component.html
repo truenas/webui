@@ -1,10 +1,26 @@
+
+<md-card>
+  <md-card-header>
+    <md-card-title>{{status.label}}</md-card-title>
+    <md-card-subtitle>State: {{status.state}}</md-card-subtitle>
+  </md-card-header>
+  <md-card-content>
+    <p>
+      <md-slide-toggle #serviceStatus [checked]="status.state === 'RUNNING'" (change)="toggle()"> </md-slide-toggle>
+      <span>{{status.state === 'RUNNING' ? 'Running': 'Stopped'}}</span>
+    </p>
+    <p>
+      <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox> Auto Start
+    </p>
+  </md-card-content>
+  <md-card-actions>
+    <button md-button (click)="editService(this.status.service)">Configure</button>
+  </md-card-actions>
+</md-card>
+<!--
 <md-card class="m-0 p-0">
 <md-toolbar class="mat-bg-primary" >
-  <md-slide-toggle
-    #serviceStatus
-    [checked]="status.state === 'RUNNING'"
-    (change)="toggle()">
-  </md-slide-toggle>
+  <md-slide-toggle #serviceStatus [checked]="status.state === 'RUNNING'" (change)="toggle()"> </md-slide-toggle>
   <md-card-title class="mb-05 ml-1 service-item-title">
     {{status.label}}
   </md-card-title>
@@ -29,4 +45,4 @@
   </button>
   </md-card-actions>
 </md-card>
-
+-->

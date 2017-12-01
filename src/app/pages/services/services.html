@@ -1,3 +1,77 @@
-<div class="services-wrap">
-	<service *ngFor="let service of services" [status]="service" class="service-item mt-1 mb-05 ml-1"></service>
+<div>
+  <div class="view-controls">
+    <md-button-toggle-group #viewMode="mdButtonToggleGroup" (change)="onViewChange($event)">
+      <md-button-toggle value="cards">Cards</md-button-toggle>
+      <md-button-toggle value="slim">Slim</md-button-toggle>
+      <md-button-toggle value="table">Table</md-button-toggle>
+    </md-button-toggle-group>
+  </div>
+</div>
+<div class="padding-16">
+  <div *ngIf="viewMode.value == 'table'">
+    <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxLayoutGap="5%">
+      <!---->
+      <ngx-datatable
+        [rows]='services'
+        class='material'
+        [columnMode]="'flex'"
+        [rowHeight]="'auto'"
+        [headerHeight]="'50px'"
+        [footerHeight]="'50px'"
+        [limit]="20">
+
+        <ngx-datatable-column name="Label" [flexGrow]="3">
+          <ng-template let-column="column" ngx-datatable-header-template>
+            {{column.name}}
+          </ng-template>
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <div>{{value}}</div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="State" [flexGrow]="3" [minWidth]="100">
+          <ng-template let-column="column" ngx-datatable-header-template>
+            {{column.name}}
+          </ng-template>
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <div><strong>{{value}}</strong></div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="State" [flexGrow]="3">
+          <ng-template let-column="column" ngx-datatable-header-template>
+            Start/Stop
+          </ng-template>
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <mat-slide-toggle [checked]="row.state === 'RUNNING'" (change)="toggleService(row)"></mat-slide-toggle>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Enable" [flexGrow]="3">
+          <ng-template let-column="column" ngx-datatable-header-template>
+            Auto Start
+          </ng-template>
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <mat-slide-toggle [checked]="row.enable" (change)="toggleAutoStart(row)"></mat-slide-toggle>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Service" [flexGrow]="3">
+          <ng-template let-column="column" ngx-datatable-header-template>
+            Settings
+          </ng-template>
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            <!--{{value}}-->
+            <a md-button (click)="configure(value)">Configure</a>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+  <div class="services-wrap" *ngIf="viewMode.value == 'slim' || viewMode.value == 'cards'">
+    <service *ngFor="let service of services"
+             [status]="service" class="service-item"
+             [ngClass]="{'card-view': viewMode.value == 'cards', 'slim-view': viewMode.value == 'slim'}">
+    </service>
+  </div>
 </div>
