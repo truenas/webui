@@ -1,0 +1,14 @@
+<h1 md-dialog-title>
+  <md-icon class="information-icon">report_problem</md-icon>
+  {{ title }}
+</h1>
+<div md-dialog-content>
+  <div class="info-panel">
+    <textarea mdInput>{{info}}</textarea>
+  </div>  
+</div>
+<div md-dialog-actions>
+  &nbsp;
+  <span fxFlex></span>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">Close</button>
+</div>
