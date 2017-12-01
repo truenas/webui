@@ -24,17 +24,18 @@ import { ReplicationService } from 'app/pages/task-calendar/replication/replicat
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
-  selector : 'app-replication-add',
-  templateUrl : './replication-add.component.html' 
+  selector : 'app-replication-form',
+  templateUrl : './replication-form.component.html' 
 })
-export class ReplicationAddComponent implements AfterViewInit {
+export class ReplicationFormComponent implements AfterViewInit {
   
   protected resource_name = 'storage/replication';
   protected route_success: string[] = [ 'tasks', 'replication'];
-  protected isNew = true;
+  protected isNew = false;
   protected isEntity = true;
   public initialized = false;
   protected entityForm: EntityFormComponent;
+  private subscription;
   
   private times = [
     {label : '00:00:00', value : '00:00:00'}, 
@@ -132,10 +133,11 @@ export class ReplicationAddComponent implements AfterViewInit {
     {label : '23:00:00', value : '23:00:00'}, 
     {label : '23:15:00', value : '23:15:00'}, 
     {label : '23:30:00', value : '23:35:00'}, 
-    {label : '23:45:00', value : '23:45:00'}
+    {label : '23:45:00', value : '23:45:00'},
+    {label : '23:59:00', value : '23:59:00'},
   ];
   
-  
+  private repl_remote_dedicateduser: any;
   protected fieldConfig: FieldConfig[];
 
   constructor(
@@ -159,12 +161,14 @@ export class ReplicationAddComponent implements AfterViewInit {
         type: 'select',
         name: 'repl_filesystem',
         placeholder: 'Volume/Dataset',
-        options: []
+        options: [],
+        validation: Validators.required
       },
       {
         type: 'input',
         name: 'repl_zfs',
-        placeholder: "Remote ZFS Volume/Dataset"
+        placeholder: "Remote ZFS Volume/Dataset",
+        validation: Validators.required
       },
       {
         type : 'checkbox',
@@ -179,10 +183,23 @@ export class ReplicationAddComponent implements AfterViewInit {
         value: false
       },
       { 
+        type: 'select',
+        name: 'repl_compression',
+        placeholder: 'Replication Stream Compression',
+        options : [
+          {label : 'Off', value : 'off'}, 
+          {label : 'lz4 (fastest)', value : 'lz4'},
+          {label : 'pigz (all rounder)', value : 'pigz'},
+          {label : 'plzip (best compression)', value : 'plzip'}
+        ]
+      },
+      { 
         type: 'input',
         name: 'repl_limit',
         placeholder: 'Limit (KB/s)',
-        inputType: 'number'
+        inputType: 'number', 
+        value: 0,
+        validation: [Validators.min(0)]
       },
       {
         type: 'select',
@@ -197,20 +214,56 @@ export class ReplicationAddComponent implements AfterViewInit {
         options : this.times
       },
       {
+        type : 'checkbox',
+        name : 'repl_enabled',
+        placeholder : 'Enabled',
+        value: true
+      },
+      {
+        type : 'select',
+        name : 'repl_remote_mode',
+        placeholder : 'Remote Mode',
+        options : [
+          {label : 'Manual', value : 'MANUAL'}, 
+          {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
+        ],
+        isHidden: false
+      }, 
+      {
         type : 'input',
         name : 'repl_remote_hostname',
-        placeholder : 'Remote Hostname'
+        placeholder : 'Remote Hostname',
+        validation: Validators.required
       },
       {
         type : 'input',
         name : 'repl_remote_port',
         placeholder : 'Remote Port',
-        inputType: 'number'
+        inputType: 'number',
+        value : 22,
+        validation: [Validators.min(0)],
+        isHidden: false
       },
       {
-        type: 'input',
-        name: 'repl_remote_dedicateduser',
-        placeholder: 'Remote User'
+        type : 'input',
+        name : 'repl_remote_http_port',
+        placeholder : 'Remote HTTP/HTTPS Port',
+        inputType: 'number',
+        value : 80,
+        validation: [Validators.min(0)],
+        isHidden: true,
+      },
+      {
+        type : 'checkbox',
+        name : 'repl_remote_https',
+        placeholder : 'Remote HTTPS',
+        isHidden: true,
+      },
+      {
+        type : 'input',
+        name : 'repl_remote_token',
+        placeholder : 'Remote Auth Token',
+        isHidden: true,
       },
       {
         type : 'select',
@@ -221,26 +274,21 @@ export class ReplicationAddComponent implements AfterViewInit {
           {label : 'fast', value : 'fast'},
           {label : 'disabled', value : 'disabled'}
         ]
-      },{
-
-        type : 'select',
-        name : 'repl_remote_mode',
-        placeholder : 'Remote Mode',
-        options : [
-          {label : 'MANUAL', value : 'MANUAL'}, 
-          {label : 'SEMIAUTOMATIC', value : 'SEMIAUTOMATIC'}
-        ]
-      }, 
-      { 
+      },
+      {
+        type: 'checkbox',
+        name: 'repl_remote_dedicateduser_enabled',
+        placeholder: 'Dedicated User Enabled',
+    },
+      {
         type: 'select',
-        name: 'repl_compression',
-        placeholder: 'Stream Compression',
-        options : [
-          {label : 'Off', value : 'off'}, 
-          {label : 'lz4 (fastest)', value : 'lz4'},
-          {label : 'pigz (all rounder)', value : 'pigz'},
-          {label : 'pizip (all rounder)', value : 'pizip'}
-        ]
+        name: 'repl_remote_dedicateduser',
+        placeholder: 'Dedicated User',
+        options: [],
+        relation:[ {
+          action: "DISABLE", 
+          when:[ {name:'repl_remote_dedicateduser_enabled', value: false }]
+        } ]
       },
       {
         type: 'textareabutton',
@@ -249,31 +297,55 @@ export class ReplicationAddComponent implements AfterViewInit {
         customEventActionLabel: 'Remote SSH Key',
         customEventMethod: function(data) {
           theThis.customEventMethod(data);
-        }
+        },
+        isHidden: false
       },
-      {
-          type: 'checkbox',
-          name: 'repl_remote_dedicateduser_enabled',
-          placeholder: 'Dedicated User(Root used if false)',
-          value: false
-      },
-      {
-        type: 'input',
-        name: 'repl_remote_dedicateduser',
-        placeholder: 'Remote User',
-        value: "root"
-      },
-      {
-        type : 'checkbox',
-        name : 'repl_enabled',
-        placeholder : 'Replication Enabled',
-        value: false
-      }
     ];
   }
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    this.subscription = entityForm.formGroup.controls['repl_remote_mode'].valueChanges.subscribe((res) => {
+      if (res === 'SEMIAUTOMATIC'){
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = false;
+      } else {
+        _.find(this.fieldConfig, {'name' : 'repl_remote_port'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_hostkey'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'repl_remote_token'}).isHidden = true;
+         
+      }
+
+    });
+    if (entityForm.isNew){
+      entityForm.formGroup.controls['repl_remote_mode'].setValue('MANUAL');
+      entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
+      entityForm.formGroup.controls['repl_end'].setValue('23:59:00');
+      entityForm.formGroup.controls['repl_remote_cipher'].setValue('standard');
+      entityForm.formGroup.controls['repl_compression'].setValue('lz4');
+    }
+    else {
+      _.find(this.fieldConfig, {'name' : 'repl_remote_mode'}).isHidden = true;
+      this.rest.get(this.resource_name, {}).subscribe((res)=>{
+        for (const key in entityForm.data){
+          if (key === 'repl_remote_port'){
+            _.find(this.fieldConfig, {'name' : 'repl_remote_http_port'}).isHidden = true;
+            _.find(this.fieldConfig, {'name' : 'repl_remote_https'}).isHidden = true;
+          }
+        }
+      });
+    }
+    this.repl_remote_dedicateduser = _.find(this.fieldConfig, {'name' : 'repl_remote_dedicateduser'});
+    this.ws.call('user.query').subscribe((res)=>{
+      res.forEach((item) => {
+        this.repl_remote_dedicateduser.options.push({label : item.username, value : item.username})
+      });
+    })
   }
 
   ngAfterViewInit() {
@@ -302,4 +374,7 @@ export class ReplicationAddComponent implements AfterViewInit {
     });
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }
