@@ -237,6 +237,32 @@
   "Miss": "小姐",
   "ZFS Demand Metadata": "ZFS需求元数据",
   "ZFS Prefetch Data": "ZFS预取数据",
-  "ZFS Prefetch Metadata": "ZFS预取元数据"
+  "ZFS Prefetch Metadata": "ZFS预取元数据",
+
+  "--- VMs ---": "",
+  "Virtual Machines": "虚拟机",
+  "Filter VM List": "过滤VM列表",
+  "Filter VMs": "过滤VMs",
+  "Cards": "牌",
+  "Slim": "瘦",
+  "Table": "表",
+  "Charts Go Here!": "图表去这里！",
+  "Description": "描述",
+  "Info": "信息",
+  "Virtual CPUs": "虚拟CPUs",
+  "Memory Size (MiB)": "内存大小（MiB）",
+  "Boot Loader Type": "引导加载程序类型",
+  "State": "州",
+  "Autostart": "自动启动",
+  "Devices": "设备",
+  "Start on Boot": "开机启动",
+  "Boot Loader Type": "引导加载程序类型",
+
+  "--------": "",
+  "Successfully updated.": "成功更新。",
+  "Configure": "配置",
+  "Label Icon": "标签图标",
+  "Status": "状态",
+  "Auto-start": "自动-启动"
 
 }

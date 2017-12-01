@@ -237,6 +237,32 @@
   "Miss": "Miss",
   "ZFS Demand Metadata": "ZFS Demand Metadata",
   "ZFS Prefetch Data": "ZFS Prefetch Data",
-  "ZFS Prefetch Metadata": "ZFS Prefetch Metadata"
+  "ZFS Prefetch Metadata": "ZFS Prefetch Metadata",
+
+  "--- VMs ---": "",
+  "Virtual Machines": "Virtual Machines",
+  "Filter VM List": "Filter VM List",
+  "Filter VMs": "Filter VMs",
+  "Cards": "Cards",
+  "Slim": "Slim",
+  "Table": "Table",
+  "Charts Go Here!": "Charts Go Here!",
+  "Description": "Description",
+  "Info": "Info",
+  "Virtual CPUs": "Virtual CPUs",
+  "Memory Size (MiB)": "Memory Size (MiB)",
+  "Boot Loader Type": "Boot Loader Type",
+  "State": "State",
+  "Autostart": "Autostart",
+  "Devices": "Devices",
+  "Start on Boot": "Start on Boot",
+  "Boot Loader Type": "Boot Loader Type",
+
+  "--------": "",
+  "Successfully updated.": "Successfully updated.",
+  "Configure": "Configure",
+  "Label Icon": "Label Icon",
+  "Status": "Status",
+  "Auto-start": "Auto-start"
 
 }
