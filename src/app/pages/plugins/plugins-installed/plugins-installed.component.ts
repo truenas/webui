@@ -15,6 +15,7 @@ export class PluginsInstalledListComponent {
   protected queryCall = 'jail.list_resource';
   protected queryCallOption = ["PLUGIN"];
   protected wsDelete = 'jail.do_delete';
+  protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
   public columns: Array < any > = [
@@ -74,6 +75,14 @@ export class PluginsInstalledListComponent {
               console.log(res);
               this.loader.close();
             });
+      }
+    },
+    {
+      id: "mdelete",
+      label: "Delete",
+      enable: true,
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
       }
     },
   ];
@@ -150,5 +159,11 @@ export class PluginsInstalledListComponent {
     } else {
       _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
     }
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['jail.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
   }
 }
