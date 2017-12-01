@@ -14,6 +14,7 @@ export class SigninComponent implements OnInit {
   @ViewChild(MdButton) submitButton: MdButton;
 
   private failed: Boolean = false;
+  public origin: any;
 
   signinData = {
     username: 'root',
@@ -24,6 +25,7 @@ export class SigninComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.origin = window.location.origin;
     if (this.ws.username && this.ws.password && this.ws.redirectUrl) {
       this.submitButton.disabled = true;
       this.progressBar.mode = 'indeterminate';
