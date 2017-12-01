@@ -13,8 +13,6 @@ import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 import { ReplicationListComponent } from 'app/pages/task-calendar/replication/replication-list';
 import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/replication-form';
-import { ReplicationEditComponent } from 'app/pages/task-calendar/replication/replication-edit';
-
 export const TaskCalendarRoutes: Routes = [{
   path: '',
   data: { title: 'Calendar' },
