@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
 import filesize from 'filesize';
@@ -35,10 +35,7 @@ export class VolumesListComponent implements OnInit {
     {name : 'Status', prop : 'status'},
     {name : 'Compression', prop : 'compression'},
     {name : 'Readonly', prop : 'readonly'},
-    {name : 'Dedup', prop : 'dedup'},
-
-    
-    
+    {name : 'Dedup', prop : 'dedup'}
   ];
   public config: any = {
     paging : true,
@@ -81,6 +78,14 @@ export class VolumesListComponent implements OnInit {
     actions.push({
       label : "Import Volumes",
       icon: "vertical_align_bottom",
+      onClick : () => {
+        this._router.navigate(new Array('/').concat(
+            [ "storage", "volumes", "import_list" ]));
+      }
+    });
+    actions.push({
+      label : "View Disks",
+      icon: "important_devices",
       onClick : () => {
         this._router.navigate(new Array('/').concat(
             [ "storage", "volumes", "import_list" ]));
