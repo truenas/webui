@@ -7,6 +7,7 @@ import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort } fro
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
@@ -49,7 +50,7 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, MdSortModule 
+    Ng2DropdownModule, NgUploaderModule, MdSortModule, FlexLayoutModule
   ],
   declarations: [
     EntityDeleteComponent,
