@@ -9,6 +9,7 @@ import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
 
+
 @Component({
   selector: 'scrub-task-add',
   template: `<entity-form [conf]="this"></entity-form>`,
@@ -104,15 +105,8 @@ export class ScrubFormComponent {
   protected hour_field: any;
   protected daymonth_field: any;
 
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {
+  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService) {
     
-    this.volume_field = _.find(this.fieldConfig, { 'name': 'scrub_volume' });
-    this.taskService.getVolumeList().subscribe((res) => {
-      res.data.forEach((item) => {
-        this.volume_field.options.push({ label: item.vol_name, value: item.id });
-      })
-    });
-
     this.month_field = _.find(this.fieldConfig, { 'name': 'scrub_month' });
     this.taskService.getMonthChoices().subscribe((res) => {
       res.forEach((item) => {
@@ -144,5 +138,17 @@ export class ScrubFormComponent {
     for (let i = 1; i < 32; i++) {
       this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
+  }
+
+  afterInit(entityForm: any) {
+    this.volume_field = _.find(this.fieldConfig, { 'name': 'scrub_volume' });
+    this.taskService.getVolumeList().subscribe((res) => {
+      res.data.forEach((item) => {
+        this.volume_field.options.push({ label: item.vol_name, value: item.id });
+        if(item.vol_name == entityForm.data.scrub_volume) {
+          entityForm.formGroup.controls['scrub_volume'].setValue(item.id);
+        }
+      });
+    });    
   }
 }

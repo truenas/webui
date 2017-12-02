@@ -1,9 +1,11 @@
-import { RestService } from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
+
+import { RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
+
 
 @Component({
   selector: 'app-scrub-list',
@@ -34,7 +36,9 @@ export class ScrubListComponent {
     sorting: { columns: this.columns },
   };
 
-  constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService) {}
+  constructor(protected router: Router,
+    protected rest: RestService,
+    protected taskService: TaskService) {}
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
@@ -48,7 +52,7 @@ export class ScrubListComponent {
           for (let i = 0; i < months.length; i++) {
             month_list.push(res[Number(months[i]) - 1][1]);
           }
-          entityList.rows[i].scrub_month = _.join(month_list, ', ');
+          entityList.rows[i].scrub_month = _.join(month_list, ', ');         
         });
       }
 
