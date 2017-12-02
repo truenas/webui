@@ -15,6 +15,7 @@ import {
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
+import {  DialogService } from '../../../../services/';
 
 @Component({
   selector : 'app-user-form',
@@ -146,7 +147,8 @@ export class UserFormComponent {
   private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService ) {}
+              protected ws: WebSocketService, protected storageService: StorageService,
+              private dialog:DialogService ) {}
 
   preInit(entityForm: any) {
     // if (!entityForm.isNew) {
@@ -226,6 +228,10 @@ export class UserFormComponent {
           entityForm.formGroup.controls['bsdusr_shell'].setValue(
               this.shells[1][0]);
         });
+  }
+
+  errorReport(res) {
+    this.dialog.errorReport(res.code, res.error.error_message, res.error.traceback);
   }
 
   clean_uid(value) {
