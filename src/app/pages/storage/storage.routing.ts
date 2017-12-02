@@ -19,7 +19,8 @@ import { VolumeImportListComponent} from './volumes/import-list/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { StatusComponent } from './volumes/status/status.component';
-import { DisksListComponent } from './volumes/disks-list/';
+import { DisksListComponent } from './volumes/disks/disks-list/';
+import { DiskFormComponent } from './volumes/disks/disk-form/';
 
 export const routes: Routes = [
   {
@@ -68,8 +69,11 @@ export const routes: Routes = [
           path : 'delete/:pk', component : VolumeDeleteComponent,
           data: {title: 'Delete Volume', breadcrumb:'Delete Volume' }},
         {
-          path : 'disks_list', component: DisksListComponent,
+          path : 'disks', component: DisksListComponent,
           data: {title: 'View Disks', breadcrumb:'View Disks' }},
+        {
+          path : 'disks/edit/:pk', component : DiskFormComponent,
+          data: {title: 'Edit Disk', breadcrumb:'Edit Disk' }},
       ]},
       {
         path: 'snapshots',
@@ -99,9 +103,9 @@ export const routes: Routes = [
           {
             path : 'add', component : VMwareSnapshotFormComponent,
             data: {title: 'Add', breadcrumb:'Add' }},
-            {
-              path : 'edit/:pk', component : VMwareSnapshotFormComponent,
-              data: {title: 'Edit', breadcrumb:'Edit' }}
+          {
+            path : 'edit/:pk', component : VMwareSnapshotFormComponent,
+            data: {title: 'Edit', breadcrumb:'Edit' }}
 
         ]
       }

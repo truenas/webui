@@ -88,7 +88,7 @@ export class VolumesListComponent implements OnInit {
       icon: "important_devices",
       onClick : () => {
         this._router.navigate(new Array('/').concat(
-            [ "storage", "volumes", "disks_list" ]));
+            [ "storage", "volumes", "disks" ]));
       }
     });
     return actions;

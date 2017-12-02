@@ -1,13 +1,11 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
-import { TourService } from '../../../../services/tour.service';
 import filesize from 'filesize';
 import { debug } from 'util';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
-  selector : 'app-volumes-list',
+  selector : 'app-disks-list',
   template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class DisksListComponent {
@@ -17,10 +15,7 @@ export class DisksListComponent {
   protected resource_name: string = 'storage/disk/';
 
   constructor(
-    protected _rest: RestService,
-    private _router: Router,
-    protected _eRef: ElementRef,
-    private tour: TourService    
+    private _router: Router
   ) {}
 
   public columns: Array<any> = [
@@ -47,7 +42,9 @@ export class DisksListComponent {
     actions.push({
       label : "Edit",
       onClick : (row) => {
-        
+        this._router.navigate(new Array('/').concat([
+          "storage", "volumes", "disks", "edit", row.disk_identifier
+        ]));
       }
     });
     actions.push({

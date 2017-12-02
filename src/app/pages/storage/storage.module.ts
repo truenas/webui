@@ -30,7 +30,8 @@ import { ZvolAddComponent } from './volumes/zvol/zvol-add'
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
-import { DisksListComponent } from './volumes/disks-list/';
+import { DisksListComponent } from './volumes/disks/disks-list/';
+import { DiskFormComponent } from './volumes/disks/disk-form/';
 
 @NgModule({
   imports : [
@@ -59,7 +60,8 @@ import { DisksListComponent } from './volumes/disks-list/';
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
     StatusComponent,
-    DisksListComponent
+    DisksListComponent,
+    DiskFormComponent
   ],
   providers : [UserService, StorageService]
 })
