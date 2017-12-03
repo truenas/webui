@@ -21,6 +21,7 @@ import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-l
 import { StatusComponent } from './volumes/status/status.component';
 import { DisksListComponent } from './volumes/disks/disks-list/';
 import { DiskFormComponent } from './volumes/disks/disk-form/';
+import { DiskWipeComponent } from './volumes/disks/disk-wipe/disk-wipe.component';
 
 export const routes: Routes = [
   {
@@ -74,6 +75,9 @@ export const routes: Routes = [
         {
           path : 'disks/edit/:pk', component : DiskFormComponent,
           data: {title: 'Edit Disk', breadcrumb:'Edit Disk' }},
+        {
+          path : 'disks/wipe', component : DiskWipeComponent,
+          data: {title: 'Wipe Disk', breadcrumb:'Wipe Disk' }}
       ]},
       {
         path: 'snapshots',

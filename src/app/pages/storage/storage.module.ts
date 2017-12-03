@@ -32,6 +32,8 @@ import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DisksListComponent } from './volumes/disks/disks-list/';
 import { DiskFormComponent } from './volumes/disks/disk-form/';
+import { DiskWipeComponent } from './volumes/disks/disk-wipe/disk-wipe.component';
+
 
 @NgModule({
   imports : [
@@ -61,7 +63,8 @@ import { DiskFormComponent } from './volumes/disks/disk-form/';
     VMwareSnapshotListComponent,
     StatusComponent,
     DisksListComponent,
-    DiskFormComponent
+    DiskFormComponent,
+    DiskWipeComponent
   ],
   providers : [UserService, StorageService]
 })
