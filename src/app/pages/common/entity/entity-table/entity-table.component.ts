@@ -52,6 +52,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   protected loaderOpen: boolean = false;
+  public selected = [];
   private subscription: Subscription;
 
   constructor(protected rest: RestService,
@@ -345,5 +346,41 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.currentRows = this.rows;
     this.setPaginationInfo();
 
+  }
+
+  doMultiDelete(selected) {
+    this.dialog.confirm("Delete", "Are you sure you want to delete selected itme(s)?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        if (this.conf.wsMultiDelete) {
+          // ws to do multi-delete
+          if (this.conf.wsMultiDeleteParams) {
+            this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
+              (res) => {
+                  this.getData();
+                  this.selected = [];
+               },
+              (res) => {
+                new EntityUtils().handleError(this, res);
+                this.loader.close();
+              }
+            );
+          }
+        } else {
+          // rest to do multi-delete
+        }
+      }
+    })
+  }
+
+  onSelect({ selected }) {
+    this.selected.splice(0, this.selected.length);
+    this.selected.push(...selected);
+
+    if (this.conf.updateMultiAction) {
+      this.conf.updateMultiAction(this.selected);
+    }
   }
 }

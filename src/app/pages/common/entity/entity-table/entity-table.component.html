@@ -6,8 +6,25 @@
 	<div>
 		<br/>
 	</div>
-	<div>
-		<md-paginator #paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+	<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
+		<div fxFlex="40" fxLayout="row">
+			<div *ngIf="selected.length > 0 ? true : false" >
+				<div *ngIf="conf.multiActions; else defaultMultiActions">
+					<span *ngFor="let maction of conf.multiActions">
+						<button md-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+							<span>{{ maction?.label }}</span>
+					    </button>
+				    </span>
+				</div>
+				<ng-template #defaultMultiActions>
+					<button md-raised-button (click)="doMultiDelete(this.selected);">
+						<span>Delete</span>
+				    </button>
+				</ng-template>
+			</div>
+		</div>
+
+		<md-paginator #paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
 	<div class="padding_all">
@@ -31,8 +48,25 @@
 					   [count]="currentRows.length"
 					   [offset]="paginationPageIndex"
 					   (page)='paginationUpdate($event)'
-					   (sort)='reorderEvent($event)'>
-		    
+					   (sort)='reorderEvent($event)'
+					   [selectionType]="'checkbox'"
+					   [selected]='selected'
+					   (select)='onSelect($event)'>
+
+			<ngx-datatable-column *ngIf="conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+				<ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+					<div class="headerCheckboxCell">
+						<md-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></md-checkbox>
+					</div>
+				</ng-template>
+
+				<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+					<div class="checkboxCell">
+						<md-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></md-checkbox>
+					</div>
+				</ng-template>
+			</ngx-datatable-column>
+
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
 				prop="{{col.prop}}">
