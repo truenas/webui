@@ -41,6 +41,14 @@ export class ScrubListComponent {
     protected taskService: TaskService) {}
 
   dataHandler(entityList: any) {
+
+    let timeout = setTimeout(() => {
+      this.initFields(entityList);
+      clearTimeout(timeout);
+    }, 100);
+  }
+
+  initFields(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
       let month_list: Array < string > = [];
       let months = entityList.rows[i].scrub_month.split(',');
