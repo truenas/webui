@@ -12,19 +12,22 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 })
 export class DiskFormComponent {
 
-  protected route_success: string[] = ['storage', 'volumes'];
+  protected route_success: string[] = ['storage', 'volumes', 'disks'];
   protected resource_name: string = 'storage/disk/';
+  protected isEntity: boolean = true;
 
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'disk_name',
       placeholder: 'Name',
+      readonly: true
     },
     {
       type: 'input',
       name: 'disk_serial',
       placeholder: 'Serial',
+      readonly: true
     },
     {
       type: 'input',
@@ -53,7 +56,6 @@ export class DiskFormComponent {
       type : 'checkbox',
       name : 'disk_togglesmart',
       placeholder : 'Enable S.M.A.R.T.',
-      value : true,
     },
     {
       type: 'input',
@@ -62,7 +64,39 @@ export class DiskFormComponent {
     }
   ];
 
+  protected disk_hddstandby: any;
+  protected disk_advpowermgmt: any;
+  protected disk_acousticlevel: any;
+
   constructor(
-    private _router: Router
+    private _router: Router,
+    protected rest: RestService,
+    protected ws: WebSocketService
   ) {}
+
+  afterInit(entityEdit: any) {
+    this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {
+      this.disk_hddstandby = _.find(this.fieldConfig, {name : 'disk_hddstandby'});
+      res.forEach((item) => {
+        this.disk_hddstandby.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
+    this.ws.call('notifier.choices', ['ADVPOWERMGMT_CHOICES']).subscribe((res) => {
+      this.disk_advpowermgmt = _.find(this.fieldConfig, {name : 'disk_advpowermgmt'});
+      res.forEach((item) => {
+        this.disk_advpowermgmt.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+
+    this.ws.call('notifier.choices', ['ACOUSTICLVL_CHOICES']).subscribe((res) => {
+      this.disk_acousticlevel = _.find(this.fieldConfig, {name : 'disk_acousticlevel'});
+      res.forEach((item) => {
+        this.disk_acousticlevel.options.push(
+            {label : item[1], value : item[0]});
+      });
+    });
+  }
 }
