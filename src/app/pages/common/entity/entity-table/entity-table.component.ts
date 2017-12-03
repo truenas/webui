@@ -16,6 +16,7 @@ import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
 import { TranslateService } from '@ngx-translate/core';
+import { RxCommunicatingService } from '../../../../services/rx-communicating.service';
 
 
 @Component({
@@ -51,6 +52,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   protected loaderOpen: boolean = false;
+  private subscription: Subscription;
 
   constructor(protected rest: RestService,
     protected router: Router,
@@ -58,12 +60,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     protected _eRef: ElementRef,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    public translate: TranslateService,) { }
+    public translate: TranslateService,
+    private rxcomService: RxCommunicatingService) {
+
+    // i18n Translate
+    this.subscription = this.rxcomService.getDataFromOrigin().subscribe((res) => {
+      if(res && res.type == "language") {
+        let timeout = setTimeout(() => {
+          this.initPageLabels();
+          clearTimeout(timeout);
+        }, 100);        
+      }
+    });
+  }
 
   ngOnInit() {
-    this.paginator._intl.itemsPerPageLabel = this.translate.instant("Items per page") + ":";
-    this.paginator._intl.nextPageLabel = this.translate.instant("Next page");
-    this.paginator._intl.previousPageLabel = this.translate.instant("Previous page");
+    this.initPageLabels();
 
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
@@ -120,6 +132,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
       (<any>window).dispatchEvent(new Event('resize'));
     });
+  }
+
+  initPageLabels() {
+    this.paginator._intl.itemsPerPageLabel = this.translate.instant("Items per page") + ":";
+    this.paginator._intl.nextPageLabel = this.translate.instant("Next page");
+    this.paginator._intl.previousPageLabel = this.translate.instant("Previous page");
   }
 
   getData() {
