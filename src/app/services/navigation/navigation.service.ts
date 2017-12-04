@@ -74,6 +74,7 @@ export class NavigationService {
         { name: 'S.M.A.R.T Tests', state: 'smart' },
         { name: 'Periodic Snapshot Tasks', state: 'snapshot' },
         { name: 'Replication Tasks', state: 'replication' },
+        { name: 'Scrub Tasks', state: 'scrub' },
       ]
     },
     {
