@@ -6,7 +6,7 @@
     <md-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
       <md-expansion-panel-header>
         <md-panel-title>
-          Basic Properties
+          {{"Basic Properties" | translate}}
         </md-panel-title>
         <!--         <md-panel-description>
           expand to show more props
@@ -17,13 +17,13 @@
         </ng-container>
       </div>
       <md-action-row>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button md-button color="primary" type="button" (click)="nextStep()">{{"Next" | translate}}</button>
       </md-action-row>
     </md-expansion-panel>
     <md-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
       <md-expansion-panel-header>
         <md-panel-title>
-          Jail Properties
+          {{"Jail Properties" | translate}}
         </md-panel-title>
       </md-expansion-panel-header>
       <div>
@@ -31,14 +31,14 @@
         </ng-container>
       </div>
       <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button md-button color="warn" type="button" (click)="prevStep()">{{"Previous" | translate}}</button>
+        <button md-button color="primary" type="button" (click)="nextStep()">{{"Next" | translate}}</button>
       </md-action-row>
     </md-expansion-panel>
     <md-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
       <md-expansion-panel-header>
         <md-panel-title>
-          Network Properties
+          {{"Network Properties" | translate}}
         </md-panel-title>
       </md-expansion-panel-header>
       <div>
@@ -46,14 +46,14 @@
         </ng-container>
       </div>
       <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button md-button color="warn" type="button" (click)="prevStep()">{{"Previous" | translate}}</button>
+        <button md-button color="primary" type="button" (click)="nextStep()">{{"Next" | translate}}</button>
       </md-action-row>
     </md-expansion-panel>
     <md-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
       <md-expansion-panel-header>
         <md-panel-title>
-          Custom Properties
+          {{"Custom Properties" | translate}}
         </md-panel-title>
       </md-expansion-panel-header>
       <div>
@@ -61,14 +61,14 @@
         </ng-container>
       </div>
       <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button md-button color="warn" type="button" (click)="prevStep()">{{"Previous" | translate}}</button>
+        <button md-button color="primary" type="button" (click)="nextStep()">{{"Next" | translate}}</button>
       </md-action-row>
     </md-expansion-panel>
     <md-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
       <md-expansion-panel-header>
         <md-panel-title>
-          RCTL Limits
+          {{"RCTL Limits" | translate}}
         </md-panel-title>
       </md-expansion-panel-header>
       <div>
@@ -76,12 +76,12 @@
         </ng-container>
       </div>
       <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
+        <button md-button color="warn" type="button" (click)="prevStep()">{{"Previous" | translate}}</button>
       </md-action-row>
     </md-expansion-panel>
     <md-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" md-raised-button color="accent" type="button">Cancel</button>
+      <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">{{"Save" | translate}}</button>
+      <button *ngIf="route_success" (click)="goBack()" md-raised-button color="accent" type="button">{{"Cancel" | translate}}</button>
     </md-card-actions>
   </form>
 </md-card>

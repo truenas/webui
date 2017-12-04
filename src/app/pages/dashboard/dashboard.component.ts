@@ -1,7 +1,10 @@
 import { ChartFormatter } from '../../components/common/lineChart/lineChart.component';
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 import filesize from 'filesize';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs/Subscription';
+import { RxCommunicatingService } from '../../services/rx-communicating.service';
 
 import {
   RestService,
@@ -10,15 +13,13 @@ import {
 } from '../../services/';
 import { ChartConfigData, LineChartService } from 'app/components/common/lineChart/lineChart.service';
 
-
 @Component({
   selector: 'dashboard',
   styleUrls: ['./dashboard.scss'],
   templateUrl: './dashboard.html',
   providers: [SystemGeneralService]
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
-
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public info: any = {};
   public ipAddress: any = [];
@@ -27,66 +28,25 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       return filesize(value, {standard: "iec"});
     }
   };
-  public graphs: ChartConfigData[] = [
-    {
-      title: "Average Load",
-      legends: ['Short Term', ' Mid Term', 'Long Term'],
-      type: LineChartService.lineChart,
-      dataList: [
-        {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
-        {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
-        {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
-      ],
-    },
-    {
-      title: "Memory (gigabytes)",
-      type: LineChartService.lineChart,
-      legends: ['Free', 'Active', 'Cache', 'Wired', 'Inactive'],
-      dataList: [
-        {'source': 'memory', 'type': 'memory-free', 'dataset': 'value'},
-        {'source': 'memory', 'type': 'memory-active', 'dataset': 'value'},
-        {'source': 'memory', 'type': 'memory-cache', 'dataset': 'value'},
-        {'source': 'memory', 'type': 'memory-wired', 'dataset': 'value'},
-        {'source': 'memory', 'type': 'memory-inactive', 'dataset': 'value'},
-      ],
-      divideBy: 1073741824 // Gigs worth of bytes
-    },
-    {
-      title: "CPU Usage",
-      type: LineChartService.lineChart,
-      legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
-      dataList: [
-        {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
-        {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
-        {'source': 'aggregation-cpu-sum', 'type': 'cpu-system', 'dataset': 'value'},
-        {'source': 'aggregation-cpu-sum', 'type': 'cpu-idle', 'dataset': 'value'},
-        {'source': 'aggregation-cpu-sum', 'type': 'cpu-nice', 'dataset': 'value'},
-      ],
-    },
-    {
-      title: "Uptime",
-      type: LineChartService.lineChart,
-      legends: ['Uptime'],
-      dataList: [
-        {'source': 'uptime', 'type': 'uptime', 'dataset': 'value'}
-      ],
-    }
-  ];
-
+  public graphs: ChartConfigData[];
   private erd: any = null;
+  private subscription: Subscription;
 
-  constructor(private rest: RestService, private ws: WebSocketService,
-    protected systemGeneralService: SystemGeneralService) {
-    rest.get('storage/volume/', {}).subscribe((res) => {
-      res.data.forEach((vol) => {
-        this.graphs.splice(0, 0, {
-          title: vol.vol_name + " Volume Usage",
-          type: LineChartService.pieChart,
-          legends: ['Available', 'Used'],
-          dataList: [],
-          series: [['Available', vol.avail], ['Used', vol.used]]
-        });
-      });
+  constructor(private rest: RestService,
+    private ws: WebSocketService,
+    protected systemGeneralService: SystemGeneralService,
+    public translate: TranslateService,
+    private rxcomService: RxCommunicatingService) {    
+    this.onInitDashboardChart();
+
+    // i18n Translate
+    this.subscription = this.rxcomService.getDataFromOrigin().subscribe((res) => {
+      if(res && res.type == "language") {
+        let timeout = setTimeout(() => {  
+          this.onInitDashboardChart();
+          clearTimeout(timeout);
+        }, 100);        
+      }
     });
   }
 
@@ -98,6 +58,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.info.physmem =
         Number(this.info.physmem / 1024 / 1024).toFixed(0) + ' MiB';
     });
+
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
         this.ipAddress = _.uniq(res[0]);
@@ -105,26 +66,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = res;
       }
     });
-    this.ws.call('stats.get_sources').subscribe((res) => {
-      let gLegends = [], gDataList = [];
-      
-      for (const prop in res) {
-        if (prop.startsWith("disk-") && !prop.startsWith("disk-cd")) {
-          gLegends.push(prop + " (read)");
-          gLegends.push(prop + " (write)");
-          gDataList.push({source: prop, type: 'disk_ops', dataset: 'read'});
-          gDataList.push({source: prop, type: 'disk_ops', dataset: 'write'});
-        }
-      }
-      this.graphs.push({
-        title: "Disk IOPS",
-        type: LineChartService.lineChart,
-        legends: gLegends,
-        dataList: gDataList
-      });
-     });
-
-
+    
     // This invokes the element-resize-detector js library under node_modules
     // It listens to element level size change events (even when the global window
     // Doesn't Resize.)  This lets you even off of card and element and div level
@@ -134,9 +76,115 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
   ngAfterViewInit(): void {
     this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
       (<any>window).dispatchEvent(new Event('resize'));
+    });
+  }
+
+  onInitDashboardChart() {
+    this.graphs = [
+      {
+        keyValue: "Average Load",
+        title: this.translate.instant("Average Load"),
+        legends: [
+          this.translate.instant('Short Term'),
+          this.translate.instant('Mid Term'),
+          this.translate.instant('Long Term')
+        ],
+        type: LineChartService.lineChart,
+        dataList: [
+          {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
+          {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
+          {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
+        ],
+      },
+      {
+        keyValue: "Memory (gigabytes)",
+        title: this.translate.instant("Memory (gigabytes)"),
+        type: LineChartService.lineChart,
+        legends: [
+          this.translate.instant('Free'),
+          this.translate.instant('Active'),
+          this.translate.instant('Cache'),
+          this.translate.instant('Wired'),
+          this.translate.instant('Inactive')
+        ],
+        dataList: [
+          {'source': 'memory', 'type': 'memory-free', 'dataset': 'value'},
+          {'source': 'memory', 'type': 'memory-active', 'dataset': 'value'},
+          {'source': 'memory', 'type': 'memory-cache', 'dataset': 'value'},
+          {'source': 'memory', 'type': 'memory-wired', 'dataset': 'value'},
+          {'source': 'memory', 'type': 'memory-inactive', 'dataset': 'value'},
+        ],
+        divideBy: 1073741824 // Gigs worth of bytes
+      },
+      {
+        keyValue: "CPU Usage",
+        title: this.translate.instant("CPU Usage"),
+        type: LineChartService.lineChart,
+        legends: [
+          this.translate.instant('User'),
+          this.translate.instant('Interrupt'),
+          this.translate.instant('System'),
+          this.translate.instant('Idle'),
+          'Nice'
+        ],
+        dataList: [
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-interrupt', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-system', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-idle', 'dataset': 'value'},
+          {'source': 'aggregation-cpu-sum', 'type': 'cpu-nice', 'dataset': 'value'},
+        ],
+      },
+      {
+        keyValue: "Uptime",
+        title: this.translate.instant("Uptime"),
+        type: LineChartService.lineChart,
+        legends: [this.translate.instant('Uptime')],
+        dataList: [
+          {'source': 'uptime', 'type': 'uptime', 'dataset': 'value'}
+        ],
+      }
+    ];
+
+    this.rest.get('storage/volume/', {}).subscribe((res) => {
+      res.data.forEach((vol) => {
+        this.graphs.splice(0, 0, {
+          keyValue: vol.vol_name + " Volume Usage",
+          title: vol.vol_name + " " + this.translate.instant("Volume Usage"),
+          type: LineChartService.pieChart,
+          legends: [this.translate.instant("Available"), this.translate.instant("Used")],
+          dataList: [],
+          series: [[this.translate.instant("Available"), vol.avail], [this.translate.instant("Used"), vol.used]]
+        });
+      });
+    });
+
+    this.ws.call('stats.get_sources').subscribe((res) => {
+      let gLegends = [], gDataList = [];
+      
+      for (const prop in res) {
+        if (prop.startsWith("disk-") && !prop.startsWith("disk-cd")) {
+          prop.replace("disk", this.translate.instant("disk"));
+          gLegends.push(prop + " (" + this.translate.instant("read") + ")");
+          gLegends.push(prop + " (" + this.translate.instant("write") + ")");
+          gDataList.push({source: prop, type: 'disk_ops', dataset: 'read'});
+          gDataList.push({source: prop, type: 'disk_ops', dataset: 'write'});
+        }
+      }
+      this.graphs.push({
+        keyValue: "Disk IOPS",
+        title: this.translate.instant("Disk IOPS"),
+        type: LineChartService.lineChart,
+        legends: gLegends,
+        dataList: gDataList
+      });
     });
   }
 }

@@ -1,5 +1,5 @@
 <div class="entity-slider" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
-  <label>{{ config.placeholder }}</label>
+  <label>{{ config.placeholder | translate }}</label>
   <md-slider class="full-width" thumbLabel [min]="config.min" [max]="config.max" [formControlName]="config.name" (change)="updateValue($event)" MdSliderChange>
   </md-slider>
   <label><h5><b>{{value}}</b></h5></label>

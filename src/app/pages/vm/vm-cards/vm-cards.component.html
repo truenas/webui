@@ -12,16 +12,16 @@
 		<div class="filter-field">
 			<md-icon role="img">search</md-icon>
 			<div class="card-filter-field">
-				<md-input-container floatPlaceholder="Filter VMs">
-					<input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+				<md-input-container floatPlaceholder="{{'Filter VMs' | translate}}">
+					<input mdInput #filter placeholder="{{'Filter VM List' | translate}}" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
 				</md-input-container>
 			</div>
 		</div>
 		<div class="view-controls" >
 			<md-button-toggle-group #viewMode="mdButtonToggleGroup" >
-				<md-button-toggle value="cards">Cards</md-button-toggle>
-				<md-button-toggle value="slim" >Slim</md-button-toggle>
-				<md-button-toggle value="table" >Table</md-button-toggle>
+				<md-button-toggle value="cards">{{"Cards" | translate}}</md-button-toggle>
+				<md-button-toggle value="slim">{{"Slim" | translate}}</md-button-toggle>
+				<md-button-toggle value="table">{{"Table" | translate}}</md-button-toggle>
 			</md-button-toggle-group>
 			<button md-mini-fab class="add-vm" (click)="addVM()">
 				<md-icon>add</md-icon>
@@ -40,7 +40,7 @@
 			<vm-table [data]="cards" fxFlex="60" fxLayout="column"></vm-table>
 
 			<!-- Summary and forms for table view go here -->
-			<div class="dynamic-content" fxFlex="35"><h2>Charts Go Here!</h2></div>
+			<div class="dynamic-content" fxFlex="35"><h2>{{"Charts Go Here!" | translate}}</h2></div>
 		</div>
 	</md-card-content>
 </md-card>
@@ -82,29 +82,29 @@
 						class="vm-power-btn"
 				 		[ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
 				 		(click)="toggleVmState(i)"
-				 		mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
+				 		mdTooltip="{{ powerBtnLabel(cards[i].state) | translate }}" mdTooltipPosition="above">
 						<md-icon>power_settings_new</md-icon>
 					</button>
 
-					<h3>{{ cards[i].name }}</h3>
-					<md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
+					<h3>{{ cards[i].name | translate }}</h3>
+					<md-chip  class="vm-state">{{ cards[i].state | translate }}</md-chip>
 				</div>
 
 				<div class="stats-info">
 					<table><tbody>
-							<tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
-							<tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
-							<tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
-							<tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
-							<tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
+							<tr><td class="stat-label">{{"Description" | translate}}:</td><td class="stat"> {{ cards[i].description }}</td></tr>
+							<tr><td class="stat-label">{{"Autostart" | translate}}:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
+							<tr><td class="stat-label">{{"Virtual CPUs" | translate}}:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
+							<tr><td class="stat-label">{{"Memory" | translate}}:</td><td class="stat">{{ cards[i].memory }}</td></tr>
+							<tr><td class="stat-label">{{"BootLoader" | translate}}:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
 						</tbody></table>
 				</div>
 
 
 				<div class="vm-controls">
-					<button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
-					<button md-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
-					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+					<button md-raised-button color="primary" (click)="vnc(i)">{{"VNC" | translate}}</button>
+					<button md-raised-button color="primary" (click)="goToDevices(i)">{{"Devices" | translate}}</button>
+					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">{{"Edit" | translate}}</button>
 				</div>
 			</div>
 		</ng-template>
@@ -112,12 +112,12 @@
 		<ng-template #cardback let-name="name" >
 			<!-- Template for back face of card -->
 			<vm-card-edit 
-												 *ngIf="cards[i].template == 'edit'" 
-												 [isNew]="cards[i].isNew"
-												 [machineId]="cards[i].id"  
-												 (cancel)="cancel(i)"
-												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
-												 ></vm-card-edit>
+				*ngIf="cards[i].template == 'edit'" 
+				[isNew]="cards[i].isNew"
+				[machineId]="cards[i].id"  
+				(cancel)="cancel(i)"
+				(saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
+				></vm-card-edit>
 		</ng-template>
 
 			<!-- Create your cards here -->

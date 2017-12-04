@@ -1,7 +1,6 @@
-import {Injectable} from '@angular/core';
-
-import {WebSocketService} from '../../../services';
-
+import { Injectable } from '@angular/core';
+import { WebSocketService } from '../../../services';
+import { TranslateService } from '@ngx-translate/core';
 
 /*
  * Fed to the LineChart ./lineChart.component.ts
@@ -42,6 +41,7 @@ export interface DataListItem {
  * Main Dashboard regarding storage size.
  */
 export interface ChartConfigData {
+  keyValue: string,
   title: string;
   legends: string[];
   type: string;
@@ -56,8 +56,8 @@ export interface ChartConfigData {
  */
 export interface HandleDataFunc {
   handleDataFunc(lineChartData: LineChartData);
-
 }
+
 
 /**
  * Gets all the existing Collectd/Report RRD Sources with a high level list
@@ -76,7 +76,7 @@ export class LineChartService {
 
   private cacheConfigData: ChartConfigData[] = [];
 
-  constructor(private _ws: WebSocketService) {}
+  constructor(private _ws: WebSocketService, public translate: TranslateService) {}
 
   public getData(dataHandlerInterface: HandleDataFunc, dataList: any[]) {
 
@@ -88,8 +88,7 @@ export class LineChartService {
 
       dataList.forEach(() => {linechartData.series.push([]);})
       res.data.forEach((item, i) => {
-        linechartData.labels.push(
-          new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
+        linechartData.labels.push(new Date(res.meta.start * 1000 + i * res.meta.step * 1000));
         for (const x in dataList) {
           linechartData.series[x].push(item[x]);
         }
@@ -200,71 +199,77 @@ export class LineChartService {
 
     for (const prop of properties) {
 
-
       if (prop.startsWith("disk-")) {
         configData.push({
-          title: prop + " (disk_time)",
+          keyValue: prop + " (disk_time)",
+          title: prop + " (" + this.translate.instant("disk_time") + ")",
           type: LineChartService.lineChart,
-          legends: ["read", "write"],
+          legends: [this.translate.instant("read"), this.translate.instant("write")],
           dataList: [{source: prop, type: 'disk_time', dataset: 'read'},
           {source: prop, type: 'disk_time', dataset: 'write'}]
         });
 
         configData.push({
-          title: prop + " (disk_io_time)",
+          keyValue: prop + " (disk_io_time)",
+          title: prop + " (" + this.translate.instant("disk_io_time") + ")",
           type: LineChartService.lineChart,
-          legends: ["read", "write"],
+          legends: [this.translate.instant("read"), this.translate.instant("write")],
           dataList: [{source: prop, type: 'disk_io_time', dataset: 'io_time'}]
         });
 
         configData.push({
-          title: prop + " (disk_ops)",
+          keyValue: prop + " (disk_ops)",
+          title: prop + " (" + this.translate.instant("disk_ops") + ")",
           type: LineChartService.lineChart,
-          legends: ["read", "write"],
+          legends: [this.translate.instant("read"), this.translate.instant("write")],
           dataList: [{source: prop, type: 'disk_ops', dataset: 'read'},
           {source: prop, type: 'disk_ops', dataset: 'write'}]
         });
 
         configData.push({
-          title: prop + " (disk_octets)",
+          keyValue: prop + " (disk_octets)",
+          title: prop + " (" + this.translate.instant("disk_octets") + ")",
           type: LineChartService.lineChart,
-          legends: ["read", "write"],
+          legends: [this.translate.instant("read"), this.translate.instant("write")],
           dataList: [{source: prop, type: 'disk_octets', dataset: 'read'},
           {source: prop, type: 'disk_octets', dataset: 'write'}]
         });
 
       } else if (prop.startsWith("interface-")) {
         configData.push({
-          title: prop + " (if_errors)",
+          keyValue: prop + " (if_errors)",
+          title: prop + " (" + this.translate.instant("if_errors") + ")",
           type: LineChartService.lineChart,
-          legends: ["rx", "tx"],
+          legends: [this.translate.instant("rx"), this.translate.instant("tx")],
           dataList: [{source: prop, type: 'if_errors', dataset: 'rx'},
           {source: prop, type: 'if_errors', dataset: 'tx'}]
         });
 
         configData.push({
-          title: prop + " (if_octets)",
+          keyValue: prop + " (if_octets)",
+          title: prop + " (" + this.translate.instant("if_octets") + ")",
           type: LineChartService.lineChart,
-          legends: ["rx", "tx"],
+          legends: [this.translate.instant("rx"), this.translate.instant("tx")],
           dataList: [{source: prop, type: 'if_octets', dataset: 'rx'},
           {source: prop, type: 'if_octets', dataset: 'tx'}]
         });
 
         configData.push({
-          title: prop + " (if_packets)",
+          keyValue: prop + " (if_packets)",
+          title: prop + " (" + this.translate.instant("if_packets") + ")",
           type: LineChartService.lineChart,
-          legends: ["rx", "tx"],
+          legends: [this.translate.instant("rx"), this.translate.instant("tx")],
           dataList: [{source: prop, type: 'if_packets', dataset: 'rx'},
           {source: prop, type: 'if_packets', dataset: 'tx'}]
         });
 
       } else {
-        const propObjArray: string[] = res[prop];
+        const propObjArray: string[] = [];
         const dataListItemArray: DataListItem[] = [];
 
-        propObjArray.forEach((proObjArrayItem) => {
+        res[prop].forEach((proObjArrayItem) => {
 
-
+          propObjArray.push(this.translate.instant(proObjArrayItem));
 
           const dataListItem: DataListItem = {
             source: prop,
@@ -289,7 +294,8 @@ export class LineChartService {
         
         
         configData.push({
-          title: title,
+          keyValue: title,
+          title: this.translate.instant(title),
           type: LineChartService.lineChart,
           legends: propObjArray,
           dataList: dataListItemArray,
@@ -310,8 +316,15 @@ export class LineChartService {
 
     const chartConfigData: ChartConfigData[] = [
       {
-        title: "CPU",
-        legends: ['User', 'Interrupt', 'System', 'Idle', 'Nice'],
+        keyValue: "CPU",
+        title: this.translate.instant("CPU"),
+        legends: [
+          this.translate.instant('User'),
+          this.translate.instant('Interrupt'),
+          this.translate.instant('System'),
+          this.translate.instant('Idle'),
+          this.translate.instant('Nice')
+        ],
         type: LineChartService.lineChart,
         dataList: [
           {'source': 'aggregation-cpu-sum', 'type': 'cpu-user', 'dataset': 'value'},
@@ -321,64 +334,91 @@ export class LineChartService {
           {'source': 'aggregation-cpu-sum', 'type': 'cpu-nice', 'dataset': 'value'},
         ],
       }, {
-        title: "Load",
+        keyValue: "Load",
+        title: this.translate.instant("Load"),
         type: LineChartService.lineChart,
-        legends: ['Short Term', ' Mid Term', 'Long Term'],
+        legends: [
+          this.translate.instant('Short Term'),
+          this.translate.instant('Mid Term'),
+          this.translate.instant('Long Term')
+        ],
         dataList: [
           {'source': 'load', 'type': 'load', 'dataset': 'shortterm'},
           {'source': 'load', 'type': 'load', 'dataset': 'midterm'},
           {'source': 'load', 'type': 'load', 'dataset': 'longterm'},
         ],
       }, {
-        title: "ZFS Arc Size",
+        keyValue: "ZFS Arc Size",
+        title: this.translate.instant("ZFS Arc Size"),
         type: LineChartService.lineChart,
-        legends: ['Arc Size'],
+        legends: [
+          this.translate.instant('Arc Size')
+        ],
         dataList: [
           {source: 'zfs_arc', type: 'cache_size-arc', dataset: 'value'}
         ],
       }, {
-        title: "ZFS Arc Hit Ratio",
+        keyValue: "ZFS Arc Hit Ratio",
+        title: this.translate.instant("ZFS Arc Hit Ratio"),
         type: LineChartService.lineChart,
-        legends: ['Arc', 'L2'],
+        legends: [
+          this.translate.instant('Arc'),
+          this.translate.instant('L2')
+        ],
         dataList: [
           {source: 'zfs_arc', type: 'cache_ratio-arc', dataset: 'value'},
           {source: 'zfs_arc', type: 'cache_ratio-L2', dataset: 'value'}
         ],
       }, {
-        title: "ZFS Demand Data",
+        keyValue: "ZFS Demand Data",
+        title: this.translate.instant("ZFS Demand Data"),
         type: LineChartService.lineChart,
-        legends: ['Hits', 'Miss',],
+        legends: [
+          this.translate.instant('Hits'),
+          this.translate.instant('Miss')
+        ],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_data-hit', dataset: 'value'},
           {source: 'zfs_arc', type: 'cache_result-demand_data-miss', dataset: 'value'}
         ],
       }, {
-        title: "ZFS Demand Metadata",
+        keyValue: "ZFS Demand Metadata",
+        title: this.translate.instant("ZFS Demand Metadata"),
         type: LineChartService.lineChart,
-        legends: ['Hits', 'Miss',],
+        legends: [
+          this.translate.instant('Hits'),
+          this.translate.instant('Miss')
+        ],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-demand_metadata-hit', dataset: 'value'},
           {source: 'zfs_arc', type: 'cache_result-demand_metadata-miss', dataset: 'value'}
         ],
       }, {
-        title: "ZFS Prefetch Data",
+        keyValue: "ZFS Prefetch Data",
+        title: this.translate.instant("ZFS Prefetch Data"),
         type: LineChartService.lineChart,
-        legends: ['Hits', 'Miss',],
+        legends: [
+          this.translate.instant('Hits'),
+          this.translate.instant('Miss')
+        ],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_data-hit', dataset: 'value'},
           {source: 'zfs_arc', type: 'cache_result-prefetch_data-miss', dataset: 'value'}
         ],
       }, {
-        title: "ZFS Prefetch Metadata",
+        keyValue: "ZFS Prefetch Metadata",
+        title: this.translate.instant("ZFS Prefetch Metadata"),
         type: LineChartService.lineChart,
-        legends: ['Hits', 'Miss',],
+        legends: [
+          this.translate.instant('Hits'),
+          this.translate.instant('Miss')
+        ],
         dataList: [
           {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-hit', dataset: 'value'},
           {source: 'zfs_arc', type: 'cache_result-prefetch_metadata-miss', dataset: 'value'}
         ],
       }
     ];
-
 
     return chartConfigData;
 

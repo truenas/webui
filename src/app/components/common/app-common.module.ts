@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { TranslateModule } from 'ng2-translate/ng2-translate';
-import { 
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  MaterialModule,
   MdSidenavModule,
   MdListModule,
   MdTooltipModule,
@@ -22,7 +23,7 @@ import {
   MdDialogModule
 } from '@angular/material';
 
-import {ChartistModule} from 'ng-chartist';
+import { ChartistModule } from 'ng-chartist';
 import { TopbarComponent } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -42,6 +43,7 @@ import { LineChartService } from './lineChart/lineChart.service';
     FormsModule,
     RouterModule,
     FlexLayoutModule,
+    MaterialModule,
     MdSidenavModule,
     MdIconModule,
     MdListModule,
@@ -69,6 +71,31 @@ import { LineChartService } from './lineChart/lineChart.service';
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
   ],
   providers: [ThemeService, DialogService, LineChartService],
-  exports: [LineChartComponent]
+  exports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    FlexLayoutModule,
+    MaterialModule,
+    MdSidenavModule,
+    MdIconModule,
+    MdListModule,
+    MdTooltipModule,
+    MdOptionModule,
+    MdSelectModule,
+    MdMenuModule,
+    MdSnackBarModule,
+    MdGridListModule,
+    MdToolbarModule,
+    MdButtonModule,
+    MdRadioModule,
+    MdCheckboxModule,
+    MdCardModule,
+    MdDialogModule,
+    CommonDirectivesModule,
+    TranslateModule,
+    ChartistModule,
+    LineChartComponent
+  ]
 })
 export class AppCommonModule {}

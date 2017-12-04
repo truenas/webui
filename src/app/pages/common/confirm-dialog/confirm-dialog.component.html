@@ -1,8 +1,8 @@
-<h1 md-dialog-title>{{ title }}</h1>
-<div md-dialog-content class="overflow-hide"><md-checkbox (change)="toggleSubmit($event)">{{ message }}</md-checkbox></div>
+<h1 md-dialog-title>{{ title | translate }}</h1>
+<div md-dialog-content class="overflow-hide"><md-checkbox (change)="toggleSubmit($event)">{{ message | translate }}</md-checkbox></div>
 <div md-dialog-actions>
-  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled" (click)="dialogRef.close(true)">OK</button>
+  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled" (click)="dialogRef.close(true)">{{"OK" | translate}}</button>
   &nbsp;
   <span fxFlex></span>
-  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">Cancel</button>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Cancel" | translate}}</button>
 </div>

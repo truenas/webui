@@ -15,6 +15,8 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
+import { TranslateService } from '@ngx-translate/core';
+import { RxCommunicatingService } from '../../../../services/rx-communicating.service';
 
 
 @Component({
@@ -27,9 +29,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
   @Input('conf') conf: any;
-
   
   @ViewChild('filter') filter: ElementRef;
+  @ViewChild(MdPaginator) paginator: MdPaginator;
   private erd: any = null;
 
   // MdPaginator Inputs
@@ -37,7 +39,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public paginationPageSizeOptions = [5, 10, 20, 100];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
-  
   
   public displayedColumns: string[] = [];
   public busy: Subscription;
@@ -52,11 +53,31 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   };
   protected loaderOpen: boolean = false;
   public selected = [];
+  private subscription: Subscription;
 
-  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
+  constructor(protected rest: RestService,
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected _eRef: ElementRef,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,
+    private rxcomService: RxCommunicatingService) {
+
+    // i18n Translate
+    this.subscription = this.rxcomService.getDataFromOrigin().subscribe((res) => {
+      if(res && res.type == "language") {
+        let timeout = setTimeout(() => {
+          this.initPageLabels();
+          clearTimeout(timeout);
+        }, 100);        
+      }
+    });
+  }
 
   ngOnInit() {
+    this.initPageLabels();
+
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
@@ -68,7 +89,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-
    
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
@@ -101,9 +121,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           });
         } else {
           newData = this.rows;
-        }
-
-        
+        }        
         
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
@@ -115,6 +133,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
       (<any>window).dispatchEvent(new Event('resize'));
     });
+  }
+
+  initPageLabels() {
+    this.paginator._intl.itemsPerPageLabel = this.translate.instant("Items per page") + ":";
+    this.paginator._intl.nextPageLabel = this.translate.instant("Next page");
+    this.paginator._intl.previousPageLabel = this.translate.instant("Previous page");
   }
 
   getData() {
@@ -189,9 +213,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
 
       });
-
   }
-
 
   trClass(row) {
     let classes = [];

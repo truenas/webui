@@ -26,7 +26,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   notifications: NotificationAlert[] = [];
 
-  @Output() onLangChange = new EventEmitter<any>();
+  @Output() onLangChangeEmitter = new EventEmitter<any>();
 
   interval: any;
 
@@ -35,7 +35,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     name: 'English',
     code: 'en',
   }, {
-    name: 'Spanish',
+    name: 'Español',
     code: 'es',
   }, {
     name: '中文',
@@ -132,7 +132,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   setLang(lang) {
     this.currentLang = lang;
-    this.onLangChange.emit(this.currentLang);
+    this.onLangChangeEmitter.emit(this.currentLang);
   }
 
   changeTheme(theme) {

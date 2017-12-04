@@ -7,7 +7,7 @@
   <div class="more-info" (click)="toggleOpen($event)">
     <md-icon *ngIf="isCloseMoreInfo">add_circle_outline</md-icon>
     <md-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</md-icon>
-    <span>More info...</span>
+    <span>{{"More info..." | translate}}</span>
   </div>
   <div class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}">
     <textarea mdInput>{{backtrace}}</textarea>
@@ -16,5 +16,5 @@
 <div md-dialog-actions>
   &nbsp;
   <span fxFlex></span>
-  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">Close</button>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">{{"Close" | translate}}</button>
 </div>

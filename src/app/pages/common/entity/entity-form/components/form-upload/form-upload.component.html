@@ -1,11 +1,11 @@
 <div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-    <label>{{ config.placeholder }}</label>
+    <label>{{ config.placeholder | translate }}</label>
     <md-card-content>
         <input type="file" ngFileSelect [options]="options" (onUpload)="handleUpload($event)">
     </md-card-content>
     <md-card-actions>
-        <button md-raised-button color="primary" (click)="doSubmit($event)">Submit</button>
+        <button md-raised-button color="primary" (click)="doSubmit($event)">{{"Submit" | translate}}</button>
     </md-card-actions>
-    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-    <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip | translate"></tooltip>
+    <md-error *ngIf="config.hasErrors">{{config.errors | translate}}</md-error>
 </div>

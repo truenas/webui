@@ -1,15 +1,17 @@
 import { RestService, WebSocketService } from '../../../../services';
-import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewChecked, OnInit, Output, ViewChild, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
 import { MdSidenav, MdDialog, MdDialogRef } from '@angular/material';
-import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
-import {UUID} from 'angular2-uuid';
+import { UUID } from 'angular2-uuid';
+import { TranslateService } from '@ngx-translate/core';
+import { RxCommunicatingService } from '../../../../services/rx-communicating.service';
+
 
 @Component({
   selector: 'app-admin-layout',
@@ -34,8 +36,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private media: ObservableMedia,
     protected rest: RestService,
     protected ws: WebSocketService,
+    public dialog: MdDialog,
     public translate: TranslateService,
-    public dialog: MdDialog) {
+    private rxcomService: RxCommunicatingService) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;
@@ -52,10 +55,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
       this.updateSidenav();
     });
-
-    // Translator init
-    const browserLang: string = translate.getBrowserLang();
-    translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
   }
 
   ngOnInit() {
@@ -178,5 +177,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
         this.sideNave.close();
       }
     }
+  }
+
+  onLanguageChange($event) {
+    this.translate.use($event);
+    this.rxcomService.sendDataToAll({ type: 'language', lang: $event });
   }
 }

@@ -1,10 +1,10 @@
 <md-toolbar class="topbar">
   <!-- Sidenav toggle button -->
-  <button md-icon-button id="sidenavToggle" (click)="toggleSidenav()" md-tooltip="Toggle Hide/Open">
+  <button md-icon-button id="sidenavToggle" (click)="toggleSidenav()" md-tooltip="{{'Toggle Hide/Open' | translate}}">
     <md-icon>menu</md-icon>
   </button>
   <!-- Sidenav toggle collapse -->
-  <button md-icon-button id="collapseToggle" fxHide.lt-md="true" (click)="toggleCollapse()" md-tooltip="Toggle Collapse" class="toggle-collapsed">
+  <button md-icon-button id="collapseToggle" fxHide.lt-md="true" (click)="toggleCollapse()" md-tooltip="{{'Toggle Collapse' | translate}}" class="toggle-collapsed">
     <md-icon>chevron_left</md-icon>
   </button>
   <!-- Search form
@@ -27,7 +27,7 @@
   </button>
 
   <!-- Theme Switcher -->
-  <button md-icon-button id="schemeToggle" [style.overflow]="'visible'" mdTooltip="FreeNAS Themes" [mdMenuTriggerFor]="themeMenu" class="topbar-button-right">
+  <button md-icon-button id="schemeToggle" [style.overflow]="'visible'" mdTooltip="{{'FreeNAS Themes' | translate}}" [mdMenuTriggerFor]="themeMenu" class="topbar-button-right">
     <md-icon>format_color_fill</md-icon>
   </button>
   <md-menu #themeMenu="mdMenu" >
@@ -37,17 +37,17 @@
           <div [style.background]="theme.baseColor" class="egret-swatch"></div>
           <md-icon class="active-icon" *ngIf="theme.isActive">check</md-icon>
         </div>
-        <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
+        <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{theme.label | translate}}</span>
       </md-grid-tile>
     </md-grid-list>
   </md-menu>
 
-  <button md-icon-button (click)="startTour()" class="topbar-button-right" mdTooltip="Guide Tour" [style.overflow]="'visible'">
+  <button md-icon-button (click)="startTour()" class="topbar-button-right" mdTooltip="{{'Guide Tour' | translate}}" [style.overflow]="'visible'">
     <md-icon>flight_takeoff</md-icon>
   </button>
 
   <!-- Notification toggle button -->
-  <button md-icon-button mdTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+  <button md-icon-button mdTooltip="{{'Notifications' | translate}}" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
     <md-icon>notifications</md-icon>
     <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
   </button>
@@ -65,15 +65,15 @@
     </button>
     <button md-menu-item [routerLink]="['/account/users/edit/1']">
       <md-icon>account_box</md-icon>
-      <span>Account</span>
+      <span>{{"Account" | translate}}</span>
     </button>
     <button md-menu-item [routerLink]="['/account/users/change-password']">
       <md-icon>dialpad</md-icon>
-      <span>Change Password</span>
+      <span>{{"Change Password" | translate}}</span>
     </button>
     <button md-menu-item [routerLink]="['/system/general']">
       <md-icon>settings</md-icon>
-      <span>Settings</span>
+      <span>{{"Settings" | translate}}</span>
     </button>
     <!-- button md-menu-item>
       <md-icon>notifications_off</md-icon>
@@ -81,19 +81,19 @@
     </button -->
     <button md-menu-item (click)="signOut()">
       <md-icon>exit_to_app</md-icon>
-      <span>Logout</span>
+      <span>{{"Logout" | translate}}</span>
     </button>
     <button md-menu-item (click)="onReboot()">
       <md-icon>replay</md-icon>
-      <span>Reboot</span>
+      <span>{{"Reboot" | translate}}</span>
     </button>
     <button md-menu-item (click)="onShutdown()">
       <md-icon>power_settings_new</md-icon>
-      <span>Shutdown</span>
+      <span>{{"Shutdown" | translate}}</span>
     </button>
     <button md-menu-item (click)="onShowAbout()">
       <md-icon>info_outline</md-icon>
-      <span>About</span>
+      <span>{{"About" | translate}}</span>
     </button>
   </md-menu>
 

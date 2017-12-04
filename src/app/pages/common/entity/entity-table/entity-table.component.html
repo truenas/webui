@@ -1,6 +1,6 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
 	<div class="mat-toolbar mat-card-toolbar">
-		<div class="mat-card-title-text">{{ title }}</div>
+		<div class="mat-card-title-text">{{ title | translate }}</div>
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
 	<div>
@@ -24,12 +24,12 @@
 			</div>
 		</div>
 
-		<md-paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+		<md-paginator #paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
 	<div class="padding_all">
 		<md-input-container floatPlaceholder="never">
-			<input mdInput #filter placeholder="Filter {{title}}">
+			<input mdInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
 		</md-input-container>
 	</div>
 
@@ -69,14 +69,16 @@
 
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
-				prop="{{col.prop}}" 
-				 name="{{col.name}}">
-				 <ng-template let-row="row" ngx-datatable-cell-template>
+				prop="{{col.prop}}">
+				<ng-template let-column="column" ngx-datatable-header-template>
+          {{col.name | translate}}
+        </ng-template>
+				<ng-template let-row="row" ngx-datatable-cell-template>
 					<div title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
 						<img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
 						{{row[col.prop]}}
-					  </div>
-					</ng-template>
+					</div>
+				</ng-template>
 			</ngx-datatable-column>
 
 			<ngx-datatable-column>

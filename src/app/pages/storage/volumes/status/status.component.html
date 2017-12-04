@@ -1,26 +1,26 @@
 <div class="material mat-card mat-card-table" *ngIf="is_ready; else emptyVolume">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">
-      Scrub Status
+      {{"Scrub Status" | translate}}
     </div>
   </div>
 
   <div class="padding-16">
     <md-list>
-      <md-list-item>State: {{status.state}}</md-list-item>
-      <md-list-item>Bytes Processed: {{status.bytes_processed}}</md-list-item>
-      <md-list-item>Bytes to Process: {{status.bytes_to_process}}</md-list-item>
-      <md-list-item>Finished: {{status.percentage}}</md-list-item>
-      <md-list-item>Start Time: {{status.start_time | date:'short'}}</md-list-item>
-      <md-list-item>End Time: {{status.end_time | date:'short'}}</md-list-item>
-      <md-list-item>Errors: {{status.errors}}</md-list-item>
+      <md-list-item>{{"State" | translate}}: {{status.state}}</md-list-item>
+      <md-list-item>{{"Bytes Processed" | translate}}: {{status.bytes_processed}}</md-list-item>
+      <md-list-item>{{"Bytes to Process" | translate}}: {{status.bytes_to_process}}</md-list-item>
+      <md-list-item>{{"Finished" | translate}}: {{status.percentage}}</md-list-item>
+      <md-list-item>{{"Start Time" | translate}}: {{status.start_time | date:'short'}}</md-list-item>
+      <md-list-item>{{"End Time" | translate}}: {{status.end_time | date:'short'}}</md-list-item>
+      <md-list-item>{{"Errors" | translate}}: {{status.errors}}</md-list-item>
     </md-list>
   </div>
 </div>
 <ng-template #emptyVolume class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">
-      Volume info not found.
+      {{"Volume info not found." | translate}}
     </div>
   </div>
 </ng-template>

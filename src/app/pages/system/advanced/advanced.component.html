@@ -3,18 +3,18 @@
     <form class="form-wrap" (submit)="onFormSubmit()">
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemenu" name="adv_consolemenu">Enable Console Menu
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemenu" name="adv_consolemenu">{{"Enable Console Menu" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_serialconsole" name="adv_serialconsole">Enable Serial Console </md-checkbox>
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_serialconsole" name="adv_serialconsole">{{"Enable Serial Console" | translate}}</md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-select">
-          <md-select class="form-control full-width" placeholder="Serial Port"
+          <md-select class="form-control full-width" placeholder="{{'Serial Port' | translate}}"
                      [disabled]="!systemAdvancedSettings.adv_serialconsole"
                      [(ngModel)]="systemAdvancedSettings.adv_serialport" name="adv_serialport">
             <md-option *ngFor="let port of ports" [value]="port.start">{{port.name + '(' + port.start + ')'}}</md-option>
@@ -23,7 +23,7 @@
       </div>
       <div class="form-line">
         <div class="form-select">
-          <md-select class="form-control full-width" placeholder="Serial Speed"
+          <md-select class="form-control full-width" placeholder="{{'Serial Speed' | translate}}"
                      [disabled]="!systemAdvancedSettings.adv_serialconsole"
                      [(ngModel)]="systemAdvancedSettings.adv_serialspeed" name="adv_serialspeed">
             <md-option [value]="'9600'">9600</md-option>
@@ -38,92 +38,85 @@
         <div class="form-input">
           <md-input-container class="full-width">
             <input mdInput [type]="'number'" [(ngModel)]="systemAdvancedSettings.adv_swapondrive" name="adv_swapondrive"
-                   placeholder="Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).">
+                   placeholder="{{'Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).' | translate}}">
           </md-input-container>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolescreensaver" name="adv_consolescreensaver">Enable
-            Console Screensaver
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolescreensaver" name="adv_consolescreensaver">{{"Enable Console Screensaver" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_powerdaemon" name="adv_powerdaemon">Enable Power Saving
-            Daemon
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_powerdaemon" name="adv_powerdaemon">{{"Enable Power Saving Daemon" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_autotune" name="adv_autotune">Enable autotune
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_autotune" name="adv_autotune">{{"Enable autotune" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_debugkernel" name="adv_debugkernel">Enable Debug Kernel
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_debugkernel" name="adv_debugkernel">{{"Enable Debug Kernel" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemsg" name="adv_consolemsg">Show console messages
-            in the footer
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemsg" name="adv_consolemsg">{{"Show console messages in the footer" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <md-input-container class="full-width">
-          <textarea [(ngModel)]="systemAdvancedSettings.adv_motd" name="adv_motd" placeholder="MOTD Banner"
+          <textarea [(ngModel)]="systemAdvancedSettings.adv_motd" name="adv_motd" placeholder="{{'MOTD Banner' | translate}}"
                     mdInput></textarea>
         </md-input-container>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_traceback" name="adv_traceback">Show tracebacks in case
-            of fatal errors
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_traceback" name="adv_traceback">{{"Show tracebacks in case of fatal errors" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_advancedmode" name="adv_advancedmode">Show advanced
-            fields by default
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_advancedmode" name="adv_advancedmode">{{"Show advanced fields by default" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_uploadcrash" name="adv_uploadcrash">Enable automatic
-            upload of kernel crash dumps and daily telemetry
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_uploadcrash" name="adv_uploadcrash">{{"Enable automatic upload of kernel crash dumps and daily telemetry" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
-        <md-select class="form-control full-width" placeholder="Periodic Notification User"
+        <md-select class="form-control full-width" placeholder="{{'Periodic Notification User' | translate}}"
                    [(ngModel)]="systemAdvancedSettings.adv_periodic_notifyuser" name="adv_periodic_notifyuser">
           <md-option *ngFor="let user of users" [value]="user.bsdusr_username">{{user.bsdusr_username}}</md-option>
         </md-select>
       </div>
       <div class="form-line">
         <md-input-container class="full-width">
-          <input mdInput [type]="'text'" placeholder="Remote Graphite Server Hostname"
+          <input mdInput [type]="'text'" placeholder="{{'Remote Graphite Server Hostname' | translate}}"
                  [(ngModel)]="systemAdvancedSettings.adv_graphite" name="adv_graphite">
         </md-input-container>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_fqdn_syslog" name="adv_fqdn_syslog">Use FQDN for
-            logging
+          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_fqdn_syslog" name="adv_fqdn_syslog">{{"Use FQDN for logging" | translate}}
           </md-checkbox>
         </div>
       </div>
       <div class="form-line">
         <md-card-actions>
-          <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
+          <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">{{"Save" | translate}}</button>
         </md-card-actions>
         <p *ngIf="success">{{success}}</p>
       </div>

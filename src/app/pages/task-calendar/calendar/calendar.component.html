@@ -48,7 +48,7 @@
 <ng-template #modalContent let-close="close">
   <div class="p-0">
     <div class="card-title-text">
-      <span [style.lineHeight]="'40px'">Event action occurred</span>
+      <span [style.lineHeight]="'40px'">{{"Event action occurred" | translate}}</span>
       <span fxFlex></span>
       <button md-icon-button (click)="closeDialog()">
         <md-icon>close</md-icon>
@@ -57,11 +57,11 @@
     <md-divider class="mb-1"></md-divider>
     <div>
       <div>
-        Action:
+        {{"Action"  | translate}}:
         <pre><code>{{ modalData?.action }}</code></pre>
       </div>
       <div>
-        Event:
+        {{"Event" | translate}}:
         <pre><code [style.display]="'block'">{{ modalData?.event | json }}</code></pre>
       </div>
     </div>

@@ -1,10 +1,10 @@
 <div md-dialog-content>
 
-	<pre #footerBarScroll class="message">{{consoleMsg}}</pre>
+	<pre #footerBarScroll class="message">{{consoleMsg | translate}}</pre>
 
-	<div md-dialog-content class="overflow-hide"><md-checkbox (change)="onStopRefresh($event)">Stop refresh</md-checkbox></div>
+	<div md-dialog-content class="overflow-hide"><md-checkbox (change)="onStopRefresh($event)">{{"Stop refresh" | translate}}</md-checkbox></div>
 </div>
 <div md-dialog-actions>
   <span fxFlex></span>
-  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">Close</button>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Close" | translate}}</button>
 </div>

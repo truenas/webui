@@ -1,5 +1,5 @@
 <div class="form-task" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
-  <label class="form-task-label">{{ config.placeholder }}</label>
+  <label class="form-task-label">{{ config.placeholder | translate }}</label>
   <br>
   <md-card>
     <md-tab-group #tabGroup (selectChange)="onSelectChange($event)">

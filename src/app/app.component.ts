@@ -8,6 +8,7 @@ import { MdSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { TourService } from './services/tour.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,8 @@ export class AppComponent implements OnInit {
     private routePartsService: RoutePartsService,
     public snackBar: MdSnackBar,
     private rest: RestService,
-    private tour: TourService) {
+    private tour: TourService,
+    public translate: TranslateService) {
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
@@ -43,6 +45,13 @@ export class AppComponent implements OnInit {
         }
       }
     });
+
+    // Translator init
+    translate.addLangs(["en", "es", "zh"]);
+    translate.setDefaultLang("en");
+
+    let browserLang = translate.getBrowserLang();
+    translate.use(browserLang.match(/en|es|zh/) ? browserLang : 'en');
   }
 
   ngOnInit() {

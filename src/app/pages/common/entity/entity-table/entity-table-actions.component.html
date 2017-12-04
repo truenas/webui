@@ -4,7 +4,7 @@
     <span *ngFor="let action of actions">
 			<button md-menu-item *ngIf="!entity.conf.isActionVisible
 						|| entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);">
-				<span>{{ action?.label }}</span>
+				<span>{{ action?.label | translate }}</span>
     </button>
     </span>
 </md-menu>

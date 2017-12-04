@@ -4,8 +4,8 @@
     <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup">
     </ng-container>
     <md-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" type="button" md-raised-button color="accent">Cancel</button>
+      <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">{{"Save" | translate}}</button>
+      <button *ngIf="route_success" (click)="goBack()" type="button" md-raised-button color="accent">{{"Cancel" | translate}}</button>
     </md-card-actions>
   </form>
 </md-card>

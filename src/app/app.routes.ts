@@ -31,7 +31,7 @@ export const rootRouterConfig: Routes = [{
     children: [{
         path: 'dashboard',
         loadChildren: './pages/dashboard/dashboard.module#DashboardModule',
-        data: { title: 'Dashboard', breadcrumb: 'DASHBOARD' }
+        data: { title: 'Dashboard', breadcrumb: 'Dashboard' }
       },
       {
         path: 'account',
