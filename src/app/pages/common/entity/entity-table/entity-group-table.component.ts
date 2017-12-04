@@ -32,8 +32,14 @@ export interface Node {
   providers: [DialogService]
 })
 export class EntityGroupTableComponent extends EntityTableComponent {
+  readonly parentId: 0;
+
+  parent: Node= { id: this.parentId,
+                  name: "All",
+                  children: [] 
+                };
+
   
-  nodes: Node[] = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) { 
@@ -45,8 +51,9 @@ export class EntityGroupTableComponent extends EntityTableComponent {
     super.ngOnInit(); 
    }
 
-   handleData(res) {
-      super.handleData(res);
+   handleData(res): any {
+
+      res = super.handleData(res);
       
       let parentMap = new Map<string, Node>();
 
@@ -58,7 +65,7 @@ export class EntityGroupTableComponent extends EntityTableComponent {
 
        if( row.path.indexOf("/") === -1 ) {
           
-          this.nodes.push(newNode);
+          this.parent.children.push(newNode);
           parentMap.set(row.path, newNode);
         } else {
           const key: string = row.path.split('/')[0];
@@ -74,8 +81,10 @@ export class EntityGroupTableComponent extends EntityTableComponent {
           }
         }
 
-        console.log("nodes:", this.nodes);
       });
+
+      return res;
    }
+
   
 }

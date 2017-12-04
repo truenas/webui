@@ -152,7 +152,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   }
 
-  handleData(res) {
+  handleData(res): any {
+
+    if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
+
+      res = {
+        data: []
+      };
+    }
+
     if (res.data) {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
@@ -194,6 +202,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.currentRows = rows;
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
+    return res;
 
   }
 

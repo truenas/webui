@@ -15,11 +15,28 @@
 			<input mdInput #filter placeholder="Filter {{title}}">
 		</md-input-container>
 	</div>
-	========================  entity-group-table is Under Construction =================
 	
-	<div *ngIf="this.nodes.length > 0">
-		<tree-root [nodes]="nodes"></tree-root>
+	<md-accordion>
+		<md-expansion-panel>
+			<md-expansion-panel-header>
+				<md-panel-title>
+					Volume Tree
+				</md-panel-title>
+				<md-panel-description>
+					Filter Recursive By Parent
+				</md-panel-description>
+			</md-expansion-panel-header>
+			<div *ngIf="this.parent.children.length > 0">
+				<tree-root [nodes]="[this.parent]">
+				</tree-root>
+			</div>
+		</md-expansion-panel>
+	</md-accordion>
+	
+	<div>
+		<br/>
 	</div>
+
 	<div>
 		<ngx-datatable class='material' 
 					   [rows]='seenRows' 
