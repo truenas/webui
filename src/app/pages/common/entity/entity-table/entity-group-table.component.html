@@ -27,7 +27,7 @@
 				</md-panel-description>
 			</md-expansion-panel-header>
 			<div *ngIf="this.parent.children.length > 0">
-				<tree-root [nodes]="[this.parent]">
+				<tree-root [nodes]="[this.parent]"  (activate)="treeOnActiveChanged($event)">
 				</tree-root>
 			</div>
 		</md-expansion-panel>

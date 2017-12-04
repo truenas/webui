@@ -86,5 +86,34 @@ export class EntityGroupTableComponent extends EntityTableComponent {
       return res;
    }
 
+
+   treeOnActiveChanged($event) {
+     const newData: any[] = [];
+
+     this.rows.forEach((row)=>{
+        
+      if( $event.node.data.name === "All" ) {
+        newData.push(row);
+      } else if( row.path.indexOf("/") === -1 ) {
+          
+          if( row.path.indexOf($event.node.data.name) !== -1 ) {
+            newData.push(row);
+          }
+
+        } else {
+          const key: string = row.path.split('/')[0];
+          
+          if( row.path.indexOf(key) !== -1 ) {
+            newData.push(row);
+          }
+        }
+
+
+     });
+
+     this.currentRows = newData;
+     this.paginationPageIndex  = 0;
+     this.setPaginationInfo();
+   }
   
 }

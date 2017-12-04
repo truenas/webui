@@ -186,7 +186,7 @@ export class VolumesListComponent implements OnInit {
         data[i].type = 'zpool'
         data[i].path = data[i].name
       }
-      if (data[i].type === 'dataset'){
+      if (data[i].type === 'dataset' && typeof(this.dataset_data) !== "undefined" && typeof(this.dataset_data.data) !== "undefined" ) {
         for (let k = 0; k< this.dataset_data.data.length;k++){
           if (this.dataset_data.data[k].name === data[i].path){
             data[i].compression = this.dataset_data.data[k].compression;

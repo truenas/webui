@@ -305,7 +305,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.setPaginationInfo();
   }
 
-  private setPaginationInfo() {
+  protected setPaginationInfo() {
     
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
