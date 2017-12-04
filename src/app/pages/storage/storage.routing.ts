@@ -76,7 +76,7 @@ export const routes: Routes = [
           path : 'disks/edit/:pk', component : DiskFormComponent,
           data: {title: 'Edit Disk', breadcrumb:'Edit Disk' }},
         {
-          path : 'disks/wipe', component : DiskWipeComponent,
+          path : 'disks/wipe/:pk', component : DiskWipeComponent,
           data: {title: 'Wipe Disk', breadcrumb:'Wipe Disk' }}
       ]},
       {

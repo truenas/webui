@@ -51,7 +51,7 @@ export class DisksListComponent {
       label : "Wipe",
       onClick : (row) => {
         this._router.navigate(new Array('/').concat([
-          "storage", "volumes", "disks", "wipe"
+          "storage", "volumes", "disks", "wipe", row.disk_name
         ]));
       }
     });

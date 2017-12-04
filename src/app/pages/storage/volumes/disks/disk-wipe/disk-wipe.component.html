@@ -1,11 +1,13 @@
-<div class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">
-      Wipe Disk
-    </div>
+<md-card>
+  <div class="md-content">
+    <form class="form-wrap">
+      <ng-container *ngFor="let field of fieldConfig;" 
+        dynamicField [config]="field" [group]="formGroup">
+      </ng-container>
+      <md-card-actions>
+        <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Wipe</button>
+        <button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" md-raised-button color="accent">Cancel</button>
+      </md-card-actions>
+    </form>
   </div>
-
-  <div class="padding-16">
-    
-  </div>
-</div>
+</md-card>
