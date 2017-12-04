@@ -15,11 +15,15 @@
 .disks {
 	flex-basis: auto;
 	-webkit-box-flex: 1;
-	min-width: 400px; 
+	flex-grow: 1;
+	min-width: 350px; 
+	max-width: 400px;
 }
 .pool {
 	flex-basis: auto;
 	-webkit-box-flex: 1;
-	min-width: 450px; 
+	flex-grow: 1;
+	min-width: 400px;
+	max-width: 450px;
 }
 
