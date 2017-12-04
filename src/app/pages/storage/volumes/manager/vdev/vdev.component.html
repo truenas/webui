@@ -45,7 +45,7 @@
                 <md-option value="raidz2" *ngIf="getDisks().length >= 4">Raid-z2</md-option>
                 <md-option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</md-option>
             </md-select>
-            Estimated available capacity: {{size}}
+            Estimated raw capacity: {{size}}
         </div>
         </div>
         <div class="vdev-close">
