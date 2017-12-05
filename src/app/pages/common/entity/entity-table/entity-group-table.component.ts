@@ -21,6 +21,8 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 export interface Node {
   id?: number;
   name?: string;
+  fullpath?: string;
+  parent?: string;
   children?: Node[];
 };
 
@@ -32,88 +34,117 @@ export interface Node {
   providers: [DialogService]
 })
 export class EntityGroupTableComponent extends EntityTableComponent {
-  readonly parentId: 0;
+  readonly parentId = -666;
+  readonly parentRootPath = "/ROOT/";
+  readonly parentName = "All";
 
-  parent: Node= { id: this.parentId,
-                  name: "All",
-                  children: [] 
-                };
+  parent: Node = {
+    id: this.parentId,
+    name: this.parentName,
+    fullpath: this.parentRootPath,
+    parent: null,
+    children: []
+  };
 
-  
+  parentMap: Map<string, Node> = new Map<string, Node>();
+
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) { 
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
     super(rest, router, ws, _eRef, dialog, loader);
-   }
+  }
 
 
-   ngOnInit(): void {
-    super.ngOnInit(); 
-   }
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
 
-   handleData(res): any {
+  handleData(res): any {
 
-      res = super.handleData(res);
-      
-      let parentMap = new Map<string, Node>();
+    res = super.handleData(res);
 
-      this.rows.forEach((row)=>{
-        const newNode = {
-          id: row.id,
-          name: row.path
-        };
+    this.rows.forEach((row) => {
+      const newNode: Node = {
+        id: row.id,
+        name: row.path,
+        parent: this.parentRootPath,
+        fullpath: row.path
 
-       if( row.path.indexOf("/") === -1 ) {
-          
-          this.parent.children.push(newNode);
-          parentMap.set(row.path, newNode);
-        } else {
-          const key: string = row.path.split('/')[0];
-          const node: Node = parentMap.get(key);
+      };
+      this.parentMap.set(row.path, newNode);
 
-          if(node) {
-            if(typeof(node.children) === "undefined" ) {
-              node.children = [];
-            }
 
-            newNode.name = newNode.name.substr( (key + "/").length );
-            node.children.push(newNode);
-          }
+      if (row.path.indexOf("/") === - 1) {
+        this.parent.children.push(newNode);
+      } else {
+        let lastIndexOf: number = row.path.lastIndexOf("/");
+        if (lastIndexOf === -1) {
+          lastIndexOf = row.path.length;
         }
 
-      });
+        const key: string = row.path.substr(0, lastIndexOf);
 
-      return res;
-   }
+        if (this.parentMap.has(key)) {
+          const parentNode: Node = this.parentMap.get(key);
 
 
-   treeOnActiveChanged($event) {
-     const newData: any[] = [];
+          if (typeof (parentNode.children) === "undefined") {
+            parentNode.children = [];
+          }
 
-     this.rows.forEach((row)=>{
-        
-      if( $event.node.data.name === "All" ) {
+          newNode.name = newNode.name.substr((key + "/").length);
+          newNode.parent = key;
+          parentNode.children.push(newNode);
+        }
+      }
+
+    });
+
+    return res;
+  }
+
+
+  treeOnActiveChanged($event) {
+    const newData: any[] = [];
+
+    this.rows.forEach((row) => {
+
+      if( row.path === $event.node.data.fullpath || $event.node.data.fullpath === this.parentRootPath) {
         newData.push(row);
-      } else if( row.path.indexOf("/") === -1 ) {
-          
-          if( row.path.indexOf($event.node.data.name) !== -1 ) {
-            newData.push(row);
-          }
-
-        } else {
-          const key: string = row.path.split('/')[0];
-          
-          if( row.path.indexOf(key) !== -1 ) {
-            newData.push(row);
-          }
+      } else {
+        let lastIndexOf: number = row.path.lastIndexOf("/");
+        if (lastIndexOf === -1) {
+          lastIndexOf = row.path.length;
         }
 
+        let key: string = row.path.substr(0, lastIndexOf);
+        const filteredParentRootNode: Node = this.parentMap.get($event.node.data.fullpath);
 
-     });
+        let found = false;
+        while (this.parentMap.has(key) && key !== this.parentRootPath) {
+          const node = this.parentMap.get(key);
 
-     this.currentRows = newData;
-     this.paginationPageIndex  = 0;
-     this.setPaginationInfo();
-   }
-  
+          if (node.id === filteredParentRootNode.id) { 
+            found = true;
+            break;
+          }
+
+          key = node.parent;
+        }
+
+        if (found === true) {
+          newData.push(row);
+        }
+      }
+
+      
+
+
+    });
+
+    this.currentRows = newData;
+    this.paginationPageIndex = 0;
+    this.setPaginationInfo();
+  }
+
 }
