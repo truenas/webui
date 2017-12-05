@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import {  DialogService } from '../../../../services/';
 
 @Component({
   selector: 'app-group-form',
@@ -51,7 +52,7 @@ export class GroupFormComponent {
   private allow: any;
 
   constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService) {}
+    protected ws: WebSocketService, private dialog:DialogService) {}
   preInit(entityForm: any) {
   }
   afterInit(entityForm: any) {
@@ -74,5 +75,8 @@ export class GroupFormComponent {
         entityForm.formGroup.controls['bsdgrp_gid'].setValue(gid);
       }
     });
+  }
+  errorReport(res) {
+    this.dialog.errorReport(res.code, res.error.error_message, res.error.traceback);
   }
 }
