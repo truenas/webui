@@ -20,6 +20,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 export interface Node {
   id?: number;
+  type?: string;
   name?: string;
   fullpath?: string;
   parent?: string;
@@ -42,6 +43,7 @@ export class EntityGroupTableComponent extends EntityTableComponent {
     id: this.parentId,
     name: this.parentName,
     fullpath: this.parentRootPath,
+    type: this.parentRootPath,
     parent: null,
     children: []
   };
@@ -66,6 +68,7 @@ export class EntityGroupTableComponent extends EntityTableComponent {
     this.rows.forEach((row) => {
       const newNode: Node = {
         id: row.id,
+        type: row.type,
         name: row.path,
         parent: this.parentRootPath,
         fullpath: row.path
@@ -75,6 +78,10 @@ export class EntityGroupTableComponent extends EntityTableComponent {
 
 
       if (row.path.indexOf("/") === - 1) {
+
+        if( newNode.type === "zpool" ) {
+          newNode.name += "(zpool)";
+        }
         this.parent.children.push(newNode);
       } else {
         let lastIndexOf: number = row.path.lastIndexOf("/");
