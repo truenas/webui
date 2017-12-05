@@ -8,7 +8,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-volumes-list',
-  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template : `<entity-group-table [title]="title" [conf]="this"></entity-group-table>`
 })
 export class VolumesListComponent implements OnInit {
 
@@ -46,11 +46,11 @@ export class VolumesListComponent implements OnInit {
   };
 
   ngOnInit() {
-    let showTour = localStorage.getItem(this._router.url) || 'false';
-    if (showTour != "true") {
-      hopscotch.startTour(this.tour.startTour(this._router.url));
-      localStorage.setItem(this._router.url, 'true');
-    }
+    //let showTour = localStorage.getItem(this._router.url) || 'false';
+    //if (showTour != "true") {
+    //  hopscotch.startTour(this.tour.startTour(this._router.url));
+    //  localStorage.setItem(this._router.url, 'true');
+    //}
     this._rest.get('storage/dataset/',{}).subscribe((res)=>{
       this.dataset_data = res;
     })
@@ -186,7 +186,7 @@ export class VolumesListComponent implements OnInit {
         data[i].type = 'zpool'
         data[i].path = data[i].name
       }
-      if (data[i].type === 'dataset'){
+      if (data[i].type === 'dataset' && typeof(this.dataset_data) !== "undefined" && typeof(this.dataset_data.data) !== "undefined" ) {
         for (let k = 0; k< this.dataset_data.data.length;k++){
           if (this.dataset_data.data[k].name === data[i].path){
             data[i].compression = this.dataset_data.data[k].compression;

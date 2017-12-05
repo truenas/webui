@@ -54,7 +54,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService) { }
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) { }
 
   ngOnInit() {
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
@@ -110,6 +110,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
   }
+  
 
   ngAfterViewInit(): void {
     this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
@@ -145,53 +146,65 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
     this.busy =
-      this.getFunction.subscribe((res) => {
-        if (res.data) {
-          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
-            res.data = this.conf.resourceTransformIncomingRestData(res.data);
-          }
-        } else {
-          if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
-            res = this.conf.resourceTransformIncomingRestData(res);
-          }
-        }
-
-        let rows: any[] = [];
-
-        if (this.loaderOpen) {
-          this.loader.close();
-          this.loaderOpen = false;
-        }
-        if (res.data) {
-          rows = new EntityUtils().flattenData(res.data);
-        } else {
-          rows = new EntityUtils().flattenData(res);
-        }
-        if (this.conf.dataHandler) {
-          this.conf.dataHandler(this);
-        }
-        for (let i = 0; i < rows.length; i++) {
-          for (let attr in rows[i]) {
-            if (rows[i].hasOwnProperty(attr)) {
-              rows[i][attr] = this.rowValue(rows[i], attr);
-            }
-          }
-        }
-
-        this.rows = rows;
-    
-        if (this.conf.addRows) {
-          this.conf.addRows(this);
-        }
-        
-        this.currentRows = rows;
-        this.paginationPageIndex  = 0;
-        this.setPaginationInfo();
-
+      this.getFunction.subscribe((res)=>{
+        this.handleData(res);
       });
 
   }
 
+  handleData(res): any {
+
+    if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
+
+      res = {
+        data: []
+      };
+    }
+
+    if (res.data) {
+      if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+        res.data = this.conf.resourceTransformIncomingRestData(res.data);
+      }
+    } else {
+      if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+        res = this.conf.resourceTransformIncomingRestData(res);
+      }
+    }
+
+    let rows: any[] = [];
+
+    if (this.loaderOpen) {
+      this.loader.close();
+      this.loaderOpen = false;
+    }
+    if (res.data) {
+      rows = new EntityUtils().flattenData(res.data);
+    } else {
+      rows = new EntityUtils().flattenData(res);
+    }
+    if (this.conf.dataHandler) {
+      this.conf.dataHandler(this);
+    }
+    for (let i = 0; i < rows.length; i++) {
+      for (let attr in rows[i]) {
+        if (rows[i].hasOwnProperty(attr)) {
+          rows[i][attr] = this.rowValue(rows[i], attr);
+        }
+      }
+    }
+
+    this.rows = rows;
+
+    if (this.conf.addRows) {
+      this.conf.addRows(this);
+    }
+    
+    this.currentRows = rows;
+    this.paginationPageIndex  = 0;
+    this.setPaginationInfo();
+    return res;
+
+  }
 
   trClass(row) {
     let classes = [];
@@ -292,7 +305,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.setPaginationInfo();
   }
 
-  private setPaginationInfo() {
+  protected setPaginationInfo() {
     
     const beginIndex = this.paginationPageIndex * this.paginationPageSize;
     const endIndex = beginIndex + this.paginationPageSize ;
