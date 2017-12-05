@@ -34,7 +34,7 @@ export interface Node {
   styleUrls: ['./entity-group-table.component.scss'],
   providers: [DialogService]
 })
-export class EntityGroupTableComponent extends EntityTableComponent {
+export class EntityGroupTableComponent extends EntityTableComponent implements OnInit {
   readonly parentId = -666;
   readonly parentRootPath = "/ROOT/";
   readonly parentName = "All";
@@ -143,9 +143,6 @@ export class EntityGroupTableComponent extends EntityTableComponent {
           newData.push(row);
         }
       }
-
-      
-
 
     });
 
