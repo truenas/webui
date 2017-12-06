@@ -1,6 +1,6 @@
 <md-card>
   <div class="md-content">
-    <form class="form-wrap">
+    <form class="form-wrap" (ngSubmit)="onSubmit($event)">
       <ng-container *ngFor="let field of fieldConfig;" 
         dynamicField [config]="field" [group]="formGroup">
       </ng-container>
