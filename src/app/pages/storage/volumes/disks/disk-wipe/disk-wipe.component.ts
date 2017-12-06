@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { FormArray, FormGroup } from '@angular/forms';
-import { MdSnackBar } from '@angular/material';
+import { MdDialog, MdSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
 import { WebSocketService } from "../../../../../services/ws.service";
@@ -9,7 +9,7 @@ import { RestService } from "../../../../../services/rest.service";
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-
+import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-disk-wipe',
@@ -20,8 +20,12 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 export class DiskWipeComponent implements OnInit {
 
   protected pk: any;
+  public job: any = {};
+  protected dialogRef: any;
   protected route_success: string[] = ['storage', 'volumes', 'disks'];
   public formGroup: FormGroup;
+  protected disk_name: any;
+  protected wipe_method: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -34,28 +38,22 @@ export class DiskWipeComponent implements OnInit {
       type: 'select',
       name: 'wipe_method',
       placeholder: 'Method',
-      options: [{
-        label: 'Quick',
-        value: 'QUICK',
-      }, {
-        label: 'Full with zeros',
-        value: 'FULL',
-      }, {
-        label: 'Full with random data',
-        value: 'FULL_RANDOM',
-      }],
+      options: [],
     }
   ];
-
-  protected disk_name: any;
-  protected wipe_method: any;
 
   constructor(private ws: WebSocketService,
               private router: Router,
               private activatedRoute: ActivatedRoute,
               protected entityFormService: EntityFormService,
               protected loader: AppLoaderService,
-              public snackBar: MdSnackBar) {
+              public snackBar: MdSnackBar,
+              protected dialog: MdDialog) {
+  }
+
+  ngOnInit() {
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+    this.preInit();
   }
 
   openSnackBar(message: string, action: string) {
@@ -68,13 +66,26 @@ export class DiskWipeComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.pk = params['pk'];
       this.disk_name = _.find(this.fieldConfig, {name : 'disk_name'});
-      this.disk_name.value = this.pk;
+      this.formGroup.controls['disk_name'].setValue(this.pk);
     });
-  }
 
-  ngOnInit() {
-    this.preInit();
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);    
+    let method = [
+      {
+        label: 'Quick',
+        value: 'QUICK',
+      }, {
+        label: 'Full with zeros',
+        value: 'FULL',
+      }, {
+        label: 'Full with random data',
+        value: 'FULL_RANDOM',
+      }];
+    this.wipe_method = _.find(this.fieldConfig, {name : 'wipe_method'});
+    method.forEach((item) => {
+      this.wipe_method.options.push(
+          {label : item.label, value : item.value});
+    });
+    this.formGroup.controls['wipe_method'].setValue(method[0].value);
   }
 
   goBack() {
@@ -84,26 +95,25 @@ export class DiskWipeComponent implements OnInit {
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.loader.open();
 
     let formValue = _.cloneDeep(this.formGroup.value);
 
-    this.ws.job('disk.wipe', [formValue.disk_name, formValue.wipe_method]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (res.progress) {
-          console.log(res.progress.percent);
-        }
-        if (res.state == 'SUCCESS') {
-          this.openSnackBar("Disk successfully wiped", "Success");
-        } else if (res.state == 'FAILED') {
-          this.openSnackBar("Please retry.", "Failed");
-        }
-      },
-      (res) => {
-        console.log("Wipe disk error: ", res);
-        this.loader.close();
-      });
+    if(!formValue.wipe_method) {
+      return false;
+    }
+
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Wipe" }, disableClose: true });
+    this.dialogRef.componentInstance.progressNumberType = "nopercent";
+    this.dialogRef.componentInstance.setDiscription("Wiping Disk...");
+    this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(false);
+      this.openSnackBar("Disk successfully wiped", "Success");
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogRef.componentInstance.setDiscription(res.error);
+    });
   }
 
 }
