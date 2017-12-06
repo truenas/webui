@@ -3,6 +3,11 @@ import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
+import { EntityFormComponent } from '../../../common/entity/entity-form';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { WebSocketService } from '../../../../services/';
+import { DialogService } from '../../../../services/';
+
 import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
@@ -12,8 +17,8 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 })
 export class StorageFormComponent {
 
-  protected resource_name: string = 'jails/mountpoints/';
-  protected route_success: string[] = ['jails', 'storage'];
+  protected addCall = 'jail.fstab';
+  protected route_success: string[] = ['jails'];
   protected isEntity: boolean = true;
 
   public fieldConfig: FieldConfig[] = [{
@@ -29,38 +34,75 @@ export class StorageFormComponent {
       placeholder: 'Source',
     },
     {
-      type: 'explorer',
-      initial: '/mnt',
+      // type: 'explorer',
+      // initial: '/mnt/iocage/jails/test6/root',
+      type: 'input',
       name: 'destination',
       placeholder: 'Destination',
-    },
-    {
-      type: 'checkbox',
-      name: 'readonly',
-      placeholder: 'Read-Only',
-    },
-    {
-      type: 'checkbox',
-      name: 'create directory',
-      placeholder: 'Create directory',
     }
   ];
 
   private jail: any;
-
+  protected entityForm: any;
+  protected formGroup: any;
+  protected error: any;
+  protected jailID: any;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected jailService: JailService) {}
+    protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
+    private dialog: DialogService) {}
+
+  preInit(entityForm: any) {
+    this.jail = _.find(this.fieldConfig, { 'name': 'jail' });
+    this.aroute.params.subscribe(params => {
+      this.jailID = params['id'];
+      if(this.jailID) {
+        this.jail.value = this.jailID;
+      }
+    });
+  }
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+    entityForm.onSubmit = this.onSubmit;
+    entityForm.error = this.error;
+    entityForm.route_success = this.route_success;
+    entityForm.jailID = this.jailID;
+
     this.jailService.listJails().subscribe((res) => {
-      this.jail = _.find(this.fieldConfig, { 'name': 'jail' });
-      res.data.forEach((item) => {
-        this.jail.options.push({ label: item.jail_host, value: item.jail_host });
+      res.forEach((item) => {
+        this.jail.options.push({ label: item.host_hostuuid, value: item.host_hostuuid });
       });
     });
 
-    if (!entityForm.isNew) {
+    if (!entityForm.isNew || this.jailID) {
       entityForm.setDisabled('jail', true);
     }
+  }
+
+  onSubmit(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.error = null;
+    let value = _.cloneDeep(this.formGroup.value);
+
+    let jail = this.jailID;
+
+    value['action'] = "add";
+    value['fstype'] = "nullfs";
+    value['fsoptions'] = "ro";
+    value['dump'] = "0";
+    value['_pass'] = "0";
+
+    this.loader.open();
+    this.ws.call('jail.fstab', [jail, value]).subscribe(
+      (res) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (res) => {
+        this.loader.close();
+        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+      }
+    );
   }
 }
