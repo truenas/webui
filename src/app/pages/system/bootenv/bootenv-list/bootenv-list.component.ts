@@ -2,6 +2,7 @@ import {Component, ElementRef} from '@angular/core';
 import {Router} from '@angular/router';
 import filesize from 'filesize';
 import { Subscription } from 'rxjs';
+import { MdSnackBar } from '@angular/material';
 
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -58,7 +59,8 @@ export class BootEnvironmentListComponent {
   }
 
   constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
-    private dialog: DialogService, protected loader: AppLoaderService ) {}
+    private dialog: DialogService, protected loader: AppLoaderService,
+    public snackBar: MdSnackBar ) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
@@ -80,14 +82,13 @@ export class BootEnvironmentListComponent {
             [ "system", "bootenv", "create" ]));
        }
     });
-    // uncommit me when we have a fix for #26779
-    // actions.push({
-    //   label : "scrub",
-    //   icon: "device_hub",
-    //   onClick : () => {
-    //     this.entityList.scrub();
-    //   }
-    // });
+    actions.push({
+      label : "scrub",
+      icon: "device_hub",
+      onClick : () => {
+        this.scrub();
+      }
+    });
     actions.push({
       label : "status",
       icon: "local_laundry_service",
@@ -211,21 +212,22 @@ export class BootEnvironmentListComponent {
     }
 
   }
-  // scrub() {
-  //   this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
-  //     if (res) {
-  //       this.loader.open();
-  //       this.loaderOpen = true;
-  //       let data = {};
-  //       this.busy = this._rest.post('', {}).subscribe((res) => {
-  //         this.loader.close();
-  //         },
-  //         (res) => {
-  //           this.dialog.errorReport(res.error, res.reason, res);
-  //           this.loader.close();
-  //         }
-  //         );
-  //     }
-  //   })
-  // }
+  scrub() {
+    this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call('boot.scrub').subscribe((res) => {
+          this.loader.close();
+          this.snackBar.open('Scrub started',"OK", {duration: 5000});
+          },
+          (res) => {
+            this.dialog.errorReport(res.error, res.reason, res);
+            this.loader.close();
+          }
+          );
+      }
+    })
+  }
 }
