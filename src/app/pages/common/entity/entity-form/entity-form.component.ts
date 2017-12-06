@@ -298,7 +298,13 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                         },
                         (res) => {
                           this.loader.close();
-                          this.dialog.errorReport(res.error, res.reason, res.trace.formatted); });
+                          if (this.conf.errorReport){
+                            this.conf.errorReport(res);
+                          }
+                          else {
+                            this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+                          }
+                        });
   }
 
   clearErrors() {
