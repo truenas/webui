@@ -20,15 +20,12 @@
 		<md-expansion-panel>
 			<md-expansion-panel-header>
 				<md-panel-title>
-					Filter Recursive
+					Filter Nodes
 				</md-panel-title>
 				<md-panel-description>
 				</md-panel-description>
 			</md-expansion-panel-header>
 			<md-card>
-				<md-card-title>
-					Expand Tree and Select Filter Node
-				</md-card-title>
 				<md-card-content>
 					<div *ngIf="this.parent.children.length > 0">
 						<tree-root [nodes]="[this.parent]"  (activate)="treeOnActiveChanged($event)">
