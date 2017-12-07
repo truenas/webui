@@ -16,6 +16,7 @@ import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
 import {  DialogService } from '../../../../services/';
+import {Validators} from '@angular/forms';
 
 @Component({
   selector : 'app-user-form',
@@ -32,11 +33,13 @@ export class UserFormComponent {
       type : 'input',
       name : 'bsdusr_uid',
       placeholder : 'User ID',
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'bsdusr_username',
       placeholder : 'Username',
+      validation : [ Validators.required ]
     },
 
     {
@@ -82,6 +85,7 @@ export class UserFormComponent {
       type : 'input',
       name : 'bsdusr_full_name',
       placeholder : 'Full Name',
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -92,14 +96,15 @@ export class UserFormComponent {
       type : 'input',
       name : 'bsdusr_password',
       placeholder : 'Password',
-      inputType : 'password'
+      inputType : 'password',
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'bsdusr_password_conf',
       placeholder : 'Confirm Password',
       inputType : 'password',
-      validation : [ matchOtherValidator('bsdusr_password') ]
+      validation : [ matchOtherValidator('bsdusr_password'), Validators.required ]
 
     },
     {

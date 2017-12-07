@@ -53,7 +53,7 @@
 					   [selected]='selected'
 					   (select)='onSelect($event)'>
 
-			<ngx-datatable-column *ngIf="conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+			<ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
 				<ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
 					<div class="headerCheckboxCell">
 						<md-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></md-checkbox>
