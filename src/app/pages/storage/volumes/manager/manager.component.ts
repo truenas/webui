@@ -32,9 +32,13 @@ import { DownloadKeyModalDialog } from '../../../../components/common/dialog/dow
 export class ManagerComponent implements OnInit, OnDestroy {
 
   public disks: Array < any > = [];
+  public original_disks: Array < any > = [];
+  public suggestable_disks: Array < any > = [];
+  public can_suggest = false;
   public selected: Array < any > = [];
   public vdevs:
     any = { data: [{}], cache: [], spare: [], log: [] };
+  public original_vdevs: any = {};
   public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
@@ -50,6 +54,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public re_has_errors = false;
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
+  public dirty = false;
+  public layout_type = "redundancy";
+  public layout_types = {"Redundancy":"redundancy", "Virtualization":"virtualization"}
 
   public busy: Subscription;
 
@@ -103,8 +110,25 @@ export class ManagerComponent implements OnInit, OnDestroy {
         res[i]['capacity'] = filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
+      this.original_disks = this.disks;
+
+      // assign disks for suggested layout
+      let largest_capacity = 0;
+      for (let i = 0; i < this.disks.length; i++) {
+        if (this.disks[i].real_capacity > largest_capacity) {
+          largest_capacity = this.disks[i].real_capacity;
+        }
+      }
+      for (let i = 0; i < this.disks.length; i++) {
+        if (this.disks[i].real_capacity === largest_capacity) {
+          this.suggestable_disks.push(this.disks[i]);
+        }
+      }
+      this. can_suggest = this.suggestable_disks.length < 11;
+
       this.temp = [...this.disks];
     });
+    this.original_vdevs = this.vdevs;
   }
 
   ngOnDestroy() {
@@ -214,6 +238,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.temp.splice(this.temp.indexOf(disk), 1);
+    this.dirty = true;
   }
 
   onSelect({ selected }) {
@@ -252,6 +277,49 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
       // Whenever the filter changes, always go back to the first page
       this.table.offset = 0;
+    }
+  }
+
+  reset() {
+    this.disks = this.original_disks;
+    this.selected = [];
+    this.temp = [...this.disks];
+    this.vdevs = this.original_vdevs;
+    this.dirty = false;
+  }
+
+  addSuggestedDisksToVdev(disks, vdev_index) {
+     for (let i = 0; i < disks.length; i++) {
+       this.vdevs["data"][vdev_index].addDisk(disks[i]);
+       this.suggestable_disks.splice(this.suggestable_disks.indexOf(disks[i]), 1);
+       this.removeDisk(disks[i]);
+     }
+  }
+
+  suggestLayout() {
+    this.reset();
+    if (this.layout_type === "virtualization") {
+      this.suggestVirtualizationLayout();
+    } else {
+      this.suggestRedundancyLayout();
+    }
+
+  }  
+
+  suggestRedundancyLayout() {
+    this.addSuggestedDisksToVdev(this.suggestable_disks, 0);
+  }
+
+  suggestVirtualizationLayout() {
+    let usable_length = this.suggestable_disks.length;
+    if (usable_length % 2 !== 0) {
+      usable_length = usable_length - 1;
+    }
+    for (let i, j = 0; i < usable_length; i += 2, j++) {
+      if (j > 0) {
+        this.addVdev("data");
+      }
+      this.addSuggestedDisksToVdev(this.suggestable_disks.slice(i-1,i),j);
     }
   }
 }
