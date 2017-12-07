@@ -46,11 +46,11 @@ export class VolumesListComponent implements OnInit {
   };
 
   ngOnInit() {
-    //let showTour = localStorage.getItem(this._router.url) || 'false';
-    //if (showTour != "true") {
-    //  hopscotch.startTour(this.tour.startTour(this._router.url));
-    //  localStorage.setItem(this._router.url, 'true');
-    //}
+    let showTour = localStorage.getItem(this._router.url) || 'false';
+    if (showTour != "true") {
+      hopscotch.startTour(this.tour.startTour(this._router.url));
+      localStorage.setItem(this._router.url, 'true');
+    }
     this._rest.get('storage/dataset/',{}).subscribe((res)=>{
       this.dataset_data = res;
     })
