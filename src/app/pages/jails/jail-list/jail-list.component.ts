@@ -1,7 +1,7 @@
 import { RestService, WebSocketService } from '../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
+import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
@@ -15,19 +15,93 @@ export class JailListComponent {
   protected route_add: string[] = ['jails', 'add'];
   protected route_add_tooltip = "Add Jail";
   protected wsDelete = 'jail.do_delete';
+  protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
   public columns: Array < any > = [
     { name: 'Jail', prop: 'host_hostuuid' },
-    { name: 'Status', prop: 'state' },
-    { name: 'Release', prop: 'release' },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
+    { name: 'Status', prop: 'state' },
+    { name: 'Type', prop: 'type' },
+    { name: 'Release', prop: 'release' },
   ];
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true,
   };
-
+  public multiActions: Array < any > = [{
+      id: "mstart",
+      label: "Start",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.loader.open();
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
+            (res) => {
+              for (let i in selected) {
+                selected[i].state = 'up';
+              }
+              this.updateMultiAction(selected);
+              this.loader.close();
+            },
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            });
+      }
+    },
+    {
+      id: "mstop",
+      label: "Stop",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.loader.open();
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
+            (res) => {
+              for (let i in selected) {
+                selected[i].state = 'down';
+              }
+              this.updateMultiAction(selected);
+              this.loader.close();
+            },
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            });
+      }
+    },
+    {
+      id: "mupdate",
+      label: "Update",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.loader.open();
+        this.entityList.busy =
+          this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            },
+            (res) => {
+              console.log(res);
+              this.loader.close();
+            });
+      }
+    },
+    {
+      id: "mdelete",
+      label: "Delete",
+      enable: true,
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
+      }
+    },
+  ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
@@ -91,5 +165,33 @@ export class JailListComponent {
         }
       }
     ]
+  }
+
+  getSelectedNames(selectedJails) {
+    let selected: any = [];
+    for (let i in selectedJails) {
+      selected.push(selectedJails[i].host_hostuuid);
+    }
+    return selected;
+  }
+
+  updateMultiAction(selected: any) {
+    if (_.find(selected, ['state', 'up'])) {
+     _.find(this.multiActions, {'id': 'mstop'})['enable'] = true;
+    } else {
+      _.find(this.multiActions, {'id': 'mstop'})['enable'] = false;
+    }
+
+    if (_.find(selected, ['state', 'down'])) {
+     _.find(this.multiActions, {'id': 'mstart'})['enable'] = true;
+    } else {
+      _.find(this.multiActions, {'id': 'mstart'})['enable'] = false;
+    }
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['jail.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
   }
 }

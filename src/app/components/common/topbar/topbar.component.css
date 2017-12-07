@@ -1,3 +1,28 @@
+.fa-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
+}
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
 .movement {
   animation: nudge 3s infinite linear;
 }
@@ -14,4 +39,9 @@
   80% {
     transform: translate(-10px, 0);
   }
+}
+
+.mat-menu-item  span.flag-icon {
+  padding-left: 30px;
+  background-position-x: left;
 }

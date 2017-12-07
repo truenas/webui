@@ -12,8 +12,10 @@ import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
 import { ReplicationListComponent } from 'app/pages/task-calendar/replication/replication-list';
-import { ReplicationAddComponent } from 'app/pages/task-calendar/replication/replication-add';
-import { ReplicationEditComponent } from 'app/pages/task-calendar/replication/replication-edit';
+import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/replication-form';
+import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
+import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
+
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -79,11 +81,11 @@ export const TaskCalendarRoutes: Routes = [{
         data: { title: 'Replication', breadcrumb: 'Replication' },
       }, {
         path: 'add-replication',
-        component: ReplicationAddComponent,
+        component: ReplicationFormComponent,
         data: { title: 'Add Replication', breadcrumb: 'Add Replication' },
       },{
         path: 'edit-replication/:pk',
-        component: ReplicationEditComponent,
+        component: ReplicationFormComponent,
         data: { title: 'Edit Replication', breadcrumb: 'Edit Replication' },
       }
     ]
@@ -117,6 +119,22 @@ export const TaskCalendarRoutes: Routes = [{
     }, {
       path: 'edit/:pk',
       component: SmartFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
+    }]
+  }, {
+    path: 'scrub',
+    data: { title: 'Scrub Tasks', breadcrumb: 'Scrub Tasks' },
+    children: [{
+      path: '',
+      component: ScrubListComponent,
+      data: { title: 'Scrub Tasks', breadcrumb: 'Scrub Tasks' },
+    }, {
+      path: 'add',
+      component: ScrubFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add' }
+    }, {
+      path: 'edit/:pk',
+      component: ScrubFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
   }]

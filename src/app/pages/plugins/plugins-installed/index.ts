@@ -1,0 +1,1 @@
+export { PluginsInstalledListComponent } from './plugins-installed.component'; 

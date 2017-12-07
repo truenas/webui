@@ -15,6 +15,8 @@ import {
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
+import {  DialogService } from '../../../../services/';
+import {Validators} from '@angular/forms';
 
 @Component({
   selector : 'app-user-form',
@@ -31,11 +33,13 @@ export class UserFormComponent {
       type : 'input',
       name : 'bsdusr_uid',
       placeholder : 'User ID',
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'bsdusr_username',
       placeholder : 'Username',
+      validation : [ Validators.required ]
     },
 
     {
@@ -81,6 +85,7 @@ export class UserFormComponent {
       type : 'input',
       name : 'bsdusr_full_name',
       placeholder : 'Full Name',
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -91,14 +96,15 @@ export class UserFormComponent {
       type : 'input',
       name : 'bsdusr_password',
       placeholder : 'Password',
-      inputType : 'password'
+      inputType : 'password',
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'bsdusr_password_conf',
       placeholder : 'Confirm Password',
       inputType : 'password',
-      validation : [ matchOtherValidator('bsdusr_password') ]
+      validation : [ matchOtherValidator('bsdusr_password'), Validators.required ]
 
     },
     {
@@ -146,7 +152,8 @@ export class UserFormComponent {
   private bsdusr_creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected storageService: StorageService ) {}
+              protected ws: WebSocketService, protected storageService: StorageService,
+              private dialog:DialogService ) {}
 
   preInit(entityForm: any) {
     // if (!entityForm.isNew) {
@@ -226,6 +233,10 @@ export class UserFormComponent {
           entityForm.formGroup.controls['bsdusr_shell'].setValue(
               this.shells[1][0]);
         });
+  }
+
+  errorReport(res) {
+    this.dialog.errorReport(res.code, res.error.error_message, res.error.traceback);
   }
 
   clean_uid(value) {

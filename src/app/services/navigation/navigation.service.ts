@@ -74,6 +74,7 @@ export class NavigationService {
         { name: 'S.M.A.R.T Tests', state: 'smart' },
         { name: 'Periodic Snapshot Tasks', state: 'snapshot' },
         { name: 'Replication Tasks', state: 'replication' },
+        { name: 'Scrub Tasks', state: 'scrub' },
       ]
     },
     {
@@ -137,13 +138,17 @@ export class NavigationService {
       icon: 'tune',
       state: 'services'
     },
-    // {
-    //   name: 'Plugins',
-    //   type: 'dropDown',
-    //   tooltip: 'Plugins',
-    //   icon: 'extension',
-    //   state: 'plugins'
-    // },
+    {
+      name: 'Plugins',
+      type: 'dropDown',
+      tooltip: 'Plugins',
+      icon: 'extension',
+      state: 'plugins',
+      sub: [
+        {name: 'Available', state: 'available'},
+        {name: 'Installed', state: 'installed'},
+      ]
+    },
     {
       name: 'Jails',
       type: 'link',

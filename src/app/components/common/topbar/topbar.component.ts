@@ -16,7 +16,7 @@ import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'topbar',
-  styleUrls: ['./topbar.component.css'],
+  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
   templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
@@ -41,13 +41,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
     name: '中文',
     code: 'zh',
   }]
-  freenasThemes;
   continuosStreaming: Subscription;
   showReplication: boolean = false;
+  showResilvering: boolean = false;
   replicationDetails;
+  resilveringDetails;
 
   constructor(
-    private themeService: ThemeService,
+    public themeService: ThemeService,
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
@@ -73,7 +74,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.freenasThemes = this.themeService.freenasThemes;
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
 
@@ -101,6 +101,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.continuosStreaming = Observable.interval(10000).subscribe(x => {
       this.showReplicationStatus();
     });
+
+    this.ws.subscribe('zfs.pool.scan').subscribe(res => {
+      if(res && res.fields.scan.function.indexOf('RESILVER') > -1 ) {
+        this.resilveringDetails = res.fields;
+        this.showResilvering = true;
+      }
+    });
+
+    setInterval(() => {
+      if(this.resilveringDetails && this.resilveringDetails.scan.state == 'FINISHED') {
+        this.showResilvering = false;
+        this.resilveringDetails = '';
+      }
+    }, 2500);
   }
 
   ngOnDestroy() {
@@ -116,7 +130,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     localStorage.setItem(this.router.url, 'true');
   }
 
-  setLang() {
+  setLang(lang) {
+    this.currentLang = lang;
     this.onLangChange.emit(this.currentLang);
   }
 
@@ -175,7 +190,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showReplicationStatus() {
     this.rest.get('storage/replication/', {}).subscribe(res => {
       let idx = res.data.forEach(x => {
-        if(x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
+        if(typeof(x.repl_status) !== "undefined" &&
+            x.repl_status != null && x.repl_status.indexOf('Sending') > -1 && x.repl_enabled == true) {
           this.showReplication = true;
           this.replicationDetails = x;
         }
@@ -187,5 +203,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   showReplicationDetails(){
     this.snackBar.open(this.replicationDetails.repl_status.toString(), 'OKAY');
+  }
+
+  showResilveringDetails() {
+    this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, 'OKAY');
   }
 }
