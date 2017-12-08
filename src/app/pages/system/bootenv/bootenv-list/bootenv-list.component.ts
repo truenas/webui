@@ -9,10 +9,12 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
+import * as moment from 'moment';
 
 @Component({
   selector : 'app-bootenv-list',
-  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
+  // template : `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  templateUrl : './bootenv-list.component.html'
 })
 export class BootEnvironmentListComponent {
 
@@ -25,6 +27,13 @@ export class BootEnvironmentListComponent {
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
   public busy: Subscription;
+  public size_consumed: string;
+  public condition: string;
+  public size_boot: string;
+  public percentange: string;
+  public header: string;
+  public scrub_msg: string;
+  public scrub_interval: number; 
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -38,7 +47,23 @@ export class BootEnvironmentListComponent {
     sorting : {columns : this.columns},
   };
 
+  preInit(){
+    this._rest.get('system/advanced/',{}).subscribe(res=>{
+      this.scrub_interval = res.data.adv_boot_scrub;
+      this.ws.call('boot.get_state').subscribe(res => {
+        this.scrub_msg = moment(res.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
+        this.size_consumed = res.properties.allocated.value;
+        this.condition = res.properties.health.value;
+        if (this.condition === 'DEGRADED'){
+          this.condition = this.condition + ` One or more devices has experienced an error resulting in data corruption. Applications may be affected.`
+        }
+        this.size_boot =  res.properties.size.value;
+        this.percentange =  res.properties.capacity.value;
+      });
+    });
 
+  }
+  
 
   rowValue(row, attr) {
     if (attr === 'created'){
