@@ -55,7 +55,18 @@ constructor (private entityFormService : EntityFormService){}
 
   getChildren(node:any) {
     return new Promise((resolve, reject) => {
-      resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
+      if(this.config.explorerType == "zvol") {
+        resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
+      }
+      else if(this.config.explorerType == "directory") {
+        resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      }
+      else if(this.config.explorerType == "file") {
+        resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      }
+      else {
+        resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
+      }     
     });
   }
 
