@@ -9,12 +9,13 @@ import {ActiveDirectoryComponent} from './activedirectory/';
 import {routing} from './directoryservice.routing';
 import {LdapComponent} from './ldap/';
 import {NISComponent} from './nis/';
+import { IdmapAdComponent } from './idmap/ad/';
 
 @NgModule({
   imports : [
     EntityModule, FormsModule, ReactiveFormsModule,
     NgUploaderModule, routing
   ],
-  declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent ],
+  declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent, IdmapAdComponent ],
   providers : [ SystemGeneralService ]
 }) export class DirectoryServiceModule {}

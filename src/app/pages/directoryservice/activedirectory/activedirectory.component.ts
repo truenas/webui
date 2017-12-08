@@ -13,6 +13,7 @@ import {FieldConfig} from '../../common/entity/entity-form/models/field-config.i
 export class ActiveDirectoryComponent {
   protected resource_name: string = 'directoryservice/activedirectory';
   protected isBasicMode: boolean = true;
+  protected idmapBacked: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -200,6 +201,8 @@ export class ActiveDirectoryComponent {
       return false;
     } else if (actionname === 'basic_mode' && this.isBasicMode === true) {
       return false;
+    } else if (actionname === 'edit_idmap' && this.isBasicMode === true) {
+      return false;
     }
     return true;
   }
@@ -214,6 +217,13 @@ export class ActiveDirectoryComponent {
       'id' : 'advanced_mode',
       'name' : 'Advanced Mode',
       function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      'id' : 'edit_idmap',
+      'name' : 'Edit Idmap',
+      function : () => { 
+        this.router.navigate(new Array('').concat(['directoryservice','idmap', 'activedirectory', this.idmapBacked]));
+      }
     }
   ];
 
@@ -286,5 +296,9 @@ export class ActiveDirectoryComponent {
             {label : item[1], value : item[0]});
       });
     });
+
+    entityEdit.formGroup.controls['ad_idmap_backend'].valueChanges.subscribe((res)=> {
+      this.idmapBacked = res;
+    })
   }
 }
