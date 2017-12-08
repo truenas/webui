@@ -1,19 +1,25 @@
-import {Component, ElementRef} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import filesize from 'filesize';
 import { Subscription } from 'rxjs';
+import { MdSnackBar } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
 
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
+import * as moment from 'moment';
+import { stringify } from '@angular/core/src/util';
 
 @Component({
   selector : 'app-bootenv-list',
-  template : `<entity-table [title]="title" [conf]="this"></entity-table>`
+  templateUrl : './bootenv-list.component.html'
 })
 export class BootEnvironmentListComponent {
+
+  @ViewChild('scrubIntervalEvent') scrubIntervalEvent: ElementRef;
 
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
@@ -24,6 +30,13 @@ export class BootEnvironmentListComponent {
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
   public busy: Subscription;
+  public size_consumed: string;
+  public condition: string;
+  public size_boot: string;
+  public percentange: string;
+  public header: string;
+  public scrub_msg: string;
+  public scrub_interval: number; 
 
   public columns: Array<any> = [
     {name: 'Name', prop: 'name'},
@@ -37,6 +50,43 @@ export class BootEnvironmentListComponent {
     sorting : {columns : this.columns},
   };
 
+  preInit(){
+    this._rest.get('system/advanced/',{}).subscribe(res=>{
+      this.scrub_interval = res.data.adv_boot_scrub;
+      this.ws.call('boot.get_state').subscribe(res => {
+        if (res.scan.end_time){
+          this.scrub_msg = moment(res.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
+        } else{
+          this.scrub_msg="Never"
+        }
+        this.size_consumed = res.properties.allocated.value;
+        this.condition = res.properties.health.value;
+        if (this.condition === 'DEGRADED'){
+          this.condition = this.condition + ` One or more devices has experienced an error resulting in data corruption. Applications may be affected.`
+        }
+        this.size_boot =  res.properties.size.value;
+        this.percentange =  res.properties.capacity.value;
+      });
+    });
+
+  }
+
+  changeEvent(){
+    Observable.fromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').debounceTime(150).distinctUntilChanged()
+    .subscribe(() => {
+      const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
+      if( scrubIntervalValue > -1){
+        this._rest.put('system/advanced/',{ body: JSON.stringify(
+          {'adv_boot_scrub':scrubIntervalValue})}).subscribe((res)=>{
+
+          })
+
+      }
+      else {
+        this.dialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
+      }
+    });
+  }
 
 
   rowValue(row, attr) {
@@ -58,7 +108,8 @@ export class BootEnvironmentListComponent {
   }
 
   constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
-    private dialog: DialogService, protected loader: AppLoaderService ) {}
+    private dialog: DialogService, protected loader: AppLoaderService,
+    public snackBar: MdSnackBar ) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
@@ -80,14 +131,13 @@ export class BootEnvironmentListComponent {
             [ "system", "bootenv", "create" ]));
        }
     });
-    // uncommit me when we have a fix for #26779
-    // actions.push({
-    //   label : "scrub",
-    //   icon: "device_hub",
-    //   onClick : () => {
-    //     this.entityList.scrub();
-    //   }
-    // });
+    actions.push({
+      label : "scrub",
+      icon: "device_hub",
+      onClick : () => {
+        this.scrub();
+      }
+    });
     actions.push({
       label : "status",
       icon: "local_laundry_service",
@@ -211,21 +261,22 @@ export class BootEnvironmentListComponent {
     }
 
   }
-  // scrub() {
-  //   this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
-  //     if (res) {
-  //       this.loader.open();
-  //       this.loaderOpen = true;
-  //       let data = {};
-  //       this.busy = this._rest.post('', {}).subscribe((res) => {
-  //         this.loader.close();
-  //         },
-  //         (res) => {
-  //           this.dialog.errorReport(res.error, res.reason, res);
-  //           this.loader.close();
-  //         }
-  //         );
-  //     }
-  //   })
-  // }
+  scrub() {
+    this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        let data = {};
+        this.busy = this.ws.call('boot.scrub').subscribe((res) => {
+          this.loader.close();
+          this.snackBar.open('Scrub started',"OK", {duration: 5000});
+          },
+          (res) => {
+            this.dialog.errorReport(res.error, res.reason, res);
+            this.loader.close();
+          }
+          );
+      }
+    })
+  }
 }
