@@ -8,6 +8,7 @@ import { ConfigSaveComponent } from './general/config-save/config-save.component
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
@@ -85,6 +86,10 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedComponent,
       data: { title: 'Advanced', breadcrumb: 'Advanced' },
+    },{
+      path: 'dataset',
+      component: DatasetComponent,
+      data: { title: 'Dataset', breadcrumb: 'Dataset' },
     }, {
       path: 'bootenv',
       data: { title: 'Boot Environments', breadcrumb: 'Boot Environments' },
