@@ -17,36 +17,46 @@ export class DatasetComponent implements OnInit{
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
-    name: 'stg_guiprotocol',
+    name: 'pool',
     placeholder: 'System Dataset Pool',
     tooltip: 'Select Default Pool',
     options: [
       { label: 'freenas-boot', value: 'freenas-boot' },
-    ],
+    ]
   },{
       type: 'checkbox',
-      name: 'stg_guihttpsredirect',
+      name: 'syslog',
       placeholder: 'Syslog',
       tooltip : 'Check this to redirect <i>HTTP</i> connections to\
  <i>HTTPS</i>. <i>HTTPS</i> must be selected in <b>Protocol</b>.'
     },{
       type: 'checkbox',
-      name: 'stg_guihttpsredirect',
+      name: 'rrd',
       placeholder: 'Reporting Database',
       tooltip : 'Save the Round-Robin Database (RRD) used by system statistics collection daemon into the system dataset'
     }];
 
-  private stg_guiprotocol: any;
+  private pool: any;
+  private syslog: any;
+  private rrd: any;
   constructor(private rest: RestService, private ws: WebSocketService) {}
 
   ngOnInit() {
     this.rest.get(this.volume_name, {}).subscribe( res => {
        if (res) {
-         this.stg_guiprotocol = _.find(this.fieldConfig, {'name': 'stg_guiprotocol'});
+         this.pool = _.find(this.fieldConfig, {'name': 'pool'});
          res.data.forEach( x => {
-           this.stg_guiprotocol.options.push({ label: x.name, value: x.name});
+           this.pool.options.push({ label: x.name, value: x.name});
          });
        }
+    });
+  }
+
+  afterInit(entityForm: any) {
+    this.ws.call('systemdataset.config').subscribe(res => {
+      entityForm.formGroup.controls['pool'].setValue(res.pool);
+      entityForm.formGroup.controls['syslog'].setValue(res.syslog);
+      entityForm.formGroup.controls['rrd'].setValue(res.rrd);
     })
   }
 }
