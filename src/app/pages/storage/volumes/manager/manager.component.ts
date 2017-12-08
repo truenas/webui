@@ -4,7 +4,8 @@ import {
   OnDestroy,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  AfterViewInit
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
@@ -29,7 +30,7 @@ import { DownloadKeyModalDialog } from '../../../../components/common/dialog/dow
     DialogService
   ],
 })
-export class ManagerComponent implements OnInit, OnDestroy {
+export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public disks: Array < any > = [];
   public original_disks: Array < any > = [];
@@ -43,7 +44,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
-
+  public originalVdevComponents: QueryList <VdevComponent>;
+  public originalDiskComponents: QueryList <DiskComponent>;
   @ViewChild(DatatableComponent) table: DatatableComponent;
   public temp = [];
   
@@ -129,6 +131,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this.temp = [...this.disks];
     });
     this.original_vdevs = this.vdevs;
+  }
+
+  ngAfterViewInit() {
+    this.originalVdevComponents = this.vdevComponents;
+    this.originalDiskComponents = this.diskComponents;
   }
 
   ngOnDestroy() {
@@ -282,17 +289,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   reset() {
     this.disks = this.original_disks;
+    this.diskComponents = this.originalDiskComponents;
     this.selected = [];
     this.temp = [...this.disks];
     this.vdevs = this.original_vdevs;
+    this.vdevComponents = this.originalVdevComponents;
     this.dirty = false;
   }
 
-  addSuggestedDisksToVdev(disks, vdev_index) {
+  addSuggestedDisksToVdev(disks) {
      for (let i = 0; i < disks.length; i++) {
-       this.vdevs["data"][vdev_index].addDisk(disks[i]);
-       this.suggestable_disks.splice(this.suggestable_disks.indexOf(disks[i]), 1);
-       this.removeDisk(disks[i]);
+       this.vdevComponents.last.addDisk(disks[i]);
+     }
+     while (disks.length > 0) {
+        this.removeDisk(disks[0]);
+        this.suggestable_disks.splice(this.suggestable_disks.indexOf(disks[0]), 1);
      }
   }
 
@@ -307,7 +318,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }  
 
   suggestRedundancyLayout() {
-    this.addSuggestedDisksToVdev(this.suggestable_disks, 0);
+    this.addSuggestedDisksToVdev(this.suggestable_disks);
   }
 
   suggestVirtualizationLayout() {
@@ -316,10 +327,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
       usable_length = usable_length - 1;
     }
     for (let i, j = 0; i < usable_length; i += 2, j++) {
-      if (j > 0) {
-        this.addVdev("data");
-      }
-      this.addSuggestedDisksToVdev(this.suggestable_disks.slice(i-1,i),j);
+      this.addSuggestedDisksToVdev(this.suggestable_disks.slice(i-1,i));
     }
   }
 }

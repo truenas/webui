@@ -14,15 +14,17 @@
        (change)="isEncryptedChecked()" >
        Encryption
       </md-checkbox>
-      <mat-select *ngif="suggestible_disks.length > 8" [disabled]="dirty" placeholder="Layout type" [(ngModel)]="layout_type" >
-        <mat-option [value]="redunduncy">
-         Redundancy
-        </mat-option>
-        <mat-option [value]="virtualization">
-          Virtualization
-        </mat-option>
-      </mat-select>
-      <button *ngif="suggestible_disks.length > 8" [disabled]="dirty" md-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+      <div *ngIf="suggestable_disks.length <= 8">
+        <md-select [disabled]="dirty" placeholder="Layout type" [(ngModel)]="layout_type" >
+          <md-option [value]="redunduncy">
+           Redundancy
+          </md-option>
+          <md-option [value]="virtualization">
+            Virtualization
+          </md-option>
+        </md-select>
+        <button [disabled]="dirty" md-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+      </div>
       <button [disabled]="!dirty" md-raised-button class="btn btn-accent" (click)="reset()">Reset</button>
     </div>
     <div class="wrapper">
