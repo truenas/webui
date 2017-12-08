@@ -14,6 +14,7 @@ export class DatasetComponent implements OnInit{
 
   protected resource_name: string = 'storage/dataset';
   protected volume_name: string = 'storage/volume';
+  public formGroup: FormGroup;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
@@ -57,6 +58,21 @@ export class DatasetComponent implements OnInit{
       entityForm.formGroup.controls['pool'].setValue(res.pool);
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
       entityForm.formGroup.controls['rrd'].setValue(res.rrd);
-    })
+    });
+
+    entityForm.submitFunction = this.submitFunction;
+  }
+
+  submitFunction() {
+    const payload = {};
+    const formvalue = _.cloneDeep(this.formGroup.value);
+    payload['pool'] = formvalue.pool;
+    payload['syslog'] = formvalue.syslog;
+    payload['rrd'] = formvalue.rrd;
+    try {
+      return this.ws.call('systemdataset.update', [payload]);
+    } catch(err) {
+      console.log(err);
+    }
   }
 }
