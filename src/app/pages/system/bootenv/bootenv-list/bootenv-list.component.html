@@ -5,7 +5,7 @@
 <p> Last Scrub Run on: {{scrub_msg}} </p>
 <p> Automatic scrub interval (in days)</p>
 <md-input-container floatPlaceholder="never">
-        <input mdInput [value]="scrub_interval">
+        <input mdInput [value]="scrub_interval" #scrubIntervalEvent>
 </md-input-container> 
 </md-card>
 <entity-table [title]="title" [conf]="this"></entity-table>

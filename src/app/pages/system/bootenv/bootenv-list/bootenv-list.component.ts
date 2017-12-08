@@ -1,8 +1,9 @@
-import {Component, ElementRef} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import filesize from 'filesize';
 import { Subscription } from 'rxjs';
 import { MdSnackBar } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
 
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -10,13 +11,15 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
+import { stringify } from '@angular/core/src/util';
 
 @Component({
   selector : 'app-bootenv-list',
-  // template : `<entity-table [title]="title" [conf]="this"></entity-table>`,
   templateUrl : './bootenv-list.component.html'
 })
 export class BootEnvironmentListComponent {
+
+  @ViewChild('scrubIntervalEvent') scrubIntervalEvent: ElementRef;
 
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
@@ -63,7 +66,24 @@ export class BootEnvironmentListComponent {
     });
 
   }
-  
+
+  changeEvent(){
+    Observable.fromEvent(this.scrubIntervalEvent.nativeElement, 'keyup').debounceTime(150).distinctUntilChanged()
+    .subscribe(() => {
+      const scrubIntervalValue: number = this.scrubIntervalEvent.nativeElement.value;
+      if( scrubIntervalValue > -1){
+        this._rest.put('system/advanced/',{ body: JSON.stringify(
+          {'adv_boot_scrub':scrubIntervalValue})}).subscribe((res)=>{
+
+          })
+
+      }
+      else {
+        this.dialog.Info('Enter valid value', scrubIntervalValue+' is not a valid number of days.')
+      }
+    });
+  }
+
 
   rowValue(row, attr) {
     if (attr === 'created'){
