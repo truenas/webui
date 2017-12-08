@@ -54,7 +54,11 @@ export class BootEnvironmentListComponent {
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
       this.ws.call('boot.get_state').subscribe(res => {
-        this.scrub_msg = moment(res.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
+        if (res.scan.end_time){
+          this.scrub_msg = moment(res.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
+        } else{
+          this.scrub_msg="Never"
+        }
         this.size_consumed = res.properties.allocated.value;
         this.condition = res.properties.health.value;
         if (this.condition === 'DEGRADED'){
