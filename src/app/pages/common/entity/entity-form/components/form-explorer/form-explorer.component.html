@@ -4,9 +4,14 @@
     </md-input-container>
     <button md-button (click)="toggleTree()" type="button">Browse</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
-        <ng-template #treeNodeTemplate let-node>
+        <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
             <md-icon>folder</md-icon>
             <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
+        </ng-template>
+        <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'file') || !config.explorerType">
+            <md-icon *ngIf="node.data.hasChildren">folder</md-icon>
+            <md-icon *ngIf="!node.data.hasChildren">insert_drive_file</md-icon>
+            <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
         </ng-template>
     </tree-root>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
