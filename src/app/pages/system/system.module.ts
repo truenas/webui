@@ -14,6 +14,7 @@ import { ConfigSaveComponent } from './general/config-save/config-save.component
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
@@ -73,6 +74,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     ConfigResetComponent,
     ConfigSaveComponent,
     AdvancedComponent,
+    DatasetComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,
