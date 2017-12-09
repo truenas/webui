@@ -53,19 +53,19 @@ export class BootEnvironmentListComponent {
   preInit(){
     this._rest.get('system/advanced/',{}).subscribe(res=>{
       this.scrub_interval = res.data.adv_boot_scrub;
-      this.ws.call('boot.get_state').subscribe(res => {
-        if (res.scan.end_time){
-          this.scrub_msg = moment(res.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
+      this.ws.call('boot.get_state').subscribe(wres => {
+        if (wres.scan.end_time){
+          this.scrub_msg = moment(wres.scan.end_time.$date).format('MMMM Do YYYY, h:mm:ss a');
         } else{
           this.scrub_msg="Never"
         }
-        this.size_consumed = res.properties.allocated.value;
-        this.condition = res.properties.health.value;
+        this.size_consumed = wres.properties.allocated.value;
+        this.condition = wres.properties.health.value;
         if (this.condition === 'DEGRADED'){
-          this.condition = this.condition + ` One or more devices has experienced an error resulting in data corruption. Applications may be affected.`
+          this.condition = this.condition + ` Please check Notifications for detailed information.`
         }
-        this.size_boot =  res.properties.size.value;
-        this.percentange =  res.properties.capacity.value;
+        this.size_boot =  wres.properties.size.value;
+        this.percentange =  wres.properties.capacity.value;
       });
     });
 
