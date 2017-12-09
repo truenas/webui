@@ -47,7 +47,7 @@ export class FormExplorerComponent implements Field, OnInit {
 constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
-    if(this.config.explorerType === "zvol" || !this.config.explorerType) {
+    if(this.config.explorerType === "zvol") {
       this.displayFieldName = 'name';
       this.nodes = [{
         mountpoint: this.config.initial,
@@ -77,7 +77,7 @@ constructor (private entityFormService : EntityFormService){}
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
       else {
-        resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
+        resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }     
     });
   }
@@ -98,7 +98,7 @@ constructor (private entityFormService : EntityFormService){}
   }
 
   setPath(node:any) {
-    if(this.config.explorerType === "zvol" || !this.config.explorerType) {
+    if(this.config.explorerType === "zvol") {
       if(!node.data.mountpoint) {
         node.data.mountpoint = this.config.initial + "/" + node.data.path;
       }
