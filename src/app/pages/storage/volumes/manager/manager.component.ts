@@ -5,7 +5,6 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
-  AfterViewInit
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
@@ -30,10 +29,9 @@ import { DownloadKeyModalDialog } from '../../../../components/common/dialog/dow
     DialogService
   ],
 })
-export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ManagerComponent implements OnInit, OnDestroy {
 
   public disks: Array < any > = [];
-  public original_disks: Array < any > = [];
   public suggestable_disks: Array < any > = [];
   public can_suggest = false;
   public selected: Array < any > = [];
@@ -44,8 +42,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
-  public originalVdevComponents: QueryList <VdevComponent>;
-  public originalDiskComponents: QueryList <DiskComponent>;
   @ViewChild(DatatableComponent) table: DatatableComponent;
   public temp = [];
   
@@ -57,8 +53,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
   public dirty = false;
-  public layout_type = "redundancy";
-  public layout_types = {"Redundancy":"redundancy", "Virtualization":"virtualization"}
 
   public busy: Subscription;
 
@@ -112,17 +106,16 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         res[i]['capacity'] = filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
-      this.original_disks = this.disks;
 
       // assign disks for suggested layout
       let largest_capacity = 0;
       for (let i = 0; i < this.disks.length; i++) {
-        if (this.disks[i].real_capacity > largest_capacity) {
-          largest_capacity = this.disks[i].real_capacity;
+        if (parseInt(this.disks[i].real_capacity) > largest_capacity) {
+          largest_capacity = parseInt(this.disks[i].real_capacity);
         }
       }
       for (let i = 0; i < this.disks.length; i++) {
-        if (this.disks[i].real_capacity === largest_capacity) {
+        if (parseInt(this.disks[i].real_capacity) === largest_capacity) {
           this.suggestable_disks.push(this.disks[i]);
         }
       }
@@ -130,19 +123,16 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.temp = [...this.disks];
     });
-    this.original_vdevs = this.vdevs;
-  }
-
-  ngAfterViewInit() {
-    this.originalVdevComponents = this.vdevComponents;
-    this.originalDiskComponents = this.diskComponents;
   }
 
   ngOnDestroy() {
     this.dragulaService.destroy("pool-vdev");
   }
 
-  addVdev(group) { this.vdevs[group].push({}); }
+  addVdev(group) { 
+    this.dirty = true;
+    this.vdevs[group].push({});
+  }
 
   removeVdev(vdev: VdevComponent) {
     let index = null;
@@ -287,47 +277,18 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  reset() {
-    this.disks = this.original_disks;
-    this.diskComponents = this.originalDiskComponents;
-    this.selected = [];
-    this.temp = [...this.disks];
-    this.vdevs = this.original_vdevs;
-    this.vdevComponents = this.originalVdevComponents;
-    this.dirty = false;
-  }
-
-  addSuggestedDisksToVdev(disks) {
-     for (let i = 0; i < disks.length; i++) {
-       this.vdevComponents.last.addDisk(disks[i]);
-     }
-     while (disks.length > 0) {
-        this.removeDisk(disks[0]);
-        this.suggestable_disks.splice(this.suggestable_disks.indexOf(disks[0]), 1);
-     }
-  }
-
   suggestLayout() {
-    this.reset();
-    if (this.layout_type === "virtualization") {
-      this.suggestVirtualizationLayout();
-    } else {
-      this.suggestRedundancyLayout();
-    }
-
+    // todo: add more layouts, manipulating multiple vdevs is hard
+    this.suggestRedundancyLayout();
   }  
 
   suggestRedundancyLayout() {
-    this.addSuggestedDisksToVdev(this.suggestable_disks);
-  }
-
-  suggestVirtualizationLayout() {
-    let usable_length = this.suggestable_disks.length;
-    if (usable_length % 2 !== 0) {
-      usable_length = usable_length - 1;
+    for (let i = 0; i < this.suggestable_disks.length; i++) {
+      this.vdevComponents.first.addDisk(this.suggestable_disks[i]);
     }
-    for (let i, j = 0; i < usable_length; i += 2, j++) {
-      this.addSuggestedDisksToVdev(this.suggestable_disks.slice(i-1,i));
+    while (this.suggestable_disks.length > 0) {
+       this.removeDisk(this.suggestable_disks[0]);
+       this.suggestable_disks.shift();
     }
   }
 }
