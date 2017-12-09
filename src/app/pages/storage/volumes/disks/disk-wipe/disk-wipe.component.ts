@@ -10,6 +10,8 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
+import { DialogService } from '../../../../../services/dialog.service';
+
 
 @Component({
   selector: 'app-disk-wipe',
@@ -20,13 +22,13 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 export class DiskWipeComponent implements OnInit {
 
   protected pk: any;
-  public job: any = {};
   protected dialogRef: any;
   protected route_success: string[] = ['storage', 'volumes', 'disks'];
-  public formGroup: FormGroup;
   protected disk_name: any;
   protected wipe_method: any;
 
+  public job: any = {};
+  public formGroup: FormGroup;
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -48,7 +50,8 @@ export class DiskWipeComponent implements OnInit {
               protected entityFormService: EntityFormService,
               protected loader: AppLoaderService,
               public snackBar: MdSnackBar,
-              protected dialog: MdDialog) {
+              protected dialog: MdDialog,
+              private dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -80,6 +83,7 @@ export class DiskWipeComponent implements OnInit {
         label: 'Full with random data',
         value: 'FULL_RANDOM',
       }];
+
     this.wipe_method = _.find(this.fieldConfig, {name : 'wipe_method'});
     method.forEach((item) => {
       this.wipe_method.options.push(
@@ -96,24 +100,27 @@ export class DiskWipeComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    let formValue = _.cloneDeep(this.formGroup.value);
+    this.dialogService.confirm("Wipe Disk", "Are you sure you want to wipe disk?").subscribe((res) => {
+      if (res) {
+        let formValue = _.cloneDeep(this.formGroup.value);
 
-    if(!formValue.wipe_method) {
-      return false;
-    }
+        if(!formValue.wipe_method) {
+          return false;
+        }
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Wipe" }, disableClose: true });
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
-    this.dialogRef.componentInstance.setDiscription("Wiping Disk...");
-    this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(false);
-      this.openSnackBar("Disk successfully wiped", "Success");
-    });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogRef.componentInstance.setDiscription(res.error);
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Wipe" }, disableClose: true });
+        this.dialogRef.componentInstance.progressNumberType = "nopercent";
+        this.dialogRef.componentInstance.setDiscription("Wiping Disk...");
+        this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialogRef.close(false);
+          this.openSnackBar("Disk successfully wiped", "Success");
+        });
+        this.dialogRef.componentInstance.failure.subscribe((res) => {
+          this.dialogRef.componentInstance.setDiscription(res.error);
+        });
+      }
     });
   }
-
 }
