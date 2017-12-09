@@ -25,6 +25,7 @@ export class FormExplorerComponent implements Field, OnInit {
   nodes: any[];
 
   private treeVisible: boolean = false;
+  private displayFieldName: string;
   private actionMapping:IActionMapping = {
     mouse: {
       contextMenu: (tree, node, $event) => {
@@ -46,22 +47,33 @@ export class FormExplorerComponent implements Field, OnInit {
 constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
-    this.nodes = [{
-      mountpoint: this.config.initial,
-      name: this.config.initial,
-      hasChildren: true
-    }];
+    if(this.config.explorerType === "zvol" || !this.config.explorerType) {
+      this.displayFieldName = 'name';
+      this.nodes = [{
+        mountpoint: this.config.initial,
+        name: this.config.initial,
+        hasChildren: true
+      }];
+    }
+    else {
+      this.displayFieldName = 'subTitle';
+      this.nodes = [{
+        name: this.config.initial,
+        subTitle: this.config.initial,
+        hasChildren: true
+      }];
+    }
   }
 
   getChildren(node:any) {
     return new Promise((resolve, reject) => {
-      if(this.config.explorerType == "zvol") {
+      if(this.config.explorerType === "zvol") {
         resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
       }
-      else if(this.config.explorerType == "directory") {
-        resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      else if(this.config.explorerType === "directory") {
+        resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType));
       }
-      else if(this.config.explorerType == "file") {
+      else if(this.config.explorerType === "file") {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
       else {
@@ -71,7 +83,7 @@ constructor (private entityFormService : EntityFormService){}
   }
 
   customTemplateStringOptions = {
-    displayField: 'name',
+    displayField: this.displayFieldName,
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),
@@ -86,10 +98,15 @@ constructor (private entityFormService : EntityFormService){}
   }
 
   setPath(node:any) {
-    if(!node.data.mountpoint) {
-      node.data.mountpoint = this.config.initial + "/" + node.data.path;
+    if(this.config.explorerType === "zvol" || !this.config.explorerType) {
+      if(!node.data.mountpoint) {
+        node.data.mountpoint = this.config.initial + "/" + node.data.path;
+      }
+      this.group.controls[this.config.name].setValue(node.data.mountpoint);
     }
-    this.group.controls[this.config.name].setValue(node.data.mountpoint);
+    else {
+      this.group.controls[this.config.name].setValue(node.data.name);
+    }
   }
 }
 
