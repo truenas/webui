@@ -222,7 +222,7 @@ export class ActiveDirectoryComponent {
       'id' : 'edit_idmap',
       'name' : 'Edit Idmap',
       function : () => { 
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', 'activedirectory', this.idmapBacked]));
+        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
       }
     }
   ];
