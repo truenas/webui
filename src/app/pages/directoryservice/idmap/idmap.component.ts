@@ -19,7 +19,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 export class IdmapComponent implements OnInit {
 
   protected resource_name = 'directoryservice/idmap/';
-  public route_success: string[] = ['directoryservice', 'activedirectory'];
+  public route_success: string[] = ['directoryservice'];
 
   public formGroup: any;
   public error: string;
@@ -295,7 +295,6 @@ export class IdmapComponent implements OnInit {
   protected targetDS: any;
   protected idmap: any;
   protected idmap_type: any;
-  protected service: any;
   protected idmapID: any;
   protected defaultIdmap: any;
   constructor(protected router: Router,
@@ -308,10 +307,10 @@ export class IdmapComponent implements OnInit {
   ngOnInit() {
     this.aroute.params.subscribe((res) => {
       if (res['service']) {
-        this.service = res['service'];
-        if (this.service === 'activedirectory') {
+        this.route_success.push(res['service']);
+        if (res['service'] === 'activedirectory') {
           this.targetDS = 1;
-        } else if (this.service === 'ldap') {
+        } else if (res['service'] === 'ldap') {
           this.targetDS = 2;
         }
       }
