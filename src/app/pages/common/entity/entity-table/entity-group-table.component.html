@@ -7,7 +7,8 @@
 		<br/>
 	</div>
 	<div>
-		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions"
+		 [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
 		</md-paginator>
 	</div>
 	<div class="padding_all">
@@ -15,67 +16,50 @@
 			<input mdInput #filter placeholder="Filter {{title}}">
 		</md-input-container>
 	</div>
-	
-	<md-accordion>
-		<md-expansion-panel>
-			<md-expansion-panel-header>
-				<md-panel-title>
-					Filter Nodes
-				</md-panel-title>
-				<md-panel-description>
-				</md-panel-description>
-			</md-expansion-panel-header>
-			<md-card>
-				<md-card-content>
-					<div *ngIf="this.parent.children.length > 0">
-						<tree-root [nodes]="[this.parent]"  (activate)="treeOnActiveChanged($event)">
-						</tree-root>
-					</div>
-				</md-card-content>
-			</md-card>
-		</md-expansion-panel>
-	</md-accordion>
-	
-	<div>
-		<br/>
-	</div>
 
-	<div>
-		<ngx-datatable class='material' 
-					   [rows]='seenRows' 
-					   [columns]="conf.columns" 
-					   [columnMode]="'force'" 
-					   [columnWidth]="'auto'"
-					   [headerHeight]="50" 
-					   [footerHeight]="50" 
-					   [rowHeight]="50" 
-					   [reorderable]="true"
-					   [limit]="paginationPageSize" 
-					   [externalPaging]="true"
-					   [count]="currentRows.length"
-					   [offset]="paginationPageIndex"
-					   (page)='paginationUpdate($event)'
-					   (sort)='reorderEvent($event)'>
-		    
-		  <ngx-datatable-column
-				*ngFor="let col of conf.columns"
-				prop="{{col.prop}}" 
-				 name="{{col.name}}">
-				 <ng-template let-row="row" ngx-datatable-cell-template> 
-					 <div title="{{row[col.prop]}}">
-						{{row[col.prop]}}
-					  </div>
-					</ng-template>
-			</ngx-datatable-column>
+	<table class="custom_table">
+		<tr>
+			<td class="custom_table_left_nav_td" >
+				<div *ngIf="this.parent.children.length > 0">
+									<tree-root [nodes]="[this.parent]" (activate)="treeOnActiveChanged($event)">
+									</tree-root>
+				</div>
+			</td>
+			<td class="custom_table_right_nav_td">
+				<ngx-datatable class='material' [rows]='seenRows' 
+												[columns]="conf.columns" 
+												[columnMode]="'force'" 
+												[columnWidth]="'auto'"
+												 [headerHeight]="50" 
+												 [footerHeight]="50" 
+												 [rowHeight]="50" 
+												 [reorderable]="true" 
+												 [limit]="paginationPageSize" 
+												 [externalPaging]="true"
+												 [count]="currentRows.length" 
+												 [offset]="paginationPageIndex" 
+												 (page)='paginationUpdate($event)' 
+												 (sort)='reorderEvent($event)'>
 
-			<ngx-datatable-column>
-				<ng-template let-row="row" ngx-datatable-cell-template>
-						<app-entity-table-actions [entity]="this" [row]="row">
-						</app-entity-table-actions>
-				</ng-template>
-			</ngx-datatable-column>
-		
-		</ngx-datatable>
-	</div>
+					<ngx-datatable-column *ngFor="let col of conf.columns" prop="{{col.prop}}" name="{{col.name}}">
+						<ng-template let-row="row" ngx-datatable-cell-template>
+							<div title="{{row[col.prop]}}">
+								{{row[col.prop]}}
+							</div>
+						</ng-template>
+					</ngx-datatable-column>
+
+					<ngx-datatable-column>
+						<ng-template let-row="row" ngx-datatable-cell-template>
+							<app-entity-table-actions [entity]="this" [row]="row">
+							</app-entity-table-actions>
+						</ng-template>
+					</ngx-datatable-column>
+
+				</ngx-datatable>
+			</td>
+
+		</tr>
+	</table>
 
 </div>
