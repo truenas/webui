@@ -52,8 +52,8 @@
   		</md-list>
       </md-card-content>
     </md-card>
-  	<md-card
-  		*ngFor="let graph of graphs" 
+  <md-card
+  		*ngFor="let graph of graphs"
   		class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
   	  <md-card-title>
         <div class="mat-toolbar mat-card-toolbar">
@@ -63,14 +63,41 @@
         </div>
       </md-card-title>
   	  <md-card-content>
-  	  	<line-chart 
-  	  	[dataList]="graph.dataList" 
-  	  	[legends]="graph.legends" 
-  	  	[type]="graph.type || 'Line'" 
-  	  	[series]="graph.series" 
+  	  	<line-chart
+  	  	[dataList]="graph.dataList"
+  	  	[legends]="graph.legends"
+  	  	[type]="graph.type || 'Line'"
+  	  	[series]="graph.series"
   	  	[divideBy]="graph.divideBy"
   	  	[chartFormatter]="chartFormatter"></line-chart>
-  	  	
+
   	  </md-card-content>
+
   	</md-card>
+  <md-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+    <md-card-title>
+      <div class="mat-toolbar mat-card-toolbar">
+        <div class="mat-card-title-text">
+          <span>Notes</span>
+        </div>
+      </div>
+    </md-card-title>
+    <md-card-content>
+      <div *ngIf="!showNote && !note">
+        <p>
+          <button md-raised-button class="btn btn-block btn-warning" (click)="showNote = true">Add Note</button>
+        </p>
+      </div>
+      <div *ngIf="showNote || note">
+        <p>
+          <md-input-container class="full-width">
+            <textarea matInput rows="4" placeholder="Leave a note here" [(ngModel)]="note"></textarea>
+          </md-input-container>
+        </p>
+        <div>
+          <button md-raised-button class="btn btn-block btn-warning" type="submit" color="primary" (click)="updateNote()">Save</button>
+        </div>
+      </div>
+    </md-card-content>
+  </md-card>
 </div>

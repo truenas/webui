@@ -20,6 +20,7 @@ import { ChartConfigData, LineChartService } from 'app/components/common/lineCha
 export class DashboardComponent implements OnInit, AfterViewInit {
 
 
+
   public info: any = {};
   public ipAddress: any = [];
   public chartFormatter: ChartFormatter = {
@@ -74,6 +75,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ];
 
   private erd: any = null;
+  public note: string = '';
+  public showNote: boolean = false;
+  private user: any;
+
 
   constructor(private rest: RestService, private ws: WebSocketService,
     protected systemGeneralService: SystemGeneralService) {
@@ -107,7 +112,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
     this.ws.call('stats.get_sources').subscribe((res) => {
       let gLegends = [], gDataList = [];
-      
+
       for (const prop in res) {
         if (prop.startsWith("disk-") && !prop.startsWith("disk-cd")) {
           gLegends.push(prop + " (read)");
@@ -132,11 +137,31 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
+
+    // for dashboard notes
+    // saving under the
+
+
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.user = res.data;
+      if(this.user.bsdusr_attributes.userdashboardnote && this.user.bsdusr_attributes.hasOwnProperty('userdashboardnote')) {
+        this.note = this.user.bsdusr_attributes.userdashboardnote;
+        this.showNote = true;
+      }
+    });
+
   }
 
   ngAfterViewInit(): void {
     this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
       (<any>window).dispatchEvent(new Event('resize'));
     });
+  }
+
+  updateNote() {
+    let payload = this.user.bsdusr_attributes;
+    payload.userdashboardnote = this.note;
+    this.ws.call('user.update', [this.user.id, {attributes: payload}])
+      .subscribe(res => console.log('res', res), err => console.log(err))
   }
 }
