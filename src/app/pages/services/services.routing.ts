@@ -28,62 +28,77 @@ export const routes: Routes = [
   {
     path : 'ssh',
     component : ServiceSSHComponent,
+    data: {title: 'SSH', breadcrumb: 'SSH'}
   },
   {
     path : 'afp',
     component : ServiceAFPComponent,
+    data: {title: 'AFP', breadcrumb: 'AFP'}
   },
   {
     path : 'domaincontroller',
     component : ServiceDCComponent,
+    data: {title: 'Domain Controller', breadcrumb: 'DC'}
   },
   {
     path : 'ftp',
     component : ServiceFTPComponent,
+    data: {title: 'FTP', breadcrumb: 'FTP'}
   },
   {
     path : 'lldp',
     component : ServiceLLDPComponent,
+    data: {title: 'LLDP', breadcrumb: 'LLDP'}
   },
   {
     path : 'rsync',
     component : ServiceRSYNCComponent,
+    data: {title: 'Rsync', breadcrumb: 'RSync'}
   },
   {
     path : 'smartd',
     component : ServiceSMARTComponent,
+    data: {title: 'SMART', breadcrumb: 'SMART'}
   },
   {
     path : 'nfs',
     component : ServiceNFSComponent,
+    data: {title: 'NFS', breadcrumb: 'NFS'}
   },
   {
     path : 'tftp',
     component : ServiceTFTPComponent,
+    data: {title: 'TFTP', breadcrumb: 'TFTP'}
   },
   {
     path : 'ups',
     component : ServiceUPSComponent,
+    data: {title: 'UPS', breadcrumb: 'UPS'}
   },
   {
     path : 'dynamicdns',
     component : ServiceDDNSComponent,
+    data: {title: 'Dynamic CDN', breadcrumb: 'Dynamic CDN'}
   },
   {
     path : 'cifs',
     component : ServiceSMBComponent,
+    data: {title: 'CIFS', breadcrumb: 'CIFS'}
   },
   {
     path : 'snmp',
     component : ServiceSNMPComponent,
+    data: {title: 'SNMP', breadcrumb: 'SNMP'}
   },
   {
     path : 'webdav',
     component : ServiceWebdavComponent,
+    data: {title: 'Webdav', breadcrumb: 'Webdav'}
   },
   {
     path : 's3',
     component : ServiceS3Component,
+    data: {title: 'S3', breadcrumb: 'S3'}
   }
 ];
 
