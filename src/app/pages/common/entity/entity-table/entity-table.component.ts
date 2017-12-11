@@ -76,6 +76,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
     this.displayedColumns.push("action");
 
+    if (this.conf.changeEvent) {
+      this.conf.changeEvent(this);
+    }
+
     Observable.fromEvent(this.filter.nativeElement, 'keyup')
       .debounceTime(150)
       .distinctUntilChanged()

@@ -65,13 +65,16 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
-  getFilesystemListdirChildren(node: any) {
+  getFilesystemListdirChildren(node: any, explorerType?: string) {
     let children = [];
 
     return this.ws.call('filesystem.listdir', [node.data.name]).toPromise().then(res => {
       for (let i = 0; i < res.length; i++) {
         let child = {};
         if (res[i].hasOwnProperty('name')) {
+          if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
+            continue;
+          }
           child['name'] = res[i].path;
           if(res[i].type === 'DIRECTORY') {
             child['hasChildren'] = true;
