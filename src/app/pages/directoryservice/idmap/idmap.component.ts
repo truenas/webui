@@ -349,12 +349,30 @@ export class IdmapComponent implements OnInit {
     });
 
     this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
-      console.log("ws call",res[0]);
       if (res[0]) {
         this.idmapID = res[0]['id'];
         for (let i in res[0]) {
           if (this.formGroup.controls[i]) {
             this.formGroup.controls[i].setValue(res[0][i]);
+          }
+        }
+      } else {
+        // no idmap config find in datastore
+        if (this.idmap_type === 'tdb' || this.idmap_type === 'tdb2' || this.idmap_type === 'script') {
+          for (let i in this.formGroup.controls) {
+            if(_.endsWith(i, 'range_low')) {
+              this.formGroup.controls[i].setValue('90000001');
+            } else if (_.endsWith(i, 'range_high')) {
+              this.formGroup.controls[i].setValue('100000000');
+            }
+          }
+        } else {
+          for (let i in this.formGroup.controls) {
+            if(_.endsWith(i, 'range_low')) {
+              this.formGroup.controls[i].setValue('10000');
+            } else if (_.endsWith(i, 'range_high')) {
+              this.formGroup.controls[i].setValue('90000000');
+            }
           }
         }
       }
@@ -371,17 +389,32 @@ export class IdmapComponent implements OnInit {
 
     let value = _.cloneDeep(this.formGroup.value);
 
-    this.loader.open();
-    this.ws.call('datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(
-      (res) => {
-       this.loader.close();
-       this.router.navigate(new Array('').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        console.log(res);
-      }
-    );
+    if (this.idmapID) {
+      this.loader.open();
+      this.ws.call('datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(
+        (res) => {
+         this.loader.close();
+         this.router.navigate(new Array('').concat(this.route_success));
+        },
+        (res) => {
+          this.loader.close();
+          console.log(res);
+        }
+      );
+    } else {
+      value['idmap_ds_type'] = this.targetDS;
+      this.loader.open();
+      this.ws.call('datastore.insert', [this.query_call + this.idmap_type, value]).subscribe(
+        (res) => {
+         this.loader.close();
+         this.router.navigate(new Array('').concat(this.route_success));
+        },
+        (res) => {
+          this.loader.close();
+          console.log(res);
+        }
+      );
+    }
 
   }
 }
