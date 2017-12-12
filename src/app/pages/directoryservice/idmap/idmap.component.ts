@@ -318,7 +318,6 @@ export class IdmapComponent implements OnInit {
       }
     });
 
-    console.log(this.idmap_type);
     if (this.idmap_type === 'ad') {
       this.formGroup = this.entityFormService.createFormGroup(this.adFieldConfig);
     } else if (this.idmap_type === 'autorid') {
@@ -344,7 +343,7 @@ export class IdmapComponent implements OnInit {
     // get default idmap range
     this.rest.get('services/cifs', {}).subscribe((res) => {
       this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
-        this.defaultIdmap = idmap_res;
+        this.defaultIdmap = idmap_res[0];
       });
     });
 
@@ -388,33 +387,57 @@ export class IdmapComponent implements OnInit {
     this.error = null;
 
     let value = _.cloneDeep(this.formGroup.value);
+    let new_range_low: any;
+    let new_range_high: any;
 
-    if (this.idmapID) {
-      this.loader.open();
-      this.ws.call('datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(
-        (res) => {
-         this.loader.close();
-         this.router.navigate(new Array('').concat(this.route_success));
-        },
-        (res) => {
-          this.loader.close();
-          console.log(res);
-        }
-      );
-    } else {
-      value['idmap_ds_type'] = this.targetDS;
-      this.loader.open();
-      this.ws.call('datastore.insert', [this.query_call + this.idmap_type, value]).subscribe(
-        (res) => {
-         this.loader.close();
-         this.router.navigate(new Array('').concat(this.route_success));
-        },
-        (res) => {
-          this.loader.close();
-          console.log(res);
-        }
-      );
+    for (let i in value) {
+      if (_.endsWith(i, 'range_low')) {
+        new_range_low = value[i];
+      }
+      if (_.endsWith(i, 'range_high')) {
+        new_range_high = value[i];
+      }
     }
 
+    if (new_range_low > new_range_high) {
+      this.error = "Range low larger than range high";
+    } else {
+      if (new_range_low < this.defaultIdmap['idmap_tdb_range_low'] || new_range_low > this.defaultIdmap['idmap_tdb_range_high']) {
+        if (new_range_high < this.defaultIdmap['idmap_tdb_range_low'] || new_range_high > this.defaultIdmap['idmap_tdb_range_high']) {
+          // no overlap, update/insert into datastore
+          if (this.idmapID) {
+            this.loader.open();
+            this.ws.call('datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(
+              (res) => {
+               this.loader.close();
+               this.router.navigate(new Array('').concat(this.route_success));
+              },
+              (res) => {
+                this.loader.close();
+                console.log(res);
+              }
+            );
+          } else {
+            value['idmap_ds_type'] = this.targetDS;
+            this.loader.open();
+            this.ws.call('datastore.insert', [this.query_call + this.idmap_type, value]).subscribe(
+              (res) => {
+               this.loader.close();
+               this.router.navigate(new Array('').concat(this.route_success));
+              },
+              (res) => {
+                this.loader.close();
+                console.log(res);
+              }
+            );
+          }
+        } else {
+          this.error = "Range overlapped with the default range: [" + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+        }
+      } else {
+        this.error = "Range overlapped with the default range: [" + this.defaultIdmap['idmap_tdb_range_low'] + "," + this.defaultIdmap['idmap_tdb_range_high'] + "] !";
+      }
+    }
   }
+
 }
