@@ -39,7 +39,7 @@
 			<ng-template let-group="group" let-expanded="false" ngx-datatable-group-header-template>
 				<div style="padding-left:5px;">
 					<a href="#" title="Expand/Collapse Group"
-					 (click)="toggleExpandGroup(group)">
+					 (click)="toggleExpandGroup($event, group)">
 						<b>Type: {{group.value[0].type}}</b>
 					</a>
 				</div>

@@ -117,6 +117,8 @@ export class EntityGroupTableComponent extends EntityTableComponent implements O
 
 
   treeOnActiveChanged($event) {
+    $event.preventDefault();
+
     const newData: any[] = [];
 
     this.rows.forEach((row) => {
@@ -157,12 +159,14 @@ export class EntityGroupTableComponent extends EntityTableComponent implements O
   }
 
 
-  toggleExpandGroup(group) {
+  toggleExpandGroup($event, group) {
     console.log('Toggled Expand Group!', group);
     this.table.groupHeader.toggleExpandGroup(group);
+    $event.preventDefault();
   }  
 
-  onDetailToggle(event) {
-    console.log('Detail Toggled', event);
+  onDetailToggle($event) {
+    console.log('Detail Toggled', $event);
+    $event.preventDefault();
   }
 }
