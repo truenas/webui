@@ -18,7 +18,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 })
 export class IdmapComponent implements OnInit {
 
-  protected resource_name = 'directoryservice/idmap/';
+  protected query_call = "directoryservice.idmap_";
   public route_success: string[] = ['directoryservice'];
 
   public formGroup: any;
@@ -259,7 +259,6 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_script_script',
       placeholder: 'Script',
     }];
-  //tdb
   public tdbFieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -349,26 +348,17 @@ export class IdmapComponent implements OnInit {
       });
     });
 
-    if (this.idmap_type === 'tdb') {
-      // this.rest.get('directoryservice/idmap_tdb/', {}).subscribe((res) => {
-
-      // });
-    } else {
-      this.rest.get(this.resource_name + this.idmap_type, {}).subscribe((res) => {
-        for (let i in res.data) {
-          if (res.data[i].idmap_ds_type === this.targetDS) {
-            console.log(res.data[i]);
-            this.idmapID = res.data[i]['id'];
-            console.log(this.idmapID);
-            for (let j in res.data[i]) {
-              if (this.formGroup.controls[j]) {
-                this.formGroup.controls[j].setValue(res.data[i][j]);
-              }
-            }
+    this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
+      console.log("ws call",res[0]);
+      if (res[0]) {
+        this.idmapID = res[0]['id'];
+        for (let i in res[0]) {
+          if (this.formGroup.controls[i]) {
+            this.formGroup.controls[i].setValue(res[0][i]);
           }
         }
-      });
-    }
+      }
+    });
 
   }
 
@@ -382,18 +372,16 @@ export class IdmapComponent implements OnInit {
     let value = _.cloneDeep(this.formGroup.value);
 
     this.loader.open();
-
-    this.rest.put(this.resource_name + this.idmap_type + '/' + this.idmapID , {
-      body: JSON.stringify(value)
-    }).subscribe(
+    this.ws.call('datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(
       (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('').concat(this.route_success));
+       this.loader.close();
+       this.router.navigate(new Array('').concat(this.route_success));
       },
       (res) => {
         this.loader.close();
         console.log(res);
       }
     );
+
   }
 }
