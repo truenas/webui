@@ -28,7 +28,7 @@ export class EntityUtils {
     for (let i in res.error) {
       if (res.error.hasOwnProperty(i)) {
         let field = res.error[i];
-        let fc: any; //ANGULAR_5_UPDATE_PJS _.find(entity.fieldConfig, {'name' : i});
+        let fc = _.find(entity.fieldConfig, {'name' : i});
         if (fc) {
           let errors = '';
           field.forEach((item, j) => { errors += item + ' '; });
