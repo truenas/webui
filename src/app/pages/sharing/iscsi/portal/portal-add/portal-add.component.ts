@@ -112,7 +112,7 @@ export class PortalAddComponent {
         entityForm.formGroup.controls['iscsi_target_portal_ips'] as FormArray;
     this.arrayControl =
         _.find(this.fieldConfig, {'name' : 'iscsi_target_portal_ips'});
-    this.arrayModel = _.find(this.arrayControl.formarray, {'name' : 'ip'});
+    this.arrayModel; //ANGULAR_5_UPDATE_PJS = _.find(this.arrayControl.formarray, {'name' : 'ip'});
     this.portal_ip_count = this.arrayControl.initialCount;
 
     this.iscsiService.getIpChoices().subscribe((res) => {

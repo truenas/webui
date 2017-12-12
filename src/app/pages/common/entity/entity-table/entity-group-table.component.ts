@@ -38,7 +38,12 @@ export class EntityGroupTableComponent extends EntityTableComponent implements O
   readonly parentId = -666;
   readonly parentRootPath = "/ROOT/";
   readonly parentName = "All";
+  
+  groups = [];
 
+
+
+   @ViewChild('myTable') table: any;
   parent: Node = {
     id: this.parentId,
     name: this.parentName,
@@ -151,4 +156,13 @@ export class EntityGroupTableComponent extends EntityTableComponent implements O
     this.setPaginationInfo();
   }
 
+
+  toggleExpandGroup(group) {
+    console.log('Toggled Expand Group!', group);
+    this.table.groupHeader.toggleExpandGroup(group);
+  }  
+
+  onDetailToggle(event) {
+    console.log('Detail Toggled', event);
+  }
 }
