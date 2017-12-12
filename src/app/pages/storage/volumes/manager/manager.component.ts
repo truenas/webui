@@ -4,7 +4,7 @@ import {
   OnDestroy,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
@@ -32,14 +32,16 @@ import { DownloadKeyModalDialog } from '../../../../components/common/dialog/dow
 export class ManagerComponent implements OnInit, OnDestroy {
 
   public disks: Array < any > = [];
+  public suggestable_disks: Array < any > = [];
+  public can_suggest = false;
   public selected: Array < any > = [];
   public vdevs:
     any = { data: [{}], cache: [], spare: [], log: [] };
+  public original_vdevs: any = {};
   public error: string;
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
-
   @ViewChild(DatatableComponent) table: DatatableComponent;
   public temp = [];
   
@@ -50,6 +52,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public re_has_errors = false;
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
+  public dirty = false;
 
   public busy: Subscription;
 
@@ -103,6 +106,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
         res[i]['capacity'] = filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
+
+      // assign disks for suggested layout
+      let largest_capacity = 0;
+      for (let i = 0; i < this.disks.length; i++) {
+        if (parseInt(this.disks[i].real_capacity) > largest_capacity) {
+          largest_capacity = parseInt(this.disks[i].real_capacity);
+        }
+      }
+      for (let i = 0; i < this.disks.length; i++) {
+        if (parseInt(this.disks[i].real_capacity) === largest_capacity) {
+          this.suggestable_disks.push(this.disks[i]);
+        }
+      }
+      this. can_suggest = this.suggestable_disks.length < 11;
+
       this.temp = [...this.disks];
     });
   }
@@ -111,7 +129,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.dragulaService.destroy("pool-vdev");
   }
 
-  addVdev(group) { this.vdevs[group].push({}); }
+  addVdev(group) { 
+    this.dirty = true;
+    this.vdevs[group].push({});
+  }
 
   removeVdev(vdev: VdevComponent) {
     let index = null;
@@ -214,6 +235,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.temp.splice(this.temp.indexOf(disk), 1);
+    this.dirty = true;
   }
 
   onSelect({ selected }) {
@@ -252,6 +274,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
       // Whenever the filter changes, always go back to the first page
       this.table.offset = 0;
+    }
+  }
+
+  suggestLayout() {
+    // todo: add more layouts, manipulating multiple vdevs is hard
+    this.suggestRedundancyLayout();
+  }  
+
+  suggestRedundancyLayout() {
+    for (let i = 0; i < this.suggestable_disks.length; i++) {
+      this.vdevComponents.first.addDisk(this.suggestable_disks[i]);
+    }
+    while (this.suggestable_disks.length > 0) {
+       this.removeDisk(this.suggestable_disks[0]);
+       this.suggestable_disks.shift();
     }
   }
 }
