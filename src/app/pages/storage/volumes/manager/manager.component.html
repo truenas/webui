@@ -14,6 +14,9 @@
        (change)="isEncryptedChecked()" >
        Encryption
       </md-checkbox>
+      <div>
+        <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" md-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+      </div>
     </div>
     <div class="wrapper">
       <div class="disks">

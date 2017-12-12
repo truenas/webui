@@ -59,9 +59,9 @@ export class VdevComponent implements OnInit {
         this.type = "mirror";
       } else if (this.disks.length === 3) {
         this.type = "raidz";
-      } else if (this.disks.length >= 4 && this.disks.length <= 6 ) {
+      } else if (this.disks.length >= 4 && this.disks.length <= 8 ) {
         this.type = "raidz2";
-      } else if (this.disks.length >= 7) {
+      } else if (this.disks.length >= 9) {
         this.type = "raidz3";
       } else {
         this.type = "stripe";
