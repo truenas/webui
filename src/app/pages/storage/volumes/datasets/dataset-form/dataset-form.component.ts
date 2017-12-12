@@ -19,17 +19,14 @@ export class DatasetFormComponent implements OnInit{
 
   protected pk: any;
   protected volid: string;
-  protected parent: string;
   public sub: Subscription;
   public route_success: string[] = [ 'storage', 'volumes' ];
   protected isBasicMode: boolean = true;
 
-  protected resourceName: string = 'storage/dataset/';
   public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public formGroup: FormGroup;
   protected data: any;
-  protected parent_data: any;
 
   public error: string;
   public success: boolean = false;
@@ -104,8 +101,8 @@ export class DatasetFormComponent implements OnInit{
       name: 'snapdir',
       placeholder: 'Snapshot directory',
       options: [
-        { label: 'Visible', value: "0" },
-        { label: 'Invisible', value: "1" },
+        { label: 'Visible', value: "visible" },
+        { label: 'Invisible', value: "hidden" },
       ],
     },
     {
@@ -192,16 +189,10 @@ export class DatasetFormComponent implements OnInit{
       // edit dataset
       if(params['pk']) {
         this.pk = params['pk'];
-        let pk_parent = this.pk.split('/');
-        this.parent = this.resourceName + pk_parent.splice(0, pk_parent.length - 1).join('/');
-
-        this.resourceName = this.resourceName + this.pk + '/';
         this.fieldConfig.pop();
       }
       // add new dataset
       if (params['parent']) {
-        this.parent = params['parent'];
-        this.resourceName = this.resourceName + this.parent + '/';
         this.submitFunction = this.addSubmit;
         this.isNew = true;
       }
@@ -213,15 +204,12 @@ export class DatasetFormComponent implements OnInit{
       let target_field = _.find(this.fieldConfig, {name: field});
       if (target_field) {
         if (field == 'recordsize') {
-          target_field.options.push({label: 'inherit (' + this.RecordSizeMap[this.parent_data['recordsize']] + ' )', value: 'inherit'});
+          target_field.options.push({label: 'Inherit', value: 'inherit'});
         }
 
         for (let item of res) {
           let label = item[1];
           let value = item[0];
-          if (value == 'inherit') {
-            label = label + '( ' + this.parent_data[field] + ' )';
-          }
           target_field.options.push({label: label, value: value});
         }
 
@@ -258,42 +246,44 @@ export class DatasetFormComponent implements OnInit{
     this.preInit();
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    this.rest.get(this.resourceName, {}).subscribe((res) => {
-      this.data = res.data;
-      this.parent_data = res.data;
-      for (let i in this.data) {
-        let fg = this.formGroup.controls[i];
-        if (fg && !this.isNew) {
-          let value = this.data[i];
-          if (i == 'recordsize') {
-            value = this.RecordSizeMap[value];
-          }
+    if(!this.isNew) {
+      this.ws.call('pool.dataset.query', [ [["id", "=", this.pk]] ]).subscribe((res) => {
+        this.data = res[0].properties;
 
-          if (_.indexOf(this.data['inherit_props'], i) > -1) {
-            value = 'inherit';
-          }
-          if (i == 'comments' && _.indexOf(this.data['inherit_props'], 'org.freenas:description') > -1) {
-            value = '';
-          }
+        for (let i in this.data) {
+          let fg = this.formGroup.controls[i];
 
-          fg.setValue(value);
+          if (fg) {
+            let value = this.data[i].rawvalue;
+
+            if (i == 'recordsize') {
+              value = this.RecordSizeMap[value];
+            }
+
+            if (_.indexOf(this.data['inherit_props'], i) > -1) {
+              value = 'inherit';
+            }
+
+            if (i == 'comments' && _.indexOf(this.data['inherit_props'], 'org.freenas:description') > -1) {
+              value = '';
+            }
+
+            fg.setValue(value);
+          }
         }
-      }
 
-      if (!this.isNew) {
-        this.rest.get(this.parent, {}).subscribe((res) => {
-          this.parent_data = res.data;
-          this.afterInit();
-        });
-      } else {
         this.afterInit();
-      }
-    });
+      });
+    }
   }
 
-  editSubmit(body: any) { return this.rest.put(this.resourceName, body); }
+  editSubmit(body: any) {
+    return this.ws.call('pool.dataset.update', [this.pk, body]);
+  }
 
-  addSubmit(body: any) { return this.rest.post(this.resourceName, body); }
+  addSubmit(body: any) {
+    return this.ws.call('pool.dataset.create', [body]);
+  }
 
   clearErrors() {
     for (let f = 0; f < this.fieldConfig.length; f++) {
@@ -350,7 +340,7 @@ export class DatasetFormComponent implements OnInit{
                             this.success = true;
                           }
                         },
-                        (res) => { 
+                        (res) => {
                           this.loader.close();
                           new EntityUtils().handleError(this, res); });
   }
