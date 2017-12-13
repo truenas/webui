@@ -319,6 +319,10 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
       }
+    } else {
+      if (this.conf.basic_field != undefined && this.conf.basic_field.indexOf(id) > -1) {
+        return false;
+      }
     }
     return true;
   }
