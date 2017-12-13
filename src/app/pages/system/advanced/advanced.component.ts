@@ -34,7 +34,8 @@ export class AdvancedComponent implements OnInit {
     adv_uploadcrash: '',
     adv_periodic_notifyuser: '',
     adv_graphite: '',
-    adv_fqdn_syslog: ''
+    adv_fqdn_syslog: '',
+    adv_cpu_in_percentage: '',
   };
 
   constructor(private rest: RestService,
@@ -53,6 +54,7 @@ export class AdvancedComponent implements OnInit {
       // users with their data
       this.users = results[1].data;
       // setting current system data
+      console.log(results[2].data);
       this.buildForm(results[2].data);
       // readying the page
       this.isReady = true;
@@ -80,7 +82,8 @@ export class AdvancedComponent implements OnInit {
       adv_uploadcrash: system.adv_uploadcrash,
       adv_periodic_notifyuser: system.adv_periodic_notifyuser,
       adv_graphite: system.adv_graphite,
-      adv_fqdn_syslog: system.adv_fqdn_syslog
+      adv_fqdn_syslog: system.adv_fqdn_syslog,
+      adv_cpu_in_percentage: system.adv_cpu_in_percentage,
     };
   }
 
