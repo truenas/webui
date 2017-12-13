@@ -19,9 +19,9 @@ import { VolumeImportListComponent} from './volumes/import-list/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { StatusComponent } from './volumes/status/status.component';
-import { DisksListComponent } from './volumes/disks/disks-list/';
-import { DiskFormComponent } from './volumes/disks/disk-form/';
-import { DiskWipeComponent } from './volumes/disks/disk-wipe/disk-wipe.component';
+import { DisksListComponent } from './disks/disks-list/';
+import { DiskFormComponent } from './disks/disk-form/';
+import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 
 export const routes: Routes = [
   {
@@ -68,16 +68,7 @@ export const routes: Routes = [
         //{ path: 'edit/:pk', component: VolumesEditComponent },
         {
           path : 'delete/:pk', component : VolumeDeleteComponent,
-          data: {title: 'Delete Volume', breadcrumb:'Delete Volume' }},
-        {
-          path : 'disks', component: DisksListComponent,
-          data: {title: 'View Disks', breadcrumb:'View Disks' }},
-        {
-          path : 'disks/edit/:pk', component : DiskFormComponent,
-          data: {title: 'Edit Disk', breadcrumb:'Edit Disk' }},
-        {
-          path : 'disks/wipe/:pk', component : DiskWipeComponent,
-          data: {title: 'Wipe Disk', breadcrumb:'Wipe Disk' }}
+          data: {title: 'Delete Volume', breadcrumb:'Delete Volume' }}
       ]},
       {
         path: 'snapshots',
@@ -111,6 +102,21 @@ export const routes: Routes = [
             path : 'edit/:pk', component : VMwareSnapshotFormComponent,
             data: {title: 'Edit', breadcrumb:'Edit' }}
 
+        ]
+      },
+      {
+        path: 'disks',
+        data: {title: 'disks', breadcrumb: 'disks'},
+        children: [
+          {
+            path : '', component: DisksListComponent,
+            data: {title: 'View Disks', breadcrumb:'View Disks' }},
+          {
+            path : 'edit/:pk', component : DiskFormComponent,
+            data: {title: 'Edit Disk', breadcrumb:'Edit Disk' }},
+          {
+            path : 'wipe/:pk', component : DiskWipeComponent,
+            data: {title: 'Wipe Disk', breadcrumb:'Wipe Disk' }}
         ]
       }
     ]

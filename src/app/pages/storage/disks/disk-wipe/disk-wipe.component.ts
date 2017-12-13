@@ -4,13 +4,13 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { MdDialog, MdSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
-import { WebSocketService } from "../../../../../services/ws.service";
-import { RestService } from "../../../../../services/rest.service";
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
-import { DialogService } from '../../../../../services/dialog.service';
+import { WebSocketService } from "../../../../services/ws.service";
+import { RestService } from "../../../../services/rest.service";
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { DialogService } from '../../../../services/dialog.service';
 
 
 @Component({
@@ -23,7 +23,7 @@ export class DiskWipeComponent implements OnInit {
 
   protected pk: any;
   protected dialogRef: any;
-  protected route_success: string[] = ['storage', 'volumes', 'disks'];
+  protected route_success: string[] = ['storage', 'disks'];
   protected disk_name: any;
   protected wipe_method: any;
 

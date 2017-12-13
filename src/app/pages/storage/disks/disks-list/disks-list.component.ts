@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import filesize from 'filesize';
 import { debug } from 'util';
-import { EntityUtils } from '../../../../common/entity/utils';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-disks-list',
@@ -43,7 +43,7 @@ export class DisksListComponent {
       label : "Edit",
       onClick : (row) => {
         this._router.navigate(new Array('/').concat([
-          "storage", "volumes", "disks", "edit", row.disk_identifier
+          "storage", "disks", "edit", row.disk_identifier
         ]));
       }
     });
@@ -51,7 +51,7 @@ export class DisksListComponent {
       label : "Wipe",
       onClick : (row) => {
         this._router.navigate(new Array('/').concat([
-          "storage", "volumes", "disks", "wipe", row.disk_name
+          "storage", "disks", "wipe", row.disk_name
         ]));
       }
     });

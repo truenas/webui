@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../../services/';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { RestService, WebSocketService } from '../../../../services/';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 
 @Component({
@@ -12,7 +12,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 })
 export class DiskFormComponent {
 
-  protected route_success: string[] = ['storage', 'volumes', 'disks'];
+  protected route_success: string[] = ['storage', 'disks'];
   protected resource_name: string = 'storage/disk/';
   protected isEntity: boolean = true;
 

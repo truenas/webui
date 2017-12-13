@@ -99,14 +99,6 @@ export class VolumesListComponent implements OnInit {
           ["storage", "volumes", "import_list"]));
       }
     });
-    actions.push({
-      label : "View Disks",
-      icon: "important_devices",
-      onClick : () => {
-        this._router.navigate(new Array('/').concat(
-            [ "storage", "volumes", "disks" ]));
-      }
-    });
     return actions;
   }
 
