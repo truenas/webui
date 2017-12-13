@@ -293,7 +293,7 @@ export class IdmapComponent implements OnInit {
 
   protected targetDS: any;
   protected idmap: any;
-  protected idmap_type: any;
+  public idmap_type: any;
   protected idmapID: any;
   protected defaultIdmap: any;
   constructor(protected router: Router,
