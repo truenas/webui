@@ -210,7 +210,7 @@ export class DatasetFormComponent implements OnInit{
       let target_field = _.find(this.fieldConfig, {name: field});
       if (target_field) {
         if (field == 'recordsize') {
-          target_field.options.push({label: 'inherit (' + this.RecordSizeMap[this.parent_data['recordsize'].rawvalue] + ' )', value: 'inherit'});
+          target_field.options.push({label: 'Inherit (' + this.RecordSizeMap[this.parent_data['recordsize'].rawvalue] + ' )', value: 'inherit'});
         }
 
         for (let item of res) {
@@ -283,9 +283,9 @@ export class DatasetFormComponent implements OnInit{
         }
       }
 
-      if (!this.isNew) {
+      if (!this.isNew && this.parent) {
         this.ws.call('pool.dataset.query', [ [["id", "=", this.parent]] ]).subscribe((res) => {
-          this.parent_data = res.data;
+          this.parent_data = res[0].properties;
           this.afterInit();
         });
       } else {
