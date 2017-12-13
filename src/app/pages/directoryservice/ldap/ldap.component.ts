@@ -20,6 +20,7 @@ import {
 export class LdapComponent {
   protected resource_name: string = 'directoryservice/ldap';
   protected isBasicMode: boolean = true;
+  protected idmapBacked: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -172,6 +173,8 @@ export class LdapComponent {
       return false;
     } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
+    } else if (actionId === 'edit_idmap' && this.isBasicMode === true) {
+      return false;
     }
     return true;
   }
@@ -186,6 +189,13 @@ export class LdapComponent {
       id : 'advanced_mode',
       name : 'Advanced Mode',
       function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id : 'edit_idmap',
+      name : 'Edit Idmap',
+      function : () => {
+        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'ldap']));
+      }
     }
   ];
   
@@ -251,5 +261,8 @@ export class LdapComponent {
       }));
     });
 
+    entityEdit.formGroup.controls['ldap_idmap_backend'].valueChanges.subscribe((res)=> {
+      this.idmapBacked = res;
+    })
   }
 }
