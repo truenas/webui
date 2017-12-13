@@ -1,0 +1,1 @@
+export { IdmapComponent } from './idmap.component';
