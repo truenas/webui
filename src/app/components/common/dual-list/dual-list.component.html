@@ -2,7 +2,7 @@
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
     <div *ngFor="let item of availableItems.totalItems" [ngClass]="{ choosed: availableItems.isSelected(item,1) }" (click)="availableItems.select(item)">
       <md-list *ngIf="templateItem;else noTemplateItem">
-        <ng-container [ngTemplateOutlet]="templateItem" [ngOutletContext]="{ data: item }"> </ng-container>
+        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </md-list>
       <ng-template #noTemplateItem>
         {{item.name}}
@@ -32,7 +32,7 @@
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
     <div *ngFor="let item of selectedItems.totalItems" [ngClass]="{ choosed: selectedItems.isSelected(item,2) }"  (click)="selectedItems.select(item)">
       <md-list *ngIf="templateItem;else noTemplateItem">
-        <ng-container [ngTemplateOutlet]="templateItem" [ngOutletContext]="{ data: item }"> </ng-container>
+        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
       </md-list>
       <ng-template #noTemplateItem>
         {{item.name}}
