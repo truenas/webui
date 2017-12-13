@@ -1,0 +1,66 @@
+<div id="entity-table-component" class="material mat-card mat-card-table">
+	<div class="mat-toolbar mat-card-toolbar">
+		<div class="mat-card-title-text">{{ title }}</div>
+		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+	</div>
+	<div>
+		<br/>
+	</div>
+	<div>
+		<md-paginator [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions"
+		 [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+		</md-paginator>
+	</div>
+	<div class="padding_all">
+		<md-input-container floatPlaceholder="never">
+			<input mdInput #filter placeholder="Filter {{title}}">
+		</md-input-container>
+	</div>
+	<ngx-datatable class='material expandable' #myTable 
+				[rows]='seenRows' 
+				[columns]="conf.columns" 
+				[columnMode]="'force'" 
+				[columnWidth]="'auto'"
+				 [groupRowsBy]="conf.configResourceGroupColumnName" 
+				 [headerHeight]="50" 
+				[footerHeight]="50" 
+				 [rowHeight]="50" 
+				 [reorderable]="true" 
+				 [limit]="paginationPageSize"
+				 [externalPaging]="true" 
+				 [count]="currentRows.length" 
+				 [offset]="paginationPageIndex" 
+				 (page)='paginationUpdate($event)' 
+				 (sort)='reorderEvent($event)'
+	 			[groupExpansionDefault]="true">
+
+		<!-- Group Header Template -->
+		<ngx-datatable-group-header [rowHeight]="50" #myGroupHeader (toggle)="onDetailToggle($event)">
+			<ng-template let-group="group" let-expanded="false" ngx-datatable-group-header-template>
+				<div style="padding-left:5px;">
+					<a href="#" title="Expand/Collapse Group"
+					 (click)="toggleExpandGroup($event, group)">
+						<b>{{conf.getExpansionColumnName(group.value[0])}}</b>
+					</a>
+				</div>
+			</ng-template>
+		</ngx-datatable-group-header>
+
+		<ngx-datatable-column *ngFor="let col of conf.columns" prop="{{col.prop}}" name="{{col.name}}">
+			<ng-template let-row="row" ngx-datatable-cell-template>
+				<div title="{{row[col.prop]}}">
+					{{row[col.prop]}}
+				</div>
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column>
+			<ng-template let-row="row" ngx-datatable-cell-template>
+				<app-entity-table-actions [entity]="this" [row]="row">
+				</app-entity-table-actions>
+			</ng-template>
+		</ngx-datatable-column>
+
+	</ngx-datatable>
+
+</div>

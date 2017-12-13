@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, Injector, OnInit, Inject, NgZone, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NgFileSelectDirective, NgUploaderOptions, UploadedFile } from 'ngx-uploader';
+import { NgFileSelectDirective, UploadInput, UploadFile, UploadStatus } from 'ngx-uploader';
 import { Observable, Observer, Subscription } from 'rxjs';
 import { WebSocketService } from '../../../../services/';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
@@ -12,7 +12,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 })
 
 export class ConfigUploadComponent {
-  public options: NgUploaderOptions;
+  public options: UploadInput;
   public busy: Subscription[] = [];
   public sub: Subscription;
   public observer: Observer < any > ;
@@ -21,23 +21,23 @@ export class ConfigUploadComponent {
 
   constructor(@Inject(NgZone) private zone: NgZone,
     protected ws: WebSocketService) {
-    this.options = new NgUploaderOptions({
+    this.options = {
       url: '/_upload',
+      type: "uploadFile",
       data: {
         data: JSON.stringify({
           method: 'config.upload',
         }),
       },
-      autoUpload: true,
-      calculateSpeed: true,
-      customHeaders: {
+      withCredentials: true,
+      headers: {
         Authorization: 'Basic ' + btoa(ws.username + ':' + ws.password),
       }
-    });
+    };
   }
 
-  handleUpload(ufile: UploadedFile) {
-    if (ufile.done) {
+  handleUpload(ufile: UploadFile) {
+    if (ufile.progress.status === UploadStatus.Done ) {
       let resp = JSON.parse(ufile.response);
       this.jobId = resp.job_id;
       this.observer.complete();
@@ -48,7 +48,7 @@ export class ConfigUploadComponent {
     this.sub = Observable
                    .create((observer) => {
                      this.observer = observer;
-                     this.file.uploader.uploadFilesInQueue();
+                     this.file.upload.uploadScheduler.complete();
                    })
                    .subscribe();
     this.busy.push(this.sub);
