@@ -21,7 +21,7 @@
 				[columns]="conf.columns" 
 				[columnMode]="'force'" 
 				[columnWidth]="'auto'"
-				 [groupRowsBy]="'type'" 
+				 [groupRowsBy]="conf.configResourceGroupColumnName" 
 				 [headerHeight]="50" 
 				[footerHeight]="50" 
 				 [rowHeight]="50" 
@@ -40,7 +40,7 @@
 				<div style="padding-left:5px;">
 					<a href="#" title="Expand/Collapse Group"
 					 (click)="toggleExpandGroup($event, group)">
-						<b>Type: {{group.value[0].type}}</b>
+						<b>{{conf.getExpansionColumnName(group.value[0])}}</b>
 					</a>
 				</div>
 			</ng-template>
