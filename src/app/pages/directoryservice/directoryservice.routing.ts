@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ActiveDirectoryComponent } from './activedirectory/';
 import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
+import { IdmapComponent } from './idmap';
 
 export const routes: Routes = [{
   path: '',
@@ -20,6 +21,10 @@ export const routes: Routes = [{
     path: 'nis',
     component: NISComponent,
     data: { title: 'NIS', breadcrumb: 'NIS' }
+  }, {
+    path: 'idmap/:pk/:service',
+    data: { title: 'Idmap', breadcrumb: 'Idmap' },
+    component: IdmapComponent,
   }]
 }];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
