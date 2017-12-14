@@ -18,6 +18,7 @@ export class EntityJobComponent implements OnInit {
   public title: string = '';
   public showCloseButton: boolean = true;
   public jobId: Number;
+  public progressNumberType;
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
@@ -52,7 +53,12 @@ export class EntityJobComponent implements OnInit {
       this.description = progress.description;
     }
     if (progress.percent) {
-      this.progressTotalPercent = progress.percent;
+      if (this.progressNumberType == 'nopercent') {
+        this.progressTotalPercent = progress.percent * 100;
+      }
+      else {
+        this.progressTotalPercent = progress.percent;
+      }
     }
   }
 
