@@ -1,3 +1,5 @@
+
+
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -43,6 +45,7 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
+import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/entity-group-table.component';
 
 @NgModule({
   imports: [
@@ -53,6 +56,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   declarations: [
     EntityDeleteComponent,
     EntityTableComponent,
+    EntityGroupTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -88,6 +92,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
+    EntityGroupTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     DynamicFieldDirective,
