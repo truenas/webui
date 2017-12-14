@@ -12,12 +12,13 @@ import {routing} from './directoryservice.routing';
 import {LdapComponent} from './ldap/';
 import {NISComponent} from './nis/';
 import { IdmapComponent } from './idmap';
+import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 
 @NgModule({
   imports : [
     CommonModule, EntityModule, FormsModule, ReactiveFormsModule,
     NgUploaderModule, routing, MaterialModule
   ],
-  declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent, IdmapComponent ],
+  declarations : [ LdapComponent, ActiveDirectoryComponent, NISComponent, IdmapComponent, KerberosRealmsListComponent ],
   providers : [ SystemGeneralService ]
 }) export class DirectoryServiceModule {}

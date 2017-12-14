@@ -5,6 +5,7 @@ import { ActiveDirectoryComponent } from './activedirectory/';
 import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
 import { IdmapComponent } from './idmap';
+import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 
 export const routes: Routes = [{
   path: '',
@@ -25,6 +26,14 @@ export const routes: Routes = [{
     path: 'idmap/:pk/:service',
     data: { title: 'Idmap', breadcrumb: 'Idmap' },
     component: IdmapComponent,
+  }, {
+    path: 'kerberosrealms',
+    data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms' },
+    children: [{
+      path: '',
+      component: KerberosRealmsListComponent,
+      data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms' }
+    }]
   }]
 }];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
