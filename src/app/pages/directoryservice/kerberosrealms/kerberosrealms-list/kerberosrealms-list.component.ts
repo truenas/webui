@@ -10,9 +10,9 @@ export class KerberosRealmsListComponent {
 
   public title = "Kerberos Realms";
   protected resource_name: string = 'directoryservice/kerberosrealm';
-  protected route_add: string[] = ['kerberosrealms', 'add'];
+  protected route_add: string[] = ['directoryservice', 'kerberosrealms', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Realm";
-  protected route_edit: string[] = ['kerberosrealms', 'edit'];
+  protected route_edit: string[] = ['directoryservice', 'kerberosrealms', 'edit'];
 
   public columns: Array < any > = [
     { name: 'Realm', prop: 'krb_realm' },

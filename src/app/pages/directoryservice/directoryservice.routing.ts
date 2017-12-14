@@ -6,6 +6,7 @@ import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
 import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
+import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 
 export const routes: Routes = [{
   path: '',
@@ -33,6 +34,14 @@ export const routes: Routes = [{
       path: '',
       component: KerberosRealmsListComponent,
       data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms' }
+    }, {
+      path: 'add',
+      component: KerberosRealmsFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add'},
+    }, {
+      path: 'edit/:pk',
+      component: KerberosRealmsFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit'},
     }]
   }]
 }];
