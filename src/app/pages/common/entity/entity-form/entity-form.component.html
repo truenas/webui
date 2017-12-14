@@ -20,8 +20,8 @@
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-      <button md-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
-    </span>
+                  <button md-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+                </span>
                 <button md-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">Delete</button>
                 <!-- </div> -->
             </md-card-actions>

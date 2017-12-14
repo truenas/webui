@@ -102,7 +102,8 @@ export class NavigationService {
       sub: [
         { name: 'Volumes', state: 'volumes' },
         { name: 'Snapshots', state: 'snapshots' },
-        { name: 'VMware-Snapshots', state: 'vmware-Snapshots' }
+        { name: 'VMware-Snapshots', state: 'vmware-Snapshots' },
+        { name: 'Disks', state: 'disks' }
       ]
     },
     {
