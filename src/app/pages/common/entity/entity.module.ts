@@ -21,6 +21,7 @@ import { FormCheckboxComponent } from './entity-form/components/form-checkbox/fo
 import { FormInputComponent } from './entity-form/components/form-input/form-input.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
+import { FormRadioComponent } from './entity-form/components/form-radio/form-radio.component';
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
 
@@ -67,6 +68,7 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
     FormButtonComponent,
     FormInputComponent,
     FormSelectComponent,
+    FormRadioComponent,
     FormCheckboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
@@ -107,6 +109,7 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
     FormTextareaButtonComponent,
     FormPermissionsComponent,
     FormArrayComponent,
+    FormRadioComponent,
     FormUploadComponent,
     FormReadFileComponent,
     FormExplorerComponent,

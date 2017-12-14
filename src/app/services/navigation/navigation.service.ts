@@ -104,6 +104,7 @@ export class NavigationService {
         { name: 'Snapshots', state: 'snapshots' },
         { name: 'VMware-Snapshots', state: 'vmware-Snapshots' },
         { name: 'Disks', state: 'disks' }
+        { name: 'Import Disk', state: 'import-disk'},
       ]
     },
     {
