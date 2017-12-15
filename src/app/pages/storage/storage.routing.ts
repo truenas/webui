@@ -10,16 +10,6 @@ import { DatasetFormComponent} from './volumes/datasets/dataset-form/';
 import { DatasetDeleteComponent} from './volumes/datasets/dataset-delete/';
 import { ManagerComponent} from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
-<<<<<<< HEAD
-import { VolumeDeleteComponent} from './volumes/volume-delete/index';
-import { VolumesListComponent} from './volumes/volumes-list/';
-import { ZvolAddComponent} from './volumes/zvol/zvol-add/';
-import { ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
-import { ZvolEditComponent} from './volumes/zvol/zvol-edit/';
-import { VolumeImportListComponent} from './volumes/import-list/';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
-=======
 import {VolumeDeleteComponent} from './volumes/volume-delete/index';
 import {VolumesListComponent} from './volumes/volumes-list/';
 import {ZvolAddComponent} from './volumes/zvol/zvol-add/';
@@ -29,7 +19,6 @@ import {VolumeImportListComponent} from './volumes/import-list/';
 import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
 import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
->>>>>>> 75c0c0f5... Initial commit for import disk and form-radio component
 import { StatusComponent } from './volumes/status/status.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
