@@ -77,9 +77,12 @@ export class TunableFormComponent {
     },
   ];
 
+
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  afterInit(entityForm: any) {}
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['tun_enabled'].setValue(true);
+  }
 }
