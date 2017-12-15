@@ -70,9 +70,7 @@ export class ImportDiskComponent {
   }
 
   submitFunction(payload){
-    payload = JSON.stringify(payload);
-    console.log(payload);
-    return this.ws.call('pool.import_disk', [payload]);
+    return this.ws.call('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
   }
 
 }
