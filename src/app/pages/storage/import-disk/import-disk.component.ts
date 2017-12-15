@@ -49,15 +49,24 @@ export class ImportDiskComponent {
       initial: '/mnt',
     },
   ];
-  public diskOptions: any;
-  private entityEdit: EntityFormComponent;
+  public volume: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected _injector: Injector, protected _appRef: ApplicationRef
               ) {}
 
-  afterInit(entityEdit: any) { 
-    this.entityEdit = entityEdit;
-   }
+  preInit(entityEdit: any) { 
+    entityEdit.isNew = true; // disable attempting to load data that doesn't exist
+  }
+  
+  afterInit(entityEdit: any) {
+    this.volume = _.find(this.fieldConfig, {'name':'volume'});
+    this.ws.call('disk.get_unused').subscribe((res)=>{
+      res.forEach((item) => {
+        console.log(item)
+        this.volume.options.push({label : item.name, value : item.name});
+      });
+    });
+  }
 }
