@@ -14,6 +14,7 @@ import { NISComponent } from './nis/';
 import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
+import { KerberosSettingsComponent } from './kerberossettings';
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-for
     IdmapComponent,
     KerberosRealmsListComponent,
     KerberosRealmsFormComponent,
+    KerberosSettingsComponent,
   ],
   providers: [SystemGeneralService]
 }) export class DirectoryServiceModule {}

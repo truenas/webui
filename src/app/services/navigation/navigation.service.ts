@@ -117,6 +117,7 @@ export class NavigationService {
         { name: 'LDAP', state: 'ldap' },
         { name: 'NIS', state: 'nis' },
         { name: 'Kerberos Realms', state: 'kerberosrealms' },
+        { name: 'Kerberos Settings', state: 'kerberossettings' },
       ]
     },
     {
