@@ -116,6 +116,7 @@ export class NavigationService {
         { name: 'Active Directory', state: 'activedirectory' },
         { name: 'LDAP', state: 'ldap' },
         { name: 'NIS', state: 'nis' },
+        { name: 'Kerberos Settings', state: 'kerberossettings' },
       ]
     },
     {
