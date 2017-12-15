@@ -22,7 +22,6 @@ import {TOOLTIPS} from '../../common/tooltips';
   providers : [ ],
 })
 export class ImportDiskComponent {
-  protected editCall: string = 'pool.import_disk';
   public fieldConfig: FieldConfig[] = [
     {
       type : 'select',
@@ -56,7 +55,8 @@ export class ImportDiskComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef
               ) {}
 
-  preInit(entityEdit: any) { 
+  preInit(entityEdit: any) {
+    entityEdit.submitFunction = this.submitFunction;
     entityEdit.isNew = true; // disable attempting to load data that doesn't exist
   }
   
@@ -64,9 +64,15 @@ export class ImportDiskComponent {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
       res.forEach((item) => {
-        console.log(item)
         this.volume.options.push({label : item.name, value : item.name});
       });
     });
   }
+
+  submitFunction(payload){
+    payload = JSON.stringify(payload);
+    console.log(payload);
+    return this.ws.call('pool.import_disk', [payload]);
+  }
+
 }
