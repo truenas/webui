@@ -1,20 +1,25 @@
-.services-wrap {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-around;
-	align-items: stretch;
-	align-content: stretch;
-	-webkit-box-orient: horizontal;
-	-webkit-box-direction: normal;
-	box-sizing: border-box;
+
+/* cards */
+ .entity-card-wrapper {
+  text-align:left;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.entity-cards-container{
+  text-align:center;
 }
 .service-item {
-	flex-basis: auto;
-	-webkit-box-flex: 1;
-	flex-grow: 1;
-	min-width: 25%;
+  flex-basis: 355px !important;
+  -webkit-box-flex: 1 !important;
+  flex-grow: 1 !important;
+  flex: 1 0 100%;
+  height:100%;
 }
-.service-item-title {
-	font-size: 26px !important;
-	padding-top: 4px !important;
+.service-item:last-child {
+  max-width: 48%;
 }
