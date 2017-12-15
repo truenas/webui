@@ -11,8 +11,8 @@ import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import {Tooltip} from '../../common/tooltip';
-import {TOOLTIPS} from '../../common/tooltips';
+import { MdDialog, MdDialogRef } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector : 'app-import-disk',
@@ -34,10 +34,10 @@ export class ImportDiskComponent {
       name : 'fs_type',
       placeholder : 'Filesystem type',
       options: [
-                    {value:'UFS', label:'UFS'}, 
-                    {value:'NTFS', label:'NTFS'}, 
-                    {value:'MSDOSFS', label:'MSDOSFS'}, 
-                    {value: 'EXT2FS', label:'EXT2FS'}
+                    {value:'ufs', label:'UFS'}, 
+                    {value:'ntfs', label:'NTFS'}, 
+                    {value:'msdosfs', label:'MSDOSFS'}, 
+                    {value: 'ext2fs', label:'EXT2FS'}
                   ]
     },
     {
@@ -49,18 +49,21 @@ export class ImportDiskComponent {
     },
   ];
   public volume: any;
+  private entityForm: any;
+  protected dialogRef: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService,
+              protected ws: WebSocketService, protected dialog: MdDialog,
               protected _injector: Injector, protected _appRef: ApplicationRef
               ) {}
 
-  preInit(entityEdit: any) {
-    entityEdit.submitFunction = this.submitFunction;
-    entityEdit.isNew = true; // disable attempting to load data that doesn't exist
+  preInit(entityForm: any) {
+    this.entityForm = entityForm;
+   // entityEdit.submitFunction = this.submitFunction;
+    entityForm.isNew = true; // disable attempting to load data that doesn't exist
   }
   
-  afterInit(entityEdit: any) {
+  afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
     this.ws.call('disk.get_unused').subscribe((res)=>{
       res.forEach((item) => {
@@ -69,8 +72,20 @@ export class ImportDiskComponent {
     });
   }
 
-  submitFunction(payload){
-    return this.ws.call('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
+  customSubmit(payload){
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Disk" }});
+    this.dialogRef.componentInstance.progressNumberType = "nopercent";
+    this.dialogRef.componentInstance.setDiscription("Importing Disk...");
+    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.entityForm.success = true;
+      this.entityForm.snackBar.open("Disk successfully imported", "Success");
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+    });
+    //return this.ws.call('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
   }
 
 }
