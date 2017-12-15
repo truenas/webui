@@ -18,7 +18,7 @@ export class NTPServerEditComponent {
       type: 'input',
       name: 'ntp_address',
       placeholder: 'Address',
-      tooltip: 'Enter the name of the <b>NTP</b> server.',
+      tooltip: 'Enter the hostname or IP address of the <b>NTP</b> server.',
     },
     {
       type: 'checkbox',
