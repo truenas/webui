@@ -33,9 +33,9 @@ export class VolumesListComponent implements OnInit {
 
   public columns: Array<any> = [
     { name: 'Name', prop: 'path', sortable: false },
+    { name: 'Type', prop: 'type', sortable: false },
     { name: 'Used', prop: 'used', sortable: false },
     { name: 'Available', prop: 'avail', sortable: false },
-    { name: 'Type', prop: 'type', sortable: false },
     { name: 'Compression', prop: 'compression', sortable: false },
     { name: 'Readonly', prop: 'readonly', sortable: false },
     { name: 'Dedup', prop: 'dedup', sortable: false },
@@ -219,9 +219,9 @@ export class VolumesListComponent implements OnInit {
       let zfs_pool: string = (data[i].path.indexOf("/") !== -1 ) ? data[i].path.split("/")[0] : data[i].path;
       data[i].zfs_pool = zfs_pool;
       
-      if(data[i].type !== 'zpool' ) {
+      //if(data[i].type !== 'zpool' ) {
         returnData.push(data[i]);
-      }
+      //}
     }
  
     return returnData;
