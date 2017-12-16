@@ -47,6 +47,7 @@ export class UserFormComponent {
       name : 'bsdusr_creategroup',
       placeholder : 'Create a new Primary Group for the user.',
       value : true,
+      isHidden: false
     },
 
     {
@@ -206,7 +207,7 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdusr_username', true);
-        entityForm.setDisabled('bsdusr_creategroup', true);
+        _.find(this.fieldConfig, {name : "bsdusr_creategroup"}).isHidden = true;
         if (entityForm.data.bsdusr_builtin === true) {
           entityForm.formGroup.controls['bsdusr_uid'].setValue(
               entityForm.data.bsdusr_uid);
