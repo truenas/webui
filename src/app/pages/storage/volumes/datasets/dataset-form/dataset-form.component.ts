@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
@@ -39,7 +39,7 @@ export class DatasetFormComponent implements OnInit{
       type: 'input',
       name: 'name',
       placeholder: 'Name',
-      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -226,10 +226,9 @@ export class DatasetFormComponent implements OnInit{
     });
   }
 
-  ngOnInit() {    
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
+  ngOnInit() {
     this.preInit();
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     this.ws.call('pool.dataset.query', [ [["id", "=", this.resourceName]] ]).subscribe((res) => {
       this.data = res[0].properties;
