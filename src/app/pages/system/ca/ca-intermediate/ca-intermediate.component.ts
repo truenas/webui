@@ -39,17 +39,24 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_signedby',
       placeholder : 'Signing Certificate Authority',
+      tooltip: 'Required; select the CA which was previously imported\
+ or created using <a href="http://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.',
       options : []
     },
     {
       type : 'input',
       name : 'cert_name',
       placeholder : 'Identifier',
+      tooltip: 'Required; enter a descriptive name for the\
+ certificate using only alphanumeric, underscore\
+ (_), and dash (-) characters.',
     },
     {
       type : 'select',
       name : 'cert_key_length',
       placeholder : 'Key Length',
+      tooltip:'For security reasons, a minimum of 2048\
+ is recommended.',
       options : [
         {label : '1024', value : 1024},
         {label : '2048', value : 2048},
@@ -60,6 +67,8 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_digest_algorithm',
       placeholder : 'Digest Algorithm',
+      tooltip: 'The default is acceptable unless your organization\
+ requires a different algorithm.',
       options : [
         {label : 'SHA1', value : 'SHA1'},
         {label : 'SHA224', value : 'SHA224'},
@@ -72,6 +81,7 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'input',
       name : 'cert_lifetime',
       placeholder : 'Lifetime',
+      tooltip: 'The lifetime of the CA is specified in days.',
       inputType: 'number',
       validation: [Validators.required, Validators.min(0)]
     },
@@ -79,6 +89,7 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_country',
       placeholder : 'Country',
+      tooltip: 'Select the country for the organization.',
       options : [
         {label : 'US', value : 'US'},
         {label : 'CHINA', value : 'CN'},
@@ -89,27 +100,36 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'input',
       name : 'cert_state',
       placeholder : 'State',
+      tooltip: 'Required; enter the state or province of\
+ the organization.',
     },
     {
       type : 'input',
       name : 'cert_city',
       placeholder : 'Locality',
+      tooltip: 'Required; enter the location of the organization.',
     },
     {
       type : 'input',
       name : 'cert_organization',
       placeholder : 'Organization',
+      tooltip: 'Required; enter the name of the\
+ company or organization.',
     },
     {
       type : 'input',
       name : 'cert_email',
       placeholder : 'Email',
+      tooltip: 'Required; enter the email address for the person\
+ responsible for the CA.',
       validation : [ Validators.email ]
     },
     {
       type : 'input',
       name : 'cert_common',
       placeholder : 'Common Name',
+      tooltip: 'Required; enter the fully-qualified hostname\
+ (FQDN) of the FreeNAS® system.',
     },
   ];
   private cert_signedby: any;
