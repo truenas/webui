@@ -39,6 +39,7 @@ export class DatasetFormComponent implements OnInit{
       type: 'input',
       name: 'name',
       placeholder: 'Name',
+      required: true,
     },
     {
       type: 'input',
@@ -49,13 +50,24 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level',
-      options: [],
+      options: [
+        { label: 'OFF', value: "OFF" },
+        { label: 'LZ4', value: "LZ4" },
+        { label: 'GZIP-1', value: "GZIP-1" },
+        { label: 'GZIP-6', value: "GZIP-6" },
+        { label: 'GZIP-9', value: "GZIP-9" },
+        { label: 'ZLE', value: "ZLE" },
+        { label: 'LZJB', value: "LZJB" }
+      ],
     },
     {
       type: 'select',
       name: 'atime',
       placeholder: 'Enable atime',
-      options: [],
+      options: [
+        { label: 'ON', value: "ON" },
+        { label: 'OFF', value: "OFF" }
+      ],
     },
     {
       type: 'input',
@@ -88,23 +100,30 @@ export class DatasetFormComponent implements OnInit{
 
     {
       type: 'select',
-      name: 'dedup',
+      name: 'deduplication',
       placeholder: 'Deduplication',
-      options: [],
+      options: [
+        { label: 'ON', value: "ON" },
+        { label: 'VERIFY', value: "VERIFY" },
+        { label: 'OFF', value: "OFF" }
+      ],
     },
     {
       type: 'select',
       name: 'readonly',
       placeholder: 'Read-only',
-      options: [],
+      options: [
+        { label: 'ON', value: "ON" },
+        { label: 'OFF', value: "OFF" }
+      ],
     },
     {
       type: 'select',
       name: 'snapdir',
       placeholder: 'Snapshot directory',
       options: [
-        { label: 'Visible', value: "visible" },
-        { label: 'Invisible', value: "hidden" },
+        { label: 'Visible', value: "VISIBLE" },
+        { label: 'Invisible', value: "HIDDEN" },
       ],
     },
     {
@@ -122,13 +141,30 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'recordsize',
       placeholder: 'Record Size',
-      options: [],
+      options: [
+        { label: '512', value: "512" },
+        { label: '1K', value: "1K" },
+        { label: '2K', value: "2K" },
+        { label: '4K', value: "4K" },
+        { label: '8K', value: "8K" },
+        { label: '16K', value: "16K" },
+        { label: '32K', value: "32K" },
+        { label: '64K', value: "64K" },
+        { label: '128K', value: "128K" },
+        { label: '256K', value: "256K" },
+        { label: '512K', value: "512K" },
+        { label: '1024K', value: "1024K" }
+      ],
     },
     {
       type: 'select',
-      name: 'case_sensitivity',
+      name: 'casesensitivity',
       placeholder: 'Case Sensitivity',
-      options: [],
+      options: [
+        { label: 'SENSITIVE', value: "SENSITIVE" },
+        { label: 'INSENSITIVE', value: "INSENSITIVE" },
+        { label: 'MIXED', value: "MIXED" }
+      ],
     },
   ];
 
@@ -155,21 +191,6 @@ export class DatasetFormComponent implements OnInit{
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
-
-  protected RecordSizeMap: any = {
-    '512': '512',
-    '1024': '1K',
-    '2048': '2K',
-    '4096': '4K',
-    '8192': '8K',
-    '16384': '16K',
-    '32768': '32K',
-    '65536': '64K',
-    '131072': '128K',
-    '262144': '256K',
-    '524288': '512K',
-    '1048576': '1024K',
-  };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, 
@@ -205,57 +226,10 @@ export class DatasetFormComponent implements OnInit{
     });
   }
 
-  setFieldValue(endpoint: string, field: string) {
-    this.ws.call('notifier.choices', [ endpoint ]).subscribe((res) => {
-      let target_field = _.find(this.fieldConfig, {name: field});
-      if (target_field) {
-        if (field == 'recordsize') {
-          target_field.options.push({label: 'Inherit (' + this.RecordSizeMap[this.parent_data['recordsize'].rawvalue] + ' )', value: 'inherit'});
-        }
-
-        for (let item of res) {
-          let label = item[1];
-          let value = item[0];
-          if (value == 'inherit') {
-            label = label + '( ' + this.parent_data[field].rawvalue + ' )';
-          }
-          target_field.options.push({label: label, value: value});
-        }
-
-        // set default value
-        if (this.isNew) {
-          let default_value = 'inherit';
-          let fg = this.formGroup.controls[field];
-          if (field == 'case_sensitivity') {
-            default_value = 'sensitive';
-          }
-
-          if (fg) {
-            fg.setValue(default_value);
-          }
-        }
-      }
-    });
-  }
-
-  afterInit() {
-    this.setFieldValue('ZFS_CompressionChoices', 'compression');
-    this.setFieldValue('ZFS_AtimeChoices', 'atime');
-    this.setFieldValue('ZFS_DEDUP_INHERIT', 'dedup');
-    this.setFieldValue('CASE_SENSITIVITY_CHOICES', 'case_sensitivity');
-    this.setFieldValue('ZFS_ReadonlyChoices', 'readonly');
-    this.setFieldValue('ZFS_RECORDSIZE', 'recordsize');
-
-    if (!this.isNew) {
-      this.setDisabled('name', true);
-    }
-  }
-
-  ngOnInit() {
-    this.preInit();
+  ngOnInit() {    
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    console.log("resourcename:", this.resourceName, " parent:", this.parent);
+    this.preInit();
 
     this.ws.call('pool.dataset.query', [ [["id", "=", this.resourceName]] ]).subscribe((res) => {
       this.data = res[0].properties;
@@ -265,37 +239,25 @@ export class DatasetFormComponent implements OnInit{
         let fg = this.formGroup.controls[i];
 
         if (fg && !this.isNew) {
-          let value = this.data[i].rawvalue;
-
-          if (i == 'recordsize') {
-            value = this.RecordSizeMap[value];
-          }
-
-          if (_.indexOf(this.data['inherit_props'], i) > -1) {
-            value = 'inherit';
-          }
-
-          if (i == 'comments' && _.indexOf(this.data['inherit_props'], 'org.freenas:description') > -1) {
-            value = '';
-          }
-
+          let value = this.data[i].value;
           fg.setValue(value);
         }
       }
 
-      if (!this.isNew && this.parent) {
-        this.ws.call('pool.dataset.query', [ [["id", "=", this.parent]] ]).subscribe((res) => {
-          this.parent_data = res[0].properties;
-          this.afterInit();
-        });
-      } else {
-        this.afterInit();
+      if (!this.isNew) {
+        this.setDisabled('name', true);
+
+        if(this.parent) {
+          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res) => {
+            this.parent_data = res[0].properties;
+          });
+        }
       }
     });
   }
 
   editSubmit(body: any) {
-    return this.ws.call('pool.dataset.update', [this.resourceName, body]);
+    return this.ws.call('pool.dataset.update', [[["id", "=", this.resourceName]], body]);
   }
 
   addSubmit(body: any) {
@@ -345,8 +307,10 @@ export class DatasetFormComponent implements OnInit{
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
 
+    value['name'] = this.resourceName + "/" + value['name'];
+    
     this.loader.open();
-    this.busy = this.submitFunction({body : JSON.stringify(value)})
+    this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -359,6 +323,7 @@ export class DatasetFormComponent implements OnInit{
                         },
                         (res) => {
                           this.loader.close();
-                          new EntityUtils().handleError(this, res); });
+                          this.error = res.reason;
+                        });
   }
 }
