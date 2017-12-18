@@ -61,6 +61,7 @@ import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservic
 import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
 import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
+import { EmailComponent } from './email';
 
 @NgModule({
   imports: [
@@ -120,7 +121,8 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     CertificateImportComponent,
     CertificateInternalComponent,
     CertificateCSRComponent,
-    SupportComponent
+    SupportComponent,
+    EmailComponent,
   ],
   providers: []
 })
