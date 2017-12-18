@@ -219,9 +219,9 @@ export class VolumesListComponent implements OnInit {
       let zfs_pool: string = (data[i].path.indexOf("/") !== -1 ) ? data[i].path.split("/")[0] : data[i].path;
       data[i].zfs_pool = zfs_pool;
       
-      //if(data[i].type !== 'zpool' ) {
+      if(data[i].type !== 'zpool' ) {
         returnData.push(data[i]);
-      //}
+      }
     }
  
     return returnData;
