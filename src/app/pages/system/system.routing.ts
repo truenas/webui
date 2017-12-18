@@ -55,6 +55,7 @@ import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservic
 import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
 import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
+import {EmailComponent} from './email/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -163,7 +164,13 @@ export const routes: Routes = [
           data: { title: 'Add', breadcrumb: 'Add' },
         },
       ]
-    }, {
+    }, 
+    {
+      path : 'email', 
+      component : EmailComponent,
+      data: { title: 'email', breadcrumb: 'email' },
+    },
+    {
       path: 'alertservice',
       data: { title: 'AlertService', breadcrumb: 'AlertService' },
       children: [{
