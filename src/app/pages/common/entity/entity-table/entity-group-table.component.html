@@ -27,9 +27,11 @@
 
 		<!-- Group Header Template -->
 		<ngx-datatable-group-header [rowHeight]="50" #myGroupHeader [collapseAllGroups]="true" (toggle)="onDetailToggle($event)">
-			<ng-template let-group="group" ngx-datatable-group-header-template>
+			<ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template >
 				<div style="padding-left:5px;">
 					<a href="#" title="Expand/Collapse Group"
+					[class.datatable-icon-right]="!expanded"
+					[class.datatable-icon-down]="expanded"
 					 (click)="toggleExpandGroup($event, group)">
 						<b>{{conf.getExpansionColumnName(group.value[0])}}</b>
 					</a>
