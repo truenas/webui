@@ -22,21 +22,23 @@ interface ZfsPoolData {
   vol_guid: string;
   vol_name: string;
   children: any[];
+  volumesListTableConfig: VolumesListTableConfig;
+
 }
 
 
 export class VolumesListTableConfig {
   protected flattenedVolData: any;
-  protected resource_name: string = 'storage/volume';
+  protected resource_name = 'storage/volume';
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip: string = "Volume Manager";
+  protected route_add_tooltip = "Volume Manager";
   public dataset_data: any;
   
   constructor(
     private _router: Router,
     private _classId: string,
     private title  ) { 
-        this.resource_name += "/" + this._classId;
+       this.resource_name += "/" + this._classId;
     }
 
   public columns: Array<any> = [
@@ -204,6 +206,7 @@ export class VolumesListTableConfig {
 
       const zfs_pool: string = (data[i].path.indexOf("/") !== -1 ) ? data[i].path.split("/")[0] : data[i].path;
       data[i].zfs_pool = zfs_pool;
+      returnData.push(data[i]);
       
       
     }
@@ -230,13 +233,10 @@ export class VolumesListComponent implements OnInit  {
     
     this._rest.get("storage/volume", {}).subscribe((res)=>{
         res.data.forEach((volume)=>{
+          volume.volumesListTableConfig =  new VolumesListTableConfig( this._router, volume.id, volume.name);
           this.zfsPoolRows.push(volume);
         });
     });
   }
 
-
-  public getVolumesListTableConfig( id: string, name: string ): VolumesListTableConfig {
-    return new VolumesListTableConfig( this._router, id, name);
-  }
 }
