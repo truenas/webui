@@ -163,6 +163,11 @@ export const routes: Routes = [
           component: NTPServerAddComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         },
+        {
+          path: 'edit/:pk',
+          component: NTPServerEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
       ]
     }, 
     {
