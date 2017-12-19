@@ -59,7 +59,6 @@ export class ImportDiskComponent {
 
   preInit(entityForm: any) {
     this.entityForm = entityForm;
-   // entityEdit.submitFunction = this.submitFunction;
     entityForm.isNew = true; // disable attempting to load data that doesn't exist
   }
   
@@ -76,7 +75,7 @@ export class ImportDiskComponent {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Disk" }});
     this.dialogRef.componentInstance.progressNumberType = "nopercent";
     this.dialogRef.componentInstance.setDiscription("Importing Disk...");
-    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
+    this.dialogRef.componentInstance.setCall('pool.import_disk', ["/dev/" + payload.volume, payload.fs_type, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
@@ -85,7 +84,6 @@ export class ImportDiskComponent {
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
     });
-    //return this.ws.call('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
   }
 
 }
