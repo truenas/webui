@@ -5,6 +5,11 @@ import { TourService } from '../../../../services/tour.service';
 import filesize from 'filesize';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 
 interface ZfsPoolData {
@@ -224,28 +229,32 @@ export class VolumesListTableConfig {
   selector: 'app-volumes-list',
   templateUrl: './volumes-list.component.html'
 })
-export class VolumesListComponent implements OnInit  {
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit  {
   
   zfsPoolRows: ZfsPoolData[] = [];
+  conf = new VolumesListTableConfig( this.router, "", "Volumes");
 
-  entity = {
-    volumesListTableConfig:   new VolumesListTableConfig( this._router, "", "Volumes")
-  };
-  constructor(
-    private _router: Router,
-    private _rest: RestService ){
-      
-   
-  }
+  
+  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
+      super(rest, router, ws, _eRef, dialog, loader);
+
+     }
+
+  
 
   ngOnInit(): void {
-    
-    this._rest.get("storage/volume", {}).subscribe((res)=>{
+    this.rest.get("storage/volume", {}).subscribe((res)=>{
         res.data.forEach((volume)=>{
-          volume.volumesListTableConfig =  new VolumesListTableConfig( this._router, volume.id, volume.name);
+          volume.volumesListTableConfig =  new VolumesListTableConfig( this.router, volume.id, volume.name);
           this.zfsPoolRows.push(volume);
         });
     });
+    
+  }
+
+  ngAfterViewInit() : void {
+    
   }
 
 }
