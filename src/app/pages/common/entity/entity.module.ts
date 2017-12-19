@@ -90,6 +90,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
+    EntityTableAddActionsComponent,
     DynamicFieldDirective,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,

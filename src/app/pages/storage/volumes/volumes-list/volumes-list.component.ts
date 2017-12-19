@@ -28,6 +28,7 @@ interface ZfsPoolData {
 
 
 export class VolumesListTableConfig {
+  protected hideTopActions = true;
   protected flattenedVolData: any;
   protected resource_name = 'storage/volume';
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
@@ -37,8 +38,11 @@ export class VolumesListTableConfig {
   constructor(
     private _router: Router,
     private _classId: string,
-    private title  ) { 
-       this.resource_name += "/" + this._classId;
+    private title: string  ) { 
+
+       if( typeof(this._classId) !== "undefined" && this._classId !== "" ) {
+          this.resource_name += "/" + this._classId;
+       }
     }
 
   public columns: Array<any> = [
@@ -224,9 +228,14 @@ export class VolumesListComponent implements OnInit  {
   
   zfsPoolRows: ZfsPoolData[] = [];
 
+  entity = {
+    volumesListTableConfig:   new VolumesListTableConfig( this._router, "", "Volumes")
+  };
   constructor(
     private _router: Router,
-    private _rest: RestService ){ 
+    private _rest: RestService ){
+      
+   
   }
 
   ngOnInit(): void {
