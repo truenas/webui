@@ -1,0 +1,22 @@
+<div id="volumes-list.component_html"  class="material mat-card mat-card-table">
+    
+
+    <md-accordion>
+        <md-expansion-panel *ngFor="let row of zfsPoolRows">
+          <md-expansion-panel-header>
+            <md-panel-title>
+                {{row.name}}
+            </md-panel-title>
+            <md-panel-description>
+                {{row.status}}
+            </md-panel-description>
+          </md-expansion-panel-header>
+
+          <entity-table [conf]="getVolumesListTableConfig(row.id, row.name)"></entity-table>
+
+
+        </md-expansion-panel>
+    </md-accordion>
+
+
+</div>

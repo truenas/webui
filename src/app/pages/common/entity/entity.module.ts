@@ -44,7 +44,6 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
-import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/entity-group-table.component';
 
 @NgModule({
   imports: [
@@ -55,7 +54,6 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
   declarations: [
     EntityDeleteComponent,
     EntityTableComponent,
-    EntityGroupTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -90,7 +88,6 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
-    EntityGroupTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     DynamicFieldDirective,
