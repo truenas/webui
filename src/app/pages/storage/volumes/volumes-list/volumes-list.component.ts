@@ -57,8 +57,7 @@ export class VolumesListTableConfig {
     { name: 'Available', prop: 'avail', sortable: false },
     { name: 'Compression', prop: 'compression', sortable: false },
     { name: 'Readonly', prop: 'readonly', sortable: false },
-    { name: 'Dedup', prop: 'dedup', sortable: false },
-    { name: 'ZFS Pool', prop: 'zfs_pool', sortable: false }
+    { name: 'Dedup', prop: 'dedup', sortable: false }
 
   ];
 
@@ -213,9 +212,9 @@ export class VolumesListTableConfig {
         }
       }
 
-      const zfs_pool: string = (data[i].path.indexOf("/") !== -1 ) ? data[i].path.split("/")[0] : data[i].path;
-      data[i].zfs_pool = zfs_pool;
-      returnData.push(data[i]);
+      //if( data[i].type !== 'zpool') {
+        returnData.push(data[i]);
+      //}
       
       
     }
@@ -253,8 +252,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     
   }
 
-  ngAfterViewInit() : void {
-    
+  ngAfterViewInit(): void {
+
   }
 
 }
