@@ -20,7 +20,7 @@ interface ZfsPoolData {
   mountpoint: string;
   name: string;
   status: string;
-  used:number;
+  used: number;
   sed_pct: string;
   vol_encrypt: number;
   vol_encryptkey: string;
@@ -39,16 +39,16 @@ export class VolumesListTableConfig {
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
   protected route_add_tooltip = "Volume Manager";
   public dataset_data: any;
-  
+
   constructor(
     private _router: Router,
     private _classId: string,
-    private title: string  ) { 
+    private title: string) {
 
-       if( typeof(this._classId) !== "undefined" && this._classId !== "" ) {
-          this.resource_name += "/" + this._classId;
-       }
+    if (typeof (this._classId) !== "undefined" && this._classId !== "") {
+      this.resource_name += "/" + this._classId;
     }
+  }
 
   public columns: Array<any> = [
     { name: 'Name', prop: 'path', sortable: false },
@@ -200,7 +200,7 @@ export class VolumesListTableConfig {
       if (data[i].status !== '-') {
         data[i].type = 'zpool'
         data[i].path = data[i].name
-     }
+      }
       if (data[i].type === 'dataset' && typeof (this.dataset_data) !== "undefined" && typeof (this.dataset_data.data) !== "undefined") {
         for (let k = 0; k < this.dataset_data.data.length; k++) {
           if (this.dataset_data.data[k].name === data[i].path) {
@@ -212,13 +212,13 @@ export class VolumesListTableConfig {
         }
       }
 
-      //if( data[i].type !== 'zpool') {
+      if( data[i].type !== 'zpool') {
         returnData.push(data[i]);
-      //}
-      
-      
+      }
+
+
     }
-    
+
     return returnData;
   };
 }
@@ -228,28 +228,27 @@ export class VolumesListTableConfig {
   selector: 'app-volumes-list',
   templateUrl: './volumes-list.component.html'
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit  {
-  
-  zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig( this.router, "", "Volumes");
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  
+  zfsPoolRows: ZfsPoolData[] = [];
+  conf = new VolumesListTableConfig(this.router, "", "Volumes");
+
+
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
-      super(rest, router, ws, _eRef, dialog, loader);
+    super(rest, router, ws, _eRef, dialog, loader);
 
-     }
-
-  
+  }
 
   ngOnInit(): void {
-    this.rest.get("storage/volume", {}).subscribe((res)=>{
-        res.data.forEach((volume)=>{
-          volume.volumesListTableConfig =  new VolumesListTableConfig( this.router, volume.id, volume.name);
-          this.zfsPoolRows.push(volume);
-        });
+    this.rest.get("storage/volume", {}).subscribe((res) => {
+      res.data.forEach((volume) => {
+        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name);
+        volume.type = 'zpool';
+        this.zfsPoolRows.push(volume);
+      });
     });
-    
+
   }
 
   ngAfterViewInit(): void {

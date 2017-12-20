@@ -1,5 +1,5 @@
 <div class="panel_container">
-		<md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</md-icon>
+		<md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">{{icon_name}}</md-icon>
 <md-menu #appMenu="mdMenu">
     <span *ngFor="let action of actions">
 			<button md-menu-item *ngIf="!entity.conf.isActionVisible
