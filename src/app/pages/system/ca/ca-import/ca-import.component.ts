@@ -69,7 +69,7 @@ export class CertificateAuthorityImportComponent {
       name : 'Passphrase2',
       inputType : 'password',
       placeholder : 'Confirm Passphrase',
-      tooltip: 'Must match the value of the <i>Passphrase</i>.',
+      tooltip: 'Re-enter the <i>Passphrase</i> to confirm.',
     },
     {
       type : 'input',
