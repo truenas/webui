@@ -24,8 +24,12 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
   styleUrls: ['./entity-group-table.component.scss'],
   providers: [DialogService]
 })
-export class EntityGroupTableComponent extends EntityTableComponent implements OnInit {
+export class EntityGroupTableComponent extends EntityTableComponent implements OnInit, AfterViewInit {
   
+
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+  }
 
   
   @ViewChild('myTable') table: any;
@@ -58,6 +62,12 @@ export class EntityGroupTableComponent extends EntityTableComponent implements O
     console.log('Detail Toggled', $event);
     $event.preventDefault();
   }
+
+
+  protected setPaginationInfo() {
+        this.seenRows = this.currentRows;
+  }
+    
 
   
 }
