@@ -38,5 +38,7 @@ export class EntityTableAddActionsComponent implements OnInit {
   public direction: string = 'right';
   public animationMode: string = 'fling';
 
-  ngOnInit() { this.actions = this.entity.getAddActions(); }
+  ngOnInit() { 
+		this.actions = this.entity.getAddActions(); 
+	}
 }

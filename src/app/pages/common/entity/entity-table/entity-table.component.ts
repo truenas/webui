@@ -33,8 +33,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   private erd: any = null;
 
   // MdPaginator Inputs
-  public paginationPageSize = 5;
-  public paginationPageSizeOptions = [5, 10, 20, 100];
+  public paginationPageSize = 20;
+  public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
   
@@ -300,6 +300,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
  
   paginationUpdate($pageEvent: any) {
+    
     this.paginationPageEvent = $pageEvent;
     
     this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
@@ -348,17 +349,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        let data = {};
+        const data = {};
         if (this.conf.wsMultiDelete) {
           // ws to do multi-delete
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
-              (res) => {
+              (res1) => {
                   this.getData();
                   this.selected = [];
                },
-              (res) => {
-                new EntityUtils().handleError(this, res);
+              (res1) => {
+                new EntityUtils().handleError(this, res1);
                 this.loader.close();
               }
             );

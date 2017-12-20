@@ -5,69 +5,67 @@ import { TourService } from '../../../../services/tour.service';
 import filesize from 'filesize';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 
+interface ZfsPoolData {
+  avail: number;
+  id: string;
+  is_decrypted: boolean;
+  is_upgraded: boolean;
+  mountpoint: string;
+  name: string;
+  status: string;
+  used: number;
+  sed_pct: string;
+  vol_encrypt: number;
+  vol_encryptkey: string;
+  vol_guid: string;
+  vol_name: string;
+  children: any[];
+  volumesListTableConfig: VolumesListTableConfig;
 
-@Component({
-  selector: 'app-volumes-list',
-  template: `<entity-group-table [title]="title" [conf]="this"></entity-group-table>`
-})
-export class VolumesListComponent implements OnInit {
+}
 
-  
-  public title = "Volumes";
+
+export class VolumesListTableConfig {
+  protected hideTopActions = true;
   protected flattenedVolData: any;
-  protected resource_name: string = 'storage/volume/';
+  protected resource_name = 'storage/volume';
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip: string = "Volume Manager";
+  protected route_add_tooltip = "Volume Manager";
   public dataset_data: any;
-  mapZfsPoolStatus: Map<String, String> = new Map<String,String>();
 
   constructor(
-    protected _rest: RestService,
     private _router: Router,
-    protected _eRef: ElementRef,
-    private tour: TourService,
+    private _classId: string,
+    private title: string) {
 
-  ) { }
+    if (typeof (this._classId) !== "undefined" && this._classId !== "") {
+      this.resource_name += "/" + this._classId;
+    }
+  }
 
   public columns: Array<any> = [
-    { name: 'Name', prop: 'path' },
-    { name: 'Used', prop: 'used' },
-    { name: 'Available', prop: 'avail' },
-    { name: 'Type', prop: 'type' },
-    { name: 'Status', prop: 'status' },
-    { name: 'Compression', prop: 'compression' },
-    { name: 'Readonly', prop: 'readonly' },
-    { name: 'Dedup', prop: 'dedup' },
-    { name: 'ZFS Pool', prop: 'zfs_pool' }
-
-
+    { name: 'Name', prop: 'path', sortable: false },
+    { name: 'Type', prop: 'type', sortable: false },
+    { name: 'Used', prop: 'used', sortable: false },
+    { name: 'Available', prop: 'avail', sortable: false },
+    { name: 'Compression', prop: 'compression', sortable: false },
+    { name: 'Readonly', prop: 'readonly', sortable: false },
+    { name: 'Dedup', prop: 'dedup', sortable: false }
 
   ];
+
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
   };
 
-  configResourceGroupColumnName = "zfs_pool";
-
-  getExpansionColumnName(data: any): String {
-    const status: String = this.mapZfsPoolStatus.get(data.zfs_pool);
-    return data.zfs_pool + ((typeof(status) !== "undefined" && status !== null && status !== "" )? " (" + status + ")" : "");
-  };
-
-
-  ngOnInit() {
-    let showTour = localStorage.getItem(this._router.url) || 'false';
-    if (showTour != "true") {
-      hopscotch.startTour(this.tour.startTour(this._router.url));
-      localStorage.setItem(this._router.url, 'true');
-    }
-    this._rest.get('storage/dataset/', {}).subscribe((res) => {
-      this.dataset_data = res;
-    })
-  }
 
   dataHandler(EntityTable: any) {
     for (let i = 0; i < EntityTable.rows.length; i++) {
@@ -90,7 +88,7 @@ export class VolumesListComponent implements OnInit {
   }
 
   getAddActions() {
-    let actions = [];
+    const actions = [];
     actions.push({
       label: "Import Volumes",
       icon: "vertical_align_bottom",
@@ -103,7 +101,7 @@ export class VolumesListComponent implements OnInit {
   }
 
   getActions(row) {
-    let actions = [];
+    const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (row.type === 'zpool') {
       actions.push({
@@ -195,14 +193,13 @@ export class VolumesListComponent implements OnInit {
 
 
   resourceTransformIncomingRestData(data: any): any {
-    this.mapZfsPoolStatus.clear();
-
     data = new EntityUtils().flattenData(data);
+    const returnData: any[] = [];
+
     for (let i = 0; i < data.length; i++) {
       if (data[i].status !== '-') {
         data[i].type = 'zpool'
         data[i].path = data[i].name
-        this.mapZfsPoolStatus.set(data[i].name, data[i].status);
       }
       if (data[i].type === 'dataset' && typeof (this.dataset_data) !== "undefined" && typeof (this.dataset_data.data) !== "undefined") {
         for (let k = 0; k < this.dataset_data.data.length; k++) {
@@ -215,10 +212,51 @@ export class VolumesListComponent implements OnInit {
         }
       }
 
-      let zfs_pool: string = (data[i].path.indexOf("/") !== -1 ) ? data[i].path.split("/")[0] : data[i].path;
-      data[i].zfs_pool = zfs_pool;
+      if( data[i].type !== 'zpool') {
+        returnData.push(data[i]);
+      }
+
+
     }
- 
-    return data;
+
+    return returnData;
   };
+}
+
+
+@Component({
+  selector: 'app-volumes-list',
+  templateUrl: './volumes-list.component.html'
+})
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
+
+  zfsPoolRows: ZfsPoolData[] = [];
+  conf = new VolumesListTableConfig(this.router, "", "Volumes");
+  expanded = false;
+
+  constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
+    super(rest, router, ws, _eRef, dialog, loader);
+
+  }
+
+  ngOnInit(): void {
+    this.rest.get("storage/volume", {}).subscribe((res) => {
+      res.data.forEach((volume) => {
+        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name);
+        volume.type = 'zpool';
+        this.zfsPoolRows.push(volume);
+      });
+
+      if( this.zfsPoolRows.length === 1 ) {
+        this.expanded = true;
+      }
+    });
+
+  }
+
+  ngAfterViewInit(): void {
+
+  }
+
 }
