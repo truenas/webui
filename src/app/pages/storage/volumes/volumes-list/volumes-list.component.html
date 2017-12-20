@@ -9,7 +9,7 @@
     </div>
 
     <md-accordion>
-        <md-expansion-panel *ngFor="let row of zfsPoolRows">
+        <md-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
           <md-expansion-panel-header>
             <md-panel-title>
                 {{row.name}}

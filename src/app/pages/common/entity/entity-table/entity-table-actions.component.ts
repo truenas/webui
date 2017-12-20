@@ -22,15 +22,15 @@ export class EntityTableActionsComponent implements OnInit {
   public showMenu: boolean = true;
 
   menuActionVisible(id: string) {
-    if (id == 'edit' || id == 'delete') {
-      false;
+    if (id === 'edit' || id === 'delete') {
+      return false;
     }
     return true;
   }
 
   ngOnInit() {
     this.actions = this.entity.getActions(this.row);
-    let removeIds = [];
+    const removeIds = [];
     for (let i = 0; i < this.actions.length; i++) {
       if (this.entity.conf.isActionVisible) {
         this.actions[i].visible = this.entity.conf.isActionVisible.bind(

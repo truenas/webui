@@ -232,7 +232,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   zfsPoolRows: ZfsPoolData[] = [];
   conf = new VolumesListTableConfig(this.router, "", "Volumes");
-
+  expanded = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
@@ -247,6 +247,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         volume.type = 'zpool';
         this.zfsPoolRows.push(volume);
       });
+
+      if( this.zfsPoolRows.length === 1 ) {
+        this.expanded = true;
+      }
     });
 
   }
