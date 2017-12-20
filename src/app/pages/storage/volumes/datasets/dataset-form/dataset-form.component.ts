@@ -51,13 +51,13 @@ export class DatasetFormComponent implements OnInit{
       name: 'compression',
       placeholder: 'Compression level',
       options: [
-        { label: 'OFF', value: "OFF" },
-        { label: 'LZ4', value: "LZ4" },
-        { label: 'GZIP-1', value: "GZIP-1" },
-        { label: 'GZIP-6', value: "GZIP-6" },
-        { label: 'GZIP-9', value: "GZIP-9" },
-        { label: 'ZLE', value: "ZLE" },
-        { label: 'LZJB', value: "LZJB" }
+        { label: 'OFF', value: 'OFF' },
+        { label: 'LZ4', value: 'LZ4' },
+        { label: 'GZIP-1', value: 'GZIP-1' },
+        { label: 'GZIP-6', value: 'GZIP-6' },
+        { label: 'GZIP-9', value: 'GZIP-9' },
+        { label: 'ZLE', value: 'ZLE' },
+        { label: 'LZJB', value: 'LZJB' }
       ],
     },
     {
@@ -65,8 +65,8 @@ export class DatasetFormComponent implements OnInit{
       name: 'atime',
       placeholder: 'Enable atime',
       options: [
-        { label: 'ON', value: "ON" },
-        { label: 'OFF', value: "OFF" }
+        { label: 'ON', value: 'ON' },
+        { label: 'OFF', value: 'OFF' }
       ],
     },
     {
@@ -103,9 +103,9 @@ export class DatasetFormComponent implements OnInit{
       name: 'deduplication',
       placeholder: 'Deduplication',
       options: [
-        { label: 'ON', value: "ON" },
-        { label: 'VERIFY', value: "VERIFY" },
-        { label: 'OFF', value: "OFF" }
+        { label: 'ON', value: 'ON' },
+        { label: 'VERIFY', value: 'VERIFY' },
+        { label: 'OFF', value: 'OFF' }
       ],
     },
     {
@@ -113,8 +113,8 @@ export class DatasetFormComponent implements OnInit{
       name: 'readonly',
       placeholder: 'Read-only',
       options: [
-        { label: 'ON', value: "ON" },
-        { label: 'OFF', value: "OFF" }
+        { label: 'ON', value: 'ON' },
+        { label: 'OFF', value: 'OFF' }
       ],
     },
     {
@@ -122,8 +122,8 @@ export class DatasetFormComponent implements OnInit{
       name: 'snapdir',
       placeholder: 'Snapshot directory',
       options: [
-        { label: 'Visible', value: "VISIBLE" },
-        { label: 'Invisible', value: "HIDDEN" },
+        { label: 'Visible', value: 'VISIBLE' },
+        { label: 'Invisible', value: 'HIDDEN' },
       ],
     },
     {
@@ -131,9 +131,9 @@ export class DatasetFormComponent implements OnInit{
       name: 'copies',
       placeholder: 'Copies',
       options: [
-        { label: '1', value: "1" },
-        { label: '2', value: "2" },
-        { label: '3', value: "3" }
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' }
       ],
       tooltip: 'How many copies of data does ZFS allow?',
     },
@@ -142,18 +142,18 @@ export class DatasetFormComponent implements OnInit{
       name: 'recordsize',
       placeholder: 'Record Size',
       options: [
-        { label: '512', value: "512" },
-        { label: '1K', value: "1K" },
-        { label: '2K', value: "2K" },
-        { label: '4K', value: "4K" },
-        { label: '8K', value: "8K" },
-        { label: '16K', value: "16K" },
-        { label: '32K', value: "32K" },
-        { label: '64K', value: "64K" },
-        { label: '128K', value: "128K" },
-        { label: '256K', value: "256K" },
-        { label: '512K', value: "512K" },
-        { label: '1024K', value: "1024K" }
+        { label: '512', value: '512' },
+        { label: '1K', value: '1K' },
+        { label: '2K', value: '2K' },
+        { label: '4K', value: '4K' },
+        { label: '8K', value: '8K' },
+        { label: '16K', value: '16K' },
+        { label: '32K', value: '32K' },
+        { label: '64K', value: '64K' },
+        { label: '128K', value: '128K' },
+        { label: '256K', value: '256K' },
+        { label: '512K', value: '512K' },
+        { label: '1024K', value: '1024K' }
       ],
     },
     {
@@ -161,9 +161,9 @@ export class DatasetFormComponent implements OnInit{
       name: 'casesensitivity',
       placeholder: 'Case Sensitivity',
       options: [
-        { label: 'SENSITIVE', value: "SENSITIVE" },
-        { label: 'INSENSITIVE', value: "INSENSITIVE" },
-        { label: 'MIXED', value: "MIXED" }
+        { label: 'SENSITIVE', value: 'SENSITIVE' },
+        { label: 'INSENSITIVE', value: 'INSENSITIVE' },
+        { label: 'MIXED', value: 'MIXED' }
       ],
     },
   ];
@@ -191,6 +191,21 @@ export class DatasetFormComponent implements OnInit{
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
+
+  protected RecordSizeMap: any = {
+    '512': '512',
+    '1024': '1K',
+    '2048': '2K',
+    '4096': '4K',
+    '8192': '8K',
+    '16384': '16K',
+    '32768': '32K',
+    '65536': '64K',
+    '131072': '128K',
+    '262144': '256K',
+    '524288': '512K',
+    '1048576': '1024K',
+  };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, 
@@ -230,15 +245,45 @@ export class DatasetFormComponent implements OnInit{
     this.preInit();
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    this.ws.call('pool.dataset.query', [ [["id", "=", this.resourceName]] ]).subscribe((res) => {
+    this.ws.call('pool.dataset.query', [ [['id', '=', this.resourceName]] ]).subscribe((res) => {
       this.data = res[0].properties;
       this.parent_data = res[0].properties;
 
       for (let i in this.data) {
         let fg = this.formGroup.controls[i];
 
+
+
+
+
+        // if(i == "org.freenas:description") {
+        //   fg = this.formGroup.controls['comments'];
+        // }
+        // if(i == "dedup") {
+        //   fg = this.formGroup.controls['deduplication'];
+        // } 
+
+
+
+
+
+
         if (fg && !this.isNew) {
-          let value = this.data[i].value;
+          let value = this.data[i].rawvalue;
+
+          if(i == "recordsize") {
+            value = this.RecordSizeMap[this.data[i].rawvalue];
+          }
+          if(
+            i == "compression" || 
+            i == "atime" || 
+            i == "dedup" || 
+            i == "readonly" || 
+            i == "snapdir" || 
+            i == "casesensitivity") {
+            value = value.toUpperCase();
+          }
+
           fg.setValue(value);
         }
       }
@@ -247,7 +292,7 @@ export class DatasetFormComponent implements OnInit{
         this.setDisabled('name', true);
 
         if(this.parent) {
-          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res) => {
+          this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
             this.parent_data = res[0].properties;
           });
         }
@@ -256,7 +301,7 @@ export class DatasetFormComponent implements OnInit{
   }
 
   editSubmit(body: any) {
-    return this.ws.call('pool.dataset.update', [[["id", "=", this.resourceName]], body]);
+    return this.ws.call('pool.dataset.update', [this.resourceName, body]);
   }
 
   addSubmit(body: any) {
@@ -306,7 +351,35 @@ export class DatasetFormComponent implements OnInit{
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
 
-    value['name'] = this.resourceName + "/" + value['name'];
+    if(this.isNew) {
+      value['name'] = this.resourceName + '/' + value['name'];
+    }
+
+
+
+    // else {
+    //   value['org.freenas:description'] = value['comments'];
+    //   delete value['comments'];
+
+    //   value['dedup'] = value['deduplication'];
+    //   delete value['deduplication'];
+    // } 
+
+
+       
+    
+    if(value['quota'] == 0) {
+      value['quota'] = null;
+    }
+    if(value['refquota'] == 0) {
+      value['refquota'] = null;
+    }
+    if(value['reservation'] == 0) {
+      value['reservation'] = null;
+    }
+    if(value['refreservation'] == 0) {
+      value['refreservation'] = null;
+    }
     
     this.loader.open();
     this.busy = this.submitFunction(value)
