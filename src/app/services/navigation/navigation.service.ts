@@ -49,7 +49,7 @@ export class NavigationService {
         { name: 'NTP Servers', state: 'ntpservers' },
         { name: 'Boot', state: 'bootenv' },
         { name: 'Advanced', state: 'advanced' },
-        //{name: 'Email', state: 'email'},
+        {name: 'Email', state: 'email'},
         {name: 'System Dataset', state: 'dataset'},
         { name: 'Alert Services', state: 'alertservice' },
         { name: 'Cloud Credentials', state: 'cloudcredentials' },
@@ -116,6 +116,7 @@ export class NavigationService {
         { name: 'Active Directory', state: 'activedirectory' },
         { name: 'LDAP', state: 'ldap' },
         { name: 'NIS', state: 'nis' },
+        { name: 'Kerberos Realms', state: 'kerberosrealms' },
         { name: 'Kerberos Settings', state: 'kerberossettings' },
       ]
     },
