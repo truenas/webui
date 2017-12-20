@@ -38,14 +38,14 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'cert_name',
       placeholder : 'Identifier',
-      tooltip: 'Mandatory; enter a descriptive name for the CA using\
+      tooltip: 'Enter a descriptive name for the CA using\
  only alphanumeric, underscore (_), and dash (-) characters.',
     },
     {
       type : 'textarea',
       name : 'cert_certificate',
       placeholder : 'Certificate',
-      tooltip: 'Mandatory; paste in the certificate for the CA.',
+      tooltip: 'Cut and paste in the certificate for the CA.',
     },
     {
       type : 'textarea',
@@ -75,7 +75,7 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'cert_serial',
       placeholder : 'Serial',
-      tooltip: 'Mandatory; enter the serial number\
+      tooltip: 'Enter the serial number\
  for the certificate.',
     },
   ];
