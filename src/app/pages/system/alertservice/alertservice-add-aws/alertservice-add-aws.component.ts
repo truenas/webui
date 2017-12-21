@@ -45,7 +45,7 @@ export class AlertServiceAddAWSComponent {
       type : 'input',
       name : 'region',
       placeholder : 'region',
-      tooltip: 'Paste the region for the AWS account here.'
+      tooltip: 'Paste the region for the AWS account here.',
     },
     {
       type: 'input',
