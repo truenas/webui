@@ -47,7 +47,7 @@ export class CertificateEditComponent {
       type: 'input',
       name: 'cert_privatekey',
       placeholder: 'Private Key',
-      tooltip:'Paste the contents of your private key here.',
+      tooltip:'Paste the contents of the private key here.',
     }
   ];
 
