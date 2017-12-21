@@ -71,7 +71,7 @@ export class AlertServiceAddAWSComponent {
       type : 'checkbox',
       name : 'enabled',
       placeholder : 'Enabled',
-      tooltip: 'Check this box to enable the Amazon Web Service (AWS)\
+      tooltip: 'Check this box to enable the Amazon Web Service\
  Simple Notification Service.',
     },
   ];
