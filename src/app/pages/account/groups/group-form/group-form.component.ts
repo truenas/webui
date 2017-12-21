@@ -71,8 +71,9 @@ export class GroupFormComponent {
         entityForm.setDisabled('bsdgrp_gid', true);
         entityForm.setDisabled('allow', true);
       } else {
-        gid += 1;
-        entityForm.formGroup.controls['bsdgrp_gid'].setValue(gid);
+        this.ws.call('group.get_next_gid').subscribe((res)=>{
+          entityForm.formGroup.controls['bsdgrp_gid'].setValue(res);
+        })
       }
     });
   }
