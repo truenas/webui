@@ -34,7 +34,7 @@
             </a>
             <md-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
                 <md-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index">
-                    <a [routerLink]="['/', item.state, subItem.state]" id="{{i}}-{{j}}">{{subItem.name | translate}}</a>
+                    <a [routerLink]="['/', item.state, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" >{{subItem.name | translate}}</a>
                 </md-list-item>
             </md-nav-list>
             <a md-button style="height: 0; position: absolute;">
