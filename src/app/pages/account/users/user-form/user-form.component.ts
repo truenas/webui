@@ -164,6 +164,9 @@ export class UserFormComponent {
   }
 
   afterInit(entityForm: any) {
+    if (!entityForm.isNew) {
+      _.find(this.fieldConfig, {name : "bsdusr_creategroup"}).isHidden = true;
+    }
     /* list groups */
     this.rest.get('account/groups/', {}).subscribe((res) => {
       this.bsdusr_group = _.find(this.fieldConfig, {name : "bsdusr_group"});
@@ -207,7 +210,6 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdusr_username', true);
-        _.find(this.fieldConfig, {name : "bsdusr_creategroup"}).isHidden = true;
         if (entityForm.data.bsdusr_builtin === true) {
           entityForm.formGroup.controls['bsdusr_uid'].setValue(
               entityForm.data.bsdusr_uid);
