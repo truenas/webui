@@ -37,7 +37,7 @@ export class VolumesListTableConfig {
   protected flattenedVolData: any;
   protected resource_name = 'storage/volume';
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip = "Volume Manager";
+  protected route_add_tooltip = "Create ZFS Pool";
   public dataset_data: any;
 
   constructor(
@@ -104,6 +104,13 @@ export class VolumesListTableConfig {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (row.type === 'zpool') {
+      actions.push({
+        label: "Extend",
+        onClick: (row) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "manager", row.id]));
+        }
+      });
       actions.push({
         label: "Delete",
         onClick: (row) => {
