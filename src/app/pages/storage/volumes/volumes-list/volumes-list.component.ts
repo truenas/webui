@@ -12,7 +12,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 
-interface ZfsPoolData {
+export interface ZfsPoolData {
   avail: number;
   id: string;
   is_decrypted: boolean;
