@@ -1,14 +1,14 @@
-import { Component, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, ElementRef} from '@angular/core';
+import {Router} from '@angular/router';
 import filesize from 'filesize';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
-import { DialogService } from '../../../../services/';
+import {  DialogService } from '../../../../services/';
 import { debug } from 'util';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 
 
 @Component({
@@ -18,29 +18,25 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 export class BootStatusListComponent {
 
   public title = "Boot Status";
+  protected resource_name: string = 'system/bootenv';
   protected queryCall = 'boot.get_state';
   protected entityList: any;
   public busy: Subscription;
 
   public columns: Array<any> = [
-    { name: 'Name', prop: 'name' },
-    { name: 'type', prop: 'type' },    
-    { name: 'Read', prop: 'read_errors' },
-    { name: 'Write', prop: 'write_errors' },
-    { name: 'Checksum', prop: 'checksum_errors' },
-    { name: 'Status', prop: 'status' },
+    {name: 'Name', prop: 'name'},
+    {name: 'type', prop: 'type'},    
+    {name: 'Read', prop: 'read_errors'},
+    {name: 'Write', prop: 'write_errors'},
+    {name: 'Checksum', prop: 'checksum_errors'},
+    {name: 'Status', prop: 'status'},
   ];
   public config: any = {
     paging : true,
-    sorting : { columns : this.columns },
+    sorting : {columns : this.columns},
   };
 
-  constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog:DialogService, protected loader: AppLoaderService,) {}
 
-  afterInit(entityList: any) {
-    this.entityList = entityList;
-  }
 
   rowValue(row, attr) {
     if (attr === 'name'){
@@ -75,8 +71,8 @@ export class BootStatusListComponent {
               [ "system", "bootenv", "attach", row.name ]));
         }
       });
-    }
-    else {
+
+    } else {
       actions.push({
         label : "replace",
         id: "replace",
@@ -85,7 +81,6 @@ export class BootStatusListComponent {
               [ "system", "bootenv", "replace", row.name ]));
         }
       });
-      
       actions.push({
         label : "detach",
         id: "attach",
@@ -95,6 +90,7 @@ export class BootStatusListComponent {
       });
 
     }
+    
 
     return actions;
   }
@@ -104,8 +100,7 @@ export class BootStatusListComponent {
     data.read_errors  = data.groups.data[0].stats.read_errors;
     data.write_errors  = data.groups.data[0].stats.write_errors;
     data.checksum_errors  = data.groups.data[0].stats.checksum_errors;
-    data.type = data.groups.data[0].type;
-
+    data.type = data.groups.data[0].type
     if (data.type === 'mirror')
     {
       for (let cindex = 0; cindex < data.groups.data[0].children.length; cindex++){
@@ -117,11 +112,10 @@ export class BootStatusListComponent {
     }
     return data
   };
-
   detach(disk:any){
-    disk = disk.substring(5, disk.length);
+    disk = disk.substring(5, disk.length)
     this.loader.open();
-    this.busy = this.ws.call('boot.detach', [disk]).subscribe(
+    this.busy = this.entityList.ws.call('boot.detach', [disk]).subscribe(
       (res) => {
         this.loader.close();
          this._router.navigate(
@@ -134,10 +128,15 @@ export class BootStatusListComponent {
       });
   }
 
-  addRows(rows: any){
-    this.ws.call(this.queryCall).subscribe((res)=>{
-      const transformedData = this.resourceTransformIncomingRestData(res);
+  constructor(_rest: RestService, private _router: Router, ws: WebSocketService,
+    private dialog:DialogService, protected loader: AppLoaderService,) {}
 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+  }
+  addRows(rows: any){
+    rows.ws.call(this.queryCall).subscribe((res)=>{
+      const transformedData = this.resourceTransformIncomingRestData(res);
       for(let transformedDataIdx=0; transformedDataIdx <transformedData.path.length; transformedDataIdx++){
         this.entityList.pushNewRow(
           {
@@ -150,6 +149,7 @@ export class BootStatusListComponent {
         });
       }
     })
+
   }
 
 }
