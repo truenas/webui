@@ -237,6 +237,7 @@ export class VolumesListTableConfig {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
+  title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
   conf = new VolumesListTableConfig(this.router, "", "Volumes");
   expanded = false;
