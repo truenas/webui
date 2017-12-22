@@ -74,7 +74,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ];
 
   private erd: any = null;
+  public cards: Array<any> = [
+  {
+    id: '1',
+    content: 'hello',
+    lazyLoaded: true,
+    template: 'none',
+  }];
 
+  public noteStyle: any = {
+      'width': '480px',  
+      'height': '400px',
+      'margin': '50px auto'
+  };
   constructor(private rest: RestService, private ws: WebSocketService,
     protected systemGeneralService: SystemGeneralService) {
     rest.get('storage/volume/', {}).subscribe((res) => {
@@ -138,5 +150,42 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
       (<any>window).dispatchEvent(new Event('resize'));
     });
+  }
+
+  addNote() {
+    console.log("add Note");
+  }
+
+
+  focusVM(index){
+    for(var i = 0; i < this.cards.length; i++){
+      if(i !== index && this.cards[i].isFlipped ){
+  //console.log("Index = " + index + " && i = " + i);
+  this.cards[i].isFlipped = false;
+  this.cards[i].lazyLoaded = false;
+  this.cards[i].template = 'none';
+      }
+    }
+  }
+  
+  toggleForm(flipState, card, template){
+    // load #cardBack template with code here
+    //console.log(flipState);
+    card.template = template;
+    card.isFlipped = flipState;
+    card.lazyLoaded = !card.lazyLoaded;
+    var index = this.cards.indexOf(card);
+    this.focusVM(index);
+  }
+
+    cancel(index){
+    let card = this.cards[index];
+    if(card.isNew){
+      this.cards.splice(index,1);
+      // this.updateCache();
+    } else {
+      this.toggleForm(false,card,'none')
+    }
+
   }
 }
