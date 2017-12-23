@@ -131,7 +131,7 @@ export class UserFormComponent {
     },
 
     {
-      type : 'input',
+      type : 'textarea',
       name : 'bsdusr_sshpubkey',
       placeholder : 'SSH Public Key'
     },
