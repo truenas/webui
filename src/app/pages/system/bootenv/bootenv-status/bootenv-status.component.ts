@@ -61,7 +61,6 @@ export class BootStatusListComponent {
     else if(attr === 'type'){
       return row.type;
     }
-
   }
 
   getActions(row) {
@@ -93,7 +92,6 @@ export class BootStatusListComponent {
           [this.detach(row.name)];
         }
       });
-
     }
 
     return actions;
@@ -109,13 +107,13 @@ export class BootStatusListComponent {
     if (data.type === 'mirror')
     {
       for (let cindex = 0; cindex < data.groups.data[0].children.length; cindex++){
-        data.path.push(data.groups.data[0].children[cindex].path)
+        data.path.push(data.groups.data[0].children[cindex].path);
       }
     } else {
-      data.type = 'stripe'
-      data.path.push(data.groups.data[0].path)
+      data.type = 'stripe';
+      data.path.push(data.groups.data[0].path);
     }
-    return data
+    return data;
   };
 
   detach(disk:any){
@@ -124,9 +122,9 @@ export class BootStatusListComponent {
     this.busy = this.ws.call('boot.detach', [disk]).subscribe(
       (res) => {
         this.loader.close();
-         this._router.navigate(
+        this._router.navigate(
           new Array('').concat('system','bootenv','status')
-        )
+        );
       },
       (res) => {
         this.loader.close();
