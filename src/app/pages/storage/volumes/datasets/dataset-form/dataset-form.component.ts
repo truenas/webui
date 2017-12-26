@@ -246,34 +246,22 @@ export class DatasetFormComponent implements OnInit{
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     this.ws.call('pool.dataset.query', [ [['id', '=', this.resourceName]] ]).subscribe((res) => {
-      this.data = res[0].properties;
-      this.parent_data = res[0].properties;
+      this.data = res[0];
+      this.parent_data = res[0];
 
       for (let i in this.data) {
         let fg = this.formGroup.controls[i];
 
-
-
-
-
-        // if(i == "org.freenas:description") {
-        //   fg = this.formGroup.controls['comments'];
-        // }
-        // if(i == "dedup") {
-        //   fg = this.formGroup.controls['deduplication'];
-        // } 
-
-
-
-
-
-
         if (fg && !this.isNew) {
-          let value = this.data[i].rawvalue;
+          let value = "";
 
-          if(i == "recordsize") {
-            value = this.RecordSizeMap[this.data[i].rawvalue];
+          if(i === "name") {
+            value = this.data[i];
           }
+          else {
+            value = this.data[i].value;
+          }
+
           if(
             i == "compression" || 
             i == "atime" || 
@@ -293,7 +281,7 @@ export class DatasetFormComponent implements OnInit{
 
         if(this.parent) {
           this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
-            this.parent_data = res[0].properties;
+            this.parent_data = res[0];
           });
         }
       }
@@ -353,21 +341,7 @@ export class DatasetFormComponent implements OnInit{
 
     if(this.isNew) {
       value['name'] = this.resourceName + '/' + value['name'];
-    }
-
-
-
-    // else {
-    //   value['org.freenas:description'] = value['comments'];
-    //   delete value['comments'];
-
-    //   value['dedup'] = value['deduplication'];
-    //   delete value['deduplication'];
-    // } 
-
-
-       
-    
+    }    
     if(value['quota'] == 0) {
       value['quota'] = null;
     }
@@ -379,6 +353,9 @@ export class DatasetFormComponent implements OnInit{
     }
     if(value['refreservation'] == 0) {
       value['refreservation'] = null;
+    }
+    if(value['copies'] > 0) {
+      value['copies'] = value['copies'].toString();
     }
     
     this.loader.open();
