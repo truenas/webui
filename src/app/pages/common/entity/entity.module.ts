@@ -27,6 +27,7 @@ import { FormTextareaButtonComponent } from './entity-form/components/form-texta
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { FormSliderComponent } from './entity-form/components/form-slider/form-slider.component';
+import { FormDatepickerComponent } from './entity-form/components/form-datepicker/form-datepicker.component'
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormTaskComponent } from './entity-form/components/form-task/form-task.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
@@ -72,6 +73,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormPermissionsComponent,
     TooltipComponent,
     FormSliderComponent,
+    FormDatepickerComponent,
     FormToggleButtonComponent,
     FormTaskComponent,
     FormArrayComponent,
@@ -111,6 +113,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormExplorerComponent,
     EntityJobComponent,
     FormSliderComponent,
+    FormDatepickerComponent,
     FormToggleButtonComponent,
     FormTaskComponent
   ],
