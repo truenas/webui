@@ -18,7 +18,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 export class CronFormComponent implements OnInit {
 
   protected resource_name: string = 'tasks/cronjob';
-  protected route_success: string[] = ['tasks', 'cron'];
+  public route_success: string[] = ['tasks', 'cron'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
@@ -202,7 +202,7 @@ export class CronFormComponent implements OnInit {
   public formGroup: any;
   public error: string;
   protected pk: any;
-  protected isNew: boolean = false;
+  public isNew: boolean = false;
   protected data: any;
 
   constructor(protected router: Router,
@@ -241,7 +241,6 @@ export class CronFormComponent implements OnInit {
     if (!this.isNew) {
       let query = this.resource_name + '/' + this.pk;
       this.rest.get(query, {}).subscribe((res) => {
-        console.log(res.data);
         if (res.data) {
           this.data = res.data;
           for (let i in this.data) {
@@ -293,7 +292,6 @@ export class CronFormComponent implements OnInit {
   }
 
   onSubmit(event: Event) {
-    console.log("submit cron");
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
