@@ -27,7 +27,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
   @Input('conf') conf: any;
-
   
   @ViewChild('filter') filter: ElementRef;
   private erd: any = null;
@@ -36,8 +35,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public paginationPageSize = 20;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
-  public paginationPageEvent: any;
-  
+  public paginationPageEvent: any;  
   
   public displayedColumns: string[] = [];
   public busy: Subscription;
@@ -60,22 +58,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
-
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
     this.getData();
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
-    }
-
-   
+    }   
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
     });
-
     this.displayedColumns.push("action");
-
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
     }
@@ -95,7 +88,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
               if( typeof(value) === "boolean" || typeof(value) === "number") {
                 value = String(value);
               }
-
               if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
                 newData.push(dataElement);
                 break;
@@ -107,8 +99,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           newData = this.rows;
         }
 
-        
-        
         this.currentRows = newData;
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
@@ -153,18 +143,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
       });
-
   }
 
   handleData(res): any {
 
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
-
       res = {
-        data: []
+        data: res
       };
     }
-
     if (res.data) {
       if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
@@ -189,6 +176,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
     }
+
     for (let i = 0; i < rows.length; i++) {
       for (let attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
@@ -212,10 +200,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   trClass(row) {
     let classes = [];
+
     classes.push('treegrid-' + row.id);
     if (row._parent) {
       classes.push('treegrid-parent-' + row._parent);
     }
+
     return classes.join(' ');
   }
 
@@ -252,6 +242,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         return row[attr];
       }
     }
+
     return row[attr];
   }
 
@@ -301,11 +292,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
  
   paginationUpdate($pageEvent: any) {
     
-    this.paginationPageEvent = $pageEvent;
-    
+    this.paginationPageEvent = $pageEvent;    
     this.paginationPageIndex = (typeof(this.paginationPageEvent.offset) !== "undefined" ) 
     ? this.paginationPageEvent.offset : this.paginationPageEvent.pageIndex;
-
     this.paginationPageSize = this.paginationPageEvent.pageSize;
     this.setPaginationInfo();
   }
@@ -341,7 +330,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.rows.push(row);
     this.currentRows = this.rows;
     this.setPaginationInfo();
-
   }
 
   doMultiDelete(selected) {
