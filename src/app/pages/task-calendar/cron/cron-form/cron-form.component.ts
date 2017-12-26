@@ -15,7 +15,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   templateUrl: './cron-form.component.html',
   providers: [TaskService, UserService, EntityFormService]
 })
-export class CronFormComponent implements OnInit{
+export class CronFormComponent implements OnInit {
 
   protected resource_name: string = 'tasks/cronjob';
   protected route_success: string[] = ['tasks', 'cron'];
@@ -23,133 +23,139 @@ export class CronFormComponent implements OnInit{
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
 
-  public fieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'cron_description',
-      placeholder: 'Description'
+  public fieldConfig: FieldConfig[] = [{
+    type: 'input',
+    name: 'cron_description',
+    placeholder: 'Description'
+  }, {
+    type: 'input',
+    name: 'cron_command',
+    placeholder: 'Command',
+  }, {
+    type: 'select',
+    name: 'cron_user',
+    placeholder: 'Run As User',
+    options: [],
+  }, {
+    type: 'input',
+    inputType: 'time',
+    name: 'cron_time',
+    placeholder: 'Time',
+  }, {
+    type: 'input',
+    inputType: 'date',
+    name: 'cron_date',
+    placeholder: 'Date',
+  }, {
+    type: 'select',
+    name: 'cron_repeat',
+    placeholder: 'Repeat',
+    options: [
+      { label: 'Once(Do not Repeat)', value: 'once' },
+      { label: 'Hourly', value: 'hourly' },
+      { label: 'Daily', value: 'daily' },
+      { label: 'Weekly', value: 'weekly' },
+      { label: 'Monthly', value: 'monthly' },
+      { label: 'At Boot', value: 'boot' }
+    ],
+    value: 'once',
+  }, {
+    type: 'input',
+    name: 'cron_minute',
+    placeholder: 'Minute',
+  }, {
+    type: 'input',
+    name: 'cron_hour',
+    placeholder: 'Hour',
+  }, {
+    type: 'input',
+    name: 'cron_daymonth',
+    placeholder: 'Day of month',
+  }, {
+    type: 'select',
+    name: 'cron_month',
+    placeholder: 'Month',
+    multiple: true,
+    options: [{
+      label: 'January',
+      value: '1',
     }, {
-      type: 'input',
-      name: 'cron_command',
-      placeholder: 'Command',
+      label: 'February',
+      value: '2',
     }, {
-      type: 'select',
-      name: 'cron_user',
-      placeholder: 'Run As User',
-      options: [],
+      label: 'March',
+      value: '3',
     }, {
-      type: 'input',
-      inputType: 'time',
-      name: 'cron_time',
-      placeholder: 'Time',
+      label: 'April',
+      value: '4',
     }, {
-      type: 'input',
-      inputType: 'date',
-      name: 'cron_date',
-      placeholder: 'Date',
+      label: 'May',
+      value: '5',
     }, {
-      type: 'select',
-      name: 'cron_repeat',
-      placeholder: 'Repeat',
-      options: [
-        { label: 'Once(Do not Repeat)', value: 'once' },
-        { label: 'Hourly', value: 'hourly' },
-        { label: 'Daily', value: 'daily' },
-        { label: 'Weekly', value: 'weekly' },
-        { label: 'Monthly', value: 'monthly' },
-        { label: 'At Boot', value: 'boot' }
-      ],
-      value: 'once',
+      label: 'June',
+      value: '6',
     }, {
-      type: 'input',
-      name: 'cron_minute',
-      placeholder: 'Minute',
+      label: 'July',
+      value: '7',
     }, {
-      type: 'input',
-      name: 'cron_hour',
-      placeholder: 'Hour',
+      label: 'August',
+      value: '8',
     }, {
-      type: 'input',
-      name: 'cron_daymonth',
-      placeholder: 'Day of month',
+      label: 'September',
+      value: '9',
     }, {
-      type: 'select',
-      name: 'cron_month',
-      placeholder: 'Month',
-      multiple: true,
-      options: [
-      {
-        label: 'January',
-        value: '1',
-      }, {
-        label: 'February',
-        value: '2',
-      }, {
-        label: 'March',
-        value: '3',
-      }, {
-        label: 'April',
-        value: '4',
-      }, {
-        label: 'May',
-        value: '5',
-      }, {
-        label: 'June',
-        value: '6',
-      }, {
-        label: 'July',
-        value: '7',
-      }, {
-        label: 'August',
-        value: '8',
-      }, {
-        label: 'September',
-        value: '9',
-      }, {
-        label: 'October',
-        value: '10',
-      }, {
-        label: 'November',
-        value: '11',
-      }, {
-        label: 'December',
-        value: '12',
-      }],
+      label: 'October',
+      value: '10',
     }, {
-      type: 'select',
-      name: 'cron_dayweek',
-      placeholder: 'Day of week',
-      multiple: true,
-      options: [
-      {
-        label: 'Monday',
-        value: '1',
-      }, {
-        label: 'Tuesday',
-        value: '2',
-      }, {
-        label: 'Wednesday',
-        value: '3',
-      }, {
-        label: 'Thursday',
-        value: '4',
-      }, {
-        label: 'Friday',
-        value: '5',
-      }, {
-        label: 'Saturday',
-        value: '6',
-      }, {
-        label: 'Sunday',
-        value: '7',
-      }],
+      label: 'November',
+      value: '11',
     }, {
-      type: 'checkbox',
-      name: 'cron_enabled',
-      placeholder: 'Enable',
-      value: true,
-    }
-  ];
+      label: 'December',
+      value: '12',
+    }],
+  }, {
+    type: 'select',
+    name: 'cron_dayweek',
+    placeholder: 'Day of week',
+    multiple: true,
+    options: [{
+      label: 'Monday',
+      value: '1',
+    }, {
+      label: 'Tuesday',
+      value: '2',
+    }, {
+      label: 'Wednesday',
+      value: '3',
+    }, {
+      label: 'Thursday',
+      value: '4',
+    }, {
+      label: 'Friday',
+      value: '5',
+    }, {
+      label: 'Saturday',
+      value: '6',
+    }, {
+      label: 'Sunday',
+      value: '7',
+    }],
+  }, {
+    type: 'checkbox',
+    name: 'cron_stdout',
+    placeholder: 'Redirect Stdout',
+    value: true,
+  }, {
+    type: 'checkbox',
+    name: 'cron_stderr',
+    placeholder: 'Redirecr Stderr',
+    value: false,
+  }, {
+    type: 'checkbox',
+    name: 'cron_enabled',
+    placeholder: 'Enable',
+    value: true,
+  }];
 
   protected user_field: any;
   protected month_field: any;
@@ -181,8 +187,7 @@ export class CronFormComponent implements OnInit{
     return true;
   }
 
-  public custActions: Array < any > = [
-    {
+  public custActions: Array < any > = [{
       'id': 'basic_mode',
       'name': 'Basic Mode',
       function: () => { this.isBasicMode = !this.isBasicMode; }
@@ -215,7 +220,7 @@ export class CronFormComponent implements OnInit{
         this.user_field.options.push({ label: item.bsdusr_username, value: item.bsdusr_username })
       });
     });
-    
+
     this.aroute.params.subscribe(params => {
       if (this.resource_name && !this.resource_name.endsWith('/')) {
         this.resource_name = this.resource_name + '/';
@@ -223,6 +228,7 @@ export class CronFormComponent implements OnInit{
       if (this.isEntity) {
         this.pk = params['pk'];
         if (this.pk && !this.isNew) {
+          this.isBasicMode = false;
           //edit
         } else {
           //add
@@ -234,29 +240,39 @@ export class CronFormComponent implements OnInit{
 
     if (!this.isNew) {
       let query = this.resource_name + '/' + this.pk;
-        this.rest.get(query , {}).subscribe((res) => {
-          console.log(res.data);
-          if (res.data){
-            this.data = res.data;
-            for (let i in this.data) {
-              if (_.findIndex(this.advanced_field, i)) {
-                
-              }
-              let fg = this.formGroup.controls[i];
-              if (fg) {
-                console.log(i,fg, this.data[i]);
-                let current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.name == "cron_month" || current_field.name == "cron_dayweek") {
-                    // multiple select
+      this.rest.get(query, {}).subscribe((res) => {
+        console.log(res.data);
+        if (res.data) {
+          this.data = res.data;
+          for (let i in this.data) {
+            let fg = this.formGroup.controls[i];
+            if (fg) {
+              let current_field = this.fieldConfig.find((control) => control.name === i);
+              if (current_field.name == "cron_month" || current_field.name == "cron_dayweek") {
+                // multiple select
+                if (this.data[i] == '*') {
+                  let human_value = [];
+                  for (let i in current_field.options) {
+                    human_value.push(current_field.options[i].value);
+                  }
+                  fg.setValue(human_value);
                 } else {
-                  fg.setValue(this.data[i]);
-                  console.log("after setvalue", fg);
+                  let human_value = [];
+                  for (let j in this.data[i]) {
+                    if (_.find(current_field.options, { 'value': this.data[i][j] })) {
+                      human_value.push(this.data[i][j]);
+                    }
+                  }
+                  fg.setValue(human_value);
                 }
+              } else {
+                fg.setValue(this.data[i]);
               }
             }
-          } 
-        });
-      }
+          }
+        }
+      });
+    }
   }
 
   isShow(id: any): any {
@@ -315,20 +331,33 @@ export class CronFormComponent implements OnInit{
 
       }
     }
-    
 
     this.loader.open();
-    this.rest.post(this.resource_name + '/', {
-      body : JSON.stringify(value)
-    }).subscribe(
-      (res)=> {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-        console.log(res);
-      })
+    if (this.isNew) {
+      this.rest.post(this.resource_name + '/', {
+        body: JSON.stringify(value)
+      }).subscribe(
+        (res) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (res) => {
+          this.loader.close();
+          console.log(res);
+        });
+    } else {
+      this.rest.put(this.resource_name + '/' + this.pk, {
+        body: JSON.stringify(value)
+      }).subscribe(
+        (res) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (res) => {
+          this.loader.close();
+          console.log(res);
+        });
+    }
 
-  }    
+  }
 }
