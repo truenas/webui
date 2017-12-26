@@ -6,9 +6,11 @@
     <md-card-actions>
       <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
       <button *ngIf="route_success" (click)="goBack()" type="button" md-raised-button color="accent">Cancel</button>
-      <span *ngFor="let custBtn of custActions">
-	    <button md-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
-	  </span>
+      <span *ngIf="isNew">
+        <span *ngFor="let custBtn of custActions">
+          <button md-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+        </span>
+      </span>
     </md-card-actions>
   </form>
 </md-card>
