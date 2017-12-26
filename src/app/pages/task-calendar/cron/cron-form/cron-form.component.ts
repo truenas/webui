@@ -37,16 +37,6 @@ export class CronFormComponent implements OnInit {
     placeholder: 'Run As User',
     options: [],
   }, {
-    type: 'input',
-    inputType: 'time',
-    name: 'cron_time',
-    placeholder: 'Time',
-  }, {
-    type: 'input',
-    inputType: 'date',
-    name: 'cron_date',
-    placeholder: 'Date',
-  }, {
     type: 'select',
     name: 'cron_repeat',
     placeholder: 'Repeat',
@@ -165,8 +155,6 @@ export class CronFormComponent implements OnInit {
   protected daymonth_field: any;
 
   protected basic_field: Array < any > = [
-    'cron_time',
-    'cron_date',
     'cron_repeat'
   ];
 
@@ -228,10 +216,9 @@ export class CronFormComponent implements OnInit {
       if (this.isEntity) {
         this.pk = params['pk'];
         if (this.pk && !this.isNew) {
+          // only enable advanced mode
           this.isBasicMode = false;
-          //edit
         } else {
-          //add
           this.isNew = true;
         }
       }
@@ -305,26 +292,26 @@ export class CronFormComponent implements OnInit {
       value['cron_hour'] = '*';
       value['cron_minute'] = '*';
 
-      let date = value['cron_date'] + ' ' + value['cron_time'];
+      let date = new Date();
       if (value['cron_repeat'] == 'once') {
-        value['cron_month'] = new Date(date).getMonth().toString();
-        value['cron_dayweek'] = new Date(date).getDay().toString();
-        value['cron_daymonth'] = new Date(date).getDate().toString();
-        value['cron_hour'] = new Date(date).getHours().toString();
-        value['cron_minute'] = new Date(date).getMinutes().toString();
+        value['cron_month'] = date.getMonth().toString();
+        value['cron_dayweek'] = date.getDay().toString();
+        value['cron_daymonth'] = date.getDate().toString();
+        value['cron_hour'] = date.getHours().toString();
+        value['cron_minute'] = date.getMinutes().toString();
       } else if (value['cron_repeat'] == 'hourly') {
-        value['cron_minute'] = new Date(date).getMinutes().toString();
+        value['cron_minute'] = date.getMinutes().toString();
       } else if (value['cron_repeat'] == 'daily') {
-        value['cron_minute'] = new Date(date).getMinutes().toString();
-        value['cron_hour'] = new Date(date).getHours().toString();
+        value['cron_minute'] = date.getMinutes().toString();
+        value['cron_hour'] = date.getHours().toString();
       } else if (value['cron_repeat'] == 'monthly') {
-        value['cron_minute'] = new Date(date).getMinutes().toString();
-        value['cron_hour'] = new Date(date).getHours().toString();
-        value['cron_daymonth'] = new Date(date).getDate().toString();
+        value['cron_minute'] = date.getMinutes().toString();
+        value['cron_hour'] = date.getHours().toString();
+        value['cron_daymonth'] = date.getDate().toString();
       } else if (value['cron_repeat'] == 'weekly') {
-        value['cron_minute'] = new Date(date).getMinutes().toString();
-        value['cron_hour'] = new Date(date).getHours().toString();
-        value['cron_dayweek'] = new Date(date).getDay().toString();
+        value['cron_minute'] = date.getMinutes().toString();
+        value['cron_hour'] = date.getHours().toString();
+        value['cron_dayweek'] = date.getDay().toString();
       } else if (value['cron_repeat'] == 'boot') {
 
       }
