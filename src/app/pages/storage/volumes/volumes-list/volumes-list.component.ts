@@ -87,6 +87,25 @@ export class VolumesListTableConfig {
     }
   }
 
+  public titleRowValue(row, attr): any {
+    let returnValue = row[attr];
+
+    switch (attr) {
+      case 'avail':
+      case 'used':
+       try {
+        returnValue = filesize(row[attr], { standard: "iec" });
+       } catch(error) {
+         console.log("Error", error);
+       }
+       break;
+      default:
+        returnValue = row[attr];
+    }
+
+    return returnValue;
+  }
+
   getAddActions() {
     const actions = [];
     actions.push({

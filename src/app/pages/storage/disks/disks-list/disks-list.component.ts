@@ -112,6 +112,13 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         } catch( error ) {
           console.log("error", error );
         }
+
+        try {
+          volume.used = filesize(volume.used, { standard: "iec" });
+        } catch( error ) {
+          console.log("error", error );
+        }
+
         this.zfsPoolRows.push(volume);
         const volumeId = volume.id;
         this.ws.call('pool.get_disks', [volumeId]).subscribe((resGetDisks) => {
