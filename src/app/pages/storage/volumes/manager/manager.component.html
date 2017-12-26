@@ -4,40 +4,31 @@
   </div>
   <div class="md-content p-1">
     <div class="m-3">
-    <md-input-container>
-      <input mdInput placeholder="Name" [(ngModel)]="name" required>
-    </md-input-container>
-    <md-checkbox
-     [(ngModel)]="isEncrypted"
-      class="form-control"
-       placeholder="Encryption"
-       (change)="isEncryptedChecked()" >
-       Encryption
-      </md-checkbox>
-      <div>
-        <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" md-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+      <div *ngIf="isNew;else extend">
+      <md-input-container>
+          <input mdInput placeholder="Name" [(ngModel)]="name" required>
+      </md-input-container>
+        <md-checkbox
+          [(ngModel)]="isEncrypted"
+          class="form-control"
+           placeholder="Encryption"
+           (change)="isEncryptedChecked()" >
+           Encryption
+        </md-checkbox>
+        <div>
+          <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" md-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+        </div>
       </div>
+      <ng-template #extend>
+        <md-input-container>
+          <input mdInput placeholder="Name" [value]="name" disabled>
+        </md-input-container>
+        <md-error *ngIf="isEncrypted">Extending an encrypted volume will reset the passphrase and recovery key!</md-error>
+      </ng-template>
     </div>
     <div class="wrapper">
       <div class="disks">
           <h4>Available Disks</h4>
-            <md-input-container>
-              <input mdInput
-                id="nameFilter"
-                type='text'
-                placeholder='Filter disks by name'
-                (keyup)='updateFilter($event)'
-              />
-            </md-input-container>
-            <md-input-container>
-              <input mdInput
-                id="capacityFilter"
-                type='text'
-                placeholder='Filter disks by capacity'
-                (keyup)='updateFilter($event)'
-              />
-            </md-input-container>
-            <md-error *ngIf="re_has_errors">{{re_errors}}</md-error>
             <ngx-datatable
               #table
               class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
@@ -62,6 +53,23 @@
               <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
               <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
             </ngx-datatable>
+            <md-input-container>
+                <input mdInput
+                  id="nameFilter"
+                  type='text'
+                  placeholder='Filter disks by name'
+                  (keyup)='updateFilter($event)'
+                />
+              </md-input-container>
+              <md-input-container>
+                <input mdInput
+                  id="capacityFilter"
+                  type='text'
+                  placeholder='Filter disks by capacity'
+                  (keyup)='updateFilter($event)'
+                />
+              </md-input-container>
+              <md-error *ngIf="re_has_errors">{{re_errors}}</md-error>
       </div>
       <div class="pool">
         <div>
@@ -84,7 +92,7 @@
     </div>
   <div class="buttons">
   <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
-        <button md-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Create</button>
+        <button md-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Save</button>
         <button md-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
         <button md-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
         <button [disabled]="vdevs.cache.length > 0" md-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>

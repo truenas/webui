@@ -8,6 +8,7 @@
         <br/>
     </div>
 
+    <div *ngIf="zfsPoolRows.length > 0">
     <md-accordion>
         <md-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
           <md-expansion-panel-header>
@@ -34,6 +35,17 @@
 
         </md-expansion-panel>
     </md-accordion>
+    </div>
+
+    <div *ngIf="zfsPoolRows.length < 1">
+        <md-card>
+            <md-card-content>
+                    No ZFS Pools found.
+            </md-card-content>
+        </md-card>
+        <br/>
+        <br/>
+    </div>
 
 
 </div>
