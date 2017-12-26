@@ -101,7 +101,7 @@ export class NavigationService {
       icon: 'storage',
       state: 'storage',
       sub: [
-        { name: 'Volumes', state: 'volumes' },
+        { name: 'ZFS Pools', state: 'pools' },
         { name: 'Snapshots', state: 'snapshots' },
         { name: 'VMware-Snapshots', state: 'vmware-Snapshots' },
         { name: 'Disks', state: 'disks' }

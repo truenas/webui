@@ -219,6 +219,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     if (!route) {
       route = this.conf.route_success;
     }
+    console.log(route);
     this.router.navigate(new Array('/').concat(route));
   }
 

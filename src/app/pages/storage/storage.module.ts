@@ -14,20 +14,20 @@ import { SnapshotAddComponent } from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
-import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
-import { StatusComponent } from './volumes/status/status.component';
+import { DatasetFormComponent } from './pools/datasets/dataset-form/';
+import { DatasetDeleteComponent } from './pools/datasets/dataset-delete/';
+import { DatasetPermissionsComponent } from './pools/datasets/dataset-permissions/'
+import { StatusComponent } from './pools/status/status.component';
 
-import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
+import { DiskComponent, ManagerComponent, VdevComponent } from './pools/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
-import { VolumeDeleteComponent } from './volumes/volume-delete/';
-import { VolumesListComponent } from './volumes/volumes-list/';
-import { VolumeImportListComponent } from './volumes/import-list/';
+import { PoolDeleteComponent } from './pools/pool-delete/';
+import { PoolsListComponent } from './pools/pools-list/';
+import { PoolImportListComponent } from './pools/import-list/';
 import { routing } from './storage.routing';
-import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
-import { ZvolAddComponent } from './volumes/zvol/zvol-add'
-import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
+import { ZvolDeleteComponent } from './pools/zvol/zvol-delete/';
+import { ZvolAddComponent } from './pools/zvol/zvol-add'
+import { ZvolEditComponent } from './pools/zvol/zvol-edit/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DisksListComponent } from './disks/disks-list/';
@@ -42,18 +42,18 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
     NgxDatatableModule
   ],
   declarations : [
-    VolumesListComponent,
+    PoolsListComponent,
     ManagerComponent,
     DiskComponent,
     VdevComponent,
     DatasetFormComponent,
     DatasetDeleteComponent,
     // VolumesEditComponent,
-    VolumeDeleteComponent,
+    PoolDeleteComponent,
     ZvolDeleteComponent,
     ZvolAddComponent,
     ZvolEditComponent,
-    VolumeImportListComponent,
+    PoolImportListComponent,
     SnapshotListComponent,
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
