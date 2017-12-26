@@ -41,6 +41,7 @@ export class VmCardsComponent implements OnInit {
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List: 
   @ViewChild('viewMode') viewMode:MdButtonToggleGroup;
+  focusedVM:string;
 
 
   public tpl = "edit";
@@ -95,7 +96,8 @@ export class VmCardsComponent implements OnInit {
       memory:data.memory,
       lazyLoaded: false,
       template:'none',
-      isNew:false
+      isNew:false,
+      cardActions:[]
     }   
     return card;
   }
@@ -111,7 +113,9 @@ export class VmCardsComponent implements OnInit {
 	//this.pwrBtnLabel = this.pwrBtnOptions[this.cache[i].state];
       }   
       if(init){
-	this.displayAll()
+	this.displayAll();
+      } else {
+	this.updateCards();
       }
     })  
   }
@@ -133,6 +137,23 @@ export class VmCardsComponent implements OnInit {
   updateCache(){
     this.cache = [];
     this.getVmList();
+  }
+
+  updateCards(isNew?:VmProfile){
+    let result = [];
+    for(let i = 0; i < this.cards.length; i++){
+      for(let ii = 0; ii < this.cache.length; ii++){
+	if(this.cache[ii].id == this.cards[i].id){
+	  let newCard = Object.assign({}, this.cache[ii]);
+	  result.push(newCard);
+	}
+      }
+    }
+    if(isNew){
+      result.push(isNew) 
+    }
+
+    this.cards = result;
   }
 
   refreshVM(index,id:any){
@@ -164,7 +185,8 @@ export class VmCardsComponent implements OnInit {
       template:'',
       isNew:true
     }
-    this.cards.push(card);
+    //this.cards.push(card);
+    this.updateCards(card);
     this.toggleForm(true,this.cards[index],'edit');
   }
 
@@ -177,6 +199,9 @@ export class VmCardsComponent implements OnInit {
 	let data = {};
 	this.rest.delete( 'vm/vm/' + this.cards[index].id, {}).subscribe(
 	  (res) => {
+	    console.log("deleteVM: REST response...");
+	    console.log(res);
+	    this.focusedVM = '';
 	    this.cards.splice(index,1);
 	    this.loader.close();
 	    this.updateCache();
@@ -196,12 +221,13 @@ export class VmCardsComponent implements OnInit {
       this.cards.splice(index,1);
       this.updateCache();
     } else {
-      this.toggleForm(false,card,'none')
+      this.toggleForm(false,card,'none');
     }
-
+    this.focusedVM = '';
   }
 
   focusVM(index){
+    this.focusedVM = String(index);
     for(var i = 0; i < this.cards.length; i++){
       if(i !== index && this.cards[i].isFlipped ){
 	//console.log("Index = " + index + " && i = " + i);
@@ -230,10 +256,11 @@ export class VmCardsComponent implements OnInit {
 
   // toggles VM on/off
   toggleVmState(index){
+    console.log("TOGGLE-VM-STATE");
     let vm = this.cards[index];
     let action: string;
     let rpc: string;
-    if (vm.state != 'RUNNING') {
+    if (vm.state != 'running') {
       rpc = 'vm.start';
     } else {
       rpc = 'vm.stop';
