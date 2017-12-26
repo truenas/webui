@@ -35,12 +35,27 @@
 			fxLayout="row"
 	 		fxLayoutWrap
 			fxLayoutAlign="space-between start"
-			fxLayoutGap="5%"
-			>
-			<vm-table [data]="cards" fxFlex="60" fxLayout="column"></vm-table>
+			fxLayoutGap="5%">
 
-			<!-- Summary and forms for table view go here -->
-			<div class="dynamic-content" fxFlex="35"><h2>Charts Go Here!</h2></div>
+		<!-- Summary and forms for table view go here -->
+		<div class="dynamic-content" fxFlex="100">
+        <!-- Template for back face of card -->
+				<vm-card-edit [ngClass]="vm-card-edit" 
+					*ngIf="focusedVM && cards[focusedVM].template == 'edit' && cards[focusedVM].isFlipped" 
+          [isNew]="cards[focusedVM].isNew"
+          [machineId]="cards[focusedVM].id"  
+          (cancel)="cancel(focusedVM)"
+          (saved)="toggleForm($event.flipState,cards[focusedVM],'none');refreshVM(focusedVM,$event.id)">
+					</vm-card-edit>
+		</div>
+		
+		<!-- Table data -->
+		<vm-table [data]="cards" fxFlex="100" fxLayout="column"
+			(edit)="focusVM($event);toggleForm(true,cards[focusedVM],'edit');"
+			(delete)="deleteVM($event)"
+			(power)="toggleVmState($event)"
+			></vm-table>
+
 		</div>
 	</md-card-content>
 </md-card>
@@ -112,16 +127,16 @@
 		<ng-template #cardback let-name="name" >
 			<!-- Template for back face of card -->
 			<vm-card-edit 
-												 *ngIf="cards[i].template == 'edit'" 
-												 [isNew]="cards[i].isNew"
-												 [machineId]="cards[i].id"  
-												 (cancel)="cancel(i)"
-												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
-												 ></vm-card-edit>
+        *ngIf="cards[i].template == 'edit'" 
+        [isNew]="cards[i].isNew"
+        [machineId]="cards[i].id"  
+        (cancel)="cancel(i)"
+				(saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)">
+      </vm-card-edit>
 		</ng-template>
 
-			<!-- Create your cards here -->
-			<entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+		<!-- Create your cards here -->
+		<entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
 
 	</div>
 

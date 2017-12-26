@@ -7,7 +7,7 @@ md-card.card-filter.mat-card{
 }
 
 md-card.card-filter.mat-card .mat-card-content{
-  padding:8px 24px;
+  padding:8px 0;
 }
 
 md-card.card-filter.mat-card .mat-card-header > div{
@@ -49,6 +49,15 @@ md-card.card-filter .view-controls .add-vm{
 .card-filter md-input-container.mat-input-container{
  width:97%;
  padding-left:32px;
+}
+
+/* table view */
+.dynamic-content{
+  position:relative;
+  background-color:rgba(0,0,0,0.03);
+  margin:0 0 16px !important;
+  border-bottom: solid 1px rgba(0,0,0,0.1);
+  border-top: solid 1px rgba(0,0,0,0.1);
 }
 
 /* cards */
