@@ -74,24 +74,26 @@
   	  </md-card-content>
   	</md-card>
     <!-- Notes -->
-    <div class="entity-cards-container">
-      <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper">
-        <ng-template #cardfront let-name="name">
-          <md-card-title>
-            Note
-          </md-card-title>
-          <md-card-content>note content here</md-card-content>
-          <md-card-actions>
-            <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
-          </md-card-actions>
-        </ng-template>
+    <div *ngFor="let card of cards; let i=index" class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+      <ng-template #cardfront let-name="name">
+        <md-card-title>
+          Note
+        </md-card-title>
+        <md-card-content>note content here</md-card-content>
+        <md-card-actions>
+          <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+        </md-card-actions>
+      </ng-template>
 
-        <ng-template #cardback let-name="name">
-          <span *ngIf="cards[i].template == 'edit'">Hello back</span>
-        </ng-template>
-       
-        <entity-card [ngStyle]="noteStyle" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
-      </div>
+      <ng-template #cardback let-name="backname">
+        <span *ngIf="cards[i].template == 'edit'">Hello back</span>
+        <md-card-content>edit content here</md-card-content>
+        <md-card-actions>
+          <button md-raised-button color="primary" (click)="toggleForm($event.flipState,cards[i],'none');">Cancel</button>
+        </md-card-actions>
+      </ng-template>
+
+      <entity-card [ngStyle]="noteStyle" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="true"></entity-card>
     </div>
     <!-- end of Notes -->
 </div>

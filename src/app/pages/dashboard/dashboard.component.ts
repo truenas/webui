@@ -80,12 +80,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     content: 'hello',
     lazyLoaded: true,
     template: 'none',
+  },
+  {
+    id: '2',
+    content: 'send note',
+    lazyLoaded: true,
+    template: 'none',
   }];
 
   public noteStyle: any = {
-      'width': '480px',  
-      'height': '400px',
-      'margin': '50px auto'
+    // 'width': '480px',
+    'height': '400px',
+    // 'margin': '50px auto'
   };
   constructor(private rest: RestService, private ws: WebSocketService,
     protected systemGeneralService: SystemGeneralService) {
