@@ -26,6 +26,7 @@ import {FormToggleButtonComponent} from '../form-toggle-button/form-toggle-butto
 import {FormTaskComponent} from '../form-task/form-task.component';
 import {FormReadFileComponent} from '../form-readfile/form-readfile.component'
 import { FormTextareaButtonComponent } from 'app/pages/common/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
+import { FormDatepickerComponent } from '../form-datepicker/form-datepicker.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -41,7 +42,8 @@ const components: {[type: string] : Type<Field>} = {
   slider: FormSliderComponent,
   togglebutton: FormToggleButtonComponent,
   task: FormTaskComponent,
-  readfile: FormReadFileComponent
+  readfile: FormReadFileComponent,
+  datepicker: FormDatepickerComponent,
 };
 
 @Directive({selector : '[dynamicField]'})
