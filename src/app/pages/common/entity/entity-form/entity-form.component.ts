@@ -152,11 +152,13 @@ export class EntityFormComponent implements OnInit, OnDestroy {
             for (let i in this.data) {
               let fg = this.formGroup.controls[i];
               if (fg) {
+                console.log(i,fg, this.data[i]);
                 let current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type == "array") {
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   fg.setValue(this.data[i]);
+                  console.log("after setvalue", fg);
                 }
               }
             }
@@ -318,6 +320,10 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   isShow(id: any): any {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
+        return false;
+      }
+    } else {
+      if (this.conf.basic_field != undefined && this.conf.basic_field.indexOf(id) > -1) {
         return false;
       }
     }
