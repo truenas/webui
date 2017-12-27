@@ -8,6 +8,7 @@ import {
   MdCardModule,
   MaterialModule
 } from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule } from 'angular-calendar';
 import { TaskCalendarComponent } from './calendar/calendar.component';
@@ -43,6 +44,8 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
     CalendarModule.forRoot(),
     RouterModule.forChild(TaskCalendarRoutes),
     EntityModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   declarations: [
     TaskCalendarComponent,
