@@ -39,7 +39,7 @@ export class DisksListConfig {
     constructor(
       protected _router: Router,
       protected _classId: string,
-      protected title: string) {
+      public title: string) {
   
       if (typeof (this._classId) !== "undefined" && this._classId !== "") {
         this.resource_name += "/" + this._classId;
