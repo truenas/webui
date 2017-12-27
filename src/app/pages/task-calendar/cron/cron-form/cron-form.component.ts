@@ -70,77 +70,73 @@ export class CronFormComponent implements OnInit {
     name: 'cron_month',
     placeholder: 'Month',
     multiple: true,
-    options: [
-      {
-        label: 'January',
-        value: '1',
-      }, {
-        label: 'February',
-        value: '2',
-      }, {
-        label: 'March',
-        value: '3',
-      }, {
-        label: 'April',
-        value: '4',
-      }, {
-        label: 'May',
-        value: '5',
-      }, {
-        label: 'June',
-        value: '6',
-      }, {
-        label: 'July',
-        value: '7',
-      }, {
-        label: 'August',
-        value: '8',
-      }, {
-        label: 'September',
-        value: '9',
-      }, {
-        label: 'October',
-        value: '10',
-      }, {
-        label: 'November',
-        value: '11',
-      }, {
-        label: 'December',
-        value: '12',
-      }
-    ],
-    value: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+    options: [{
+      label: 'January',
+      value: '1',
+    }, {
+      label: 'February',
+      value: '2',
+    }, {
+      label: 'March',
+      value: '3',
+    }, {
+      label: 'April',
+      value: '4',
+    }, {
+      label: 'May',
+      value: '5',
+    }, {
+      label: 'June',
+      value: '6',
+    }, {
+      label: 'July',
+      value: '7',
+    }, {
+      label: 'August',
+      value: '8',
+    }, {
+      label: 'September',
+      value: '9',
+    }, {
+      label: 'October',
+      value: '10',
+    }, {
+      label: 'November',
+      value: '11',
+    }, {
+      label: 'December',
+      value: '12',
+    }],
+    value: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
     isHidden: false,
   }, {
     type: 'select',
     name: 'cron_dayweek',
     placeholder: 'Day of week',
     multiple: true,
-    options: [
-      {
-        label: 'Monday',
-        value: '1',
-      }, {
-        label: 'Tuesday',
-        value: '2',
-      }, {
-        label: 'Wednesday',
-        value: '3',
-      }, {
-        label: 'Thursday',
-        value: '4',
-      }, {
-        label: 'Friday',
-        value: '5',
-      }, {
-        label: 'Saturday',
-        value: '6',
-      }, {
-        label: 'Sunday',
-        value: '7',
-      }
-    ],
-    value: ['1','2','3','4','5','6','7'],
+    options: [{
+      label: 'Monday',
+      value: '1',
+    }, {
+      label: 'Tuesday',
+      value: '2',
+    }, {
+      label: 'Wednesday',
+      value: '3',
+    }, {
+      label: 'Thursday',
+      value: '4',
+    }, {
+      label: 'Friday',
+      value: '5',
+    }, {
+      label: 'Saturday',
+      value: '6',
+    }, {
+      label: 'Sunday',
+      value: '7',
+    }],
+    value: ['1', '2', '3', '4', '5', '6', '7'],
     isHidden: false,
   }, {
     type: 'checkbox',
@@ -208,69 +204,67 @@ export class CronFormComponent implements OnInit {
         }
       }
       this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-      console.log(this.formGroup.controls['cron_repeat']);
       this.formGroup.controls['cron_repeat'].valueChanges.subscribe((res) => {
-        console.log(res, 'repeat change');
-          if (res == 'none') {
-            this.month_field.isHidden = false;
-            this.day_field.isHidden = false;
-            this.daymonth_field.isHidden = false;
-            this.hour_field.isHidden = false;
-            this.mintue_field.isHidden = false;
+        if (res == 'none') {
+          this.month_field.isHidden = false;
+          this.day_field.isHidden = false;
+          this.daymonth_field.isHidden = false;
+          this.hour_field.isHidden = false;
+          this.mintue_field.isHidden = false;
 
-            if (this.isNew) {
-              this.formGroup.controls['cron_month'].setValue([date.getMonth().toString()]);
-              this.formGroup.controls['cron_dayweek'].setValue([date.getDay().toString()]);
-              this.formGroup.controls['cron_daymonth'].setValue(date.getDate().toString());
-              this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
-              this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
-            }
-          } else if (res == 'hourly') {
-            this.month_field.isHidden = true;
-            this.day_field.isHidden = true;
-            this.daymonth_field.isHidden = true;
-            this.hour_field.isHidden = true;
-            this.mintue_field.isHidden = false;
-
-            if (this.isNew) {
-              this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
-            }
-          } else if (res == 'daily') {
-            this.month_field.isHidden = true;
-            this.day_field.isHidden = true;
-            this.daymonth_field.isHidden = true;
-            this.hour_field.isHidden = false;
-            this.mintue_field.isHidden = false;
-
-            if (this.isNew) {
-              this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
-              this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
-            }
-          } else if (res == 'weekly') {
-            this.month_field.isHidden = true;
-            this.day_field.isHidden = false;
-            this.daymonth_field.isHidden = true;
-            this.hour_field.isHidden = false;
-            this.mintue_field.isHidden = false;
-
-            if (this.isNew) {
-              this.formGroup.controls['cron_dayweek'].setValue([date.getDay().toString()]);
-              this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
-              this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
-            }
-          } else if (res == 'monthly') {
-            this.month_field.isHidden = true;
-            this.day_field.isHidden = true;
-            this.daymonth_field.isHidden = false;
-            this.hour_field.isHidden = false;
-            this.mintue_field.isHidden = false;
-
-            if (this.isNew) {
-              this.formGroup.controls['cron_daymonth'].setValue(date.getDate().toString());
-              this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
-              this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
-            }
+          if (this.isNew) {
+            this.formGroup.controls['cron_month'].setValue([date.getMonth().toString()]);
+            this.formGroup.controls['cron_dayweek'].setValue([date.getDay().toString()]);
+            this.formGroup.controls['cron_daymonth'].setValue(date.getDate().toString());
+            this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
           }
+        } else if (res == 'hourly') {
+          this.month_field.isHidden = true;
+          this.day_field.isHidden = true;
+          this.daymonth_field.isHidden = true;
+          this.hour_field.isHidden = true;
+          this.mintue_field.isHidden = false;
+
+          if (this.isNew) {
+            this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
+          }
+        } else if (res == 'daily') {
+          this.month_field.isHidden = true;
+          this.day_field.isHidden = true;
+          this.daymonth_field.isHidden = true;
+          this.hour_field.isHidden = false;
+          this.mintue_field.isHidden = false;
+
+          if (this.isNew) {
+            this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
+          }
+        } else if (res == 'weekly') {
+          this.month_field.isHidden = true;
+          this.day_field.isHidden = false;
+          this.daymonth_field.isHidden = true;
+          this.hour_field.isHidden = false;
+          this.mintue_field.isHidden = false;
+
+          if (this.isNew) {
+            this.formGroup.controls['cron_dayweek'].setValue([date.getDay().toString()]);
+            this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
+          }
+        } else if (res == 'monthly') {
+          this.month_field.isHidden = true;
+          this.day_field.isHidden = true;
+          this.daymonth_field.isHidden = false;
+          this.hour_field.isHidden = false;
+          this.mintue_field.isHidden = false;
+
+          if (this.isNew) {
+            this.formGroup.controls['cron_daymonth'].setValue(date.getDate().toString());
+            this.formGroup.controls['cron_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls['cron_minute'].setValue(date.getMinutes().toString());
+          }
+        }
       })
     });
 
@@ -305,6 +299,24 @@ export class CronFormComponent implements OnInit {
               }
             }
           }
+
+          if (_.isEqual(this.formGroup.controls['cron_month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
+            if (_.isEqual(this.formGroup.controls['cron_dayweek'].value, ['1', '2', '3', '4', '5', '6', '7'])) {
+              if (this.formGroup.controls['cron_daymonth'].value == '*') {
+                if (this.formGroup.controls['cron_hour'].value == '*') {
+                  this.formGroup.controls['cron_repeat'].setValue('hourly');
+                } else {
+                  this.formGroup.controls['cron_repeat'].setValue('daily');
+                }
+              } else {
+                this.formGroup.controls['cron_repeat'].setValue('monthly');
+              }
+            } else {
+              if (this.formGroup.controls['cron_daymonth'].value == '*') {
+                this.formGroup.controls['cron_repeat'].setValue('weekly');
+              }
+            }
+          }
         }
       });
     }
@@ -319,14 +331,6 @@ export class CronFormComponent implements OnInit {
     event.stopPropagation();
     this.error = null;
     let value = _.cloneDeep(this.formGroup.value);
-
-    // analysis date and time
-
-    // value['cron_dayweek'] = '*';
-    // value['cron_month'] = '*';
-    // value['cron_daymonth'] = '*';
-    // value['cron_hour'] = '*';
-    // value['cron_minute'] = '*';
 
     if (value['cron_repeat'] == 'hourly') {
       value['cron_dayweek'] = '*';
@@ -343,7 +347,7 @@ export class CronFormComponent implements OnInit {
     } else if (value['cron_repeat'] == 'monthly') {
       value['cron_dayweek'] = '*';
       value['cron_month'] = '*';
-    } 
+    }
 
     this.loader.open();
     if (this.isNew) {
