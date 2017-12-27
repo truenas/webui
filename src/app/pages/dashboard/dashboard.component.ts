@@ -21,6 +21,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
 
   public info: any = {};
+  public networkInfo: any = {};
   public ipAddress: any = [];
   public chartFormatter: ChartFormatter = {
     format(value, ratio, id) {
@@ -103,6 +104,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.ipAddress = _.uniq(res[0]);
       } else {
         this.ipAddress = res;
+      }
+    });
+    this.rest.get('network/globalconfiguration', {}).subscribe((res) => {
+      if (res.data) {
+        this.networkInfo = res.data;
       }
     });
     this.ws.call('stats.get_sources').subscribe((res) => {
