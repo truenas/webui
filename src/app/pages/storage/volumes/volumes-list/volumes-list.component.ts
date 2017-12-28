@@ -12,7 +12,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 
-interface ZfsPoolData {
+export interface ZfsPoolData {
   avail: number;
   id: string;
   is_decrypted: boolean;
@@ -85,6 +85,25 @@ export class VolumesListTableConfig {
       default:
         return row[attr];
     }
+  }
+
+  public titleRowValue(row, attr): any {
+    let returnValue = row[attr];
+
+    switch (attr) {
+      case 'avail':
+      case 'used':
+       try {
+        returnValue = filesize(row[attr], { standard: "iec" });
+       } catch(error) {
+         console.log("Error", error);
+       }
+       break;
+      default:
+        returnValue = row[attr];
+    }
+
+    return returnValue;
   }
 
   getAddActions() {
