@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -10,9 +10,9 @@ import { NotificationAlert, NotificationsService } from '../../../services/notif
 import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
-import {RestService} from "../../../services/rest.service";
-import {Observable} from "rxjs/Observable";
-import {Subscription} from "rxjs/Subscription";
+import { RestService } from "../../../services/rest.service";
+import { Observable } from "rxjs/Observable";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   selector: 'topbar',
@@ -164,7 +164,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   signOut() {
     this.idle.ngOnDestroy();
-    this.dialogService.confirm("Log Out", "Log out of the WebUI?").subscribe((res) => {
+    this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {
       if (res) {
         this.ws.logout();
       }
