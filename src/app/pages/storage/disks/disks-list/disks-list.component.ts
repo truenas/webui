@@ -17,7 +17,8 @@ export class DisksListConfig {
     protected flattenedVolData: any;
     protected resource_name = 'storage/disk/';
     public hideTopActions = true;
-  
+    public diskMap: Map<string,string> = new Map<string,string>();
+
     public columns: Array<any> = [
       {name : 'Name', prop : 'disk_name'},
       {name : 'Serial', prop : 'disk_serial'},
@@ -77,6 +78,23 @@ export class DisksListConfig {
           return row[attr];
       }
     }
+
+    resourceTransformIncomingRestData(data: any): any {
+      data = new EntityUtils().flattenData(data);
+      const returnData: any[] = [];
+      
+      for (let i = 0; i < data.length; i++) {
+
+        if( this.diskMap.size < 1 ) {
+          returnData.push(data[i]);
+        } else if( this.diskMap.has(data[i].disk_name) ) {
+          returnData.push(data[i]);
+        } 
+      }
+      
+      console.log("this:", this);
+      return returnData;
+    };
     
   }
 
@@ -107,7 +125,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
       res.data.forEach((volume) => {
         volume.disksListConfig = new DisksListConfig(this.router, "", volume.name);
         volume.type = 'zpool';
-
+        volume.isReady = false;
         try {
           volume.avail = filesize(volume.avail, { standard: "iec" });
         } catch( error ) {
@@ -122,9 +140,16 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
         this.zfsPoolRows.push(volume);
         const volumeId = volume.id;
+        const volumeObj = volume;
         this.ws.call('pool.get_disks', [volumeId]).subscribe((resGetDisks) => {
-          console.log("disks for volume", volumeId, resGetDisks); 
+          resGetDisks.forEach((driveName)=>{
+            (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
+          });
+
+          volume.isReady = true;
         });
+    
+        
       });
 
       if( this.zfsPoolRows.length === 1 ) {

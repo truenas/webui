@@ -6,12 +6,12 @@
                 <br/>
         </div>
         <div>
-                <md-tab-group (selectChange)="tabSelectChangeHandler($event)">
+                <md-tab-group >
                         <md-tab label="All Disks">
                                 <entity-table [conf]="conf" [title]="conf.title"></entity-table>
                         </md-tab>
                         <md-tab *ngFor="let row of zfsPoolRows" label="{{row.name}}">
-                               <entity-table [conf]="row.disksListConfig"></entity-table>
+                               <entity-table *ngIf="row.isReady" [conf]="row.disksListConfig"></entity-table>
                         </md-tab>
                 </md-tab-group>
         </div>
