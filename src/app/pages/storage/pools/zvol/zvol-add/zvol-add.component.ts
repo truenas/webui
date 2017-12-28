@@ -8,43 +8,35 @@ import {
   FormGroup,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import filesize from 'filesize';
-import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import {RestService, WebSocketService} from '../../../../../services/';
-import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'app-zvol-edit',
+  selector : 'app-zvol-add',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class ZvolEditComponent {
+export class ZvolAddComponent {
 
   protected pk: any;
   protected path: string;
-  protected zvol: string;
   public sub: Subscription;
-  public formGroup: FormGroup;
-  public data: Object = {};
-  public error: string;
-  public busy: Subscription;
-  protected fs: any = filesize;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
+  protected compression: any;
+  protected advanced_field: Array<any> = [ 'blocksize' ];
+  protected isBasicMode: boolean = true;
+  protected isNew: boolean = true;
+  protected isEntity: boolean = true;
 
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols/';
   }
 
-  get custom_get_query(): string {
-    return this.resource_name + this.zvol + '/';
-  }
-
-  get custom_edit_query(): string {
-    return this.resource_name + this.zvol + '/';
+  get custom_add_query(): string { 
+    return this.resource_name; 
   }
 
   public fieldConfig: FieldConfig[] = [
@@ -52,7 +44,6 @@ export class ZvolEditComponent {
       type: 'input',
       name : 'name',
       placeholder : 'zvol name:',
-      readonly: true
     },
     {
       type: 'input',
@@ -97,20 +88,32 @@ export class ZvolEditComponent {
     }
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-              protected aroute: ActivatedRoute, protected rest: RestService,
-              protected ws: WebSocketService) {}
-
-  initial(entityEdit) {
-    entityEdit.formGroup.controls.volsize.setValue(
-        this.fs(entityEdit.data.volsize, {standard : "iec"}));
+  isCustActionVisible(actionId: string) {
+    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+      return false;
+    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+      return false;
+    }
+    return true;
   }
 
-  preInit(entityEdit: any) {
+  constructor(protected router: Router, protected aroute: ActivatedRoute,
+              protected rest: RestService, protected ws: WebSocketService,
+              ) {}
+
+  clean(value) {
+     let start = this.path.split('/').splice(1).join('/');
+     if (start != '') {
+       return start + '/' + value;
+     } else {
+       return value;
+     }
+  }
+
+  afterInit(entityAdd: any) {
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.path = params['path'];
-      this.zvol = this.path.slice(this.pk.length + 1, this.path.length);
     });
   }
 }

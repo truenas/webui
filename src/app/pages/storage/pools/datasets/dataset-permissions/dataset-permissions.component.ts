@@ -35,7 +35,7 @@ export class DatasetPermissionsComponent {
   public error: string;
   public busy: Subscription;
   protected fs: any = filesize;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
   protected resource_name = 'storage/permission';
 
   public fieldConfig: FieldConfig[] = [

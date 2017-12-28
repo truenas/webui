@@ -13,9 +13,9 @@ import { MdDialog, MdDialogRef } from '@angular/material';
   template : `<entity-table [conf]="this"></entity-table>`
 })
 
-export class VolumeImportListComponent {
+export class PoolImportListComponent {
     protected resource_name: string = 'storage/volume_import';
-    protected route_success: string[] = [ 'storage', 'volumes' ];
+    protected route_success: string[] = [ 'storage', 'pools' ];
     public busy: Subscription;
 
     constructor(protected router: Router, protected aroute: ActivatedRoute,
@@ -41,7 +41,7 @@ export class VolumeImportListComponent {
       icon: "undo",
       onClick: () => {
         this.router.navigate(
-          new Array('/').concat(["storage", "volumes"]));
+          new Array('/').concat(["storage", "pools"]));
       }
     });
     return actions;
@@ -52,7 +52,7 @@ export class VolumeImportListComponent {
     actions.push({
       label : "Import",
       onClick : (row) => {
-        let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Volume" } });
+        let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Pool" } });
         dialogRef.componentInstance.post(this.resource_name + '/', {
           body: JSON.stringify({"volume_id": row.id}),
         });

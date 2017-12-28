@@ -8,18 +8,18 @@ import {Subscription} from 'rxjs';
 import {RestService, WebSocketService} from '../../../../../services/';
 
 @Component({
-  selector : 'app-zvol-delete',
+  selector : 'app-dataset-delete',
   template : `<entity-delete [conf]="this"></entity-delete>`
 })
-export class ZvolDeleteComponent {
+export class DatasetDeleteComponent {
 
   protected pk: any;
   protected path: string;
   public sub: Subscription;
   public deleteSnapshot: boolean = true;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
   get resource_name(): string {
-    return 'storage/volume/' + this.pk + '/zvols/';
+    return 'storage/volume/' + this.pk + '/datasets/';
   }
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,

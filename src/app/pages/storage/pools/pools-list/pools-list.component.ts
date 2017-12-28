@@ -27,16 +27,16 @@ interface ZfsPoolData {
   vol_guid: string;
   vol_name: string;
   children: any[];
-  volumesListTableConfig: VolumesListTableConfig;
+  poolsListTableConfig: PoolsListTableConfig;
 
 }
 
 
-export class VolumesListTableConfig {
+export class PoolsListTableConfig {
   protected hideTopActions = true;
   protected flattenedVolData: any;
   protected resource_name = 'storage/volume';
-  protected route_add: string[] = ['storage', 'volumes', 'manager'];
+  protected route_add: string[] = ['storage', 'pools', 'manager'];
   protected route_add_tooltip = "Create ZFS Pool";
   public dataset_data: any;
 
@@ -90,11 +90,11 @@ export class VolumesListTableConfig {
   getAddActions() {
     const actions = [];
     actions.push({
-      label: "Import Volumes",
+      label: "Import Pools",
       icon: "vertical_align_bottom",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "import_list"]));
+          ["storage", "pools", "import_list"]));
       }
     });
     return actions;
@@ -108,21 +108,21 @@ export class VolumesListTableConfig {
         label: "Extend",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "manager", row.id]));
+            ["storage", "pools", "manager", row.id]));
         }
       });
       actions.push({
         label: "Delete",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "delete", row.id]));
+            ["storage", "pools", "delete", row.id]));
         }
       });
       actions.push({
         label: "Status",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "status", row.id]));
+            ["storage", "pools", "status", row.id]));
         }
       });
     }
@@ -131,7 +131,7 @@ export class VolumesListTableConfig {
         label: "Add Dataset",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "dataset",
+            "storage", "pools", "id", row.path.split('/')[0], "dataset",
             "add", row.path
           ]));
         }
@@ -140,7 +140,7 @@ export class VolumesListTableConfig {
         label: "Add Zvol",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "zvol", "add",
+            "storage", "pools", "id", row.path.split('/')[0], "zvol", "add",
             row.path
           ]));
         }
@@ -149,7 +149,7 @@ export class VolumesListTableConfig {
         label: "Edit Options",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "dataset",
+            "storage", "pools", "id", row.path.split('/')[0], "dataset",
             "edit", row.path
           ]));
         }
@@ -159,7 +159,7 @@ export class VolumesListTableConfig {
           label: "Delete Dataset",
           onClick: (row) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id", row.path.split('/')[0], "dataset",
+              "storage", "pools", "id", row.path.split('/')[0], "dataset",
               "delete", row.path
             ]));
           }
@@ -168,7 +168,7 @@ export class VolumesListTableConfig {
           label: "Edit Permissions",
           onClick: (row) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id", row.path.split('/')[0], "dataset",
+              "storage", "pools", "id", row.path.split('/')[0], "dataset",
               "permissions", row.path
             ]));
           }
@@ -180,7 +180,7 @@ export class VolumesListTableConfig {
         label: "Delete Zvol",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "zvol",
+            "storage", "pools", "id", row.path.split('/')[0], "zvol",
             "delete", row.path
           ]));
         }
@@ -189,7 +189,7 @@ export class VolumesListTableConfig {
         label: "Edit Zvol",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "zvol", "edit",
+            "storage", "pools", "id", row.path.split('/')[0], "zvol", "edit",
             row.path
           ]));
         }
@@ -232,14 +232,14 @@ export class VolumesListTableConfig {
 
 
 @Component({
-  selector: 'app-volumes-list',
-  templateUrl: './volumes-list.component.html'
+  selector: 'app-pools-list',
+  templateUrl: './pools-list.component.html'
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
+export class PoolsListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  title = "Volumes";
+  title = "ZFS Pools";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this.router, "", "Volumes");
+  conf = new PoolsListTableConfig(this.router, "", "Pools");
   expanded = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
@@ -251,7 +251,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngOnInit(): void {
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name);
+        volume.poolsListTableConfig = new PoolsListTableConfig(this.router, volume.id, volume.name);
         volume.type = 'zpool';
         this.zfsPoolRows.push(volume);
       });

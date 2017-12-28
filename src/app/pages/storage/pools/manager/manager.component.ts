@@ -205,11 +205,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
                 dialogRef.componentInstance.volumeId = res.data.id;
                 dialogRef.afterClosed().subscribe(result => {
-                  this.router.navigate(['/', 'storage', 'volumes']);
+                  this.router.navigate(['/', 'storage', 'pools']);
                 });
               }
               else {
-                this.router.navigate(['/', 'storage', 'volumes']);
+                this.router.navigate(['/', 'storage', 'pools']);
               }      
             },
             (res) => {
@@ -227,7 +227,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/', 'storage', 'volumes']);
+    this.router.navigate(['/', 'storage', 'pools']);
   }
 
   openSnackBar() {

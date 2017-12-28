@@ -1,24 +1,24 @@
 import { ModuleWithProviders} from '@angular/core';
 import { RouterModule, Routes} from '@angular/router';
 
-import { DatasetPermissionsComponent} from './volumes/datasets/dataset-permissions/'
+import { DatasetPermissionsComponent} from './pools/datasets/dataset-permissions/'
 import { SnapshotAddComponent} from './snapshots/snapshot-add/';
 import { SnapshotCloneComponent} from './snapshots/snapshot-clone/';
 import { SnapshotListComponent} from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent} from './snapshots/snapshot-rollback/';
-import { DatasetFormComponent} from './volumes/datasets/dataset-form/';
-import { DatasetDeleteComponent} from './volumes/datasets/dataset-delete/';
-import { ManagerComponent} from './volumes/manager/';
+import { DatasetFormComponent} from './pools/datasets/dataset-form/';
+import { DatasetDeleteComponent} from './pools/datasets/dataset-delete/';
+import { ManagerComponent} from './pools/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
-import { VolumeDeleteComponent} from './volumes/volume-delete/index';
-import { VolumesListComponent} from './volumes/volumes-list/';
-import { ZvolAddComponent} from './volumes/zvol/zvol-add/';
-import { ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
-import { ZvolEditComponent} from './volumes/zvol/zvol-edit/';
-import { VolumeImportListComponent} from './volumes/import-list/';
+import { PoolDeleteComponent} from './pools/pool-delete/index';
+import { PoolsListComponent} from './pools/pools-list/';
+import { ZvolAddComponent} from './pools/zvol/zvol-add/';
+import { ZvolDeleteComponent} from './pools/zvol/zvol-delete/';
+import { ZvolEditComponent} from './pools/zvol/zvol-edit/';
+import { PoolImportListComponent} from './pools/import-list/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
-import { StatusComponent } from './volumes/status/status.component';
+import { StatusComponent } from './pools/status/status.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
@@ -28,12 +28,12 @@ export const routes: Routes = [
     path : '',
     data: {title:'Storage'},
     children: [
-      { path: 'volumes',
-        data: {title: 'Volumes', breadcrumb: 'Volumes'},
+      { path: 'pools',
+        data: {title: 'ZFS Pools', breadcrumb: 'ZFS Pools'},
         children: [
         {
-          path: '', component : VolumesListComponent,
-          data: {title: 'Volumes', breadcrumb: 'Volumes'}
+          path: '', component : PoolsListComponent,
+          data: {title: 'ZFS Pools', breadcrumb: 'ZFS Pools'}
         },
         {
           path : 'id/:volid/dataset/add/:parent', component : DatasetFormComponent,
@@ -64,15 +64,15 @@ export const routes: Routes = [
           data: {title: 'Extend Pool', breadcrumb: 'Extend Pool' }
         },
         {
-          path : 'import_list', component: VolumeImportListComponent,
-          data: {title: 'Import Volume', breadcrumb:'Import Volume' }},
+          path : 'import_list', component: PoolImportListComponent,
+          data: {title: 'Import Pool', breadcrumb:'Import Pool' }},
         {
           path: 'status/:pk', component: StatusComponent,
           data: {title: 'Scrub Status', breadcrumb:'Scrub Status' }},
         //{ path: 'edit/:pk', component: VolumesEditComponent },
         {
-          path : 'delete/:pk', component : VolumeDeleteComponent,
-          data: {title: 'Delete Volume', breadcrumb:'Delete Volume' }}
+          path : 'delete/:pk', component : PoolDeleteComponent,
+          data: {title: 'Delete Pool', breadcrumb:'Delete Pool' }}
       ]},
       {
         path: 'snapshots',

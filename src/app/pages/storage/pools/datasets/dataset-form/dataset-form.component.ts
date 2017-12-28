@@ -21,7 +21,7 @@ export class DatasetFormComponent implements OnInit{
   protected volid: string;
   protected parent: string;
   public sub: Subscription;
-  public route_success: string[] = [ 'storage', 'volumes' ];
+  public route_success: string[] = [ 'storage', 'pools' ];
   protected isBasicMode: boolean = true;
 
   protected resourceName: string = 'storage/dataset/';
