@@ -65,27 +65,33 @@ export class VmCardsComponent implements OnInit {
       console.log("VmProfiles! *********");
       console.log(evt);
       this.setVmList(evt,'init');
-    })
+    });
 
     this.core.register({observerClass:this,eventName:"VmProfile"}).subscribe((evt:CoreEvent) => {
       console.log("VmProfile! *********");
       console.log(evt);
       this.setVm(evt);
-    })
+    });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
       console.log("VmStarted! *********");
       console.log(evt);
       let index = this.getCardIndex('id',evt.sender[0]);
       this.refreshVM(index,evt.sender[0]); // Can't use this because API doesn't return vm.id
-    })
+    });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
       console.log("VmStopped! *********");
       console.log(evt);
       let index = this.getCardIndex('id',evt.sender[0]);
       this.refreshVM(index,evt.sender[0]); // Workaround: sender returns the request params
-    })
+    });
+
+    this.core.register({observerClass:this,eventName:"VmDeleted"}).subscribe((evt:CoreEvent) => {
+      console.log("VmDeleted! *********");
+      console.log(evt);
+      this.removeVM(evt); // Workaround: sender returns the request params
+    });
 
     this.getVmList();
   }
@@ -167,24 +173,26 @@ export class VmCardsComponent implements OnInit {
     this.core.emit({
       name:"VmProfileRequest",
       data:[[["id", "=", String(this.cards[index].id)]]]
-    })
+    });
   }
 
   setVm(evt:CoreEvent){
     let res = evt.data[0];
-    //this.rest.get('vm/vm/'+this.cards[index].id, {}).subscribe((res) => {
+    let currentIndex = this.getCardIndex("id",res.id)
     if(!res.state){
-      let currentIndex = this.getCardIndex("id",res.id)
-      console.log(currentIndex);
+      //DEBUG: console.log(currentIndex);
       let currentState = this.cards[currentIndex].state;
       res.state = currentState;
     }
     let card = this.parseResponse(res);
-    let index = card.id;
-    this.cards[index] = card;
-    this.updateCache();
-    //})  
-    }
+    let index = currentIndex;
+    
+    // delay to allow flip animation
+    setTimeout( () => {
+      this.cards[index] = card;
+      this.updateCache();
+    },300);
+  }
 
   updateCache(){
     this.cache = [];
@@ -220,7 +228,7 @@ export class VmCardsComponent implements OnInit {
       description:"",
       info:"",
       bootloader:"",
-      state:"",
+      state:"stopped",
       autostart:"",
       vcpus:"",
       memory:"",
@@ -240,7 +248,8 @@ export class VmCardsComponent implements OnInit {
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.rest.delete( 'vm/vm/' + this.cards[index].id, {}).subscribe(
+        this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
+        /*this.rest.delete( 'vm/vm/' + this.cards[index].id, {}).subscribe(
           (res) => {
             console.log("deleteVM: REST response...");
             console.log(res);
@@ -248,14 +257,24 @@ export class VmCardsComponent implements OnInit {
             this.cards.splice(index,1);
             this.loader.close();
             this.updateCache();
-          }/*,
+          },
           (res) => { 
             new EntityUtils().handleError(this, res);
             this.loader.close(); 
-          }*/
-        );        
+          }
+        );*/
       }
     })
+  }
+
+  removeVM(evt:CoreEvent){
+    console.log("removeVM ********");
+    console.log(evt);
+    let index = this.getCardIndex("id", evt.sender);
+    this.focusedVM = '';
+    this.cards.splice(index,1);
+    this.loader.close();
+    this.updateCache();
   }
 
   cancel(index){

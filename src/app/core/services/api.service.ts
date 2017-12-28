@@ -49,6 +49,13 @@ export class ApiService {
       namespace:"vm.stop",
       args:[],
       responseEvent:"VmStopped"
+    },
+    VmDelete:{
+      protocol:"websocket",
+      version:"1",
+      namespace:"vm.delete",
+      args:[],
+      responseEvent:"VmDeleted"
     }
   } 
 
