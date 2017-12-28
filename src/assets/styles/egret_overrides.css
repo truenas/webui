@@ -133,8 +133,7 @@ vm-cards md-card{
 }
 
 vm-card-edit div.md-content{
-  padding: 5%;
-  width: 90%;
-  height: 90%;
-  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+  position:absolute;
 }
