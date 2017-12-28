@@ -35,7 +35,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public paginationPageSize = 20;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
-  public paginationPageEvent: any;  
+  public paginationPageEvent: any;
+  public hideTopActions = false;
   
   public displayedColumns: string[] = [];
   public busy: Subscription;
@@ -71,6 +72,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
+    }
+
+    if( typeof(this.conf.hideTopActions) !== 'undefined'  ) {
+      this.hideTopActions = this.conf.hideTopActions;
     }
 
     Observable.fromEvent(this.filter.nativeElement, 'keyup')

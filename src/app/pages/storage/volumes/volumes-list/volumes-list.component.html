@@ -16,7 +16,7 @@
                 {{row.name}}
             </md-panel-title>
             <md-panel-description>
-                {{row.status}} ({{rowValue(row, 'avail')}} Free) 
+                {{row.status}} ({{conf.titleRowValue(row, 'used')}} ({{row.used_pct}}) Used / {{conf.titleRowValue(row, 'avail')}} Free) 
             </md-panel-description>
           </md-expansion-panel-header>
           <div>
