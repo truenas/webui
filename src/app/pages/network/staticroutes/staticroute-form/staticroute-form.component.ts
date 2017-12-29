@@ -26,16 +26,20 @@ export class StaticRouteFormComponent {
       type : 'input',
       name : 'sr_destination',
       placeholder : 'Destination',
+      tooltip : 'Use the format <i>A.B.C.D/E</i> where <i>E</i> is the\
+ CIDR mask.',
     },
     {
       type : 'input',
       name : 'sr_gateway',
       placeholder : 'Gateway',
+      tooltip : 'Enter the IP address of the gateway.',
     },
     {
       type : 'input',
       name : 'sr_description',
       placeholder : 'Description',
+      tooltip : 'Optional.',
     },
   ];
 
