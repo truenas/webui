@@ -36,37 +36,50 @@ export class AlertServiceEditAWSComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'service name',
+      tooltip: 'Amazon Web Service (AWS)\
+ Simple Notification Service (SNS).',
       disabled: true,
     },
     {
       type : 'input',
       name : 'region',
-      placeholder : 'region'
+      placeholder : 'region',
+      tooltip: 'Paste the region for the AWS account here.',
     },
     {
       type: 'input',
       name: 'topic_arn',
-      placeholder: 'topic_arn'
+      placeholder: 'topic_arn',
+      tooltip: 'Paste the Topic Amazon Resource Name (ARN) to publish to.\
+ Here is an example ARN:\
+ <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
     },
     {
       type : 'input',
       name : 'base_url',
-      placeholder : 'base_url'
+      placeholder : 'base_url',
+      tooltip: 'Example: http://s3.example.com',
     },
     {
       type : 'input',
       name : 'aws_access_key_id',
-      placeholder : 'key id'
+      placeholder : 'key id',
+      tooltip: 'Paste the AWS Access Key ID for the\
+ AWS account here.',
     },
     {
       type: 'input',
       name: 'aws_secret_access_key',
       placeholder: 'secret access key',
+      tooltip: 'Paste the AWS Secret Access Key for the AWS\
+ account here.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the Amazon Web Service\
+ Simple Notification Service.',
     },
   ];
 
