@@ -6,7 +6,7 @@
 <ng-template #noCheckBox>{{ message }}</ng-template>
 
 <div md-dialog-actions>
-  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled" (click)="dialogRef.close(true)">OK</button>
+  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">OK</button>
   &nbsp;
   <span fxFlex></span>
   <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">Cancel</button>
