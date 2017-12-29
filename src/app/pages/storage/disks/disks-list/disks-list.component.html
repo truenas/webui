@@ -14,7 +14,6 @@
                         </md-tab>
                         <md-tab *ngFor="let row of zfsPoolRows" label="{{row.name}}">
                                 <div *ngIf="selectedKeyName === row.name">
-
                                         <entity-table *ngIf="row.isReady" [conf]="row.disksListConfig"></entity-table>
                                 </div>
                         </md-tab>
