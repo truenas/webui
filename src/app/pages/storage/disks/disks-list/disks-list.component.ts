@@ -13,12 +13,11 @@ import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 
 export class DisksListConfig {
-  
     protected flattenedVolData: any;
     protected resource_name = 'storage/disk/';
     public hideTopActions = true;
     public diskMap: Map<string,string> = new Map<string,string>();
-
+    
     public columns: Array<any> = [
       {name : 'Name', prop : 'disk_name'},
       {name : 'Serial', prop : 'disk_serial'},
@@ -109,6 +108,9 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   expanded_all = true;
   expanded_zfs = false;
   conf: DisksListConfig;
+  public readonly ALL_DISKS = "All Disks";
+  public selectedKeyName;
+
   public title = "View Disks";
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
@@ -119,6 +121,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   ngOnInit(): void {
 
+    this.selectedKeyName = this.ALL_DISKS;
+    
     
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
@@ -161,6 +165,11 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   ngAfterViewInit(): void {
 
+  }
+
+  tabSelectChangeHandler($event): void {
+    const selectedTabName: string = $event.tab.textLabel;
+    this.selectedKeyName = selectedTabName; 
   }
 
 }
