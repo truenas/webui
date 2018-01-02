@@ -4,6 +4,7 @@ import {RestService} from "../../../services/rest.service";
 import {Observable} from "rxjs/Observable";
 import {AppLoaderService} from "../../../services/app-loader/app-loader.service";
 import {DialogService} from "../../../services/dialog.service";
+import { MdSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-system-advanced',
@@ -41,7 +42,8 @@ export class AdvancedComponent implements OnInit {
   constructor(private rest: RestService,
               private load: AppLoaderService,
               private dialog: DialogService,
-              private ws: WebSocketService) {
+              private ws: WebSocketService,
+              public snackBar: MdSnackBar) {
   }
 
   ngOnInit(): void {
@@ -62,6 +64,27 @@ export class AdvancedComponent implements OnInit {
       this.isReady = true;
       this.error = 'Something went wrong, please try again later.';
     });
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action , {
+      duration: 5000
+    });
+  }
+
+  saveDebug() {
+    console.log("debug");
+    this.rest.post('system/debug/').subscribe(
+        (res) => {
+          console.log(res);
+          this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
+          window.open(res);
+        },
+        (err) => {
+          console.log(res);
+          this.openSnackBar("Please check your network connection", "Failed");
+        }
+    );
   }
 
   buildForm(system: any) {
