@@ -20,6 +20,7 @@ export class WebSocketService {
   @LocalStorage() username;
   @LocalStorage() password;
   redirectUrl: string = '';
+  shuttingdown = false;
 
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
@@ -45,6 +46,7 @@ export class WebSocketService {
   }
 
   onconnect() {
+    this.shuttingdown = false;
     while (this.pendingMessages.length > 0) {
       let payload = this.pendingMessages.pop();
       this.send(payload);
@@ -55,7 +57,9 @@ export class WebSocketService {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
-    this._router.navigate(['/sessions/signin']);
+    if (!this.shuttingdown) {
+      this._router.navigate(['/sessions/signin']);
+    }
   }
 
   ping() {
@@ -215,10 +219,19 @@ export class WebSocketService {
     });
   }
 
-  logout() {
+  clearCredentials() {
     this.loggedIn = false;
     this.username = '';
     this.password = '';
+  }
+
+  prepare_shutdown() {
+    this.shuttingdown = true;
+    this.clearCredentials();
+  }
+
+  logout() {
+    this.clearCredentials();
     this._router.navigate(['/sessions/signin']);
   }
 }
