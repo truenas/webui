@@ -25,20 +25,27 @@ export class CronFormComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
     type: 'input',
     name: 'cron_description',
-    placeholder: 'Description'
+    placeholder: 'Description',
+    tooltip: 'Optional.',
   }, {
     type: 'input',
     name: 'cron_command',
     placeholder: 'Command',
+    tooltip: 'The <b>full path</b> to the command or script to be run.\
+ If it is a script, test it at the command line to ensure it works.',
   }, {
     type: 'select',
     name: 'cron_user',
     placeholder: 'Run As User',
+    tooltip: 'Make sure the selected user has permission to run the\
+ specified command or script.',
     options: [],
   }, {
     type: 'select',
     name: 'cron_repeat',
     placeholder: 'Quick Schedule',
+    tooltip: 'Select a time frame for the job. Otherwise, do not select\
+ a time frame to customize the schedule.',
     options: [
       { label: '----------', value: 'none' },
       { label: 'Hourly', value: 'hourly' },
@@ -51,24 +58,28 @@ export class CronFormComponent implements OnInit {
     type: 'input',
     name: 'cron_minute',
     placeholder: 'Minute',
+    tooltip: 'The cron job occurs at the specified minutes.',
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'cron_hour',
     placeholder: 'Hour',
+    tooltip: 'The cron job occurs at the specified hours.',
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'cron_daymonth',
     placeholder: 'Day of month',
+    tooltip: 'The cron job occurs on the specified days each month.',
     value: '*',
     isHidden: false,
   }, {
     type: 'select',
     name: 'cron_month',
     placeholder: 'Month',
+    tooltip: 'The cron job occurs at the specified months.',
     multiple: true,
     options: [{
       label: 'January',
@@ -113,6 +124,7 @@ export class CronFormComponent implements OnInit {
     type: 'select',
     name: 'cron_dayweek',
     placeholder: 'Day of week',
+    tooltip: 'The cron job occurs on the specified days.',
     multiple: true,
     options: [{
       label: 'Monday',
@@ -142,16 +154,20 @@ export class CronFormComponent implements OnInit {
     type: 'checkbox',
     name: 'cron_stdout',
     placeholder: 'Redirect Stdout',
+    tooltip: 'Disables emailing standard output to the <i>root</i> user\
+ account.',
     value: true,
   }, {
     type: 'checkbox',
     name: 'cron_stderr',
     placeholder: 'Redirecr Stderr',
+    tooltip: 'Disables emailing errors to the <i>root</i> user account.',
     value: false,
   }, {
     type: 'checkbox',
     name: 'cron_enabled',
     placeholder: 'Enable',
+    tooltip: 'Uncheck to disable the cron job without deleting it.',
     value: true,
   }];
 
