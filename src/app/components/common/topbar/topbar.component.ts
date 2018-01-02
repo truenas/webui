@@ -174,7 +174,16 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onShutdown() {
     this.dialogService.confirm("Shut Down", "Shut down the system?").subscribe((res) => {
       if (res) {
-        this.ws.call('system.shutdown', {}).subscribe(res => {});
+        this.ws.call('system.shutdown', {}).subscribe(
+        (res) => {
+        },
+        (res) => { // error on shutdown
+          this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+        },
+        () => { // show reboot screen
+          this.ws.prepare_shutdown();
+          this.router.navigate(['/others/shutdown']);
+        });
       }
     });
   }
@@ -182,7 +191,16 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onReboot() {
     this.dialogService.confirm("Reboot", "Reboot the system?").subscribe((res) => {
       if (res) {
-        this.ws.call('system.reboot', {}).subscribe(res => {});
+        this.ws.call('system.reboot', {}).subscribe(
+          (res) => {
+          },
+          (res) => { // error on reboot
+            this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+          },
+          () => { // show reboot screen
+            this.ws.prepare_shutdown();
+            this.router.navigate(['/others/reboot']);
+          });
       }
     });
   }
