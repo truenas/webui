@@ -10,7 +10,7 @@ export class DialogService {
 
     constructor(private dialog: MdDialog) { }
 
-    public confirm(title: string, message: string): Observable<boolean> {
+    public confirm(title: string, message: string, hideCheckBox?: boolean): Observable<boolean> {
 
         let dialogRef: MdDialogRef<ConfirmDialog>;
 
@@ -18,6 +18,10 @@ export class DialogService {
 
         dialogRef.componentInstance.title = title;
         dialogRef.componentInstance.message = message;
+
+        if(hideCheckBox) {
+            dialogRef.componentInstance.hideCheckBox = hideCheckBox;
+        }        
 
         return dialogRef.afterClosed();
     }
