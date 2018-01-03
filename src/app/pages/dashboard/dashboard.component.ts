@@ -9,7 +9,18 @@ import {
   WebSocketService
 } from '../../services/';
 import { ChartConfigData, LineChartService } from 'app/components/common/lineChart/lineChart.service';
+import { DialogService } from '../../services/dialog.service';
+import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 
+interface NoteCard {
+  id?:string;
+  title?:string;
+  content?:string;
+  lazyLoaded?:boolean;
+  template?:string; // for back face of card
+  cardActions?:Array<any>;
+  isNew:boolean;
+}
 
 @Component({
   selector: 'dashboard',
@@ -18,7 +29,6 @@ import { ChartConfigData, LineChartService } from 'app/components/common/lineCha
   providers: [SystemGeneralService]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-
 
   public info: any = {};
   public ipAddress: any = [];
@@ -74,19 +84,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ];
 
   private erd: any = null;
-  public cards: Array<any> = [
-  {
-    id: '1',
-    content: 'hello',
-    lazyLoaded: true,
-    template: 'none',
-  },
-  {
-    id: '2',
-    content: 'send note',
-    lazyLoaded: true,
-    template: 'none',
-  }];
+  public cards: Array<any> = [];
+  public notes: Array<any> = [];
+  public userConf: Array<any> = [];
 
   public noteStyle: any = {
     // 'width': '480px',
@@ -94,7 +94,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // 'margin': '50px auto'
   };
   constructor(private rest: RestService, private ws: WebSocketService,
-    protected systemGeneralService: SystemGeneralService) {
+    protected systemGeneralService: SystemGeneralService, private dialog: DialogService,
+    protected loader: AppLoaderService,) {
     rest.get('storage/volume/', {}).subscribe((res) => {
       res.data.forEach((vol) => {
         this.graphs.splice(0, 0, {
@@ -106,6 +107,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         });
       });
     });
+  }
+
+   parseResponse(data){
+    var card: NoteCard = {
+      id:data.id,
+      title:data.title,
+      content:data.content,
+      lazyLoaded: false,
+      template:'none',
+      isNew:false
+    }
+    return card;
   }
 
   ngOnInit() {
@@ -150,6 +163,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (window.hasOwnProperty('elementResizeDetectorMaker')) {
       this.erd = window['elementResizeDetectorMaker'].call();
     }
+
+    this.getNotes();
+  }
+
+  getNotes() {
+    // get notes
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.userConf = res.data.bsdusr_attributes;
+      this.notes = res.data.bsdusr_attributes.user_dashboard_notes;
+      if (typeof(res.data.bsdusr_attributes.user_dashboard_notes) == "undefined") {
+        this.notes = [];
+      }
+      for(let i = 0; i < this.notes.length; i++){
+        let card = this.parseResponse(this.notes[i]);
+        this.cards.push(card);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -159,24 +189,50 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   addNote() {
-    console.log("add Note");
+    let index = this.cards.length;
+    let card: NoteCard = {
+      title:"",
+      content:"",
+      lazyLoaded:false,
+      template:'',
+      cardActions:[],
+      isNew:true,
+    }
+    this.cards.push(card);
+    this.toggleForm(true,this.cards[index],'edit');
   }
 
+  deleteNote(index) {
+    this.dialog.confirm("Delete", "Are you sure you want to delete note" + this.notes[index].title + "?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.notes.splice(index, 1);
+        this.ws.call('user.update', [1, { attributes: { user_dashboard_notes: this.notes, usertheme: this.userConf['usertheme'] } }]).subscribe(
+          (wsres)=> {
+            this.loader.close();
+            this.cards = [];
+            this.getNotes();
+          },
+          (wsres)=> {
+            this.loader.close();
+            console.log('error');
+          });
+      }
+    })
+  }
 
   focusVM(index){
     for(var i = 0; i < this.cards.length; i++){
       if(i !== index && this.cards[i].isFlipped ){
-  //console.log("Index = " + index + " && i = " + i);
-  this.cards[i].isFlipped = false;
-  this.cards[i].lazyLoaded = false;
-  this.cards[i].template = 'none';
+        this.cards[i].isFlipped = false;
+        this.cards[i].lazyLoaded = false;
+        this.cards[i].template = 'none';
       }
     }
   }
   
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
-    //console.log(flipState);
     card.template = template;
     card.isFlipped = flipState;
     card.lazyLoaded = !card.lazyLoaded;
@@ -184,14 +240,28 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.focusVM(index);
   }
 
-    cancel(index){
+  cancel(index){
     let card = this.cards[index];
     if(card.isNew){
       this.cards.splice(index,1);
-      // this.updateCache();
     } else {
       this.toggleForm(false,card,'none')
     }
 
+  }
+
+  getNote(index) {
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.userConf = res.data.bsdusr_attributes;
+      this.notes = res.data.bsdusr_attributes.user_dashboard_notes;
+      if (typeof(res.data.bsdusr_attributes.user_dashboard_notes) == "undefined") {
+        this.notes = [];
+      }
+      this.cards[index] = this.notes[index];
+    });
+  }
+
+  refreshNote(index){
+    this.getNote(index);
   }
 }

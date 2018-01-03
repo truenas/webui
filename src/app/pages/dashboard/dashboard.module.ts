@@ -8,13 +8,14 @@ import { EntityModule } from '../common/entity/entity.module';
 
 import {DashboardComponent} from './dashboard.component';
 import {routing} from './dashboard.routing';
-
+import { DashboardNoteEditComponent } from './dashboard-note-edit.component';
 
 @NgModule({
   imports : [ CommonModule, FormsModule,  routing, 
   MaterialModule, MdCardModule, AppCommonModule , EntityModule],
   declarations : [
-    DashboardComponent
+    DashboardComponent,
+    DashboardNoteEditComponent
   ],
   providers : [
     
