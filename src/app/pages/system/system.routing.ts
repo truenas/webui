@@ -26,6 +26,7 @@ import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
+import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
@@ -275,6 +276,16 @@ export const routes: Routes = [
           path: 'amazon/:pk',
           component: CloudCredentialsAmazonComponent,
           data: { title: 'amazon', breadcrumb: 'amazon' },
+        },
+        {
+          path: 'azure',
+          component: CloudCredentialsAzureComponent,
+          data: { title: 'azure', breadcrumb: 'azure' },
+        },
+        {
+          path: 'azure/:pk',
+          component: CloudCredentialsAzureComponent,
+          data: { title: 'azure', breadcrumb: 'azure' },
         },
         {
           path: 'b2',
