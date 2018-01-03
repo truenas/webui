@@ -37,29 +37,34 @@ export class AlertServiceAddHipchatComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      value: 'HipChat'
+      value: 'HipChat',
     },{
       type: 'input',
       name: 'cluster_name',
-      placeholder: 'Cluster Name'
+      placeholder: 'Cluster Name',
+      tooltip: 'Enter the name of the cluster.',
     },{
       type: 'input',
       name: 'base_url',
       placeholder: 'Url',
+      tooltip: 'Enter the HipChat base url.',
       value: 'https://api.hipchat.com/v2/'
     },{
       type: 'input',
       name: 'room_id',
-      placeholder: 'Room'
+      placeholder: 'Room',
+      tooltip: 'Enter the name of the room.',
     },{
       type: 'input',
       name: 'auth_token',
-      placeholder: 'Auth Token'
+      placeholder: 'Auth Token',
+      tooltip: 'Paste the Authentication token here.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the HipChat service.',
     },
   ];
 
