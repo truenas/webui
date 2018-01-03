@@ -84,12 +84,15 @@ export class ThemeService {
       t.isActive = (t.name === theme.name);
     });
 
-    this.ws.call('user.update', [1, {
-      attributes: {
-        usertheme: theme.name
-      }
-    }]).subscribe((res_ws) => {
-      console.log("Saved usertheme:", res_ws, theme.name);
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.ws.call('user.update', [1, {
+        attributes: {
+          user_dashboard_notes: res.data.bsdusr_attributes.user_dashboard_notes,
+          usertheme: theme.name
+        }
+      }]).subscribe((res_ws) => {
+        console.log("Saved usertheme:", res_ws, theme.name);
+      });
     });
   }
 }
