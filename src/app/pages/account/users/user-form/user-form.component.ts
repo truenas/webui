@@ -98,14 +98,13 @@ export class UserFormComponent {
       name : 'bsdusr_password',
       placeholder : 'Password',
       inputType : 'password',
-      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'bsdusr_password_conf',
       placeholder : 'Confirm Password',
       inputType : 'password',
-      validation : [ matchOtherValidator('bsdusr_password'), Validators.required ]
+      validation : [ matchOtherValidator('bsdusr_password') ],
 
     },
     {
