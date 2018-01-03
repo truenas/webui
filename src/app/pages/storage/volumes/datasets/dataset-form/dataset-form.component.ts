@@ -1,6 +1,6 @@
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
@@ -17,14 +17,13 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 })
 export class DatasetFormComponent implements OnInit{
 
-  protected pk: any;
   protected volid: string;
-  protected parent: string;
   public sub: Subscription;
   public route_success: string[] = [ 'storage', 'volumes' ];
   protected isBasicMode: boolean = true;
 
-  protected resourceName: string = 'storage/dataset/';
+  protected resourceName: string;
+  protected parent: string;
   public submitFunction = this.editSubmit;
   private isNew: boolean = false;
   public formGroup: FormGroup;
@@ -40,6 +39,7 @@ export class DatasetFormComponent implements OnInit{
       type: 'input',
       name: 'name',
       placeholder: 'Name',
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -50,13 +50,24 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level',
-      options: [],
+      options: [
+        { label: 'OFF', value: 'OFF' },
+        { label: 'LZ4', value: 'LZ4' },
+        { label: 'GZIP-1', value: 'GZIP-1' },
+        { label: 'GZIP-6', value: 'GZIP-6' },
+        { label: 'GZIP-9', value: 'GZIP-9' },
+        { label: 'ZLE', value: 'ZLE' },
+        { label: 'LZJB', value: 'LZJB' }
+      ],
     },
     {
       type: 'select',
       name: 'atime',
       placeholder: 'Enable atime',
-      options: [],
+      options: [
+        { label: 'ON', value: 'ON' },
+        { label: 'OFF', value: 'OFF' }
+      ],
     },
     {
       type: 'input',
@@ -89,27 +100,71 @@ export class DatasetFormComponent implements OnInit{
 
     {
       type: 'select',
-      name: 'dedup',
-      placeholder: 'ZFS Deduplication',
-      options: [],
+      name: 'deduplication',
+      placeholder: 'Deduplication',
+      options: [
+        { label: 'ON', value: 'ON' },
+        { label: 'VERIFY', value: 'VERIFY' },
+        { label: 'OFF', value: 'OFF' }
+      ],
     },
     {
       type: 'select',
       name: 'readonly',
-      placeholder: 'Read-Only',
-      options: [],
+      placeholder: 'Read-only',
+      options: [
+        { label: 'ON', value: 'ON' },
+        { label: 'OFF', value: 'OFF' }
+      ],
+    },
+    {
+      type: 'select',
+      name: 'snapdir',
+      placeholder: 'Snapshot directory',
+      options: [
+        { label: 'Visible', value: 'VISIBLE' },
+        { label: 'Invisible', value: 'HIDDEN' },
+      ],
+    },
+    {
+      type: 'select',
+      name: 'copies',
+      placeholder: 'Copies',
+      options: [
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' }
+      ],
+      tooltip: 'How many copies of data does ZFS allow?',
     },
     {
       type: 'select',
       name: 'recordsize',
       placeholder: 'Record Size',
-      options: [],
+      options: [
+        { label: '512', value: '512' },
+        { label: '1K', value: '1K' },
+        { label: '2K', value: '2K' },
+        { label: '4K', value: '4K' },
+        { label: '8K', value: '8K' },
+        { label: '16K', value: '16K' },
+        { label: '32K', value: '32K' },
+        { label: '64K', value: '64K' },
+        { label: '128K', value: '128K' },
+        { label: '256K', value: '256K' },
+        { label: '512K', value: '512K' },
+        { label: '1024K', value: '1024K' }
+      ],
     },
     {
       type: 'select',
-      name: 'case_sensitivity',
+      name: 'casesensitivity',
       placeholder: 'Case Sensitivity',
-      options: [],
+      options: [
+        { label: 'SENSITIVE', value: 'SENSITIVE' },
+        { label: 'INSENSITIVE', value: 'INSENSITIVE' },
+        { label: 'MIXED', value: 'MIXED' }
+      ],
     },
   ];
 
@@ -119,6 +174,8 @@ export class DatasetFormComponent implements OnInit{
     'refreservation',
     'reservation',
     'readonly',
+    'snapdir',
+    'copies',
     'recordsize',
   ];
 
@@ -169,89 +226,50 @@ export class DatasetFormComponent implements OnInit{
       this.volid = params['volid'];
       // edit dataset
       if(params['pk']) {
-        this.pk = params['pk'];
-        let pk_parent = this.pk.split('/');
-        this.parent = this.resourceName + pk_parent.splice(0, pk_parent.length - 1).join('/');
-
-        this.resourceName = this.resourceName + this.pk + '/';
+        this.resourceName = params['pk'];
+        let pk_parent = params['pk'].split('/');
+        this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
         this.fieldConfig.pop();
       }
       // add new dataset
       if (params['parent']) {
         this.parent = params['parent'];
-        this.resourceName = this.resourceName + this.parent + '/';
+        this.resourceName = this.parent;
         this.submitFunction = this.addSubmit;
         this.isNew = true;
       }
     });
   }
 
-  setFieldValue(endpoint: string, field: string) {
-    this.ws.call('notifier.choices', [ endpoint ]).subscribe((res) => {
-      let target_field = _.find(this.fieldConfig, {name: field});
-      if (target_field) {
-        if (field == 'recordsize') {
-          target_field.options.push({label: 'inherit (' + this.RecordSizeMap[this.parent_data['recordsize']] + ' )', value: 'inherit'});
-        }
-
-        for (let item of res) {
-          let label = item[1];
-          let value = item[0];
-          if (value == 'inherit') {
-            label = label + '( ' + this.parent_data[field] + ' )';
-          }
-          target_field.options.push({label: label, value: value});
-        }
-
-        // set default value
-        if (this.isNew) {
-          let default_value = 'inherit';
-          let fg = this.formGroup.controls[field];
-          if (field == 'case_sensitivity') {
-            default_value = 'sensitive';
-          }
-
-          if (fg) {
-            fg.setValue(default_value);
-          }
-        }
-      }
-    });
-  }
-
-  afterInit() {
-    this.setFieldValue('ZFS_CompressionChoices', 'compression');
-    this.setFieldValue('ZFS_AtimeChoices', 'atime');
-    this.setFieldValue('ZFS_DEDUP_INHERIT', 'dedup');
-    this.setFieldValue('CASE_SENSITIVITY_CHOICES', 'case_sensitivity');
-    this.setFieldValue('ZFS_ReadonlyChoices', 'readonly');
-    this.setFieldValue('ZFS_RECORDSIZE', 'recordsize');
-
-    if (!this.isNew) {
-      this.setDisabled('name', true);
-    }
-  }
-
   ngOnInit() {
     this.preInit();
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    this.rest.get(this.resourceName, {}).subscribe((res) => {
-      this.data = res.data;
-      this.parent_data = res.data;
+    this.ws.call('pool.dataset.query', [ [['id', '=', this.resourceName]] ]).subscribe((res) => {
+      this.data = res[0];
+      this.parent_data = res[0];
+
       for (let i in this.data) {
         let fg = this.formGroup.controls[i];
+
         if (fg && !this.isNew) {
-          let value = this.data[i];
-          if (i == 'recordsize') {
-            value = this.RecordSizeMap[value];
+          let value = "";
+
+          if(i === "name") {
+            value = this.data[i];
+          }
+          else {
+            value = this.data[i].value;
           }
 
-          if (_.indexOf(this.data['inherit_props'], i) > -1) {
-            value = 'inherit';
-          }
-          if (i == 'comments' && _.indexOf(this.data['inherit_props'], 'org.freenas:description') > -1) {
-            value = '';
+          if(
+            i == "compression" || 
+            i == "atime" || 
+            i == "dedup" || 
+            i == "readonly" || 
+            i == "snapdir" || 
+            i == "casesensitivity") {
+            value = value.toUpperCase();
           }
 
           fg.setValue(value);
@@ -259,19 +277,24 @@ export class DatasetFormComponent implements OnInit{
       }
 
       if (!this.isNew) {
-        this.rest.get(this.parent, {}).subscribe((res) => {
-          this.parent_data = res.data;
-          this.afterInit();
-        });
-      } else {
-        this.afterInit();
+        this.setDisabled('name', true);
+
+        if(this.parent) {
+          this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
+            this.parent_data = res[0];
+          });
+        }
       }
     });
   }
 
-  editSubmit(body: any) { return this.rest.put(this.resourceName, body); }
+  editSubmit(body: any) {
+    return this.ws.call('pool.dataset.update', [this.resourceName, body]);
+  }
 
-  addSubmit(body: any) { return this.rest.post(this.resourceName, body); }
+  addSubmit(body: any) {
+    return this.ws.call('pool.dataset.create', [body]);
+  }
 
   clearErrors() {
     for (let f = 0; f < this.fieldConfig.length; f++) {
@@ -316,8 +339,27 @@ export class DatasetFormComponent implements OnInit{
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
 
+    if(this.isNew) {
+      value['name'] = this.resourceName + '/' + value['name'];
+    }    
+    if(value['quota'] == 0) {
+      value['quota'] = null;
+    }
+    if(value['refquota'] == 0) {
+      value['refquota'] = null;
+    }
+    if(value['reservation'] == 0) {
+      value['reservation'] = null;
+    }
+    if(value['refreservation'] == 0) {
+      value['refreservation'] = null;
+    }
+    if(value['copies'] > 0) {
+      value['copies'] = value['copies'].toString();
+    }
+    
     this.loader.open();
-    this.busy = this.submitFunction({body : JSON.stringify(value)})
+    this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -328,8 +370,9 @@ export class DatasetFormComponent implements OnInit{
                             this.success = true;
                           }
                         },
-                        (res) => { 
+                        (res) => {
                           this.loader.close();
-                          new EntityUtils().handleError(this, res); });
+                          this.error = res.reason;
+                        });
   }
 }

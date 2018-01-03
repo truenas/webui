@@ -9,6 +9,6 @@ export interface FieldConfig {
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
   initialCount?: number, readonly?: boolean, initial?: string,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
-  customEventActionLabel?: string, explorerType?: string,
+  customEventActionLabel?: string, explorerType?: string, required?: boolean,
   customEventMethod?(data:any)
 }
