@@ -56,7 +56,14 @@ export class CloudCredentialsListComponent {
           new Array('').concat(["system", "cloudcredentials", "b2"]));
       }
     });
-    
+    actions.push({
+      label: "AZURE",
+      icon: "card_membership",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "cloudcredentials", "azure"]));
+      }
+    });
 
     return actions;
   }
@@ -86,11 +93,11 @@ export class CloudCredentialsListComponent {
         }
       });
     }
-    if(row.provider == "BACKBLAZE"){
+    if(row.provider == "AZURE"){
       actions.push({
         label : "Edit",
         onClick : (row) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "azure",row.id]));
         }
       });
     }
