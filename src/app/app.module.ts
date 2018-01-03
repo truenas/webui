@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Injector } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -30,6 +30,10 @@ import { AppLoaderModule } from './services/app-loader/app-loader.module';
 import { NotificationsService } from 'app/services/notifications.service';
 import { MarkdownModule } from 'angular2-markdown';
 
+// Core Application Services and Service Injector
+import { CoreServices} from 'app/core/services/coreservices.module';
+import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
+
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
 }
@@ -51,6 +55,7 @@ export function createTranslateLoader(http: Http) {
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
+    CoreServices.forRoot()
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
@@ -75,4 +80,13 @@ export function createTranslateLoader(http: Http) {
     DownloadKeyModalDialog
   ],
 })
-export class AppModule { }
+export class AppModule { 
+  /**
+   *      * Allows for retrieving singletons using `AppModule.injector.get(MyService)`
+   *           * This is good to prevent injecting the service as constructor parameter.
+   *                */
+   static injector: Injector;
+   constructor(injector: Injector) {
+     setCoreServiceInjector(injector);
+   }
+}

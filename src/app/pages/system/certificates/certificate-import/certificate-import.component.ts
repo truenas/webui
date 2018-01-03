@@ -35,21 +35,27 @@ export class CertificateImportComponent {
       type: 'input',
       name: 'cert_name',
       placeholder: 'Identifier',
+      tooltip: 'Internal identifier of the certificate.\
+ Only alphanumeric, underscore (_),\
+ and dash (-) characters are allowed.',
     },
     {
       type: 'textarea',
       name: 'cert_certificate',
       placeholder: 'Certificate',
+      tooltip: 'Paste the contents of the certificate here.',
     },
     {
       type: 'textarea',
       name: 'cert_privatekey',
       placeholder: 'Private Key',
+      tooltip: 'Paste the contents of the private key here.',
     },
     {
       type: 'input',
       name: 'Passphrase',
       placeholder: 'Passphrase',
+      tooltip: 'Passphrase for encrypted private keys.',
       inputType: 'password',
       validation: [matchOtherValidator('Passphrase2')]
     },
@@ -58,6 +64,7 @@ export class CertificateImportComponent {
       name: 'Passphrase2',
       inputType: 'password',
       placeholder: 'Confirm Passphrase',
+      tooltip: 'Re-enter the <i>Passphrase</i> to confirm.',
     },
   ];
 

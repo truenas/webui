@@ -14,6 +14,7 @@ import { ConfigSaveComponent } from './general/config-save/config-save.component
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
+import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
@@ -30,6 +31,7 @@ import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
+import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
@@ -60,6 +62,7 @@ import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservic
 import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
 import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
+import { EmailComponent } from './email';
 
 @NgModule({
   imports: [
@@ -73,6 +76,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     ConfigResetComponent,
     ConfigSaveComponent,
     AdvancedComponent,
+    DatasetComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,
@@ -105,6 +109,7 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsAmazonComponent,
+    CloudCredentialsAzureComponent,
     CloudCredentialsB2Component,
     CloudCredentialsListComponent,
     CloudCredentialsDeleteComponent,
@@ -118,7 +123,8 @@ import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/
     CertificateImportComponent,
     CertificateInternalComponent,
     CertificateCSRComponent,
-    SupportComponent
+    SupportComponent,
+    EmailComponent,
   ],
   providers: []
 })

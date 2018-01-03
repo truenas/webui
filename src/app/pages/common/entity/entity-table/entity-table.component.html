@@ -1,5 +1,5 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
-	<div class="mat-toolbar mat-card-toolbar">
+	<div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
 		<div class="mat-card-title-text">{{ title }}</div>
 		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
 	</div>
@@ -53,7 +53,7 @@
 					   [selected]='selected'
 					   (select)='onSelect($event)'>
 
-			<ngx-datatable-column *ngIf="conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+			<ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
 				<ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
 					<div class="headerCheckboxCell">
 						<md-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></md-checkbox>

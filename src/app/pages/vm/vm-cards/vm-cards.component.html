@@ -4,125 +4,140 @@
   views. 
 -->
 <md-card class="card-filter">
-	<md-card-header>
-	<!--
-		This is the filter bar which shares an md-card 
-		with the table view
-	-->
-		<div class="filter-field">
-			<md-icon role="img">search</md-icon>
-			<div class="card-filter-field">
-				<md-input-container floatPlaceholder="Filter VMs">
-					<input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
-				</md-input-container>
-			</div>
-		</div>
-		<div class="view-controls" >
-			<md-button-toggle-group #viewMode="mdButtonToggleGroup" >
-				<md-button-toggle value="cards">Cards</md-button-toggle>
-				<md-button-toggle value="slim" >Slim</md-button-toggle>
-				<md-button-toggle value="table" >Table</md-button-toggle>
-			</md-button-toggle-group>
-			<button md-mini-fab class="add-vm" (click)="addVM()">
-				<md-icon>add</md-icon>
-			</button>
-		</div>
-	</md-card-header>
+  <md-card-header>
+    <!--
+      This is the filter bar which shares an md-card 
+      with the table view
+    -->
+    <div class="filter-field">
+      <md-icon role="img">search</md-icon>
+      <div class="card-filter-field">
+        <md-input-container floatPlaceholder="Filter VMs">
+          <input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+        </md-input-container>
+      </div>
+    </div>
+    <div class="view-controls" >
+      <md-button-toggle-group #viewMode="mdButtonToggleGroup" >
+        <md-button-toggle value="cards">Cards</md-button-toggle>
+        <md-button-toggle value="slim" >Slim</md-button-toggle>
+        <md-button-toggle value="table" >Table</md-button-toggle>
+      </md-button-toggle-group>
+      <button md-mini-fab class="add-vm" (click)="addVM()">
+        <md-icon>add</md-icon>
+      </button>
+    </div>
+  </md-card-header>
 
-	<md-card-content>
-		<!-- Inject table view here -->
-		<div *ngIf="viewMode.value == 'table'"
-			fxLayout="row"
-	 		fxLayoutWrap
-			fxLayoutAlign="space-between start"
-			fxLayoutGap="5%"
-			>
-			<vm-table [data]="cards" fxFlex="60" fxLayout="column"></vm-table>
+  <md-card-content>
+    <!-- Inject table view here -->
+    <div *ngIf="viewMode.value == 'table'"
+                          fxLayout="row"
+                          fxLayoutWrap
+                          fxLayoutAlign="space-between start"
+                          fxLayoutGap="5%">
 
-			<!-- Summary and forms for table view go here -->
-			<div class="dynamic-content" fxFlex="35"><h2>Charts Go Here!</h2></div>
-		</div>
-	</md-card-content>
+      <!-- Summary and forms for table view go here -->
+      <div class="dynamic-content" fxFlex="100">
+        <!-- Template for back face of card -->
+        <vm-card-edit [ngClass]="vm-card-edit" 
+                                   *ngIf="focusedVM && cards[focusedVM].template == 'edit' && cards[focusedVM].isFlipped" 
+                                   [isNew]="cards[focusedVM].isNew"
+                                   [machineId]="cards[focusedVM].id"  
+                                   (cancel)="cancel(focusedVM)"
+                                   (saved)="toggleForm($event.flipState,cards[focusedVM],'none');refreshVM(focusedVM,$event.id)">
+        </vm-card-edit>
+      </div>
+
+      <!-- Table data -->
+      <vm-table [data]="cards" fxFlex="100" fxLayout="column"
+                                            (edit)="focusVM($event);toggleForm(true,cards[focusedVM],'edit');"
+                                            (delete)="deleteVM($event)"
+                                            (power)="toggleVmState($event)"
+                                            ></vm-table>
+
+    </div>
+  </md-card-content>
 </md-card>
 
 
 
 <div class="entity-cards-container" *ngIf="viewMode.value == 'cards' || viewMode.value == 'slim'">
-	<div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" 
-		[ngClass]="{'slim':viewMode.value == 'slim'}">
-		<!-- 
-		This is where both the regular and slim cards are created. The difference between
-		slim and regular card views are generated purely via css there is no
-		ng-template for slim cards.
+  <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" 
+                                               [ngClass]="{'slim':viewMode.value == 'slim'}">
+    <!-- 
+      This is where both the regular and slim cards are created. The difference between
+      slim and regular card views are generated purely via css there is no
+      ng-template for slim cards.
 
-		Create ng-templates that you inject into the entity-card component. 
-		Keep in mind, entity-card is injecting your ng-template into an <md-card> 
-		so you can use any of the usual md-card internal selectors like <md-header>, 
-		<md-content> etc.
-		-->
-		<ng-template #cardfront let-name="name">
-			<!-- Template for front face of card -->
-			<div *ngIf="viewMode.value == 'cards'" class="vm-bg"></div>
-			<div class="side-content section">
+      Create ng-templates that you inject into the entity-card component. 
+      Keep in mind, entity-card is injecting your ng-template into an <md-card> 
+      so you can use any of the usual md-card internal selectors like <md-header>, 
+      <md-content> etc.
+    -->
+    <ng-template #cardfront let-name="name">
+      <!-- Template for front face of card -->
+      <div *ngIf="viewMode.value == 'cards'" class="vm-bg"></div>
+      <div class="side-content section">
 
-					<button md-fab
-						*ngIf="viewMode.value == 'slim'"
-						class="vm-power-btn"
-				 		[ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
-				 		(click)="toggleVmState(i)"
-				 		mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
-						<md-icon>power_settings_new</md-icon>
-					</button>
-
-
-				<div class="side-content-header">
-					<button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
-					<button md-fab 
-						*ngIf="viewMode.value == 'cards'"
-						class="vm-power-btn"
-				 		[ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
-				 		(click)="toggleVmState(i)"
-				 		mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
-						<md-icon>power_settings_new</md-icon>
-					</button>
-
-					<h3>{{ cards[i].name }}</h3>
-					<md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
-				</div>
-
-				<div class="stats-info">
-					<table><tbody>
-							<tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
-							<tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
-							<tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
-							<tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
-							<tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
-						</tbody></table>
-				</div>
+        <button md-fab
+           *ngIf="viewMode.value == 'slim'"
+           class="vm-power-btn"
+           [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
+           (click)="toggleVmState(i)"
+           mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
+          <md-icon>power_settings_new</md-icon>
+        </button>
 
 
-				<div class="vm-controls">
-					<button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
-					<button md-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
-					<button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
-				</div>
-			</div>
-		</ng-template>
+        <div class="side-content-header">
+          <button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
+          <button md-fab 
+                  *ngIf="viewMode.value == 'cards'"
+                  class="vm-power-btn"
+                  [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
+                  (click)="toggleVmState(i)"
+                  mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
+            <md-icon>power_settings_new</md-icon>
+          </button>
 
-		<ng-template #cardback let-name="name" >
-			<!-- Template for back face of card -->
-			<vm-card-edit 
-												 *ngIf="cards[i].template == 'edit'" 
-												 [isNew]="cards[i].isNew"
-												 [machineId]="cards[i].id"  
-												 (cancel)="cancel(i)"
-												 (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"
-												 ></vm-card-edit>
-		</ng-template>
+          <h3>{{ cards[i].name }}</h3>
+          <md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
+        </div>
 
-			<!-- Create your cards here -->
-			<entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+        <div class="stats-info">
+          <table><tbody>
+              <tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
+              <tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
+              <tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
+              <tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
+              <tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
+            </tbody></table>
+        </div>
 
-	</div>
+
+        <div class="vm-controls">
+          <button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
+          <button md-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
+          <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #cardback let-name="name" >
+      <!-- Template for back face of card -->
+      <vm-card-edit 
+        *ngIf="cards[i].template == 'edit'" 
+        [isNew]="cards[i].isNew"
+        [machineId]="cards[i].id"  
+        (cancel)="cancel(i)"
+        (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)">
+      </vm-card-edit>
+    </ng-template>
+
+    <!-- Create your cards here -->
+    <entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+
+  </div>
 
 </div>

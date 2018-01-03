@@ -1,8 +1,8 @@
-<div class="flip" style="width:inherit; height:inherit;">
+<div id="entity-card.component" class="flip" style="width:inherit; height:inherit;">
 	<div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
 
 		<md-card class="card front face animated slideInUp">
-			<ng-template [ngTemplateOutlet]="front" [ngOutletContext]="{name: 'Child'}"></ng-template>
+			<ng-template [ngTemplateOutlet]="front" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
 			<md-card-footer *ngIf="actions" class="card-footer">
 				<div class="">
 					<app-entity-card-actions [entity]="this"></app-entity-card-actions>
@@ -12,7 +12,7 @@
 
 		<md-card class="card back face" style="overflow-y:auto;">
 
-			<ng-template *ngIf="lazyLoaded" [ngTemplateOutlet]="back" [ngOutletContext]="{name: 'Child'}"></ng-template>
+			<ng-template *ngIf="lazyLoaded" [ngTemplateOutlet]="back" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
 		</md-card>
 
 	</div>

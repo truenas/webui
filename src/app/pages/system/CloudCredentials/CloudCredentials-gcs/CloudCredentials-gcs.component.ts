@@ -56,6 +56,7 @@ export class CloudCredentialsGCSComponent {
       type : 'readfile',
       name : 'attributes',
       placeholder : 'JSON Service Account Key',
+      validation : [ Validators.required ]
     },
   ];
 

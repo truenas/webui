@@ -53,6 +53,7 @@ export class VMwareSnapshotFormComponent {
       type: 'explorer', 
       name: 'filesystem', 
       placeholder: 'ZFS Filesystem',
+      explorerType: "zvol",
       initial: '/mnt'
     },
     {

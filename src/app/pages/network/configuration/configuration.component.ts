@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -22,7 +22,7 @@ import {TOOLTIPS} from '../../common/tooltips';
   `,
   providers : [ TooltipsService ],
 })
-export class ConfigurationComponent implements OnInit {
+export class ConfigurationComponent {
 
   protected resource_name: string = 'network/globalconfiguration/';
   public fieldConfig: FieldConfig[] = [
@@ -103,16 +103,6 @@ export class ConfigurationComponent implements OnInit {
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected tooltipsService: TooltipsService) {}
-
-  protected gc_netwait_ip: any;
-
-  ngOnInit() {
-    this.tooltipsService.getTooltip('gc_netwait_ip').then((res) => {
-      let tooltip = res.body;
-      this.gc_netwait_ip = _.find(this.fieldConfig, {'name' : 'gc_netwait_ip'});
-      this.gc_netwait_ip.tooltip = tooltip;
-    });
-  }
 
   afterInit(entityEdit: any) { this.entityEdit = entityEdit; }
 }
