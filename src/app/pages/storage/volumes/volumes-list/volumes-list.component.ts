@@ -31,8 +31,21 @@ export interface ZfsPoolData {
 
 }
 
+export interface VolumeData extends ZfsPoolData {
+
+    path: string;
+    type: string;
+    compression: string;
+    readonly: string;
+    dedup: string;
+}
+
+
+
+
 
 export class VolumesListTableConfig {
+  protected volumeParentChildrenMap = new Map<string, VolumeData[]>();
   protected hideTopActions = true;
   protected flattenedVolData: any;
   protected resource_name = 'storage/volume';
@@ -219,32 +232,51 @@ export class VolumesListTableConfig {
 
 
   resourceTransformIncomingRestData(data: any): any {
-    data = new EntityUtils().flattenData(data);
-    const returnData: any[] = [];
+    this.volumeParentChildrenMap.clear();
 
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].status !== '-') {
-        data[i].type = 'zpool'
-        data[i].path = data[i].name
+    const dataIncomming: VolumeData[] = new EntityUtils().flattenData(data);
+    const returnData: VolumeData[] = [];
+
+    for (let i = 0; i < dataIncomming.length; i++) {
+      if (dataIncomming[i].status !== '-') {
+        dataIncomming[i].type = 'zpool'
+        dataIncomming[i].path = dataIncomming[i].name
       }
-      if (data[i].type === 'dataset' && typeof (this.dataset_data) !== "undefined" && typeof (this.dataset_data.data) !== "undefined") {
+      if (dataIncomming[i].type === 'dataset' && typeof (this.dataset_data) !== "undefined" && typeof (this.dataset_data.data) !== "undefined") {
         for (let k = 0; k < this.dataset_data.data.length; k++) {
           if (this.dataset_data.data[k].name === data[i].path) {
-            data[i].compression = this.dataset_data.data[k].compression;
-            data[i].readonly = this.dataset_data.data[k].readonly;
-            data[i].dedup = this.dataset_data.data[k].dedup;
+            dataIncomming[i].compression = this.dataset_data.data[k].compression;
+            dataIncomming[i].readonly = this.dataset_data.data[k].readonly;
+            dataIncomming[i].dedup = this.dataset_data.data[k].dedup;
           }
 
         }
       }
 
-      if( data[i].type !== 'zpool') {
-        returnData.push(data[i]);
+      if( dataIncomming[i].type !== 'zpool') {
+        // Populate this.volumeTreeMap 
+        const incommingPath: string = dataIncomming[i].path;
+        if( typeof(incommingPath) !== 'undefined' && 
+                            incommingPath.length > 0 && 
+                                  incommingPath.indexOf("/") !== - 1 ) {
+
+          const parentIncommingPath = incommingPath.slice(0,  incommingPath.lastIndexOf("/"));
+          if( ! this.volumeParentChildrenMap.has(parentIncommingPath) ) {
+            this.volumeParentChildrenMap.set(parentIncommingPath, []);
+          }
+  
+          const parentVolumesData = this.volumeParentChildrenMap.get(parentIncommingPath);
+          parentVolumesData.push(dataIncomming[i]);
+        }
+
+        returnData.push(dataIncomming[i]);
       }
 
 
     }
 
+
+    console.log("VolumesListComponent.resourceTransformIncomingRestData", returnData, this.volumeParentChildrenMap);
     return returnData;
   };
 }
