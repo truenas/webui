@@ -76,21 +76,23 @@
     <!-- Notes -->
     <div *ngFor="let card of cards; let i=index" class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
       <ng-template #cardfront let-name="name">
-        <md-card-title>
-          Note
-        </md-card-title>
-        <md-card-content>note content here</md-card-content>
+        <md-card-title>{{card.title}}</md-card-title>
+        <md-card-content>{{card.content}}</md-card-content>
         <md-card-actions>
           <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+          <button md-raised-button color="primary" (click)="deleteNote(i)">Delete</button>
         </md-card-actions>
       </ng-template>
 
       <ng-template #cardback let-name="backname">
-        <span *ngIf="cards[i].template == 'edit'">Hello back</span>
-        <md-card-content>edit content here</md-card-content>
-        <md-card-actions>
-          <button md-raised-button color="primary" (click)="toggleForm($event.flipState,cards[i],'none');">Cancel</button>
-        </md-card-actions>
+        <dashboard-note-edit class="dashboard-note-cardback"
+                         *ngIf="cards[i].template == 'edit'"
+                         [isNew]="cards[i].isNew"
+                         [machineId]="cards[i].id"
+                         [userConf]="userConf"
+                         (cancel)="cancel(i)"
+                         (saved)="toggleForm($event.flipState,cards[i],'none');refreshNote(i)"
+                         ></dashboard-note-edit>
       </ng-template>
 
       <entity-card [ngStyle]="noteStyle" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="true"></entity-card>
