@@ -47,7 +47,7 @@ export class AlertServiceAddHipchatComponent {
       type: 'input',
       name: 'base_url',
       placeholder: 'Url',
-      tooltip: 'Enter the HipChat base url.',
+      tooltip: 'Enter the HipChat base URL.',
       value: 'https://api.hipchat.com/v2/'
     },{
       type: 'input',
