@@ -8,6 +8,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { MdDialog, MdDialogRef, MdSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 import { environment } from '../../../../environments/environment';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-update',
@@ -33,12 +34,13 @@ export class UpdateComponent implements OnInit {
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MdSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog) {
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog, protected loader: AppLoaderService) {
     router.events.subscribe((res) => {
       if (res instanceof NavigationStart) {
         if (res.url == '/sessions/signin' && !this.ws.connected) {
           this.dialogRef.close();
-          router.navigate(['/reboot']);
+          this.ws.prepare_shutdown();
+          router.navigate(['/others/reboot']);
         }
       }
     })
@@ -69,6 +71,7 @@ export class UpdateComponent implements OnInit {
 
   check() {
     this.error = null;
+    this.loader.open();
     this.busy =
       this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
@@ -119,7 +122,10 @@ export class UpdateComponent implements OnInit {
             }
           }
         },
-        (err) => { this.error = err.error; });
+        (err) => { this.error = err.error; },
+        () => {
+          this.loader.close();
+        });
   }
 
   update() {
