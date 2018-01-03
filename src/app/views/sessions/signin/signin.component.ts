@@ -73,6 +73,7 @@ export class SigninComponent implements OnInit {
   }
 
   errorLogin() {
+    this.submitButton.disabled = false;
     this.failed = true;
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
