@@ -30,41 +30,53 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_hostname',
       placeholder : 'Hostname',
+      tooltip : 'System host name.',
     },
     {
       type : 'input',
       name : 'gc_domain',
       placeholder : 'Domain',
+      tooltip : 'System domain name.',
     },
     {
       type : 'input',
       name : 'gc_ipv4gateway',
       placeholder : 'IPv4 Default Gateway',
+      tooltip : 'Adding an IPv4 address here overrides a default\
+ gateway provided by DHCP.',
     },
     {
       type : 'input',
       name : 'gc_ipv6gateway',
       placeholder : 'IPv6 Default Gateway',
+      tooltip : 'Adding an IPv6 address here overrides a default\
+ gateway provided by DHCP.',
     },
     {
       type : 'input',
       name : 'gc_nameserver1',
       placeholder : 'Nameserver 1',
+      tooltip : 'The primary DNS server, typically in Windows domain.',
     },
     {
       type : 'input',
       name : 'gc_nameserver2',
       placeholder : 'Nameserver 2',
+      tooltip : 'Secondary DNS server.',
     },
     {
       type : 'input',
       name : 'gc_nameserver3',
       placeholder : 'Nameserver 3',
+      tooltip : 'Tertiary DNS server',
     },
     {
       type : 'input',
       name : 'gc_httpproxy',
       placeholder : 'HTTP Proxy',
+      tooltip : 'Enter the proxy information for the network in the\
+ format <i>http://my.proxy.server:3128</i> or\
+ <i>http://user:password@my.proxy.server:3128</i>',
     },
     {
       type : 'checkbox',
