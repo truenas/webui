@@ -64,9 +64,13 @@ export class ImportDiskComponent {
   
   afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
-    this.ws.call('disk.get_unused').subscribe((res)=>{
+    this.ws.call('disk.get_unused', [true]).subscribe((res)=>{
       res.forEach((item) => {
-        this.volume.options.push({label : item.name, value : item.name});
+        let partitions = item['partitions'];
+        for (let i = 0; i < partitions.length; i++) {
+          let name = partitions[i].path.replace(/^\/dev\//, '');
+          this.volume.options.push({label : name, value : partitions[i].path});
+        }
       });
     });
   }
@@ -75,7 +79,7 @@ export class ImportDiskComponent {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Disk" }});
     this.dialogRef.componentInstance.progressNumberType = "nopercent";
     this.dialogRef.componentInstance.setDiscription("Importing Disk...");
-    this.dialogRef.componentInstance.setCall('pool.import_disk', ["/dev/" + payload.volume, payload.fs_type, payload.dst_path]);
+    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
