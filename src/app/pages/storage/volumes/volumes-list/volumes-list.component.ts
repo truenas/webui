@@ -10,6 +10,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { MdDialog } from '@angular/material';
 
 
 export interface ZfsPoolData {
@@ -31,21 +33,8 @@ export interface ZfsPoolData {
 
 }
 
-export interface VolumeData extends ZfsPoolData {
-
-    path: string;
-    type: string;
-    compression: string;
-    readonly: string;
-    dedup: string;
-}
-
-
-
-
 
 export class VolumesListTableConfig {
-  protected volumeParentChildrenMap = new Map<string, VolumeData[]>();
   protected hideTopActions = true;
   protected flattenedVolData: any;
   protected resource_name = 'storage/volume';
@@ -56,7 +45,8 @@ export class VolumesListTableConfig {
   constructor(
     private _router: Router,
     private _classId: string,
-    private title: string) {
+    private title: string,
+    public mdDialog: MdDialog ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -157,7 +147,22 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row.id]));
         }
       });
+
+      if( row.vol_encrypt > 0 ) {
+        actions.push({
+          label: "Download Encrypt Key",
+          onClick: (row) => {
+            let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+
+            dialogRef.componentInstance.volumeId = row.id;
+            dialogRef.afterClosed().subscribe(result => {
+              this._router.navigate(['/', 'storage', 'volumes']);
+            });
+          }
+        });
+      }
     }
+    
     if (row.type == "dataset") {
       actions.push({
         label: "Add Dataset",
@@ -232,51 +237,32 @@ export class VolumesListTableConfig {
 
 
   resourceTransformIncomingRestData(data: any): any {
-    this.volumeParentChildrenMap.clear();
+    data = new EntityUtils().flattenData(data);
+    const returnData: any[] = [];
 
-    const dataIncomming: VolumeData[] = new EntityUtils().flattenData(data);
-    const returnData: VolumeData[] = [];
-
-    for (let i = 0; i < dataIncomming.length; i++) {
-      if (dataIncomming[i].status !== '-') {
-        dataIncomming[i].type = 'zpool'
-        dataIncomming[i].path = dataIncomming[i].name
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].status !== '-') {
+        data[i].type = 'zpool'
+        data[i].path = data[i].name
       }
-      if (dataIncomming[i].type === 'dataset' && typeof (this.dataset_data) !== "undefined" && typeof (this.dataset_data.data) !== "undefined") {
+      if (data[i].type === 'dataset' && typeof (this.dataset_data) !== "undefined" && typeof (this.dataset_data.data) !== "undefined") {
         for (let k = 0; k < this.dataset_data.data.length; k++) {
           if (this.dataset_data.data[k].name === data[i].path) {
-            dataIncomming[i].compression = this.dataset_data.data[k].compression;
-            dataIncomming[i].readonly = this.dataset_data.data[k].readonly;
-            dataIncomming[i].dedup = this.dataset_data.data[k].dedup;
+            data[i].compression = this.dataset_data.data[k].compression;
+            data[i].readonly = this.dataset_data.data[k].readonly;
+            data[i].dedup = this.dataset_data.data[k].dedup;
           }
 
         }
       }
 
-      if( dataIncomming[i].type !== 'zpool') {
-        // Populate this.volumeTreeMap 
-        const incommingPath: string = dataIncomming[i].path;
-        if( typeof(incommingPath) !== 'undefined' && 
-                            incommingPath.length > 0 && 
-                                  incommingPath.indexOf("/") !== - 1 ) {
-
-          const parentIncommingPath = incommingPath.slice(0,  incommingPath.lastIndexOf("/"));
-          if( ! this.volumeParentChildrenMap.has(parentIncommingPath) ) {
-            this.volumeParentChildrenMap.set(parentIncommingPath, []);
-          }
-  
-          const parentVolumesData = this.volumeParentChildrenMap.get(parentIncommingPath);
-          parentVolumesData.push(dataIncomming[i]);
-        }
-
-        returnData.push(dataIncomming[i]);
+      if( data[i].type !== 'zpool') {
+        returnData.push(data[i]);
       }
 
 
     }
 
-
-    console.log("VolumesListComponent.resourceTransformIncomingRestData", returnData, this.volumeParentChildrenMap);
     return returnData;
   };
 }
@@ -290,11 +276,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this.router, "", "Volumes");
+  conf = new VolumesListTableConfig(this.router, "", "Volumes", this.mdDialog);
   expanded = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
+    protected mdDialog: MdDialog ) {
     super(rest, router, ws, _eRef, dialog, loader);
 
   }
@@ -302,7 +289,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngOnInit(): void {
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog);
         volume.type = 'zpool';
         this.zfsPoolRows.push(volume);
       });
