@@ -23,30 +23,35 @@ export const routes: Routes = [
       path: 'edit/:pk',
       component: JailEditComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' },
+    }, {
+      path: 'storage/:pk',
+      component: StorageListComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' },
     },
-    {
-      path: 'storage',
-      data: { title: 'Storage', breadcrumb: 'Storage'},
-      children: [{
-        path: '',
-        component: StorageListComponent,
-        data: { title: 'Storage', breadcrumb: 'Storage'},
-      },{
-        path: 'add',
-        component: StorageFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      },
-      {
-        path: 'add/:id',
-        component: StorageFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      },
-      {
-        path: 'edit/:pk',
-        component: StorageFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
-      }]
-    },
+    // {
+    //   path: 'storage',
+    //   data: { title: 'Storage', breadcrumb: 'Storage'},
+    //   children: [{
+    //     path: '',
+    //     component: StorageListComponent,
+    //     data: { title: 'Storage', breadcrumb: 'Storage'},
+    //   },{
+    //     path: 'add',
+    //     component: StorageFormComponent,
+    //     data: { title: 'Add', breadcrumb: 'Add' },
+    //   },
+    //   {
+    //     path: 'add/:id',
+    //     component: StorageFormComponent,
+    //     data: { title: 'Add', breadcrumb: 'Add' },
+    //   },
+    //   {
+    //     path: 'edit/:pk',
+    //     component: StorageFormComponent,
+    //     data: { title: 'Edit', breadcrumb: 'Edit' },
+    //   }]
+    // },
+
     // {
     //   path: 'configuration',
     //   component: JailsConfigurationComponent,
