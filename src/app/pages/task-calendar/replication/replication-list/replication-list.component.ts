@@ -99,7 +99,7 @@ export class ReplicationListComponent {
 
   getReplicationToken(){
     this.ws.call('auth.generate_token').subscribe((res)=> {
-      this.dialog.Info('Replication Keys',res);
+      this.dialog.Info('Replication Auth Token',res);
     });
   }
 
