@@ -18,7 +18,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 export class StorageFormComponent {
 
   protected addCall = 'jail.fstab';
-  protected route_success: string[] = ['jails'];
+  protected route_success: string[] = ['jails', 'storage'];
   protected isEntity: boolean = true;
 
   public fieldConfig: FieldConfig[] = [{
@@ -54,7 +54,8 @@ export class StorageFormComponent {
   preInit(entityForm: any) {
     this.jail = _.find(this.fieldConfig, { 'name': 'jail' });
     this.aroute.params.subscribe(params => {
-      this.jailID = params['id'];
+      this.route_success.push(params['jail']);
+      this.jailID = params['jail'];
       if(this.jailID) {
         this.jail.value = this.jailID;
       }
@@ -87,11 +88,11 @@ export class StorageFormComponent {
 
     let jail = this.jailID;
 
-    value['action'] = "add";
+    value['action'] = "ADD";
     value['fstype'] = "nullfs";
     value['fsoptions'] = "ro";
     value['dump'] = "0";
-    value['_pass'] = "0";
+    value['pass'] = "0";
 
     this.loader.open();
     this.ws.call('jail.fstab', [jail, value]).subscribe(
