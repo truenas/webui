@@ -1,0 +1,23 @@
+<div id="disks-list.component_html" class="material mat-card mat-card-table">
+        <div class="mat-toolbar mat-card-toolbar">
+                <div class="mat-card-title-text">{{title}}</div>
+        </div>
+        <div>
+                <br/>
+        </div>
+        <div>
+                <md-tab-group (selectChange)="tabSelectChangeHandler($event)">
+                        <md-tab label="ALL_DISKS">
+                                <div>
+                                        <entity-table [conf]="conf" [title]="conf.title"></entity-table>
+                                </div>
+                        </md-tab>
+                        <md-tab *ngFor="let row of zfsPoolRows" label="{{row.name}}">
+                                <div *ngIf="selectedKeyName === row.name">
+                                        <entity-table *ngIf="row.isReady" [conf]="row.disksListConfig"></entity-table>
+                                </div>
+                        </md-tab>
+                </md-tab-group>
+        </div>
+
+</div>

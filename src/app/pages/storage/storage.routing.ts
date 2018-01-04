@@ -59,7 +59,11 @@ export const routes: Routes = [
           data: {title: 'Delete Zvol', breadcrumb:'Delete Zvol' }},
         {
           path : 'manager', component : ManagerComponent,
-          data: {title: 'Volume Manager', breadcrumb:'Volume Manager' }},
+          data: {title: 'Create Pool', breadcrumb:'Create Pool' }},
+        {
+          path : 'manager/:pk', component : ManagerComponent,
+          data: {title: 'Extend Pool', breadcrumb: 'Extend Pool' }
+        },
         {
           path : 'import_list', component: VolumeImportListComponent,
           data: {title: 'Import Volume', breadcrumb:'Import Volume' }},

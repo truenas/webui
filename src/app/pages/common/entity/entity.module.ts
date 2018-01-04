@@ -3,7 +3,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort } from '@angular/material';
+import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort, MdDatepickerModule, MdNativeDateModule } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
@@ -24,6 +24,7 @@ import { FormSelectComponent } from './entity-form/components/form-select/form-s
 import { FormRadioComponent } from './entity-form/components/form-radio/form-radio.component';
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
+import { FormDatepickerComponent } from './entity-form/components/form-datepicker/form-datepicker.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -45,18 +46,16 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
-import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/entity-group-table.component';
 
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, MdSortModule, FlexLayoutModule
+    Ng2DropdownModule, NgUploaderModule, MdSortModule, FlexLayoutModule, MdDatepickerModule, MdNativeDateModule
   ],
   declarations: [
     EntityDeleteComponent,
     EntityTableComponent,
-    EntityGroupTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableActionsComponent,
@@ -72,6 +71,7 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
     FormCheckboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
+    FormDatepickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
     TooltipComponent,
@@ -92,9 +92,10 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityTableComponent,
-    EntityGroupTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
+    EntityTableAddActionsComponent,
+    EntityTableActionsComponent,    
     DynamicFieldDirective,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
@@ -107,6 +108,7 @@ import { EntityGroupTableComponent } from 'app/pages/common/entity/entity-table/
     FormCheckboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
+    FormDatepickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,
     FormRadioComponent,

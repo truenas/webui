@@ -26,6 +26,7 @@ import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
 import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
+import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
@@ -55,6 +56,7 @@ import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservic
 import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
 import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
+import {EmailComponent} from './email/';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -162,8 +164,19 @@ export const routes: Routes = [
           component: NTPServerAddComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         },
+        {
+          path: 'edit/:pk',
+          component: NTPServerEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }
       ]
-    }, {
+    }, 
+    {
+      path : 'email', 
+      component : EmailComponent,
+      data: { title: 'email', breadcrumb: 'email' },
+    },
+    {
       path: 'alertservice',
       data: { title: 'AlertService', breadcrumb: 'AlertService' },
       children: [{
@@ -263,6 +276,16 @@ export const routes: Routes = [
           path: 'amazon/:pk',
           component: CloudCredentialsAmazonComponent,
           data: { title: 'amazon', breadcrumb: 'amazon' },
+        },
+        {
+          path: 'azure',
+          component: CloudCredentialsAzureComponent,
+          data: { title: 'azure', breadcrumb: 'azure' },
+        },
+        {
+          path: 'azure/:pk',
+          component: CloudCredentialsAzureComponent,
+          data: { title: 'azure', breadcrumb: 'azure' },
         },
         {
           path: 'b2',

@@ -47,6 +47,7 @@ export class UserFormComponent {
       name : 'bsdusr_creategroup',
       placeholder : 'Create a new Primary Group for the user.',
       value : true,
+      isHidden: false
     },
 
     {
@@ -130,7 +131,7 @@ export class UserFormComponent {
     },
 
     {
-      type : 'input',
+      type : 'textarea',
       name : 'bsdusr_sshpubkey',
       placeholder : 'SSH Public Key'
     },
@@ -163,6 +164,9 @@ export class UserFormComponent {
   }
 
   afterInit(entityForm: any) {
+    if (!entityForm.isNew) {
+      _.find(this.fieldConfig, {name : "bsdusr_creategroup"}).isHidden = true;
+    }
     /* list groups */
     this.rest.get('account/groups/', {}).subscribe((res) => {
       this.bsdusr_group = _.find(this.fieldConfig, {name : "bsdusr_group"});
@@ -206,7 +210,6 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('bsdusr_username', true);
-        entityForm.setDisabled('bsdusr_creategroup', true);
         if (entityForm.data.bsdusr_builtin === true) {
           entityForm.formGroup.controls['bsdusr_uid'].setValue(
               entityForm.data.bsdusr_uid);
