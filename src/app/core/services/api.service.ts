@@ -15,6 +15,13 @@ interface ApiCall {
 export class ApiService {
 
   private apiDefinitions = {
+    PoolDataRequest:{
+     protocol:"rest",
+     version:"1.0",
+     operation: "get",
+     namespace: "storage/volume/",
+     responseEvent: "PoolData"
+    },
     /*VmProfilesRequest:{
       protocol:"websocket",
       version:"1",
