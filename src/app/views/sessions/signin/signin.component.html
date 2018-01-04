@@ -3,6 +3,7 @@
     <md-progress-bar mode="determinate" class="session-progress"></md-progress-bar>
     <md-card>
       <md-card-content>
+        <div *ngIf="connected();else notconnected">
         <div class="text-center pb-1" *ngIf="logo_ready">
           <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.png" alt="freenas-log">
           <ng-template #isTruenas>
@@ -50,13 +51,17 @@
               class="pb-1">Remember this computer</md-checkbox>
           </div-->
 
-          <button md-raised-button class="mat-accent full-width mb-1" [disabled]="signinForm.invalid">Sign in</button>
+          <button md-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">Sign in</button>
           <!--div class="text-center">
             <a [routerLink]="['/sessions/forgot-password']" class="mat-primary text-center full-width">Forgot password</a>
             <span fxFlex></span>
             <a [routerLink]="['/sessions/signup']" class="mat-primary text-center full-width">Create a new account</a>
           </div-->
         </form>
+        </div>
+        <ng-template #notconnected>
+          System is not yet available, please wait
+        </ng-template>
         <div>
           <a md-button color="primary" href="/legacy/">Back to the Old UI</a>
         </div>
