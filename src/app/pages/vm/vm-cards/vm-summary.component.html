@@ -1,5 +1,6 @@
-<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxLayoutGap="1%">
-  <viewchart #cpu fxFlex="30"></viewchart>
-  <viewchart #zpool fxFlex="30"></viewchart>
-  <viewchart #net fxFlex="30"></viewchart>
+<div class="vm-summary" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-around start" fxLayoutGap="1%">
+  <h3 fxFlex="98">Virtual Machines Summary</h3>
+  <viewchartpie #cpu fxFlex="30" class="chart"></viewchartpie>
+  <viewchartdonut #zpool fxFlex="30" class="chart"></viewchartdonut>
+  <viewchartpie #net fxFlex="30" class="chart"></viewchartpie>
 </div>

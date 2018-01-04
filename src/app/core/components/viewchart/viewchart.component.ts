@@ -8,14 +8,18 @@ export interface ChartData {
   data: any[];
 }
 
+export const ViewChartMetadata = {
+  template: `<div id="{{chartId}}"></div>`
+}
+
 @Component({
   selector: 'viewchart',
-  templateUrl: './viewchart.component.html',
+  template: ViewChartMetadata.template,
+  //templateUrl: './viewchart.component.html',
   styleUrls: ['./viewchart.component.css']
 })
 export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
-  public chartType: string = 'pie';
   public chartColors: string[];
   public maxLabels: number;
   public units: string;
@@ -23,14 +27,9 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public height: number;
 
   protected chart: any;
+  protected chartType: string = 'pie';
   protected _data: any[];
   protected _chartId: string;
-  private validChartTypes: string[] = [
-    'pie',
-    'bar',
-    'donut',
-    'gauge'
-  ]
 
   constructor() { 
     super();

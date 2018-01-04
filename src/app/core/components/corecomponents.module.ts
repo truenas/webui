@@ -10,7 +10,9 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { Display,DisplayContainer } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ViewChartComponent } from './viewchart/viewchart.component';
+import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
+import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
+import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 
 /*
  *
@@ -35,7 +37,9 @@ import { ViewChartComponent } from './viewchart/viewchart.component';
     Display,
     DisplayContainer,
     ViewButtonComponent,
-    ViewChartComponent
+    ViewChartComponent,
+    ViewChartDonutComponent,
+    ViewChartPieComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -46,6 +50,8 @@ import { ViewChartComponent } from './viewchart/viewchart.component';
     PageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartDonutComponent,
+    ViewChartPieComponent,
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
@@ -55,6 +61,8 @@ import { ViewChartComponent } from './viewchart/viewchart.component';
     DisplayContainer,
     ViewComponent,
     ViewChartComponent,
+    ViewChartDonutComponent,
+    ViewChartPieComponent,
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
