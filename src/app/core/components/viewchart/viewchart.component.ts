@@ -35,6 +35,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   constructor() { 
     super();
     this._chartId = "chart-" + UUID.UUID();
+    this.units = '';
   }
 
   ngAfterViewInit() {
@@ -84,6 +85,18 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       size:{
         width: this.width,
         height: this.height
+      },
+      tooltip:{
+        format: {
+          value: (value, ratio, id, index) => {
+            if(this.units){
+              console.log("Units = " + this.units)
+              return value + this.units; 
+            } else {
+              return value;
+            }
+          }
+        }
       }
     })
   }

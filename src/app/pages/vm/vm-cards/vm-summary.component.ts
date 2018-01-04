@@ -53,6 +53,7 @@ export class VmSummaryComponent implements OnInit {
       data: [availableObj.value]
     };
 
+    this.zpoolChart.units = 'GB';
     this.zpoolChart.data = [used,available];
     console.log(this.zpoolChart.data);
     this.zpoolChart.width = 320;
