@@ -37,32 +37,38 @@ export class AlertServiceAddInfluxdbComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      value: 'InfluxDB'
+      value: 'InfluxDB',
     },{
       type : 'input',
       name : 'username',
-      placeholder: 'username'
+      placeholder: 'username',
+      tooltip: 'Enter the username for this service.',
     },{
       type : 'input',
       name : 'password',
-      placeholder: 'password'
+      placeholder: 'password',
+      tooltip: 'Enter password.',
     },{
       type : 'input',
       name : 'host',
-      placeholder: 'host'
+      placeholder: 'host',
+      tooltip: 'Enter the InfluxDB host.',
     },{
       type : 'input',
       name : 'database',
-      placeholder: 'database'
+      placeholder: 'database',
+      tooltip: 'Enter the InfluxDB database name.',
     },{
       type : 'input',
       name : 'series_name',
-      placeholder: 'series_name'
+      placeholder: 'series_name',
+      tooltip: 'Enter the InfluxDB series name for the points.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the InfluxDB service.',
     },
   ];
 
