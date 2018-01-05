@@ -39,7 +39,6 @@ export class RsyncFormComponent {
   protected rsync_ssh_field: Array<any> = [
     'rsync_remotesshport',
     'rsync_remotepath',
-    'rsync_validate_remotepath',
   ];
 
   constructor(protected router: Router, 
@@ -68,7 +67,7 @@ export class RsyncFormComponent {
       tooltip: 'IP Address or hostname. Specify user@hostname or user@ip-address if your remote machine user and above rsync task user are different.'
     }, {
       type: 'input',
-      name: 'rsync_remotesshport',
+      name: 'rsync_remoteport',
       inputType: 'number',
       placeholder: 'Remote SSH Port',
       value: 22,
@@ -92,11 +91,6 @@ export class RsyncFormComponent {
       name: 'rsync_remotepath',
       explorerType: 'directory',
       placeholder: 'Remote Path',
-    }, {
-      type: 'checkbox',
-      name: 'rsync_validate_remotepath',
-      placeholder: 'Validate Remote Path',
-      value: true,
     }, {
       type: 'select',
       name: 'rsync_direction',
