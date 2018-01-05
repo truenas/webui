@@ -20,8 +20,38 @@ export class RsyncFormComponent {
   protected route_success: string[] = ['tasks', 'rsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
+  
+  public fieldConfig: FieldConfig[];
 
-  public fieldConfig: FieldConfig[] = [{
+  protected user_field: any;
+  protected month_field: any;
+  protected day_field: any;
+  protected rsync_mode_field: any;
+  protected rsync_direction_field: any;
+  protected mintue_field: any;
+  protected hour_field: any;
+  protected daymonth_field: any;
+
+  protected hide_fileds: Array<any>;
+  protected rsync_module_field: Array<any> = [
+    'rsync_remotemodule',
+  ];
+  protected rsync_ssh_field: Array<any> = [
+    'rsync_remotesshport',
+    'rsync_remotepath',
+    'rsync_validate_remotepath',
+  ];
+
+  constructor(protected router: Router, 
+    protected taskService: TaskService, 
+    protected userService: UserService, 
+    protected entityFormService: EntityFormService, ) {
+
+    const theThis = this;
+
+    this.hide_fileds = this.rsync_ssh_field;
+
+    this.fieldConfig = [{
       type : 'explorer',
       initial: '/mnt',
       name: 'rsync_path',
@@ -35,15 +65,38 @@ export class RsyncFormComponent {
       type: 'input',
       name: 'rsync_remotehost',
       placeholder: 'Remote Host',
+      tooltip: 'IP Address or hostname. Specify user@hostname or user@ip-address if your remote machine user and above rsync task user are different.'
+    }, {
+      type: 'input',
+      name: 'rsync_remotesshport',
+      inputType: 'number',
+      placeholder: 'Remote SSH Port',
+      value: 22,
+      tooltip: 'SSH Port',
     }, {
       type: 'select',
       name: 'rsync_mode',
       placeholder: 'Rsync mode',
       options: [],
+      onChangeOption: function(data) {
+        theThis.onChangeRsyncMode(data.event.value);
+      },
     }, {
       type: 'input',
       name: 'rsync_remotemodule',
-      placeholder: 'Remote Module Name'
+      placeholder: 'Remote Module Name',
+      tooltip: 'Name of the module defined in the remote rsync daemon',
+    }, {
+      type : 'explorer',
+      initial: '/mnt',
+      name: 'rsync_remotepath',
+      explorerType: 'directory',
+      placeholder: 'Remote Path',
+    }, {
+      type: 'checkbox',
+      name: 'rsync_validate_remotepath',
+      placeholder: 'Validate Remote Path',
+      value: true,
     }, {
       type: 'select',
       name: 'rsync_direction',
@@ -166,19 +219,8 @@ export class RsyncFormComponent {
       name: 'rsync_enabled',
       placeholder: 'Enabled',
       value: true,
-    }
-  ];
+    }];
 
-  protected user_field: any;
-  protected month_field: any;
-  protected day_field: any;
-  protected rsync_mode_field: any;
-  protected rsync_direction_field: any;
-  protected mintue_field: any;
-  protected hour_field: any;
-  protected daymonth_field: any;
-
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {
     this.user_field = _.find(this.fieldConfig, { 'name': 'rsync_user' });
     this.userService.listUsers().subscribe((res) => {
       res.data.forEach((item) => {
@@ -231,6 +273,15 @@ export class RsyncFormComponent {
     for (let i = 1; i < 32; i++) {
       this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
-
   }
+
+  onChangeRsyncMode(value) {
+    if( value === "ssh" ){
+      this.hide_fileds = this.rsync_module_field;
+    }
+    else {
+      this.hide_fileds = this.rsync_ssh_field;
+    }
+  }
+
 }
