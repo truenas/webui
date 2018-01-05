@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
+import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { Subject } from 'rxjs/Subject';
 import filesize from 'filesize';
@@ -13,7 +14,7 @@ import filesize from 'filesize';
   })
 export class VmSummaryComponent implements OnInit {
   
-  @ViewChild('cpu') cpuChart:ViewChartPieComponent;
+  @ViewChild('cpu') cpuChart:ViewChartDonutComponent;
   @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
   @ViewChild('net') netChart:ViewChartPieComponent;
   public chartSize:number = 260;
@@ -31,8 +32,7 @@ export class VmSummaryComponent implements OnInit {
     this.core.emit({name:"PoolDataRequest"});
 
     this.cpuChart.data = [
-      {legend: 'A', data:[10]},
-      {legend: 'B', data:[90]}
+      {legend: 'CPU Load', data:[10,50,60,95,15,30,45,55,35,79,95,60,80,15,250,125,1024,670,220,450,75]},
     ];
     this.cpuChart.width = this.chartSize;
     this.cpuChart.height = this.chartSize;

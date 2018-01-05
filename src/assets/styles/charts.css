@@ -12,9 +12,9 @@
 /* Chart Tooltips */
 .c3-tooltip-container{
   /*background-color: rgba(0,0,0,0.9) !important;*/
-  background:linear-gradient(0deg,rgba(0,0,0,0.9),rgba(33,33,33,0.9)) !important;
+  background:linear-gradient(0deg,rgba(0,0,0,0.49),rgba(33,33,33,0.79)) !important;
   color: #fff !important;
-  box-shadow: 0px 7px 10px rgba(0,0,0,0.65) !important;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.85) !important;
   margin: .333333rem;
   overflow: hidden;
   padding:24px;

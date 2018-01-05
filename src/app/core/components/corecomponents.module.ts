@@ -13,6 +13,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
+import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
+import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 
 /*
  *
@@ -39,7 +41,9 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
     ViewButtonComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
-    ViewChartPieComponent
+    ViewChartPieComponent,
+    ViewChartGaugeComponent,
+    ViewChartLineComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -51,7 +55,9 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
     ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
+    ViewChartGaugeComponent,
     ViewChartPieComponent,
+    ViewChartLineComponent,
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
@@ -62,7 +68,9 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
     ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
+    ViewChartGaugeComponent,
     ViewChartPieComponent,
+    ViewChartLineComponent,
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
