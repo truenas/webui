@@ -16,6 +16,8 @@ import {
 import {
   matchOtherValidator
 } from '../../common/entity/entity-form/validators/password-validation';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { MdDialog } from '@angular/material';
 
 @Component({
   selector : 'app-email',
@@ -30,7 +32,7 @@ export class EmailComponent {
 
   protected resource_name: string = 'system/email';
   public entityEdit: any;
-  public rootEmail = '';
+  public rootEmail: string;
   private em_outgoingserver: any;
   private em_port: any;
   public fieldConfig: FieldConfig[] = [
@@ -111,11 +113,12 @@ export class EmailComponent {
       validation : [ Validators.required ]
     },
   ];
+  protected dialogRef: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
-              protected _appRef: ApplicationRef,
-              private dialog:DialogService
+              protected _appRef: ApplicationRef,private dialogservice: DialogService,
+              protected dialog: MdDialog
             ) {}
 
 afterInit(entityEdit: any) {
@@ -130,32 +133,40 @@ afterInit(entityEdit: any) {
    
   }
   sendMail(): void {
-    if(!this.entityEdit.data.em_outgoingserver || !this.entityEdit.data.em_port){
-      this.dialog.Info("email", 
-      "Your test email could not be sent: [EFAULT] you must provide an outgoing mailserver and mail server port when sending mail");
-    }
-    else{
     if (this.rootEmail){
-      let value = _.cloneDeep(this.entityEdit.formGroup.value);
-      let mailObj = {
+      const value = _.cloneDeep(this.entityEdit.formGroup.value);
+      const mailObj = {
         "subject" : "Test message from FreeNAS",
         "text" : "This is a test message from FreeNAS",
       };
-      // TODO fix callback Hell!!
+      const security_table = {
+        'plain':'PLAIN',
+        'ssl': 'SSL',
+        'tls': 'TLS'
+      };
       this.ws.call('system.info').subscribe((res) => {
+        const mail_form_payload = {}
+        mail_form_payload['fromemail'] = value.em_fromemail
+        mail_form_payload['outgoingserver']= value.em_outgoingserver
+        mail_form_payload['port']= value.em_port
+        mail_form_payload['security']= security_table[value.em_security]
+        mail_form_payload['smtp']= value.em_smtp
+        mail_form_payload['user']= value.em_user
+        mail_form_payload['pass']= value.em_pass1
         mailObj['subject'] += " hostname: " + res['hostname'];
-        this.ws.call('mail.send', [ mailObj ]).subscribe((res) => {
-          if (res[0]) {
-            this.entityEdit.error = res[1];
-          } else {
-            this.entityEdit.error = "";
-            this.dialog.Info("email", "Test email sent successfully!")
-          }
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
+        this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((s_res)=>{
+          this.dialogRef.close(false);
+          this.dialogservice.Info("email", "Test email sent successfully!")
+        });
+        this.dialogRef.componentInstance.failure.subscribe((e_res) => {
+          this.dialogRef.componentInstance.setDiscription(e_res.error);
         });
       });
     }
     else{
-      this.dialog.Info("email", "please setup root user email address");
+      this.dialogservice.Info("email", "please setup root user email address");
     }
   }}
-}

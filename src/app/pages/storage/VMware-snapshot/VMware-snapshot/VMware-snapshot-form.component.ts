@@ -34,32 +34,41 @@ export class VMwareSnapshotFormComponent {
 
   protected fieldConfig: FieldConfig[] =[
     {
-      type: 'input', 
-      name: 'hostname', 
+      type: 'input',
+      name: 'hostname',
       placeholder: 'Hostname',
+      tooltip: 'IP address or hostname of VMware host; when clustering\
+ this is the vCenter server for the cluster.',
     },
     {
-      type: 'input', 
-      name: 'username', 
+      type: 'input',
+      name: 'username',
       placeholder: 'Username',
+      tooltip: 'User on VMware host with permission to snapshot virtual\
+ machines.',
     },
     {
-      type: 'input', 
-      name: 'password', 
+      type: 'input',
+      name: 'password',
       placeholder: 'Password',
+      tooltip: 'Password associated with <b>Username</b>.',
       inputType: 'password'
     },
     {
-      type: 'explorer', 
-      name: 'filesystem', 
+      type: 'explorer',
+      name: 'filesystem',
       placeholder: 'ZFS Filesystem',
+      tooltip: 'The filesystem to snapshot.',
       explorerType: "zvol",
       initial: '/mnt'
     },
     {
-      type: 'select', 
-      name: 'datastore', 
+      type: 'select',
+      name: 'datastore',
       placeholder: 'Datastore',
+      tooltip: 'After entering the <b>Hostname, Username</b>, and\
+ <b>Password</b>, click <b>Fetch Datastores</b> to populate the menu and\
+ select the datastore with which to synchornize.',
     },
 
   ]
@@ -87,7 +96,7 @@ export class VMwareSnapshotFormComponent {
               const datastores = res[key]
               for (const datastore in datastores){
                 this.datastore.options.push({label : datastore, value : datastore})
-              }      
+              }
             }
           });
         }
@@ -106,7 +115,7 @@ export class VMwareSnapshotFormComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  
+
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;

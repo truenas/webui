@@ -40,11 +40,14 @@ export class TargetEditComponent implements OnInit {
       type: 'input',
       name : 'iscsi_target_name',
       placeholder : 'Target Name',
+      tooltip: 'Required value. Base name will be appended\
+ automatically if it does not start with <i>iqn</i>.',
     },
     {
       type: 'input',
       name : 'iscsi_target_alias',
       placeholder : 'Target Alias',
+      tooltip: 'Optional user-friendly name.',
     },
     {
       type: 'array',
@@ -55,6 +58,8 @@ export class TargetEditComponent implements OnInit {
           type: 'select',
           name : 'iscsi_target_portalgroup',
           placeholder : 'Portal Group ID',
+          tooltip: 'Leave empty or select number of existing portal\
+ to use.',
           value : '',
           options: [],
         },
@@ -62,6 +67,8 @@ export class TargetEditComponent implements OnInit {
           type: 'select',
           name : 'iscsi_target_initiatorgroup',
           placeholder : 'Initiator Group ID',
+          tooltip: 'Select which existing initiator group has access\
+ to the target.',
           value : '',
           options: [],
         },
@@ -69,6 +76,8 @@ export class TargetEditComponent implements OnInit {
           type: 'select',
           name : 'iscsi_target_authtype',
           placeholder : 'Auth Method',
+          tooltip: 'Choices are <i>None, Auto, CHAP,</i> or\
+ <i>Mutual CHAP</i>.',
           value : 'None',
           options : [
             {
@@ -89,6 +98,8 @@ export class TargetEditComponent implements OnInit {
           type: 'select',
           name : 'iscsi_target_authgroup',
           placeholder : 'Authentication Group number',
+          tooltip: '<i>None</i> or integer representing number of\
+ existing authorized access.',
           value : '',
           options: [],
         },
