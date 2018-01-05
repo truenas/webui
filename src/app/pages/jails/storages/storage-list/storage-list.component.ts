@@ -29,16 +29,15 @@ export class StorageListComponent {
       this.jailId = params['jail'];
       this.queryCallOption.push(params['jail']);
       this.queryCallOption.push({ "action": "LIST", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" });
-      this.route_add.push(params['jail'], 'add');
+      this.route_add.push('add', params['jail'], );
       this.route_delete.push(params['jail'], 'delete');
-      this.route_edit.push(params['jail'], 'edit');
+      this.route_edit.push('edit', params['jail']);
     });
   }
 
   public columns: Array < any > = [
     { name: 'Source', prop: 'source' },
     { name: 'Destination', prop: 'destination' },
-    { name: 'FStype', prop: 'fstype' },
   ];
   public config: any = {
     paging: true,
