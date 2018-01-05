@@ -41,18 +41,21 @@ export class SnapshotAddComponent implements AfterViewInit {
         type: 'select',
         name: 'dataset',
         placeholder: 'Volume/Dataset',
+        tooltip: 'Select an existing ZFS volume, dataset, or zvol.',
         options: []
       },
       {
         type: 'input',
         name: 'name',
         placeholder: 'Name',
+        tooltip: 'Add a name for the new snapshot',
         options: []
       },
       {
         type: 'checkbox',
         name: 'recursive',
-        placeholder: 'Recursive'
+        placeholder: 'Recursive',
+        tooltip: 'Check this to include child datasets of the chosen dataset.',
       }
     ];
 
