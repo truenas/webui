@@ -37,20 +37,25 @@ export class AlertServiceAddVictoropsComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      value: 'VictorOps'
+      value: 'VictorOps',
     },{
       type : 'input',
       name : 'routing_key',
-      placeholder: 'routing_key'
+      placeholder: 'routing_key',
+      tooltip: 'Paste the routing key here. Refer \
+      to the <a href="https://help.victorops.com/knowledge-base/routing-keys/" target="_blank"> VictorOps Knowledge-base</a>\for more information about routing keys.',
     },{
       type : 'input',
       name : 'api_key',
-      placeholder: 'api_key'
+      placeholder: 'api_key',
+      tooltip: 'Paste the API key from the\
+ VictorOps web portal.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the VictorOps alert service.',
     },
   ];
 
