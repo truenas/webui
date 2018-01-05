@@ -26,124 +26,174 @@ export class LdapComponent {
     {
       type : 'input',
       name : 'ldap_hostname',
-      placeholder : 'Hostname'
+      placeholder : 'Hostname',
+      tooltip: 'Hostname or IP address of LDAP server.'
     },
     {
       type : 'input',
       name : 'ldap_basedn',
-      placeholder : 'Base DN'
+      placeholder : 'Base DN',
+      tooltip: 'Top level of the LDAP directory tree to be used when\
+ searching for resources (e.g. <i>dc=test,dc=org</i>).'
     },
     {
       type : 'input',
       name : 'ldap_binddn',
-      placeholder : 'Bind DN'
+      placeholder : 'Bind DN',
+      tooltip: 'Name of administrative account on LDAP server (e.g.\
+ <i>cn=Manager,dc=test,dc=org</i>).'
     },
     {
       type : 'input',
       name : 'ldap_bindpw',
       placeholder : 'Bind Password',
-      inputType : 'password',
+      tooltip: 'Password for <b>Root bind DN</b>.',
+      inputType : 'password'
     },
     {
       type : 'checkbox',
       name : 'ldap_anonbind',
       placeholder : 'Allow Anonymous Binding',
+      tooltip: 'Instructs LDAP server to not provide authentication and\
+ to allow read and write access to any client.'
     },
     {
       type : 'input',
       name : 'ldap_usersuffix',
-      placeholder : 'User Suffix'
+      placeholder : 'User Suffix',
+      tooltip: 'Optional. Can be added to name when user account added\
+ to LDAP directory (e.g. dept. or company name).'
     },
     {
       type : 'input',
       name : 'ldap_groupsuffix',
-      placeholder : 'Group Suffix'
+      placeholder : 'Group Suffix',
+      tooltip: 'Optional. Can be added to name when group added to LDAP\
+ directory (e.g. dept. or company name).'
     },
     {
       type : 'input',
       name : 'ldap_passwordsuffix',
-      placeholder : 'Password Suffix'
+      placeholder : 'Password Suffix',
+      tooltip: 'Optional. Can be added to password when password added\
+ to LDAP directory.'
     },
     {
       type : 'input',
       name : 'ldap_machinesuffix',
-      placeholder : 'Machine Suffix'
+      placeholder : 'Machine Suffix',
+      tooltip: 'Optional. Can be added to name when system added to LDAP\
+ directory (e.g. server, accounting).'
     },
     {
       type : 'input',
       name : 'ldap_sudosuffix',
-      placeholder : 'SUDO Suffix'
+      placeholder : 'SUDO Suffix',
+      tooltip: 'Use if LDAP-based users need superuser access.'
     },
     {
       type : 'select',
       name : 'ldap_kerberos_realm',
       placeholder : 'Kerberos Realm',
+      tooltip: 'Select the realm created using the instructions in\
+ <a href="http://doc.freenas.org/11/directoryservice.html#kerberos-realms"\
+ target="_blank">Kerberos Realm</a>.',
       options : []
     },
     {
       type : 'select',
       name : 'ldap_kerberos_principal',
       placeholder : 'Kerberos Principal',
+      tooltip: 'Select the location of the principal in the keytab\
+ created as described in\
+ <a href="http://doc.freenas.org/11/directoryservice.html#kerberos-keytabs"\
+ target="_blank">Kerberos Keytabs</a>',
       options : []
     },
     {
       type : 'select',
       name : 'ldap_ssl',
       placeholder : 'Encryption Mode',
+      tooltip: 'Choices are <i>Off,SSL</i> or <i>TLS</i>. Note that\
+ either <i>SSL</i> or <i>TLS</i> and a <b>Certificate</b> must be\
+ selected in order for authentication to work.',
       options : []
     },
     {
       type : 'select',
       name : 'ldap_certificate',
       placeholder : 'Certificate',
+      tooltip: 'Select the certificate of the LDAP CA (required if\
+ authentication is used). The certificate for the LDAP server CA must\
+ first be imported from the\
+ <b>System -> Certificates -> Import Certificate</b> page.',
       options : []
     },
     {
       type : 'input',
       name : 'ldap_timeout',
-      placeholder : 'LDAP timeout'
+      placeholder : 'LDAP timeout',
+      tooltip: 'Increase this value (in seconds) if encountering a\
+ Kerberos ticket time out'
     },
     {
       type : 'input',
       name : 'ldap_dns_timeout',
-      placeholder : 'DNS timeout'
+      placeholder : 'DNS timeout',
+      tooltip: 'Increase this value (in seconds) if DNS queries timeout.'
     },
     {
       type : 'select',
       name : 'ldap_idmap_backend',
       placeholder : 'Idmap Backend',
+      tooltip: 'Select the backend used to map Windows security\
+ identifires (SIDs) to UNIX UIDs and GIDs. Click the <b>Edit</b> link\
+ to configure the options of that backend',
       options : []
     },
     {
       type : 'checkbox',
       name : 'ldap_has_samba_schema',
       placeholder : 'Samba Schema',
+      tooltip: 'Only check this box if you need LDAP authentication for\
+ SMB shares <b>and</b> have <b>already</b> configured the LDAP server\
+ with Samba attributes.'
     },
     {
       type : 'textarea',
       name : 'ldap_auxiliary_parameters',
-      placeholder : 'Auxiliary Parameters'
+      placeholder : 'Auxiliary Parameters',
+      tooltip: 'Additional options for\
+ <a href="https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html"\
+ target="_blank">sssd.conf(5)</a>.'
     },
     {
       type : 'select',
       name : 'ldap_schema',
       placeholder : 'Schema',
+      tooltip: 'If <b>Samba Schema</b> is checked, select the schema to\
+ use. Choices are <i>rfc2307</i> and <i>rfc2307bis</i>.',
       options : []
     },
     {
       type : 'checkbox',
       name : 'ldap_enable',
       placeholder : 'Enable',
+      tooltip: 'Uncheck to disable the configuration without deleteing it.'
     },
     {
       type : 'input',
       name : 'ldap_netbiosname_a',
       placeholder : 'Netbios Name',
+      tooltip: 'Limited to 15 characters. It is automatically populated\
+ with the original host name of the system. <b>Must</b> be different\
+ from the <i>Workgroup</i> name.'
     },
     {
       type : 'input',
       name : 'ldap_netbiosalias',
       placeholder : 'NetBIOS alias',
+      tooltip: 'Limited to 15 characters.'
     }
   ];
 
