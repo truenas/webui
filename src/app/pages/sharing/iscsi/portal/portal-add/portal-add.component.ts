@@ -28,11 +28,17 @@ export class PortalAddComponent {
       type : 'input',
       name : 'iscsi_target_portal_comment',
       placeholder : 'Comment',
+      tooltip: 'Optional description. Portals are automatically assigned\
+ a numeric group ID.',
     },
     {
       type : 'select',
       name : 'iscsi_target_portal_discoveryauthmethod',
       placeholder : 'Discovery Auth Method',
+      tooltip: 'Configures the authentication level required by the\
+ target for discovery of valid devices, where <i>None</i> will allow\
+ anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require\
+ authentication.',
       options : [
         {
           label : 'NONE',
@@ -52,6 +58,9 @@ export class PortalAddComponent {
       type : 'select',
       name : 'iscsi_target_portal_discoveryauthgroup',
       placeholder : 'Discovery Auth Group',
+      tooltip: 'Select a user created in <b>Authorized Access</b> if\
+ the <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
+ <i>Mutual CHAP</i>.',
       options : [ {
         label : 'NONE',
         value : '',
@@ -66,6 +75,8 @@ export class PortalAddComponent {
           type : 'select',
           name : "ip",
           placeholder : "IP Address",
+          tooltip: 'Select the IP address associated with an interface\
+ or the wildcard address of <i>0.0.0.0</i> (any interface).',
           value : '0.0.0.0',
           options : [],
         },
@@ -73,6 +84,8 @@ export class PortalAddComponent {
           type : 'input',
           name : "port",
           placeholder : "Port",
+          tooltip: 'TCP port used to access the iSCSI target. Default\
+ is <i>3260</i>.',
           value : '2306',
         }
       ]

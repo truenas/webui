@@ -26,22 +26,30 @@ export class VlanFormComponent {
       type : 'input',
       name : 'vlan_vint',
       placeholder : 'Virtual Interface',
+      tooltip : 'Use the format <i>vlanX</i> where <i>X</i> is a number\
+ representing a vlan interface not currently being used as a parent.',
     },
     {
       type : 'select',
       name : 'vlan_pint',
       placeholder : 'Parent Interface',
+      tooltip : 'Usually an ethernet card connected to a properly\
+ configured switch port. Note that newly created link aggreagations\
+ will not appear in the drop-down until the system is rebooted.',
       options : []
     },
     {
       type : 'input',
       name : 'vlan_tag',
       placeholder : 'Vlan Tag',
+      tooltip : 'Number between 1 and 4095 which matches a numeric tag\
+ set up in the switched network.',
     },
     {
       type : 'input',
       name : 'vlan_description',
       placeholder : 'Description',
+      tooltip : 'Optional.',
     },
   ];
 
