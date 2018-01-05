@@ -10,6 +10,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { MdDialog } from '@angular/material';
 
 
 export interface ZfsPoolData {
@@ -43,7 +45,8 @@ export class VolumesListTableConfig {
   constructor(
     private _router: Router,
     private _classId: string,
-    private title: string) {
+    private title: string,
+    public mdDialog: MdDialog ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -144,7 +147,22 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row.id]));
         }
       });
+
+      if( row.vol_encrypt > 0 ) {
+        actions.push({
+          label: "Download Encrypt Key",
+          onClick: (row) => {
+            let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+
+            dialogRef.componentInstance.volumeId = row.id;
+            dialogRef.afterClosed().subscribe(result => {
+              this._router.navigate(['/', 'storage', 'volumes']);
+            });
+          }
+        });
+      }
     }
+    
     if (row.type == "dataset") {
       actions.push({
         label: "Add Dataset",
@@ -258,11 +276,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this.router, "", "Volumes");
+  conf = new VolumesListTableConfig(this.router, "", "Volumes", this.mdDialog);
   expanded = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
+    protected mdDialog: MdDialog ) {
     super(rest, router, ws, _eRef, dialog, loader);
 
   }
@@ -270,7 +289,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngOnInit(): void {
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog);
         volume.type = 'zpool';
         this.zfsPoolRows.push(volume);
       });
