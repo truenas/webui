@@ -92,21 +92,17 @@ export class RsyncFormComponent {
       type: 'input',
       name: 'rsync_remotemodule',
       placeholder: 'Remote Module Name',
-<<<<<<< HEAD
-      tooltip: 'Name of the module defined in the remote rsync daemon',
+      tooltip: 'Only appears when using <i>Rsync module</i> mode.\
+ At least one module must be defined in\
+ <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" target="_blank">\
+ rsyncd.conf(5)</a> of rsync server or in the <b>Rsync Modules</b> of\
+ another system.',
     }, {
       type : 'explorer',
       initial: '/mnt',
       name: 'rsync_remotepath',
       explorerType: 'directory',
       placeholder: 'Remote Path',
-=======
-      tooltip: 'Only appears when using <i>Rsync module</i> mode.\
- At least one module must be defined in\
- <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" target="_blank">\
- rsyncd.conf(5)</a> of rsync server or in the <b>Rsync Modules</b> of\
- another system.',
->>>>>>> master
     }, {
       type: 'select',
       name: 'rsync_direction',
