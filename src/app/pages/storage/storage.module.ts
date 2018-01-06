@@ -18,6 +18,7 @@ import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
 import { StatusComponent } from './volumes/status/status.component';
+import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
@@ -58,6 +59,7 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
     SnapshotAddComponent,
+    ImportDiskComponent,
     DatasetPermissionsComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,

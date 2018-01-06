@@ -22,16 +22,20 @@ export class InterfacesFormComponent {
       type : 'input',
       name : 'int_interface',
       placeholder : 'Interface',
+      tooltip : 'The FreeBSD device name of the interface; a read-only\
+ field when editing an interface.',
     },
     {
       type : 'input',
       name : 'int_name',
       placeholder : 'Name',
+      tooltip : 'Description of interface.',
     },
     {
       type : 'input',
       name : 'int_ipv4address',
       placeholder : 'IPv4 Address',
+      tooltip : 'Enter a static IP address if <b>DHCP</b> is unchecked.',
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
@@ -40,16 +44,24 @@ export class InterfacesFormComponent {
       type : 'select',
       name : 'int_v4netmaskbit',
       placeholder : 'IPv4 Netmask',
+      tooltip : 'Enter a netmask if <b>DHCP</b> is unchecked.',
       options : [],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
     },
-    {type : 'checkbox', name : 'int_dhcp', placeholder : 'DHCP'},
+    {
+      type : 'checkbox',
+      name : 'int_dhcp',
+      placeholder : 'DHCP',
+      tooltip : 'Requires static IPv4 or IPv6 configuration if\
+ unchecked; only one interface can be configured for <b>DHCP</b>'},
     {
       type : 'input',
       name : 'int_options',
       placeholder : 'Options',
+      tooltip : 'Additional parameters from ifconfig(8). Seperate\
+ multiple paramerters with a space.',
     },
   ];
 

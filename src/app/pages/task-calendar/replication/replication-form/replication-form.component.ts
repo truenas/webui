@@ -17,11 +17,13 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import {RestService, WebSocketService} from '../../../../services/';
+import { DialogService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-replication-form',
@@ -147,7 +149,9 @@ export class ReplicationFormComponent implements AfterViewInit {
       protected ws: WebSocketService,
       protected replicationService: ReplicationService,
       protected _injector: Injector,
-      protected _appRef: ApplicationRef
+      protected _appRef: ApplicationRef,
+      private dialog:DialogService,
+      protected loader: AppLoaderService,
   ) {
     
     const theThis = this;
@@ -294,7 +298,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         type: 'textareabutton',
         name: 'repl_remote_hostkey',
         placeholder: 'Remote Hostkey',
-        customEventActionLabel: 'Remote SSH Key',
+        customEventActionLabel: 'Scan SSH Key',
         customEventMethod: function(data) {
           theThis.customEventMethod(data);
         },
@@ -367,10 +371,15 @@ export class ReplicationFormComponent implements AfterViewInit {
     const textAreaSSH: ElementRef = (<ElementRef>data.textAreaSSH);
     const hostName: string = this.entityForm.value.repl_remote_hostname;
     const port: number = Number(this.entityForm.value.repl_remote_port);
-    
+    this.loader.open();
     this.replicationService.getSSHKeyscan( hostName, port).subscribe((sshKeyData)=>{
+      this.loader.close();
       textAreaSSH.nativeElement.value = sshKeyData;
-      this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(sshKeyData);   
+      this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(sshKeyData);
+    },
+    (sshError) => {
+      this.loader.close();
+      this.dialog.errorReport(sshError.error, sshError.reason, sshError.trace.formatted);
     });
   }
 

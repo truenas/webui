@@ -1,9 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {WebSocketService} from "../../../services/ws.service";
-import {RestService} from "../../../services/rest.service";
-import {Observable} from "rxjs/Observable";
-import {AppLoaderService} from "../../../services/app-loader/app-loader.service";
-import {DialogService} from "../../../services/dialog.service";
+import { Component, OnInit } from '@angular/core';
+import { WebSocketService } from "../../../services/ws.service";
+import { RestService } from "../../../services/rest.service";
+import { Observable } from "rxjs/Observable";
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
+import { DialogService } from "../../../services/dialog.service";
+import { MdSnackBar, MdDialog } from '@angular/material';
 
 @Component({
   selector: 'app-system-advanced',
@@ -17,6 +19,8 @@ export class AdvancedComponent implements OnInit {
   success: string;
   users: any;
   ports: any;
+  public job: any = {};
+  protected dialogRef: any;
   systemAdvancedSettings = {
     adv_consolemenu: '',
     adv_serialconsole: '',
@@ -39,15 +43,15 @@ export class AdvancedComponent implements OnInit {
   };
 
   constructor(private rest: RestService,
-              private load: AppLoaderService,
-              private dialog: DialogService,
-              private ws: WebSocketService) {
-  }
+    private load: AppLoaderService,
+    private dialog: DialogService,
+    private ws: WebSocketService,
+    public snackBar: MdSnackBar) {}
 
   ngOnInit(): void {
     const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);
-    const users = this.rest.get('account/users/', {limit: 0});
-    const systemSettings = this.rest.get('system/advanced', {limit: 0});
+    const users = this.rest.get('account/users/', { limit: 0 });
+    const systemSettings = this.rest.get('system/advanced', { limit: 0 });
     Observable.forkJoin([deviceInfo, users, systemSettings]).subscribe(results => {
       // listing serial ports
       this.ports = results[0];
@@ -61,6 +65,30 @@ export class AdvancedComponent implements OnInit {
     }, res => {
       this.isReady = true;
       this.error = 'Something went wrong, please try again later.';
+    });
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000
+    });
+  }
+
+  saveDebug() {
+    this.dialog.confirm("Gererating Debug File", "It may take several minutes, you can close the dialog");
+    this.ws.job('system.debug').subscribe((res) => {
+      if (res.state === "SUCCESS") {
+        this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
+        window.open('/legacy/system/debug/download/');
+      }
+    }, () => {
+
+    }, () => {
+          if (this.job.state == 'SUCCESS') {
+            console.log("success:",this.job);
+          } else if (this.job.state == 'FAILED') {
+            this.openSnackBar("Please check your network connection", "Failed");
+          }
     });
   }
 
@@ -89,7 +117,7 @@ export class AdvancedComponent implements OnInit {
 
   onFormSubmit() {
     this.load.open('Updating settings...');
-    this.rest.put('system/advanced', {body: this.systemAdvancedSettings})
+    this.rest.put('system/advanced', { body: this.systemAdvancedSettings })
       .subscribe(res => {
         this.systemAdvancedSettings = res.data;
         this.success = 'System settings updated';
@@ -101,4 +129,3 @@ export class AdvancedComponent implements OnInit {
       })
   }
 }
-
