@@ -39,16 +39,19 @@ export class AlertServiceEditPagerdutyComponent {
     },{
       type : 'input',
       name : 'client_name',
-      placeholder: 'client_name'
+      placeholder: 'client_name',
+      tooltip: 'Enter the monitoring client name.',
     },{
       type : 'input',
       name : 'service_key',
-      placeholder: 'service_key'
+      placeholder: 'service_key',
+      tooltip: 'Paste the service_key for the service.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the PagerDuty service.',
     },
   ];
 

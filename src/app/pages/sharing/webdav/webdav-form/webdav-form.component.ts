@@ -19,27 +19,33 @@ export class WebdavFormComponent {
         type : 'input',
         name : 'webdav_name',
         placeholder : 'Share Name',
+        tooltip: 'Input a name for the share.'
       },
       {
         type : 'input',
         name : 'webdav_comment',
         placeholder : 'Comment',
+        tooltip: 'Optional.'
       },
       {
         type : 'explorer',
         initial: '/mnt',
         name : 'webdav_path',
         placeholder : 'Path',
+        tooltip: 'Browse to the volume or dataset to share.'
       },
       {
         type : 'checkbox',
         name : 'webdav_ro',
         placeholder : 'Read Only',
+        tooltip: 'If checked, users cannot write to the share.'
       },
       {
         type : 'checkbox',
         name : 'webdav_perm',
         placeholder : 'Change User & Group Ownership',
+        tooltip: 'If checked, automatically sets the contents of the\
+ share to the <i>webdav</i> user and group.'
       },
     ];
 }

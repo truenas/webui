@@ -20,21 +20,25 @@ export class KerberosRealmsFormComponent {
       type: 'input',
       name: 'krb_realm',
       placeholder: 'Realm',
+      tooltip: 'Mandatory. Name of the realm.'
     },
     {
       type: 'input',
       name: 'krb_kdc',
       placeholder: 'KDC',
+      tooltip: 'Name of the Key Distribution Center.'
     },
     {
       type: 'input',
       name: 'krb_admin_server',
       placeholder: 'Admin Server',
+      tooltip: 'Server where all changes to the database are performed.'
     },
     {
       type: 'input',
       name: 'krb_kpasswd_server',
       placeholder: 'Password Server',
+      tooltip: 'Server where all password changes are performed.'
     },
   ];
 
