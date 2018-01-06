@@ -26,22 +26,36 @@ export class NISComponent {
       type : 'input',
       name : 'nis_domain',
       placeholder : 'NIS domain:',
+      tooltip: 'Name of NIS domain.',
     },
-    {type : 'input', name : 'nis_servers', placeholder : 'NIS servers:'},
+    {
+      type : 'input',
+      name : 'nis_servers',
+      placeholder : 'NIS servers:',
+      tooltip : 'Comma delimited list of hostnames or IP addresses.'
+    },
     {
       type : 'checkbox',
       name : 'nis_secure_mode',
       placeholder : 'Secure mode',
+      tooltip : 'If checked,\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=ypbind"\
+ target="_blank">ypbind(8)</a> refuses to bind to any NIS server that\
+ is not running as root on a TCP port number over 1024.'
     },
     {
       type : 'checkbox',
       name : 'nis_manycast',
       placeholder : 'Manycast',
+      tooltip : 'If checked, ypbind binds to the server that responds\
+ the fastest. This is useful when no local NIS server is available on\
+ the same subnet.'
     },
     {
       type : 'checkbox',
       name : 'nis_enable',
       placeholder : 'Enable',
+      tooltip : 'Uncheck to disable the configuration without deleting it.'
     },
   ];
 

@@ -27,6 +27,8 @@ export class NFSFormComponent {
       formarray: [{
         name: 'path',
         placeholder: 'Path',
+        tooltip: 'Browse to the volume or dataset to be shared. Click\
+ <b>Add extra path</b> to select multiple paths.',
         type: 'explorer',
         initial: '/mnt',
       },
@@ -40,6 +42,8 @@ export class NFSFormComponent {
       type: 'input',
       name: 'nfs_comment',
       placeholder: 'Comment',
+      tooltip: 'Set the share name. If left empty, share name is the\
+ list of selected <b>Path</b> entries.',
     },
     {
       type: 'textarea',
@@ -55,51 +59,70 @@ export class NFSFormComponent {
       type: 'checkbox',
       name: 'nfs_alldirs',
       placeholder: 'All dirs',
+      tooltip: 'When checked, allow the client to mount any subdirectory\
+ within the <b>Path</b>.',
     },
     {
       type: 'checkbox',
       name: 'nfs_ro',
       placeholder: 'Read Only',
+      tooltip: 'Prohibit writing to the share.',
     },
     {
       type: 'checkbox',
       name: 'nfs_quiet',
       placeholder: 'Quiet',
+      tooltip: 'Inhibit otherwise-useful syslog diagnostics to avoid\
+ some annoying error messages. See\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
+ target="_blank">exports(5)</a> for examples.',
     },
     {
       type: 'textarea',
       name: 'nfs_network',
-      placeholder: 'Authorized Networks'
+      placeholder: 'Authorized Networks',
+      tooltip: 'Space-delimited list of allowed networks in network/mask\
+ CIDR notation\ (e.g. <i>1.2.3.0/24</i>). Leave empty to allow all.',
     },
        {
       type: 'textarea',
       name: 'nfs_hosts',
-      placeholder: 'Authorized Hosts and IP addresses'
+      placeholder: 'Authorized Hosts and IP addresses',
+      tooltip: 'Space-delimited list of allowed IP addresses or\
+ hostnames. Leave empty to allow all.',
     },
     {
       type: 'select',
       name: 'nfs_maproot_user',
       placeholder: 'Maproot User',
+      tooltip: 'When a user is selected, the <i>root</i> user is\
+ limited to the permissions of that user.',
       options: []
     },
     {
       type: 'select',
       name: 'nfs_maproot_group',
       placeholder: 'Maproot Group',
+      tooltip: 'When a group is selected, the <i>root</i> user is also\
+ limited to the permissions of that group.',
       options: []
     },
     {
       type: 'select',
       name: 'nfs_mapall_user',
       placeholder: 'Mapall User',
+      tooltip: 'The specified permissions of that user are used by all\
+ clients.',
       options: []
     },
     {
       type: 'select',
       name: 'nfs_mapall_group',
       placeholder: 'Mapall Group',
+      tooltip: 'The specified permissions of that group are used by all\
+ clients.',
       options: []
-    }, 
+    },
   ];
 
   protected arrayControl: any;
@@ -166,7 +189,7 @@ export class NFSFormComponent {
       }
     });
   }
-  
+
   afterInit(EntityForm: any) {
     this.formArray = EntityForm.formGroup.controls['nfs_paths'];
 
