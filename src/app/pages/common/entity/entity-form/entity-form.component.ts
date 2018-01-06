@@ -281,8 +281,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.beforeSubmit(value);
     }
 
-    this.loader.open();
-    this.busy = this.submitFunction(value)
+    if (this.conf.customSubmit) {
+      this.busy = this.conf.customSubmit(value);
+    } else {
+      this.loader.open();
+      this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -311,6 +314,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             }
                           }
                         });
+    }
   }
 
   clearErrors() {
