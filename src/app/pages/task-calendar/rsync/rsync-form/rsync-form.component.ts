@@ -37,7 +37,7 @@ export class RsyncFormComponent {
     'rsync_remotemodule',
   ];
   protected rsync_ssh_field: Array<any> = [
-    'rsync_remotesshport',
+    'rsync_remoteport',
     'rsync_remotepath',
   ];
 
