@@ -87,9 +87,7 @@ export class InitshutdownFormComponent {
       this.formUpdate(value);
     });
 
-
     this.type_control.setValue('command');
-
   }
 
   formUpdate(type) {
