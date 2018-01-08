@@ -37,6 +37,9 @@ export class ServiceWebdavComponent implements OnInit {
       type : 'select',
       name : 'webdav_protocol',
       placeholder : 'Protocol',
+      tooltip : 'Choose <i>HTTP</i> to keep the connection always\
+ unencrypted, <i>HTTPS</i> keeps the connection encrypted, or select\
+ <i>HTTP+HTTPS</i> to allow both types of connections.',
       options : [
         {label : 'HTTP', value : 'http'},
         {label : 'HTTPS', value : 'https'},
@@ -47,22 +50,33 @@ export class ServiceWebdavComponent implements OnInit {
       type : 'input',
       name : 'webdav_tcpport',
       placeholder : 'HTTP Port',
+      tooltip : 'Specify the port for unencrypted connections. The\
+ default port <i>8080</i> is recommended. Do not use a port number\
+ already in use by another service.',
     },
     {
       type : 'input',
       name : 'webdav_tcpportssl',
       placeholder : 'HTTPS Port',
+      tooltip : 'Specify the port for encrypted connections. The\
+ default port <i>8081</i> is recommended. Do not use a port number\
+ already in use by another service.',
     },
     {
       type : 'select',
       name : 'webdav_certssl',
       placeholder : 'Webdav SSL Certificate',
+      tooltip : 'Select the SSL certificate to use for encrypted\
+ connections. Navigate to the <b>System -> Certificates</b> page to\
+ create a certificate.',
       options : []
     },
     {
       type : 'select',
       name : 'webdav_htauth',
       placeholder : 'HTTP Authentication',
+      tooltip : '<i>Basic Authentication</i> is unencrypted.\
+ <i>Digest Authentication</i> is encrypted.',
       options : [
         {label : 'Basic Authentication', value : 'basic'},
         {label : 'Digest Authentication', value : 'digest'},
@@ -72,6 +86,8 @@ export class ServiceWebdavComponent implements OnInit {
       type : 'input',
       name : 'webdav_password',
       placeholder : 'Webdav Password',
+      tooltip : 'The default is <i>davtest</i>. It is recommended to\
+ change the password as the default is a known value.',
       inputType : 'password',
       validation : [ matchOtherValidator('webdav_password2') ]
     },
