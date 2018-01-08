@@ -20,8 +20,37 @@ export class RsyncFormComponent {
   protected route_success: string[] = ['tasks', 'rsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
+  
+  public fieldConfig: FieldConfig[];
 
-  public fieldConfig: FieldConfig[] = [{
+  protected user_field: any;
+  protected month_field: any;
+  protected day_field: any;
+  protected rsync_mode_field: any;
+  protected rsync_direction_field: any;
+  protected mintue_field: any;
+  protected hour_field: any;
+  protected daymonth_field: any;
+
+  protected hide_fileds: Array<any>;
+  protected rsync_module_field: Array<any> = [
+    'rsync_remotemodule',
+  ];
+  protected rsync_ssh_field: Array<any> = [
+    'rsync_remoteport',
+    'rsync_remotepath',
+  ];
+
+  constructor(protected router: Router, 
+    protected taskService: TaskService, 
+    protected userService: UserService, 
+    protected entityFormService: EntityFormService, ) {
+
+    const theThis = this;
+
+    this.hide_fileds = this.rsync_ssh_field;
+
+    this.fieldConfig = [{
       type : 'explorer',
       initial: '/mnt',
       name: 'rsync_path',
@@ -44,11 +73,21 @@ export class RsyncFormComponent {
  store the copy. Use the format <i>username@remote_host</i> if the\
  username differs on the remote host.',
     }, {
+      type: 'input',
+      name: 'rsync_remoteport',
+      inputType: 'number',
+      placeholder: 'Remote SSH Port',
+      value: 22,
+      tooltip: 'SSH Port',
+    }, {
       type: 'select',
       name: 'rsync_mode',
       placeholder: 'Rsync mode',
       tooltip: 'Choices are <i>Rsync module</i> or <i>Rsync over SSH</i>',
       options: [],
+      onChangeOption: function(data) {
+        theThis.onChangeRsyncMode(data.event.value);
+      },
     }, {
       type: 'input',
       name: 'rsync_remotemodule',
@@ -58,6 +97,12 @@ export class RsyncFormComponent {
  <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html" target="_blank">\
  rsyncd.conf(5)</a> of rsync server or in the <b>Rsync Modules</b> of\
  another system.',
+    }, {
+      type : 'explorer',
+      initial: '/mnt',
+      name: 'rsync_remotepath',
+      explorerType: 'directory',
+      placeholder: 'Remote Path',
     }, {
       type: 'select',
       name: 'rsync_direction',
@@ -213,19 +258,8 @@ export class RsyncFormComponent {
  target="_blank">Rsync</a> service is OFF, the rsync task continues to\
  look for the server unless this checkbox is unchecked.',
       value: true,
-    }
-  ];
+    }];
 
-  protected user_field: any;
-  protected month_field: any;
-  protected day_field: any;
-  protected rsync_mode_field: any;
-  protected rsync_direction_field: any;
-  protected mintue_field: any;
-  protected hour_field: any;
-  protected daymonth_field: any;
-
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {
     this.user_field = _.find(this.fieldConfig, { 'name': 'rsync_user' });
     this.userService.listUsers().subscribe((res) => {
       res.data.forEach((item) => {
@@ -278,6 +312,15 @@ export class RsyncFormComponent {
     for (let i = 1; i < 32; i++) {
       this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) });
     }
-
   }
+
+  onChangeRsyncMode(value) {
+    if( value === "ssh" ){
+      this.hide_fileds = this.rsync_module_field;
+    }
+    else {
+      this.hide_fileds = this.rsync_ssh_field;
+    }
+  }
+
 }
