@@ -87,4 +87,14 @@ export class StorageListComponent {
       }
     })
   }
+
+  getAddActions() {
+    return [{
+      label: "Go Back to Jails",
+      icon: "reply",
+      onClick: () => {
+        this.router.navigate(new Array('').concat(['jails']));
+      }
+    }];
+  }
 }
