@@ -38,13 +38,13 @@
 </style>
 <entity-form [conf]="this"></entity-form>
 <section class="fab">
-  <button md-fab class="md-fab-bottom-right-1" color="primary" (click)="gotoSaveConfig()">
+  <button md-fab class="md-fab-bottom-right-1" color="primary" (click)="gotoSaveConfig()" mdTooltip="Save Config">
     <md-icon class="md-16 ">save</md-icon>
   </button>
-  <button md-fab class="md-fab-bottom-right-2" color="primary" (click)="gotoUploadConfig()">
+  <button md-fab class="md-fab-bottom-right-2" color="primary" (click)="gotoUploadConfig()" mdTooltip="Upload Config">
     <md-icon class="md-16">file_upload</md-icon>
   </button>
-  <button md-fab class="md-fab-bottom-right-3" color="primary" (click)="gotoResetConfig()">
+  <button md-fab class="md-fab-bottom-right-3" color="primary" (click)="gotoResetConfig()" mdTooltip="Reset Config">
     <md-icon class="md-16">clear</md-icon>
   </button>
 </section>

@@ -288,8 +288,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.beforeSubmit(value);
     }
 
-    this.loader.open();
-    this.busy = this.submitFunction(value)
+    if (this.conf.customSubmit) {
+      this.busy = this.conf.customSubmit(value);
+    } else {
+      this.loader.open();
+      this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -318,6 +321,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             }
                           }
                         });
+    }
   }
 
   clearErrors() {
@@ -334,6 +338,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       }
     } else {
       if (this.conf.basic_field != undefined && this.conf.basic_field.indexOf(id) > -1) {
+        return false;
+      }
+    }
+
+    if (this.conf.hide_fileds != undefined) {
+      if (this.conf.hide_fileds.indexOf(id) > -1) {
         return false;
       }
     }

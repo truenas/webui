@@ -41,9 +41,11 @@ export class InitshutdownFormComponent {
     placeholder: 'Command',
     tooltip: 'Enter the command plus any desired options.',
   }, {
-    type: 'input',
+    type : 'explorer',
+    initial: '/mnt',
     name: 'ini_script',
     placeholder: 'Script',
+    explorerType: 'file',
     tooltip: 'Enter the location of the script.',
   }, {
     type: 'select',
@@ -85,9 +87,7 @@ export class InitshutdownFormComponent {
       this.formUpdate(value);
     });
 
-
     this.type_control.setValue('command');
-
   }
 
   formUpdate(type) {

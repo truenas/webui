@@ -15,4 +15,10 @@ export class FormSelectComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
+
+  onChangeOption($event) {
+    if( this.config.onChangeOption !== undefined && this.config.onChangeOption != null ) {
+      this.config.onChangeOption({ event:  $event });
+    }
+  } 
 }

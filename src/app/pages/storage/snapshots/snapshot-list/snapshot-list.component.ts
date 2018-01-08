@@ -15,6 +15,7 @@ export class SnapshotListComponent {
   public title = "Snapshots";
   protected resource_name: string = 'storage/snapshot';
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
+  protected route_add_tooltip: string = "Add Snapshot";
   protected entityList: any;
   public busy: Subscription;
   public sub: Subscription;
