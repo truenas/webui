@@ -2,6 +2,7 @@
     <md-input-container class="full-width">
         <input mdInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
     </md-input-container>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
     <button md-button (click)="toggleTree()" type="button">Browse</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
         <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
@@ -14,6 +15,5 @@
             <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
         </ng-template>
     </tree-root>
-    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
     <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
 </div>
