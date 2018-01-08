@@ -32,9 +32,13 @@ export class ServiceAFPComponent {
     {
       type : 'select',
       name : 'afp_srv_guest_user',
-      placeholder : 'Guest Access',
-      tooltip: 'If checked, clients will not be prompted to\
- authenticate before accessing AFP shares.',
+      placeholder : 'Guest Account',
+      tooltip: 'Select account to use for guest access; the selected\
+ account must have permissions to the volume or dataset being shared.\
+ The privileges given to this user are also available to any \
+ client connecting to the guest service. This user must exist in the\
+ password file, but does not require a\
+ valid login. Note the user root cannot be used as guest account.',
       options: [
         {label : 'nobody', value : 'nobody'}
       ]
@@ -42,13 +46,9 @@ export class ServiceAFPComponent {
     {
       type : 'checkbox',
       name : 'afp_srv_guest',
-      placeholder : 'Guest account',
-      tooltip: 'Select account to use for guest access; the selected\
- account must have permissions to the volume or dataset being shared.\
- The privileges given to this user are also available to any \
- client connecting to the guest service. This user must exist in the\
- password file, but does not require a\
- valid login. Note the user root cannot be used as guest account.',
+      placeholder : 'Guest Access',
+      tooltip: 'If checked, clients will not be prompted to\
+ authenticate before accessing AFP shares.',
     },
     {
       type : 'input',
