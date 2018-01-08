@@ -334,6 +334,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         return false;
       }
     }
+
+    if (this.conf.hide_fileds != undefined) {
+      if (this.conf.hide_fileds.indexOf(id) > -1) {
+        return false;
+      }
+    }
     return true;
   }
 
