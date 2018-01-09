@@ -49,6 +49,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public wsResponse;
   public wsfg;
   public wsResponseIdx;
+  public queryResponse;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -129,7 +130,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       if (this.conf.queryCall) {
         if(this.pk) {
           const filter = []
-          filter.push(this.conf.pk)
+          if (this.conf.pk) {
+           filter.push(this.conf.pk);
+          }
+          if (this.conf.queryCallOption) {
+            filter.push(this.conf.queryCallOption);
+          }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []);
@@ -163,6 +169,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               }
             }
           } else {
+            this.queryResponse = res;
             this.wsResponse = res[0];
             for (let i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
