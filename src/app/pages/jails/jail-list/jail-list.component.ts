@@ -125,6 +125,15 @@ export class JailListComponent {
         }
       },
       {
+        id: "mount",
+        label: "Mount points",
+        onClick: (row) => {
+          this.router.navigate(
+            //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
+            new Array('').concat(["jails", "storage", row.host_hostuuid]));
+        }
+      },
+      {
         id: "start",
         label: "Start",
         onClick: (row) => {

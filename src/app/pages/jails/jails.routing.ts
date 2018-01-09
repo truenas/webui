@@ -23,25 +23,21 @@ export const routes: Routes = [
       path: 'edit/:pk',
       component: JailEditComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' },
+    }, {
+      path: 'storage/:jail',
+      component: StorageListComponent,
+      data: { title: 'Mount Points', breadcrumb: 'Mount Points' },
+    }, {
+      path: 'storage/add/:jail',
+      component: StorageFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add' },
+    }, {
+      path: 'storage/edit/:jail/:pk',
+      component: StorageFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' },
     },
+
     // {
-    //   path: 'storage',
-    //   data: { title: 'Storage', breadcrumb: 'Storage'},
-    //   children: [{
-    //     path: '',
-    //     component: StorageListComponent,
-    //     data: { title: 'Storage', breadcrumb: 'Storage'},
-    //   },{
-    //     path: 'add',
-    //     component: StorageFormComponent,
-    //     data: { title: 'Add', breadcrumb: 'Add' },
-    //   },
-    //   {
-    //     path: 'edit/:pk',
-    //     component: StorageFormComponent,
-    //     data: { title: 'Edit', breadcrumb: 'Edit' },
-    //   }]
-    // }, {
     //   path: 'configuration',
     //   component: JailsConfigurationComponent,
     //   data: { title: 'Configuration', breadcrumb: 'Configuration' },
