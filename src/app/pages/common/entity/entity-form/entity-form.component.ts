@@ -158,13 +158,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
             for (let i in this.data) {
               let fg = this.formGroup.controls[i];
               if (fg) {
-                console.log(i,fg, this.data[i]);
                 let current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type == "array") {
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   fg.setValue(this.data[i]);
-                  console.log("after setvalue", fg);
                 }
               }
             }
