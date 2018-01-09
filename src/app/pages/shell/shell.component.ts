@@ -41,7 +41,7 @@ export class ShellComponent implements OnInit, OnChanges {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        if(value !== undefined){
+        if (value !== undefined) {
           this.xterm.write(value);
         }
       });
@@ -68,8 +68,8 @@ export class ShellComponent implements OnInit, OnChanges {
 
   initializeTerminal() {
     let domHeight = document.body.offsetHeight;
-    let rowNum = (domHeight * 0.75 - 104)/21;
-    if(rowNum < 10) {
+    let rowNum = (domHeight * 0.75 - 104) / 21;
+    if (rowNum < 10) {
       rowNum = 10;
     }
 
