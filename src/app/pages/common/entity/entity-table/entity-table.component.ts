@@ -178,8 +178,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       rows = new EntityUtils().flattenData(res);
     }
-    if (this.conf.dataHandler) {
-      this.conf.dataHandler(this);
+
+    if (this.conf.queryRes) {
+      this.conf.queryRes = rows;
     }
 
     for (let i = 0; i < rows.length; i++) {
@@ -192,11 +193,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
     this.rows = rows;
 
+    if (this.conf.dataHandler) {
+      this.conf.dataHandler(this);
+    }
+
     if (this.conf.addRows) {
       this.conf.addRows(this);
     }
     
-    this.currentRows = rows;
+    this.currentRows = this.rows;
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
     return res;

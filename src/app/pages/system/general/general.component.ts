@@ -85,7 +85,9 @@ export class GeneralComponent {
  <a href="http://doc.freenas.org/11/system.html#cas" target="_blank"><ins>Certificate Authority (CA)</ins></a>\
  then the\
  <a href="http://doc.freenas.org/11/system.html#certificates" target="_blank"><ins>Certificate</ins></a>.',
-      options: []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type: 'checkbox',
