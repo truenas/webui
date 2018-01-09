@@ -50,7 +50,7 @@
 
                 <div id="tree-list-demo">
                     <dx-tree-list id="employees" [dataSource]="employees" keyExpr="ID" parentIdExpr="Head_ID" [showRowLines]="true" [columnAutoWidth]="true"
-                        [expandedRowKeys]="[1]" (onCellPrepared)="cellPrepared($event)">
+                        [expandedRowKeys]="['1']" (onCellPrepared)="cellPrepared($event)">
                         <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
                             <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
                             </dxo-popup>

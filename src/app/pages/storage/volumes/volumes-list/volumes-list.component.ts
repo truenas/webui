@@ -17,8 +17,8 @@ import { MdDialog } from '@angular/material';
 import { Injectable } from '@angular/core';
 
 export class Employee {
-  ID: number;
-  Head_ID: number;
+  ID: string;
+  Head_ID: string;
   Full_Name: string;
   Prefix: string;
   Title: string;
@@ -32,8 +32,8 @@ export class Employee {
 }
 
 var employees: Employee[] = [{
-  "ID": 1,
-  "Head_ID": 0,
+  "ID": "1",
+  "Head_ID": "0",
   "Full_Name": "John Heart",
   "Prefix": "Mr.",
   "Title": "CEO",
@@ -45,8 +45,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1964-03-16",
   "Hire_Date": "1995-01-15"
 }, {
-  "ID": 2,
-  "Head_ID": 1,
+  "ID": "2",
+  "Head_ID": "1",
   "Full_Name": "Samantha Bright",
   "Prefix": "Dr.",
   "Title": "COO",
@@ -58,8 +58,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1966-05-02",
   "Hire_Date": "2004-05-24"
 }, {
-  "ID": 3,
-  "Head_ID": 1,
+  "ID": "3",
+  "Head_ID": "1",
   "Full_Name": "Arthur Miller",
   "Prefix": "Mr.",
   "Title": "CTO",
@@ -71,8 +71,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1972-07-11",
   "Hire_Date": "2007-12-18"
 }, {
-  "ID": 4,
-  "Head_ID": 1,
+  "ID": "4",
+  "Head_ID": "1",
   "Full_Name": "Robert Reagan",
   "Prefix": "Mr.",
   "Title": "CMO",
@@ -84,8 +84,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1974-09-07",
   "Hire_Date": "2002-11-08"
 }, {
-  "ID": 5,
-  "Head_ID": 1,
+  "ID": "5",
+  "Head_ID": "1",
   "Full_Name": "Greta Sims",
   "Prefix": "Ms.",
   "Title": "HR Manager",
@@ -97,8 +97,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1977-11-22",
   "Hire_Date": "1998-04-23"
 }, {
-  "ID": 6,
-  "Head_ID": 3,
+  "ID": "6",
+  "Head_ID": "3",
   "Full_Name": "Brett Wade",
   "Prefix": "Mr.",
   "Title": "IT Manager",
@@ -110,8 +110,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1968-12-01",
   "Hire_Date": "2009-03-06"
 }, {
-  "ID": 7,
-  "Head_ID": 5,
+  "ID": "7",
+  "Head_ID": "5",
   "Full_Name": "Sandra Johnson",
   "Prefix": "Mrs.",
   "Title": "Controller",
@@ -123,8 +123,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1974-11-15",
   "Hire_Date": "2005-05-11"
 }, {
-  "ID": 8,
-  "Head_ID": 4,
+  "ID": "8",
+  "Head_ID": "4",
   "Full_Name": "Ed Holmes",
   "Prefix": "Dr.",
   "Title": "Sales Manager",
@@ -136,8 +136,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1973-07-14",
   "Hire_Date": "2005-06-19"
 }, {
-  "ID": 9,
-  "Head_ID": 3,
+  "ID": "9",
+  "Head_ID": "3",
   "Full_Name": "Barb Banks",
   "Prefix": "Mrs.",
   "Title": "Support Manager",
@@ -149,8 +149,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1979-04-14",
   "Hire_Date": "2002-08-07"
 }, {
-  "ID": 10,
-  "Head_ID": 2,
+  "ID": "10",
+  "Head_ID": "2",
   "Full_Name": "Kevin Carter",
   "Prefix": "Mr.",
   "Title": "Shipping Manager",
@@ -162,8 +162,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1978-01-09",
   "Hire_Date": "2009-08-11"
 }, {
-  "ID": 11,
-  "Head_ID": 5,
+  "ID": "11",
+  "Head_ID": "5",
   "Full_Name": "Cindy Stanwick",
   "Prefix": "Ms.",
   "Title": "HR Assistant",
@@ -175,8 +175,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1985-06-05",
   "Hire_Date": "2008-03-24"
 }, {
-  "ID": 12,
-  "Head_ID": 8,
+  "ID": "12",
+  "Head_ID": "8",
   "Full_Name": "Sammy Hill",
   "Prefix": "Mr.",
   "Title": "Sales Assistant",
@@ -188,8 +188,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1984-02-17",
   "Hire_Date": "2012-02-01"
 }, {
-  "ID": 13,
-  "Head_ID": 10,
+  "ID": "13",
+  "Head_ID": "10",
   "Full_Name": "Davey Jones",
   "Prefix": "Mr.",
   "Title": "Shipping Assistant",
@@ -201,8 +201,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1983-03-06",
   "Hire_Date": "2011-04-24"
 }, {
-  "ID": 14,
-  "Head_ID": 10,
+  "ID": "14",
+  "Head_ID": "10",
   "Full_Name": "Victor Norris",
   "Prefix": "Mr.",
   "Title": "Shipping Assistant",
@@ -214,8 +214,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1986-07-23",
   "Hire_Date": "2012-07-23"
 }, {
-  "ID": 15,
-  "Head_ID": 10,
+  "ID": "15",
+  "Head_ID": "10",
   "Full_Name": "Mary Stern",
   "Prefix": "Ms.",
   "Title": "Shipping Assistant",
@@ -227,8 +227,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1982-04-08",
   "Hire_Date": "2012-08-12"
 }, {
-  "ID": 16,
-  "Head_ID": 10,
+  "ID": "16",
+  "Head_ID": "10",
   "Full_Name": "Robin Cosworth",
   "Prefix": "Mrs.",
   "Title": "Shipping Assistant",
@@ -240,8 +240,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1981-06-12",
   "Hire_Date": "2012-09-01"
 }, {
-  "ID": 17,
-  "Head_ID": 9,
+  "ID": "17",
+  "Head_ID": "9",
   "Full_Name": "Kelly Rodriguez",
   "Prefix": "Ms.",
   "Title": "Support Assistant",
@@ -253,8 +253,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1988-05-11",
   "Hire_Date": "2012-10-13"
 }, {
-  "ID": 18,
-  "Head_ID": 9,
+  "ID": "18",
+  "Head_ID": "9",
   "Full_Name": "James Anderson",
   "Prefix": "Mr.",
   "Title": "Support Assistant",
@@ -266,8 +266,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1987-01-29",
   "Hire_Date": "2012-10-18"
 }, {
-  "ID": 19,
-  "Head_ID": 9,
+  "ID": "19",
+  "Head_ID": "9",
   "Full_Name": "Antony Remmen",
   "Prefix": "Mr.",
   "Title": "Support Assistant",
@@ -279,8 +279,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1986-02-19",
   "Hire_Date": "2013-01-19"
 }, {
-  "ID": 20,
-  "Head_ID": 8,
+  "ID": "20",
+  "Head_ID": "8",
   "Full_Name": "Olivia Peyton",
   "Prefix": "Mrs.",
   "Title": "Sales Assistant",
@@ -292,8 +292,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1981-06-03",
   "Hire_Date": "2012-05-14"
 }, {
-  "ID": 21,
-  "Head_ID": 6,
+  "ID": "21",
+  "Head_ID": "6",
   "Full_Name": "Taylor Riley",
   "Prefix": "Mr.",
   "Title": "Network Admin",
@@ -305,8 +305,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1982-08-14",
   "Hire_Date": "2012-04-14"
 }, {
-  "ID": 22,
-  "Head_ID": 6,
+  "ID": "22",
+  "Head_ID": "6",
   "Full_Name": "Amelia Harper",
   "Prefix": "Mrs.",
   "Title": "Network Admin",
@@ -318,8 +318,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1983-11-19",
   "Hire_Date": "2011-02-10"
 }, {
-  "ID": 23,
-  "Head_ID": 6,
+  "ID": "23",
+  "Head_ID": "6",
   "Full_Name": "Wally Hobbs",
   "Prefix": "Mr.",
   "Title": "Programmer",
@@ -331,8 +331,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1984-12-24",
   "Hire_Date": "2011-02-17"
 }, {
-  "ID": 24,
-  "Head_ID": 6,
+  "ID": "24",
+  "Head_ID": "6",
   "Full_Name": "Brad Jameson",
   "Prefix": "Mr.",
   "Title": "Programmer",
@@ -344,8 +344,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1988-10-12",
   "Hire_Date": "2011-03-02"
 }, {
-  "ID": 25,
-  "Head_ID": 6,
+  "ID": "25",
+  "Head_ID": "6",
   "Full_Name": "Karen Goodson",
   "Prefix": "Miss",
   "Title": "Programmer",
@@ -357,8 +357,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1987-04-26",
   "Hire_Date": "2011-03-14"
 }, {
-  "ID": 26,
-  "Head_ID": 5,
+  "ID": "26",
+  "Head_ID": "5",
   "Full_Name": "Marcus Orbison",
   "Prefix": "Mr.",
   "Title": "Travel Coordinator",
@@ -370,8 +370,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1982-03-02",
   "Hire_Date": "2005-05-19"
 }, {
-  "ID": 27,
-  "Head_ID": 5,
+  "ID": "27",
+  "Head_ID": "5",
   "Full_Name": "Sandy Bright",
   "Prefix": "Ms.",
   "Title": "Benefits Coordinator",
@@ -383,8 +383,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1983-09-11",
   "Hire_Date": "2005-06-04"
 }, {
-  "ID": 28,
-  "Head_ID": 6,
+  "ID": "28",
+  "Head_ID": "6",
   "Full_Name": "Morgan Kennedy",
   "Prefix": "Mrs.",
   "Title": "Graphic Designer",
@@ -396,8 +396,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1984-07-17",
   "Hire_Date": "2012-01-11"
 }, {
-  "ID": 29,
-  "Head_ID": 28,
+  "ID": "29",
+  "Head_ID": "28",
   "Full_Name": "Violet Bailey",
   "Prefix": "Ms.",
   "Title": "Jr Graphic Designer",
@@ -409,8 +409,8 @@ var employees: Employee[] = [{
   "Birth_Date": "1985-06-10",
   "Hire_Date": "2012-01-19"
 }, {
-  "ID": 30,
-  "Head_ID": 5,
+  "ID": "30",
+  "Head_ID": "5",
   "Full_Name": "Ken Samuelson",
   "Prefix": "Dr.",
   "Title": "Ombudsman",
