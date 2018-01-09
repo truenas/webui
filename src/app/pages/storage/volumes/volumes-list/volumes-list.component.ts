@@ -727,6 +727,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
   }
 
+  onclickAction($event, data) {
+    alert('data=' + data.value);
+    $event.preventDefault();
+  }
+
   ngOnInit(): void {
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume) => {
