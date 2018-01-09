@@ -1,10 +1,11 @@
 <md-card>
   <md-card-title></md-card-title>
-	<div id="terminal" #terminal></div>
+	<div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}"  #terminal></div>
 	<md-card-content>
 		<p>
 			You can use the system copy/paste command.<br>
 			Ctrl + c/v or Command + c/v for mac users.
 		</p>
+		set font size: <input type="number" placeholder="input font size" value="16" [(ngModel)]="font_size" >px
 	</md-card-content>
 </md-card>
