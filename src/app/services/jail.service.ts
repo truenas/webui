@@ -66,7 +66,7 @@ export class JailService {
     {label : '/124', value : '124'}, {label : '/128', value : '128'},
   ];
 
-  protected jailsResource: string = 'jails/jails';
+  protected jailsResource: string = 'jail.query';
   protected jailsConfig: string = 'jails/configuration';
   protected jailsTemplate: string = 'jails/templates';
 
@@ -76,7 +76,7 @@ export class JailService {
 
   getIpv6Prefix() { return this.ipv6_prefix_options; }
 
-  listJails() { return this.rest.get(this.jailsResource, {}); }
+  listJails() { return this.ws.call(this.jailsResource, {}); }
 
   getJailsConfig() { return this.rest.get(this.jailsConfig, {}); }
 
