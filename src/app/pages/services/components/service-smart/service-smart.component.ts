@@ -37,7 +37,7 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_interval',
       placeholder : 'Check Interval',
-      tooltip: 'In minutes, how often smartd wakes up to check if\
+      tooltip: 'In minutes, how often <b>smartd</b> wakes up to check if\
       any tests have been configured to run.',
     },
     {
