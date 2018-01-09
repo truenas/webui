@@ -5,3 +5,7 @@
 /deep/ #employees {
    max-height: 530px;
 }
+
+.hov:hover{
+    cursor: pointer;
+}

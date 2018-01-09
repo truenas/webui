@@ -75,11 +75,11 @@
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
                        
-                        <dxi-column caption="" dataField="Full_Name" [width]="100" [allowFiltering]="false"
+                        <dxi-column caption="" [width]="100" [allowFiltering]="false"
                         [allowSorting]="false" cellTemplate="cellTemplate"></dxi-column>
                         
-                        <div *dxTemplate="let data of 'cellTemplate'">
-                             <div (click)="onclickAction($event, data)" style="cursor: pointer;">
+                        <div *dxTemplate="let rowData of 'cellTemplate'">
+                             <div (click)="onclickAction($event, rowData)" style="cursor: pointer;" onmouseover="">
                                  ...
                              </div>
                         </div>

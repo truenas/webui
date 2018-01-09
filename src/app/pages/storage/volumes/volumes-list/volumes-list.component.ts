@@ -727,9 +727,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
   }
 
-  onclickAction($event, data) {
-    alert('data=' + data.value);
+  onclickAction($event, rowData) {
     $event.preventDefault();
+    setTimeout(()=>{
+      alert('data=' + rowData.data.Full_Name);
+      console.log("Data", rowData);
+    }, -1 );
   }
 
   ngOnInit(): void {
