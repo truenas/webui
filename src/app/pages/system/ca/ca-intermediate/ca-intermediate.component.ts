@@ -41,7 +41,9 @@ export class CertificateAuthorityIntermediateComponent {
       placeholder : 'Signing Certificate Authority',
       tooltip: 'Required; select the CA which was previously imported\
  or created using <a href="http://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.',
-      options : []
+      options : [
+        {label: '---', value: null}
+      ]
     },
     {
       type : 'input',
