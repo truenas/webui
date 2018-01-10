@@ -155,12 +155,6 @@ export class UserFormComponent {
               protected ws: WebSocketService, protected storageService: StorageService,
               private dialog:DialogService ) {}
 
-  preInit(entityForm: any) {
-    // if (!entityForm.isNew) {
-    //   this.bsdusr_creategroup = _.find(this.fieldConfig, {name : "bsdusr_creategroup"});
-    //   this.bsdusr_creategroup.isHidden = false;
-    // }
-  }
 
   afterInit(entityForm: any) {
     if (!entityForm.isNew) {
@@ -176,28 +170,9 @@ export class UserFormComponent {
         //this.bsdusr_aux_group.options.push({label : res.data[i].bsdgrp_group, value : res.data[i].id})
         }
 
-      // res.data.forEach((item) => {
-      //   this.bsdusr_group.options.push(
-      //       {label : item.bsdgrp_group, value : item.id});
-      //   this.bsdusr_aux_group.options.push(
-      //       {label : item.bsdgrp_group, value : item.id});
-      //   /* if(item.bsdgrp_builtin === true)
-      //    * entityForm.setDisabled('bsdusr_group', true); */
-      // });
     });
     /* list users */
     this.rest.get(this.resource_name, {}).subscribe((res) => {
-      let uid = 999;
-      res.data.forEach((item, i) => {
-        if (item.bsdusr_uid > uid)
-          uid = item.bsdusr_uid;
-        /*
-        if(item.bsdusr_builtin === true) {
-          entityForm.setDisabled('bsdusr_uid', true);
-          entityForm.setDisabled('bsdusr_home', true);
-        }
-        */
-      });
 
       if (entityForm.data.bsdusr_home) {
         this.storageService.filesystemStat(entityForm.data.bsdusr_home).subscribe(stat => {
@@ -219,8 +194,9 @@ export class UserFormComponent {
               entityForm.data.bsdusr_uid);
         }
       } else {
-        uid += 1;
-        entityForm.formGroup.controls['bsdusr_uid'].setValue(uid);
+        this.ws.call('user.get_next_uid').subscribe((res)=>{
+          entityForm.formGroup.controls['bsdusr_uid'].setValue(res);
+        })
       }
     });
     /* list shells */
