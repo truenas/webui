@@ -9,7 +9,6 @@ import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
 
 
-
 @Component({
   selector : 'form-explorer',
   templateUrl : './form-explorer.component.html',
@@ -44,7 +43,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-constructor (private entityFormService : EntityFormService){}
+  constructor (private entityFormService : EntityFormService){}
 
   ngOnInit() {
     if(this.config.explorerType === "zvol") {

@@ -22,6 +22,7 @@ export class DatasetComponent implements OnInit{
     placeholder: 'System Dataset Pool',
     tooltip: 'Select Default Pool',
     options: [
+      {label: '---', value: null},
       { label: 'freenas-boot', value: 'freenas-boot' },
     ]
   },{
