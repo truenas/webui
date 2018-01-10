@@ -237,15 +237,20 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dialog.confirm("Warning", "Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.").subscribe((res) => {
-      if (res) {
-        this.isEncrypted = true;
-        this.vol_encrypt = 1
-      } else {
-        this.isEncrypted = false;
-        this.vol_encrypt = 0;
-      }
-    });
+    if(this.isEncrypted) {
+      this.dialog.confirm("Warning", "Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.").subscribe((res) => {
+        if (res) {
+          this.isEncrypted = true;
+          this.vol_encrypt = 1
+        } else {
+          this.isEncrypted = false;
+          this.vol_encrypt = 0;
+        }
+      });
+    } else {
+      this.isEncrypted = false;
+      this.vol_encrypt = 0;
+    }
   }
 
   isEncryptedChecked() {
