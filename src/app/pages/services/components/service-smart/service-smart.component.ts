@@ -37,6 +37,8 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_interval',
       placeholder : 'Check Interval',
+      tooltip: 'In minutes, how often <b>smartd</b> wakes up to check if\
+      any tests have been configured to run.',
     },
     {
       type : 'select',
@@ -58,11 +60,17 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_informational',
       placeholder : 'Informational',
+      tooltip: 'Default of 0 disables this check, otherwise will\
+ message with a log level of LOG_INFO if the temperature is higher\
+ than specified degrees in Celsius.',
     },
     {
       type : 'input',
       name : 'smart_critical',
       placeholder : 'Critical',
+      tooltip: 'Default of 0 disables this check, otherwise will\
+ message with a log level of LOG_CRIT and send an email if the\
+ temperature is higher than specified degrees in Celsius.',
     },
     {
       type : 'input',
