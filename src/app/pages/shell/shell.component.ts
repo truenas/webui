@@ -31,6 +31,7 @@ export class ShellComponent implements OnInit, OnChanges {
   // xterm variables
   cols: string;
   rows: string;
+  font_size: number;
   public token: any;
   public xterm: any;
   private shellSubscription: any;
