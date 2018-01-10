@@ -111,6 +111,12 @@ export class CertificateCSRComponent {
       tooltip: 'Enter the fully-qualified\
  hostname (FQDN) of the FreeNAS® system.',
     },
+    {
+      type : 'textarea',
+      name : 'cert_san',
+      placeholder: 'Subject Alternate Names',
+      tooltip: 'Multi-domain support. Enter additional space separated domains.'
+    }
   ];
 
   afterInit(entityEdit: any) {}
