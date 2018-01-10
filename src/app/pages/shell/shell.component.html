@@ -1,11 +1,13 @@
 <md-card>
   <md-card-title></md-card-title>
 	<div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}"  #terminal></div>
+	<md-divider class="mb-1"></md-divider>
 	<md-card-content>
 		<p>
 			You can use the system copy/paste command.<br>
 			Ctrl + c/v or Command + c/v for mac users.
 		</p>
-		set font size: <input type="number" placeholder="input font size" value="16" [(ngModel)]="font_size" >px
+		Set font size: <md-slider min="10" max="20" step="1" value="14"  [(ngModel)]="font_size"></md-slider>
+		<button md-raised-button (click)="resetDefault()" mdTooltip="Reset font size to default value">reset default</button>
 	</md-card-content>
 </md-card>

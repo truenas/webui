@@ -54,6 +54,10 @@ export class ShellComponent implements OnInit, OnChanges {
     this.shellSubscription.unsubscribe();
   };
 
+  resetDefault() {
+    this.font_size = 14;
+  }
+
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
   }) {
