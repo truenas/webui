@@ -19,7 +19,7 @@
                         {{row.name}}
                     </md-panel-title>
                     <md-panel-description>
-                        {{row.status}} ({{conf.titleRowValue(row, 'used')}} ({{row.used_pct}}) Used / {{conf.titleRowValue(row, 'avail')}} Free)
+                        {{row.status}} ({{row.usedStr}} Used / {{row.availStr}} Free)
                     </md-panel-description>
                 </md-expansion-panel-header>
                 <div>
@@ -33,59 +33,61 @@
                     <br/>
                 </div>
 
-                <entity-table [conf]="row.volumesListTableConfig"></entity-table>
-
-
-            </md-expansion-panel>
-
-            <md-expansion-panel [expanded]="expanded">
-                <md-expansion-panel-header>
-                    <md-panel-title>
-                        TEST
-                    </md-panel-title>
-                    <md-panel-description>
-                        New Tree Table for Demo
-                    </md-panel-description>
-                </md-expansion-panel-header>
-
-                <div id="tree-list-demo">
-                    <dx-tree-list id="employees" [dataSource]="employees" keyExpr="ID" parentIdExpr="Head_ID" [showRowLines]="true" [columnAutoWidth]="true"
-                        [expandedRowKeys]="['1']" (onCellPrepared)="cellPrepared($event)">
+                <div id="tree-list-demo" *ngIf="row.volumesListTableConfig.rowData.length > 0">
+                    <dx-tree-list id="row.volumesListTableConfig._classId" 
+                                [dataSource]="row.volumesListTableConfig.rowData" 
+                                keyExpr="path" 
+                                parentIdExpr="parentPath" 
+                                [showRowLines]="true" 
+                                [allowColumnResizing]="true"
+                                [columnAutoWidth]="true"
+                                [columnResizingMode]="'widget'"
+                                [columnMinWidth]="50"
+                                [expandedRowKeys]="['1']">
                         <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
                             <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
                             </dxo-popup>
                         </dxo-editing -->
 
-                        <dxi-column dataField="Full_Name">
+                        <dxi-column dataField="path" caption="Name" >
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
-                        <dxi-column dataField="Prefix" caption="Title">
+                        <dxi-column dataField="type" caption="Type">
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
-                        <dxi-column dataField="Title" caption="Position">
+                        <dxi-column dataField="usedStr" caption="Used">
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
-                        <dxi-column dataField="City" [width]="150">
+                        <dxi-column dataField="availStr" [width]="Available">
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
-                        <dxi-column dataField="State">
+                        
+                        <dxi-column dataField="compression" [width]="Compression">
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
-                        <dxi-column dataField="Hire_Date" dataType="date" [width]="120">
+                        
+                        <dxi-column dataField="readonly" [width]="Readonly">
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
-                       
-                        <dxi-column caption="" [width]="100" [allowFiltering]="false"
-                        [allowSorting]="false" cellTemplate="cellTemplate"></dxi-column>
+                        
+                        <dxi-column dataField="dedup" [width]="Dedup">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        
+                        <dxi-column caption="" 
+                                    [width]="100" 
+                                    [allowFiltering]="false"
+                                    [allowSorting]="false" 
+                                    cellTemplate="cellTemplate"></dxi-column>
                         
                         <div *dxTemplate="let rowData of 'cellTemplate'">
-                             <div (click)="onclickAction($event, rowData)" style="cursor: pointer;" onmouseover="">
-                                 ...
-                             </div>
+                            <!--app-entity-table-actions [entity]="this" [row]="rowData">
+                            </app-entity-table-actions -->
                         </div>
 
                     </dx-tree-list>
                 </div>
+
 
             </md-expansion-panel>
         </md-accordion>

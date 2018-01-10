@@ -34,7 +34,6 @@ import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-l
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
-import { EmployeeService } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxTreeListModule } from 'devextreme-angular';
 
@@ -71,7 +70,7 @@ import { DxTreeListModule } from 'devextreme-angular';
     DiskFormComponent,
     DiskWipeComponent
   ],
-  providers : [UserService, StorageService, EmployeeService]
+  providers : [UserService, StorageService]
 })
 export class StorageModule {
 }

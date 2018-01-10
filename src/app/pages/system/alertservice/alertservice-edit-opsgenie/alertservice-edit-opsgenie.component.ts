@@ -36,6 +36,7 @@ export class AlertServiceEditOpsgenieComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
+      disabled: true
     },{
       type : 'input',
       name : 'cluster_name',

@@ -37,7 +37,8 @@ export class AlertServiceAddPagerdutyComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      value: 'PagerDuty'
+      value: 'PagerDuty',
+      disabled: true
     },{
       type : 'input',
       name : 'client_name',
