@@ -42,7 +42,9 @@ export class CertificateInternalComponent {
       placeholder : 'Signing Certificate Authority',
       tooltip: 'Select the CA which was previously imported\
  or created using <a href="https://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.',
-      options : []
+      options : [
+        {label: '---', value: null}
+      ]
     },
     {
       type : 'input',
