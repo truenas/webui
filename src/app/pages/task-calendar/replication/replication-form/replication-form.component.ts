@@ -226,7 +226,7 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'select',
         name : 'repl_remote_mode',
-        placeholder : 'Remote Mode',
+        placeholder : 'Setup Mode',
         options : [
           {label : 'Manual', value : 'MANUAL'}, 
           {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
@@ -272,7 +272,7 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'select',
         name : 'repl_remote_cipher',
-        placeholder : 'Remote Cipher',
+        placeholder : 'Encryption Cipher',
         options : [
           {label : 'standard', value : 'standard'}, 
           {label : 'fast', value : 'fast'},
