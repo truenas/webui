@@ -22,11 +22,15 @@ export class RoutePartsService {
         routeParts = routeParts.concat(this.generateRouteParts(snapshot.firstChild));
       }
       if (snapshot.data['title'] && snapshot.url.length) {
-        // console.log(snapshot.data['title'], snapshot.url)
+        let targetUrl: any = snapshot.url[0];
+        for(let i = 1; i < snapshot.url.length; i++) {
+          targetUrl = targetUrl + '/' + snapshot.url[i];
+        }
         routeParts.push({
           title: snapshot.data['title'], 
           breadcrumb: snapshot.data['breadcrumb'] , 
-          url: snapshot.url[0].path});
+          url: targetUrl
+        });
       }
     }
     return routeParts.reverse();
