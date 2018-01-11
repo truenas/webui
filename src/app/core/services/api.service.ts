@@ -63,6 +63,13 @@ export class ApiService {
       namespace:"vm.delete",
       args:[],
       responseEvent:"VmDeleted"
+    },
+    StatsRequest:{
+      protocol:"websocket",
+      version:"1",
+      namespace:"stats.get_data",
+      args:[],
+      responseEvent:"StatsData"
     }
   } 
 

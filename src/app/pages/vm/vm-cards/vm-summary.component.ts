@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
+import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { Subject } from 'rxjs/Subject';
 import filesize from 'filesize';
 
@@ -11,40 +12,54 @@ import filesize from 'filesize';
   selector: 'vm-summary',
   templateUrl: './vm-summary.component.html',
   styleUrls: ['./vm-summary.component.css']
-  })
-export class VmSummaryComponent implements OnInit {
-  
-  @ViewChild('cpu') cpuChart:ViewChartDonutComponent;
+})
+export class VmSummaryComponent implements AfterViewInit {
+
+  @ViewChild('cpu') cpuChart:ViewChartLineComponent;
   @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
-  @ViewChild('net') netChart:ViewChartPieComponent;
+  @ViewChild('net') netChart:ViewChartGaugeComponent;
   public chartSize:number = 260;
 
   constructor(private core:CoreService) {
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       this.setPoolData(evt);
     });
 
-    this.core.emit({name:"PoolDataRequest"});
+    this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      this.setCPUData(evt);
+      this.setNetData(evt);
+    });
 
-    this.cpuChart.data = [
-      {legend: 'CPU Load', data:[10,50,60,95,15,30,45,55,35,79,95,60,80,15,250,125,1024,670,220,450,75]},
+    // Pool Stats
+    this.core.emit({name:"PoolDataRequest"});
+    // CPU Stats (dataList eg. {source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"})
+    let dataList = [{source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"}];
+    this.core.emit({name:"StatsRequest", data:[dataList,{step:'10', start:'now-10m'}]});
+
+    /*this.cpuChart.data = [
+     {legend: 'CPU Load', data:[10,50,60,95,15,30,45,55,35,79,95,60,80,15,250,125,1024,670,220,450,75]},
     ];
     this.cpuChart.width = this.chartSize;
     this.cpuChart.height = this.chartSize;
+    */
 
+
+
+   }
+
+  setNetData(evt:CoreEvent){
     this.netChart.data = [
-      {legend: 'C', data:[10]},
+      //{legend: 'C', data:[10]},
       {legend: 'D', data:[90]}
     ];
     this.netChart.width = this.chartSize;
     this.netChart.height = this.chartSize;
-
-
   }
 
   // rest.get('storage/volume/', {}).subscribe((res) => {});
@@ -68,4 +83,23 @@ export class VmSummaryComponent implements OnInit {
     this.zpoolChart.width = this.chartSize;
     this.zpoolChart.height = this.chartSize;
   };
+
+  setCPUData(evt:CoreEvent){
+    console.log("SET CPU DATA");
+    console.log(evt.data);
+    let cpuUserObj = evt.data;
+    let cpuUser: ChartData = {
+      legend: 'CPU/User',
+      data: evt.data.data
+    }
+
+    this.cpuChart.chartType = 'area';
+    this.cpuChart.units = '%';
+    this.cpuChart.timeSeries = true;
+    this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
+    this.cpuChart.timeData = evt.data.meta;
+    this.cpuChart.data = [cpuUser];
+    this.cpuChart.width = this.chartSize;
+    this.cpuChart.height = this.chartSize;
+  }
 }

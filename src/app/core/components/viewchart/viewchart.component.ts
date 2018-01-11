@@ -1,7 +1,8 @@
-import { Component, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
+import {ChartConfiguration} from 'c3';
 
 export interface ChartData {
   legend: string;
@@ -18,7 +19,7 @@ export const ViewChartMetadata = {
   //templateUrl: './viewchart.component.html',
   styleUrls: ['./viewchart.component.css']
 })
-export class ViewChartComponent extends ViewComponent implements AfterViewInit {
+export class ViewChartComponent extends ViewComponent implements OnInit {
 
   public chartColors: string[];
   public maxLabels: number;
@@ -27,17 +28,20 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public height: number;
 
   protected chart: any;
-  protected chartType: string = 'pie';
+  protected _chartType: string;
   protected _data: any[];
   protected _chartId: string;
 
+  protected chartConfig: ChartConfiguration;
+
   constructor() { 
     super();
-    this._chartId = "chart-" + UUID.UUID();
+    this.chartId = "chart-" + UUID.UUID();
+    this.chartType = "pie";
     this.units = '';
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.render();
   }
 
@@ -46,20 +50,35 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this.render();
   }
 
-  set data(d:ChartData[]){
-    let result: any[] = [];
-    for(let i = 0; i < d.length; i++){
-      let item = d[i];
-      let legend = [item.legend];
-      let dataObj = legend.concat(item.data)
-        result.push(dataObj);
-    }
-    this._data = result;
-    this.render();
-  }
-
   get data(){
     return this._data;
+  }
+
+  set data(d:ChartData[]){
+    if(/*!this.chartConfig ||*/ !d){
+      /*this.chartConfig = {
+        data:{
+          columns:[]
+        }
+      }*/
+      this._data = [];
+    } else {
+      let result: any[] = [];
+      for(let i = 0; i < d.length; i++){
+        let item = d[i];
+        let legend = [item.legend];
+        let dataObj = legend.concat(item.data)
+          result.push(dataObj);
+      }
+      this._data = result;
+
+      console.log("DEBUG: set data() ********");
+      console.log(d);
+      //console.log(this.chartConfig);
+
+      //this.chartConfig.data.columns = result;
+      this.render();
+    }
   }
 
   get chartId(){
@@ -68,36 +87,57 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   set chartId(sel: string){
     this._chartId = sel;
+    //this.chartConfig.bindto = '#' + sel;
+  }
+
+  get chartType(){
+    return this._chartType;
+    //return this.chartConfig.data.type;
+  }
+
+  set chartType(str:string){
+    this._chartType = str;
+    //this.chartConfig.data.type = str;
+  }
+
+  makeConfig(){
+    this.chartConfig = {
+     bindto: '#' + this.chartId,
+     data: {
+       columns: this._data,
+       type: this.chartType
+     },
+     size:{
+       width: this.width,
+       height: this.height
+     },
+     tooltip:{
+       format: {
+         value: (value, ratio, id, index) => {
+           if(this.units){
+             console.log("Units = " + this.units)
+             return value + this.units; 
+           } else {
+             return value;
+           }
+         }
+       }
+     }
+    }
+
+    return this.chartConfig;
   }
 
   render(){
     if(this.data.length == 0){
+      console.log("NO DATA FOUND");
       return -1;
     }
-    
-    this.chart = c3.generate({
-      bindto: '#' + this._chartId,
-      data: {
-        columns: this._data,
-        type: this.chartType
-      },
-      size:{
-        width: this.width,
-        height: this.height
-      },
-      tooltip:{
-        format: {
-          value: (value, ratio, id, index) => {
-            if(this.units){
-              console.log("Units = " + this.units)
-              return value + this.units; 
-            } else {
-              return value;
-            }
-          }
-        }
-      }
-    })
+    let conf = this.makeConfig();
+    console.log("GENERATING DATA FROM ...");
+    console.log(conf);
+    this.chart = c3.generate(conf);
+    return this.chart
   }
 
 }

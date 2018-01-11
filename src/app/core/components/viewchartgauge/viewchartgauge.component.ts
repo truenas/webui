@@ -33,12 +33,9 @@ export class ViewChartGaugeComponent extends ViewChartComponent implements OnIni
   ngOnInit() {
   }
 
-  render(){
-    if(this.data.length == 0){
-      return -1;
-    }
-    
-    this.chart = c3.generate({
+  makeConfig(){
+  
+    this.chartConfig = {
       bindto: '#' + this._chartId,
       data: {
         columns: this._data,
@@ -65,7 +62,9 @@ export class ViewChartGaugeComponent extends ViewChartComponent implements OnIni
           }
         }
       }
-    })
+    }
+
+    return this.chartConfig;
   }
 
 }

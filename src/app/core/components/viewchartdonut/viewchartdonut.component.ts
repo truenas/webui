@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
-import * as c3 from 'c3';
+//import * as c3 from 'c3';
 
 @Component({
   selector: 'viewchartdonut',
@@ -20,12 +20,8 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
   ngOnInit() {
   }
 
-  render(){
-    if(this.data.length == 0){
-      return -1;
-    }
-    
-    this.chart = c3.generate({
+  makeConfig(){
+    this.chartConfig = {
       bindto: '#' + this._chartId,
       data: {
         columns: this._data,
@@ -50,7 +46,9 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
           }
         }
       }
-    })
+    }
+
+    return this.chartConfig;
   }
 
 }
