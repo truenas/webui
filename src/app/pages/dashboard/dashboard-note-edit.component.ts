@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { MdSnackBar } from '@angular/material';
@@ -26,6 +26,7 @@ export class DashboardNoteEditComponent implements OnInit {
   @Input() isNew: boolean = false;
   @Input() cardNote: any = {};
 
+  templateTop: TemplateRef<any>;
   protected resource_name: string = 'vm/vm/' + this.machineId;
   protected isEntity: boolean = true;
 
