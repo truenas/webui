@@ -1,0 +1,12 @@
+<div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+	<md-input-container class="full-width">
+		<input mdInput [mdDatepicker]="picker" 
+			[placeholder]="config.placeholder"
+			[value]="config.value"
+			[formControlName]="config.name">
+		<button mdSuffix [mdDatepickerToggle]="picker"></button>
+		<md-datepicker #picker></md-datepicker>
+	</md-input-container>
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+</div>

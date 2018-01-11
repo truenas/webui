@@ -49,6 +49,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public wsResponse;
   public wsfg;
   public wsResponseIdx;
+  public queryResponse;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -129,7 +130,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       if (this.conf.queryCall) {
         if(this.pk) {
           const filter = []
-          filter.push(this.conf.pk)
+          if (this.conf.pk) {
+           filter.push(this.conf.pk);
+          }
+          if (this.conf.queryCallOption) {
+            filter.push(this.conf.queryCallOption);
+          }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []);
@@ -161,6 +167,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               }
             }
           } else {
+            this.queryResponse = res;
             this.wsResponse = res[0];
             for (let i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
@@ -279,8 +286,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.beforeSubmit(value);
     }
 
-    this.loader.open();
-    this.busy = this.submitFunction(value)
+    if (this.conf.customSubmit) {
+      this.busy = this.conf.customSubmit(value);
+    } else {
+      this.loader.open();
+      this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -302,9 +312,14 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             this.conf.errorReport(res);
                           }
                           else {
-                            this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+                            if (res.trace) {
+                              this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+                            } else {
+                              new EntityUtils().handleError(this, res);
+                            }
                           }
                         });
+    }
   }
 
   clearErrors() {
@@ -317,6 +332,16 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   isShow(id: any): any {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
+        return false;
+      }
+    } else {
+      if (this.conf.basic_field != undefined && this.conf.basic_field.indexOf(id) > -1) {
+        return false;
+      }
+    }
+
+    if (this.conf.hide_fileds != undefined) {
+      if (this.conf.hide_fileds.indexOf(id) > -1) {
         return false;
       }
     }

@@ -10,9 +10,11 @@ import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { MdDialog } from '@angular/material';
 
 
-interface ZfsPoolData {
+export interface ZfsPoolData {
   avail: number;
   id: string;
   is_decrypted: boolean;
@@ -37,13 +39,14 @@ export class VolumesListTableConfig {
   protected flattenedVolData: any;
   protected resource_name = 'storage/volume';
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip = "Volume Manager";
+  protected route_add_tooltip = "Create ZFS Pool";
   public dataset_data: any;
 
   constructor(
     private _router: Router,
     private _classId: string,
-    private title: string) {
+    private title: string,
+    public mdDialog: MdDialog ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -87,6 +90,25 @@ export class VolumesListTableConfig {
     }
   }
 
+  public titleRowValue(row, attr): any {
+    let returnValue = row[attr];
+
+    switch (attr) {
+      case 'avail':
+      case 'used':
+       try {
+        returnValue = filesize(row[attr], { standard: "iec" });
+       } catch(error) {
+         console.log("Error", error);
+       }
+       break;
+      default:
+        returnValue = row[attr];
+    }
+
+    return returnValue;
+  }
+
   getAddActions() {
     const actions = [];
     actions.push({
@@ -105,6 +127,13 @@ export class VolumesListTableConfig {
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (row.type === 'zpool') {
       actions.push({
+        label: "Extend",
+        onClick: (row) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "manager", row.id]));
+        }
+      });
+      actions.push({
         label: "Delete",
         onClick: (row) => {
           this._router.navigate(new Array('/').concat(
@@ -118,7 +147,22 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row.id]));
         }
       });
+
+      if( row.vol_encrypt > 0 ) {
+        actions.push({
+          label: "Download Encrypt Key",
+          onClick: (row) => {
+            let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
+
+            dialogRef.componentInstance.volumeId = row.id;
+            dialogRef.afterClosed().subscribe(result => {
+              this._router.navigate(['/', 'storage', 'volumes']);
+            });
+          }
+        });
+      }
     }
+    
     if (row.type == "dataset") {
       actions.push({
         label: "Add Dataset",
@@ -230,12 +274,14 @@ export class VolumesListTableConfig {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
+  title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this.router, "", "Volumes");
+  conf = new VolumesListTableConfig(this.router, "", "Volumes", this.mdDialog);
   expanded = false;
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
+    protected mdDialog: MdDialog ) {
     super(rest, router, ws, _eRef, dialog, loader);
 
   }
@@ -243,7 +289,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngOnInit(): void {
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog);
         volume.type = 'zpool';
         this.zfsPoolRows.push(volume);
       });

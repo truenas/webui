@@ -10,14 +10,15 @@ import { DatasetFormComponent} from './volumes/datasets/dataset-form/';
 import { DatasetDeleteComponent} from './volumes/datasets/dataset-delete/';
 import { ManagerComponent} from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
-import { VolumeDeleteComponent} from './volumes/volume-delete/index';
-import { VolumesListComponent} from './volumes/volumes-list/';
-import { ZvolAddComponent} from './volumes/zvol/zvol-add/';
-import { ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
-import { ZvolEditComponent} from './volumes/zvol/zvol-edit/';
-import { VolumeImportListComponent} from './volumes/import-list/';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
+import {VolumeDeleteComponent} from './volumes/volume-delete/index';
+import {VolumesListComponent} from './volumes/volumes-list/';
+import {ZvolAddComponent} from './volumes/zvol/zvol-add/';
+import {ZvolDeleteComponent} from './volumes/zvol/zvol-delete/';
+import {ZvolEditComponent} from './volumes/zvol/zvol-edit/';
+import {VolumeImportListComponent} from './volumes/import-list/';
+import {VMwareSnapshotFormComponent} from './VMware-snapshot/VMware-snapshot';
+import {VMwareSnapshotListComponent} from './VMware-snapshot/VMware-snapshot-list';
+import {ImportDiskComponent} from './import-disk/import-disk.component';
 import { StatusComponent } from './volumes/status/status.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
@@ -58,7 +59,11 @@ export const routes: Routes = [
           data: {title: 'Delete Zvol', breadcrumb:'Delete Zvol' }},
         {
           path : 'manager', component : ManagerComponent,
-          data: {title: 'Volume Manager', breadcrumb:'Volume Manager' }},
+          data: {title: 'Create Pool', breadcrumb:'Create Pool' }},
+        {
+          path : 'manager/:pk', component : ManagerComponent,
+          data: {title: 'Extend Pool', breadcrumb: 'Extend Pool' }
+        },
         {
           path : 'import_list', component: VolumeImportListComponent,
           data: {title: 'Import Volume', breadcrumb:'Import Volume' }},
@@ -118,7 +123,11 @@ export const routes: Routes = [
             path : 'wipe/:pk', component : DiskWipeComponent,
             data: {title: 'Wipe Disk', breadcrumb:'Wipe Disk' }}
         ]
-      }
+      },
+      {
+        path: 'import-disk', component : ImportDiskComponent,
+        data: {title: 'Import Disk', breadcrumb: 'Import Disk'}
+      },
     ]
   }
 ];

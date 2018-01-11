@@ -31,12 +31,20 @@ export class SigninComponent implements OnInit {
 
   ngOnInit() {
     if (this.ws.username && this.ws.password && this.ws.redirectUrl) {
-      this.submitButton.disabled = true;
-      this.progressBar.mode = 'indeterminate';
+      if (this.submitButton) {
+        this.submitButton.disabled = true;
+      }
+      if (this.progressBar) {
+        this.progressBar.mode = 'indeterminate';
+      }
 
       this.ws.login(this.ws.username, this.ws.password)
                        .subscribe((result) => { this.loginCallback(result); });
     }
+  }
+
+  connected() {
+    return this.ws.connected;
   }
 
   signin() {
@@ -65,6 +73,7 @@ export class SigninComponent implements OnInit {
   }
 
   errorLogin() {
+    this.submitButton.disabled = false;
     this.failed = true;
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';

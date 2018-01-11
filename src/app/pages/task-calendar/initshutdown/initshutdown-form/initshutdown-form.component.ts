@@ -25,6 +25,8 @@ export class InitshutdownFormComponent {
     type: 'select',
     name: 'ini_type',
     placeholder: 'Type',
+    tooltip: 'Select <i>Command</i> (for an executable) or\
+ <i>Script</i> (for an executable script)',
     options: [{
       label: 'Command',
       value: 'command',
@@ -37,14 +39,22 @@ export class InitshutdownFormComponent {
     type: 'input',
     name: 'ini_command',
     placeholder: 'Command',
+    tooltip: 'Enter the command plus any desired options.',
   }, {
-    type: 'input',
+    type : 'explorer',
+    initial: '/mnt',
     name: 'ini_script',
     placeholder: 'Script',
+    explorerType: 'file',
+    tooltip: 'Enter the location of the script.',
   }, {
     type: 'select',
     name: 'ini_when',
     placeholder: 'When',
+    tooltip: 'Select when the command/script runs. Choices are\
+ <i>Pre Init</i> (very early in boot process before filesystems are\
+ mounted), <i>Post Init</i> (towards end of boot process before FreeNAS\
+ services are started), or <i>Shutdown</i>.',
     options: [{
       label: '---------',
       value: '',
@@ -63,6 +73,7 @@ export class InitshutdownFormComponent {
     type: 'checkbox',
     name: 'ini_enabled',
     placeholder: 'Enable',
+    tooltip: 'Uncheck to diable the task.',
     value: true,
   }];
 
@@ -76,9 +87,7 @@ export class InitshutdownFormComponent {
       this.formUpdate(value);
     });
 
-
     this.type_control.setValue('command');
-
   }
 
   formUpdate(type) {

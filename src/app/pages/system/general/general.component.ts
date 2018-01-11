@@ -44,7 +44,9 @@ export class GeneralComponent {
  accessing the administrative GUI. The built-in HTTP server binds to the\
  wildcard address of <i>0.0.0.0</i> (any address) and issues an alert if\
  the specified address becomes unavailable.',
-      options: []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type: 'select',
@@ -85,7 +87,9 @@ export class GeneralComponent {
  <a href="http://doc.freenas.org/11/system.html#cas" target="_blank"><ins>Certificate Authority (CA)</ins></a>\
  then the\
  <a href="http://doc.freenas.org/11/system.html#certificates" target="_blank"><ins>Certificate</ins></a>.',
-      options: []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type: 'checkbox',
@@ -101,21 +105,27 @@ export class GeneralComponent {
       tooltip : 'Select a localization and reload the browser.\
  Localization progress is viewable on\
  <a href="https://weblate.trueos.org/projects/freenas/#languages" target="_blank"><ins>Weblate</ins></a>.',
-      options: []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type: 'select',
       name: 'stg_kbdmap',
       placeholder: 'Console Keyboard Map',
       tooltip : 'Select a keyboard layout.',
-      options: []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type: 'select',
       name: 'stg_timezone',
       placeholder: 'Timezone',
       tooltip : 'Select a time zone.',
-      options: []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type: 'select',

@@ -6,7 +6,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
 import filesize from 'filesize';
@@ -46,6 +46,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public temp = [];
   
   public name: string;
+  public resource_name = 'storage/volume/';
+  public pk: any;
+  public isNew = true;
   public vol_encrypt: number = 0;
   public isEncrypted: boolean = false;
   public re_errors = "";
@@ -64,6 +67,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     private dialog:DialogService, 
     public snackBar: MdSnackBar,
     private loader:AppLoaderService,
+    protected route: ActivatedRoute,
     public mdDialog: MdDialog ) {
 
     dragulaService.setOptions('pool-vdev', {
@@ -97,6 +101,21 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.route.params.subscribe(params => {
+      if (params['pk']) {
+        this.pk = params['pk'];
+        this.isNew = false;
+      }
+    });
+    if (!this.isNew) {
+      this.rest.get(this.resource_name + this.pk + '/', {}).subscribe((res) => {
+        this.name = res.data.vol_name;
+        this.vol_encrypt = res.data.vol_encrypt;
+        if (this.vol_encrypt > 0) {
+          this.isEncrypted = true;
+        }
+      });
+    }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
     this.ws.call("notifier.get_disks", [true]).subscribe((res) => {
@@ -166,11 +185,17 @@ export class ManagerComponent implements OnInit, OnDestroy {
           }
         });
 
+        let body = {};
         this.loader.open();
+        if (this.isNew) {
+          body = {volume_name: this.name, encryption: this.isEncrypted, layout: layout };
+        } else {
+          body  = {volume_add: this.name, layout: layout };
+        }
         this.busy =
           this.rest
-          .post('storage/volume/', {
-            body: JSON.stringify({ volume_name: this.name, encryption: this.vol_encrypt, layout: layout })
+          .post(this.resource_name, {
+            body: JSON.stringify(body)
           })
           .subscribe(
             (res) => {
@@ -212,15 +237,20 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dialog.confirm("Warning", "Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.").subscribe((res) => {
-      if (res) {
-        this.isEncrypted = true;
-        this.vol_encrypt = 1
-      } else {
-        this.isEncrypted = false;
-        this.vol_encrypt = 0;
-      }
-    });
+    if(this.isEncrypted) {
+      this.dialog.confirm("Warning", "Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.").subscribe((res) => {
+        if (res) {
+          this.isEncrypted = true;
+          this.vol_encrypt = 1
+        } else {
+          this.isEncrypted = false;
+          this.vol_encrypt = 0;
+        }
+      });
+    } else {
+      this.isEncrypted = false;
+      this.vol_encrypt = 0;
+    }
   }
 
   isEncryptedChecked() {

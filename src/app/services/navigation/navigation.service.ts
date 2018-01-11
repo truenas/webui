@@ -12,7 +12,8 @@ interface IMenuItem {
 }
 interface IChildItem {
   name: string, // Display text
-  state: string // Router state
+  state: string, // Router state
+  disabled ? : boolean, // If true, item will not be appeared in sidenav.
 }
 
 @Injectable()
@@ -86,7 +87,7 @@ export class NavigationService {
       sub: [
         { name: 'Global Configuration', state: 'configuration' },
         { name: 'Interfaces', state: 'interfaces' },
-        { name: 'IPMI', state: 'ipmi' },
+        { name: 'IPMI', state: 'ipmi', disabled: false },
         { name: 'Link Aggregations', state: 'laggs' },
         //        {name: 'Network Summary', state: 'networksummary'},
         { name: 'Static Routes', state: 'staticroutes' },
@@ -103,7 +104,8 @@ export class NavigationService {
         { name: 'Volumes', state: 'volumes' },
         { name: 'Snapshots', state: 'snapshots' },
         { name: 'VMware-Snapshots', state: 'vmware-Snapshots' },
-        { name: 'Disks', state: 'disks' }
+        { name: 'Disks', state: 'disks' },
+        { name: 'Import Disk', state: 'import-disk'},
       ]
     },
     {
