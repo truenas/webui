@@ -65,15 +65,18 @@ export class VolumesListTableConfig {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
+      
+      this.rest.get(this.resource_name, {}).subscribe((res) => {
+        this.rowData = [];
+  
+        this.rowData = this.resourceTransformIncomingRestData(res.data);
+        console.log("this.rowData", this.rowData);
+        
+      });
     }
 
-    this.rest.get(this.resource_name, {}).subscribe((res) => {
-      this.rowData = [];
-
-      this.rowData = this.resourceTransformIncomingRestData(res.data);
-      console.log("this.rowData", this.rowData);
-      
-    });
+    
+    
   }
  
   getAddActions() {
@@ -89,39 +92,39 @@ export class VolumesListTableConfig {
     return actions;
   }
 
-  getActions(row: ZfsPoolData) {
+  getActions(rowData: any) {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
-    if (row.type === 'zpool') {
+    if (rowData.type === 'zpool') {
       actions.push({
         label: "Extend",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "manager", row.id]));
+            ["storage", "volumes", "manager", row1.id]));
         }
       });
       actions.push({
         label: "Delete",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "delete", row.id]));
+            ["storage", "volumes", "delete", row1.id]));
         }
       });
       actions.push({
         label: "Status",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "status", row.id]));
+            ["storage", "volumes", "status", row1.id]));
         }
       });
 
-      if (row.vol_encrypt > 0) {
+      if (rowData.vol_encrypt > 0) {
         actions.push({
           label: "Download Encrypt Key",
-          onClick: (row) => {
+          onClick: (row1) => {
             let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
 
-            dialogRef.componentInstance.volumeId = row.id;
+            dialogRef.componentInstance.volumeId = row1.id;
             dialogRef.afterClosed().subscribe(result => {
               this._router.navigate(['/', 'storage', 'volumes']);
             });
@@ -130,71 +133,72 @@ export class VolumesListTableConfig {
       }
     }
 
-    if (row.type == "dataset") {
+    if (rowData.type == "dataset") {
       actions.push({
         label: "Add Dataset",
-        onClick: (row) => {
+        onClick: (row1) => {
+          alert("FUCK DUDE");
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "dataset",
-            "add", row.path
+            "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+            "add", row1.path
           ]));
         }
       });
       actions.push({
         label: "Add Zvol",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "zvol", "add",
-            row.path
+            "storage", "volumes", "id", row1.path.split('/')[0], "zvol", "add",
+            row1.path
           ]));
         }
       });
       actions.push({
         label: "Edit Options",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "dataset",
-            "edit", row.path
+            "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+            "edit", row1.path
           ]));
         }
       });
-      if (row.path.indexOf('/') != -1) {
+      if (rowData.path.indexOf('/') != -1) {
         actions.push({
           label: "Delete Dataset",
-          onClick: (row) => {
+          onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id", row.path.split('/')[0], "dataset",
-              "delete", row.path
+              "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+              "delete", row1.path
             ]));
           }
         });
         actions.push({
           label: "Edit Permissions",
-          onClick: (row) => {
+          onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id", row.path.split('/')[0], "dataset",
-              "permissions", row.path
+              "storage", "volumes", "id",row1.path.split('/')[0], "dataset",
+              "permissions", row1.path
             ]));
           }
         });
       }
     }
-    if (row.type == "zvol") {
+    if (rowData.type == "zvol") {
       actions.push({
         label: "Delete Zvol",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "zvol",
-            "delete", row.path
+            "storage", "volumes", "id", row1.path.split('/')[0], "zvol",
+            "delete", row1.path
           ]));
         }
       });
       actions.push({
         label: "Edit Zvol",
-        onClick: (row) => {
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row.path.split('/')[0], "zvol", "edit",
-            row.path
+            "storage", "volumes", "id", row1.path.split('/')[0], "zvol", "edit",
+            row1.path
           ]));
         }
       });
@@ -206,20 +210,27 @@ export class VolumesListTableConfig {
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
+    const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
     for (let i = 0; i < data.length; i++) {
+      data[i].path = data[i].mountpoint;
       
-      data[i].path = data[i].name;
-      data[i].parentPath = (data[i].path.indexOf("/") !== -1) ? data[i].path.slice(0, data[i].path.lastIndexOf("/") ): "/";
+      if (data[i].status !== '-') {
+        // THEN THIS A ZFS_POOL DON'T ADD    data[i].type = 'zpool'
+        continue;
+      } else if( typeof(data[i].path) === "undefined" || data[i].path.indexOf("/") === -1) {
+        continue;
+      }
 
+      data[i].parentPath =  data[i].path.slice(0, data[i].path.lastIndexOf("/") );
+
+      if( "/mnt" === data[i].parentPath ) {
+        data[i].parentPath = "0";
+      }
       data[i].availStr = filesize(data[i].avail, { standard: "iec" });
       data[i].usedStr = filesize(data[i].used, { standard: "iec" }) + " (" + data[i].used_pct + ")";
-      data[i].volumesListTableConfig = this;
+      data[i].volumesListTableConfig = null;
 
-      if (data[i].status !== '-') {
-        data[i].type = 'zpool'
-        data[i].path = data[i].name
-      }
       if (data[i].type === 'dataset' && typeof (data[i].dataset_data) !== "undefined" && typeof (data[i].dataset_data.data) !== "undefined") {
         for (let k = 0; k < data[i].dataset_data.data.length; k++) {
           if (data[i].dataset_data.data[k].name === data[i].path) {
@@ -231,14 +242,15 @@ export class VolumesListTableConfig {
         }
       }
 
-      if (data[i].type !== 'zpool') {
-        returnData.push(data[i]);
-      }
-
-
+      returnData.push(data[i]);
     }
 
     return returnData;
+  };
+
+  onClick($event, action, data) {
+    $event.preventDefault();
+    console.log("Did I get clicked!?!?!?");
   };
 }
 
@@ -266,7 +278,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   ngOnInit(): void {
     this.rest.get("storage/volume", {}).subscribe((res) => {
-      res.data.forEach((volume) => {
+      res.data.forEach((volume: ZfsPoolData) => {
         volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog, this.rest);
         volume.type = 'zpool';
         volume.availStr = filesize(volume.avail, { standard: "iec" });
@@ -285,5 +297,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngAfterViewInit(): void {
 
   }
+
+ 
 
 }

@@ -32,24 +32,25 @@
                 <div>
                     <br/>
                 </div>
-
-                <div id="tree-list-demo" *ngIf="row.volumesListTableConfig.rowData.length > 0">
-                    <dx-tree-list id="row.volumesListTableConfig._classId" 
-                                [dataSource]="row.volumesListTableConfig.rowData" 
-                                keyExpr="path" 
-                                parentIdExpr="parentPath" 
-                                [showRowLines]="true" 
-                                [allowColumnResizing]="true"
-                                [columnAutoWidth]="true"
-                                [columnResizingMode]="'widget'"
-                                [columnMinWidth]="50"
-                                [expandedRowKeys]="['1']">
+                    
+                <div>
+                        <!--  keyExpr="path" 
+                                  parentIdExpr="parentPath" -->
+                    <dx-tree-list keyExpr="path" 
+                                  parentIdExpr="parentPath"
+                                  [dataSource]="row.volumesListTableConfig.rowData" 
+                                  [showRowLines]="true" 
+                                  [allowColumnResizing]="true"
+                                  [columnAutoWidth]="true"
+                                  [columnResizingMode]="'widget'"
+                                  [columnMinWidth]="50"
+                                  [expandedRowKeys]="['1']">
                         <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
                             <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
                             </dxo-popup>
                         </dxo-editing -->
 
-                        <dxi-column dataField="path" caption="Name" >
+                        <dxi-column dataField="name">
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
                         <dxi-column dataField="type" caption="Type">
@@ -81,8 +82,16 @@
                                     cellTemplate="cellTemplate"></dxi-column>
                         
                         <div *dxTemplate="let rowData of 'cellTemplate'">
-                            <!--app-entity-table-actions [entity]="this" [row]="rowData">
-                            </app-entity-table-actions -->
+                            <div class="panel_container">
+                                <md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</md-icon>
+                                <md-menu #appMenu="mdMenu">
+                                    <span *ngFor="let action of row.volumesListTableConfig.getActions(rowData.data)">
+                                        <button md-menu-item  (click)="row.volumesListTableConfig.onClick($event, action, rowData.data)">
+                                            <span>{{ action.label }}</span>
+                                        </button>
+                                    </span>
+                                </md-menu>
+                            </div>
                         </div>
 
                     </dx-tree-list>
