@@ -86,7 +86,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private erd: any = null;
   public cards: Array<any> = [];
   public notes: Array<any> = [];
-  public userConf: Array<any> = [];
 
   public noteStyle: any = {
     // 'width': '480px',
@@ -110,10 +109,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
    parseResponse(data){
+    let key = _.keys(data);
     var card: NoteCard = {
-      id:data.id,
-      title:data.title,
-      content:data.content,
+      id:key[0],
+      title:key[0].substring(5),
+      content:data[key[0]],
       lazyLoaded: false,
       template:'none',
       isNew:false
@@ -170,12 +170,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   getNotes() {
     // get notes
     this.rest.get("account/users/1", {}).subscribe((res) => {
-      this.userConf = res.data.bsdusr_attributes;
-      this.notes = res.data.bsdusr_attributes.user_dashboard_notes;
-      if (typeof(res.data.bsdusr_attributes.user_dashboard_notes) == "undefined") {
-        this.notes = [];
+      this.notes = [];
+      for (let i in res.data.bsdusr_attributes) {
+        if (_.startsWith(i, 'note_')) {
+          this.notes.push(_.pick(res.data.bsdusr_attributes, i));
+        }
       }
-      for(let i = 0; i < this.notes.length; i++){
+      for (let i = 0; i < this.notes.length; i++) {
         let card = this.parseResponse(this.notes[i]);
         this.cards.push(card);
       }
@@ -191,6 +192,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   addNote() {
     let index = this.cards.length;
     let card: NoteCard = {
+      id: "",
       title:"",
       content:"",
       lazyLoaded:false,
@@ -202,12 +204,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.toggleForm(true,this.cards[index],'edit');
   }
 
-  deleteNote(index) {
-    this.dialog.confirm("Delete", "Are you sure you want to delete note" + this.notes[index].title + "?").subscribe((res) => {
+  deleteNote(noteId) {
+    this.dialog.confirm("Delete", "Are you sure you want to delete note " + noteId.substring(5) + "?").subscribe((res) => {
       if (res) {
         this.loader.open();
-        this.notes.splice(index, 1);
-        this.ws.call('user.update', [1, { attributes: { user_dashboard_notes: this.notes, usertheme: this.userConf['usertheme'] } }]).subscribe(
+        this.notes.slice(_.findIndex(this.notes, noteId), 1);
+        this.ws.call('user.pop_attribute', [1, noteId]).subscribe(
           (wsres)=> {
             this.loader.close();
             this.cards = [];
@@ -231,8 +233,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
   
-  toggleForm(flipState, card, template){
+  toggleForm(flipState, card, template, id?){
     // load #cardBack template with code here
+    if (id) {
+      card.id = id;
+      card.title = id.substring(5);
+      card.isNew = false;
+    }
     card.template = template;
     card.isFlipped = flipState;
     card.lazyLoaded = !card.lazyLoaded;
@@ -252,16 +259,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getNote(index) {
     this.rest.get("account/users/1", {}).subscribe((res) => {
-      this.userConf = res.data.bsdusr_attributes;
-      this.notes = res.data.bsdusr_attributes.user_dashboard_notes;
-      if (typeof(res.data.bsdusr_attributes.user_dashboard_notes) == "undefined") {
-        this.notes = [];
+      for (let i in res.data.bsdusr_attributes) {
+        if (i == index) {
+          _.find(this.cards, {id: index})['content'] = res.data.bsdusr_attributes[i];
+          this.notes.push(_.pick(res.data.bsdusr_attributes, i));
+        }
       }
-      this.cards[index] = this.notes[index];
     });
   }
 
-  refreshNote(index){
-    this.getNote(index);
+  refreshNote(id) {
+    this.getNote(id);
   }
 }

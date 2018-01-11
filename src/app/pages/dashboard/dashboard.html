@@ -80,7 +80,7 @@
         <md-card-content>{{card.content}}</md-card-content>
         <md-card-actions>
           <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
-          <button md-raised-button color="primary" (click)="deleteNote(i)">Delete</button>
+          <button md-raised-button color="primary" (click)="deleteNote(card.id)">Delete</button>
         </md-card-actions>
       </ng-template>
 
@@ -89,9 +89,9 @@
                          *ngIf="cards[i].template == 'edit'"
                          [isNew]="cards[i].isNew"
                          [machineId]="cards[i].id"
-                         [userConf]="userConf"
+                         [cardNote]="cards[i]"
                          (cancel)="cancel(i)"
-                         (saved)="toggleForm($event.flipState,cards[i],'none');refreshNote(i)"
+                         (saved)="toggleForm($event.flipState,cards[i],'none', $event.id);refreshNote(cards[i].id)"
                          ></dashboard-note-edit>
       </ng-template>
 
