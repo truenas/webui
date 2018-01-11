@@ -1346,11 +1346,6 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
 }
 
 /*---- tooltip ----*/
-tooltip {
-    position: relative;
-    display: inline-block;
-}
-
 .tooltip .tooltiptext a {
     color: #bbe2f9;
     text-decoration: underline;
@@ -1376,3 +1371,8 @@ body.safari-platform .mat-raised-button {
     transform: none;
 }
 
+/*---- Ascii art font ----*/
+.ascii-art-font {
+    line-height: 1 !important;
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
+}

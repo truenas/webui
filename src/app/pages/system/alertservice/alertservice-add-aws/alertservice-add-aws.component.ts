@@ -51,7 +51,9 @@ export class AlertServiceAddAWSComponent {
       type: 'input',
       name: 'topic_arn',
       placeholder: 'topic_arn',
-      tooltip: 'Paste the Topic ARN to publish to.',
+      tooltip: 'Paste the Topic Amazon Resource Name (ARN) to publish to.\
+ Here is an example ARN:\
+ <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
     },
     {
       type : 'input',

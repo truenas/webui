@@ -30,6 +30,7 @@
             "../node_modules/chartist/dist/chartist.min.css",
             "../node_modules/@swimlane/ngx-datatable/assets/icons.css",
             "../node_modules/c3/c3.min.css",
+            "../node_modules/angular-tree-component/dist/angular-tree-component.css",
             "vendor/pace/pace-theme-min.css",
             "assets/styles/themes/egret-dark-purple.scss",
             "assets/styles/themes/egret-dark-pink.scss",

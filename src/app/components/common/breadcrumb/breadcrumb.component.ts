@@ -19,11 +19,9 @@ export class BreadcrumbComponent implements OnInit {
     this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
     // generate url from parts
     this.routeParts.reverse().map((item, i) => {
-      item.disabled = false;
       // prepend / to first part
       if(i === 0) {
         item.url = `/${item.url}`;
-        item.disabled = true;
         return item;
       }
       // prepend previous part to current part
@@ -36,7 +34,6 @@ export class BreadcrumbComponent implements OnInit {
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       // generate url from parts
       this.routeParts.reverse().map((item, i) => {
-        item.disabled = false;
         // prepend / to first part
         if(i === 0) {
           item.url = `/${item.url}`;

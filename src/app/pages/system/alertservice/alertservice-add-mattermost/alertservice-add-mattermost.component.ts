@@ -41,32 +41,48 @@ export class AlertServiceAddMattermostComponent {
     },{
       type : 'input',
       name : 'username',
-      placeholder: 'username'
+      placeholder: 'username',
+      tooltip: 'Enter the Mattermost username.',
     },{
       type : 'input',
       name : 'password',
-      placeholder: 'password'
+      placeholder: 'password',
+      tooltip: 'Enter the Mattermost password.',
     },{
       type : 'input',
       name : 'cluster_name',
-      placeholder: 'cluster_name'
+      placeholder: 'cluster_name',
+      tooltip: 'Enter the name of the cluster to join.',
     },{
       type : 'input',
       name : 'url',
-      placeholder: 'url'
+      placeholder: 'url',
+      tooltip:'Paste the incoming webhook URL asssociated\
+ with this service.\
+ Refer to the <a href="https://docs.mattermost.com/developer/webhooks-incoming.html" target="_blank">Mattermost User Guide</a>\
+ for more information about incoming webhooks.',
     },{
       type : 'input',
       name : 'channel',
-      placeholder: 'channel'
+      placeholder: 'channel',
+      tooltip: 'Enter the name of the desired channel\
+ that will recieve the notifications. This overides the default\
+ channel in the Incoming Webhook settings.\
+ Refer to the <a href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels" target="_blank">Mattermost User Guide</a>\
+ for more information about managing channels.',
     },{
       type : 'input',
       name : 'team',
-      placeholder: 'team'
+      placeholder: 'team',
+      tooltip: 'Enter the Mattermost team name.\
+ Refer to the <a href="https://docs.mattermost.com/help/getting-started/creating-teams.html" target="_blank">Mattermost User Guide</a>\
+ for more information about creating teams.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the Mattermost service.'
     },
   ];
 
