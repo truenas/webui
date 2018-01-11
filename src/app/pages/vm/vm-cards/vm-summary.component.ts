@@ -89,7 +89,7 @@ export class VmSummaryComponent implements AfterViewInit {
     console.log(evt.data);
     let cpuUserObj = evt.data;
     let cpuUser: ChartData = {
-      legend: 'CPU/User',
+      legend: 'CPU',
       data: evt.data.data
     }
 
