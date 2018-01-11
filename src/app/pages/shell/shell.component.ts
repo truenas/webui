@@ -31,6 +31,7 @@ export class ShellComponent implements OnInit, OnChanges {
   // xterm variables
   cols: string;
   rows: string;
+  font_size: number;
   public token: any;
   public xterm: any;
   private shellSubscription: any;
@@ -52,6 +53,10 @@ export class ShellComponent implements OnInit, OnChanges {
   ngOnDestroy() {
     this.shellSubscription.unsubscribe();
   };
+
+  resetDefault() {
+    this.font_size = 14;
+  }
 
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
