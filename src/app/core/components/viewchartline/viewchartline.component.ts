@@ -38,10 +38,10 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
   }
 
   set chartType(str: string){
-    if(str == 'line' || str == 'area' || str == 'spline' || str == 'area-spline'){
+    if(str == 'line' || str == 'area' || str == 'spline' || str == 'area-spline' || !str){
       this._chartType = str;
     } else {
-      throw "chartType must be a valid line chart type (line, area, spline or area-spline)"
+      console.warn("chartType must be a valid line chart type (line, area, spline or area-spline)")
     }
   }
 
