@@ -24,7 +24,7 @@ export class DashboardNoteEditComponent implements OnInit {
   @Output() cancel: EventEmitter < any > = new EventEmitter < any > ();
   @Output() saved: EventEmitter < any > = new EventEmitter < any > ();
   @Input() isNew: boolean = false;
-  @Input() userConf: Array < any > = [];
+  @Input() cardNote: any = {};
 
   protected resource_name: string = 'vm/vm/' + this.machineId;
   protected isEntity: boolean = true;
@@ -36,7 +36,7 @@ export class DashboardNoteEditComponent implements OnInit {
     name: 'Config',
     class: 'config',
     config: [
-      { type: 'input', name: 'title', placeholder: 'Title' },
+      { type: 'input', name: 'title', placeholder: 'Title', readonly: false },
       { type: 'textarea', name: 'content', placeholder: 'Content' },
     ]
   }];
@@ -61,21 +61,17 @@ export class DashboardNoteEditComponent implements OnInit {
 
   ngOnInit() {
     this.generateFieldConfig();
-    if (this.userConf['user_dashboard_notes']) {
-      this.notes = this.userConf['user_dashboard_notes'];
-    } else {
-      this.notes = [];
+    if (!this.isNew) {
+      _.find(this.fieldConfig, {name: 'title'}).readonly = true;
     }
-    
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
   
     if (!this.isNew) {
-      this.targetNoteIndex = _.findIndex(this.notes, {id: this.machineId});
-      for (let i in this.notes[this.targetNoteIndex]) {
+      for (let i in this.cardNote) {
         let fg = this.formGroup.controls[i];
         if (fg) {
           let current_field = this.fieldConfig.find((control) => control.name === i);
-          fg.setValue(this.notes[this.targetNoteIndex][i]);
+          fg.setValue(this.cardNote[i]);
         }
       }
     }
@@ -120,29 +116,20 @@ export class DashboardNoteEditComponent implements OnInit {
     this.success = false;
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-
+    let attribute_key = '';
     if (this.isNew) {
-      let new_id: number;
-      if (this.notes.length == 0) {
-        new_id = 1;
-      } else {
-        new_id = _.last(this.notes).id + 1;
-      }
-      value['id'] = new_id;
-      this.notes.push(value);
+      attribute_key = 'note_' + value['title'];
     } else {
-      value['id'] = this.machineId;
-      this.notes[this.targetNoteIndex] = value;
+      attribute_key = this.cardNote['id'];
     }
-    
     this.loader.open();
-    this.busy = this.ws.call('user.update', [1, { attributes: { usertheme: this.userConf['usertheme'], user_dashboard_notes: this.notes } }])
+    this.busy = this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
       .subscribe(
         (res) => {
           this.loader.close();
           this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
           this.success = true;
-          this.onSuccess(res);
+          this.onSuccess(attribute_key);
         },
         (res) => {
           this.loader.close();
