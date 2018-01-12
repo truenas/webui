@@ -21,14 +21,14 @@ export class InterfacesFormComponent {
     {
       type : 'input',
       name : 'int_interface',
-      placeholder : 'Interface',
+      placeholder : 'NIC',
       tooltip : 'The FreeBSD device name of the interface; a read-only\
  field when editing an interface.',
     },
     {
       type : 'input',
       name : 'int_name',
-      placeholder : 'Name',
+      placeholder : 'Interface Name',
       tooltip : 'Description of interface.',
     },
     {
