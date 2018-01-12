@@ -78,6 +78,23 @@ export class AFPFormComponent {
  result in intermittent failed backups.'
     },
     {
+      type: 'input',
+      name: 'afp_timemachine_quota',
+      placeholder: 'Time Machine Quota',
+      inputType: 'number',
+      tooltip: 'Quota for each Time Machine backup on this share (in GiB).\
+        Please note that this change will be applied only after share re-mount.',
+      relation : [
+        {
+          action : 'ENABLE',
+          when : [ {
+            name : 'afp_timemachine',
+            value : true,
+          } ]
+        },
+      ],
+    },
+    {
       type: 'checkbox',
       name: 'afp_nodev',
       placeholder: 'Zero Device Numbers',
