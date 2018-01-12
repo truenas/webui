@@ -32,7 +32,7 @@ export class NetworkService {
 
   getAllNicChoices() {
     return this.ws.call('notifier.choices',
-                        [ 'NICChoices', [ false, false, false ] ]);
+                        [ 'NICChoices', [ false, false, true, false, false, true ] ]);
   }
 
   getV4Netmasks() {
