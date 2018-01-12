@@ -32,6 +32,13 @@ export class SMBFormComponent {
     },
     {
       type: 'checkbox',
+      name: 'cifs_home',
+      placeholder: 'Use as home share',
+      tooltip: 'Check this box if the share is meant to hold user home\
+      directories; only one share can be the homes share'
+    },
+    {
+      type: 'checkbox',
       name: 'cifs_default_permissions',
       placeholder: 'Default Permissions',
       tooltip: 'Sets the ACLs to allow read and write for owner or\
@@ -180,7 +187,7 @@ export class SMBFormComponent {
           });
         });
     if (entityForm.isNew) {
-      entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr','aio_pthread']);
+      entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
       entityForm.formGroup.controls['cifs_default_permissions'].setValue(true);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
     }
