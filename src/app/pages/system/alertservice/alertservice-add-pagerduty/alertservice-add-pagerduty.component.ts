@@ -43,7 +43,7 @@ export class AlertServiceAddPagerdutyComponent {
       name : 'client_name',
       placeholder: 'client_name',
       tooltip: 'Enter the monitoring <b>client name</b>.\
- To find the client name sign in to the PagerDuty web interface, and\
+ To locate the client name, sign in to the PagerDuty web interface, and\
  go to <b>Configuration -> Services -> Integrations</b>.\
  Find the name of the desired integration, which is the same as the client name.',
     },{
