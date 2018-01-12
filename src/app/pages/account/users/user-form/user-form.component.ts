@@ -25,26 +25,27 @@ import {Validators} from '@angular/forms';
 export class UserFormComponent {
 
   protected resource_name: string = 'account/users/';
+  protected addCall = 'user.create';
   protected route_success: string[] = ['account', 'users' ];
   protected isEntity: boolean = true;
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'bsdusr_uid',
+      name : 'uid',
       placeholder : 'User ID',
       validation : [ Validators.required ]
     },
     {
       type : 'input',
-      name : 'bsdusr_username',
+      name : 'username',
       placeholder : 'Username',
       validation : [ Validators.required ]
     },
 
     {
       type : 'checkbox',
-      name : 'bsdusr_creategroup',
+      name : 'creategroup',
       placeholder : 'Create a new Primary Group for the user.',
       value : true,
       isHidden: false
@@ -52,14 +53,14 @@ export class UserFormComponent {
 
     {
       type : 'select',
-      name : 'bsdusr_group',
+      name : 'group',
       placeholder : 'Primary Group',
       options : [],
       relation : [
         {
           action : 'DISABLE',
           when : [ {
-            name : 'bsdusr_creategroup',
+            name : 'creategroup',
             value : true,
           } ]
         },
@@ -68,88 +69,88 @@ export class UserFormComponent {
     {
       type : 'explorer',
       initial: '/mnt',
-      name : 'bsdusr_home',
+      name : 'home',
       placeholder : 'Home Directory',
     },
     {
       type : 'permissions',
-      name : 'bsdusr_mode',
+      name : 'mode',
       placeholder : 'Home Directory Mode',
     },
     {
       type : 'select',
-      name : 'bsdusr_shell',
+      name : 'shell',
       placeholder : 'Shell',
       options : [],
     },
     {
       type : 'input',
-      name : 'bsdusr_full_name',
+      name : 'full_name',
       placeholder : 'Full Name',
       validation : [ Validators.required ]
     },
     {
       type : 'input',
-      name : 'bsdusr_email',
+      name : 'email',
       placeholder : 'Email',
     },
     {
       type : 'input',
-      name : 'bsdusr_password',
+      name : 'password',
       placeholder : 'Password',
       inputType : 'password',
     },
     {
       type : 'input',
-      name : 'bsdusr_password_conf',
+      name : 'password_conf',
       placeholder : 'Confirm Password',
       inputType : 'password',
-      validation : [ matchOtherValidator('bsdusr_password') ],
+      validation : [ matchOtherValidator('password') ],
 
     },
     {
       type : 'checkbox',
-      name : 'bsdusr_password_disabled',
+      name : 'password_disabled',
       placeholder : 'Disable password login',
     },
     {
       type : 'checkbox',
-      name : 'bsdusr_locked',
+      name : 'locked',
       placeholder : 'Lock user'
     },
     {
       type : 'checkbox',
-      name : 'bsdusr_sudo',
+      name : 'sudo',
       placeholder : 'Permit Sudo'
     },
   
     {
       type : 'checkbox',
-      name : 'bsdusr_microsoft_account',
+      name : 'microsoft_account',
       placeholder : 'Microsoft Account'
     },
 
     {
       type : 'textarea',
-      name : 'bsdusr_sshpubkey',
+      name : 'sshpubkey',
       placeholder : 'SSH Public Key'
     },
-    // {
-    //   type : 'select',
-    //   name : 'bsdusr_aux_group',
-    //   placeholder : 'Auxilary group',
-    //   options : [],
-    //   multiple : true
-    // },
+    {
+      type : 'select',
+      name : 'groups',
+      placeholder : 'Auxilary group',
+      options : [],
+      multiple : true
+    },
 
   ];
   private home: any;
   private mode: any;
   private shells: any;
-  private bsdusr_shell: any;
-  private bsdusr_group: any;
-  private bsdusr_aux_group: any;
-  private bsdusr_creategroup: any;
+  private shell: any;
+  private group: any;
+  private groups: any;
+  private creategroup: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
@@ -158,57 +159,58 @@ export class UserFormComponent {
 
   afterInit(entityForm: any) {
     if (!entityForm.isNew) {
-      _.find(this.fieldConfig, {name : "bsdusr_creategroup"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "creategroup"}).isHidden = true;
     }
     /* list groups */
-    this.rest.get('account/groups/', {}).subscribe((res) => {
-      this.bsdusr_group = _.find(this.fieldConfig, {name : "bsdusr_group"});
-      this.bsdusr_aux_group = _.find(this.fieldConfig, {name : "bsdusr_aux_group"});
-      for (let i = 0; i < res.data.length; i++) {
-        this.bsdusr_group.options.push({ label : res.data[i].bsdgrp_group, value : res.data[i].id });
+    this.ws.call('group.query').subscribe((res) => {
+      this.group = _.find(this.fieldConfig, {name : "group"});
+      this.groups = _.find(this.fieldConfig, {name : "groups"});
+      console.log(res);
+      for (let i = 0; i < res.length; i++) {
+        this.group.options.push({ label : res[i].group, value : res[i].id });
         //uncomment this when we are ready to bring back aux groups, hiding for now.
-        //this.bsdusr_aux_group.options.push({label : res.data[i].bsdgrp_group, value : res.data[i].id})
+        this.groups.options.push({label : res[i].group, value : res[i].id})
         }
 
     });
     /* list users */
-    this.rest.get(this.resource_name, {}).subscribe((res) => {
+    this.ws.call('user.query').subscribe((res) => {
 
-      if (entityForm.data.bsdusr_home) {
-        this.storageService.filesystemStat(entityForm.data.bsdusr_home).subscribe(stat => {
-          entityForm.formGroup.controls['bsdusr_mode'].setValue(stat.mode.toString(8).substring(2,5));
+      if (entityForm.data.home) {
+        this.storageService.filesystemStat(entityForm.data.home).subscribe(stat => {
+          entityForm.formGroup.controls['mode'].setValue(stat.mode.toString(8).substring(2,5));
         });
       } else {
-        entityForm.formGroup.controls['bsdusr_mode'].setValue('755');
+        entityForm.formGroup.controls['mode'].setValue('755');
       }
 
       if (!entityForm.isNew) {
-        entityForm.setDisabled('bsdusr_username', true);
-        if (entityForm.data.bsdusr_builtin === true) {
-          entityForm.formGroup.controls['bsdusr_uid'].setValue(
-              entityForm.data.bsdusr_uid);
-          entityForm.setDisabled('bsdusr_uid', true);
-          entityForm.setDisabled('bsdusr_home', true);
+        entityForm.setDisabled('username', true);
+        if (entityForm.data.builtin === true) {
+          entityForm.formGroup.controls['uid'].setValue(
+              entityForm.data.uid);
+          entityForm.setDisabled('uid', true);
+          entityForm.setDisabled('home', true);
         } else {
-          entityForm.formGroup.controls['bsdusr_uid'].setValue(
-              entityForm.data.bsdusr_uid);
+          entityForm.formGroup.controls['uid'].setValue(
+              entityForm.data.uid);
         }
       } else {
         this.ws.call('user.get_next_uid').subscribe((res)=>{
-          entityForm.formGroup.controls['bsdusr_uid'].setValue(res);
+          entityForm.formGroup.controls['uid'].setValue(res);
         })
       }
     });
     /* list shells */
     entityForm.ws.call('notifier.choices', [ 'SHELL_CHOICES' ])
         .subscribe((res) => {
-          this.bsdusr_shell = _.find(this.fieldConfig, {name : "bsdusr_shell"});
+          this.shell = _.find(this.fieldConfig, {name : "shell"});
           this.shells = res;
-          let bsduser_shell = this.bsdusr_shell
+          let bsduser_shell = this.shell
           res.forEach((item) => {
-            this.bsdusr_shell.options.push({label : item[1], value : item[0]});
+            this.shell.options.push({label : item[1], value : item[0]});
           });
-          entityForm.formGroup.controls['bsdusr_shell'].setValue(
+          entityForm.formGroup.controls['shell'].setValue(
               this.shells[1][0]);
         });
   }
