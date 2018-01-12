@@ -18,7 +18,7 @@ export class NetworkService {
   }
 
   getInterfaceNicChoices() {
-    return this.ws.call('notifier.choices', [ 'NICChoices', [false, false, true, false, false, true] ]);
+    return this.ws.call('notifier.choices', [ 'NICChoices', [] ]);
   }
 
   getLaggNicChoices() {
