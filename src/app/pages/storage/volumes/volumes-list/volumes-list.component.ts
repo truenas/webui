@@ -27,6 +27,7 @@ export interface ZfsPoolData {
   mountpoint: string;
   name: string;
   path: string;
+  nodePath: string;
   parentPath: string;
   status: string;
   used: number;
@@ -43,6 +44,7 @@ export interface ZfsPoolData {
   readonly: string;
   children: any[];
   dataset_data: any;
+  actions: any[];
   volumesListTableConfig: VolumesListTableConfig;
 
 }
@@ -70,9 +72,7 @@ export class VolumesListTableConfig {
         this.rowData = [];
   
         this.rowData = this.resourceTransformIncomingRestData(res.data);
-        console.log("this.rowData", this.rowData);
-        
-      });
+       });
     }
 
     
@@ -137,7 +137,6 @@ export class VolumesListTableConfig {
       actions.push({
         label: "Add Dataset",
         onClick: (row1) => {
-          alert("FUCK DUDE");
           this._router.navigate(new Array('/').concat([
             "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
             "add", row1.path
@@ -213,16 +212,16 @@ export class VolumesListTableConfig {
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
     for (let i = 0; i < data.length; i++) {
-      data[i].path = data[i].mountpoint;
+      data[i].nodePath = data[i].mountpoint;
       
       if (data[i].status !== '-') {
         // THEN THIS A ZFS_POOL DON'T ADD    data[i].type = 'zpool'
         continue;
-      } else if( typeof(data[i].path) === "undefined" || data[i].path.indexOf("/") === -1) {
+      } else if( typeof(data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
         continue;
       }
 
-      data[i].parentPath =  data[i].path.slice(0, data[i].path.lastIndexOf("/") );
+      data[i].parentPath =  data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/") );
 
       if( "/mnt" === data[i].parentPath ) {
         data[i].parentPath = "0";
@@ -233,7 +232,7 @@ export class VolumesListTableConfig {
 
       if (data[i].type === 'dataset' && typeof (data[i].dataset_data) !== "undefined" && typeof (data[i].dataset_data.data) !== "undefined") {
         for (let k = 0; k < data[i].dataset_data.data.length; k++) {
-          if (data[i].dataset_data.data[k].name === data[i].path) {
+          if (data[i].dataset_data.data[k].name === data[i].nodePath) {
             data[i].compression = data[i].dataset_data.data[k].compression;
             data[i].readonly = data[i].dataset_data.data[k].readonly;
             data[i].dedup = data[i].dataset_data.data[k].dedup;
@@ -242,16 +241,15 @@ export class VolumesListTableConfig {
         }
       }
 
+      data[i].actions = this.getActions(data[i]);
+
       returnData.push(data[i]);
     }
 
     return returnData;
   };
 
-  onClick($event, action, data) {
-    $event.preventDefault();
-    console.log("Did I get clicked!?!?!?");
-  };
+
 }
 
 

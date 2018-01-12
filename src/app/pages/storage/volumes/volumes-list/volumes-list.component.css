@@ -9,3 +9,12 @@
 .hov:hover{
     cursor: pointer;
 }
+
+.ion-android-more-vertical:before {
+    color: black;
+}
+
+
+.panel_container {
+
+}

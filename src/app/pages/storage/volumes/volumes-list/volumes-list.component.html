@@ -34,9 +34,7 @@
                 </div>
                     
                 <div>
-                        <!--  keyExpr="path" 
-                                  parentIdExpr="parentPath" -->
-                    <dx-tree-list keyExpr="path" 
+                    <dx-tree-list keyExpr="nodePath" 
                                   parentIdExpr="parentPath"
                                   [dataSource]="row.volumesListTableConfig.rowData" 
                                   [showRowLines]="true" 
@@ -85,8 +83,8 @@
                             <div class="panel_container">
                                 <md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</md-icon>
                                 <md-menu #appMenu="mdMenu">
-                                    <span *ngFor="let action of row.volumesListTableConfig.getActions(rowData.data)">
-                                        <button md-menu-item  (click)="row.volumesListTableConfig.onClick($event, action, rowData.data)">
+                                    <span *ngFor="let action of rowData.data.actions">
+                                        <button md-menu-item  (click)="action.onClick( rowData.data );">
                                             <span>{{ action.label }}</span>
                                         </button>
                                     </span>
