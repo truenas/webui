@@ -40,21 +40,29 @@ export class EmailComponent {
       type : 'input',
       name : 'em_fromemail',
       placeholder : 'From E-mail',
+      tooltip : 'The envelope <b>From</b> address shown in the email.\
+ This can be set to assist with filtering mail on the receiving system.',
     },
     {
       type : 'input',
       name : 'em_outgoingserver',
       placeholder : 'Outgoing Mail Server',
+      tooltip : 'Hostname or IP address of SMTP server to use for\
+ sending this email.',
     },
     {
       type : 'input',
       name : 'em_port',
       placeholder : 'Mail Server Port',
+      tooltip : 'SMTP port number. Typically <i>25,465</i>\
+ (secure SMTP), or <i>587</i> (submission).',
     },
     {
       type : 'select',
       name : 'em_security',
       placeholder : 'Security',
+      tooltip : 'Encryption type. Choices are <i>Plain, SSL</i>, or\
+ <i>TLS</i>.',
       options : [
         {label : 'Plain', value : 'plain'},
         {label : 'SSL', value : 'ssl'},
@@ -65,11 +73,17 @@ export class EmailComponent {
       type : 'checkbox',
       name : 'em_smtp',
       placeholder : 'SMTP Authentication',
+      tooltip : 'Enable/disable\
+ <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
+ target="_blank">SMTP AUTH</a> using PLAIN SASL. If checked, enter the\
+ required <b>Username</b> and <b>Password</b>.',
     },
     {
       type : 'input',
       name : 'em_user',
       placeholder : 'Username',
+      tooltip : 'Enter the username if the SMTP server requires\
+ authentication.',
       relation : [
         {
           action : 'DISABLE',
@@ -84,6 +98,8 @@ export class EmailComponent {
       type : 'input',
       name : 'em_pass1',
       placeholder : 'Password',
+      tooltip : 'Enter the password if the SMTP server requires\
+ authentication.',
       inputType : 'password',
       relation : [
         {
@@ -100,6 +116,7 @@ export class EmailComponent {
       type : 'input',
       name : 'em_pass2',
       placeholder : 'Confirm Password',
+      tooltip : 'Confirm previous password.',
       inputType : 'password',
       relation : [
         {
