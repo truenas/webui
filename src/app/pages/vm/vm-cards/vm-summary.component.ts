@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, Input } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -18,6 +18,7 @@ export class VmSummaryComponent implements AfterViewInit {
   @ViewChild('cpu') cpuChart:ViewChartLineComponent;
   @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
   @ViewChild('net') netChart:ViewChartGaugeComponent;
+  @Input() virtualMachines;
   public chartSize:number = 260;
 
   constructor(private core:CoreService) {
@@ -30,7 +31,7 @@ export class VmSummaryComponent implements AfterViewInit {
       this.setPoolData(evt);
     });
 
-    this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       this.setCPUData(evt);
       this.setNetData(evt);
@@ -39,8 +40,9 @@ export class VmSummaryComponent implements AfterViewInit {
     // Pool Stats
     this.core.emit({name:"PoolDataRequest"});
     // CPU Stats (dataList eg. {source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"})
-    let dataList = [{source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"}];
-    this.core.emit({name:"StatsRequest", data:[dataList,{step:'10', start:'now-10m'}]});
+    //let dataList = [{source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"}];
+    //this.core.emit({name:"StatsRequest", data:[dataList,{step:'10', start:'now-10m'}]});
+    this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
 
     /*this.cpuChart.data = [
      {legend: 'CPU Load', data:[10,50,60,95,15,30,45,55,35,79,95,60,80,15,250,125,1024,670,220,450,75]},
@@ -88,17 +90,35 @@ export class VmSummaryComponent implements AfterViewInit {
     console.log("SET CPU DATA");
     console.log(evt.data);
     let cpuUserObj = evt.data;
-    let cpuUser: ChartData = {
-      legend: 'CPU',
-      data: evt.data.data
+
+    let parsedData = [];
+    let dataTypes = evt.data.meta.legend;
+
+    for(let index in dataTypes){
+      let chartData:ChartData = {
+        legend: dataTypes[index],
+        data:[]
+      }
+      for(let i in evt.data.data){
+        chartData.data.push(evt.data.data[i][index])
+      }
+      parsedData.push(chartData);
     }
+
+
+    /*
+     let cpuUser: ChartData = {
+       legend: 'CPU',
+       data: evt.data.data
+     }
+     */
 
     this.cpuChart.chartType = 'area';
     this.cpuChart.units = '%';
     this.cpuChart.timeSeries = true;
     this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
     this.cpuChart.timeData = evt.data.meta;
-    this.cpuChart.data = [cpuUser];
+    this.cpuChart.data = parsedData;//[cpuUser];
     this.cpuChart.width = this.chartSize;
     this.cpuChart.height = this.chartSize;
   }

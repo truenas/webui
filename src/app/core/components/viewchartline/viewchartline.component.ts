@@ -63,7 +63,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
 
   protected makeTimeAxis(td:TimeData, axis?: string):any[]{
     if(!axis){ axis = 'x';}
-    let labels: any[] = [axis];
+      let labels: any[] = [axis];
     this._data[0].forEach((item, index) =>{
       let date = new Date(td.start * 1000 + index * td.step * 1000);
       labels.push(date);
@@ -73,7 +73,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
   }
 
   makeConfig(){
-  
+
     this.chartConfig = {
       bindto: '#' + this._chartId,
       grid: {
@@ -136,12 +136,22 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           return {top: y, left: left}
         },
         contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
-          console.log(raw[0]);
-          let c = color(raw[0]);
-          let d = Math.floor(raw[0].value)
-          let markup = '<div id="tooltip" class="module-triangle-bottom" style="height:' + this.tooltipHeight + ';border-left:solid 6px ' + c + ';">' + raw[0].name + ': ' +  d + this.units + '</div>'
+          if(!this.tooltipHeight){ return "";}
+          let tthSplit = this.tooltipHeight.split('px');
+          let tth = Math.floor(Number(tthSplit[0]));
+          let h = tth/raw.length;
+          console.log(tth);
+          let preList = '<div style="min-height:' + this.tooltipHeight + ';"><ul>';
+          let list = '';
+          let postList = '</ul></div>';
+          for(let i in raw){
+            let c = color(raw[i]);
+            let d = Math.floor(raw[i].value)
+            let markup = '<li id="tooltip" class="module-triangle-bottom" style="border-left:solid 6px ' + c + ';">  ' + raw[i].name + ': ' +  d + this.units + '</li>';
+            list += markup;
+          }
           //let focus = defaultTitleFormat(d);
-          return markup;
+          return preList + list + postList;
         },
         format: {
           value: (value, ratio, id, index) => {
@@ -163,8 +173,8 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
       let xAxis = this.makeTimeAxis(this.timeData);
       this._data.unshift(xAxis);
 
-    console.log("TIME SETUP");
-    console.log(xAxis);
+      console.log("TIME SETUP");
+      console.log(xAxis);
     }
 
     console.log(this.chartConfig);
