@@ -17,157 +17,240 @@ export class ActiveDirectoryComponent {
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input', 
-      name : 'ad_domainname', 
-      placeholder : 'Domain Name'
+      type : 'input',
+      name : 'ad_domainname',
+      placeholder : 'Domain Name',
+      tooltip : 'Name of Active Directory domain (<i>example.com</i>)\
+ or child domain (<i>sales.example.com</i>). This setting is mandatory\
+ and the GUI refuses to save the settings if the domain controller\
+ for the specified domain cannot be found.',
     },
     {
-      type : 'input', 
-      name : 'ad_bindname', 
-      placeholder : 'Domain Account Name'
+      type : 'input',
+      name : 'ad_bindname',
+      placeholder : 'Domain Account Name',
+      tooltip : 'Name of the Active Directory administrator account.\
+ This setting is mandatory and the GUI refuses to save the settings\
+ if it cannot connect to the domain controller using this account name.',
     },
     {
       type : 'input',
       name : 'ad_bindpw',
       placeholder : 'Domain Account Password',
+      tooltip : 'Password for the Active Directory administrator\
+ account. This setting is mandatory and the GUI refuses to save the\
+ settings if it cannot connect to the domain controller using this\
+ password.',
       inputType : 'password'
     },
     {
       type : 'input',
       name : 'ad_monitor_frequency',
-      placeholder : 'AD check connectivity frequency (seconds)'
+      placeholder : 'AD check connectivity frequency (seconds)',
+      tooltip : 'How often to verify that Active Directory services are\
+ active.',
     },
     {
       type : 'input',
       name : 'ad_recover_retry',
       placeholder : 'How many recovery attempts',
+      tooltip : 'Number of times to attempt reconnecting to the Active\
+ directory server. Tries forever when set to <i>0</i>.',
     },
     {
       type : 'checkbox',
       name : 'ad_enable_monitor',
-      placeholder : 'Enable AD Monitoring'
+      placeholder : 'Enable AD Monitoring',
+      tooltip : 'Restart Active Directory automatically if the service\
+ is disconnected.',
     },
     {
       type : 'select',
       name : 'ad_ssl',
       placeholder : 'Encryption Mode',
+      tooltip : 'Choices are <i>Off, SSL</i> or <i>TLS</i>.',
       options : []
     },
     {
       type : 'select',
       name : 'ad_certificate',
       placeholder : 'Certificate',
+      tooltip : 'Select the certificate of the Active Directory server\
+ if SSL connections are used. If a certificate does not exist yet,\
+ create a <a href="http://doc.freenas.org/11/system.html#cas"\
+ target="_blank">CA</a>, then create a certificate on the Active\
+ Directory server and import it to the FreeNAS system with\
+ <a href="http://doc.freenas.org/11/system.html#certificates"\
+ target="_blank">Certificates</a>.',
       options : []
     },
     {
       type : 'checkbox',
       name : 'ad_verbose_logging',
       placeholder : 'Verbose logging',
+      tooltip : 'When checked, logs attempts to join the domain to\
+ <b>/var/log/messages</b>.',
     },
     {
       type : 'checkbox',
       name : 'ad_unix_extensions',
       placeholder : 'UNIX extensions',
+      tooltip : '<b>Only</b> check this box if the AD server has been\
+ explicitly configured to map permissions for UNIX users. Checking this\
+ box provides persistent UIDs and GUIDs, otherwise, users and groups\
+ are mapped to the UID or GUID range configured in Samba.',
     },
     {
       type : 'checkbox',
       name : 'ad_allow_trusted_doms',
       placeholder : 'Allow Trusted Domains',
+      tooltip : 'Should only be enabled if network has active <a\
+ href="https://technet.microsoft.com/en-us/library/cc757352(WS.10).aspx"\
+ target="_blank">domain/forest trusts</a> and you need to manage files\
+ on multiple domains. use with caution as it will generate more\
+ winbind traffic, slowing down the ability to filter through\
+ user/group info.',
     },
     {
       type : 'checkbox',
       name : 'ad_use_default_domain',
       placeholder : 'Use Default Domain',
+      tooltip : 'When unchecked, the domain name is prepended to the\
+ username. If <b>Allow Trusted Domains</b> is checked and multiple\
+ domains use the same usernames, uncheck this box to prevent name\
+ collisions.',
     },
     {
       type : 'checkbox',
       name : 'ad_allow_dns_updates',
       placeholder : 'Allow DNS updates',
+      tooltip : 'When unchecked, disables Samba from doing DNS updates\
+ when joining a domain.',
     },
     {
       type : 'checkbox',
       name : 'ad_disable_freenas_cache',
       placeholder : 'Disable FreeNAS Cache',
+      tooltip : 'When checked, disables caching AD users and gorups.\
+ Useful if you cannot bind to a domain with a large number of users or\
+ groups.',
     },
     {
       type : 'input',
       name : 'ad_userdn',
       placeholder : 'User Base',
+      tooltip : 'Distinguished name (DN) of the user container in\
+ Active Directory.',
     },
     {
       type : 'input',
       name : 'ad_groupdn',
       placeholder : 'Group Base',
+      tooltip : 'Distinguished name (DN) of the gorup container in\
+ Active Directory.',
     },
     {
-      type : 'input', 
-      name : 'ad_site', 
-      placeholder : 'Site Name'
+      type : 'input',
+      name : 'ad_site',
+      placeholder : 'Site Name',
+      tooltip : 'The relative distinguished name of the site object in\
+ Active Directory.',
     },
     {
       type : 'input',
       name : 'ad_dcname',
       placeholder : 'Domain Controller',
+      tooltip : 'Will automatically be added to the SRV record for the\
+ domain and, when multiple controllers are specified, FreeNAS selects\
+ the closest DC which responds.',
     },
     {
-      type : 'input', 
-      name : 'ad_gcname', 
-      placeholder : 'Global Catalog Server'
+      type : 'input',
+      name : 'ad_gcname',
+      placeholder : 'Global Catalog Server',
+      tooltip : 'If the hostname of the global catalog server to use is\
+ specified, make sure it is resolvable.',
     },
     {
       type : 'select',
       name : 'ad_kerberos_realm',
       placeholder : 'Kerberos Realm',
+      tooltip : 'Select the realm created using the instructions in <a\
+ href="http://doc.freenas.org/11/directoryservice.html#kerberos-realms"\
+ target="_blank">Kerberos Realms</a>.',
       options : []
     },
     {
       type : 'select',
       name : 'ad_kerberos_principal',
       placeholder : 'Kerberos Principal',
+      tooltip : 'Browse to the location of the keytab created using the\
+ instructions in <a\
+ href="http://doc.freenas.org/11/directoryservice.html#kerberos-keytabs"\
+ target="_blank">Kerberos Keytabs</a>.',
       options : []
-    }, 
-    {
-      type : 'input', 
-      name : 'ad_timeout', 
-      placeholder : 'AD Timeout'
     },
     {
-      type : 'input', 
-      name : 'ad_dns_timeout', 
-      placeholder : 'DNS Timeout'
+      type : 'input',
+      name : 'ad_timeout',
+      placeholder : 'AD Timeout',
+      tooltip : 'In seconds, increase if the AD service does not start\
+ after connecting to the domain.',
+    },
+    {
+      type : 'input',
+      name : 'ad_dns_timeout',
+      placeholder : 'DNS Timeout',
+      tooltip : 'In seconds, increase if AD DNS queries timeout.',
     },
     {
       type : 'select',
       name : 'ad_idmap_backend',
       placeholder : 'Idmap backend',
+      tooltip : 'Select the backend to use to map Windows security\
+ identifiers (SIDs) to UNIX UIDs and GIDs. Click the <b>Edit</b> link\
+ to configure the editable options of that backend.',
       options : []
     },
     {
       type : 'select',
       name : 'ad_nss_info',
       placeholder : 'Winbind NSS Info',
+      tooltip : 'Defines the schema to use when querying AD for\
+ user/group info. <i>rfc2307</i> uses the RFC2307 schema support\
+ included in Windows 2003 R2, <i>sfu20</i> is for Services For Unix 3.0\
+ or 3.5, and <i>sfu</i> is for Services For Unix 2.0.',
       options : []
     },
     {
       type : 'select',
       name : 'ad_ldap_sasl_wrapping',
       placeholder : 'SASL wrapping',
+      tooltip : 'Defines how LDAP traffic is transmitted. Choices are\
+ <i>plain</i> (plain text), <i>sign</i> (signed only), or <i>seal</i>\
+ (signed and encrypted). Windows 2000 SP3 and higher can be configured\
+ to enforce signed LDAP connections.',
       options : []
     },
     {
       type : 'checkbox',
       name : 'ad_enable',
       placeholder : 'Enable',
+      tooltip : 'Enable the Active Directory service.',
     },
     {
       type : 'input',
       name : 'ad_netbiosname_a',
       placeholder : 'Netbios Name',
+      tooltip : 'Limited to 15 characters. Automatically populated with\
+ the orginal host name of the system. It <b>must</b> be different from\
+ the <i>Workgroup</i> name.',
     },
     {
       type : 'input',
       name : 'ad_netbiosalias',
       placeholder : 'NetBIOS alias',
+      tooltip : 'Limited to 15 characters.',
     }
   ];
 
@@ -193,7 +276,7 @@ export class ActiveDirectoryComponent {
     'ad_nss_info',
     'ad_ldap_sasl_wrapping',
     'ad_netbiosname_a',
-    'ad_netbiosalias',    
+    'ad_netbiosalias',
   ];
 
   isCustActionVisible(actionname: string) {
@@ -221,7 +304,7 @@ export class ActiveDirectoryComponent {
     {
       'id' : 'edit_idmap',
       'name' : 'Edit Idmap',
-      function : () => { 
+      function : () => {
         this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
       }
     }
@@ -232,7 +315,7 @@ export class ActiveDirectoryComponent {
   protected ad_kerberos_principal: any;
   protected ad_ssl: any;
   protected ad_idmap_backend: any;
-  protected ad_nss_info: any;  
+  protected ad_nss_info: any;
   protected ad_ldap_sasl_wrapping: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
