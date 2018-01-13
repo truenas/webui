@@ -28,16 +28,21 @@ export class ServiceLLDPComponent {
       type : 'checkbox',
       name : 'lldp_intdesc',
       placeholder : 'Interface Description',
+      tooltip: 'When checked, receive mode is enabled and received peer\
+ information is saved in interface descriptions.',
     },
     {
       type : 'input',
       name : 'lldp_country',
       placeholder : 'Country Code',
+      tooltip: 'Required for LLDP location support. Enter a two-letter\
+ ISO 3166 country code.',
     },
     {
       type : 'input',
       name : 'lldp_location',
       placeholder : 'Location',
+      tooltip: 'Optional. Specify the physical location of the host.',
     },
   ];
 
