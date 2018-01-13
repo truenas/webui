@@ -1,8 +1,7 @@
 /* Charts */
-.c3 text{
+.c3 text,.c3-tooltip-container{
   font-family:"Droid Sans Mono";
   color:rgba(0,0,0,0.55);
-  font-weight:900;
 }
 
 .c3-legend-item text{
@@ -19,7 +18,7 @@
   overflow: hidden;
   padding:24px;
   border-radius:2px;
-  font-family:"Roboto Medium";
+  /*font-family:"Roboto Medium";*/
 }
 
 .c3-tooltip,
@@ -53,6 +52,7 @@
 /* GENERAL CHART STYLES */
 .c3 .tick text {
   fill:#bbb;
+  font-weight:900;
 }
 .c3 path.domain,.c3 .tick line {
   stroke: #ddd  !important;

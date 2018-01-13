@@ -140,14 +140,16 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           let tthSplit = this.tooltipHeight.split('px');
           let tth = Math.floor(Number(tthSplit[0]));
           let h = tth/raw.length;
-          console.log(tth);
-          let preList = '<div style="min-height:' + this.tooltipHeight + ';"><ul>';
-          let list = '';
-          let postList = '</ul></div>';
+          let time = defaultTitleFormat(raw[0].x);
+          //let time = raw[0].x instanceof String;
+          console.log(time);
+          let preList = '<div style="min-height:' + this.tooltipHeight + ';"><table>';
+          let list = '<tr><td><strong>' + time + '</strong></td></tr>';
+          let postList = '</table></div>';
           for(let i in raw){
             let c = color(raw[i]);
             let d = Math.floor(raw[i].value)
-            let markup = '<li id="tooltip" class="module-triangle-bottom" style="border-left:solid 6px ' + c + ';">  ' + raw[i].name + ': ' +  d + this.units + '</li>';
+            let markup = '<tr><td class="tooltip" class="module-triangle-bottom" style="border-left:solid 6px ' + c + ';">  ' + raw[i].name + ': ' +  d + this.units + '</td></tr>';
             list += markup;
           }
           //let focus = defaultTitleFormat(d);
