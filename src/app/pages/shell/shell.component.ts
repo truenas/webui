@@ -20,6 +20,7 @@ import 'xterm/dist/addons/attach/attach.js';
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
+  styleUrls: ['./shell.component.css'],
   providers: [ShellService],
 })
 

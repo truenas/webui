@@ -84,11 +84,7 @@ export class ThemeService {
       t.isActive = (t.name === theme.name);
     });
 
-    this.ws.call('user.update', [1, {
-      attributes: {
-        usertheme: theme.name
-      }
-    }]).subscribe((res_ws) => {
+    this.ws.call('user.set_attribute', [1, 'usertheme', theme.name]).subscribe((res_ws) => {
       console.log("Saved usertheme:", res_ws, theme.name);
     });
   }
