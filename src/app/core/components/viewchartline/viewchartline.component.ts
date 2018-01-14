@@ -125,7 +125,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
       },
       tooltip:{
         grouped:true,
-        position:(data, width, height, element) => {
+        /*position:(data, width, height, element) => {
           let x = (parseInt(element.getAttribute('x')));
           let y = 0;
           let w = (parseInt(element.getAttribute('width')));
@@ -134,27 +134,28 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           let left = x + (w/2);
           this.tooltipHeight = String((h*0.8));
           return {top: y, left: left}
-        },
-        contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
-          if(!this.tooltipHeight){ return "";}
-          let tthSplit = this.tooltipHeight.split('px');
-          let tth = Math.floor(Number(tthSplit[0]));
-          let h = tth/raw.length;
-          let time = defaultTitleFormat(raw[0].x);
-          //let time = raw[0].x instanceof String;
-          console.log(time);
-          let preList = '<div style="min-height:' + this.tooltipHeight + ';"><table>';
+        },*/
+        /*contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+          //if(!this.tooltipHeight){ return "";}
+          //let tthSplit = this.tooltipHeight.split('px');
+          //let tth = Math.floor(Number(tthSplit[0]));
+          //let h = tth/raw.length;
+          //let time = defaultTitleFormat(raw[0].x);
+          let time = raw[0].x;
+          //DEBUG: console.log(time);
+          //let preList = '<div style="min-height:' + this.tooltipHeight + ';"><table>';
+          let preList = '<div><table>';
           let list = '<tr><td><strong>' + time + '</strong></td></tr>';
           let postList = '</table></div>';
           for(let i in raw){
             let c = color(raw[i]);
             let d = Math.floor(raw[i].value)
-            let markup = '<tr><td class="tooltip" class="module-triangle-bottom" style="border-left:solid 6px ' + c + ';">  ' + raw[i].name + ': ' +  d + this.units + '</td></tr>';
+            let markup = '<tr class="tooltip"><td class="module-triangle-bottom" style="border-left:solid 6px ' + c + ';">  ' + raw[i].name + ':</td><td>' +  d + this.units + '</td></tr>';
             list += markup;
           }
           //let focus = defaultTitleFormat(d);
           return preList + list + postList;
-        },
+        },*/
         format: {
           value: (value, ratio, id, index) => {
             if(this.units){
@@ -175,12 +176,12 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
       let xAxis = this.makeTimeAxis(this.timeData);
       this._data.unshift(xAxis);
 
-      console.log("TIME SETUP");
-      console.log(xAxis);
+      //DEBUG: console.log("TIME SETUP");
+      //DEBUG: console.log(xAxis);
     }
 
-    console.log(this.chartConfig);
-    console.log(this._data);
+    //DEBUG: console.log(this.chartConfig);
+    //DEBUG: console.log(this._data);
     return this.chartConfig;
   }
 

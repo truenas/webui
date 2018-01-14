@@ -113,7 +113,7 @@ export class VmSummaryComponent implements AfterViewInit {
      }
      */
 
-    this.cpuChart.chartType = 'area';
+    this.cpuChart.chartType = 'area-spline';
     this.cpuChart.units = '%';
     this.cpuChart.timeSeries = true;
     this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L

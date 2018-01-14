@@ -10,7 +10,7 @@ export interface ChartData {
 }
 
 export const ViewChartMetadata = {
-  template: `<div id="{{chartId}}"></div>`
+  template: `<div id="{{chartId}}" [ngClass]="chartClass"></div>`
 }
 
 @Component({
@@ -88,6 +88,11 @@ export class ViewChartComponent extends ViewComponent implements OnInit {
   set chartId(sel: string){
     this._chartId = sel;
     //this.chartConfig.bindto = '#' + sel;
+  }
+
+  get chartClass(){
+    return this._chartType;
+    //return this.chartConfig.data.type;
   }
 
   get chartType(){

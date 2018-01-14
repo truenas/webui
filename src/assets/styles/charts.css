@@ -11,12 +11,13 @@
 /* Chart Tooltips */
 .c3-tooltip-container{
   /*background-color: rgba(0,0,0,0.9) !important;*/
-  background:linear-gradient(0deg,rgba(0,0,0,0.49),rgba(33,33,33,0.79)) !important;
+  /*background:linear-gradient(0deg,rgba(0,0,0,0.49),rgba(33,33,33,0.79)) !important;*/
+  background:linear-gradient(0deg,rgba(0,0,0,0.7), rgba(33,33,33,1))!important;
   color: #fff !important;
   box-shadow: 0px 2px 4px rgba(0,0,0,0.85) !important;
   margin: .333333rem;
   overflow: hidden;
-  padding:24px;
+  padding:16px;
   border-radius:2px;
   /*font-family:"Roboto Medium";*/
 }
@@ -56,7 +57,7 @@
 }
 .c3 path.domain,.c3 .tick line {
   stroke: #ddd  !important;
-  stroke-opacity:0 !important;
+  stroke-opacity:0.15 !important;
 }
 
 .c3-xgrid {
@@ -69,7 +70,7 @@
 }
 
 .c3-area {
-  opacity: 0.3!important;
+  opacity: 0.65!important;
 }
 
 .c3-chart-arc path{
@@ -94,6 +95,11 @@ g.c3-chart:nth-child(1){opacity:0.55;}
 }
 .c3-chart-line .c3-lines path.c3-line{
   stroke-width:3px;
+}
+
+div.c3.area .c3-chart-line .c3-lines path.c3-line,
+div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
+  stroke-width:0px;
 }
 
 /* SUBCHARTS */
