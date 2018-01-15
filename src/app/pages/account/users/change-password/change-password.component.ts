@@ -32,6 +32,9 @@ export class ChangePasswordComponent {
       name : 'bsdusr_password',
       placeholder : 'New Password',
       inputType : 'password',
+      tooltip : 'Passwords cannot contain a <b>?</b>. Passwords are\
+ recommended to be 8 characters or longer and contain a mix of lower and\
+ upper case, numbers, and special characters.'
     },
     {
       type : 'input',
