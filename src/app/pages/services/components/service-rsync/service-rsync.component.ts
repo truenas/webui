@@ -23,11 +23,16 @@ export class ServiceRSYNCComponent {
       type : 'input',
       name : 'rsyncd_port',
       placeholder : 'TCP Port',
+      tooltip: 'Port for <b>rsyncd</b> to listen on. Default is\
+ <i>873</i>.',
     },
     {
       type : 'textarea',
       name : 'rsyncd_auxiliary',
       placeholder : 'Auxiliary parameters',
+      tooltip: 'Additional parameter from\
+ <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
+ target="_blank">rsyncd.conf(5)</a>.',
     },
   ]
 
