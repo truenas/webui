@@ -36,7 +36,8 @@ export class AlertServiceEditMattermostComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      value: 'Mattermost'
+      value: 'Mattermost',
+      disabled: true
     },{
       type : 'input',
       name : 'username',

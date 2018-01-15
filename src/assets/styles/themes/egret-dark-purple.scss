@@ -236,4 +236,75 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .mat-color-warn {
         color: #f44336;
     }
+
+    .dx-treelist-borders > .dx-treelist-headers,
+    .dx-treelist-borders > .dx-treelist-rowsview,
+    .dx-treelist-borders > .dx-treelist-total-footer {
+    border-left: 1px solid #4d4d4d;
+    border-right: 1px solid #4d4d4d;
+    }
+    .dx-treelist-borders > .dx-treelist-rowsview,
+    .dx-treelist-borders > .dx-treelist-total-footer {
+    border-bottom: 1px solid #4d4d4d;
+    }
+    .dx-treelist-borders > .dx-treelist-pager,
+    .dx-treelist-borders > .dx-treelist-headers {
+    border-top: 1px solid #4d4d4d;
+    }
+    .dx-treelist-container {
+    color: #dedede;
+    background-color: #2a2a2a;
+    }
+    .dx-treelist-container .dx-header-filter {
+    position: relative;
+    color: #7c7c7c;
+    font: 14px/1 DXIcons;
+    }
+    .dx-treelist-container .dx-header-filter-empty {
+    color: rgba(124, 124, 124, 0.5);
+    }
+    .dx-treelist-container .dx-treelist-content-fixed .dx-treelist-table .dx-col-fixed {
+    background-color: #2a2a2a;
+    }
+    .dx-treelist-container .dx-treelist-rowsview .dx-data-row td.dx-pointer-events-none,
+    .dx-treelist-container .dx-treelist-rowsview .dx-freespace-row td.dx-pointer-events-none,
+    .dx-treelist-container .dx-treelist-headers .dx-row td.dx-pointer-events-none {
+    border-left: 2px solid #4d4d4d;
+    border-right: 2px solid #4d4d4d;
+    }
+    .dx-treelist-container .dx-treelist-rowsview .dx-treelist-edit-form {
+    background-color: #2a2a2a;
+    }
+    .dx-treelist-container .dx-treelist-filter-row .dx-filter-range-content {
+    color: #dedede;
+    }
+    .dx-treelist-container .dx-error-row td {
+    color: #2a2a2a;
+    padding: 0;
+    }
+    .dx-treelist-container .dx-error-row .dx-error-message {
+    background-color: #934340;
+    white-space: normal;
+    word-wrap: break-word;
+    }
+    .dx-treelist-column-chooser {
+    color: #dedede;
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
+    line-height: 1.35715;
+    }
+    .dx-treelist-edit-popup .dx-error-message {
+    background-color: #934340;
+    white-space: normal;
+    word-wrap: break-word;
+    color: #2a2a2a;
+    margin-bottom: 20px;
+    }
+    .dx-rtl .dx-treelist-container .dx-treelist-rowsview .dx-data-row td.dx-pointer-events-none,
+    .dx-rtl .dx-treelist-container .dx-treelist-rowsview .dx-freespace-row td.dx-pointer-events-none,
+    .dx-rtl .dx-treelist-container .dx-treelist-headers .dx-row td.dx-pointer-events-none {
+    border-left: 2px solid #4d4d4d;
+    }
+    
 }
