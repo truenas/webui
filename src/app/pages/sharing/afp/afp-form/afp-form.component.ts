@@ -1,5 +1,6 @@
-import { Component, ViewContainerRef } from '@angular/core';
+import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
@@ -7,12 +8,15 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
   selector : 'app-afp-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class AFPFormComponent {
+export class AFPFormComponent implements OnDestroy {
 
   protected route_success: string[] = [ 'sharing', 'afp' ];
   protected resource_name: string = 'sharing/afp/';
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
+  public afp_timemachine: any;
+  public afp_timemachine_quota: any;
+  public afp_timemachine_subscription: any;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -76,6 +80,14 @@ export class AFPFormComponent {
  the Mac deals with low-diskspace issues when multiple Macs share the\
  same volume, checking <b>Time Machine</b> on multiple shares could\
  result in intermittent failed backups.'
+    },
+    {
+      type: 'input',
+      name: 'afp_timemachine_quota',
+      placeholder: 'Time Machine Quota',
+      inputType: 'number',
+      tooltip: 'Quota for each Time Machine backup on this share (in GiB).\
+        Please note that this change will be applied only after share re-mount.'
     },
     {
       type: 'checkbox',
@@ -194,5 +206,15 @@ export class AFPFormComponent {
       entityForm.formGroup.controls['afp_dperm'].setValue("755", {emitEvent: true});
       entityForm.formGroup.controls['afp_upriv'].setValue(true);
     }
+    this.afp_timemachine_quota = _.find(this.fieldConfig, {'name': 'afp_timemachine_quota'});
+    this.afp_timemachine = entityForm.formGroup.controls['afp_timemachine'];
+    this.afp_timemachine_quota.isHidden = !this.afp_timemachine.value;
+    this.afp_timemachine_subscription = this.afp_timemachine.valueChanges.subscribe((value) => {
+      this.afp_timemachine_quota.isHidden = !value;
+    });
+  }
+
+  ngOnDestroy() {
+    this.afp_timemachine_subscription.unsubscribe();
   }
 }
