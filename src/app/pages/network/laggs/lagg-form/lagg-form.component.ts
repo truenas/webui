@@ -31,6 +31,8 @@ export class LaggFormComponent {
       type : 'select',
       name : 'lagg_protocol',
       placeholder : 'Lagg Protocol',
+      tooltip : 'Select the desired Protocol Type. LACP is preferred.\
+ If the network switch does not support LACP, choose Failover.',
       options : []
     },
     {
