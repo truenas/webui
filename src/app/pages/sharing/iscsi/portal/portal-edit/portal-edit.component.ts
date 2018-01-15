@@ -87,7 +87,7 @@ export class PortalEditComponent {
           placeholder : "Port",
           tooltip: 'TCP port used to access the iSCSI target. Default\
  is <i>3260</i>.',
-          value : '2306',
+          value : '3260',
         },
         {
           type: 'checkbox',
