@@ -31,7 +31,7 @@
             "../node_modules/@swimlane/ngx-datatable/assets/icons.css",
             "../node_modules/c3/c3.min.css",
             "../node_modules/devextreme/dist/css/dx.common.css",
-            "../node_modules/devextreme/dist/css/dx.dark.css",
+            "../node_modules/devextreme/dist/css/dx.light.css",
             "../node_modules/angular-tree-component/dist/angular-tree-component.css",
             "vendor/pace/pace-theme-min.css",
             "assets/styles/themes/egret-dark-purple.scss",
