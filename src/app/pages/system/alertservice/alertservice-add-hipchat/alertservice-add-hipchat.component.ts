@@ -38,6 +38,7 @@ export class AlertServiceAddHipchatComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'HipChat',
+      disabled: true
     },{
       type: 'input',
       name: 'cluster_name',
