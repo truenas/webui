@@ -279,9 +279,18 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       res.data.forEach((volume: ZfsPoolData) => {
         volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog, this.rest);
         volume.type = 'zpool';
-        volume.availStr = filesize(volume.avail, { standard: "iec" });
-        volume.usedStr = filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
-      
+        
+        try {
+          volume.availStr = filesize(volume.avail, { standard: "iec" });
+        } catch( error ) {
+          volume.availStr = "" + volume.avail;
+        }
+
+        try {
+          volume.usedStr = filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
+        } catch( error ) {
+          volume.usedStr = "" + volume.used;
+        }
         this.zfsPoolRows.push(volume);
       });
 
