@@ -31,6 +31,7 @@ export class ViewChartComponent extends ViewComponent implements OnInit {
   protected _chartType: string;
   protected _data: any[];
   protected _chartId: string;
+  protected colors: string[];
 
   protected chartConfig: ChartConfiguration;
 
@@ -64,11 +65,12 @@ export class ViewChartComponent extends ViewComponent implements OnInit {
       this._data = [];
     } else {
       let result: any[] = [];
+     
       for(let i = 0; i < d.length; i++){
         let item = d[i];
         let legend = [item.legend];
         let dataObj = legend.concat(item.data)
-          result.push(dataObj);
+        result.push(dataObj);
       }
       this._data = result;
 
@@ -129,7 +131,6 @@ export class ViewChartComponent extends ViewComponent implements OnInit {
        }
      }
     }
-
     return this.chartConfig;
   }
 
@@ -138,7 +139,16 @@ export class ViewChartComponent extends ViewComponent implements OnInit {
       console.log("NO DATA FOUND");
       return -1;
     }
+
     let conf = this.makeConfig();
+    let colors = this.colorsFromTheme();
+    if(colors){
+      let color = {
+        pattern: colors
+      }
+      conf.color = color;
+    }
+    
     console.log("GENERATING DATA FROM ...");
     console.log(conf);
     this.chart = c3.generate(conf);

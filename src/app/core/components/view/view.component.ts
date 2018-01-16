@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs/Subject';
 import { CoreEvent } from 'app/core/services/core.service';
 import { View } from 'app/core/classes/view';
@@ -17,10 +19,12 @@ export class ViewComponent extends View {
 
   readonly componentName = ViewComponent;
   protected _data: any;
-  public viewController: Subject<CoreEvent>
+  public viewController: Subject<CoreEvent>;
+  protected themeService: ThemeService;
 
   constructor(){
     super();
+    this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
   ngOnInit() {
@@ -33,5 +37,16 @@ export class ViewComponent extends View {
 
   get data(){
     return this._data;
+  }
+
+  colorsFromTheme(){
+    let theme = this.themeService.currentTheme();
+    console.log(theme.accentColors);
+    if(theme.accentColors){
+      return theme.accentColors;
+    } else {
+      let defaultThemeIndex = this.themeService.freeThemeDefaultIndex; 
+      return this.themeService.freenasThemes[defaultThemeIndex].accentColors
+    }
   }
 }
