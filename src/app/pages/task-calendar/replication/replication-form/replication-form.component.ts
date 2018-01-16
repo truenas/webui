@@ -305,16 +305,12 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'select',
         name : 'repl_remote_cipher',
-<<<<<<< HEAD
-        placeholder : 'Remote Cipher',
+        placeholder : 'Encryption Cipher',
         tooltip : '<i>Standard</i> provides the best security.\
  <i>Fast</i> is less secure, but gives better transfer rates for\
  devices with limited cryptographic speed. Choose <i>Disabled</i> for\
  networks where the entire path between sources and destination\
  computers is trusted.',
-=======
-        placeholder : 'Encryption Cipher',
->>>>>>> 260cef12aa2ad6c713dc393b3fcb4b6878d38d3b
         options : [
           {label : 'standard', value : 'standard'},
           {label : 'fast', value : 'fast'},
