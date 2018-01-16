@@ -16,6 +16,7 @@ import * as xterm from "xterm";
 import * as Terminal from 'xterm/dist/xterm';
 import 'xterm/dist/addons/fit/fit.js';
 import 'xterm/dist/addons/attach/attach.js';
+import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 
 @Component({
   selector: 'app-shell',
@@ -36,6 +37,8 @@ export class ShellComponent implements OnInit, OnChanges {
   public token: any;
   public xterm: any;
   private shellSubscription: any;
+
+  public shell_tooltip = 'You can use the system copy/paste command. Ctrl + c/v or Command + c/v for mac users.';
 
   clearLine = "\u001b[2K\r"
 

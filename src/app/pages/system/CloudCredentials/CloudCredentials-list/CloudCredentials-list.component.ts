@@ -101,6 +101,14 @@ export class CloudCredentialsListComponent {
         }
       });
     }
+    if(row.provider == "BACKBLAZE"){
+      actions.push({
+        label : "Edit",
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
+        }
+      });
+    }
     return actions;
   }
 }
