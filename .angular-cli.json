@@ -30,6 +30,8 @@
             "../node_modules/chartist/dist/chartist.min.css",
             "../node_modules/@swimlane/ngx-datatable/assets/icons.css",
             "../node_modules/c3/c3.min.css",
+            "../node_modules/devextreme/dist/css/dx.common.css",
+            "../node_modules/devextreme/dist/css/dx.light.css",
             "../node_modules/angular-tree-component/dist/angular-tree-component.css",
             "vendor/pace/pace-theme-min.css",
             "assets/styles/themes/egret-dark-purple.scss",
@@ -37,9 +39,11 @@
             "assets/styles/themes/egret-blue.scss",
             "assets/styles/themes/egret-indigo.scss",
             "assets/styles/themes/ix-blue.scss",
+            "assets/styles/themes/solarized-dark.scss",
             "assets/styles/themes/freenas-warriors.scss",
             "assets/styles/themes/freenas-sharks.scss",
             "assets/styles/styles.css",
+            "assets/styles/charts.css",
             "assets/styles/egret_overrides.css"
         ],
         "scripts": [
@@ -49,7 +53,9 @@
             "../node_modules/hammerjs/hammer.js",
             "vendor/Chart.min.js",
             "../node_modules/quill/dist/quill.min.js",
-            "../node_modules/element-resize-detector/dist/element-resize-detector.min.js"
+            "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
+            "../node_modules/devextreme/dist/js/dx.all.js"
+           
         ],
         "environmentSource": "environments/environment.ts",
         "environments":
