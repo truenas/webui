@@ -99,7 +99,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     DynamicFieldDirective,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
-    SmdFabSpeedDialComponent
+    SmdFabSpeedDialComponent,
+    TooltipComponent
   ],
   entryComponents: [
     FormButtonComponent,
