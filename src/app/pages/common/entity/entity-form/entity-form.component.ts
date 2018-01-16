@@ -249,8 +249,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     let payload = []
     let call = this.conf.editCall;
     payload.push(body);
-    console.log(body);
-    return this.ws.call(call, payload.push(body));
+    return this.ws.call(call, payload);
   }
 
   addSubmit(body: any) {

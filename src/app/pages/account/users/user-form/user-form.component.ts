@@ -26,7 +26,6 @@ export class UserFormComponent {
 
   protected resource_name: string = 'account/users/';
   protected addCall = 'user.create';
-  protected editCall = 'user.update';
   protected route_success: string[] = ['account', 'users' ];
   protected isEntity: boolean = true;
 
@@ -163,6 +162,7 @@ export class UserFormComponent {
   afterInit(entityForm: any) {
     if (!entityForm.isNew) {
       _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
+      entityForm.formGroup.controls['group_create'].setValue(false);
     }
     /* list groups */
     this.ws.call('group.query').subscribe((res) => {
@@ -170,7 +170,6 @@ export class UserFormComponent {
       this.groups = _.find(this.fieldConfig, {name : "groups"});
       for (let i = 0; i < res.length; i++) {
         this.group.options.push({ label : res[i].group, value : res[i].id });
-        //uncomment this when we are ready to bring back aux groups, hiding for now.
         this.groups.options.push({label : res[i].group, value : res[i].id})
         }
 
@@ -181,7 +180,7 @@ export class UserFormComponent {
     filter.push("=");
     filter.push(entityForm.pk);
     this.ws.call('user.query',[[filter]]).subscribe((res) => {
-      if (res[0].home) {
+      if (res.length !== 0 ) {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2,5));
         });
@@ -191,27 +190,30 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('username', true);
-        if (entityForm.data.builtin === true) {
-          entityForm.formGroup.controls['uid'].setValue(
-              entityForm.data.uid);
-          entityForm.setDisabled('uid', true);
-          entityForm.setDisabled('home', true);
-        } else {
-          console.log(res[0]);
+        entityForm.formGroup.controls['username'].setValue(res[0].username);
+        entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
+        entityForm.formGroup.controls['email'].setValue(res[0].email);
+        entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);
+        entityForm.formGroup.controls['locked'].setValue(res[0].locked);
+        entityForm.formGroup.controls['sudo'].setValue(res[0].sudo);
+        entityForm.formGroup.controls['microsoft_account'].setValue(res[0].microsoft_account);
+        entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
+        entityForm.formGroup.controls['groups'].setValue(res[0].groups);
+        entityForm.formGroup.controls['home'].setValue(res[0].home);
+        if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
-          entityForm.formGroup.controls['username'].setValue(res[0].username);
+          entityForm.setDisabled('uid', true);
+          entityForm.setValue('group',res[0].group.id);
+          entityForm.setDisabled('group',true);
+          entityForm.setDisabled('home',true);
+          entityForm.setDisabled('home_mode',true);
+          _.find(this.fieldConfig, {name : "home_mode"}).isHidden = true;
+        } else {
+          entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('group',false);
-          // entityForm.setValue('group',res[0].group.bsdgrp_group);
-          entityForm.formGroup.controls['home'].setValue(res[0].home);
+          entityForm.setValue('group',res[0].group.id);
           entityForm.formGroup.controls['shell'].setValue(res[0].shell);
-          entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
-          entityForm.formGroup.controls['email'].setValue(res[0].email);
-          entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);
-          entityForm.formGroup.controls['locked'].setValue(res[0].locked);
-          entityForm.formGroup.controls['sudo'].setValue(res[0].sudo);
-          entityForm.formGroup.controls['microsoft_account'].setValue(res[0].microsoft_account);
-          entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
-          entityForm.formGroup.controls['groups'].setValue(res[0].groups);
+
         }
       } else {
         this.ws.call('user.get_next_uid').subscribe((res)=>{
@@ -231,6 +233,9 @@ export class UserFormComponent {
           entityForm.formGroup.controls['shell'].setValue(
               this.shells[1][0]);
         });
+    if (!entityForm.isNew){
+      entityForm.submitFunction = this.submitFunction;
+    }
   }
 
   errorReport(res) {
@@ -243,5 +248,12 @@ export class UserFormComponent {
       delete value['uid'];
     }
     return value;
+  }
+
+  submitFunction(this: any, entityForm: any, ){
+    delete entityForm['uid']
+    delete entityForm['group_create']
+    delete entityForm['password_conf']
+    return this.ws.call('user.update', [this.pk, entityForm]);
   }
 }
