@@ -36,7 +36,8 @@ export class AlertServiceEditVictoropsComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      value: 'VictorOps'
+      value: 'VictorOps',
+      disabled: true
     },{
       type : 'input',
       name : 'routing_key',

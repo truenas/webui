@@ -1,0 +1,335 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+// Solarized Color Palette - don't forget to add accents to theme.service!
+$base03:    #002b36; // Dark BG tone
+$base02:    #073642; // Dark BG tone
+$base01:    #586e75; // Dark Content tone
+$base00:    #657b83; // Dark Content tone
+$base0:     #839496; // Light Content tone
+$base1:     #93a1a1; // Light Content tone
+$base2:     #eee8d5; // Light BG tone
+$base3:     #fdf6e3; // Light BG tone
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
+$primary:$base01;
+$secondary: $base03;
+$accent:$blue;
+
+$canvas: $base03;
+$canvas-text:$base01;
+$background:$base02;
+$foreground:$base00;
+$canvas-alt:$base2;
+$background-alt: $base3;
+$foreground-alt: $base1;
+
+$mat-primary: (
+    50 : lighten($primary, 45%),
+    100 : lighten($primary, 40%),
+    200 : lighten($primary, 30%),
+    300 : lighten($primary, 20%),
+    400 : lighten($primary,10%),
+    500 : $primary,
+    600 : darken($primary, 10%),
+    700 : darken($primary, 20%), // links in sidenav
+    800 : darken($primary, 30%),
+    900 : darken($primary, 40%),
+    A100 : lighten($secondary, 40%),// secondary?
+    A200 : lighten($secondary, 30%),
+    A400 : lighten($secondary, 10%),
+    A700 : darken($secondary, 20%),
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #ffffff,
+    )
+);
+
+$mat-accent: (
+    50 : $blue,
+    100 : $blue,
+    200 : $blue,
+    300 : $blue,
+    400 : $blue,
+    500 : $blue,
+    600 : $blue,
+    700 : $blue,
+    800 : $blue,
+    900 : $blue,
+    A100 : $blue,
+    A200 : $blue,
+    A400 : $blue,
+    A700 : $blue,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$mat-warn: (
+    50 : $red,
+    100 : $red,
+    200 : $red,
+    300 : $red,
+    400 : $red,
+    500 : $red,
+    600 : $red,
+    700 : $red,
+    800 : $red,
+    900 : $red,
+    A100 : $red,
+    A200 : $red,
+    A400 : $red,
+    A700 : $red,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+// mandatory stuff for theming
+$freenas-primary: mat-palette($mat-primary);
+$freenas-accent:  mat-palette($mat-accent);
+$freenas-warn: mat-palette($mat-warn);
+
+
+// include the custom theme components into a theme object
+$freenas-theme: mat-dark-theme($freenas-primary, $freenas-accent/*, $freenas-warn*/);
+
+$primary-dark: darken( map-get($mat-primary, 700), 8% );
+
+
+// include the custom theme object into the angular material theme
+.solarized-dark {
+    @include angular-material-theme($freenas-theme);
+    
+    // Background
+    body, .mat-sidenav-content{
+      background-color:$canvas;
+      color:$base01;
+    }
+
+    //Background Elevated
+    .sidebar-panel.mat-sidenav .navigation-hold#scroll-area, .mat-card, .breadcrumb-bar#breadcrumb-bar{
+      background-color: $background !important;
+      color:$foreground;
+    }
+
+    //Light Elements
+    .datatable-row-wrapper{
+      background:$canvas-alt;
+    }
+
+    // Semi-Light Elements
+    .datatable-header,.datatable-footer{
+      background:$primary;
+      color:$canvas-alt;
+    }
+
+.app-loader {
+    background: map-get($mat-primary, 500) !important;
+
+}
+    .mat-bg-primary,
+    .topbar,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open mat-icon:not(.menu-caret),
+    .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+    .fileupload-drop-zone.dz-file-over,
+    .toolbar-avatar.online > .status-dot,
+    .cal-open-day-events,
+    div.hopscotch-bubble {
+        background: map-get($mat-primary, 500) !important;
+        color: #ffffff !important;
+    }
+    .mat-color-primary, .tree, 
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        color: map-get($mat-primary, 700) !important;
+    }
+    .node-content-wrapper-active, 
+    .node-content-wrapper.node-content-wrapper-active:hover,
+    .node-content-wrapper-active.node-content-wrapper-focused {
+        background: map-get($mat-primary, 400) !important;
+        color: #000000;
+    }
+
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        font-weight: 500;
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+        border-left: 2px solid map-get($mat-primary, 500);
+    }
+    .messages-wrap .inbox-hold {
+        background: transparent !important;
+    }
+    .sidebar-panel.mat-sidenav {
+        background: url('../../images/sidebar-bg-dark.jpg') no-repeat;
+    }
+    .app-user .app-user-name,
+    .sidebar-panel.mat-sidenav .sidebar-list-item mat-icon:not(.menu-caret),
+    .ql-snow .ql-picker,
+    .mat-option,
+    .mat-dialog-container {
+        color: white !important;
+    }
+    .text-muted {
+        color: rgba(255, 255, 255, .54) !important;
+    }
+
+    .ql-snow .ql-stroke  {
+        stroke: #ffffff;
+    }
+    .ql-snow .ql-fill {
+        fill: #ffffff;
+    }
+    .ql-toolbar.ql-snow,
+    .ql-toolbar.ql-snow + .ql-container.ql-snow {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .sidebar-panel.mat-sidenav .navigation-hold,
+    .mat-tab-header,
+    .message-item.open .message-head,
+    .ngx-datatable.material .datatable-header,
+    .bg-white,
+    .cal-month-view .cal-cell-row:hover,
+    .chats-wrap .conversations-hold .single-conversation.sender .conversation-msg,
+    .cal-day-view .cal-hour:nth-child(odd),
+    &.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu,
+    .breadcrumb-bar {
+        background: rgb(66, 66, 66) !important;
+    }
+    .cal-month-view .cal-cell-row .cal-cell:hover, 
+    .cal-month-view .cal-cell.cal-has-events.cal-open,
+    .cal-week-view .cal-day-headers .cal-header:hover, 
+    .cal-week-view .cal-day-headers .cal-drag-over,
+    .cal-day-view .cal-hour-segment:hover, 
+    .cal-day-view .cal-drag-over .cal-hour-segment {
+        background: #333 !important;
+    }
+    .cal-month-view .cal-day-cell:not(:last-child),
+    .cal-month-view .cal-days,
+    .cal-week-view .cal-day-headers .cal-header:not(:last-child),
+    .cal-week-view .cal-day-headers,
+    .cal-month-view .cal-days .cal-cell-row,
+    .cal-day-view .cal-hour:not(:last-child) .cal-hour-segment, 
+    .cal-day-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
+        border-color: #000 !important;
+    }
+    .ngx-datatable.material .datatable-header {
+        background-color: map-get($mat-primary, 500) !important;
+        color: #ffffff !important;
+
+    }
+    /* Hopscotch Tour */ 
+    div.hopscotch-bubble {
+        border-color: $primary-dark;
+    }
+    /* up arrow  */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
+        border-bottom: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
+        border-bottom: 17px solid map-get($mat-primary, 500);
+        top: -16px;
+    }
+    /* right arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
+        border-left: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
+        border-left: 17px solid map-get($mat-primary, 500);
+        left: -1px;
+    }
+    /* bottom arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
+        border-top: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
+        border-top: 17px solid map-get($mat-primary, 500);
+        top: -18px;
+    }
+    /* Left Arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
+        border-right: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
+        left: 1px;
+        border-right: 17px solid map-get($mat-primary, 500);
+    }
+    
+    .mat-bg-accent,
+    div.hopscotch-bubble .hopscotch-bubble-number,
+    div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+    div.hopscotch-bubble .hopscotch-nav-button.next {
+        background-color: map-get($mat-accent, 500);
+        color: black;
+    }
+    .mat-button {
+        background-color: map-get($mat-primary, 500);
+        color: black;   
+    }
+    .mat-bg-warn {
+        background-color: $red;
+        color: $base2;
+    }
+    .mat-color-accent {
+        color: map-get($mat-accent, 500);
+    }
+    .mat-color-warn {
+        color: $red;
+    }
+
+    .vm-power-btn-off{ 
+      background: $red;
+    } 
+    .vm-power-btn-on{
+      background:$green;
+    }
+
+}

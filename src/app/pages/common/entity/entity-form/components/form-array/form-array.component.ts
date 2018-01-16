@@ -8,6 +8,7 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 @Component({
   selector : 'form-array',
   templateUrl : './form-array.component.html',
+  styleUrls: ['./form-array.component.css'],
 })
 export class FormArrayComponent implements Field {
   config: FieldConfig;

@@ -1,37 +1,16 @@
 <md-card>
-  <md-tab-group #tabGroup (selectChange)="onSelectChange($event)">
-    <md-tab label="Global Configuration">
-      <app-iscsi-globalconfiguration></app-iscsi-globalconfiguration>
-    </md-tab>
-    <md-tab label="Portals">
-      <div class="iscsi-padding">
-        <app-iscsi-portal-list></app-iscsi-portal-list>
-      </div>
-    </md-tab>
-    <md-tab label="Initiators" class="iscsi-padding">
-      <div class="iscsi-padding">
-        <app-iscsi-initiator-list></app-iscsi-initiator-list>
-      </div>
-    </md-tab>
-    <md-tab label="Authorized Access">
-      <div class="iscsi-padding">
-        <app-iscsi-authorizedaccess-list></app-iscsi-authorizedaccess-list>
-      </div>
-    </md-tab>
-    <md-tab label="Targets">
-      <div class="iscsi-padding">
-        <app-iscsi-target-list></app-iscsi-target-list>
-      </div>
-    </md-tab>
-    <md-tab label="Extents">
-      <div class="iscsi-padding">
-        <app-iscsi-extent-list></app-iscsi-extent-list>
-      </div>
-    </md-tab>
-    <md-tab label="Associated Targets">
-      <div class="iscsi-padding">
-        <app-iscsi-associated-target-list></app-iscsi-associated-target-list>
-      </div>
-    </md-tab>
-  </md-tab-group>
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+    {{link.label}}
+  </a>
+  </nav>
+  <router-outlet>
+    <app-iscsi-globalconfiguration *ngIf="activedTab == 'configuration'"></app-iscsi-globalconfiguration>
+    <app-iscsi-portal-list *ngIf="activedTab == 'portals'"></app-iscsi-portal-list>
+    <app-iscsi-initiator-list *ngIf="activedTab == 'initiator'"></app-iscsi-initiator-list>
+    <app-iscsi-authorizedaccess-list *ngIf="activedTab == 'auth'"></app-iscsi-authorizedaccess-list>
+    <app-iscsi-target-list *ngIf="activedTab == 'target'"></app-iscsi-target-list>
+    <app-iscsi-extent-list *ngIf="activedTab == 'extent'"></app-iscsi-extent-list>
+    <app-iscsi-associated-target-list *ngIf="activedTab == 'associatedtarget'"></app-iscsi-associated-target-list>
+  </router-outlet>
 </md-card>

@@ -40,6 +40,7 @@ export class AlertServiceAddAWSComponent {
       value: 'AWSSNS',
       tooltip: 'Amazon Web Service (AWS)\
  Simple Notification Service (SNS).',
+      disabled: true
     },
     {
       type : 'input',
