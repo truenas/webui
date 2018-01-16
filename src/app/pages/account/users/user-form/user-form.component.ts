@@ -26,6 +26,7 @@ export class UserFormComponent {
 
   protected resource_name: string = 'account/users/';
   protected addCall = 'user.create';
+  protected editCall = 'user.update';
   protected route_success: string[] = ['account', 'users' ];
   protected isEntity: boolean = true;
 
@@ -45,7 +46,7 @@ export class UserFormComponent {
 
     {
       type : 'checkbox',
-      name : 'creategroup',
+      name : 'group_create',
       placeholder : 'Create a new Primary Group for the user.',
       value : true,
       isHidden: false
@@ -60,7 +61,7 @@ export class UserFormComponent {
         {
           action : 'DISABLE',
           when : [ {
-            name : 'creategroup',
+            name : 'group_create',
             value : true,
           } ]
         },
@@ -69,12 +70,13 @@ export class UserFormComponent {
     {
       type : 'explorer',
       initial: '/mnt',
-      name : 'home',
-      placeholder : 'Home Directory',
+      name: 'home',
+      placeholder: 'Home Directory',
+      value: '/nonexistent'
     },
     {
       type : 'permissions',
-      name : 'mode',
+      name : 'home_mode',
       placeholder : 'Home Directory Mode',
     },
     {
@@ -151,6 +153,7 @@ export class UserFormComponent {
   private group: any;
   private groups: any;
   private creategroup: any;
+  private group_create: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
@@ -159,13 +162,12 @@ export class UserFormComponent {
 
   afterInit(entityForm: any) {
     if (!entityForm.isNew) {
-      _.find(this.fieldConfig, {name : "creategroup"}).isHidden = true;
+      _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
     }
     /* list groups */
     this.ws.call('group.query').subscribe((res) => {
       this.group = _.find(this.fieldConfig, {name : "group"});
       this.groups = _.find(this.fieldConfig, {name : "groups"});
-      console.log(res);
       for (let i = 0; i < res.length; i++) {
         this.group.options.push({ label : res[i].group, value : res[i].id });
         //uncomment this when we are ready to bring back aux groups, hiding for now.
@@ -174,14 +176,17 @@ export class UserFormComponent {
 
     });
     /* list users */
-    this.ws.call('user.query').subscribe((res) => {
-
-      if (entityForm.data.home) {
-        this.storageService.filesystemStat(entityForm.data.home).subscribe(stat => {
-          entityForm.formGroup.controls['mode'].setValue(stat.mode.toString(8).substring(2,5));
+    let filter = [];
+    filter.push("id");
+    filter.push("=");
+    filter.push(entityForm.pk);
+    this.ws.call('user.query',[[filter]]).subscribe((res) => {
+      if (res[0].home) {
+        this.storageService.filesystemStat(res[0].home).subscribe(stat => {
+          entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2,5));
         });
       } else {
-        entityForm.formGroup.controls['mode'].setValue('755');
+        entityForm.formGroup.controls['home_mode'].setValue('755');
       }
 
       if (!entityForm.isNew) {
@@ -192,8 +197,21 @@ export class UserFormComponent {
           entityForm.setDisabled('uid', true);
           entityForm.setDisabled('home', true);
         } else {
-          entityForm.formGroup.controls['uid'].setValue(
-              entityForm.data.uid);
+          console.log(res[0]);
+          entityForm.formGroup.controls['uid'].setValue(res[0].uid);
+          entityForm.formGroup.controls['username'].setValue(res[0].username);
+          entityForm.setDisabled('group',false);
+          // entityForm.setValue('group',res[0].group.bsdgrp_group);
+          entityForm.formGroup.controls['home'].setValue(res[0].home);
+          entityForm.formGroup.controls['shell'].setValue(res[0].shell);
+          entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
+          entityForm.formGroup.controls['email'].setValue(res[0].email);
+          entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);
+          entityForm.formGroup.controls['locked'].setValue(res[0].locked);
+          entityForm.formGroup.controls['sudo'].setValue(res[0].sudo);
+          entityForm.formGroup.controls['microsoft_account'].setValue(res[0].microsoft_account);
+          entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
+          entityForm.formGroup.controls['groups'].setValue(res[0].groups);
         }
       } else {
         this.ws.call('user.get_next_uid').subscribe((res)=>{
@@ -216,10 +234,11 @@ export class UserFormComponent {
   }
 
   errorReport(res) {
-    this.dialog.errorReport(res.code, res.error.error_message, res.error.traceback);
+    this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
   }
 
   clean_uid(value) {
+    delete value['password_conf'];
     if (value['uid'] === null) {
       delete value['uid'];
     }
