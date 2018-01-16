@@ -34,13 +34,15 @@ import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-l
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { DxTreeListModule } from 'devextreme-angular';
 
 
 @NgModule({
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, MdTableModule, MdCardModule, MdGridListModule,
-    NgxDatatableModule
+    NgxDatatableModule, DxTreeListModule
   ],
   declarations : [
     VolumesListComponent,
