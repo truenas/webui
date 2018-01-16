@@ -1,0 +1,4 @@
+.formarray-fieldset {
+	flex-shrink: inherit;
+    min-width: 40% !important;
+}

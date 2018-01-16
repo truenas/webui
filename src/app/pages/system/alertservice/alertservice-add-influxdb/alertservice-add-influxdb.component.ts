@@ -38,6 +38,7 @@ export class AlertServiceAddInfluxdbComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'InfluxDB',
+      disabled: true
     },{
       type : 'input',
       name : 'username',

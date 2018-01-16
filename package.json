@@ -61,6 +61,8 @@
     "core-js": "2.4.1",
     "d3": "4.10.0",
     "date-fns": "1.28.5",
+    "devextreme": "^17.2.4",
+    "devextreme-angular": "^17.2.4",
     "element-resize-detector": "1.1.12",
     "filesize": "3.5.10",
     "flag-icon-css": "2.8.0",

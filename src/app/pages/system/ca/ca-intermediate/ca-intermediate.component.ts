@@ -133,6 +133,12 @@ export class CertificateAuthorityIntermediateComponent {
       tooltip: 'Required; enter the fully-qualified hostname\
  (FQDN) of the FreeNAS® system.',
     },
+    {
+      type : 'textarea',
+      name : 'cert_san',
+      placeholder: 'Subject Alternate Names',
+      tooltip: 'Multi-domain support. Enter additional space separated domains.'
+    }
   ];
   private cert_signedby: any;
   private cert_country: any;
