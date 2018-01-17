@@ -20,11 +20,13 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 export const TaskCalendarRoutes: Routes = [{
   path: '',
   data: { title: 'Calendar' },
-  children: [{
-    path: 'calendar',
-    component: TaskCalendarComponent,
-    data: { title: 'Calendar', breadcrumb: 'Calendar' }
-  }, {
+  children: [
+  // {
+  //   path: 'calendar',
+  //   component: TaskCalendarComponent,
+  //   data: { title: 'Calendar', breadcrumb: 'Calendar' }
+  // }, 
+  {
     path: 'cron',
     data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
     children: [{
