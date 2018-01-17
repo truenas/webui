@@ -8,6 +8,7 @@ import {
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
+import {  DialogService } from '../../../../services/';
 
 import {
   RestService,
@@ -42,19 +43,23 @@ export class ServiceS3Component implements OnInit {
       placeholder : 'IP Address',
       tooltip: 'The IP address on which to run the S3 service; 0.0.0.0\
  sets the server to listen on all addresses.',
-      options : []
+      options : [
+        {label:'0.0.0.0', value: '0.0.0.0'}
+      ]
     },
     {
       type : 'input',
       name : 'bindport',
       placeholder : 'Port',
       tooltip: 'TCP port on which to provide the S3 service (default 9000).',
+      value: '9000'
     },
     {
       type : 'input',
       name : 'access_key',
       placeholder : 'Access Key',
       tooltip: 'Enter the S3 username.',
+      validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required]
     },
     {
       type : 'input',
@@ -62,7 +67,8 @@ export class ServiceS3Component implements OnInit {
       placeholder : 'Secret Key',
       tooltip: 'The password to be used by connecting S3 systems; must\
  be at least 8 but no more than 40 characters long.',
-      inputType : 'password'
+      inputType : 'password',
+      validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required]
     },
     {
       type : 'input',
@@ -70,7 +76,7 @@ export class ServiceS3Component implements OnInit {
       placeholder : 'Confirm S3 Key',
       tooltip: 'Re-enter the S3 password to confirm.',
       inputType : 'password',
-      validation : [ matchOtherValidator('secret_key') ],
+      validation : [ matchOtherValidator('secret_key'), Validators.required ],
     },
     {
       type : 'explorer',
@@ -78,6 +84,7 @@ export class ServiceS3Component implements OnInit {
       name : 'storage_path',
       placeholder : 'Disk',
       tooltip: 'S3 filesystem directory.',
+      validation: [ Validators.required]
     },
     {
       type : 'checkbox',
@@ -89,7 +96,9 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'mode',
       placeholder : 'Mode',
-      options : []
+      options : [
+        {label : "local"}
+      ]
     },
     {
       type : 'select',
@@ -102,7 +111,7 @@ export class ServiceS3Component implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService) {}
+              protected systemGeneralService: SystemGeneralService, private dialog:DialogService ) {}
 
   ngOnInit() {}
 
@@ -116,9 +125,22 @@ export class ServiceS3Component implements OnInit {
     this.systemGeneralService.getIPChoices().subscribe(res=>{
       this.ip_address = _.find(this.fieldConfig,{name:'bindip'});
       res.forEach(element => {
-        this.ip_address.options.push({label:element[1], value: element[0]})
+        this.ip_address.options.push({label:element[1], value: element[0]});
       });
-    })
+    });
+    entityForm.submitFunction = this.submitFunction;
+
+  }
+
+  clean(value) {
+    delete value['secret_key2'];
+
+    return value;
+  }
+
+  submitFunction(this: any, entityForm: any,){
+
+    return this.ws.call('s3.update', [entityForm]);
 
   }
 }
