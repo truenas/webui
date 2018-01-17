@@ -29,12 +29,16 @@ import {
 
 export class ServiceS3Component implements OnInit {
   protected resource_name: string = 'services/s3';
+  protected addCall: string = 's3.update';
   protected route_success: string[] = [ 'services' ];
+  private certificate: any;
+  private ip_address: any;
+
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'select',
-      name : 's3_bindip',
+      name : 'bindip',
       placeholder : 'IP Address',
       tooltip: 'The IP address on which to run the S3 service; 0.0.0.0\
  sets the server to listen on all addresses.',
@@ -42,19 +46,19 @@ export class ServiceS3Component implements OnInit {
     },
     {
       type : 'input',
-      name : 's3_bindport',
+      name : 'bindport',
       placeholder : 'Port',
       tooltip: 'TCP port on which to provide the S3 service (default 9000).',
     },
     {
       type : 'input',
-      name : 's3_access_key',
+      name : 'access_key',
       placeholder : 'Access Key',
       tooltip: 'Enter the S3 username.',
     },
     {
       type : 'input',
-      name : 's3_secret_key',
+      name : 'secret_key',
       placeholder : 'Secret Key',
       tooltip: 'The password to be used by connecting S3 systems; must\
  be at least 8 but no more than 40 characters long.',
@@ -62,31 +66,36 @@ export class ServiceS3Component implements OnInit {
     },
     {
       type : 'input',
-      name : 's3_secret_key2',
+      name : 'secret_key2',
       placeholder : 'Confirm S3 Key',
       tooltip: 'Re-enter the S3 password to confirm.',
-      inputType : 'password'
+      inputType : 'password',
+      validation : [ matchOtherValidator('secret_key') ],
     },
     {
       type : 'explorer',
       initial: '/mnt',
-      name : 's3_disks',
+      name : 'storage_path',
       placeholder : 'Disk',
       tooltip: 'S3 filesystem directory.',
     },
     {
       type : 'checkbox',
-      name : 's3_browser',
+      name : 'browser',
       placeholder : 'Enable Browser',
       tooltip: 'Enable the web user interface for the S3 service.',
     },
     {
       type : 'select',
-      name : 's3_mode',
+      name : 'mode',
       placeholder : 'Mode',
-      options : [
-        {label : "local"},
-      ]
+      options : []
+    },
+    {
+      type : 'select',
+      name : 'certificate',
+      placeholder : 'Certificate',
+      options : []
     },
   ];
 
@@ -97,5 +106,19 @@ export class ServiceS3Component implements OnInit {
 
   ngOnInit() {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityForm: any) { 
+    this.systemGeneralService.getCertificates().subscribe((res)=>{
+      this.certificate = _.find(this.fieldConfig, {name:'certificate'});
+      res.forEach(element => {
+        this.certificate.options.push({label:element[1], value: element[0]})
+      });
+    });
+    this.systemGeneralService.getIPChoices().subscribe(res=>{
+      this.ip_address = _.find(this.fieldConfig,{name:'bindip'});
+      res.forEach(element => {
+        this.ip_address.options.push({label:element[1], value: element[0]})
+      });
+    })
+
+  }
 }
