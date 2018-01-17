@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-plugins-installed-list',
@@ -50,7 +51,7 @@ export class PluginsInstalledListComponent {
               this.loader.close();
             },
             (res) => {
-              console.log(res);
+              new EntityUtils().handleError(this, res);
               this.loader.close();
             });
       }
@@ -72,7 +73,7 @@ export class PluginsInstalledListComponent {
               this.loader.close();
             },
             (res) => {
-              console.log(res);
+              new EntityUtils().handleError(this, res);
               this.loader.close();
             });
       }
@@ -109,7 +110,9 @@ export class PluginsInstalledListComponent {
           this.entityList.busy =
             this.ws.call('jail.start', [row[1]]).subscribe(
               (res) => { row[3] = 'up'; },
-              (res) => { console.log(res); });
+              (res) => {
+                new EntityUtils().handleError(this, res);
+              });
         }
       },
       {
@@ -119,7 +122,9 @@ export class PluginsInstalledListComponent {
           this.entityList.busy =
             this.ws.call('jail.stop', [row[1]]).subscribe(
               (res) => { row[3] = 'down'; },
-              (res) => { console.log(res); });
+              (res) => {
+                new EntityUtils().handleError(this, res);
+              });
         }
       },
       {
