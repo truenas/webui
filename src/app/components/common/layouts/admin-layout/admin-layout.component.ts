@@ -109,7 +109,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.ws.sub(subName).subscribe((res) => {
       if(res.data != ""){
         this.consoleMsg = this.accumulateConsoleMsg(res.data, neededNumberconsoleMsg);
-      }      
+      }
     });
   }
 

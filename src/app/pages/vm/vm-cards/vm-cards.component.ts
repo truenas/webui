@@ -40,7 +40,7 @@ export class VmCardsComponent implements OnInit {
   @ViewChild('filter') filter: ElementRef;
   @Input() searchTerm:string = '';
   @Input() cards = []; // Display List
-    @Input() cache = []; // Master List: 
+  @Input() cache = []; // Master List: 
   @ViewChild('viewMode') viewMode:MdButtonToggleGroup;
   focusedVM:string;
 

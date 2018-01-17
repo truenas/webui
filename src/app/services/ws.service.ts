@@ -232,6 +232,7 @@ export class WebSocketService {
 
   logout() {
     this.clearCredentials();
+    this.socket.close();
     this._router.navigate(['/sessions/signin']);
   }
 }

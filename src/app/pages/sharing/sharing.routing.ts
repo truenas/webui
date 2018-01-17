@@ -105,26 +105,17 @@ export const routes: Routes = [
         children: [
         {
           path: '',
-          component: ISCSI,
-          data: { title: 'ISCSI', breadcrumb: 'ISCSI'},
+          redirectTo: 'configuration',
         },
         {
           path: ':pk',
           component: ISCSI,
           data: { title: '', breadcrumb: ''},
-        }, 
+        },
         {
-          path: 'configuration',
-          component: ISCSI,
-          data: { title: 'configuration', breadcrumb: 'configuration'},
-        }, {
           path: 'portals',
           data: { title: 'Portals', breadcrumb: 'Portals'},
           children: [{
-            path: '',
-            component: ISCSI,
-            data: { title: 'Portals', breadcrumb: 'Portals'},
-          }, {
             path: 'add',
             component: PortalAddComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
@@ -137,10 +128,6 @@ export const routes: Routes = [
           path: 'initiators',
           data: { title: 'Initiators', breadcrumb: 'Initiators'},
           children: [{
-            path: '',
-            component: ISCSI,
-            data: { title: 'Initiators', breadcrumb: 'Initiators'},
-          }, {
             path: 'add',
             component: InitiatorFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
@@ -153,10 +140,6 @@ export const routes: Routes = [
           path: 'auth',
           data: { title: 'Auth', breadcrumb: 'Auth'},
           children: [{
-            path: '',
-            component: ISCSI,
-            data: { title: 'Auth', breadcrumb: 'Auth'},
-          }, {
             path: 'add',
             component: AuthorizedAccessFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
@@ -170,10 +153,6 @@ export const routes: Routes = [
           path: 'target',
           data: { title: 'Target', breadcrumb: 'Target'},
           children: [{
-            path: '',
-            component: ISCSI,
-            data: { title: 'Target', breadcrumb: 'Target'},
-          }, {
             path: 'add',
             component: TargetAddComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
@@ -187,10 +166,6 @@ export const routes: Routes = [
           path: 'extent',
           data: { title: 'Extent', breadcrumb: 'Extent'},
           children: [{
-            path: '',
-            component: ISCSI,
-            data: { title: 'Extent', breadcrumb: 'Extent'},
-          }, {
             path: 'add',
             component: ExtentFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
@@ -204,10 +179,6 @@ export const routes: Routes = [
           path: 'associatedtarget',
           data: { title: 'Associate Target', breadcrumb: 'Associate Target'},
           children: [{
-            path: '',
-            component: ISCSI,
-            data: { title: 'Associate Target', breadcrumb: 'Associate Target'},
-          }, {
             path: 'add',
             component: AssociatedTargetFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
