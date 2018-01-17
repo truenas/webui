@@ -6,6 +6,9 @@ import { NetworkService, RestService } from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { 
+  regexValidator 
+} from '../../../common/entity/entity-form/validators/regex-validation';
 
 
 @Component({
@@ -17,7 +20,7 @@ export class InterfacesFormComponent {
   protected resource_name: string = 'network/interface/';
   protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity: boolean = true;
-
+  
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -44,6 +47,7 @@ export class InterfacesFormComponent {
       name : 'int_ipv4address',
       placeholder : 'IPv4 Address',
       tooltip : 'Enter a static IP address if <b>DHCP</b> is unchecked.',
+      validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
@@ -69,6 +73,7 @@ export class InterfacesFormComponent {
       name : 'int_ipv6address',
       placeholder : 'IPv6 Address',
       tooltip : 'Enter a static IP address if <b>DHCP</b> is unchecked.',
+      validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
       ]
