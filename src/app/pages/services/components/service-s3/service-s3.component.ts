@@ -97,7 +97,7 @@ export class ServiceS3Component implements OnInit {
       name : 'mode',
       placeholder : 'Mode',
       options : [
-        {label : "local"}
+        {label : 'local'}
       ]
     },
     {
@@ -115,7 +115,7 @@ export class ServiceS3Component implements OnInit {
 
   ngOnInit() {}
 
-  afterInit(entityForm: any) { 
+  afterInit(entityForm: any) {
     this.systemGeneralService.getCertificates().subscribe((res)=>{
       this.certificate = _.find(this.fieldConfig, {name:'certificate'});
       res.forEach(element => {
@@ -128,6 +128,15 @@ export class ServiceS3Component implements OnInit {
         this.ip_address.options.push({label:element[1], value: element[0]});
       });
     });
+    entityForm.ws.call('s3.config').subscribe((res)=>{
+      entityForm.formGroup.controls['bindip'].setValue(res.bindip);
+      entityForm.formGroup.controls['bindport'].setValue(res.bindport);
+      entityForm.formGroup.controls['access_key'].setValue(res.access_key);
+      entityForm.formGroup.controls['storage_path'].setValue(res.storage_path);
+      entityForm.formGroup.controls['browser'].setValue(res.browser);
+      entityForm.formGroup.controls['mode'].setValue(res.mode);
+      entityForm.formGroup.controls['certificate'].setValue(res.certificate);
+    }) 
     entityForm.submitFunction = this.submitFunction;
 
   }
