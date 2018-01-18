@@ -11,6 +11,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'jail-edit',
@@ -636,6 +637,9 @@ export class JailEditComponent implements OnInit {
           }
         });
       });
+    },
+    (res) => {
+      new EntityUtils().handleError(this, res);
     });
 
     this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
@@ -647,7 +651,8 @@ export class JailEditComponent implements OnInit {
         [
           ["host_hostuuid", "=", this.pk]
         ]
-      ]).subscribe((res) => {
+      ]).subscribe(
+      (res) => {
         this.wsResponse = res[0];
         for (let i in res[0]) {
           if (this.formGroup.controls[i]) {
@@ -679,6 +684,9 @@ export class JailEditComponent implements OnInit {
             this.formGroup.controls[i].setValue(res[0][i]);
           }
         }
+      },
+      (res) => {
+        new EntityUtils().handleError(this, res);
       });
     });
 
@@ -741,6 +749,9 @@ export class JailEditComponent implements OnInit {
               } else {
                 this.router.navigate(new Array('/').concat(this.route_success));
               }
+            },
+            (res_upgrate) => {
+              new EntityUtils().handleError(this, res_upgrate);
             }
           );
         } else {
@@ -751,6 +762,9 @@ export class JailEditComponent implements OnInit {
             this.router.navigate(new Array('/').concat(this.route_success));
           }
         }
+      },
+      (res) => {
+        new EntityUtils().handleError(this, res);
       }
     );
   }
