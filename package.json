@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "license": "BSD",
   "description": "FreeNAS Angular 4 WebUI",
-  "homepage": "http://github.com/freenas/webui/",
+  "homepage": "https://github.com/freenas/webui/",
   "scripts": {
     "ng": "ng",
     "rimraf": "rimraf",
