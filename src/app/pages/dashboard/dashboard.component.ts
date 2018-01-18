@@ -131,10 +131,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
     this.ws.call('network.general.summary').subscribe((res) => {
       this.network_info = res;
-      console.log(this.network_info);
     })
     this.systemGeneralService.getIPChoices().subscribe((res) => {
-      console.log(res);
       if (res.length > 0) {
         this.ipAddress = _.uniq(res[0]);
       } else {
