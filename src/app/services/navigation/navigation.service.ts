@@ -68,7 +68,7 @@ export class NavigationService {
       icon: 'date_range',
       state: 'tasks',
       sub: [
-        { name: 'Calendar', state: 'calendar' },
+        // { name: 'Calendar', state: 'calendar' },
         { name: 'Cron Jobs', state: 'cron' },
         { name: 'Init/Shutdown Scripts', state: 'initshutdown' },
         { name: 'Rsync Tasks', state: 'rsync' },
