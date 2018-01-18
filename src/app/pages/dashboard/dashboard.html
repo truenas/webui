@@ -60,34 +60,38 @@
     </md-card-title>
     <md-card-content>
       <md-list>
-        <div *ngIf="network_info.ips">
+        <div *ngIf="network_info.ips && network_info.ips.lagg0">
           <md-list-item *ngFor="let ipv4 of network_info.ips.lagg0.IPV4">
-              <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-              <span class="cdk-visually-hidden mr-1">Label Icon</span>
-              <label mdLine class="mr-1"><strong>IPv4:</strong></label>
-              <p mdLine>{{ipv4}} </p>
+            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label mdLine class="mr-1"><strong>IPv4:</strong></label>
+            <p mdLine>{{ipv4}} </p>
           </md-list-item>
         </div>
-        <div *ngIf="network_info.ips">
+        <div *ngIf="network_info.ips && network_info.ips.lagg0">
           <md-list-item *ngFor="let ipv6 of network_info.ips.lagg0.IPV6">
-              <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-              <span class="cdk-visually-hidden mr-1">Label Icon</span>
-              <label mdLine class="mr-1"><strong>IPv6:</strong></label>
-              <p mdLine>{{ipv6}} </p>
+            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label mdLine class="mr-1"><strong>IPv6:</strong></label>
+            <p mdLine>{{ipv6}} </p>
           </md-list-item>
         </div>
-        <md-list-item *ngFor="let route of network_info.default_routes">
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden mr-1">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Routes:</strong></label>
-          <p mdLine>{{route}} </p>
-        </md-list-item>
-        <md-list-item *ngFor="let nameserver of network_info.nameservers; let i=index">
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden mr-1">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Nameserver{{i + 1}}: </strong></label>
-          <p mdLine>{{nameserver}} </p>
-        </md-list-item>
+        <div *ngIf="network_info.default_routes">
+          <md-list-item *ngFor="let route of network_info.default_routes">
+            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label mdLine class="mr-1"><strong>Routes:</strong></label>
+            <p mdLine>{{route}} </p>
+          </md-list-item>
+        </div>
+        <div *ngIf="network_info.nameservers">
+          <md-list-item *ngFor="let nameserver of network_info.nameservers; let i=index">
+            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label mdLine class="mr-1"><strong>Nameserver{{i + 1}}: </strong></label>
+            <p mdLine>{{nameserver}} </p>
+          </md-list-item>
+        </div>
       </md-list>
     </md-card-content>
   </md-card>
