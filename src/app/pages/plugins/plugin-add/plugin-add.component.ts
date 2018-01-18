@@ -141,7 +141,6 @@ export class PluginAddComponent implements OnInit {
       value['accept'] = true;
     }
 
-    console.log(value);
     this.loader.open();
     this.ws.job(this.addCall, [value]).subscribe(
       (res) => {
