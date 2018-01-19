@@ -79,7 +79,7 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: 'Default is UTF-8 which supports all characters in\
    all languages.',
       options: [
-        { label: 'UTF-8', value: 'CP437' },
+        { label: 'UTF-8', value: 'UTF-8' },
         { label: 'iso-8859-1', value: 'iso-8859-1' },
         { label: 'iso-8859-15', value: 'iso-8859-15' },
         { label: 'gb2312', value: 'gb2312' },
@@ -188,16 +188,6 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: 'Allows using hostnames rather than IP addresses in\
  the <i>Hosts Allow</b> or </i>Hosts Deny</b>fields of a SMB share; uncheck\
  if IP addresses are used to avoid the delay of a host lookup.',
-    },
-    {
-      type: 'select',
-      name: 'cifs_srv_min_protocol',
-      placeholder: 'Server Minimum Protocol',
-    },
-    {
-      type: 'select',
-      name: 'cifs_srv_max_protocol',
-      placeholder: 'Server Maximum Protocol',
     },
     {
       type: 'checkbox',
