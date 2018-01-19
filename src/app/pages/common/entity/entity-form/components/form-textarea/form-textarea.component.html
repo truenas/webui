@@ -1,4 +1,4 @@
-<div class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <md-input-container class="full-width">
     <textarea mdInput [placeholder]="config.placeholder" [formControlName]="config.name" rows="4" [ngClass]="config.class">
     </textarea>
