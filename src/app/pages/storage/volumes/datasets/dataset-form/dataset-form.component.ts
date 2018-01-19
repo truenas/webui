@@ -142,8 +142,7 @@ export class DatasetFormComponent implements OnInit{
       name: 'snapdir',
       placeholder: 'Snapshot directory',
       tooltip: 'Only available in <b>Advanced Mode</b>;\
- Snapshot directory is used when retrieving files from a snapshot\
- or for rsync-based snapshot.',
+makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dataset.',
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -153,8 +152,8 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'copies',
       placeholder: 'Copies',
-      tooltip: 'Only available in <b>Advanced Mode</b>; ZFS\
- allows 1, 2, or 3 copies of data.',
+      tooltip: 'Only available in <b>Advanced Mode</b>;\
+ sets the number of data copies on this dataset.',
       options: [
         { label: '1', value: '1' },
         { label: '2', value: '2' },
