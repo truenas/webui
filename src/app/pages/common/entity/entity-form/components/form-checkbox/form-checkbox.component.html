@@ -1,4 +1,4 @@
-<div class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 		<md-checkbox [formControlName]="config.name">
 		</md-checkbox>
 		<label>{{ config.placeholder }}</label>

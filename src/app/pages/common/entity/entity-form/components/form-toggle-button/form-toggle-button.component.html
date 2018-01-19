@@ -1,4 +1,4 @@
-<div class="toggle-button" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
+<div [id]="config.name" class="toggle-button" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
   <br>
   <md-button-toggle-group multiple class="toggle-button-wrap toggle-button-group">
