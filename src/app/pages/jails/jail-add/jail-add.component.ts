@@ -11,6 +11,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'jail-add',
@@ -625,6 +626,9 @@ export class JailAddComponent implements OnInit {
           }
         });
       });
+    },
+    (res) => {
+      new EntityUtils().handleError(this, res);
     });
 
     this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
@@ -688,6 +692,9 @@ export class JailAddComponent implements OnInit {
         } else {
           this.router.navigate(new Array('/').concat(this.route_success));
         }
+      },
+      (res) => {
+        new EntityUtils().handleError(this, res);
       }
     );
   }
