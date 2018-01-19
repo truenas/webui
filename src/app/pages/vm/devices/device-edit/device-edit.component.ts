@@ -82,6 +82,8 @@ export class DeviceEditComponent implements OnInit {
           initial: '/mnt',
           name : 'CDROM_path',
           placeholder : 'CDROM Path',
+          tooltip : 'Select the path to the CDROM. The image must be\
+ present on an accessible portion of the FreeNAS storage.',
         },
       ];
     } else if (this.dtype === "NIC") {
@@ -89,18 +91,29 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'NIC_type',
           placeholder : 'Adapter Type:',
+          tooltip : 'The default emulates an Intel E1000 (82545) Ethernet\
+ card for compatibility with most operating systems. If the operating\
+ system installed in the VM supports VirtIO paravirtualized network\
+ drivers, this can be changed to <i>VirtIO</i> to provide better\
+ performace.',
           type: 'select',
           options : [],
         },
         {
           name : 'NIC_mac',
           placeholder : 'Mac Address',
+          tooltip : 'By default, the VM receives an auto-generated\
+ random MAC address. To override the default with a custom value,\
+ enter the desired address into the field.',
           type: 'input',
           value : '',
         },
         {
           name : 'nic_attach',
           placeholder : 'Nic to attach:',
+          tooltip : 'Can be used to specify which physical interface to\
+ associate with the VM if the system has multiple physical network\
+ cards.',
           type: 'select',
           options : [],
         },
@@ -110,17 +123,24 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'VNC_port',
           placeholder : 'port',
+          tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
+ assign a port when the VM is stared, or set to a fixed,preferred port\
+ number.',
           type : 'input',
           inputType: 'number'
         },
         {
           name : 'VNC_wait',
           placeholder : 'wait on boot',
+          tooltip : 'When checked, VNC client should wait until the VM\
+ has booted before attempting the connection.',
           type: 'checkbox'
         },
         {
           name : 'VNC_resolution',
           placeholder : 'Resolution:',
+          tooltip : 'Used to modify the default screen resolution used\
+ by the VNC session.',
           type: 'select',
           options : [
             {label : '1920x1080', value : "1920x1080"},
@@ -135,18 +155,23 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'vnc_bind',
           placeholder : 'Bind:',
+          tooltip : 'By default, VNC binds to all available IP addresses\
+ (<i>0.0.0.0). To specify the IP address to use, select it.',
           type: 'select',
           options : [],
         },
         {
           name : 'vnc_password',
           placeholder : 'password',
+          tooltip : 'Enter the VNC password to automatically pass the\
+ VNC. Note that the password is limited to 8 characters.',
           type : 'input',
           inputType : 'password',
         },
         {
           name : 'vnc_web',
           placeholder : 'VNC web',
+          tooltip : 'When checked, uses the VNC web interface.',
           type: 'checkbox'
         },
       ];
@@ -155,12 +180,19 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'DISK_zvol',
           placeholder : 'ZVol',
+          tooltip : 'After <a\
+ href="http://doc.freenas.org/11/storage.html#create-zvol"\
+ target="_blank">creating a zvol</a>, select it from the list.',
           type: 'select',
           options: []
         },
         {
           name : 'DISK_mode',
           placeholder : 'Mode',
+          tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
+ software compatibility. <i>VirtIO</i> uses paravirtualized drivers and\
+ can provide better performance, but requires the operating system\
+ installed in the VM to support VirtIO disk devices.',
           type: 'select',
           options : [
             {label : 'AHCI', value : 'AHCI'},
@@ -170,6 +202,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'DISK_sectorsize',
           placeholder : 'Disk sectorsize',
+          tooltip : 'If a specific sector size is required, enter the\
+ number of bytes. The default of <i>0</i> leaves the sector size unset.',
           type: 'input',
         },
       ];
@@ -180,16 +214,23 @@ export class DeviceEditComponent implements OnInit {
           initial: '/mnt',
           name : 'RAW_path',
           placeholder : 'Raw File',
+          tooltip : 'Select the location of the RAW file being added.',
         },
         {
           type : 'input',
           name : 'RAW_sectorsize',
           placeholder : 'Disk sectorsize',
+          tooltip : 'If a specific sector size is required, enter the\
+ number of bytes. The default of <i>0</i> leaves the sector size unset.',
           inputType : 'number',
         },
         {
           name : 'RAW_mode',
           placeholder : 'Mode',
+          tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
+ software compatibility. <i>VirtIO</i> uses paravirtualized drivers and\
+ can provide better performance, but requires the operating system\
+ installed in the VM to support VirtIO disk devices.',
           type: 'select',
           options : [
             {label : 'AHCI', value : 'AHCI'},
