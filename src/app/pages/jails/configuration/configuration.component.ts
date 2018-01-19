@@ -21,16 +21,22 @@ export class JailsConfigurationComponent {
       initial: '/mnt',
       name : 'jc_path',
       placeholder : 'Jail Root',
+      tooltip : 'Path where to store jail data. Mandatory. Jails cannot\
+ be added until this is set.',
     },
     {
       type : 'checkbox',
       name : 'jc_ipv4_dhcp',
       placeholder : 'IPv4 DHCP',
+      tooltip : 'Check this box if the network has a DHCP server. When\
+ enabled, use DHCP to obtain IPv4 address as well as default router.',
     },
     {
       type : 'input',
       name : 'jc_ipv4_network',
       placeholder : 'IPv4 Network',
+      tooltip : 'IPv4 network range for jails and plugins. Format is IP\
+ address of <i>network/CIDR mask</i>.',
       relation : [ {
         action : "DISABLE",
         when : [ {name : "jc_ipv4_dhcp", value : true} ]
@@ -40,6 +46,8 @@ export class JailsConfigurationComponent {
       type : 'input',
       name : 'jc_ipv4_network_start',
       placeholder : 'IPv4 Network Start Address',
+      tooltip : 'Enter the first IP address in the reserved range in\
+ the format <i>host/CIDR mask</i>.',
       relation : [ {
         action : "DISABLE",
         when : [ {name : "jc_ipv4_dhcp", value : true} ]
@@ -49,6 +57,8 @@ export class JailsConfigurationComponent {
       type : 'input',
       name : 'jc_ipv4_network_end',
       placeholder : 'IPv4 Network End Address',
+      tooltip : 'Enter the last IP address in the reserved range in the\
+ format <i>host/CIDR mask</i>.',
       relation : [ {
         action : "DISABLE",
         when : [ {name : "jc_ipv4_dhcp", value : true} ]
@@ -58,11 +68,16 @@ export class JailsConfigurationComponent {
       type : 'checkbox',
       name : 'jc_ipv6_autoconf',
       placeholder : 'IPv6 Autoconfigure',
+      tooltip : 'When enabled, automatically configurate IPv6 address\
+ via rtsol(8). Check this box if the network has a DHCPv6 server and\
+ IPv6 will be used to access jails.',
     },
     {
       type : 'input',
       name : 'jc_ipv6_network',
       placeholder : 'IPv6 Network',
+      tooltip : 'Enter the network address for a properly configured\
+ IPv6 network.',
       relation : [ {
         action : "DISABLE",
         when : [ {name : "jc_ipv6_autoconf", value : true} ]
@@ -72,6 +87,8 @@ export class JailsConfigurationComponent {
       type : 'input',
       name : 'jc_ipv6_network_start',
       placeholder : 'IPv6 Network Start Address',
+      tooltip : 'Enter the first IP address in the reserved range for\
+ a properly configured IPv6 network.',
       relation : [ {
         action : "DISABLE",
         when : [ {name : "jc_ipv6_autoconf", value : true} ]
@@ -81,6 +98,8 @@ export class JailsConfigurationComponent {
       type : 'input',
       name : 'jc_ipv6_network_end',
       placeholder : 'IPv6 Network End Address',
+      tooltip : 'Enter the last IP address in the reserved range for a\
+ properly configured IPv6 network.',
       relation : [ {
         action : "DISABLE",
         when : [ {name : "jc_ipv6_autoconf", value : true} ]
@@ -90,6 +109,8 @@ export class JailsConfigurationComponent {
       type : 'input',
       name : 'jc_collectionurl',
       placeholder : 'Collection URL',
+      tooltip : 'URL for the index of the jail. Changing the defualt\
+ may break the ability to install jails.',
     },
   ];
 

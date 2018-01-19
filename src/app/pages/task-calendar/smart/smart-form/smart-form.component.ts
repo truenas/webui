@@ -25,17 +25,26 @@ export class SmartFormComponent {
       type: 'select',
       name: 'smarttest_disks',
       placeholder: 'Disks',
+      tooltip : 'Highlight disks to monitor.',
       options: [],
       multiple: true,
     }, {
       type: 'select',
       name: 'smarttest_type',
       placeholder: 'Type',
+      tooltip : 'Select type of test to run. See\
+ <a\
+ href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
+ target="_blank">smartctl(8)</a> for a description of each type of test\
+ (note that some test types will degrade performace or take disks\
+ offline. Do not schedule S.M.A.R.T. tests at the same time as a scrub\
+ or during a resilver operation).',
       options: [],
     }, {
       type: 'input',
       name: 'smarttest_desc',
-      placeholder: 'Short description'
+      placeholder: 'Short description',
+      tooltip : 'Optional.',
     },
     {
       type: 'task',
