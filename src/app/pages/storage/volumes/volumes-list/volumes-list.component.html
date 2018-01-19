@@ -1,49 +1,124 @@
-<div id="volumes-list.component_html"  class="material mat-card mat-card-table">
+<div id="volumes-list.component_html" class="material mat-card mat-card-table">
+
+
+
     <div class="mat-toolbar mat-card-toolbar">
         <div class="mat-card-title-text">{{ title }}</div>
         <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
     </div>
-    
+
     <div>
         <br/>
     </div>
 
     <div *ngIf="zfsPoolRows.length > 0">
-    <md-accordion>
-        <md-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
-          <md-expansion-panel-header>
-            <md-panel-title>
-                {{row.name}}
-            </md-panel-title>
-            <md-panel-description>
-                {{row.status}} ({{conf.titleRowValue(row, 'used')}} ({{row.used_pct}}) Used / {{conf.titleRowValue(row, 'avail')}} Free) 
-            </md-panel-description>
-          </md-expansion-panel-header>
-          <div>
-                <div style="margin-top: 8px; float: right; padding-bottom: 20px;">
-                    <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
+        <md-accordion>
+            <md-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
+                <md-expansion-panel-header>
+                    <md-panel-title>
+                        {{row.name}}
+                    </md-panel-title>
+                    <md-panel-description>
+                        {{row.status}} ({{row.usedStr}} Used / {{row.availStr}} Free)
+                    </md-panel-description>
+                </md-expansion-panel-header>
+                <div>
+                    <div style="margin-top: 8px; float: right; padding-bottom: 20px;">
+                        <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
+                    </div>
+                    <br/>
                 </div>
-                <br/>
-          </div>
 
-          <div>
-              <br/>
-          </div>
+                <div>
+                    <br/>
+                </div>
+                    
+                <div>
+                    <dx-tree-list keyExpr="nodePath" 
+                                  parentIdExpr="parentPath"
+                                  [dataSource]="row.volumesListTableConfig.rowData" 
+                                  [showRowLines]="true" 
+                                  [allowColumnResizing]="true"
+                                  [columnAutoWidth]="true"
+                                  [columnResizingMode]="'widget'"
+                                  [columnMinWidth]="50"
+                                  [expandedRowKeys]="['1']">
+                        <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
+                            <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
+                            </dxo-popup>
+                        </dxo-editing -->
 
-          <entity-table [conf]="row.volumesListTableConfig"></entity-table>
+                        <dxi-column dataField="name">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="type" caption="Type">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="usedStr" caption="Used">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        <dxi-column dataField="availStr" [width]="Available">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        
+                        <dxi-column dataField="compression" [width]="Compression">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        
+                        <dxi-column dataField="readonly" [width]="Readonly">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        
+                        <dxi-column dataField="dedup" [width]="Dedup">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+                        
+                        <dxi-column dataField="path" [width]="Path">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+
+                        <dxi-column caption="" 
+                                    [width]="Action"
+                                    [allowFiltering]="false"
+                                    [allowSorting]="false" 
+                                    cellTemplate="cellTemplate"></dxi-column>
+                        
+                        <div *dxTemplate="let rowData of 'cellTemplate'">
+                            <div class="panel_container">
+                                <md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</md-icon>
+                                <md-menu #appMenu="mdMenu">
+                                    <span *ngFor="let action of rowData.data.actions">
+                                        <button md-menu-item  (click)="action.onClick( rowData.data );">
+                                            <span>{{ action.label }}</span>
+                                        </button>
+                                    </span>
+                                </md-menu>
+                            </div>
+                        </div>
+
+                    </dx-tree-list>
+                </div>
 
 
-        </md-expansion-panel>
-    </md-accordion>
+            </md-expansion-panel>
+        </md-accordion>
     </div>
 
     <div *ngIf="zfsPoolRows.length < 1">
         <md-card>
             <md-card-content>
-                    No ZFS Pools found.
+                No ZFS Pools found.
             </md-card-content>
         </md-card>
         <br/>
+        <br/>
+    </div>
+
+    <div>
+        <br/>
+    </div>
+
+    <div>
         <br/>
     </div>
 
