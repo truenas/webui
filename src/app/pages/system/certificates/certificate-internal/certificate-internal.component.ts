@@ -42,7 +42,9 @@ export class CertificateInternalComponent {
       placeholder : 'Signing Certificate Authority',
       tooltip: 'Select the CA which was previously imported\
  or created using <a href="https://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.',
-      options : []
+      options : [
+        {label: '---', value: null}
+      ]
     },
     {
       type : 'input',
@@ -91,11 +93,7 @@ export class CertificateInternalComponent {
       name : 'cert_country',
       placeholder : 'Country',
       tooltip: 'Select the country for the organization.',
-      options : [
-        {label : 'US', value : 'US'},
-        {label : 'CHINA', value : 'CN'},
-        {label : 'RUSSIA', value : 'RU'},
-      ],
+      options : [],
     },
     {
       type : 'input',
@@ -133,8 +131,15 @@ export class CertificateInternalComponent {
       tooltip: 'Enter the fully-qualified\
  hostname (FQDN) of the FreeNAS® system.',
     },
+    {
+      type : 'textarea',
+      name : 'cert_san',
+      placeholder: 'Subject Alternate Names',
+      tooltip: 'Multi-domain support. Enter additional space separated domains.'
+    }
   ];
   private cert_signedby: any;
+  private cert_country: any;
 
   afterInit(entityEdit: any) {
     this.systemGeneralService.getCA().subscribe((res) => {
@@ -143,6 +148,15 @@ export class CertificateInternalComponent {
         this.cert_signedby.options.push(
             {label : item.cert_name, value : item.id});
       });
+    });
+    this.ws.call('notifier.choices', ['COUNTRY_CHOICES']).subscribe( (res) => {
+      // console.log(res);
+      this.cert_country = _.find(this.fieldConfig, {'name' : 'cert_country'});
+      res.forEach((item) => {
+        this.cert_country.options.push(
+          { label : item[1], value : item[0]}
+        );
+      }); 
     });
   }
 

@@ -49,6 +49,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   public wsResponse;
   public wsfg;
   public wsResponseIdx;
+  public queryResponse;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -129,7 +130,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       if (this.conf.queryCall) {
         if(this.pk) {
           const filter = []
-          filter.push(this.conf.pk)
+          if (this.conf.pk) {
+           filter.push(this.conf.pk);
+          }
+          if (this.conf.queryCallOption) {
+            filter.push(this.conf.queryCallOption);
+          }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []);
@@ -152,17 +158,16 @@ export class EntityFormComponent implements OnInit, OnDestroy {
             for (let i in this.data) {
               let fg = this.formGroup.controls[i];
               if (fg) {
-                console.log(i,fg, this.data[i]);
                 let current_field = this.fieldConfig.find((control) => control.name === i);
                 if (current_field.type == "array") {
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   fg.setValue(this.data[i]);
-                  console.log("after setvalue", fg);
                 }
               }
             }
           } else {
+            this.queryResponse = res;
             this.wsResponse = res[0];
             for (let i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
@@ -281,8 +286,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.beforeSubmit(value);
     }
 
-    this.loader.open();
-    this.busy = this.submitFunction(value)
+    if (this.conf.customSubmit) {
+      this.busy = this.conf.customSubmit(value);
+    } else {
+      this.loader.open();
+      this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
@@ -311,6 +319,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             }
                           }
                         });
+    }
   }
 
   clearErrors() {
@@ -327,6 +336,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       }
     } else {
       if (this.conf.basic_field != undefined && this.conf.basic_field.indexOf(id) > -1) {
+        return false;
+      }
+    }
+
+    if (this.conf.hide_fileds != undefined) {
+      if (this.conf.hide_fileds.indexOf(id) > -1) {
         return false;
       }
     }

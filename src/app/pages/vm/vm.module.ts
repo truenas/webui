@@ -29,9 +29,12 @@ import {VmCardsComponent} from './vm-cards/vm-cards.component';
 import {VmCardEditComponent} from './vm-cards/vm-card-edit.component';
 import {VmTableComponent} from './vm-cards/vm-table.component';
 import {routing} from './vm.routing';
+import { VmSummaryComponent } from './vm-cards/vm-summary.component';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 @NgModule({
   imports : [
+    CoreComponents,
     EntityModule, CommonModule, FormsModule,
 	  ReactiveFormsModule, routing, MaterialModule, MdTableModule,NgxDatatableModule, FlexLayoutModule//, BrowserModule
   ],
@@ -51,6 +54,7 @@ import {routing} from './vm.routing';
     DeviceDeleteComponent,
     DeviceEditComponent,
     DeviceRawFileAddComponent,
+    VmSummaryComponent,
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
 })

@@ -8,6 +8,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-plugin-add',
@@ -140,21 +141,24 @@ export class PluginAddComponent implements OnInit {
       value['accept'] = true;
     }
 
-    console.log(value);
     this.loader.open();
     this.ws.job(this.addCall, [value]).subscribe(
       (res) => {
         this.loader.close();
         if (res.error) {
           this.error = res.error;
-          console.log(res);
           this.ws.call('jail.delete', [this.pluginName]).subscribe(
             (jailDeleteRes) => {},
-            (jailDeleteRes) => {}
+            (jailDeleteRes) => {
+              new EntityUtils().handleError(this, jailDeleteRes);
+            }
           );
         } else {
           this.router.navigate(new Array('/').concat(this.route_success));
         }
+      },
+      (res) => {
+        new EntityUtils().handleError(this, res);
       }
     );
   }

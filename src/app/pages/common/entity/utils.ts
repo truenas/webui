@@ -24,12 +24,25 @@ export class EntityUtils {
   }
 
   handleObjError(entity: any, res: any) {
+    let scroll = false;
     entity.error = '';
     for (let i in res.error) {
       if (res.error.hasOwnProperty(i)) {
         let field = res.error[i];
         let fc :any  = _.find(entity.fieldConfig, {'name' : i});
         if (fc) {
+          let element = document.getElementById(i);
+          if (element) {
+            if (entity.conf.advanced_field && 
+              _.indexOf(entity.conf.advanced_field, i) > 0 &&
+              entity.conf.isBasicMode) {
+                entity.conf.isBasicMode = false;
+              }
+            if (!scroll) {
+              element.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+              scroll = true;
+            }
+          }
           let errors = '';
           field.forEach((item, j) => { errors += item + ' '; });
           fc.hasErrors = true;

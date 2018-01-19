@@ -68,6 +68,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       // Countdown - console.log('TimeoutWarning: ' + countdown);
     });
     idle.onTimeout.subscribe(() => {
+      // Close all dialogs before auto-login
+      this.dialog.closeAll();
       this.ws.logout();
     });
     idle.watch();

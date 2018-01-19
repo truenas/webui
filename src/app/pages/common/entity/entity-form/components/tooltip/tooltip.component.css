@@ -1,7 +1,7 @@
 /* Tooltip container */
 .tooltip {
-    position: relative;
     display: inline-block;
+    position: relative;
 }
 
 /* Tooltip text */
@@ -11,7 +11,7 @@
     max-width: 400px;
     width: 90vw;
     margin: auto;
-    padding: 10px 5px;
+    padding: 10px 15px;
     border-radius: 6px;
     color: #fff;
     text-align: center;

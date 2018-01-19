@@ -18,6 +18,7 @@ import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
 import { StatusComponent } from './volumes/status/status.component';
+import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
@@ -33,13 +34,15 @@ import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-l
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { DxTreeListModule } from 'devextreme-angular';
 
 
 @NgModule({
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, MdTableModule, MdCardModule, MdGridListModule,
-    NgxDatatableModule
+    NgxDatatableModule, DxTreeListModule
   ],
   declarations : [
     VolumesListComponent,
@@ -58,6 +61,7 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
     SnapshotAddComponent,
+    ImportDiskComponent,
     DatasetPermissionsComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,

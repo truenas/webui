@@ -68,7 +68,7 @@ export class NavigationService {
       icon: 'date_range',
       state: 'tasks',
       sub: [
-        { name: 'Calendar', state: 'calendar' },
+        // { name: 'Calendar', state: 'calendar' },
         { name: 'Cron Jobs', state: 'cron' },
         { name: 'Init/Shutdown Scripts', state: 'initshutdown' },
         { name: 'Rsync Tasks', state: 'rsync' },
@@ -104,7 +104,8 @@ export class NavigationService {
         { name: 'Volumes', state: 'volumes' },
         { name: 'Snapshots', state: 'snapshots' },
         { name: 'VMware-Snapshots', state: 'vmware-Snapshots' },
-        { name: 'Disks', state: 'disks' }
+        { name: 'Disks', state: 'disks' },
+        { name: 'Import Disk', state: 'import-disk'},
       ]
     },
     {

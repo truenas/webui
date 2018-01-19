@@ -35,36 +35,51 @@ export class AlertServiceEditSlackComponent {
     {
       type : 'input',
       name : 'consulalert_type',
-      placeholder: 'service name'
+      placeholder: 'service name',
+      disabled: true
     },{
       type : 'input',
       name : 'username',
-      placeholder: 'username'
+      placeholder: 'username',
+      tooltip: 'Enter the Slack username.',
     },{
       type : 'input',
       name : 'cluster_name',
-      placeholder: 'cluster_name'
+      placeholder: 'cluster_name',
+      tooltip: 'Enter the name of the cluster. Note this field is\
+ optional and can be left blank.',
     },{
       type : 'input',
       name : 'url',
-      placeholder: 'url'
+      placeholder: 'url',
+      tooltip: 'Paste the incoming webhook URL asssociated with\
+ this service. Refer to the\
+ <a href="https://api.slack.com/incoming-webhooks" target="_blank"> Slack API documentation</a>\
+ for more information about setting up incoming webhooks.'
     },{
       type : 'input',
       name : 'channel',
-      placeholder: 'channel'
+      placeholder: 'channel',
+      tooltip: 'Select the Slack channel the Incoming\
+ WebHook will post messages to.',
     },{
       type : 'input',
       name : 'icon_url',
-      placeholder: 'icon_url'
+      placeholder: 'icon_url',
+      tooltip: 'URL of a custom image for notification icons.\
+ This overrides the default if set in the Incoming Webhook settings.\
+ Note this field is optional and can be left blank.',
     },{
       type : 'checkbox',
       name : 'detailed',
-      placeholder : 'detailed'
+      placeholder : 'detailed',
+      tooltip: 'Enable detailed Slack notifications.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
-      placeholder : 'Enabled'
+      placeholder : 'Enabled',
+      tooltip: 'Check this box to enable the Slack alert service.',
     }
   ];
 

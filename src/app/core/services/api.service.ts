@@ -11,56 +11,127 @@ interface ApiCall {
   responseEvent ?: any;// The event name of the response this service will send
 }
 
+interface ApiDefinition { 
+  apiCall: ApiCall;
+  preProcessor?: (def:ApiCall) => ApiCall;
+  postProcessor?: (def:ApiCall) => ApiCall;
+}
+
 @Injectable()
 export class ApiService {
 
   private apiDefinitions = {
+    PoolDataRequest:{
+      apiCall:{
+        protocol:"rest",
+        version:"1.0",
+        operation: "get",
+        namespace: "storage/volume/",
+        responseEvent: "PoolData"
+      }
+    },
     /*VmProfilesRequest:{
-      protocol:"websocket",
-      version:"1",
-      namespace: "vm.query",
-      //args: [],
-      responseEvent: "VmProfiles"
+     protocol:"websocket",
+     version:"1",
+     namespace: "vm.query",
+     //args: [],
+     responseEvent: "VmProfiles"
     },*/
     VmProfilesRequest:{
-     protocol:"rest",
-     version:"1.0",
-     operation: "get",
-     namespace: "vm/vm",
-     responseEvent: "VmProfiles"
+      apiCall:{
+        protocol:"rest",
+        version:"1.0",
+        operation: "get",
+        namespace: "vm/vm",
+        responseEvent: "VmProfiles"
+      }
     },
     VmProfileRequest:{
-      protocol:"websocket",
-      version:"2.0",
-      namespace:"vm.query",
-      args: [],// eg. [["id", "=", "foo"]]
-      responseEvent: "VmProfile"
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"vm.query",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "VmProfile"
+      }
     },
     VmStart:{
-      protocol:"websocket",
-      version:"1",
-      namespace:"vm.start",
-      args:[],
-      responseEvent:"VmStarted"
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.start",
+        args:[],
+        responseEvent:"VmStarted"
+      }
     },
     VmStop:{
-      protocol:"websocket",
-      version:"1",
-      namespace:"vm.stop",
-      args:[],
-      responseEvent:"VmStopped"
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.stop",
+        args:[],
+        responseEvent:"VmStopped"
+      }
     },
     VmDelete:{
-      protocol:"websocket",
-      version:"1",
-      namespace:"vm.delete",
-      args:[],
-      responseEvent:"VmDeleted"
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.delete",
+        args:[],
+        responseEvent:"VmDeleted"
+      }
+    },
+    StatsRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      }
+    },
+    StatsCpuRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        //Do some stuff here
+        let dataList = [];
+        let oldDataList = redef.args[0];
+        let options = redef.args[1];
+
+        for(let i in oldDataList){
+          dataList.push({
+            source:"aggregation-cpu-sum",
+            type:"cpu-" + oldDataList[i],
+            dataset:"value"
+          });
+        }
+        
+        redef.args = [dataList,options];
+        redef.responseEvent = 'StatsCpuData';
+        return redef;
+      },
+      postProcessor(res){
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          let spl = legend[i].split("aggregation-cpu-sum/cpu-");
+          l.push(spl[1]);
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
+      }
     }
   } 
 
-  private apiCallBuffer: ApiCall[] = [];
-  private isRegistered: boolean = false
     constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
       console.log("*** New Instance of API Service ***");
       this.registerDefinitions();
@@ -78,9 +149,9 @@ export class ApiService {
               let apiDef = this.apiDefinitions[evt.name];
               //DEBUG: console.log(apiDef)
               //let call = this.parseCoreEvent(evt);
-              if(apiDef.protocol == 'websocket'){
+              if(apiDef.apiCall.protocol == 'websocket'){
                 this.callWebsocket(evt,apiDef);
-              } else if(apiDef.protocol == 'rest'){
+              } else if(apiDef.apiCall.protocol == 'rest'){
                 this.callRest(evt,apiDef);
               }
             }
@@ -92,23 +163,44 @@ export class ApiService {
     }
 
     private callRest(evt,def){
-      let baseUrl = "/api/v" + def.version + "/";
+      let baseUrl = "/api/v" + def.apiCall.version + "/";
+      let cloneDef = Object.assign({},def);
       if(evt.data){
-        let cloneDef = Object.assign({},def);
-        cloneDef.args = evt.data;
-        let call = this.parseEventRest(evt);
-        this.rest[def.operation](baseUrl + call.namespace, evt.data, false).subscribe((res) => {
+        // PreProcessor: ApiDefinition manipulates call to be sent out.
+        if(def.preProcessor){
+          cloneDef.apiCall = def.preProcessor(def.apiCall);
+        }
+
+        let call = cloneDef.apiCall;//this.parseEventRest(evt);
+        call.args = evt.data;
+        this.rest[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res) => {
           //DEBUG: console.log("*** API Response:");
           //DEBUG: console.log(res)
+
+          // PostProcess
+          if(def.postProcessor){
+            res = def.postProcessor(res);
+          }
+
           this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
         });
       } else {
-        let cloneDef = Object.assign({},def);
-        cloneDef.args = evt.data;
-        let call = this.parseEventRest(evt);
-        this.rest[def.operation](baseUrl + call.namespace,{}, false).subscribe((res) => {
+        // PreProcessor: ApiDefinition manipulates call to be sent out.
+        if(def.preProcessor){
+          cloneDef.apiCall = def.preProcessor(def.apiCall);
+        }
+
+        let call = cloneDef.apiCall;//this.parseEventRest(evt);
+        call.args = evt.data;
+        this.rest[call.operation](baseUrl + call.namespace,{}, false).subscribe((res) => {
           //DEBUG: console.log("*** API Response:");
           //DEBUG: console.log(call);
+
+          // PostProcess
+          if(def.postProcessor){
+            res = def.postProcessor(res);
+          }
+
           this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
         });
       }
@@ -116,45 +208,47 @@ export class ApiService {
     }
 
     private callWebsocket(evt:CoreEvent,def){
+      let cloneDef = Object.assign({}, def);
+
       if(evt.data){
-        def.args = evt.data;
-        let call = this.parseEventWs(evt);
+        cloneDef.apiCall.args = evt.data;
+
+        // PreProcessor: ApiDefinition manipulates call to be sent out.
+        if(def.preProcessor){
+          cloneDef.apiCall = def.preProcessor(def.apiCall);
+        }
+
+        let call = cloneDef.apiCall;//this.parseEventWs(evt);
         this.ws.call(call.namespace, call.args).subscribe((res) => {
           //DEBUG: console.log("*** API Response:");
-          //DEBUG: console.log(res)
+          //DEBUG: console.log(call)
+
+          // PostProcess
+          if(def.postProcessor){
+            res = def.postProcessor(res);
+          }
+
           this.core.emit({name:call.responseEvent, data:res, sender: evt.data});
         });
       } else {
-        let call = this.parseEventWs(evt);
+        // PreProcessor: ApiDefinition manipulates call to be sent out.
+        if(def.preProcessor){
+          cloneDef.apiCall = def.preProcessor(def.apiCall);
+        }
+
+        let call = cloneDef.apiCall;//this.parseEventWs(evt);
         this.ws.call(call.namespace).subscribe((res) => {
           //DEBUG: console.log("*** API Response:");
           //DEBUG: console.log(call);
+
+          // PostProcess
+          if(def.postProcessor){
+            res = def.postProcessor(res);
+          }
+
           this.core.emit({name:call.responseEvent, data:res, sender:evt.data });
         });
       }
     }
 
-    parseEventWs(evt:CoreEvent){
-      let call: ApiCall = {
-        namespace: this.apiDefinitions[evt.name].namespace,
-        responseEvent: this.apiDefinitions[evt.name].responseEvent
-      }
-
-      if(evt.data){
-        call.args = evt.data;
-      } 
-      return call;
-    }
-
-    parseEventRest(evt:CoreEvent){
-      let call: ApiCall = {
-        namespace: this.apiDefinitions[evt.name].namespace,
-        responseEvent: this.apiDefinitions[evt.name].responseEvent
-      }
-
-      if(evt.data){
-        call.args = evt.data;
-      } 
-      return call;
-    }
 }

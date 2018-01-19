@@ -1,0 +1,19 @@
+<!--
+	fxFlex="{{layoutChild.flex}}" 
+	fxFlexOrder="" 
+	fxFlexOffset="" 
+	fxFlexAlign="" 
+	fxFlexFill=""
+	-->
+
+	<md-card fxFlex="{{layoutChild.flex}}">
+	<md-card-header *ngIf="header">
+	<md-card-title *ngIf="headerTitle || headerOptions" >{{ headerTitle }} {{ headerOptions }}</md-card-title>
+	</md-card-header>
+	<md-card-content>
+  	<display #display></display>
+	</md-card-content>
+	<md-card-actions >
+		<display #footerControls></display>
+	</md-card-actions>
+</md-card>
