@@ -73,8 +73,12 @@
                             <dxi-validation-rule type="required"></dxi-validation-rule>
                         </dxi-column>
                         
+                        <dxi-column dataField="path" [width]="Path">
+                            <dxi-validation-rule type="required"></dxi-validation-rule>
+                        </dxi-column>
+
                         <dxi-column caption="" 
-                                    [width]="100" 
+                                    [width]="Action"
                                     [allowFiltering]="false"
                                     [allowSorting]="false" 
                                     cellTemplate="cellTemplate"></dxi-column>

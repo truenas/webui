@@ -31,6 +31,8 @@ export class DeviceCdromAddComponent {
       initial: '/mnt',
       name : 'path',
       placeholder : 'CDROM Path',
+      tooltip : 'Select the path to the CDROM. The image must be\
+ present on an accessible portion of the FreeNAS storage.',
     },
   ];
   protected dtype: string = 'CDROM';

@@ -26,15 +26,21 @@ export class ScrubFormComponent {
       type: 'select',
       name: 'scrub_volume',
       placeholder: 'Volume',
+      tooltip : 'Volume to be scrubbed.',
       options: [],
     }, {
       type: 'input',
       name: 'scrub_description',
-      placeholder: 'Description'
+      placeholder: 'Description',
+      tooltip : 'Optional text description of scrub.',
     }, {
       type: 'task',
       name: 'scrub_daymonth',
       placeholder: 'Day of month',
+      tooltip : 'If the slider is used, a scrub occurs every N days. If\
+ specific days of the month are chosen, a scrub runs only on the\
+ selected days of the selected months.',
+
       tabs: [{
         type: 'slider',
         name: 'scrub_daymonth_slider',
@@ -51,17 +57,27 @@ export class ScrubFormComponent {
       type: 'togglebutton',
       name: 'scrub_month',
       placeholder: 'Month',
+      tooltip : 'A scrub occurs on the selected months.',
       multiple: true,
       options: []
     }, {
       type: 'togglebutton',
       name: 'scrub_dayweek',
       placeholder: 'Day of week',
+      tooltip : 'A scrub occurs on the selected days. The default is\
+ Sunday to least impact users. Note that this field and the\
+ <b>Day of Month</b> field are <b>OR</b>ed together. For example\
+ setting <b>Day of Month</b> to <i>01,15</i> and <b>Day of week</b> to\
+ <i>Thursday</i> will cause scrubs to run on the 1st and 15th days of\
+ the month, but also on any Thursday,',
       options: []
     }, {
       type: 'task',
       name: 'scrub_minute',
       placeholder: 'Minute',
+      tooltip : 'If the slider is used, a scrub occurs every N minutes.\
+ If specific minutes are chosen, a scrub runs only at the selected\
+ minute values',
       tabs: [{
         type: 'slider',
         name: 'scrub_minute_slider',
@@ -78,6 +94,9 @@ export class ScrubFormComponent {
       type: 'task',
       name: 'scrub_hour',
       placeholder: 'Hour',
+      tooltip : 'If the slider is used, a scrub occurs every N hours.\
+ If specific hours are chosen, a scrub runs only at the selected hour\
+ values',
       tabs: [{
         type: 'slider',
         name: 'scrub_hour_slider',
@@ -94,6 +113,8 @@ export class ScrubFormComponent {
       type: 'checkbox',
       name: 'scrub_enabled',
       placeholder: 'Enable',
+      tooltip : 'Uncheck to disable the scheduled scrub without\
+ deleting it.',
       value: true,
     }
   ];

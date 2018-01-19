@@ -44,15 +44,16 @@ export class CloudCredentialsAmazonComponent {
     type : 'input',
     name : 'name',
     placeholder : 'Account Name',
-    tooltip : 'Enter a descriptive name for the cloud credential.',
+    tooltip : 'Enter the Amazon Web Service account name.',
   },
   {
     type : 'textarea',
     name : 'accesskey',
     placeholder :  'Access Key',
     tooltip : 'Paste the Amazon account access key. This can be found\
- on the Amazon AWS website by clicking on the account name, then\
- <b>My Security Credentials</b> and\
+ on the <a href="https://aws.amazon.com/" target="_blank">\
+ Amazon AWS</a> website by clicking on <b>My account</b>, then\
+ <b>Security Credentials</b> and\
  <b>Access Keys (Access Key ID and Secret Access Key)</b>.',
   },
   {
