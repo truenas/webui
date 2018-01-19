@@ -121,6 +121,8 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'snapdir',
       placeholder: 'Snapshot directory',
+      tooltip: 'Only available in <b>Advanced Mode</b>;\
+ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dataset.',
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -130,12 +132,13 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'copies',
       placeholder: 'Copies',
+      tooltip: 'Only available in <b>Advanced Mode</b>;\
+ sets the number of data copies on this dataset.',
       options: [
         { label: '1', value: '1' },
         { label: '2', value: '2' },
         { label: '3', value: '3' }
       ],
-      tooltip: 'How many copies of data does ZFS allow?',
     },
     {
       type: 'select',
