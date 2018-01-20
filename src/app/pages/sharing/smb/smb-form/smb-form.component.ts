@@ -1,20 +1,22 @@
-import { Component, ViewContainerRef } from '@angular/core';
+import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-smb-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class SMBFormComponent {
+export class SMBFormComponent implements OnDestroy {
 
   protected resource_name: string = 'sharing/cifs/';
   protected route_success: string[] = [ 'sharing', 'smb' ];
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
+  public cifs_default_permissions: any;
+  public cifs_default_permissions_subscription: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -43,7 +45,8 @@ export class SMBFormComponent {
       placeholder: 'Default Permissions',
       tooltip: 'Sets the ACLs to allow read and write for owner or\
  group and read-only for others. Should only be unchecked when creating\
- a share on a system that already has custom ACLs set.'
+ a share on a system that already has custom ACLs set.',
+      value: false
     },
     {
       type: 'checkbox',
@@ -149,6 +152,7 @@ export class SMBFormComponent {
     'cifs_showhiddenfiles',
     'cifs_recyclebin',
     'cifs_browsable',
+    'cifs_default_permissions',
     'cifs_ro',
   ];
 
@@ -166,7 +170,7 @@ export class SMBFormComponent {
   ];
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService) {}
+              protected ws: WebSocketService, private dialog:DialogService ) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -177,7 +181,22 @@ export class SMBFormComponent {
     return true;
   }
 
+  resourceTransformIncomingRestData(data: any) {
+    data['cifs_default_permissions'] = false;
+  }
+
   afterInit(entityForm: any) {
+    this.cifs_default_permissions = entityForm.formGroup.controls['cifs_default_permissions'];
+    this.cifs_default_permissions_subscription = this.cifs_default_permissions.valueChanges.subscribe((value) => {
+      if (value === true) {
+        this.dialog.confirm("Warning", "Setting default permissions will reset the permissions of this share and any others within its path.")
+        .subscribe((res) => {
+          if (!res) {
+            this.cifs_default_permissions.setValue(false);
+          }
+        });
+      }
+    });
     entityForm.ws.call('notifier.choices', [ 'CIFS_VFS_OBJECTS' ])
         .subscribe((res) => {
           this.cifs_vfsobjects =
@@ -188,8 +207,11 @@ export class SMBFormComponent {
         });
     if (entityForm.isNew) {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
-      entityForm.formGroup.controls['cifs_default_permissions'].setValue(true);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
     }
+  }
+
+  ngOnDestroy() {
+    this.cifs_default_permissions_subscription.unsubscribe();
   }
 }
