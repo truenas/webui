@@ -39,7 +39,7 @@ export class ImportDiskComponent {
       tooltip: 'Select the type of filesystem on the disk.\
  FreeNAS supports UFS, NTFS, MSDOS, and EXT2 filesystems. Imports of EXT3\
  or EXT4 filesystems are possible in some cases, although neither is fully supported.\
- Refer to the <a href="http://doc.freenas.org/11/storage.html#import-disk" target="blank">FreeNAS User Guide</a>\
+ Refer to the <a href="http://doc.freenas.org/11/storage.html#import-disk" target="_blank">FreeNAS User Guide</a>\
  to learn more about disk imports.',
       options: [
                     {value:'ufs', label:'UFS'}, 
