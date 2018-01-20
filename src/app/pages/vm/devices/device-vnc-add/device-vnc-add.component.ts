@@ -30,17 +30,24 @@ public fieldConfig: FieldConfig[]  = [
     {
       name : 'VNC_port',
       placeholder : 'port',
+      tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
+ assign a port when the VM is stared, or set to a fixed,preferred port\
+ number.',
       type : 'input',
       inputType: 'number'
     },
     {
       name : 'VNC_wait',
       placeholder : 'wait on boot',
+      tooltip : 'When checked, VNC client should wait until the VM has\
+ booted before attempting the connection.',
       type: 'checkbox'
     },
     {
       name : 'VNC_resolution',
       placeholder : 'Resolution:',
+      tooltip : 'Used to modify the default screen resolution used by\
+ the VNC session.',
       type: 'select',
       options : [
         {label : '1920x1080', value : "1920x1080"},
@@ -55,18 +62,23 @@ public fieldConfig: FieldConfig[]  = [
     {
       name : 'vnc_bind',
       placeholder : 'Bind:',
+      tooltip : 'By default, VNC binds to all available IP addresses\
+ (<i>0.0.0.0). To specify the IP address to use, select it.',
       type: 'select',
       options : [],
     },
     {
       name : 'vnc_password',
       placeholder : 'password',
+      tooltip : 'Enter the VNC password to automatically pass the VNC.\
+ Note that the password is limited to 8 characters.',
       type : 'input',
       inputType : 'password',
     },
     {
       name : 'vnc_web',
       placeholder : 'VNC web',
+      tooltip : 'When checked, uses the VNC web interface.',
       type: 'checkbox'
     },
   ];

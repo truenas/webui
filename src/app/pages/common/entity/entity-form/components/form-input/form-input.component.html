@@ -1,4 +1,4 @@
-<div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 	<md-input-container class="full-width">
 		<input mdInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder"
