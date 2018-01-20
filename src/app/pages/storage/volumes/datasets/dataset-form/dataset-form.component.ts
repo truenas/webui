@@ -53,7 +53,7 @@ export class DatasetFormComponent implements OnInit{
       name: 'compression',
       placeholder: 'Compression level',
       tooltip: 'For more information about the available compression algorithms,\
- refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="none">FreeNAS User Guide</a>.',
+ refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.',
       options: [
         { label: 'OFF', value: 'OFF' },
         { label: 'LZ4', value: 'LZ4' },
