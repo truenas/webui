@@ -332,7 +332,9 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
       background:$green;
     }
 
-
+    .broken_build {
+        color: red;
+    }
     .dx-treelist-borders > .dx-treelist-headers,
     .dx-treelist-borders > .dx-treelist-rowsview,
     .dx-treelist-borders > .dx-treelist-total-footer {
