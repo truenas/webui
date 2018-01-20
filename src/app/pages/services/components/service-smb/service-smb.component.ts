@@ -80,11 +80,11 @@ export class ServiceSMBComponent implements OnInit {
    all languages.',
       options: [
         { label: 'UTF-8', value: 'UTF-8' },
-        { label: 'iso-8859-1', value: 'iso-8859-1' },
-        { label: 'iso-8859-15', value: 'iso-8859-15' },
-        { label: 'gb2312', value: 'gb2312' },
+        { label: 'iso-8859-1', value: 'ISO-8859-1' },
+        { label: 'iso-8859-15', value: 'ISO-8859-15' },
+        { label: 'gb2312', value: 'GB2312' },
         { label: 'EUC-JP', value: 'EUC-JP' },
-        { label: 'ISCII', value: 'ISCII' },
+        { label: 'ASCII', value: 'ASCII' },
       ],
     },
     {
@@ -136,18 +136,19 @@ export class ServiceSMBComponent implements OnInit {
       type: 'select',
       name: 'cifs_srv_guest',
       placeholder: 'Guest Account',
+      options: [],
       tooltip: 'Account to be used for guest access; default is\
  nobody; account must have permission to access the shared\
  volume/dataset; if Guest Account user is deleted, resets to nobody.',
     },
     { type: 'permissions', 
-      name: 'bsdusr_mode', 
+      name: 'cifs_srv_filemask', 
       placeholder: 'File Mask',
       tooltip: 'Overrides default file creation mask of 0666 which\
  creates files with read and write access for everybody.',
     },
     { type: 'permissions', 
-      name: 'bsdusr_mode', 
+      name: 'cifs_srv_dirmask', 
       placeholder: 'Directory Mask',
       tooltip: 'Overrides default directory creation mask of 0777\
  which grants directory read, write and execute access for everybody.',
@@ -225,6 +226,7 @@ export class ServiceSMBComponent implements OnInit {
   ];
 
   private cifs_srv_bindip: any;
+  private cifs_srv_guest: any;
   ngOnInit() {
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip =
@@ -234,6 +236,12 @@ export class ServiceSMBComponent implements OnInit {
       })
     });
     this.idmapService.getADIdmap().subscribe((res) => {});
+    this.ws.call('group.query').subscribe((res) => {
+      this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
+      res.forEach((group) => {
+        this.cifs_srv_guest.options.push({ label: group.group, value: group.group });
+      });
+    });
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
