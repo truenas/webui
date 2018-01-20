@@ -236,10 +236,10 @@ export class ServiceSMBComponent implements OnInit {
       })
     });
     this.idmapService.getADIdmap().subscribe((res) => {});
-    this.ws.call('group.query').subscribe((res) => {
+    this.ws.call('user.query').subscribe((res) => {
       this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
-      res.forEach((group) => {
-        this.cifs_srv_guest.options.push({ label: group.group, value: group.group });
+      res.forEach((user) => {
+        this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
   }
