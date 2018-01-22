@@ -34,6 +34,8 @@ export class BootEnvironmentCreateComponent {
           type: 'input',
           name: 'name',
           placeholder: 'Name',
+          tooltip: 'Enter the name of the boot entry as it will appear\
+ in the boot menu.',
         },
       ];
     });
