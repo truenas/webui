@@ -38,21 +38,28 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'cert_name',
       placeholder : 'Identifier',
+      tooltip : 'Mandatory. Enter a descriptive name for the CA using\
+ only alphanumeric, underscore (_), and dash(-) characters.',
     },
     {
       type : 'textarea',
       name : 'cert_certificate',
       placeholder : 'Certificate',
+      tooltip : 'Mandatory. Paste in the certificate for the CA.',
     },
     {
       type : 'textarea',
       name : 'cert_privatekey',
       placeholder : 'Private Key',
+      tooltip : 'If there is a private key associated with the\
+ <b>Certificate</b>, paste it here.',
     },
     {
       type : 'input',
       name : 'Passphrase',
       placeholder : 'Passphrase',
+      tooltip : 'If the <b>Private Key</b> is protected by a passphrase,\
+ enter it here and repeat it in the "Confirm Passphrase" field.',
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ]
     },
@@ -66,6 +73,8 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'cert_serial',
       placeholder : 'Serial',
+      tooltip : 'Mandatory. Enter the serial number for the\
+ certificate.',
     },
   ];
 

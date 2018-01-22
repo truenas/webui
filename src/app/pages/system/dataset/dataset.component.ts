@@ -20,7 +20,9 @@ export class DatasetComponent implements OnInit{
     type: 'select',
     name: 'pool',
     placeholder: 'System Dataset Pool',
-    tooltip: 'Select Default Pool',
+    tooltip: 'Select the ZFS volume (pool) to contain the system\
+ dataset. Encrypted volumes are not displayed in the\
+ <b>System dataset pool</b> drop-down menu.',
     options: [
       {label: '---', value: null},
       { label: 'freenas-boot', value: 'freenas-boot' },
@@ -29,13 +31,16 @@ export class DatasetComponent implements OnInit{
       type: 'checkbox',
       name: 'syslog',
       placeholder: 'Syslog',
-      tooltip : 'Check this to redirect <i>HTTP</i> connections to\
- <i>HTTPS</i>. <i>HTTPS</i> must be selected in <b>Protocol</b>.'
+      tooltip : 'When checked, stores the system log on the system\
+ dataset.'
     },{
       type: 'checkbox',
       name: 'rrd',
       placeholder: 'Reporting Database',
-      tooltip : 'Save the Round-Robin Database (RRD) used by system statistics collection daemon into the system dataset'
+      tooltip : 'When checked, stores the reporting information on the\
+ system dataset. Note if this box is unchecked, the system will\
+ automatically create a RAM disk to prevent reporting information from\
+ filling up <b>/var</b>.',
     }];
 
   private pool: any;

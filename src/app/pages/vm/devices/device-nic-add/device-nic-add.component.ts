@@ -33,18 +33,29 @@ export class DeviceNicAddComponent {
     {
       name : 'NIC_type',
       placeholder : 'Adapter Type:',
+      tooltip : 'The default emulates an Intel E1000 (82545) Ethernet\
+ card for compatibility with most operating systems. If the operating\
+ system installed in the VM supports VirtIO paravirtualized network\
+ drivers, this can be changed to <i>VirtIO</i> to provide better\
+ performace.',
       type: 'select',
       options : [],
     },
     {
       name : 'NIC_mac',
       placeholder : 'Mac Address',
+      tooltip : 'By default, the VM receives an auto-generated random\
+ MAC address. To override the default with a custom value, enter the\
+ desired address into the field.',
       type: 'input',
       value : '00:a0:98:FF:FF:FF',
     },
     {
       name : 'nic_attach',
       placeholder : 'Nic to attach:',
+      tooltip : 'Can be used to specify which physical interface to\
+ associate with the VM if the system has multiple physical network\
+ cards.',
       type: 'select',
       options : [],
     },

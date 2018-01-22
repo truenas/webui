@@ -33,12 +33,19 @@ export class DeviceDiskAddComponent {
     {
       name : 'DISK_zvol',
       placeholder : 'ZVol',
+      tooltip : 'After <a\
+ href="http://doc.freenas.org/11/storage.html#create-zvol"\
+ target="_blank">creating a zvol</a>, select it from the list.',
       type: 'select',
       options: []
     },
     {
       name : 'DISK_mode',
       placeholder : 'Mode',
+      tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
+ software compatibility. <i>VirtIO</i> uses paravirtualized drivers and\
+ can provide better performance, but requires the operating system\
+ installed in the VM to support VirtIO disk devices.',
       type: 'select',
       options : [
         {label : 'AHCI', value : 'AHCI'},
@@ -48,6 +55,8 @@ export class DeviceDiskAddComponent {
     {
       name : 'sectorsize',
       placeholder : 'Disk sectorsize',
+      tooltip : 'If a specific sector size is required, enter the\
+ number of bytes. The default of <i>0</i> leaves the sector size unset.',
       type: 'input',
       value: 0
     },
