@@ -5,9 +5,9 @@
       <md-card-content>
         <div *ngIf="connected();else notconnected">
         <div class="text-center pb-1" *ngIf="logo_ready">
-          <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.png" alt="freenas-log">
+          <img *ngIf="is_freenas; else isTruenas" src="assets/images/logo-full.svg" alt="FreeNAS logo">
           <ng-template #isTruenas>
-            <img src="assets/images/truenas-logo.png" alt="truenas-logo">
+            <img src="assets/images/truenas-logo.svg" alt="TrueNAS logo">
           </ng-template>
           <!--p class="text-muted">Sign in to your account</p-->
         </div>
