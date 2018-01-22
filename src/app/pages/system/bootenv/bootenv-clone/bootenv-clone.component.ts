@@ -33,11 +33,13 @@ export class BootEnvironmentCloneComponent {
           type: 'input',
           name: 'name',
           placeholder: 'Name',
+          tooltip: 'Enter a name for the clone of this boot environment.', 
         },
         {
           type: 'input',
           name: 'source',
           placeholder : 'Source',
+          tooltip: 'This is the boot environment that will be cloned.',
           value: this.pk,
           readonly: true
         },
