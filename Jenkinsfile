@@ -3,7 +3,7 @@ throttle(['FreeNAS-webui']) {
       stage('Checkout') {
         checkout scm
       }
-      stage('Pre-Cleanup') {
+      stage('Cleanup') {
         echo 'Cleaning environment'
 	sh 'cd $WORKSPACE ; rm -rf node_modules ; rm -f package-lock.json'
 	sh 'npm cache clear --force'
@@ -14,7 +14,7 @@ throttle(['FreeNAS-webui']) {
 	sh 'npm install'
       }
       stage('NPM Build') {
-        echo 'NPM build...'
+        echo 'npm run build:prod:aot'
 	sh 'npm run build:prod:aot'
       }
   }
