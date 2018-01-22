@@ -1,4 +1,4 @@
-<div class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
     <label>{{ config.placeholder }}</label>
     <md-card-content>
         <input type="file" ngFileSelect [options]="options" (onUpload)="handleUpload($event)">

@@ -1,4 +1,4 @@
-<div class="form-task" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
+<div [id]="config.name" class="form-task" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <label class="form-task-label">{{ config.placeholder }}</label>
   <br>
   <md-card>
