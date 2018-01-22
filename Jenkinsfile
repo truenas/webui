@@ -1,4 +1,4 @@
-throttle(['webui']) {
+throttle(['FreeNAS-webui']) {
   node('FreeNAS') {
       stage('Checkout') {
         checkout scm
