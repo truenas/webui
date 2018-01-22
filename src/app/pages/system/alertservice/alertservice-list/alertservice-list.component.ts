@@ -53,7 +53,7 @@ export class AlertServiceListComponent {
         this.ws.call("consul.create_fake_alert").subscribe(()=>{
           const dialogRef = this.dialog.open(TestAlertModalDialogComponent, {});
 
-          dialogRef.afterClosed().subscribe(result => {
+          dialogRef.afterClosed().subscribe((result) => {
             // The dialog was closed
           });
         });
