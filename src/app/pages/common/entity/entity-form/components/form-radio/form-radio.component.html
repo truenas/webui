@@ -1,4 +1,4 @@
-<div class="dynamic-field md-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field md-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
   <md-radio-group [formControlName]="config.name">
     <md-radio-button *ngFor="let option of config.options" [value]="option.value" >
