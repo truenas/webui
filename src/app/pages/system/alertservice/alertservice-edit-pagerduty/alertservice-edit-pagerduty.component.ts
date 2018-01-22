@@ -36,7 +36,7 @@ export class AlertServiceEditPagerdutyComponent {
       type : 'input',
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
-      disabled: true
+      isHidden: true
     },{
       type : 'input',
       name : 'client_name',
