@@ -44,16 +44,21 @@ export class CloudCredentialsAzureComponent {
     type : 'input',
     name : 'name',
     placeholder : 'Name',
+    tooltip : 'Enter a descriptive name for the cloud credential.',
   },
   {
     type : 'input',
     name : 'account_name',
     placeholder : 'Account Name',
+    tooltip : 'Enter the Azure Storage account name.',
   },
   {
     type : 'textarea',
     name : 'account_key',
     placeholder :  'Account Key',
+    tooltip : 'Paste the Azure Storage account key. Refer to the\
+ <a href="https://docs.microsoft.com/en-us/azure/storage/"\
+ target="_blank">Azure Storage Documentation</a> for more information.',
   },
 ];
 

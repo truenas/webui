@@ -1,4 +1,4 @@
-<div class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <md-input-container class="full-width">
     <input type="text" #textAreaSSH mdInput [placeholder]="config.placeholder" [formControlName]="config.name" [ngClass]="config.class" />
   </md-input-container>
