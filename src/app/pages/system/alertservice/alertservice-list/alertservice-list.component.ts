@@ -46,6 +46,21 @@ export class AlertServiceListComponent {
 
   getAddActions() {
     return [{
+      label: "Test Alerts",
+      icon: "settings",
+      onClick: () => {
+
+        this.ws.call("consul.create_fake_alert").subscribe(()=>{
+          const dialogRef = this.dialog.open(TestAlertModalDialogComponent, {});
+
+          dialogRef.afterClosed().subscribe(result => {
+            // The dialog was closed
+          });
+        });
+
+        
+      }
+    }, {
       label: "AWS-SNS",
       icon: "card_membership",
       onClick: () => {
@@ -101,18 +116,8 @@ export class AlertServiceListComponent {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-victorops"]));
       }
-    },
-    {
-      label: "Test Alerts",
-      icon: "settings",
-      onClick: () => {
-        let dialogRef = this.dialog.open(TestAlertModalDialogComponent, {});
-
-        dialogRef.afterClosed().subscribe(result => {
-          // The dialog was closed
-        });
-      }
     }
+    
     ];
   }
 
