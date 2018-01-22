@@ -1,12 +1,13 @@
 pipeline {
     agent { label 'FreeNAS' }
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
     options { disableConcurrentBuilds() }
-    stages {
-        stage('Checkout') {
-            steps {
-		checkout scm
-	    }
-        }
+    throttle(['webui']) {
+      node('FreeNAS') {
 	stage('Pre-Cleanup') {
 	    steps {
                 echo 'Cleaning environment'
@@ -27,5 +28,7 @@ pipeline {
 		sh 'npm run build:prod:aot'
             }
         }
+
+      }
     }
 }
