@@ -1,10 +1,10 @@
-<div md-dialog-content>
-
-	<pre #footerBarScroll class="message">{{consoleMsg}}</pre>
-
-	<div md-dialog-content class="overflow-hide"><md-checkbox (change)="onStopRefresh($event)">Stop refresh</md-checkbox></div>
+<div mat-dialog-content>
+  <pre #footerBarScroll class="message">{{consoleMsg}}</pre>
+  <div mat-dialog-content class="overflow-hide">
+    <mat-checkbox (change)="onStopRefresh($event)">Stop refresh</mat-checkbox>
+  </div>
 </div>
-<div md-dialog-actions>
+<div mat-dialog-actions>
   <span fxFlex></span>
   <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">Close</button>
 </div>

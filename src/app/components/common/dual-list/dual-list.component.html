@@ -1,9 +1,9 @@
 <div class="container-dualListBox">
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
     <div *ngFor="let item of availableItems.totalItems" [ngClass]="{ choosed: availableItems.isSelected(item,1) }" (click)="availableItems.select(item)">
-      <md-list *ngIf="templateItem;else noTemplateItem">
+      <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
-      </md-list>
+      </mat-list>
       <ng-template #noTemplateItem>
         {{item.name}}
       </ng-template>
@@ -16,7 +16,7 @@
         </ng-container>
       </div>
       <ng-template #arrowRigth>
-        <button md-icon-button> <md-icon>keyboard_arrow_right</md-icon> </button>
+        <button mat-icon-button> <mat-icon>keyboard_arrow_right</mat-icon> </button>
       </ng-template>
     </div>
     <div class="" (click)="return()">
@@ -25,15 +25,15 @@
         </ng-container>
       </div>
       <ng-template #arrowLeft>
-        <button md-icon-button> <md-icon>keyboard_arrow_left</md-icon> </button>
+        <button mat-icon-button> <mat-icon>keyboard_arrow_left</mat-icon> </button>
       </ng-template>
     </div>
   </div>
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight">
     <div *ngFor="let item of selectedItems.totalItems" [ngClass]="{ choosed: selectedItems.isSelected(item,2) }"  (click)="selectedItems.select(item)">
-      <md-list *ngIf="templateItem;else noTemplateItem">
+      <mat-list *ngIf="templateItem;else noTemplateItem">
         <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"> </ng-container>
-      </md-list>
+      </mat-list>
       <ng-template #noTemplateItem>
         {{item.name}}
       </ng-template>

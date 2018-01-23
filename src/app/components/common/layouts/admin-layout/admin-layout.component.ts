@@ -3,7 +3,7 @@ import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@ang
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
-import { MdSidenav, MdDialog, MdDialogRef } from '@angular/material';
+import { MatSidenav, MatDialog, MatDialogRef } from '@angular/material';
 import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
@@ -25,7 +25,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMSgList: any[] = [];
   public is_freenas: Boolean = false;
 
-  @ViewChild(MdSidenav) private sideNave: MdSidenav;
+  @ViewChild(MatSidenav) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
   freenasThemes;
 
@@ -35,7 +35,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected rest: RestService,
     protected ws: WebSocketService,
     public translate: TranslateService,
-    public dialog: MdDialog) {
+    public dialog: MatDialog) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{
       this.is_freenas = res;

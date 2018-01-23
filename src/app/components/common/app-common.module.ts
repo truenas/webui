@@ -4,25 +4,25 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from 'ng2-translate/ng2-translate';
-import { 
-  MdSidenavModule,
-  MdListModule,
-  MdTooltipModule,
-  MdOptionModule,
-  MdSelectModule,
-  MdMenuModule,
-  MdSnackBarModule,
-  MdGridListModule,
-  MdToolbarModule,
-  MdIconModule,
-  MdButtonModule,
-  MdRadioModule,
-  MdCheckboxModule,
-  MdCardModule,
-  MdDialogModule
+import {
+  MatSidenavModule,
+  MatListModule,
+  MatTooltipModule,
+  MatOptionModule,
+  MatSelectModule,
+  MatMenuModule,
+  MatSnackBarModule,
+  MatGridListModule,
+  MatToolbarModule,
+  MatIconModule,
+  MatButtonModule,
+  MatRadioModule,
+  MatCheckboxModule,
+  MatCardModule,
+  MatDialogModule
 } from '@angular/material';
 
-import {ChartistModule} from 'ng-chartist';
+import { ChartistModule } from 'ng-chartist';
 import { TopbarComponent } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -42,21 +42,21 @@ import { LineChartService } from './lineChart/lineChart.service';
     FormsModule,
     RouterModule,
     FlexLayoutModule,
-    MdSidenavModule,
-    MdIconModule,
-    MdListModule,
-    MdTooltipModule,
-    MdOptionModule,
-    MdSelectModule,
-    MdMenuModule,
-    MdSnackBarModule,
-    MdGridListModule,
-    MdToolbarModule,
-    MdButtonModule,
-    MdRadioModule,
-    MdCheckboxModule,
-    MdCardModule,
-    MdDialogModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
+    MatTooltipModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatMenuModule,
+    MatSnackBarModule,
+    MatGridListModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatCardModule,
+    MatDialogModule,
     CommonDirectivesModule,
     TranslateModule,
     ChartistModule
@@ -64,8 +64,8 @@ import { LineChartService } from './lineChart/lineChart.service';
   declarations: [
     AdminLayoutComponent,
     AuthLayoutComponent,
-    TopbarComponent, 
-    NavigationComponent, 
+    TopbarComponent,
+    NavigationComponent,
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
   ],
   providers: [ThemeService, DialogService, LineChartService],
