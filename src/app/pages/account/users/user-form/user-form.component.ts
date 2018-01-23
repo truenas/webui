@@ -180,7 +180,7 @@ export class UserFormComponent {
     filter.push("=");
     filter.push(entityForm.pk);
     this.ws.call('user.query',[[filter]]).subscribe((res) => {
-      if (res.length !== 0 ) {
+      if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2,5));
         });
@@ -236,10 +236,6 @@ export class UserFormComponent {
     if (!entityForm.isNew){
       entityForm.submitFunction = this.submitFunction;
     }
-  }
-
-  errorReport(res) {
-    this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
   }
 
   clean_uid(value) {
