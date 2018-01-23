@@ -1,7 +1,7 @@
 <div class="vdev-wrapper">
 <div class="vdev-actions">
-    <button md-flat-button class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><md-icon>chevron_right</md-icon></button>
-    <button md-flat-button class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><md-icon>chevron_left</md-icon></button>
+    <button mat-flat-button class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><mat-icon>chevron_right</mat-icon></button>
+    <button mat-flat-button class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><mat-icon>chevron_left</mat-icon></button>
 </div>
 <div class="vdev-table">
     <ngx-datatable
@@ -38,18 +38,18 @@
      <div class="vdev-wrapper">
          <div class="vdev-type">
          <div *ngIf="group === 'data'">
-            <md-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
-                <md-option value="stripe">Stripe</md-option>
-                <md-option value="mirror" *ngIf="getDisks().length >= 2">Mirror</md-option>
-                <md-option value="raidz" *ngIf="getDisks().length >= 3">Raid-z</md-option>
-                <md-option value="raidz2" *ngIf="getDisks().length >= 4">Raid-z2</md-option>
-                <md-option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</md-option>
-            </md-select>
+            <mat-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
+                <mat-option value="stripe">Stripe</mat-option>
+                <mat-option value="mirror" *ngIf="getDisks().length >= 2">Mirror</mat-option>
+                <mat-option value="raidz" *ngIf="getDisks().length >= 3">Raid-z</mat-option>
+                <mat-option value="raidz2" *ngIf="getDisks().length >= 4">Raid-z2</mat-option>
+                <mat-option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</mat-option>
+            </mat-select>
             Estimated raw capacity: {{size}}
         </div>
         </div>
         <div class="vdev-close">
-            <button md-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
+            <button mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
          </div>
      </div>
 </div>

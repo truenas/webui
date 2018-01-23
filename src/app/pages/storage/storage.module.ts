@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DragulaModule } from 'ng2-dragula';
-import { MaterialModule, MdTableModule, MdCardModule, MdGridListModule } from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { EntityModule } from '../common/entity/entity.module';
@@ -41,7 +41,7 @@ import { DxTreeListModule } from 'devextreme-angular';
 @NgModule({
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, routing, MaterialModule, MdTableModule, MdCardModule, MdGridListModule,
+    ReactiveFormsModule, routing, MaterialModule,
     NgxDatatableModule, DxTreeListModule
   ],
   declarations : [

@@ -13,7 +13,7 @@ import filesize from 'filesize';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
-import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
+import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
@@ -65,10 +65,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
     private router: Router, 
     private dragulaService: DragulaService, 
     private dialog:DialogService, 
-    public snackBar: MdSnackBar,
+    public snackBar: MatSnackBar,
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
-    public mdDialog: MdDialog ) {
+    public mdDialog: MatDialog ) {
 
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },

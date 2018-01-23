@@ -11,7 +11,7 @@ import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
@@ -53,7 +53,7 @@ export class ImportDiskComponent {
   protected dialogRef: any;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected dialog: MdDialog,
+              protected ws: WebSocketService, protected dialog: MatDialog,
               protected _injector: Injector, protected _appRef: ApplicationRef
               ) {}
 
