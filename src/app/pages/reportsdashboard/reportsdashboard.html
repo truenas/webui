@@ -1,27 +1,27 @@
 <div id="dashboardcontainerdiv">
-	<md-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-		<md-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName }}">
+	<mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
+		<mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName }}">
 			<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
 				
 
 				<div *ngIf="paginationLength > paginationPageSize">
-					<md-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
-					</md-paginator>
+					<mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">
+					</mat-paginator>
 				</div>
 
-				<md-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-					<md-card-title>{{ chartConfigData.title }}</md-card-title>
-					<md-card-content>
+				<mat-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
+					<mat-card-title>{{ chartConfigData.title }}</mat-card-title>
+					<mat-card-content>
 						<line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
-					</md-card-content>
-				</md-card>
+					</mat-card-content>
+				</mat-card>
 
 				<div class="give_me_space_bottom">
 					<br/>
 				</div>
 			</div>
-		</md-tab>
-	</md-tab-group>
+		</mat-tab>
+	</mat-tab-group>
 
 	<!-- Silly but stops the footer from scrunching up into my action. -->
 	<div class="give_me_space_bottom"></div>

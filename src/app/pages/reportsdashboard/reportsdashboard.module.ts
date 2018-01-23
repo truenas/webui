@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 
-import { MaterialModule, MdCardModule } from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 
 import {ReportsDashboardComponent} from './reportsdashboard.component';
 import {routing} from './reportsdashboard.routing';
@@ -11,7 +11,7 @@ import {LineChartService} from '../../components/common/lineChart/lineChart.serv
 
 @NgModule({
   imports : [ CommonModule, FormsModule, routing, 
-  MaterialModule, MdCardModule, AppCommonModule ],
+  MaterialModule, AppCommonModule ],
   declarations : [
     ReportsDashboardComponent
   ],
