@@ -2,7 +2,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import filesize from 'filesize';
 import { Subscription } from 'rxjs';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 
 import {RestService} from '../../../../services/rest.service';
@@ -109,7 +109,7 @@ export class BootEnvironmentListComponent {
 
   constructor(private _rest: RestService, private _router: Router, private ws: WebSocketService, 
     private dialog: DialogService, protected loader: AppLoaderService,
-    public snackBar: MdSnackBar ) {}
+    public snackBar: MatSnackBar ) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;

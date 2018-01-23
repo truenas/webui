@@ -1,4 +1,4 @@
-import { MdDialog, MdDialogRef} from '@angular/material';
+import { MatDialog, MatDialogRef} from '@angular/material';
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import {
@@ -17,7 +17,7 @@ export class TestAlertModalDialogComponent implements OnInit {
   
 
   constructor(
-    public dialogRef: MdDialogRef<TestAlertModalDialogComponent>) { }
+    public dialogRef: MatDialogRef<TestAlertModalDialogComponent>) { }
 
   ngOnInit() {
     

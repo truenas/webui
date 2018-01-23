@@ -6,7 +6,7 @@
 	width: 15%;
 }
 
-md-select {
+mat-select {
     padding-bottom: 1.29688em;
     padding: .4375em 0;
     border-top: .84375em solid transparent;

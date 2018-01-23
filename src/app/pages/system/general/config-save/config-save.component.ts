@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { WebSocketService } from '../../../../services/';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'general-config-save',
@@ -17,7 +17,7 @@ export class ConfigSaveComponent {
   public sub: Subscription;
   public secretseed: boolean = false;
 
-  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MdSnackBar) {}
+  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar) {}
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action , {

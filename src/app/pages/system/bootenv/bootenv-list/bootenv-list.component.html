@@ -1,13 +1,13 @@
-
-<md-card>
-<p> <b>Boot Volume Condition :</b> {{condition}} </p> 
-<p> <b>Size:</b> {{size_boot}}  </p> <p><b>Used:</b> {{size_consumed}}({{percentange}})</p>
-<div *ngIf="scrub_msg">
-        <p> Last Scrub Run on: {{scrub_msg}} </p>
-</div>
-<p> Automatic scrub interval (in days)</p>
-<md-input-container floatPlaceholder="never">
-        <input mdInput [value]="scrub_interval" #scrubIntervalEvent>
-</md-input-container> 
-</md-card>
+<mat-card>
+  <p> <b>Boot Volume Condition :</b> {{condition}} </p>
+  <p> <b>Size:</b> {{size_boot}} </p>
+  <p><b>Used:</b> {{size_consumed}}({{percentange}})</p>
+  <div *ngIf="scrub_msg">
+    <p> Last Scrub Run on: {{scrub_msg}} </p>
+  </div>
+  <p> Automatic scrub interval (in days)</p>
+  <mat-input-container floatPlaceholder="never">
+    <input matInput [value]="scrub_interval" #scrubIntervalEvent>
+  </mat-input-container>
+</mat-card>
 <entity-table [title]="title" [conf]="this"></entity-table>

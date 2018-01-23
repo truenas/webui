@@ -1,5 +1,5 @@
-<md-card>
-    <div class="md-content">
+<mat-card>
+    <div class="mat-content">
         <p>
             Before filing a bug report or feature request, search <a href="http://bugs.freenas.org"> http://bugs.freenas.org </a>to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new
             one. For enterprise-grade storage solutions and support, please visit <a href="http://www.ixsystems.com/storage/">http://www.ixsystems.com/storage/</a>.
@@ -9,39 +9,39 @@
             If you do not have an account, please <a href="https://bugs.freenas.org/account/register"> register</a>.
         </p>
         <br>
-        <md-input-container class="full-width">
-            <input mdInput placeholder="username" (blur)="onBlurMethod()" [(ngModel)]="username" name="username">
-        </md-input-container>
+        <mat-input-container class="full-width">
+            <input matInput placeholder="username" (blur)="onBlurMethod()" [(ngModel)]="username" name="username">
+        </mat-input-container>
         <br>
-        <md-input-container class="full-width">
-            <input mdInput placeholder="password" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password">
-        </md-input-container>
+        <mat-input-container class="full-width">
+            <input matInput placeholder="password" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password">
+        </mat-input-container>
         <br>
-        <md-select name="type" placeholder="Type" class="full-width" [(ngModel)]="type">
-            <md-option value="BUG">Bug</md-option>
-            <md-option value="FEATURE">Feature</md-option>
-        </md-select>
+        <mat-select name="type" placeholder="Type" class="full-width" [(ngModel)]="type">
+            <mat-option value="BUG">Bug</mat-option>
+            <mat-option value="FEATURE">Feature</mat-option>
+        </mat-select>
         <br>
-        <md-select name="category" placeholder="Category" class="full-width" [(ngModel)]="category">
-            <md-option *ngFor="let category of categories" [value]="category.value">
+        <mat-select name="category" placeholder="Category" class="full-width" [(ngModel)]="category">
+            <mat-option *ngFor="let category of categories" [value]="category.value">
                 {{ category.label }}
-            </md-option>
-        </md-select>
+            </mat-option>
+        </mat-select>
         <br>
-        <md-checkbox name="attach_debug" class="full-width" [(ngModel)]="attach_debug">
+        <mat-checkbox name="attach_debug" class="full-width" [(ngModel)]="attach_debug">
             Attach Debug
-        </md-checkbox>
+        </mat-checkbox>
         <br>
-        <md-input-container class="full-width">
-            <input mdInput placeholder="Subject" name="title" [(ngModel)]="title">
-        </md-input-container>
+        <mat-input-container class="full-width">
+            <input matInput placeholder="Subject" name="title" [(ngModel)]="title">
+        </mat-input-container>
         <br>
-        <md-input-container class="full-width">
-            <textarea mdInput mdAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
-        </md-input-container>
+        <mat-input-container class="full-width">
+            <textarea matInput matAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
+        </mat-input-container>
         <br>
         <input type="file" ng2FileSelect multiple />
         <br>
-        <button md-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">Submit Ticket</button>
+        <button mat-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">Submit Ticket</button>
     </div>
-</md-card>
+</mat-card>

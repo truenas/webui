@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../services/';
 import { MarkdownModule } from 'angular2-markdown';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MdDialog, MdDialogRef, MdSnackBar } from '@angular/material';
+import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -33,8 +33,8 @@ export class UpdateComponent implements OnInit {
   public busy2: Subscription;
 
   protected dialogRef: any;
-  constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MdSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MdDialog, protected loader: AppLoaderService) {
+  constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, protected loader: AppLoaderService) {
     router.events.subscribe((res) => {
       if (res instanceof NavigationStart) {
         if (res.url == '/sessions/signin' && !this.ws.connected) {

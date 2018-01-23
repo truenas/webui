@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
@@ -10,7 +10,7 @@ import { RestService, WebSocketService } from '../../../../services/';
   templateUrl: './config-reset.component.html'
 })
 export class ConfigResetComponent {
-  constructor(protected ws: WebSocketService, private _location: Location, public snackBar: MdSnackBar) {}
+  constructor(protected ws: WebSocketService, private _location: Location, public snackBar: MatSnackBar) {}
 
   _displayTime() {
 
