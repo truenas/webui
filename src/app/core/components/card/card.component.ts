@@ -1,7 +1,7 @@
 import { Component, ViewChild, Input, OnInit } from '@angular/core';
 import { Display } from 'app/core/components/display/display.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { MaterialModule } from '@angular/material';
+import { MaterialModule } from '../../../appMaterial.module';
 
 /*
 export interface CardData {

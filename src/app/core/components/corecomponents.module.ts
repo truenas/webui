@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { MaterialModule } from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 import { CommonModule } from '@angular/common';
 
 import { PageComponent } from 'app/core/components/page/page.component';
