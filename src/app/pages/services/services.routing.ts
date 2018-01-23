@@ -26,62 +26,77 @@ export const routes: Routes = [
     component : Services,
   },
   {
+    data: { title: 'ssh', breadcrumb: 'ssh'},
     path : 'ssh',
     component : ServiceSSHComponent,
   },
   {
+    data: { title: 'afp', breadcrumb: 'afp'},
     path : 'afp',
     component : ServiceAFPComponent,
   },
   {
+    data: { title: 'domaincontroller', breadcrumb: 'domaincontroller'},
     path : 'domaincontroller',
     component : ServiceDCComponent,
   },
   {
+    data: { title: 'ftp', breadcrumb: 'ftp'},
     path : 'ftp',
     component : ServiceFTPComponent,
   },
   {
+    data: { title: 'lldp', breadcrumb: 'lldp'},
     path : 'lldp',
     component : ServiceLLDPComponent,
   },
   {
+    data: { title: 'rsync', breadcrumb: 'rsync'},
     path : 'rsync',
     component : ServiceRSYNCComponent,
   },
   {
+    data: { title: 'smartd', breadcrumb: 'smartd'},
     path : 'smartd',
     component : ServiceSMARTComponent,
   },
   {
+    data: { title: 'nfs', breadcrumb: 'nfs'},
     path : 'nfs',
     component : ServiceNFSComponent,
   },
   {
+    data: { title: 'tftp', breadcrumb: 'tftp'},
     path : 'tftp',
     component : ServiceTFTPComponent,
   },
   {
+    data: { title: 'ups', breadcrumb: 'ups'},
     path : 'ups',
     component : ServiceUPSComponent,
   },
   {
+    data: { title: 'dynamicdns', breadcrumb: 'dynamicdns'},
     path : 'dynamicdns',
     component : ServiceDDNSComponent,
   },
   {
+    data: { title: 'cifs', breadcrumb: 'cifs'},
     path : 'cifs',
     component : ServiceSMBComponent,
   },
   {
+    data: { title: 'snmp', breadcrumb: 'snmp'},
     path : 'snmp',
     component : ServiceSNMPComponent,
   },
   {
+    data: { title: 'webdav', breadcrumb: 'webdav'},
     path : 'webdav',
     component : ServiceWebdavComponent,
   },
   {
+    data: { title: 's3', breadcrumb: 's3'},
     path : 's3',
     component : ServiceS3Component,
   }
