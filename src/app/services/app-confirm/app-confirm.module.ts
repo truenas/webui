@@ -1,7 +1,7 @@
 import { AppConfirmService } from './app-confirm.service';
 import { 
-  MdDialogModule,
-  MdButtonModule
+  MatDialogModule,
+  MatButtonModule
  } from '@angular/material';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -10,8 +10,8 @@ import { AppComfirmComponent } from './app-confirm.component';
 
 @NgModule({
   imports: [
-    MdDialogModule,
-    MdButtonModule,
+    MatDialogModule,
+    MatButtonModule,
     FlexLayoutModule
   ],
   exports: [AppComfirmComponent],

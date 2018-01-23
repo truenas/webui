@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs/Rx';
-import { MdDialogRef, MdDialog, MdDialogConfig } from '@angular/material';
+import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 
 import { AppComfirmComponent } from './app-confirm.component';
@@ -7,10 +7,10 @@ import { AppComfirmComponent } from './app-confirm.component';
 @Injectable()
 export class AppConfirmService {
 
-  constructor(private dialog: MdDialog) { }
+  constructor(private dialog: MatDialog) { }
 
   public confirm(title: string, message: string): Observable<boolean> {
-    let dialogRef: MdDialogRef<AppComfirmComponent>;
+    let dialogRef: MatDialogRef<AppComfirmComponent>;
     dialogRef = this.dialog.open(AppComfirmComponent, {disableClose: true});
     dialogRef.updateSize('380px');
     dialogRef.componentInstance.title = title;

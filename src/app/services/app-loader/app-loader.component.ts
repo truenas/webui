@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-app-loader',
@@ -9,7 +9,7 @@ import { MdDialogRef } from '@angular/material';
 export class AppLoaderComponent implements OnInit {
   title;
   message;
-  constructor(public dialogRef: MdDialogRef<AppLoaderComponent>) {}
+  constructor(public dialogRef: MatDialogRef<AppLoaderComponent>) {}
 
   ngOnInit() {
   }
