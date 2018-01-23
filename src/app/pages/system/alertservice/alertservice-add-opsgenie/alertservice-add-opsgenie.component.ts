@@ -38,7 +38,7 @@ export class AlertServiceAddOpsgenieComponent {
       name : 'consulalert_type',
       placeholder: 'consulalert_type',
       value: 'OpsGenie',
-      disabled: true
+      isHidden: true
     },{
       type : 'input',
       name : 'cluster_name',
