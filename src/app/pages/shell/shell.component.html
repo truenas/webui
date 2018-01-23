@@ -1,14 +1,14 @@
-<md-card class="p-0">
-  <md-card-title class="mat-bg-primary m-0">
+<mat-card class="p-0">
+  <mat-card-title class="mat-bg-primary m-0">
   	 <div class="card-title-text">
   	 	Shell
   	 </div>
-  </md-card-title>
+  </mat-card-title>
 	<div id="terminal" [ngStyle]="{'font-size' : font_size+'px'}"  #terminal></div>
-	<md-card-content>
-		<md-divider class="mb-1"></md-divider>
-		Set font size: <md-slider min="10" max="20" step="1" value="14"  [(ngModel)]="font_size"></md-slider>
-		<button md-raised-button (click)="resetDefault()" mdTooltip="Reset font size to default value">Restore default</button>
+	<mat-card-content>
+		<mat-divider class="mb-1"></mat-divider>
+		Set font size: <mat-slider min="10" max="20" step="1" value="14"  [(ngModel)]="font_size"></mat-slider>
+		<button mat-raised-button (click)="resetDefault()" matTooltip="Reset font size to default value">Restore default</button>
 		<tooltip class="shellTooltip" [message]=shell_tooltip></tooltip>
-	</md-card-content>
-</md-card>
+	</mat-card-content>
+</mat-card>
