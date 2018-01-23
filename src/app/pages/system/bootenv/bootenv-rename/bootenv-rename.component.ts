@@ -34,6 +34,7 @@ export class BootEnvironmentRenameComponent {
           type: 'input',
           name: 'name',
           placeholder: 'Name',
+          tooltip: 'Rename the existing boot environment.',
         },
       ];
     });
