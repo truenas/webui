@@ -39,4 +39,9 @@ export class NetworkService {
     return Array(32).fill(0).map(
         (x, i) => { return {label : String(32 - i), value : String(32 - i)}; });
   }
+
+  getV6PrefixLength() {
+    return Array(33).fill(0).map(
+        (x, i) => { return {label : String((32 - i) * 4), value : String((32 - i) * 4)}; });
+  }
 }
