@@ -10,16 +10,16 @@
   <div class="padding-16" *ngIf="members.length > 0">
     <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">
       <ng-template #templateItem let-item="data">
-          <md-list-item class="pointer">{{item.username}}</md-list-item>
+          <mat-list-item class="pointer">{{item.username}}</mat-list-item>
       </ng-template>
     </app-dual-listbox>
   </div>
 </div>
 <section class="fab">
-  <button md-fab class="md-fab-bottom-right-1" color="primary" (click)="updateUsers()">
-    <md-icon class="md-16 ">save</md-icon>
+  <button mat-fab class="mat-fab-bottom-right-1" color="primary" (click)="updateUsers()">
+    <mat-icon class="md-16 ">save</mat-icon>
   </button>
-  <button md-fab class="md-fab-bottom-right-2" color="primary" (click)="cancel()">
-    <md-icon class="md-16">clear</md-icon>
+  <button mat-fab class="mat-fab-bottom-right-2" color="primary" (click)="cancel()">
+    <mat-icon class="md-16">clear</mat-icon>
   </button>
 </section>

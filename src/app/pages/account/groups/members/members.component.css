@@ -4,7 +4,7 @@
 .pointer{
   cursor: pointer;
 }
-.md-fab-bottom-right-1 {
+.mat-fab-bottom-right-1 {
   top: auto !important;
   right: 30px !important;
   bottom: 48px !important;
@@ -13,7 +13,7 @@
   z-index: 1;
 }
 
-.md-fab-bottom-right-2 {
+.mat-fab-bottom-right-2 {
   top: auto !important;
   right: 90px !important;
   bottom: 48px !important;
