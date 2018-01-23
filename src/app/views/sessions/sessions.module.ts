@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from "@angular/router";
 import { 
-  MdProgressBarModule,
-  MdButtonModule,
-  MdInputModule,
-  MdCardModule,
-  MdCheckboxModule
+  MatProgressBarModule,
+  MatButtonModule,
+  MatInputModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatSnackBarModule,
  } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -22,11 +23,12 @@ import { SessionsRoutes } from "./sessions.routing";
   imports: [
     CommonModule,
     FormsModule,
-    MdProgressBarModule,
-    MdButtonModule,
-    MdInputModule,
-    MdCardModule,
-    MdCheckboxModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatInputModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
     FlexLayoutModule,
     RouterModule.forChild(SessionsRoutes)
   ],

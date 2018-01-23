@@ -3,13 +3,13 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
-  MdListModule,
-  MdIconModule,
-  MdButtonModule,
-  MdCardModule,
-  MdMenuModule,
-  MdSlideToggleModule,
-  MdGridListModule
+  MatListModule,
+  MatIconModule,
+  MatButtonModule,
+  MatCardModule,
+  MatMenuModule,
+  MatSlideToggleModule,
+  MatGridListModule
  } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppBlankComponent } from './app-blank/app-blank.component';
@@ -21,13 +21,13 @@ import { ShutdownComponent } from "./shutdown/shutdown.component";
   imports: [
     CommonModule,
     FormsModule,
-    MdListModule,
-    MdIconModule,
-    MdButtonModule,
-    MdCardModule,
-    MdMenuModule,
-    MdSlideToggleModule,
-    MdGridListModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+    MatMenuModule,
+    MatSlideToggleModule,
+    MatGridListModule,
     FlexLayoutModule,
     RouterModule.forChild(OthersRoutes)
   ],
