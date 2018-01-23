@@ -2,8 +2,6 @@
 <p *ngIf="!hasConf">
     Please <button md-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to setup configuration first.
 </p>
-<p *ngIf="success" type="success">Successfully updated.</p>
-<p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <md-card>
     <div class="md-content">
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
@@ -26,5 +24,7 @@
                 <!-- </div> -->
             </md-card-actions>
         </form>
+        <p *ngIf="success" type="success">Successfully updated.</p>
+        <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
     </div>
 </md-card>

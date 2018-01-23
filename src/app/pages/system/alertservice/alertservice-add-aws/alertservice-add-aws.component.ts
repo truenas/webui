@@ -40,7 +40,7 @@ export class AlertServiceAddAWSComponent {
       value: 'AWSSNS',
       tooltip: 'Amazon Web Service (AWS)\
  Simple Notification Service (SNS).',
-      disabled: true
+      isHidden: true
     },
     {
       type : 'input',
@@ -55,6 +55,13 @@ export class AlertServiceAddAWSComponent {
       tooltip: 'Paste the Topic Amazon Resource Name (ARN) to publish to.\
  Here is an example ARN:\
  <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
+    },
+     {
+      type : 'input',
+      name : 'base_url',
+      placeholder : 'base_url',
+      value: 'http://s3.example.com',
+      tooltip: 'Example: http://s3.example.com',
     },
     {
       type : 'input',

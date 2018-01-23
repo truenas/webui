@@ -27,12 +27,20 @@ export class ImportDiskComponent {
       type : 'select',
       name : 'volume',
       placeholder : 'Disk',
+      tooltip: 'Use the drop-down menu to select the disk to import.\
+ The import will copy the data from the chosen disk to an existing ZFS dataset.\
+ Only one disk can be imported at a time.',
       options: []
     },
     {
       type : 'radio',
       name : 'fs_type',
       placeholder : 'Filesystem type',
+      tooltip: 'Select the type of filesystem on the disk.\
+ FreeNAS supports UFS, NTFS, MSDOS, and EXT2 filesystems. Imports of EXT3\
+ or EXT4 filesystems are possible in some cases, although neither is fully supported.\
+ Refer to the <a href="http://doc.freenas.org/11/storage.html#import-disk" target="_blank">FreeNAS User Guide</a>\
+ to learn more about disk imports.',
       options: [
                     {value:'ufs', label:'UFS'}, 
                     {value:'ntfs', label:'NTFS'}, 
@@ -44,6 +52,7 @@ export class ImportDiskComponent {
       type : 'explorer',
       name : 'dst_path',
       placeholder : 'Destination Path',
+      tooltip: 'Browse to the ZFS dataset that will hold the copied data.',
       explorerType: 'directory',
       initial: '/mnt',
     },

@@ -10,13 +10,13 @@ import {WebSocketService} from './ws.service';
 @Injectable()
 export class SystemGeneralService {
 
-  protected certificateList: string = 'system/certificate';
+  protected certificateList: string = 'certificate.query';
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getCA() { return this.ws.call('certificateauthority.query', []); }
 
-  getCertificates() { return this.rest.get(this.certificateList, {}); }
+  getCertificates() { return this.ws.call(this.certificateList); }
 
   getIPChoices() {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
