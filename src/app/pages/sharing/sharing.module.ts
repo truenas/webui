@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 
 import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';

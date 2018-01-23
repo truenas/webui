@@ -1,4 +1,4 @@
-<md-card>
+<mat-card>
   <nav mat-tab-nav-bar>
     <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
     {{link.label}}
@@ -13,4 +13,4 @@
     <app-iscsi-extent-list *ngIf="activedTab == 'extent'"></app-iscsi-extent-list>
     <app-iscsi-associated-target-list *ngIf="activedTab == 'associatedtarget'"></app-iscsi-associated-target-list>
   </router-outlet>
-</md-card>
+</mat-card>
