@@ -1,28 +1,28 @@
-<md-card class="card front">
+<mat-card class="card front">
 	<!-- Template for front face of card -->
 	<div class="service-bg"></div>
 	<div class="side-content section">
 		<div class="side-content-header">
-			<button md-fab
+			<button mat-fab
 				class="service-power-btn"
 		 		[ngClass]="{'service-power-btn-off':this.status.state == 'STOPPED','service-power-btn-on':this.status.state == 'RUNNING'}"
 		 		(click)="toggle()"
-		 		mdTooltip="{{ this.status.state }}" mdTooltipPosition="above">
-				<md-icon>power_settings_new</md-icon>
+		 		matTooltip="{{ this.status.state }}" matTooltipPosition="above">
+				<mat-icon>power_settings_new</mat-icon>
 			</button>
 
 			<h3>{{ status.label }}</h3>
-			<md-chip  class="service-state">{{ status.state }}</md-chip>
+			<mat-chip  class="service-state">{{ status.state }}</mat-chip>
 		</div>
 
 			<div class="stats-info">
-        <label mdLine class="mr-1"><strong>Auto-start:</strong></label>
-        <md-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></md-checkbox>
+        <label matLine class="mr-1"><strong>Auto-start:</strong></label>
+        <mat-checkbox [(ngModel)]="status.enable" (change)="enableToggle($event)"></mat-checkbox>
 
 				</div>
 
 		<div class="service-controls">
-			<button md-raised-button color="primary"  (click)="editService(this.status.service)">Configure</button>
+			<button mat-raised-button color="primary"  (click)="editService(this.status.service)">Configure</button>
 		</div>
 	</div>
-</md-card>
+</mat-card>

@@ -2,7 +2,7 @@
 /* cards */
 
 
-service-cards md-card.front {
+service-cards mat-card.front {
   padding:0 !important;
   min-height: 320px;
 }
@@ -67,18 +67,18 @@ service-cards md-card.front {
   position: absolute;
 }
 
-md-chip.service-state,
-md-chip.service-state-on,
-md-chip.service-state-off{
+mat-chip.service-state,
+mat-chip.service-state-on,
+mat-chip.service-state-off{
   padding:4px 10px;
 }
 
-md-chip.service-state{
+mat-chip.service-state{
  background-color:#666 !important;
  color:#fff !important;
 }
 
-md-chip.service-state-on,
+mat-chip.service-state-on,
 .service-power-btn-on.mat-fab{
  background-color:#41bd45 !important;
  color:#fff !important;
@@ -99,7 +99,7 @@ md-chip.service-state-on,
     color: rgba(0,0,0,0.35);
 }
 
-.card-close md-icon.mat-icon.material-icons{
+.card-close mat-icon.mat-icon.material-icons{
   font-size:18px;
   cursor:pointer;
 }

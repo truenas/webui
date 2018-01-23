@@ -5,7 +5,7 @@ import {Subscription} from 'rxjs';
 
 import {RestService, WebSocketService} from '../../../services/';
 import {AppConfirmService} from "../../../services/app-confirm/app-confirm.service";
-import {MdSlideToggleChange, MdSlideToggle} from "@angular/material";
+import {MatSlideToggleChange, MatSlideToggle} from "@angular/material";
 
 @Component({
   selector: 'service',
@@ -15,7 +15,7 @@ import {MdSlideToggleChange, MdSlideToggle} from "@angular/material";
 export class Service {
 
   @Input('status') status: any;
-  @ViewChild('serviceStatus') serviceStatus: MdSlideToggle;
+  @ViewChild('serviceStatus') serviceStatus: MatSlideToggle;
 
   public busy: Subscription;
 
