@@ -1,19 +1,19 @@
 <div id="entity-card.component" class="flip" style="width:inherit; height:inherit;">
 	<div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
 
-		<md-card class="card front face animated slideInUp">
+		<mat-card class="card front face animated slideInUp">
 			<ng-template [ngTemplateOutlet]="front" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
-			<md-card-footer *ngIf="actions" class="card-footer">
+			<mat-card-footer *ngIf="actions" class="card-footer">
 				<div class="">
 					<app-entity-card-actions [entity]="this"></app-entity-card-actions>
 				</div>
-			</md-card-footer>
-		</md-card>
+			</mat-card-footer>
+		</mat-card>
 
-		<md-card class="card back face" style="overflow-y:auto;">
+		<mat-card class="card back face" style="overflow-y:auto;">
 
 			<ng-template *ngIf="lazyLoaded" [ngTemplateOutlet]="back" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
-		</md-card>
+		</mat-card>
 
 	</div>
 </div>

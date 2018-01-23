@@ -11,26 +11,26 @@
 			<div *ngIf="selected.length > 0 ? true : false" >
 				<div *ngIf="conf.multiActions; else defaultMultiActions">
 					<span *ngFor="let maction of conf.multiActions">
-						<button md-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+						<button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
 							<span>{{ maction?.label }}</span>
 					    </button>
 				    </span>
 				</div>
 				<ng-template #defaultMultiActions>
-					<button md-raised-button (click)="doMultiDelete(this.selected);">
+					<button mat-raised-button (click)="doMultiDelete(this.selected);">
 						<span>Delete</span>
 				    </button>
 				</ng-template>
 			</div>
 		</div>
 
-		<md-paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
-		</md-paginator>
+		<mat-paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+		</mat-paginator>
 	</div>
 	<div class="padding_all">
-		<md-input-container floatPlaceholder="never">
-			<input mdInput #filter placeholder="Filter {{title}}">
-		</md-input-container>
+		<mat-input-container floatPlaceholder="never">
+			<input matInput #filter placeholder="Filter {{title}}">
+		</mat-input-container>
 	</div>
 
 	<div>
@@ -56,13 +56,13 @@
 			<ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
 				<ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
 					<div class="headerCheckboxCell">
-						<md-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></md-checkbox>
+						<mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
 					</div>
 				</ng-template>
 
 				<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
 					<div class="checkboxCell">
-						<md-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></md-checkbox>
+						<mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
 					</div>
 				</ng-template>
 			</ngx-datatable-column>

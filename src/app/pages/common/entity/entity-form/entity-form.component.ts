@@ -13,7 +13,7 @@ import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angul
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
@@ -77,7 +77,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
-              public snackBar: MdSnackBar,
+              public snackBar: MatSnackBar,
               public adminLayout: AdminLayoutComponent,
               private dialog:DialogService) {}
 

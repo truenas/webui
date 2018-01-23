@@ -1,10 +1,10 @@
 <div [id]="config.name" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <md-input-container class="full-width">
-    <input type="text" #textAreaSSH mdInput [placeholder]="config.placeholder" [formControlName]="config.name" [ngClass]="config.class" />
-  </md-input-container>
-  <md-card-actions>
-    <button md-raised-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>
-  </md-card-actions>
+  <mat-input-container class="full-width">
+    <input type="text" #textAreaSSH matInput [placeholder]="config.placeholder" [formControlName]="config.name" [ngClass]="config.class" />
+  </mat-input-container>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>
+  </mat-card-actions>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

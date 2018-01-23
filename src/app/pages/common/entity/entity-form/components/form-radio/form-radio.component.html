@@ -1,10 +1,10 @@
-<div [id]="config.name" class="dynamic-field md-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div [id]="config.name" class="dynamic-field mat-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
-  <md-radio-group [formControlName]="config.name">
-    <md-radio-button *ngFor="let option of config.options" [value]="option.value" >
+  <mat-radio-group [formControlName]="config.name">
+    <mat-radio-button *ngFor="let option of config.options" [value]="option.value" >
       {{ option.label }}
-    </md-radio-button>
-  </md-radio-group>
+    </mat-radio-button>
+  </mat-radio-group>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

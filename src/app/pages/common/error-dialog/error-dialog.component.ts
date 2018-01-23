@@ -1,4 +1,4 @@
-import {MdDialog, MdDialogRef} from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 
 @Component({
@@ -13,7 +13,7 @@ export class ErrorDialog {
   public backtrace: string;
   public isCloseMoreInfo: Boolean = true;
 
-  constructor(public dialogRef: MdDialogRef < ErrorDialog > ) {
+  constructor(public dialogRef: MatDialogRef < ErrorDialog > ) {
     
   }
 

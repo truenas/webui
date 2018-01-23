@@ -1,11 +1,11 @@
-<h1 md-dialog-title>{{ title }}</h1>
+<h1 mat-dialog-title>{{ title }}</h1>
 
-<div md-dialog-content class="overflow-hide" *ngIf="!hideCheckBox;else noCheckBox">
-  <md-checkbox (change)="toggleSubmit($event)">{{ message }}</md-checkbox>
+<div mat-dialog-content class="overflow-hide" *ngIf="!hideCheckBox;else noCheckBox">
+  <mat-checkbox (change)="toggleSubmit($event)">{{ message }}</mat-checkbox>
 </div>
 <ng-template #noCheckBox>{{ message }}</ng-template>
 
-<div md-dialog-actions>
+<div mat-dialog-actions>
   <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">OK</button>
   &nbsp;
   <span fxFlex></span>

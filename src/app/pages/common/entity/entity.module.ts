@@ -3,7 +3,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule, MdTableModule, MdSortModule, MdSortHeader, MdSort, MdDatepickerModule, MdNativeDateModule } from '@angular/material';
+import { MaterialModule } from '../../../appMaterial.module';
+import { MatSortHeader, MatSort } from '@angular/material';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgUploaderModule } from 'ngx-uploader';
@@ -43,15 +44,15 @@ import { FormReadFileComponent } from './entity-form/components/form-readfile/fo
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
-import { CdkTableModule } from '@angular/cdk';
+import { CdkTableModule } from '@angular/cdk/table';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    MaterialModule, NgxDatatableModule, MdTableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, MdSortModule, FlexLayoutModule, MdDatepickerModule, MdNativeDateModule
+    MaterialModule, NgxDatatableModule, CdkTableModule, TreeModule,
+    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule,
   ],
   declarations: [
     EntityDeleteComponent,
