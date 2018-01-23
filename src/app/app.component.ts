@@ -9,6 +9,7 @@ import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
 import { TourService } from './services/tour.service';
+import { WebSocketService } from './services/ws.service';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private routePartsService: RoutePartsService,
     public snackBar: MdSnackBar,
+    private ws: WebSocketService,
     private rest: RestService,
     private api: ApiService,
     private tour: TourService) {
@@ -49,6 +51,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.changePageTitle();
+    let self = this;
+    window.addEventListener('beforeunload', function(e) {
+      self.ws.logout(); 
+    }, false);
   }
 
   changePageTitle() {
