@@ -75,20 +75,21 @@ export class AdvancedComponent implements OnInit {
   }
 
   saveDebug() {
-    this.dialog.confirm("Gererating Debug File", "It may take several minutes, you can close the dialog");
-    this.ws.job('system.debug').subscribe((res) => {
-      if (res.state === "SUCCESS") {
-        this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
-        window.open('/legacy/system/debug/download/');
-      }
-    }, () => {
+    this.dialog.confirm("Gererating Debug File", "It may take several minutes, you can close the dialog").subscribe((res) => {
+      this.ws.job('system.debug').subscribe((res) => {
+        if (res.state === "SUCCESS") {
+          this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
+          window.open('/legacy/system/debug/download/');
+        }
+      }, () => {
 
-    }, () => {
-          if (this.job.state == 'SUCCESS') {
-            console.log("success:",this.job);
-          } else if (this.job.state == 'FAILED') {
-            this.openSnackBar("Please check your network connection", "Failed");
-          }
+      }, () => {
+        if (this.job.state == 'SUCCESS') {
+          console.log("success:", this.job);
+        } else if (this.job.state == 'FAILED') {
+          this.openSnackBar("Please check your network connection", "Failed");
+        }
+      });
     });
   }
 
