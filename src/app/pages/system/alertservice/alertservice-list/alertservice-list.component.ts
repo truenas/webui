@@ -4,6 +4,9 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services/';
+import { MdDialog } from '@angular/material';
+
+import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
 
 @Component({
@@ -11,7 +14,7 @@ import { RestService, WebSocketService } from '../../../../services/';
   template: `<entity-table [title]="title"  [conf]="this"></entity-table>`
 })
 export class AlertServiceListComponent {
-  
+
   public title = "Alert Service";
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = ['system', 'alertservice'];
@@ -30,7 +33,7 @@ export class AlertServiceListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) { }
+    protected _injector: Injector, protected _appRef: ApplicationRef, public dialog: MdDialog) { }
 
 
   afterInit(entityList: any) {
@@ -43,62 +46,79 @@ export class AlertServiceListComponent {
 
   getAddActions() {
     return [{
+      label: "Test Alerts",
+      icon: "settings",
+      onClick: () => {
+
+        this.ws.call("consul.create_fake_alert").subscribe(()=>{
+          const dialogRef = this.dialog.open(TestAlertModalDialogComponent, {});
+
+          dialogRef.afterClosed().subscribe((result) => {
+            // The dialog was closed
+          });
+        });
+
+        
+      }
+    }, {
       label: "AWS-SNS",
       icon: "card_membership",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-aws"]));
       }
-    },{
+    }, {
       label: "HipChat",
       icon: "system_update_alt",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-hipchat"]));
       }
-    },{
+    }, {
       label: "InfluxDB",
       icon: "vpn_lock",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-influxdb"]));
       }
-    },{
-        label: "Mattermost",
-        icon: "device_hub",
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["system", "alertservice", "add-mattermost"]));
-        }
-    },{
+    }, {
+      label: "Mattermost",
+      icon: "device_hub",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-mattermost"]));
+      }
+    }, {
       label: "OpsGenie",
       icon: "local_laundry_service",
       onClick: () => {
         this.router.navigate(
           new Array('').concat(["system", "alertservice", "add-opsgenie"]));
       }
-  },{
-    label: "PagerDuty",
-    icon: "album",
-    onClick: () => {
-      this.router.navigate(
-        new Array('').concat(["system", "alertservice", "add-pagerduty"]));
+    }, {
+      label: "PagerDuty",
+      icon: "album",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-pagerduty"]));
+      }
+    }, {
+      label: "Slack",
+      icon: "fiber_new",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-slack"]));
+      }
+    }, {
+      label: "VictorOps",
+      icon: "system_update_alt",
+      onClick: () => {
+        this.router.navigate(
+          new Array('').concat(["system", "alertservice", "add-victorops"]));
+      }
     }
-},{
-  label: "Slack",
-  icon: "fiber_new",
-  onClick: () => {
-    this.router.navigate(
-      new Array('').concat(["system", "alertservice", "add-slack"]));
-  }
-},{
-  label: "VictorOps",
-  icon: "system_update_alt",
-  onClick: () => {
-    this.router.navigate(
-      new Array('').concat(["system", "alertservice", "add-victorops"]));
-  }
-}];
+    
+    ];
   }
 
   getActions(parentRow) {
