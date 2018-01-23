@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 
-import { MaterialModule, MdCardModule } from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 import { EntityModule } from '../common/entity/entity.module';
 
 import {DashboardComponent} from './dashboard.component';
@@ -12,7 +12,7 @@ import { DashboardNoteEditComponent } from './dashboard-note-edit.component';
 
 @NgModule({
   imports : [ CommonModule, FormsModule,  routing, 
-  MaterialModule, MdCardModule, AppCommonModule , EntityModule],
+  MaterialModule, AppCommonModule , EntityModule],
   declarations : [
     DashboardComponent,
     DashboardNoteEditComponent
