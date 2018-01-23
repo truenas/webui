@@ -38,7 +38,7 @@ export class AlertServiceAddSlackComponent {
       name : 'consulalert_type',
       placeholder: 'service name',
       value: 'Slack',
-      disabled: true
+      isHidden: true
     },{
       type : 'input',
       name : 'username',

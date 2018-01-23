@@ -38,7 +38,7 @@ export class AlertServiceEditAWSComponent {
       placeholder: 'service name',
       tooltip: 'Amazon Web Service (AWS)\
  Simple Notification Service (SNS).',
-      disabled: true,
+      isHidden: true,
     },
     {
       type : 'input',
