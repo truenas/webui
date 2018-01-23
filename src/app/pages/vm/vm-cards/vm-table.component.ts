@@ -5,7 +5,8 @@ import {Observable} from 'rxjs/Observable';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import {RestService, WebSocketService} from '../../../services/';
-import { MaterialModule, MdButtonToggleGroup } from '@angular/material';
+import { MaterialModule } from '../../../appMaterial.module';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 
 export class Page {
     //The number of elements in the page

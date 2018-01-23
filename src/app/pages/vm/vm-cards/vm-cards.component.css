@@ -1,33 +1,33 @@
 /* Search Field */
 
-md-card.card-filter.mat-card{
+mat-card.card-filter.mat-card{
   width: 85%;
   margin: 24px auto 0;
   overflow:visible;
 }
 
-md-card.card-filter.mat-card .mat-card-content{
+mat-card.card-filter.mat-card .mat-card-content{
   padding:8px 0;
 }
 
-md-card.card-filter.mat-card .mat-card-header > div{
+mat-card.card-filter.mat-card .mat-card-header > div{
   /*display:inline-block;*/
 }
 
 
-md-card.card-filter .filter-field{
+mat-card.card-filter .filter-field{
   width:70%;
   margin-right:5%;
   MARGIN-TOP:10px;
 }
 
-md-card.card-filter .filter-field md-icon{
+mat-card.card-filter .filter-field mat-icon{
   width:2%;
   position:absolute;
   top:24px;
 }
 
-md-card.card-filter .view-controls{
+mat-card.card-filter .view-controls{
   width:22%;
   position:relative;
   text-align:right;
@@ -35,18 +35,18 @@ md-card.card-filter .view-controls{
   margin-right: 16px;
 }
 
-md-card.card-filter .view-controls .mat-button-toggle-group{
+mat-card.card-filter .view-controls .mat-button-toggle-group{
   top:10px;
   position:relative;
   margin:0 16px;
 }
 
-md-card.card-filter .view-controls .add-vm{
+mat-card.card-filter .view-controls .add-vm{
   position: relative;
   top: 16px;  
 }
 
-.card-filter md-input-container.mat-input-container{
+.card-filter mat-input-container.mat-input-container{
  width:97%;
  padding-left:32px;
 }
@@ -72,7 +72,7 @@ md-card.card-filter .view-controls .add-vm{
   text-align:center;
 }
 
-vm-cards md-card.front {
+vm-cards mat-card.front {
   padding:0 !important;
 }
 
@@ -134,18 +134,18 @@ vm-cards md-card.front {
   position: absolute;
 }
 
-md-chip.vm-state,
-md-chip.vm-state-on,
-md-chip.vm-state-off{
+mat-chip.vm-state,
+mat-chip.vm-state-on,
+mat-chip.vm-state-off{
   padding:4px 10px;
 }
 
-md-chip.vm-state{  
+mat-chip.vm-state{  
  background-color:#666 !important;
  color:#fff !important;
 }
 
-md-chip.vm-state-on,
+mat-chip.vm-state-on,
 .vm-power-btn-on.mat-fab{
  background-color:#41bd45 !important;
  color:#fff !important;
@@ -166,7 +166,7 @@ md-chip.vm-state-on,
     color: rgba(0,0,0,0.35);
 }
 
-.card-close md-icon.mat-icon.material-icons{
+.card-close mat-icon.mat-icon.material-icons{
   font-size:18px;
   cursor:pointer;
 }
