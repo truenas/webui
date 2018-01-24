@@ -47,6 +47,7 @@
                                    (cancel)="cancel(focusedVM)"
                                    (saved)="toggleForm($event.flipState,cards[focusedVM],'none');refreshVM(focusedVM,$event.id)">
         </vm-card-edit>
+        <vm-summary [virtualMachines]="cache" *ngIf="!focusedVM || !cards[focusedVM].isFlipped"></vm-summary>
       </div>
 
       <!-- Table data -->

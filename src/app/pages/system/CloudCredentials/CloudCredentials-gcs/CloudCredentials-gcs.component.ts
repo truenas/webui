@@ -45,6 +45,7 @@ export class CloudCredentialsGCSComponent {
       type : 'input',
       name : 'name',
       placeholder : 'Account Name',
+      tooltip : 'Enter the Google Cloud Service account name.',
     },
     {
       type : 'textarea',
@@ -56,6 +57,10 @@ export class CloudCredentialsGCSComponent {
       type : 'readfile',
       name : 'attributes',
       placeholder : 'JSON Service Account Key',
+      tooltip : 'Browse to the location of the saved Google Cloud\
+ Storage key and select it. Refer to <a\
+ href="https://cloud.google.com/storage/docs/" target="_blank">\
+ Gcloud documentation</a> for more information.',
       validation : [ Validators.required ]
     },
   ];

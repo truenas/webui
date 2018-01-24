@@ -9,7 +9,19 @@ import {
   WebSocketService
 } from '../../services/';
 import { ChartConfigData, LineChartService } from 'app/components/common/lineChart/lineChart.service';
+import { DialogService } from '../../services/dialog.service';
+import { AppLoaderService } from '../../services/app-loader/app-loader.service';
+import { ErdService } from 'app/services/erd.service';
 
+interface NoteCard {
+  id?:string;
+  title?:string;
+  content?:string;
+  lazyLoaded?:boolean;
+  template?:string; // for back face of card
+  cardActions?:Array<any>;
+  isNew:boolean;
+}
 
 @Component({
   selector: 'dashboard',
@@ -19,8 +31,8 @@ import { ChartConfigData, LineChartService } from 'app/components/common/lineCha
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
 
-
   public info: any = {};
+  public network_info: any = {};
   public ipAddress: any = [];
   public chartFormatter: ChartFormatter = {
     format(value, ratio, id) {
@@ -73,10 +85,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  private erd: any = null;
-
+  public cards: Array<any> = [];
+  public notes: Array<any> = [];
+  public noteStyle: any = {
+    // 'width': '480px',
+    'height': '400px',
+    // 'margin': '50px auto' 
+  };
   constructor(private rest: RestService, private ws: WebSocketService,
-    protected systemGeneralService: SystemGeneralService) {
+    protected systemGeneralService: SystemGeneralService, private dialog: DialogService,
+    protected loader: AppLoaderService, protected erdService: ErdService) {
     rest.get('storage/volume/', {}).subscribe((res) => {
       res.data.forEach((vol) => {
         this.graphs.splice(0, 0, {
@@ -90,6 +108,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
+   parseResponse(data){
+    let key = _.keys(data);
+    var card: NoteCard = {
+      id:key[0],
+      title:key[0].substring(5),
+      content:data[key[0]],
+      lazyLoaded: false,
+      template:'none',
+      isNew:false
+    }
+    return card;
+  }
+
   ngOnInit() {
     this.ws.call('system.info').subscribe((res) => {
       this.info = res;
@@ -98,6 +129,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.info.physmem =
         Number(this.info.physmem / 1024 / 1024).toFixed(0) + ' MiB';
     });
+    this.ws.call('network.general.summary').subscribe((res) => {
+      this.network_info = res;
+    })
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
         this.ipAddress = _.uniq(res[0]);
@@ -124,19 +158,109 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       });
      });
 
+    this.getNotes();
+  }
 
-    // This invokes the element-resize-detector js library under node_modules
-    // It listens to element level size change events (even when the global window
-    // Doesn't Resize.)  This lets you even off of card and element and div level
-    // size rechange events... As a result of responive, menu moving, etc...
-    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
-      this.erd = window['elementResizeDetectorMaker'].call();
-    }
+  getNotes() {
+    // get notes
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.notes = [];
+      for (let i in res.data.bsdusr_attributes) {
+        if (_.startsWith(i, 'note_')) {
+          this.notes.push(_.pick(res.data.bsdusr_attributes, i));
+        }
+      }
+      for (let i = 0; i < this.notes.length; i++) {
+        let card = this.parseResponse(this.notes[i]);
+        this.cards.push(card);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
-    this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
-      (<any>window).dispatchEvent(new Event('resize'));
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
+  }
+
+  addNote() {
+    let index = this.cards.length;
+    let card: NoteCard = {
+      id: "",
+      title:"",
+      content:"",
+      lazyLoaded:false,
+      template:'',
+      cardActions:[],
+      isNew:true,
+    }
+    this.cards.push(card);
+    this.toggleForm(true,this.cards[index],'edit');
+  }
+
+  deleteNote(noteId) {
+    this.dialog.confirm("Delete", "Are you sure you want to delete note " + noteId.substring(5) + "?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.notes.slice(_.findIndex(this.notes, noteId), 1);
+        this.ws.call('user.pop_attribute', [1, noteId]).subscribe(
+          (wsres)=> {
+            this.loader.close();
+            this.cards = [];
+            this.getNotes();
+          },
+          (wsres)=> {
+            this.loader.close();
+            console.log('error');
+          });
+      }
+    })
+  }
+
+  focusVM(index){
+    for(var i = 0; i < this.cards.length; i++){
+      if(i !== index && this.cards[i].isFlipped ){
+        this.cards[i].isFlipped = false;
+        this.cards[i].lazyLoaded = false;
+        this.cards[i].template = 'none';
+      }
+    }
+  }
+  
+  toggleForm(flipState, card, template, id?){
+    // load #cardBack template with code here
+    if (id) {
+      card.id = id;
+      card.title = id.substring(5);
+      card.isNew = false;
+    }
+    card.template = template;
+    card.isFlipped = flipState;
+    card.lazyLoaded = !card.lazyLoaded;
+    var index = this.cards.indexOf(card);
+    this.focusVM(index);
+  }
+
+  cancel(index){
+    let card = this.cards[index];
+    if(card.isNew){
+      this.cards.splice(index,1);
+    } else {
+      this.toggleForm(false,card,'none')
+    }
+
+  }
+
+  getNote(index) {
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      for (let i in res.data.bsdusr_attributes) {
+        if (i == index) {
+          _.find(this.cards, {id: index})['content'] = res.data.bsdusr_attributes[i];
+          this.notes.push(_.pick(res.data.bsdusr_attributes, i));
+        }
+      }
     });
+  }
+
+  refreshNote(id) {
+    this.getNote(id);
   }
 }

@@ -1,0 +1,20 @@
+/deep/ #tree-list-demo {
+    min-height: 530px;   
+}
+
+/deep/ #employees {
+   max-height: 530px;
+}
+
+.hov:hover{
+    cursor: pointer;
+}
+
+.ion-android-more-vertical:before {
+    color: black;
+}
+
+
+.panel_container {
+
+}

@@ -16,10 +16,12 @@ import * as xterm from "xterm";
 import * as Terminal from 'xterm/dist/xterm';
 import 'xterm/dist/addons/fit/fit.js';
 import 'xterm/dist/addons/attach/attach.js';
+import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
+  styleUrls: ['./shell.component.css'],
   providers: [ShellService],
 })
 
@@ -31,9 +33,12 @@ export class ShellComponent implements OnInit, OnChanges {
   // xterm variables
   cols: string;
   rows: string;
+  font_size: number;
   public token: any;
   public xterm: any;
   private shellSubscription: any;
+
+  public shell_tooltip = 'You can use the system copy/paste command. Ctrl + c/v or Command + c/v for mac users.';
 
   clearLine = "\u001b[2K\r"
 
@@ -41,7 +46,7 @@ export class ShellComponent implements OnInit, OnChanges {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        if(value !== undefined){
+        if (value !== undefined) {
           this.xterm.write(value);
         }
       });
@@ -52,6 +57,10 @@ export class ShellComponent implements OnInit, OnChanges {
   ngOnDestroy() {
     this.shellSubscription.unsubscribe();
   };
+
+  resetDefault() {
+    this.font_size = 14;
+  }
 
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
@@ -68,8 +77,8 @@ export class ShellComponent implements OnInit, OnChanges {
 
   initializeTerminal() {
     let domHeight = document.body.offsetHeight;
-    let rowNum = (domHeight * 0.75 - 104)/21;
-    if(rowNum < 10) {
+    let rowNum = (domHeight * 0.75 - 104) / 21;
+    if (rowNum < 10) {
       rowNum = 10;
     }
 

@@ -69,11 +69,7 @@ export class CertificateCSRComponent {
       name : 'cert_country',
       placeholder : 'Country',
       tooltip: 'Select the country for the organization.',
-      options : [
-        {label : 'US', value : 'US'},
-        {label : 'CHINA', value : 'CN'},
-        {label : 'RUSSIA', value : 'RU'},
-      ],
+      options : [],
     },
     {
       type : 'input',
@@ -111,9 +107,26 @@ export class CertificateCSRComponent {
       tooltip: 'Enter the fully-qualified\
  hostname (FQDN) of the FreeNAS® system.',
     },
+    {
+      type : 'textarea',
+      name : 'cert_san',
+      placeholder: 'Subject Alternate Names',
+      tooltip: 'Multi-domain support. Enter additional space separated domains.'
+    }
   ];
+  private cert_country: any;
 
-  afterInit(entityEdit: any) {}
+  afterInit(entityEdit: any) {
+    this.ws.call('notifier.choices', ['COUNTRY_CHOICES']).subscribe( (res) => {
+      // console.log(res);
+      this.cert_country = _.find(this.fieldConfig, {'name' : 'cert_country'});
+      res.forEach((item) => {
+        this.cert_country.options.push(
+          { label : item[1], value : item[0]}
+        );
+      });
+    });
+  }
 
   constructor(
       protected router: Router,

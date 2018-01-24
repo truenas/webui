@@ -74,7 +74,7 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_critical',
       placeholder : 'Critical',
-      tooltip: 'default of 0 disables this check, otherwise will\
+      tooltip: 'Default of 0 disables this check, otherwise will\
  message with a log level of LOG_CRIT and send an email if the\
  temperature is higher than specified degrees in Celsius.',
     },

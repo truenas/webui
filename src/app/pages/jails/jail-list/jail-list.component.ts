@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-jail-list',
@@ -47,8 +48,8 @@ export class JailListComponent {
               this.loader.close();
             },
             (res) => {
-              console.log(res);
               this.loader.close();
+              new EntityUtils().handleError(this, res);
             });
       }
     },
@@ -69,8 +70,8 @@ export class JailListComponent {
               this.loader.close();
             },
             (res) => {
-              console.log(res);
               this.loader.close();
+              new EntityUtils().handleError(this, res);
             });
       }
     },
@@ -84,12 +85,11 @@ export class JailListComponent {
         this.entityList.busy =
           this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
             (res) => {
-              console.log(res);
               this.loader.close();
             },
             (res) => {
-              console.log(res);
               this.loader.close();
+              new EntityUtils().handleError(this, res);      
             });
       }
     },
@@ -140,7 +140,9 @@ export class JailListComponent {
           this.entityList.busy =
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
               (res) => { row.state = 'up'; },
-              (res) => { console.log(res); });
+              (res) => {
+                new EntityUtils().handleError(this, res);
+              });
         }
       },
       {
@@ -150,7 +152,9 @@ export class JailListComponent {
           this.entityList.busy =
             this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
               (res) => { row.state = 'down'; },
-              (res) => { console.log(res); });
+              (res) => {
+                new EntityUtils().handleError(this, res);
+              });
         }
       },
       {
@@ -161,8 +165,11 @@ export class JailListComponent {
           this.entityList.busy =
             this.ws.job('jail.update_to_latest_patch', [row.host_hostuuid]).subscribe(
               (res) => {
-                console.log(res);
                 this.loader.close();
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleError(this, res);
               });
         }
       },
