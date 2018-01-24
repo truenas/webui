@@ -191,12 +191,35 @@ export class ServiceSNMPComponent {
               protected idmapService: IdmapService) {}
 
   afterInit(entityForm: any) {
+    entityForm.ws.call('snmp.config').subscribe((res)=>{
+      entityForm.formGroup.controls['location'].setValue(res.location);
+      entityForm.formGroup.controls['contact'].setValue(res.contact);
+      entityForm.formGroup.controls['community'].setValue(res.community);
+      entityForm.formGroup.controls['v3'].setValue(res.v3);
+      entityForm.formGroup.controls['v3_username'].setValue(res.v3_username);
+      entityForm.formGroup.controls['v3_privproto'].setValue(res.v3_privproto);
+      entityForm.formGroup.controls['options'].setValue(res.options);
+      entityForm.formGroup.controls['loglevel'].setValue(res.loglevel);
+      entityForm.formGroup.controls['v3_password'].setValue(res.v3_password);
+      entityForm.formGroup.controls['v3_password2'].setValue(res.v3_password);
+      entityForm.formGroup.controls['v3_privpassphrase'].setValue(res.v3_privpassphrase);
+      entityForm.formGroup.controls['v3_privpassphrase2'].setValue(res.v3_privpassphrase);
+      entityForm.formGroup.controls['v3_authtype'].setValue(res.v3_authtype);
+    });
     entityForm.submitFunction = this.submitFunction;
    }
 
   clean(value) {
     delete value['v3_privpassphrase2'];
     delete value['v3_password2'];
+    if (!value['v3']){
+      value['v3_password'] = "";
+      value['v3_privpassphrase'] = "";
+      value['v3_privproto'] = null;
+      value['v3_authtype'] = "";
+
+
+    }
 
     return value;
   }
