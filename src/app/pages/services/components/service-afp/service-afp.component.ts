@@ -58,21 +58,6 @@ export class ServiceAFPComponent {
  via AFP. The default limit is 50.',
     },
     {
-      type : 'checkbox',
-      name : 'afp_srv_homedir_enable',
-      placeholder : 'Enable home directories',
-      tooltip: 'If checked, any user home directories located under\
- <strong>Home directories</strong> will be available over the share.',
-    },
-    {
-      type : 'explorer',
-      initial: '/mnt',
-      name : 'afp_srv_homedir',
-      placeholder : 'Home Directories',
-      tooltip: 'Select the volume or dataset which contains user\
- home directories.',
-    },
-    {
       type : 'input',
       name : 'afp_srv_homename',
       placeholder : 'Home share name',
