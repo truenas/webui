@@ -31,6 +31,7 @@ interface NoteCard {
 export class DashboardComponent implements OnInit, AfterViewInit {
 
   public info: any = {};
+  public network_info: any = {};
   public ipAddress: any = [];
   public chartFormatter: ChartFormatter = {
     format(value, ratio, id) {
@@ -86,7 +87,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private erd: any = null;
   public cards: Array<any> = [];
   public notes: Array<any> = [];
-
   public noteStyle: any = {
     // 'width': '480px',
     'height': '400px',
@@ -129,6 +129,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.info.physmem =
         Number(this.info.physmem / 1024 / 1024).toFixed(0) + ' MiB';
     });
+    this.ws.call('network.general.summary').subscribe((res) => {
+      this.network_info = res;
+    })
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
         this.ipAddress = _.uniq(res[0]);
