@@ -31,11 +31,12 @@ import {
 
 export class ServiceSNMPComponent {
   protected resource_name: string = 'services/snmp';
+  protected addCall: string = 'snmp.update';
   protected route_success: string[] = [ 'services' ];
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'snmp_location',
+      name : 'location',
       placeholder : 'Location',
       tooltip: 'Optional description of the location of the system.',
       label : 'Location',
@@ -43,13 +44,13 @@ export class ServiceSNMPComponent {
     },
     {
       type : 'input',
-      name : 'snmp_contact',
+      name : 'contact',
       placeholder : 'Contact',
       tooltip: 'Optional email address of administrator.',
     },
     {
       type : 'input',
-      name : 'snmp_community',
+      name : 'community',
       placeholder : 'Community',
       tooltip: 'Default is <i>public</i> and <b>should be changed for\
  security reasons;</b> can only contain alphanumeric characters, underscores, dashes,\
@@ -57,13 +58,13 @@ export class ServiceSNMPComponent {
     },
     {
       type : 'checkbox',
-      name : 'snmp_traps',
+      name : 'v3',
       placeholder : 'SNMP v3 Support',
       tooltip: 'Check this box to enable support for SNMP version 3.',
     },
     {
       type : 'input',
-      name : 'snmp_v3_username',
+      name : 'v3_username',
       placeholder : 'Username',
       tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked; specify\
  the username to register with this service; refer to\
@@ -73,52 +74,52 @@ export class ServiceSNMPComponent {
  <b>Privacy Passphrase</b> fields.',
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
+        when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'select',
-      name : 'snmp_v3_authtype',
+      name : 'v3_authtype',
       label : 'Authentic Type',
       tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked;\
  choices are <i>MD5</i> or </i>SHA</i>.',
       options : [
-        {label : '---', value : null}, {label : 'MD5', value : 'MD5'},
+        {label : '---', value : ""}, {label : 'MD5', value : 'MD5'},
         {label : 'SHA', value : 'SHA'}
       ],
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
-      } ]
+        when : [ {name : 'v3', value : false} ]
+      } ],
     },
     {
       type : 'input',
-      name : 'snmp_v3_password',
+      name : 'v3_password',
       inputType : 'password',
       placeholder : 'password',
       tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked; specify\
  and confirm a password of at least eight characters.',
       validation :
-          [ Validators.minLength(8), matchOtherValidator('snmp_v3_password2') ],
+          [ Validators.minLength(8), matchOtherValidator('v3_password2') ],
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
+        when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'input',
-      name : 'snmp_v3_password2',
+      name : 'v3_password2',
       inputType : 'password',
       placeholder : 'Confirm password',
       tooltip: 'Re-enter <b>Password</b> to confirm.',
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
+        when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'select',
-      name : 'snmp_v3_privproto',
+      name : 'v3_privproto',
       label : 'Privacy Protocol',
       tooltip: 'Only applies if <b>SNMP v3 Support<b> is\
  checked; choices are <i>AES</i> or <i>DES</i>.',
@@ -129,40 +130,55 @@ export class ServiceSNMPComponent {
       ],
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
+        when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'input',
-      name : 'snmp_v3_privpassphrase',
+      name : 'v3_privpassphrase',
       inputType : 'password',
       placeholder : 'Privacy Passphrase',
       tooltip:'If not specified, <b>Password</b> is used.',
       validation : [
-        Validators.minLength(8), matchOtherValidator('snmp_v3_privpassphrase2')
+        Validators.minLength(8), matchOtherValidator('v3_privpassphrase2')
       ],
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
+        when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'input',
-      name : 'snmp_v3_privpassphrase2',
+      name : 'v3_privpassphrase2',
       inputType : 'password',
       placeholder : 'Confirm Privacy Passphrase',
       tooltip: 'Re-enter <b>Privacy Passphrase</b> to confirm.',
       relation : [ {
         action : 'DISABLE',
-        when : [ {name : 'snmp_traps', value : false} ]
+        when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'textarea',
-      name : 'snmp_options',
+      name : 'options',
       placeholder : 'Auxiliary Parameters',
       tooltip: 'Additional <a href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html" target="_blank">snmpd.conf(5)</a>\
  options not covered in this screen, one per line.',
+    },
+    {
+      type : 'select',
+      name : 'loglevel',
+      placeholder : 'Log Level',
+      options : [
+        {label : 'Emergency', value :0},
+        {label : 'Alert', value :1},
+        {label : 'Critical', value :2},
+        {label : 'Error', value :3},
+        {label : 'Warning', value :4},
+        {label : 'Notice', value :5},
+        {label : 'Info', value :6},
+        {label : 'Debug', value :7},
+      ]
     },
   ];
 
@@ -174,5 +190,20 @@ export class ServiceSNMPComponent {
               protected iscsiService: IscsiService,
               protected idmapService: IdmapService) {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityForm: any) {
+    entityForm.submitFunction = this.submitFunction;
+   }
+
+  clean(value) {
+    delete value['v3_privpassphrase2'];
+    delete value['v3_password2'];
+
+    return value;
+  }
+
+  submitFunction(this: any, entityForm: any,){
+
+    return this.ws.call('snmp.update', [entityForm]);
+
+  }
 }
