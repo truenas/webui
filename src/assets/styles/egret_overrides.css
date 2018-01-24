@@ -137,3 +137,14 @@ vm-cards md-card{
   height: 100% !important;
   position:absolute;
 }
+
+/* mat-sidenav-content */
+mat-sidenav-content.fn-maincontent {
+    transform: translate3d(0px, 0px, 0px);
+}
+
+body.collapsed-menu mat-sidenav-content.fn-maincontent {
+    margin-left: 48px !important;
+    margin-right: 0px !important;
+    transform: translate3d(0px, 0px, 0px);
+}
