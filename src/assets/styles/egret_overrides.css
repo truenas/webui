@@ -164,3 +164,9 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .mat-sidenav.mat-sidenav-opening {
     transform: translate3d(0,0,0);
 }
+
+/* side menu*/
+.mat-nav-list .mat-list-item {
+    display: block;
+    height: auto !important;
+}
