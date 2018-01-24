@@ -42,7 +42,7 @@
             "assets/styles/themes/solarized-dark.scss",
             "assets/styles/themes/freenas-warriors.scss",
             "assets/styles/themes/freenas-sharks.scss",
-            "assets/styles/styles.css",
+            "assets/styles/fn-styles.css",
             "assets/styles/charts.css",
             "assets/styles/egret_overrides.css"
         ],
