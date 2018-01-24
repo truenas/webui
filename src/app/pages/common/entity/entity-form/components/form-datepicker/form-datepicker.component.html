@@ -4,7 +4,8 @@
 			[placeholder]="config.placeholder"
 			[value]="config.value"
 			[formControlName]="config.name">
-		<button matSuffix [matDatepickerToggle]="picker"></button>
+		<!-- <button matSuffix [matDatepickerToggle]="picker"></button> -->
+		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 		<mat-datepicker #picker></mat-datepicker>
 	</mat-input-container>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
