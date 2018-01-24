@@ -46,7 +46,8 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'contact',
       placeholder : 'Contact',
-      tooltip: 'Optional email address of administrator.',
+      tooltip: 'Email address of administrator.',
+      validation: [Validators.required, Validators.email]
     },
     {
       type : 'input',
