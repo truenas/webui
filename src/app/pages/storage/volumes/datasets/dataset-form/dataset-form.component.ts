@@ -39,17 +39,21 @@ export class DatasetFormComponent implements OnInit{
       type: 'input',
       name: 'name',
       placeholder: 'Name',
+      tooltip: 'Mandatory; enter a unique name for the dataset.',
       validation : [ Validators.required ]
-    },
+    }, 
     {
       type: 'input',
       name: 'comments',
       placeholder: 'Comments',
+      tooltip: 'Enter comments or notes about this dataset here.',
     },
-    {
+    {  
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level',
+      tooltip: 'For more information about the available compression algorithms,\
+ refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.',
       options: [
         { label: 'OFF', value: 'OFF' },
         { label: 'LZ4', value: 'LZ4' },
@@ -64,6 +68,9 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'atime',
       placeholder: 'Enable atime',
+      tooltip: 'Controls whether the access time for files is updated\
+ when they are read; setting this property to <b>Off</b> avoids producing log\
+ traffic when reading files, and can result in significant performance gains.',
       options: [
         { label: 'ON', value: 'ON' },
         { label: 'OFF', value: 'OFF' }
@@ -74,6 +81,9 @@ export class DatasetFormComponent implements OnInit{
       inputType: 'number',
       name: 'refquota',
       placeholder: 'Quota for this dataset',
+      tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
+ quotas; specifying a value means to use no more than the specified\
+ size and is suitable for user datasets to prevent users from hogging available space.',
       value: 0,
     },
     {
@@ -81,6 +91,8 @@ export class DatasetFormComponent implements OnInit{
       inputType: 'number',
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
+      tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
+ value applies to both this dataset and any child datasets.',
       value: 0,
     },
     {
@@ -88,6 +100,9 @@ export class DatasetFormComponent implements OnInit{
       inputType: 'number',
       name: 'refreservation',
       placeholder: 'Reserved space for this dataset',
+      tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
+ unlimited; specifying a value is suitable for datasets containing logs\
+ which could take up all available free space',
       value: 0,
     },
     {
@@ -95,13 +110,16 @@ export class DatasetFormComponent implements OnInit{
       inputType: 'number',
       name: 'reservation',
       placeholder: 'Reserved space for this dataset and all children',
+      tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
+ value applies to both this dataset and any child datasets.',
       value: 0,
     },
-
     {
       type: 'select',
       name: 'deduplication',
       placeholder: 'Deduplication',
+      tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
+ before making a change to this setting.',
       options: [
         { label: 'ON', value: 'ON' },
         { label: 'VERIFY', value: 'VERIFY' },
@@ -112,6 +130,8 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'readonly',
       placeholder: 'Read-only',
+      tooltip: 'Only available in <b>Advanced Mode</b>;\
+ choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.',
       options: [
         { label: 'ON', value: 'ON' },
         { label: 'OFF', value: 'OFF' }
@@ -122,7 +142,7 @@ export class DatasetFormComponent implements OnInit{
       name: 'snapdir',
       placeholder: 'Snapshot directory',
       tooltip: 'Only available in <b>Advanced Mode</b>;\
- makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dataset.',
+makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dataset.',
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -144,6 +164,9 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'recordsize',
       placeholder: 'Record Size',
+      tooltip: 'Only available in <b>Advanced Mode</b>; while ZFS automatically\
+ adapts the record size dynamically to adapt to data, if the data has a fixed size\
+ for example, a database, matching that size may result in better performance.',
       options: [
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
@@ -163,6 +186,9 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'casesensitivity',
       placeholder: 'Case Sensitivity',
+      tooltip: 'Choices are: <b>sensitive</b> (default, assumes filenames are\
+ case sensitive), <b>insensitive</b> (assumes filenames are not case sensitive), or\
+ <b>mixed</b> (understands both types of filenames).',
       options: [
         { label: 'SENSITIVE', value: 'SENSITIVE' },
         { label: 'INSENSITIVE', value: 'INSENSITIVE' },
