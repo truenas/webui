@@ -69,10 +69,11 @@
 
 		  <ngx-datatable-column
 				*ngFor="let col of conf.columns"
-				prop="{{col.prop}}" 
-				 name="{{col.name}}">
+				prop="{{col.prop}}"
+				name="{{col.name}}">
 				 <ng-template let-row="row" ngx-datatable-cell-template>
-					<div title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
+					<div id="{{col.prop}}_{{row[col.prop]}}" 
+					     title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
 						<img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
 						{{row[col.prop]}}
 					  </div>

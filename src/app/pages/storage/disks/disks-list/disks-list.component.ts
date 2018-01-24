@@ -11,6 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { ErdService } from 'app/services/erd.service';
 
 export class DisksListConfig {
     protected flattenedVolData: any;
@@ -114,8 +115,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public title = "View Disks";
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) {
-    super(rest, router, ws, _eRef, dialog, loader);
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) {
+    super(rest, router, ws, _eRef, dialog, loader, erdService);
       this.conf = new DisksListConfig(this.router, "", "");
   }
 
