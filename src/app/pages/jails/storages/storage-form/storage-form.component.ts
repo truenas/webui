@@ -62,6 +62,9 @@ export class StorageFormComponent {
       initial: '/mnt',
       name: 'source',
       placeholder: 'Source',
+      tooltip: 'Directory or dataset on the FreeNAS system which will\
+ be accessed by the jail. This directory <b>must</b> reside outside of\
+ the volume or dataset being used by the jail.',
     },
     {
       // type: 'explorer',
@@ -69,7 +72,11 @@ export class StorageFormComponent {
       type: 'input',
       name: 'destination',
       placeholder: 'Destination',
-    }
+      tooltip: 'Select an existing, empty directory within the\
+ jail to link to the <b>Source</b> storage area. If that directory does\
+ not exist yet, enter the desired directory name and check the\
+ <b>Create directory</b> box.',
+    },
   ];
 
   private jail: any;

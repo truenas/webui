@@ -3,6 +3,7 @@ import { FormControl, NG_VALIDATORS } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { MdDialog, MdDialogRef } from '@angular/material';
 
 import {
   IdmapService,
@@ -13,6 +14,8 @@ import {
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'smb-edit',
@@ -24,6 +27,14 @@ export class ServiceSMBComponent implements OnInit {
 
   protected resource_name: string = 'services/cifs';
   protected route_success: string[] = ['services'];
+  public formGroup: any;
+  public error: string;
+  protected idmapID: any;
+  protected query_call = "directoryservice.idmap_";
+  protected idmap_type = 'tdb'
+  protected targetDS = '5';
+  
+  
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cifs_srv_netbiosname',
@@ -79,12 +90,12 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: 'Default is UTF-8 which supports all characters in\
    all languages.',
       options: [
-        { label: 'UTF-8', value: 'CP437' },
-        { label: 'iso-8859-1', value: 'iso-8859-1' },
-        { label: 'iso-8859-15', value: 'iso-8859-15' },
-        { label: 'gb2312', value: 'gb2312' },
+        { label: 'UTF-8', value: 'UTF-8' },
+        { label: 'iso-8859-1', value: 'ISO-8859-1' },
+        { label: 'iso-8859-15', value: 'ISO-8859-15' },
+        { label: 'gb2312', value: 'GB2312' },
         { label: 'EUC-JP', value: 'EUC-JP' },
-        { label: 'ISCII', value: 'ISCII' },
+        { label: 'ASCII', value: 'ASCII' },
       ],
     },
     {
@@ -136,18 +147,19 @@ export class ServiceSMBComponent implements OnInit {
       type: 'select',
       name: 'cifs_srv_guest',
       placeholder: 'Guest Account',
+      options: [],
       tooltip: 'Account to be used for guest access; default is\
  nobody; account must have permission to access the shared\
  volume/dataset; if Guest Account user is deleted, resets to nobody.',
     },
     { type: 'permissions', 
-      name: 'bsdusr_mode', 
+      name: 'cifs_srv_filemask', 
       placeholder: 'File Mask',
       tooltip: 'Overrides default file creation mask of 0666 which\
  creates files with read and write access for everybody.',
     },
     { type: 'permissions', 
-      name: 'bsdusr_mode', 
+      name: 'cifs_srv_dirmask', 
       placeholder: 'Directory Mask',
       tooltip: 'Overrides default directory creation mask of 0777\
  which grants directory read, write and execute access for everybody.',
@@ -190,16 +202,6 @@ export class ServiceSMBComponent implements OnInit {
  if IP addresses are used to avoid the delay of a host lookup.',
     },
     {
-      type: 'select',
-      name: 'cifs_srv_min_protocol',
-      placeholder: 'Server Minimum Protocol',
-    },
-    {
-      type: 'select',
-      name: 'cifs_srv_max_protocol',
-      placeholder: 'Server Maximum Protocol',
-    },
-    {
       type: 'checkbox',
       name: 'cifs_srv_allow_execute_always',
       placeholder: 'Allow Execute Always',
@@ -232,9 +234,24 @@ export class ServiceSMBComponent implements OnInit {
       options: [],
       multiple: true
     },
+    {
+      type: 'input',
+      name: 'idmap_tdb_range_low',
+      placeholder: 'Range Low',
+    },
+    {
+      type: 'input',
+      name: 'idmap_tdb_range_high',
+      placeholder: 'Range High'
+    }
   ];
 
   private cifs_srv_bindip: any;
+  private cifs_srv_guest: any;
+  protected defaultIdmap: any;
+  protected idmap_tdb_range_low: any;
+  protected idmap_tdb_range_high: any;
+  protected dialogRef: any;
   ngOnInit() {
     this.iscsiService.getIpChoices().subscribe((res) => {
       this.cifs_srv_bindip =
@@ -243,14 +260,59 @@ export class ServiceSMBComponent implements OnInit {
         this.cifs_srv_bindip.options.push({ label: item[0], value: item[0] });
       })
     });
-    this.idmapService.getADIdmap().subscribe((res) => {});
+    this.ws.call('user.query').subscribe((res) => {
+      this.cifs_srv_guest = _.find(this.fieldConfig, {'name':'cifs_srv_guest'});
+      res.forEach((user) => {
+        this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
+      });
+    });
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
-    protected idmapService: IdmapService) {}
+    protected idmapService: IdmapService,
+    protected loader: AppLoaderService, protected dialog: MdDialog) {}
 
-  afterInit(entityEdit: any) {}
-}
+  afterInit(entityEdit: any) {
+    this.rest.get('services/cifs', {}).subscribe((res) => {
+      this.idmapID = res.id;
+      this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
+        this.defaultIdmap = idmap_res[0];
+        entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
+        entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
+      });
+    });
+  }
+
+  beforeSubmit(entityEdit: any) {
+    this.error = null;
+
+    let value = _.cloneDeep(entityEdit);
+    let new_range_low: any;
+    let new_range_high: any;
+
+    for (let i in value) {
+      if (_.endsWith(i, 'range_low')) {
+        new_range_low = value[i];
+      }
+      if (_.endsWith(i, 'range_high')) {
+        new_range_high = value[i];
+      }
+    }
+      this.ws.call('datastore.query', [this.query_call + this.idmap_type, [["idmap_ds_type", "=", this.targetDS]]]).subscribe((res) => {
+        if (res[0]) {
+          this.idmapID = res[0].id;
+        if (new_range_low > new_range_high) {
+          this.error = "Range low larger than range high";
+        } else {
+          if (this.idmapID) {
+            this.ws.call(
+              'datastore.update', [this.query_call + this.idmap_type, this.idmapID, value]).subscribe(res=>{
+            });
+          };
+        };
+      }});
+    }
+  }

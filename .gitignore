@@ -45,3 +45,12 @@ Thumbs.db
 #ip/port config
 proxy.config.json
 src/environments/environment.ts
+
+# automation framework
+*.iso
+_pycache_
+*.xml
+*.pyc
+.cache
+config.py
+auto_config.py

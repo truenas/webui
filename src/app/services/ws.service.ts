@@ -5,6 +5,7 @@ import {LocalStorage} from 'ngx-webstorage';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
+import { DialogService } from '../services/dialog.service';
 
 @Injectable()
 export class WebSocketService {
@@ -24,7 +25,7 @@ export class WebSocketService {
 
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
-  constructor(private _router: Router) {
+  constructor(private _router: Router, private dialogService: DialogService) {
     this.onOpenSubject = new Subject();
     this.onCloseSubject = new Subject();
     this.pendingCalls = new Map();
@@ -83,6 +84,7 @@ export class WebSocketService {
       this.pendingCalls.delete(data.id);
       if (data.error) {
         console.log("Error: ", data.error);
+        this.dialogService.errorReport('Error ' + data.error.error + ':' + data.error.reason, data.error.trace.class, data.error.trace.formatted);
         call.observer.error(data.error);
       }
       if (call.observer) {
@@ -98,6 +100,7 @@ export class WebSocketService {
 
       if (data.error) {
         console.log("Error: ", data.error);
+        this.dialogService.errorReport('Error ' + data.error.error + ':' + data.error.reason, data.error.trace.class, data.error.trace.formatted);
         subObserver.error(data.error);
       }
       if (subObserver) {
@@ -234,5 +237,6 @@ export class WebSocketService {
     this.clearCredentials();
     this.socket.close();
     this._router.navigate(['/sessions/signin']);
+    (<any>window).location.reload();
   }
 }

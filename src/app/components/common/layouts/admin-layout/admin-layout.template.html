@@ -6,23 +6,23 @@
         <div *ngIf="theme.isActive">
           <div *ngIf="theme.hasDarkLogo; else lightLogo">
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasDark">
-              <img src="assets/images/logo.png" alt="" class="app-logo">
-              <img src="assets/images/logo-text.png" alt="" class="app-logo-text">
+              <img src="assets/images/logo.svg" alt="FreeNAS Shark logo" class="app-logo">
+              <img src="assets/images/logo-text.svg" alt="FreeNAS" class="app-logo-text">
             </div>
             <ng-template #isTruenasDark>
               <div class="branding mat-bg-primary">
-                <img src="assets/images/truenas-logo-ondark.png" alt="truenas-logo">
+                <img src="assets/images/truenas-logo-ondark.svg" alt="TrueNAS logo">
               </div>
           </ng-template>
 	  </div>
   	  <ng-template #lightLogo>
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasLight">
-              <img src="assets/images/light-logo.png" alt="" class="app-logo">
-              <img src="assets/images/light-logo-text.png" alt="" class="app-logo-text">
+              <img src="assets/images/light-logo.svg" alt="FreeNAS icon" class="app-logo">
+              <img src="assets/images/light-logo-text.svg" alt="FreeNAS" class="app-logo-text">
             </div>
             <ng-template #isTruenasLight>
               <div class="branding mat-bg-primary">
-                <img src="assets/images/truenas-logo.png" alt="truenas-logo">
+                <img src="assets/images/truenas-logo.svg" alt="TrueNAS logo">
               </div>
           </ng-template>
 	  </ng-template>
@@ -30,7 +30,7 @@
       </div>
       <div class="app-user">
         <div class="app-user-photo">
-          <img src="assets/images/ix.png" alt="">
+          <img src="assets/images/ix.svg" alt="iXsystems logo">
         </div>
         <span class="app-user-name">
           <md-icon class="icon-xs text-muted">lock</md-icon>
