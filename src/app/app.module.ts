@@ -33,6 +33,8 @@ import { MarkdownModule } from 'angular2-markdown';
 // Core Application Services and Service Injector
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateStaticLoader(http, './assets/i18n', '.json');
@@ -55,9 +57,10 @@ export function createTranslateLoader(http: Http) {
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
-    CoreServices.forRoot()
+    CoreServices.forRoot(),
+    CoreComponents
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TestAlertModalDialogComponent, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -76,6 +79,7 @@ export function createTranslateLoader(http: Http) {
     ErrorDialog,
     InfoDialog,
     AboutModalDialog,
+    TestAlertModalDialogComponent,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog
   ],

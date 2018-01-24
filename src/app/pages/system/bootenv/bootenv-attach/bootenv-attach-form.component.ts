@@ -35,15 +35,18 @@ export class BootEnvAttachFormComponent {
 
   public fieldConfig: FieldConfig[] =[
     {
-      type: 'select', 
-      name: 'dev', 
+      type: 'select',
+      name: 'dev',
       placeholder: 'Member Disk',
+      tooltip : 'Select the device to attach.',
       options :[]
     },
     {
-      type: 'checkbox', 
-      name: 'expand', 
+      type: 'checkbox',
+      name: 'expand',
       placeholder: 'Use all disk space',
+      tooltip : 'Gives control of how much of the new device is made\
+ available to ZFS. When checked, the entire capacity of the new device is used.',
     },
 
   ]

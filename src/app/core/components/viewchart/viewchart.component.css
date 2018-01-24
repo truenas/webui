@@ -1,0 +1,109 @@
+/* Charts */
+.c3 text{
+  font-family:"Droid Sans Mono";
+  color:rgba(0,0,0,0.55);
+  font-weight:900;
+}
+
+.c3-legend-item text{
+  font-family:Roboto;
+}
+
+/* Chart Tooltips */
+.c3-tooltip-container{
+  /*background-color: rgba(0,0,0,0.9) !important;*/
+  background:linear-gradient(0deg,rgba(0,0,0,0.9),rgba(33,33,33,0.9)) !important;
+  color: #fff !important;
+  box-shadow: 0px 7px 10px rgba(0,0,0,0.65) !important;
+  margin: .333333rem;
+  overflow: hidden;
+  padding:24px;
+  border-radius:2px;
+  font-family:"Roboto Medium";
+}
+
+.c3-tooltip,
+.c3-tooltip tbody,
+.c3-tooltip th,
+.c3-tooltip td{
+  background:none;
+  border:none;
+  box-shadow:none;
+}
+
+.c3-tooltip tr{
+  border:none;
+  /*background-color:rgba(0,0,0,0.25);*/
+}
+
+.c3-tooltip tr:nth-child(even){
+  /*background-color:rgba(63,63,63,0.25);*/
+}
+
+
+.c3-tooltip tr:first-child{
+  background-color:none;
+}
+
+.c3-tooltip td>span{
+  /*border:solid #fff 2px;*/
+  border-radius:8px
+}
+
+/* GENERAL CHART STYLES */
+.c3 .tick text {
+  fill:#bbb;
+}
+.c3 path.domain,.c3 .tick line {
+  stroke: #ddd  !important;
+  stroke-opacity:0 !important;
+}
+
+.c3-xgrid {
+  stroke-opacity:0 !important;
+}
+.c3-ygrid, .c3-xgrid {
+  stroke-dasharray:none!important;
+  stroke: #999  !important;
+  stroke-opacity:0.15;
+}
+
+.c3-area {
+  opacity: 0.3!important;
+}
+
+.c3-chart-arc path{
+  stroke:none;
+}
+
+g.c3-chart:nth-child(1){opacity:0.55;}
+.c3-brush .extent{fill-opacity:0.3;}
+
+/* Line/Spline charts */
+.c3-chart-line .c3-circles circle{
+  opacity:0 !important;
+}
+
+.c3-chart-line .c3-circles circle._expanded_{
+  r:4;
+  stroke: white;
+  fill-opacity: 1;
+  stroke-width: 2px;
+  stroke-opacity: 1;
+  opacity: 1 !important;
+}
+.c3-chart-line .c3-lines path.c3-line{
+  stroke-width:3px;
+}
+
+/* SUBCHARTS */
+g.c3-brush + g{
+  opacity:0 !important;
+}
+
+
+
+
+
+
+

@@ -44,16 +44,26 @@ export class CloudCredentialsAmazonComponent {
     type : 'input',
     name : 'name',
     placeholder : 'Account Name',
+    tooltip : 'Enter the Amazon Web Service account name.',
   },
   {
     type : 'textarea',
     name : 'accesskey',
     placeholder :  'Access Key',
+    tooltip : 'Paste the Amazon account access key. This can be found\
+ on the <a href="https://aws.amazon.com/" target="_blank">\
+ Amazon AWS</a> website by clicking on <b>My account</b>, then\
+ <b>Security Credentials</b> and\
+ <b>Access Keys (Access Key ID and Secret Access Key)</b>.',
   },
   {
     type : 'textarea',
     name : 'secretkey',
     placeholder : 'Secret Key',
+    tooltip : 'After pasting the Access Key value to the FreeNAS Cloud\
+ Credential Access Key field, enter the <b>Secret Key</b> value saved\
+ when the pair was created. If the Secret Key value is not known, a new\
+ key pair can be created on the same Amazon screen.',
   },
 ];
 
