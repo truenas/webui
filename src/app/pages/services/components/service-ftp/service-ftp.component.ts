@@ -280,6 +280,11 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
+      name : 'ftp_tls_opt_no_cert_request',
+      placeholder : 'TLS No Certificate Request',
+    },
+    {
+      type : 'checkbox',
       name : 'ftp_tls_opt_no_empty_fragments',
       placeholder : 'TLS No Empty Fragments',
       tooltip: 'Checking this box is <b>not</b> recommended as it\

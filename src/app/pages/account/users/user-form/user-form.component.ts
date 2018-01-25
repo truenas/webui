@@ -34,12 +34,20 @@ export class UserFormComponent {
       type : 'input',
       name : 'uid',
       placeholder : 'User ID',
+      tooltip : 'By convention, user accounts have an ID greater than\
+ 1000 and system accounts have an ID equal to the default port number\
+ used by the service.',
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'username',
       placeholder : 'Username',
+      tooltip : 'Maximum length is 16 characters, although using 8 or\
+ less is recommended for interoperability. Usernames cannot begin with\
+ a hyphen or contain a space, tab, or these characters:\
+ <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can only be used\
+ as the last character.',
       validation : [ Validators.required ]
     },
 
@@ -47,6 +55,9 @@ export class UserFormComponent {
       type : 'checkbox',
       name : 'group_create',
       placeholder : 'Create a new Primary Group for the user.',
+      tooltip : 'By default, a primary group with the same name as the\
+ user is created. Uncheck this box to select a different primary group\
+ name.',
       value : true,
       isHidden: false
     },
@@ -55,6 +66,8 @@ export class UserFormComponent {
       type : 'select',
       name : 'group',
       placeholder : 'Primary Group',
+      tooltip : 'For security reasons, FreeBSD will not give a user\
+ <b>su</b> permissions if <i>wheel</i> is their primary group.',
       options : [],
       relation : [
         {
@@ -69,36 +82,46 @@ export class UserFormComponent {
     {
       type : 'explorer',
       initial: '/mnt',
+
       name: 'home',
       placeholder: 'Home Directory',
-      value: '/nonexistent'
+      value: '/nonexistent',
+      tooltip : 'Browse to the name of an <b>existing</b> volume or\
+      dataset that the user will be assigned permission to access.',
     },
     {
       type : 'permissions',
       name : 'home_mode',
       placeholder : 'Home Directory Mode',
+      tooltip : 'Sets default Unix permissions of the user home\
+ directory. Read-only for built-in users.',
     },
     {
       type : 'select',
       name : 'shell',
       placeholder : 'Shell',
+      tooltip : 'Select the shell to use for local and SSH logins.',
       options : [],
     },
     {
       type : 'input',
       name : 'full_name',
       placeholder : 'Full Name',
+      tooltip : 'Entering a name is required. Spaces are allowed.',
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'email',
       placeholder : 'Email',
+      tooltip : 'Associate an email address with the account',
     },
     {
       type : 'input',
       name : 'password',
       placeholder : 'Password',
+      tooltip : 'Required unless <b>Disable password login</b> is\
+ checked. Passwords cannot contain a <b>?</b>.',
       inputType : 'password',
     },
     {
@@ -113,28 +136,40 @@ export class UserFormComponent {
       type : 'checkbox',
       name : 'password_disabled',
       placeholder : 'Disable password login',
+      tooltip : 'Disables password logins and authentication to SMB\
+ shares. Checking this grays out <b>Lock user</b> and\
+ <b>Permit Sudo</b>, which are mutually exclusive.',
     },
     {
       type : 'checkbox',
       name : 'locked',
-      placeholder : 'Lock user'
+      placeholder : 'Lock user',
+      tooltip : 'Check this to prevent the user from logging in until\
+ the account is unlocked (this box is unchecked). Checking this box\
+ grays out <b>Disable password login</b> which is mutually exclusive.',
     },
     {
       type : 'checkbox',
       name : 'sudo',
-      placeholder : 'Permit Sudo'
+      placeholder : 'Permit Sudo',
+      tooltip : 'Check this to give members of the group permission to\
+ use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.',
     },
-  
+
     {
       type : 'checkbox',
       name : 'microsoft_account',
-      placeholder : 'Microsoft Account'
+      placeholder : 'Microsoft Account',
+      tooltip : 'Check this if the user will be connecting from a\
+      Windows 8 or higher system.',
     },
 
     {
       type : 'textarea',
       name : 'sshpubkey',
-      placeholder : 'SSH Public Key'
+      placeholder : 'SSH Public Key',
+      tooltip : 'Paste the <b>public</b> SSH key of the user for any\
+      key-based authentication. <b>Do not paste the private key!</b>',
     },
     {
       type : 'select',
