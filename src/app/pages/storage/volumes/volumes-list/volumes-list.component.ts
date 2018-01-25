@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material';
 
 
 import { Injectable } from '@angular/core';
+import { ErdService } from 'app/services/erd.service';
 
 
 
@@ -267,9 +268,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MatDialog) {
-    super(rest, router, ws, _eRef, dialog, loader);
-
+    protected mdDialog: MatDialog, protected erdService: ErdService) {
+    super(rest, router, ws, _eRef, dialog, loader, erdService);
   }
 
   

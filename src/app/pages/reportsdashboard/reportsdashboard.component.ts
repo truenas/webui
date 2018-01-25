@@ -8,6 +8,7 @@ import {
   WebSocketService
 } from '../../services/';
 import { PageEvent } from '@angular/material';
+import { ErdService } from 'app/services/erd.service';
 
 
 interface TabChartsMappingData {
@@ -43,9 +44,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
   
-  private erd: any = null;
 
-  constructor(private _lineChartService: LineChartService) {
+
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService) {
     
   }
 
@@ -70,15 +71,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   ngOnInit() { 
     this._lineChartService.getChartConfigData(this);
 
-    // This invokes the element-resize-detector js library under node_modules
-    // It listens to element level size change events (even when the global window
-    // Doesn't Resize.)  This lets you even off of card and element and div level
-    // size rechange events... As a result of responive, menu moving, etc...
-    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
-      this.erd = window['elementResizeDetectorMaker'].call();
-    }
-
-   
+    
 
   }
 
@@ -86,9 +79,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   }
 
   ngAfterViewInit(): void {
-    this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
-      (<any>window).dispatchEvent(new Event('resize'));
-    });
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
   }
 
   /**

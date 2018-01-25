@@ -72,6 +72,8 @@ export class Service {
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
       window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
+    } else if (service === 'cifs') {
+        this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
       // Determines the route path
       this.router.navigate(new Array('').concat(['services', service]));

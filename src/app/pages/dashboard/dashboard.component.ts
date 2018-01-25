@@ -11,6 +11,7 @@ import {
 import { ChartConfigData, LineChartService } from 'app/components/common/lineChart/lineChart.service';
 import { DialogService } from '../../services/dialog.service';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
+import { ErdService } from 'app/services/erd.service';
 
 interface NoteCard {
   id?:string;
@@ -31,6 +32,7 @@ interface NoteCard {
 export class DashboardComponent implements OnInit, AfterViewInit {
 
   public info: any = {};
+  public network_info: any = {};
   public ipAddress: any = [];
   public chartFormatter: ChartFormatter = {
     format(value, ratio, id) {
@@ -83,18 +85,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  private erd: any = null;
   public cards: Array<any> = [];
   public notes: Array<any> = [];
-
   public noteStyle: any = {
     // 'width': '480px',
     'height': '400px',
-    // 'margin': '50px auto'
+    // 'margin': '50px auto' 
   };
   constructor(private rest: RestService, private ws: WebSocketService,
     protected systemGeneralService: SystemGeneralService, private dialog: DialogService,
-    protected loader: AppLoaderService,) {
+    protected loader: AppLoaderService, protected erdService: ErdService) {
     rest.get('storage/volume/', {}).subscribe((res) => {
       res.data.forEach((vol) => {
         this.graphs.splice(0, 0, {
@@ -129,6 +129,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.info.physmem =
         Number(this.info.physmem / 1024 / 1024).toFixed(0) + ' MiB';
     });
+    this.ws.call('network.general.summary').subscribe((res) => {
+      this.network_info = res;
+    })
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
         this.ipAddress = _.uniq(res[0]);
@@ -155,15 +158,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       });
      });
 
-
-    // This invokes the element-resize-detector js library under node_modules
-    // It listens to element level size change events (even when the global window
-    // Doesn't Resize.)  This lets you even off of card and element and div level
-    // size rechange events... As a result of responive, menu moving, etc...
-    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
-      this.erd = window['elementResizeDetectorMaker'].call();
-    }
-
     this.getNotes();
   }
 
@@ -184,9 +178,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // this.erd.listenTo(document.getElementById("dashboardcontainerdiv"), (element) => {
-    //   (<any>window).dispatchEvent(new Event('resize'));
-    // });
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
   }
 
   addNote() {

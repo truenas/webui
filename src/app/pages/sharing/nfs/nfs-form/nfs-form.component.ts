@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { RestService } from '../../../../services/rest.service';
 
 @Component({
   selector : 'app-nfs-form',
@@ -123,6 +124,31 @@ export class NFSFormComponent {
  clients.',
       options: []
     },
+    {
+      type: 'select',
+      multiple: true,
+      name: 'nfs_security',
+      placeholder: 'Security',
+      options: [
+        {
+          label: 'sys',
+          value: 'sys',
+        },
+        {
+          label: 'krb5',
+          value: 'krb5',
+        },
+        {
+          label: 'krb5i',
+          value: 'krb5i',
+        },
+        {
+          label: 'krb5p',
+          value: 'krb5p',
+        }
+      ],
+      isHidden: false,
+    }
   ];
 
   protected arrayControl: any;
@@ -172,13 +198,15 @@ export class NFSFormComponent {
     'nfs_maproot_user',
     'nfs_maproot_group',
     'nfs_mapall_user',
-    'nfs_mapall_group'
+    'nfs_mapall_group',
+    'nfs_security',
   ];
 
   constructor(protected router: Router,
               protected entityFormService: EntityFormService,
               protected route: ActivatedRoute,
-              protected userService: UserService ) {}
+              protected userService: UserService,
+              protected rest: RestService ) {}
 
   preInit(EntityForm: any) {
     this.arrayControl =
@@ -188,6 +216,15 @@ export class NFSFormComponent {
          this.arrayControl.initialCount = this.initialCount = this.initialCount_default = 0;
       }
     });
+
+    this.rest.get('services/nfs', {}).subscribe((res) => {
+      if (res.data['nfs_srv_v4']) {
+        _.find(this.fieldConfig, {'name' : 'nfs_security'}).isHidden = false;
+      } else {
+        _.find(this.fieldConfig, {'name' : 'nfs_security'}).isHidden = true;
+      }
+    });
+
   }
 
   afterInit(EntityForm: any) {

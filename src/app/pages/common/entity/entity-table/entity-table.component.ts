@@ -15,6 +15,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
+import { ErdService } from 'app/services/erd.service';
 
 
 @Component({
@@ -29,8 +30,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @Input('conf') conf: any;
   
   @ViewChild('filter') filter: ElementRef;
-  private erd: any = null;
-
+ 
   // MdPaginator Inputs
   public paginationPageSize = 20;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
@@ -53,12 +53,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService) { }
+    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) { }
 
   ngOnInit() {
-    if (window.hasOwnProperty('elementResizeDetectorMaker')) {
-      this.erd = window['elementResizeDetectorMaker'].call();
-    }
+    
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -112,9 +110,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   
 
   ngAfterViewInit(): void {
-    this.erd.listenTo(document.getElementById("entity-table-component"), (element) => {
-      (<any>window).dispatchEvent(new Event('resize'));
-    });
+
+    this.erdService.attachResizeEventToElement("entity-table-component");
+    
   }
 
   getData() {

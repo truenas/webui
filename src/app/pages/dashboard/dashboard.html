@@ -52,6 +52,50 @@
   		</mat-list>
       </mat-card-content>
     </mat-card>
+      <mat-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+    <mat-card-title>
+      <div class="mat-toolbar mat-card-toolbar">
+        <div class="mat-card-title-text">Network Information</div>
+      </div>
+    </mat-card-title>
+    <mat-card-content>
+      <mat-list>
+        <div *ngIf="network_info.ips && network_info.ips.lagg0">
+          <mat-list-item *ngFor="let ipv4 of network_info.ips.lagg0.IPV4">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label matLine class="mr-1"><strong>IPv4:</strong></label>
+            <p matLine>{{ipv4}} </p>
+          </mat-list-item>
+        </div>
+        <div *ngIf="network_info.ips && network_info.ips.lagg0">
+          <mat-list-item *ngFor="let ipv6 of network_info.ips.lagg0.IPV6">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label matLine class="mr-1"><strong>IPv6:</strong></label>
+            <p matLine>{{ipv6}} </p>
+          </mat-list-item>
+        </div>
+        <div *ngIf="network_info.default_routes">
+          <mat-list-item *ngFor="let route of network_info.default_routes">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label matLine class="mr-1"><strong>Routes:</strong></label>
+            <p matLine>{{route}} </p>
+          </mat-list-item>
+        </div>
+        <div *ngIf="network_info.nameservers">
+          <mat-list-item *ngFor="let nameserver of network_info.nameservers; let i=index">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+            <span class="cdk-visually-hidden mr-1">Label Icon</span>
+            <label matLine class="mr-1"><strong>Nameserver{{i + 1}}: </strong></label>
+            <p matLine>{{nameserver}} </p>
+          </mat-list-item>
+        </div>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
   	<mat-card
   		*ngFor="let graph of graphs" 
   		class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
