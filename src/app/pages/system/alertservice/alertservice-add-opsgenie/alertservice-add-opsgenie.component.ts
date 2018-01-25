@@ -43,14 +43,21 @@ export class AlertServiceAddOpsgenieComponent {
       type : 'input',
       name : 'cluster_name',
       placeholder: 'cluster_name',
-      tooltip: 'Enter the name of the cluster.',
+      tooltip: 'Enter the name of the cluster. To find the\
+ <b>cluster_name</b> sign in to the OpsGenie web interface, and\
+ go to <b>Integrations -> Configured Integrations</b>. Click the\
+ desired integration, and go to the <b>Name</b> field of the\
+ <b>Settings</b> form to locate the cluster name.',
     },{
       type : 'input',
       name : 'api_key',
       placeholder: 'api_key',
-      tooltip: 'Paste the API Key here. Refer to the\
-      <a href="https://docs.opsgenie.com/v1.0/docs/api-integration" target="_blank"> OpsGenie documentation</a>\
-      for more information about finding the API Key.',
+      tooltip: 'Paste the <b>api_key</b> here. To find the API key sign\
+ in to the OpsGenie web interface, and go to\
+ <b>Integrations -> Configured Integrations</b>. Click the desired\
+ integration and go to the <b>API Key</b> field of the <b>Settings</b> form to locate the API key.\
+ Refer to the <a href="https://docs.opsgenie.com/v1.0/docs/api-integration" target="_blank"> OpsGenie documentation </a>\
+ for more information about API integration.',
     },
     {
       type : 'checkbox',
