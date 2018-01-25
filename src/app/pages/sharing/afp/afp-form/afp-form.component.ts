@@ -91,6 +91,11 @@ export class AFPFormComponent implements OnDestroy {
     },
     {
       type: 'checkbox',
+      name: 'afp_home',
+      placeholder: 'Use as home share'
+    },
+    {
+      type: 'checkbox',
       name: 'afp_nodev',
       placeholder: 'Zero Device Numbers',
       tooltip: 'Enable when the device number is not constant across\

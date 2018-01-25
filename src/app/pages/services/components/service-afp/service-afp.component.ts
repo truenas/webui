@@ -12,7 +12,8 @@ import {Subscription} from 'rxjs';
 import {
   RestService,
   UserService,
-  WebSocketService
+  WebSocketService,
+  IscsiService
 } from '../../../../services/';
 import {
   FieldConfig
@@ -21,7 +22,7 @@ import {
 @Component({
   selector : 'afp-edit',
   template : ` <entity-form [conf]="this"></entity-form>`,
-  providers : [ UserService ]
+  providers : [ UserService, IscsiService ]
 })
 
 export class ServiceAFPComponent {
@@ -32,9 +33,13 @@ export class ServiceAFPComponent {
     {
       type : 'select',
       name : 'afp_srv_guest_user',
-      placeholder : 'Guest Access',
-      tooltip: 'If checked, clients will not be prompted to\
- authenticate before accessing AFP shares.',
+      placeholder : 'Guest Account',
+      tooltip: 'Select account to use for guest access; the selected\
+ account must have permissions to the volume or dataset being shared.\
+ The privileges given to this user are also available to any \
+ client connecting to the guest service. This user must exist in the\
+ password file, but does not require a\
+ valid login. Note the user root cannot be used as guest account.',
       options: [
         {label : 'nobody', value : 'nobody'}
       ]
@@ -42,13 +47,9 @@ export class ServiceAFPComponent {
     {
       type : 'checkbox',
       name : 'afp_srv_guest',
-      placeholder : 'Guest account',
-      tooltip: 'Select account to use for guest access; the selected\
- account must have permissions to the volume or dataset being shared.\
- The privileges given to this user are also available to any \
- client connecting to the guest service. This user must exist in the\
- password file, but does not require a\
- valid login. Note the user root cannot be used as guest account.',
+      placeholder : 'Guest Access',
+      tooltip: 'If checked, clients will not be prompted to\
+ authenticate before accessing AFP shares.',
     },
     {
       type : 'input',
@@ -56,28 +57,6 @@ export class ServiceAFPComponent {
       placeholder : 'Max. Connections',
       tooltip: 'Maximum number of simultaneous connections permitted\
  via AFP. The default limit is 50.',
-    },
-    {
-      type : 'checkbox',
-      name : 'afp_srv_homedir_enable',
-      placeholder : 'Enable home directories',
-      tooltip: 'If checked, any user home directories located under\
- <strong>Home directories</strong> will be available over the share.',
-    },
-    {
-      type : 'explorer',
-      initial: '/mnt',
-      name : 'afp_srv_homedir',
-      placeholder : 'Home Directories',
-      tooltip: 'Select the volume or dataset which contains user\
- home directories.',
-    },
-    {
-      type : 'input',
-      name : 'afp_srv_homename',
-      placeholder : 'Home share name',
-      tooltip: 'Overrides the default home folder name with the\
- specified value.',
     },
     {
       type : 'explorer',
@@ -106,6 +85,7 @@ export class ServiceAFPComponent {
     {
       type : 'select',
       name : 'afp_srv_map_acls',
+      placeholder : 'Map ACLs',
       tooltip: 'Choose mapping of effective permissions for\
  authenticated users; <b>Rights</b>\
  (default, Unix-style permissions), <b>None</b>, or\
@@ -117,12 +97,14 @@ export class ServiceAFPComponent {
       ],
     },
     {
-      type : 'input',
+      type : 'select',
       name : 'afp_srv_bindip',
       placeholder : 'Bind Interfaces',
       tooltip: 'Specify the IP addresses to listen for FTP connections.\
  If none are specified, advertise the first IP address of the\
  system, but to listen for any incoming request.',
+      options: [],
+      multiple: true
     },
     {
       type : 'textarea',
@@ -133,10 +115,11 @@ export class ServiceAFPComponent {
     }
   ];
   private guest_users: any;
+  private afp_srv_bindip: any;
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected userService: UserService) {}
+              protected userService: UserService, protected iscsiService: IscsiService,) {}
 
   afterInit(entityEdit: any) {
     let self = this;
@@ -147,6 +130,13 @@ export class ServiceAFPComponent {
           { label : res.data[i].bsdusr_username, value : res.data[i].bsdusr_username }
           );
       }
+    });
+    this.iscsiService.getIpChoices().subscribe((res) => {
+      this.afp_srv_bindip =
+        _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
+      res.forEach((item) => {
+        this.afp_srv_bindip.options.push({ label: item[0], value: item[0] });
+      })
     });
   }
 }
