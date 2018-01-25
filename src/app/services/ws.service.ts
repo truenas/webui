@@ -202,6 +202,7 @@ export class WebSocketService {
   login(username, password): Observable<any> {
     this.username = username;
     this.password = password;
+    
     return Observable.create((observer) => {
       this.call('auth.login', [ username, password ]).subscribe((result) => {
         if (result === true) {

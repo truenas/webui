@@ -60,11 +60,13 @@ export class VolumesListTableConfig {
   public rowData: ZfsPoolData[] = [];
   
   constructor(
+    private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
     private _classId: string,
     private title: string,
     public mdDialog: MdDialog,
-    protected rest: RestService) {
+    protected rest: RestService,
+    protected dialogService: DialogService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -118,23 +120,60 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row1.id]));
         }
       });
+      actions.push({
+        label: "Lock",
+        onClick: (row1) => {
+          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name ).subscribe((confirmResult)=>{
+            if( confirmResult === true ) {
+              
+              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({})}).subscribe((restPostResp)=>{
+                console.log("restPostResp", restPostResp);
+                this.dialogService.Info("Lock", "Locked " + row1.name ).subscribe((infoResult)=>{
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              });
+
+            }
+          });
+        }
+      });
+
+      /**
+       * 
+       * This unlock code is the right API.. but Im not sure about where to get the 
+       * unlock's passphrase parameter.... 
+       * 
+      actions.push({
+        label: "Un-Lock",
+        onClick: (row1) => {
+          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id ).subscribe((confirmResult)=>{
+            if( confirmResult === true ) {
+
+              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: ""})}).subscribe((restPostResp)=>{
+                console.log("restPostResp", restPostResp);
+                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname ).subscribe((infoResult)=>{
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              });
+
+              
+            }
+          });
+        }
+      });
+      **/
 
       if (rowData.vol_encrypt > 0) {
         actions.push({
           label: "Download Encrypt Key",
           onClick: (row1) => {
             let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-
-            dialogRef.componentInstance.volumeId = row1.id;
-            dialogRef.afterClosed().subscribe(result => {
-              this._router.navigate(['/', 'storage', 'volumes']);
-            });
           }
         });
       }
     }
 
-    if (rowData.type == "dataset") {
+    if (rowData.type === "dataset") {
       actions.push({
         label: "Add Dataset",
         onClick: (row1) => {
@@ -263,8 +302,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this.router, "", "Volumes", this.mdDialog, this.rest);
+  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialog);
   expanded = false;
+  public paintMe = true;
+
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
@@ -273,12 +314,19 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   }
 
-  
+  public repaintMe() {
+    this.paintMe = false;
+    this.ngOnInit();
+  }
 
   ngOnInit(): void {
+    while(this.zfsPoolRows.length > 0 ) {
+      this.zfsPoolRows.pop();
+    }
+
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog, this.rest);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialog);
         volume.type = 'zpool';
         
         try {
@@ -298,6 +346,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       if (this.zfsPoolRows.length === 1) {
         this.expanded = true;
       }
+
+      this.paintMe = true;
     });
 
   }

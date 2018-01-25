@@ -34,7 +34,6 @@ import { MarkdownModule } from 'angular2-markdown';
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 import { ErdService } from 'app/services/erd.service';
 
 export function createTranslateLoader(http: Http) {
@@ -61,7 +60,7 @@ export function createTranslateLoader(http: Http) {
     CoreServices.forRoot(),
     CoreComponents
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, TestAlertModalDialogComponent, ConsolePanelModalDialog, DownloadKeyModalDialog],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -81,7 +80,6 @@ export function createTranslateLoader(http: Http) {
     ErrorDialog,
     InfoDialog,
     AboutModalDialog,
-    TestAlertModalDialogComponent,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog
   ],
