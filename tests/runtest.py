@@ -9,7 +9,7 @@ from subprocess import call
 from os import path
 # when running for jenkins user driver, and when running on  an ubuntu system user driverU, because of  capabilities
 from driver import webDriver
-# from driverU import webDriver
+#from driverU import webDriver
 # Importing test
 # from autoflush import autoflush
 from login import run_login_test
