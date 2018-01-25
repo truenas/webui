@@ -61,8 +61,8 @@ class login_test(unittest.TestCase):
         # assert response
         self.assertTrue("Dashboard" in page_data)
         # cancelling the tour
-        if self.is_element_present(By.XPATH, "/html/body/div[3]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[3]/div[1]/button").click()
+        if self.is_element_present(By.XPATH, "/html/body/div[5]/div[1]/button"):
+            driver.find_element_by_xpath("/html/body/div[5]/div[1]/button").click()
 
     # method to test if an element is present
     def is_element_present(self, how, what):
@@ -82,7 +82,5 @@ class login_test(unittest.TestCase):
 def run_login_test(webdriver):
     global driver
     driver = webdriver
-
     suite = unittest.TestLoader().loadTestsFromTestCase(login_test)
-    # unittest.TextTestRunner(verbosity=2).run(suite)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
