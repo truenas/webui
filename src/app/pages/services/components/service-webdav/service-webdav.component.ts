@@ -69,7 +69,9 @@ export class ServiceWebdavComponent implements OnInit {
       tooltip : 'Select the SSL certificate to use for encrypted\
  connections. Navigate to the <b>System -> Certificates</b> page to\
  create a certificate.',
-      options : []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type : 'select',
