@@ -28,11 +28,14 @@ export class ExtentFormComponent {
       type : 'input',
       name : 'iscsi_target_extent_name',
       placeholder : 'Extent name',
+      tooltip: 'Name of Extent. If the <b>Extent size</b> is not\
+ <i>0</i>, it cannot be an existing file within the voulme/dataset.',
     },
     {
       type: 'select',
       name: 'iscsi_target_extent_type',
       placeholder: 'Extent type',
+      tooltip: 'Select from <i>File</i> or <i>Device</i>.',
       options: [
         {
           label: 'Device',
@@ -48,6 +51,8 @@ export class ExtentFormComponent {
       type: 'select',
       name: 'iscsi_target_extent_disk',
       placeholder: 'Device',
+      tooltip: 'Only appears if <i>Device</i> is selected. Select the\
+ unformatted disk, controller, zvol snapshot, or HAST device.',
       options: [],
       isHidden: false,
     },
@@ -55,24 +60,36 @@ export class ExtentFormComponent {
       type : 'input',
       name : 'iscsi_target_extent_serial',
       placeholder : 'Serial',
+      tooltip: 'Unique LUN ID. The default is generated from the MAC\
+ address of the system.',
     },
     {
       type : 'explorer',
       initial: '/mnt',
       name: 'iscsi_target_extent_path',
       placeholder: 'Path to the extent',
+      tooltip: 'Browse to an existing file and use <i>0</i> as the\
+ <b>Extent size</b>, or browse to the volume or dataset, click\
+ <b>Close</b>, append the\ <b>Extent Name</b> to the path, and specify\
+ a value in <b>Extent Size</b>. Extents cannot be created inside the\
+ jail root directory.',
       isHidden: false,
     },
     {
       type: 'input',
       name: 'iscsi_target_extent_filesize',
       placeholder: 'Extent size',
+      tooltip: 'If the size is specified as <i>0</i>, the file must\
+ already exist and the actual file size will be used. Otherwise,\
+ specify the size of the file to create.',
       isHidden: false,
     },
     {
       type: 'select',
       name: 'iscsi_target_extent_blocksize',
       placeholder: 'Logical block size',
+      tooltip: 'Only override the defualt if the initiator requires a\
+different block size.',
       options: [
         {
           label: '512',
@@ -97,32 +114,47 @@ export class ExtentFormComponent {
       type: 'checkbox',
       name: 'iscsi_target_extent_pblocksize',
       placeholder: 'Disable physical block size reporting',
+      tooltip: 'If the initiator does not support physical block size\
+ values over 4K (MS SQL), check this box.',
     },
     {
       type: 'input',
       name: 'iscsi_target_extent_avail_threshold',
       placeholder: 'Available space threshold (%)',
+      tooltip: 'Only appears if <i>File</i> or a zvol is selected. When\
+ the specified percentage of free space is reached, the system issues\
+ an alert. See <a href="http://doc.freenas.org/11/vaai.html#vaai"\
+ target="_blank">VAAI</a> Threshold Warning.',
     },
     {
       type : 'input',
       name : 'iscsi_target_extent_comment',
       placeholder : 'Comment',
+      tooltip: 'Optional.',
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_insecure_tpc',
       placeholder: 'Enable TPC',
+      tooltip: 'If checked, an initiator can bypass normal access\
+ control and access any scannable target. This allows <b>xcopy</b>\
+ operations which are otherwise blocked by access control.',
       value: true,
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_xen',
       placeholder: 'Xen initiator compat mode',
+      tooltip: 'Check this box when using Xen as the iSCSI initiator.',
     },
     {
       type: 'select',
       name: 'iscsi_target_extent_rpm',
       placeholder: 'LUN RPM',
+      tooltip: 'Do <b>NOT</b> change this setting when using Windows\
+ as the initiator. Only needs to be changed in large environments\
+ where the number of systems using a specific RPM is needed for\
+ accurate reporting statistics.',
       options: [],
       value: 'SSD',
     },
@@ -130,6 +162,8 @@ export class ExtentFormComponent {
       type: 'checkbox',
       name: 'iscsi_target_extent_ro',
       placeholder: 'Read-only',
+      tooltip: 'Check this box to prevent the initiator from\
+ initializing this LUN.',
     },
   ];
 
