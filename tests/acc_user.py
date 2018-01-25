@@ -28,27 +28,16 @@ xpaths = {
         'navAccount': "//*[@id='nav-1']/div/a[1]",
         'submenuUser': "//*[@id='1-1']",
         'submenuGroup': "//*[@id='1-0']",
-        'newUser': "//*[@id='1']/form-input/div/" 
-        "md-input-container/div/div[1]/div/input",
-        'primaryGroupcheckbox': "//*[@id='2']/form-checkbox/"
-        "div/md-checkbox/label/div",
-        'primaryGroupdropdown': "//*[@id='3']"
-        "/form-select/div/md-select/div",
-        'newUserName': "//*[@id='7']/form-input/"
-        "div/md-input-container/div/div[1]/div/input",
-        'newUserPass': "//*[@id='9']/form-input/"
-        "div/md-input-container/div/div[1]/div/input",
-        'newUserPassConf': "//*[@id='10']/form-input/div/"
-        "md-input-container/div/div[1]/div/input",
-        'permitSudocheckbox': "//*[@id='13']/form-checkbox/"
-        "div/md-checkbox/label/div",
-        'deleteConfirm': "/html/body/div[3]/div[3]/div[2]/md-dialog-container/"
-        "confirm-dialog/div[1]/md-checkbox/label/div",
-        'fabTrigger': "//*[@id='entity-table-component']/div[1]/"
-        "app-entity-table-add-actions/div/smd-fab-speed-dial",
-        'fabAction': "//*[@id='entity-table-component']/div[1]/"
-        "app-entity-table-add-actions/div/smd-fab-speed-dial"
-        "/div/smd-fab-actions/button"
+        'newUser': "//*[@id='1']/form-input/div/md-input-container/div/div[1]/div/input",
+        'primaryGroupcheckbox': "//*[@id='2']/form-checkbox/div/md-checkbox/label/div",
+        'primaryGroupdropdown': "//*[@id='3']/form-select/div/md-select/div",
+        'newUserName': "//*[@id='7']/form-input/div/md-input-container/div/div[1]/div/input",
+        'newUserPass': "//*[@id='9']/form-input/div/md-input-container/div/div[1]/div/input",
+        'newUserPassConf': "//*[@id='10']/form-input/div/md-input-container/div/div[1]/div/input",
+        'permitSudocheckbox': "//*[@id='13']/form-checkbox/div/md-checkbox/label/div",
+        'deleteConfirm': "/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
+        'fabTrigger': "//*[@id='entity-table-component']/div[1]/app-entity-table-add-actions/div/smd-fab-speed-dial/div",
+        'fabAction': "//*[@id='entity-table-component']/div[1]/app-entity-table-add-actions/div/smd-fab-speed-dial/div/smd-fab-actions/button"
         }
 
 
@@ -221,11 +210,17 @@ class create_user_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[1]/p"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[1]/p")
+        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button"):
+            ui_element=driver.find_element_by_xpath("/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
             error_element=ui_element.text
             print (error_element)
-            driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[2]/button").click()
+            ui_element.click()
+        if self.is_element_present(By.XPATH,"/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[2]/button"):
+            ui_element2=driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
+            error_element2=ui_element2.text
+            print (error_element2)
+            ui_element2.click()
+
 
     def delete(self, name):
         # Click User submenu
