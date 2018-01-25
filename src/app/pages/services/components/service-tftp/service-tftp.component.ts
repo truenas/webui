@@ -37,21 +37,29 @@ export class ServiceTFTPComponent {
       initial: '/mnt',
       name : 'tftp_directory',
       placeholder : 'Directory',
+      tooltip : 'Browse to an <b>existing</b> directory to be used for\
+ storage. Some devices require a specific directory name. Refer to the\
+ device documentation for more details.',
     },
     {
       type : 'checkbox',
       name : 'tftp_newfiles',
       placeholder : 'Allow New Files',
+      tooltip : 'Enable this if network devices need to send files to\
+ the system.',
     },
     {
       type : 'input',
       name : 'tftp_port',
       placeholder : 'Port',
+      tooltip : 'Enter a UDP prort to listen for TFTP requests.',
     },
     {
       type : 'select',
       name : 'tftp_username',
       placeholder : 'Username',
+      tooltip : 'Select the account to use for TFTP requests. This\
+ account must have permission to the <b>Directory</b>.',
       options : [
         {label : '', value : ''},
         {label : 'null', value : ''},
@@ -61,11 +69,16 @@ export class ServiceTFTPComponent {
       type : 'permissions',
       name : 'tftp_umask',
       placeholder : 'Umask',
+      tooltip : 'umask for newly created files. Adjust the permissions\
+ using the checkboxes.',
     },
     {
       type : 'textarea',
       name : 'tftp_options',
       placeholder : 'Extra options',
+      tooltip : 'Add more options from\
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=tftpd" target="_blank">tftpd(8)</a>.\
+ Add one option per line.',
     },
   ];
 
