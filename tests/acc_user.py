@@ -127,7 +127,7 @@ class create_user_test(unittest.TestCase):
         # click on primary group dropdownlist
         driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
         # select the element from the dropdown list by using selectlist function
-        self.selectlist("wheel")
+        self.selectlist(newusername)
         # driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[3]").click()
         # Enter User Full name
         driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
