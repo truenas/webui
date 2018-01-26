@@ -15,6 +15,7 @@ import { TemplateListComponent } from './templates/template-list/';
 import { TemplateFormComponent } from './templates/template-form/';
 import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
+import { JailWizardComponent } from './jail-wizard/';
 
 @NgModule({
   imports : [
@@ -28,7 +29,8 @@ import { JailEditComponent } from './jail-edit/';
     TemplateListComponent,
     TemplateFormComponent,
     JailAddComponent,
-    JailEditComponent
+    JailEditComponent,
+    JailWizardComponent
   ],
   providers : [
     JailService,

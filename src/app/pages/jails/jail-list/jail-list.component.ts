@@ -183,6 +183,17 @@ export class JailListComponent {
     ]
   }
 
+  getAddActions() {
+    return [{
+        label: "Jail Wizard",
+        icon: "beach_access",
+        onClick: () => {
+          this.router.navigate(
+            new Array('').concat(["jails", "wizard"]));
+        }
+      }]
+  }
+
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
