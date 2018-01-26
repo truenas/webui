@@ -78,22 +78,20 @@ export class AdvancedComponent implements OnInit {
     this.dialog.confirm("Generating Debug File", "Run this in the background?");
     this.ws.job('system.debug').subscribe((res) => {
       if (res.state === "SUCCESS") {
-        this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz'])
-          .subscribe(
-            (res) => {
-              this.openSnackBar"Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
-              window.open(res[1]);
-            },
-            (err) => {
-              this.openSnackBar("Please check the network connection", "Failed");
-            }
-          );
+        this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
+          (res) => {
+            this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
+            window.open(res[1]);
+          },
+          (err) => {
+            this.openSnackBar("Please check the network connection", "Failed");
+          }
+        );
       }
     }, () => {
 
     }, () => {
-      if (this.job.state == 'SUCCESS') {
-      } else if (this.job.state == 'FAILED') {
+      if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
         this.openSnackBar("Please check the network connection", "Failed");
       }
     });
@@ -137,6 +135,6 @@ export class AdvancedComponent implements OnInit {
       }, res => {
         this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
         this.load.close();
-      })
+      });
   }
 }
