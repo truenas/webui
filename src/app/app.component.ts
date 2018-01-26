@@ -51,10 +51,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.changePageTitle();
-    let self = this;
-    window.addEventListener('beforeunload', function(e) {
-      self.ws.logout(); 
-    }, false);
   }
 
   changePageTitle() {

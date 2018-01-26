@@ -30,7 +30,7 @@ export class SigninComponent implements OnInit {
    }
 
   ngOnInit() {
-    if (this.ws.username && this.ws.password && this.ws.redirectUrl) {
+    if (this.ws.token && this.ws.redirectUrl) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
@@ -38,7 +38,7 @@ export class SigninComponent implements OnInit {
         this.progressBar.mode = 'indeterminate';
       }
 
-      this.ws.login(this.ws.username, this.ws.password)
+      this.ws.login_token(this.ws.token)
                        .subscribe((result) => { this.loginCallback(result); });
     }
   }
@@ -64,12 +64,18 @@ export class SigninComponent implements OnInit {
   }
 
   successLogin() {
-    if (this.ws.redirectUrl) {
-      this.router.navigateByUrl(this.ws.redirectUrl);
-      this.ws.redirectUrl = '';
-    } else {
-      this.router.navigate([ '/dashboard' ]);
-    }
+    this.ws.call('auth.generate_token', [60]).subscribe((result) => {
+      if (result) {
+        this.ws.token = result;
+
+        if (this.ws.redirectUrl) {
+          this.router.navigateByUrl(this.ws.redirectUrl);
+          this.ws.redirectUrl = '';
+        } else {
+          this.router.navigate([ '/dashboard' ]);
+        }
+      }
+    });
   }
 
   errorLogin() {
@@ -78,7 +84,12 @@ export class SigninComponent implements OnInit {
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
     this.signinData.username = 'root';
-    this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
+    if (typeof(this.ws.token) === 'undefined') {
+      this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
+    } else {
+      this.snackBar.open('Token expired, please log back in', 'OKAY', {duration: 4000});
+      this.ws.token = null;
+    }
   }
 
 }
