@@ -137,11 +137,17 @@ class create_group_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[1]/p"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[1]/p")
+        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button"):
+            ui_element=driver.find_element_by_xpath("/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
             error_element=ui_element.text
             print (error_element)
-            driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[2]/button").click()
+            ui_element.click()
+        if self.is_element_present(By.XPATH,"/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[2]/button"):
+            ui_element2=driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
+            error_element2=ui_element2.text
+            print (error_element2)
+            ui_element2.click()
+
 
     @classmethod
     def tearDownClass(inst):
