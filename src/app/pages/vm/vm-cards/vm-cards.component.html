@@ -3,33 +3,33 @@
   It's role is management of data and creating/destroying
   views. 
 -->
-<md-card class="card-filter">
-  <md-card-header>
+<mat-card class="card-filter">
+  <mat-card-header>
     <!--
-      This is the filter bar which shares an md-card 
+      This is the filter bar which shares an mat-card 
       with the table view
     -->
     <div class="filter-field">
-      <md-icon role="img">search</md-icon>
+      <mat-icon role="img">search</mat-icon>
       <div class="card-filter-field">
-        <md-input-container floatPlaceholder="Filter VMs">
-          <input mdInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
-        </md-input-container>
+        <mat-input-container floatPlaceholder="Filter VMs">
+          <input matInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
+        </mat-input-container>
       </div>
     </div>
     <div class="view-controls" >
-      <md-button-toggle-group #viewMode="mdButtonToggleGroup" >
-        <md-button-toggle value="cards">Cards</md-button-toggle>
-        <md-button-toggle value="slim" >Slim</md-button-toggle>
-        <md-button-toggle value="table" >Table</md-button-toggle>
-      </md-button-toggle-group>
-      <button md-mini-fab class="add-vm" (click)="addVM()">
-        <md-icon>add</md-icon>
+      <mat-button-toggle-group #viewMode="matButtonToggleGroup" >
+        <mat-button-toggle value="cards">Cards</mat-button-toggle>
+        <mat-button-toggle value="slim" >Slim</mat-button-toggle>
+        <mat-button-toggle value="table" >Table</mat-button-toggle>
+      </mat-button-toggle-group>
+      <button mat-mini-fab class="add-vm" (click)="addVM()">
+        <mat-icon>add</mat-icon>
       </button>
     </div>
-  </md-card-header>
+  </mat-card-header>
 
-  <md-card-content>
+  <mat-card-content>
     <!-- Inject table view here -->
     <div *ngIf="viewMode.value == 'table'"
                           fxLayout="row"
@@ -58,8 +58,8 @@
                                             ></vm-table>
 
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>
 
 
 
@@ -72,8 +72,8 @@
       ng-template for slim cards.
 
       Create ng-templates that you inject into the entity-card component. 
-      Keep in mind, entity-card is injecting your ng-template into an <md-card> 
-      so you can use any of the usual md-card internal selectors like <md-header>, 
+      Keep in mind, entity-card is injecting your ng-template into an <mat-card> 
+      so you can use any of the usual mat-card internal selectors like <md-header>, 
       <md-content> etc.
     -->
     <ng-template #cardfront let-name="name">
@@ -81,29 +81,29 @@
       <div *ngIf="viewMode.value == 'cards'" class="vm-bg"></div>
       <div class="side-content section">
 
-        <button md-fab
+        <button mat-fab
            *ngIf="viewMode.value == 'slim'"
            class="vm-power-btn"
            [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
            (click)="toggleVmState(i)"
-           mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
-          <md-icon>power_settings_new</md-icon>
+           matTooltip="{{ powerBtnLabel(cards[i].state) }}" matTooltipPosition="above">
+          <mat-icon>power_settings_new</mat-icon>
         </button>
 
 
         <div class="side-content-header">
-          <button class="card-close" (click)="deleteVM(i)"><md-icon>close</md-icon></button>
-          <button md-fab 
+          <button class="card-close" (click)="deleteVM(i)"><mat-icon>close</mat-icon></button>
+          <button mat-fab 
                   *ngIf="viewMode.value == 'cards'"
                   class="vm-power-btn"
                   [ngClass]="{'vm-power-btn-off':cards[i].state == 'stopped','vm-power-btn-on':cards[i].state == 'running'}" 
                   (click)="toggleVmState(i)"
-                  mdTooltip="{{ powerBtnLabel(cards[i].state) }}" mdTooltipPosition="above">
-            <md-icon>power_settings_new</md-icon>
+                  matTooltip="{{ powerBtnLabel(cards[i].state) }}" matTooltipPosition="above">
+            <mat-icon>power_settings_new</mat-icon>
           </button>
 
           <h3>{{ cards[i].name }}</h3>
-          <md-chip  class="vm-state">{{ cards[i].state }}</md-chip>
+          <mat-chip  class="vm-state">{{ cards[i].state }}</mat-chip>
         </div>
 
         <div class="stats-info">
@@ -118,9 +118,9 @@
 
 
         <div class="vm-controls">
-          <button md-raised-button color="primary" (click)="vnc(i)">VNC</button>
-          <button md-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
-          <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+          <button mat-raised-button color="primary" (click)="vnc(i)">VNC</button>
+          <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
+          <button mat-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
         </div>
       </div>
     </ng-template>

@@ -1,14 +1,14 @@
-<md-card>
-  <div class="md-content">
+<mat-card>
+  <div class="mat-content">
     <form #wipeDiskForm="ngForm" class="form-wrap" (ngSubmit)="onSubmit($event)">
       <ng-container *ngFor="let field of fieldConfig;" 
         dynamicField [config]="field" [group]="formGroup">
       </ng-container>
-      <md-card-actions>
+      <mat-card-actions>
         <button
           class="btn btn-block btn-warning"
           type="submit"
-          md-raised-button
+          mat-raised-button
           color="primary">
           Wipe
         </button>
@@ -16,11 +16,11 @@
           class="btn btn-block btn-raised btn-lg btn-primary"
           type="button"
           (click)="goBack()"
-          md-raised-button
+          mat-raised-button
           color="accent">
           Cancel
         </button>
-      </md-card-actions>
+      </mat-card-actions>
     </form>
   </div>
-</md-card>
+</mat-card>

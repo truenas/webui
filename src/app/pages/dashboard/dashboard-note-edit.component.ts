@@ -1,7 +1,7 @@
 import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 import { FieldConfig } from '../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
@@ -56,7 +56,7 @@ export class DashboardNoteEditComponent implements OnInit {
     protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected loader: AppLoaderService,
-    public snackBar: MdSnackBar,
+    public snackBar: MatSnackBar,
     protected entityFormService: EntityFormService,
   ) {}
 

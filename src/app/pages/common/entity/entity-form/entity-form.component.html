@@ -1,9 +1,9 @@
 <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
 <p *ngIf="!hasConf">
-    Please <button md-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to setup configuration first.
+    Please <button mat-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to setup configuration first.
 </p>
-<md-card>
-    <div class="md-content">
+<mat-card>
+    <div class="mat-content">
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
             <ng-container *ngFor="let field of fieldConfig; let i = index">
                 <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{i}}">
@@ -12,19 +12,19 @@
                 </div>
             </ng-container>
             <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
-            <md-card-actions>
-                <button id="save_button" class="btn btn-block btn-warning" type="submit" md-raised-button color="primary" [disabled]="!entityForm.form.valid" >Save</button>
-                <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" md-raised-button color="accent">Cancel</button>
+            <mat-card-actions>
+                <button id="save_button" class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid" >Save</button>
+                <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-raised-button color="accent">Cancel</button>
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-                  <button id="cust_button_{{custBtn.name}}" md-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+                  <button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
                 </span>
-                <button md-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">Delete</button>
+                <button mat-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">Delete</button>
                 <!-- </div> -->
-            </md-card-actions>
+            </mat-card-actions>
         </form>
         <p *ngIf="success" type="success" id="successfully_updated">Successfully updated.</p>
         <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>
     </div>
-</md-card>
+</mat-card>

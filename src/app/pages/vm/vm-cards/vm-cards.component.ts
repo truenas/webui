@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MaterialModule, MdButtonToggleGroup } from '@angular/material';
+import { MaterialModule } from '../../../appMaterial.module';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { EntityModule } from '../../common/entity/entity.module';
 import { WebSocketService, RestService } from '../../../services/';
 import { DialogService } from '../../../services/dialog.service';
@@ -41,7 +42,7 @@ export class VmCardsComponent implements OnInit {
   @Input() searchTerm:string = '';
   @Input() cards = []; // Display List
   @Input() cache = []; // Master List: 
-  @ViewChild('viewMode') viewMode:MdButtonToggleGroup;
+  @ViewChild('viewMode') viewMode:MatButtonToggleGroup;
   focusedVM:string;
 
 

@@ -17,7 +17,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 import { debounce } from 'rxjs/operator/debounce';
 import { debug } from 'util';
-import { coerceBooleanProperty } from '@angular/cdk';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
    selector : 'bootenv-replace-form',

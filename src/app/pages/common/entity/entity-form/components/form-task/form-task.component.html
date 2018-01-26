@@ -1,12 +1,12 @@
 <div [id]="config.name" class="form-task" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
   <label class="form-task-label">{{ config.placeholder }}</label>
   <br>
-  <md-card>
-    <md-tab-group #tabGroup (selectChange)="onSelectChange($event)">
-      <md-tab *ngFor="let field of config.tabs;" label="{{field.tabName}}">
+  <mat-card>
+    <mat-tab-group #tabGroup (selectChange)="onSelectChange($event)">
+      <mat-tab *ngFor="let field of config.tabs;" label="{{field.tabName}}">
         <ng-container dynamicField [config]="field" [group]="tabFormGroup" [fieldShow]="'show'">
         </ng-container>
-      </md-tab>
-    </md-tab-group>
-  </md-card>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
 </div>

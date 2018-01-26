@@ -1,4 +1,4 @@
-import { MdDialog, MdDialogRef} from '@angular/material';
+import { MatDialog, MatDialogRef} from '@angular/material';
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import {
@@ -19,7 +19,7 @@ export class AboutModalDialog {
   public ipAddress: any = [];
 
   constructor(
-    public dialogRef: MdDialogRef<AboutModalDialog>,
+    public dialogRef: MatDialogRef<AboutModalDialog>,
     private ws: WebSocketService,
     protected systemGeneralService: SystemGeneralService) { }
 

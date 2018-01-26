@@ -1,51 +1,51 @@
-<md-nav-list class="" role="list">
+<mat-nav-list class="" role="list">
     <!--==== Side menu items ====-->
     <div class="icon-menu" *ngIf="hasIconTypeMenuItem">
         <!-- Icon menu separator -->
         <div class="mt-1 mb-1 icon-menu-separator">
-            <md-divider [style.margin]="'0 -24px'"></md-divider>
+            <mat-divider [style.margin]="'0 -24px'"></mat-divider>
             <span [ngStyle]="{paddingLeft: 0, marginLeft: '-6px'}" class="nav-section-title text-muted">{{iconTypeMenuTitle}}</span>
         </div>
         <!-- Icon menu items -->
         <div class="icon-menu-item" *ngFor="let item of menuItems">
-            <button *ngIf="!item.disabled && item.type === 'icon'" md-raised-button [mdTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"><md-icon>{{item.icon}}</md-icon></button>
+            <button *ngIf="!item.disabled && item.type === 'icon'" mat-raised-button [matTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"><mat-icon>{{item.icon}}</mat-icon></button>
         </div>
     </div>
     <!-- Regular menu items -->
     <div *ngFor="let item of menuItems; let i = index">
         <!-- if it's not disabled and not a separator and not icon -->
-        <md-list-item sideNavAccordion class="sidebar-list-item" role="listitem" *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}">
+        <mat-list-item sideNavAccordion class="sidebar-list-item" role="listitem" *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}">
             <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'">
-                <span class="menu-item-tooltip" [mdTooltip]="item.tooltip" id="{{item.name}}" mdTooltipPosition="right"></span>
-                <md-icon>{{item.icon}}</md-icon>
+                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
+                <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
             </a>
             <a *ngIf="item.type === 'dropDown'">
-                <span class="menu-item-tooltip" [mdTooltip]="item.tooltip" mdTooltipPosition="above"></span>
-                <md-icon>{{item.icon}}</md-icon>
+                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
+                <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
                 <span fxFlex></span>
-                <md-icon class="menu-caret">arrow_drop_down</md-icon>
+                <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
             </a>
             <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank">
-                <span class="menu-item-tooltip" [mdTooltip]="item.tooltip" mdTooltipPosition="right"></span>
-                <md-icon>{{item.icon}}</md-icon>
+                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
+                <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
             </a>
-            <md-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
-                <md-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index">
+            <mat-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
+                <mat-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index">
                     <a [routerLink]="['/', item.state, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" >{{subItem.name | translate}}</a>
-                </md-list-item>
-            </md-nav-list>
-            <a md-button style="height: 0; position: absolute;">
+                </mat-list-item>
+            </mat-nav-list>
+            <a mat-button style="height: 0; position: absolute;">
                 <!-- 'absorbs' the foucs behavior -->
             </a>
-        </md-list-item>
+        </mat-list-item>
 
         <!-- If item type is separator -->
         <div class="mt-1 mb-1" *ngIf="!item.disabled && item.type === 'separator'">
-            <md-divider></md-divider>
+            <mat-divider></mat-divider>
             <span class="nav-section-title text-muted" *ngIf="!!item.name">{{item.name | translate}}</span>
         </div>
     </div>
-</md-nav-list>
+</mat-nav-list>

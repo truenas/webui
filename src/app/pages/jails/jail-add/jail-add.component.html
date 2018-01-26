@@ -1,85 +1,82 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
-<md-card>
+<mat-card>
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
-    <md-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
-      <md-expansion-panel-header>
-        <md-panel-title>
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           Basic Properties
-        </md-panel-title>
-        <!--         <md-panel-description>
-          expand to show more props
-        </md-panel-description> -->
-      </md-expansion-panel-header>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
       <div>
         <ng-container *ngFor="let field of basicfieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
         </ng-container>
       </div>
-      <md-action-row>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
-      </md-action-row>
-    </md-expansion-panel>
-    <md-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
-      <md-expansion-panel-header>
-        <md-panel-title>
+      <mat-action-row>
+        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           Jail Properties
-        </md-panel-title>
-      </md-expansion-panel-header>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
       <div>
         <ng-container *ngFor="let jailfield of jailfieldConfig;" dynamicField [config]="jailfield" [group]="formGroup" [fieldShow]="'show'">
         </ng-container>
       </div>
-      <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
-      </md-action-row>
-    </md-expansion-panel>
-    <md-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
-      <md-expansion-panel-header>
-        <md-panel-title>
+      <mat-action-row>
+        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           Network Properties
-        </md-panel-title>
-      </md-expansion-panel-header>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
       <div>
         <ng-container *ngFor="let networkfield of networkfieldConfig;" dynamicField [config]="networkfield" [group]="formGroup" [fieldShow]="'show'">
         </ng-container>
       </div>
-      <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
-      </md-action-row>
-    </md-expansion-panel>
-    <md-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
-      <md-expansion-panel-header>
-        <md-panel-title>
+      <mat-action-row>
+        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           Custom Properties
-        </md-panel-title>
-      </md-expansion-panel-header>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
       <div>
         <ng-container *ngFor="let customfield of customConfig;" dynamicField [config]="customfield" [group]="formGroup" [fieldShow]="'show'">
         </ng-container>
       </div>
-      <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button md-button color="primary" type="button" (click)="nextStep()">Next</button>
-      </md-action-row>
-    </md-expansion-panel>
-    <md-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
-      <md-expansion-panel-header>
-        <md-panel-title>
+      <mat-action-row>
+        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           RCTL Limits
-        </md-panel-title>
-      </md-expansion-panel-header>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
       <div>
         <ng-container *ngFor="let rctlfield of rctlConfig;" dynamicField [config]="rctlfield" [group]="formGroup" [fieldShow]="'show'">
         </ng-container>
       </div>
-      <md-action-row>
-        <button md-button color="warn" type="button" (click)="prevStep()">Previous</button>
-      </md-action-row>
-    </md-expansion-panel>
-    <md-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" md-raised-button color="accent" type="button">Cancel</button>
-    </md-card-actions>
+      <mat-action-row>
+        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-card-actions>
+      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">Save</button>
+      <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent" type="button">Cancel</button>
+    </mat-card-actions>
   </form>
-</md-card>
+</mat-card>

@@ -1,19 +1,19 @@
 <div [id]="config.name" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-    <md-input-container class="full-width">
-        <input mdInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
-    </md-input-container>
+    <mat-input-container class="full-width">
+        <input matInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
+    </mat-input-container>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-    <button md-button (click)="toggleTree()" type="button">Browse</button>
+    <button mat-button (click)="toggleTree()" type="button">Browse</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
         <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
-            <md-icon>folder</md-icon>
+            <mat-icon>folder</mat-icon>
             <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
         </ng-template>
         <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'file') || !config.explorerType">
-            <md-icon *ngIf="node.data.hasChildren">folder</md-icon>
-            <md-icon *ngIf="!node.data.hasChildren">insert_drive_file</md-icon>
+            <mat-icon *ngIf="node.data.hasChildren">folder</mat-icon>
+            <mat-icon *ngIf="!node.data.hasChildren">insert_drive_file</mat-icon>
             <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
         </ng-template>
     </tree-root>
-    <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+    <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MdProgressBar, MdButton } from '@angular/material';
+import { MatProgressBar, MatButton } from '@angular/material';
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
@@ -7,8 +7,8 @@ import { MdProgressBar, MdButton } from '@angular/material';
 })
 export class ForgotPasswordComponent implements OnInit {
   userEmail;
-  @ViewChild(MdProgressBar) progressBar: MdProgressBar;
-  @ViewChild(MdButton) submitButton: MdButton;
+  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
+  @ViewChild(MatButton) submitButton: MatButton;
   constructor() { }
 
   ngOnInit() {

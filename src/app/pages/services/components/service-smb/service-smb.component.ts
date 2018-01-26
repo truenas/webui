@@ -3,7 +3,7 @@ import { FormControl, NG_VALIDATORS } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import {
   IdmapService,
@@ -273,7 +273,7 @@ export class ServiceSMBComponent implements OnInit {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
     protected idmapService: IdmapService,
-    protected loader: AppLoaderService, protected dialog: MdDialog) {}
+    protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   afterInit(entityEdit: any) {
     this.rest.get('services/cifs', {}).subscribe((res) => {

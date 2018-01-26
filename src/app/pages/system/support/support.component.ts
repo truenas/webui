@@ -7,7 +7,7 @@ import { RestService, UserService, WebSocketService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FileUploader } from 'ng2-file-upload';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   selector : 'app-support',
@@ -29,7 +29,7 @@ export class SupportComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
-              protected _appRef: ApplicationRef, protected dialog: MdDialog)
+              protected _appRef: ApplicationRef, protected dialog: MatDialog)
               {
               }
   

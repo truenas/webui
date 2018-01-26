@@ -1,147 +1,147 @@
-<md-card *ngIf="isReady && !error; else emptyTemplate">
-  <div class="md-content">
+<mat-card *ngIf="isReady && !error; else emptyTemplate">
+  <div class="mat-content">
     <form class="form-wrap" (submit)="onFormSubmit()">
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemenu" name="adv_consolemenu">Enable Console Menu
-          </md-checkbox>
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemenu" name="adv_consolemenu">Enable Console Menu
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_serialconsole" name="adv_serialconsole">Enable Serial Console </md-checkbox>
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_serialconsole" name="adv_serialconsole">Enable Serial Console </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-select">
-          <md-select class="form-control full-width" placeholder="Serial Port"
+          <mat-select class="form-control full-width" placeholder="Serial Port"
                      [disabled]="!systemAdvancedSettings.adv_serialconsole"
                      [(ngModel)]="systemAdvancedSettings.adv_serialport" name="adv_serialport">
-            <md-option *ngFor="let port of ports" [value]="port.start">{{port.name + '(' + port.start + ')'}}</md-option>
-          </md-select>
+            <mat-option *ngFor="let port of ports" [value]="port.start">{{port.name + '(' + port.start + ')'}}</mat-option>
+          </mat-select>
         </div>
       </div>
       <div class="form-line">
         <div class="form-select">
-          <md-select class="form-control full-width" placeholder="Serial Speed"
+          <mat-select class="form-control full-width" placeholder="Serial Speed"
                      [disabled]="!systemAdvancedSettings.adv_serialconsole"
                      [(ngModel)]="systemAdvancedSettings.adv_serialspeed" name="adv_serialspeed">
-            <md-option [value]="'9600'">9600</md-option>
-            <md-option [value]="'19200'">19200</md-option>
-            <md-option [value]="'38400'">38400</md-option>
-            <md-option [value]="'57600'">57600</md-option>
-            <md-option [value]="'115200'">115200</md-option>
-          </md-select>
+            <mat-option [value]="'9600'">9600</mat-option>
+            <mat-option [value]="'19200'">19200</mat-option>
+            <mat-option [value]="'38400'">38400</mat-option>
+            <mat-option [value]="'57600'">57600</mat-option>
+            <mat-option [value]="'115200'">115200</mat-option>
+          </mat-select>
         </div>
       </div>
       <div class="form-line">
         <div class="form-input">
-          <md-input-container class="full-width">
-            <input mdInput [type]="'number'" [(ngModel)]="systemAdvancedSettings.adv_swapondrive" name="adv_swapondrive"
+          <mat-input-container class="full-width">
+            <input matInput [type]="'number'" [(ngModel)]="systemAdvancedSettings.adv_swapondrive" name="adv_swapondrive"
                    placeholder="Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).">
-          </md-input-container>
+          </mat-input-container>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolescreensaver" name="adv_consolescreensaver">Enable
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolescreensaver" name="adv_consolescreensaver">Enable
             Console Screensaver
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_powerdaemon" name="adv_powerdaemon">Enable Power Saving
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_powerdaemon" name="adv_powerdaemon">Enable Power Saving
             Daemon
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_autotune" name="adv_autotune">Enable autotune
-          </md-checkbox>
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_autotune" name="adv_autotune">Enable autotune
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_debugkernel" name="adv_debugkernel">Enable Debug Kernel
-          </md-checkbox>
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_debugkernel" name="adv_debugkernel">Enable Debug Kernel
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemsg" name="adv_consolemsg">Show console messages
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_consolemsg" name="adv_consolemsg">Show console messages
             in the footer
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
-        <md-input-container class="full-width">
+        <mat-input-container class="full-width">
           <textarea [(ngModel)]="systemAdvancedSettings.adv_motd" name="adv_motd" placeholder="MOTD Banner"
                     class="ascii-art-font"
-                    mdInput></textarea>
-        </md-input-container>
+                    matInput></textarea>
+        </mat-input-container>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_traceback" name="adv_traceback">Show tracebacks in case
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_traceback" name="adv_traceback">Show tracebacks in case
             of fatal errors
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_advancedmode" name="adv_advancedmode">Show advanced
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_advancedmode" name="adv_advancedmode">Show advanced
             fields by default
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_uploadcrash" name="adv_uploadcrash">Enable automatic
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_uploadcrash" name="adv_uploadcrash">Enable automatic
             upload of kernel crash dumps and daily telemetry
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
-        <md-select class="form-control full-width" placeholder="Periodic Notification User"
+        <mat-select class="form-control full-width" placeholder="Periodic Notification User"
                    [(ngModel)]="systemAdvancedSettings.adv_periodic_notifyuser" name="adv_periodic_notifyuser">
-          <md-option *ngFor="let user of users" [value]="user.bsdusr_username">{{user.bsdusr_username}}</md-option>
-        </md-select>
+          <mat-option *ngFor="let user of users" [value]="user.bsdusr_username">{{user.bsdusr_username}}</mat-option>
+        </mat-select>
       </div>
       <div class="form-line">
-        <md-input-container class="full-width">
-          <input mdInput [type]="'text'" placeholder="Remote Graphite Server Hostname"
+        <mat-input-container class="full-width">
+          <input matInput [type]="'text'" placeholder="Remote Graphite Server Hostname"
                  [(ngModel)]="systemAdvancedSettings.adv_graphite" name="adv_graphite">
-        </md-input-container>
+        </mat-input-container>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_fqdn_syslog" name="adv_fqdn_syslog">Use FQDN for
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_fqdn_syslog" name="adv_fqdn_syslog">Use FQDN for
             logging
-          </md-checkbox>
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
         <div class="form-checkbox">
-          <md-checkbox [(ngModel)]="systemAdvancedSettings.adv_cpu_in_percentage" name="adv_cpu_in_percentage">Report CPU usage in percentage
-          </md-checkbox>
+          <mat-checkbox [(ngModel)]="systemAdvancedSettings.adv_cpu_in_percentage" name="adv_cpu_in_percentage">Report CPU usage in percentage
+          </mat-checkbox>
         </div>
       </div>
       <div class="form-line">
-        <md-card-actions>
-          <button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
-          <button class="btn btn-block btn-warning" type="button" md-raised-button color="primary" (click)="saveDebug()">Save Debug</button>
-        </md-card-actions>
+        <mat-card-actions>
+          <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">Save</button>
+          <button class="btn btn-block btn-warning" type="button" mat-raised-button color="primary" (click)="saveDebug()">Save Debug</button>
+        </mat-card-actions>
         <p *ngIf="success">{{success}}</p>
       </div>
     </form>
   </div>
-</md-card>
+</mat-card>
 <ng-template #emptyTemplate>
-  <md-card>
-    <div class="md-content">
+  <mat-card>
+    <div class="mat-content">
       <p type="danger">{{error}}</p>
     </div>
-  </md-card>
+  </mat-card>
 </ng-template>

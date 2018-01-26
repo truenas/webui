@@ -5,7 +5,7 @@ import { Observable } from "rxjs/Observable";
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MdSnackBar, MdDialog } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-system-advanced',
@@ -46,7 +46,7 @@ export class AdvancedComponent implements OnInit {
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
-    public snackBar: MdSnackBar) {}
+    public snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);

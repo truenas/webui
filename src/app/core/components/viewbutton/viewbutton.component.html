@@ -1,6 +1,6 @@
 <ng-container *ngIf="raised">
-	<button md-raised-button color="{{contextColor}}" (click)="sendAction()">{{label}}</button>
+	<button mat-raised-button color="{{contextColor}}" (click)="sendAction()">{{label}}</button>
 </ng-container>
 <ng-container *ngIf="!raised">
-	<button md-button color="{{contextColor}}" (click)="sendAction()">{{label}}</button>
+	<button mat-button color="{{contextColor}}" (click)="sendAction()">{{label}}</button>
 </ng-container>

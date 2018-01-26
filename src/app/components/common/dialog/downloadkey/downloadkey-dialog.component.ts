@@ -1,4 +1,4 @@
-import { MdDialog, MdDialogRef} from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import {
   WebSocketService
@@ -17,7 +17,7 @@ export class DownloadKeyModalDialog {
   public isDownloaded: Boolean = false;
 
   constructor(
-    public dialogRef: MdDialogRef<DownloadKeyModalDialog>,
+    public dialogRef: MatDialogRef<DownloadKeyModalDialog>,
     private ws: WebSocketService,
     private loader:AppLoaderService) { }
 

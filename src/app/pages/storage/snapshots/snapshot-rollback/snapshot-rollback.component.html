@@ -1,12 +1,12 @@
-<md-card>
-<form>
-  <div *ngIf="error" class="error">
-    {{ error }}
-  </div>
-  <div>
-  Are you sure you want to rollback?
-  </div>
-   <button md-raised-button class="btn btn-danger" (click)="doSubmit()" color="primary">Yes</button>
-   <button md-raised-button class="btn btn-primary" (click)="doCancel()" color="accent">Cancel</button>
-</form>
-</md-card>
+<mat-card>
+  <form>
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+    <div>
+      Are you sure you want to rollback?
+    </div>
+    <button mat-raised-button class="btn btn-danger" (click)="doSubmit()" color="primary">Yes</button>
+    <button mat-raised-button class="btn btn-primary" (click)="doCancel()" color="accent">Cancel</button>
+  </form>
+</mat-card>

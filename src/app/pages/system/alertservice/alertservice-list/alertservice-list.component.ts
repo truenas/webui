@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services/';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
@@ -33,7 +33,7 @@ export class AlertServiceListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, public dialog: MdDialog) { }
+    protected _injector: Injector, protected _appRef: ApplicationRef, public dialog: MatDialog) { }
 
 
   afterInit(entityList: any) {

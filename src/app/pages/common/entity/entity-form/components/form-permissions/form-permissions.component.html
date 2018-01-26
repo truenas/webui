@@ -1,12 +1,12 @@
 <div [id]="config.name" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 	<label>{{ config.placeholder }}</label>
-	<md-input-container class="full-width" style="display:none">
-		<input mdInput [type]="config.inputType ? config.inputType : 'text'"
+	<mat-input-container class="full-width" style="display:none">
+		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder"
 			[attr.value]="config.value"
 			[formControlName]="config.name"
 			>
-	</md-input-container>
+	</mat-input-container>
 		<table>
 			<tr>
 				<td></td>
@@ -19,16 +19,16 @@
 					Read
 				</td>
 				<td>
-					<md-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()">
-					</md-checkbox>
+					<mat-checkbox [checked]="ownerRead" (change)="toggleOwnerRead()">
+					</mat-checkbox>
 				</td>
 				<td>
-					<md-checkbox [checked]="groupRead" (change)="toggleGroupRead()">
-					</md-checkbox>
+					<mat-checkbox [checked]="groupRead" (change)="toggleGroupRead()">
+					</mat-checkbox>
 				</td>
 				<td>
-					<md-checkbox [checked]="otherRead" (change)="toggleOtherRead()">
-					</md-checkbox><br/>
+					<mat-checkbox [checked]="otherRead" (change)="toggleOtherRead()">
+					</mat-checkbox><br/>
 				</td>
 			</tr>
 			<tr>
@@ -36,16 +36,16 @@
 					Write
 				</td>
 				<td>
-					<md-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()">
-					</md-checkbox>
+					<mat-checkbox [checked]="ownerWrite" (change)="toggleOwnerWrite()">
+					</mat-checkbox>
 				</td>
 				<td>
-					<md-checkbox [checked]="groupWrite" (change)="toggleGroupWrite()">
-					</md-checkbox>
+					<mat-checkbox [checked]="groupWrite" (change)="toggleGroupWrite()">
+					</mat-checkbox>
 				</td>
 				<td>
-					<md-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()">
-					</md-checkbox><br/>
+					<mat-checkbox [checked]="otherWrite" (change)="toggleOtherWrite()">
+					</mat-checkbox><br/>
 				</td>
 			</tr>
 			<tr>
@@ -53,19 +53,19 @@
 					Execute
 				</td>
 				<td>
-					<md-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()">
-					</md-checkbox>
+					<mat-checkbox [checked]="ownerExec" (change)="toggleOwnerExec()">
+					</mat-checkbox>
 				</td>
 				<td>
-					<md-checkbox [checked]="groupExec" (change)="toggleGroupExec()">
-					</md-checkbox>
+					<mat-checkbox [checked]="groupExec" (change)="toggleGroupExec()">
+					</mat-checkbox>
 				</td>
 				<td>
-					<md-checkbox [checked]="otherExec" (change)="toggleOtherExec()">
-					</md-checkbox>
+					<mat-checkbox [checked]="otherExec" (change)="toggleOtherExec()">
+					</mat-checkbox>
 				</td>
 			</tr>
 		</table>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-	<md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

@@ -8,7 +8,7 @@ export class SideNavAccordionDirective implements OnInit {
   }
   ngOnInit() {
     let self = this;
-    var subMenu = this.el.nativeElement.querySelector('.mat-list-item-content > md-nav-list');
+    var subMenu = this.el.nativeElement.querySelector('.mat-list-item-content > mat-nav-list');
     let isCollapsed = domHelper.hasClass(document.body, 'collapsed-menu');
     if (!!subMenu)
       this.el.nativeElement.className += ' has-submenu';

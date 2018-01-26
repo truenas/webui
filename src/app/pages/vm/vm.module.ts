@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { MaterialModule, MdTableModule } from '@angular/material';
+import { MaterialModule } from '../../appMaterial.module';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
 
 //import { BrowserModule } from '@angular/platform-browser';
@@ -36,7 +36,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
   imports : [
     CoreComponents,
     EntityModule, CommonModule, FormsModule,
-	  ReactiveFormsModule, routing, MaterialModule, MdTableModule,NgxDatatableModule, FlexLayoutModule//, BrowserModule
+	  ReactiveFormsModule, routing, MaterialModule, NgxDatatableModule, FlexLayoutModule//, BrowserModule
   ],
   declarations : [
     VmListComponent,

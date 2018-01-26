@@ -17,14 +17,14 @@ import {
   matchOtherValidator
 } from '../../common/entity/entity-form/validators/password-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector : 'app-email',
   template : `
-  <md-card>
-  <button md-button class="btn btn-primary" (click)="sendMail()" >Send Test Email</button>
-  </md-card>
+  <mat-card>
+  <button mat-button class="btn btn-primary" (click)="sendMail()" >Send Test Email</button>
+  </mat-card>
   <entity-form [conf]="this"></entity-form>
   `
 })
@@ -135,7 +135,7 @@ export class EmailComponent {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef,private dialogservice: DialogService,
-              protected dialog: MdDialog
+              protected dialog: MatDialog
             ) {}
 
 afterInit(entityEdit: any) {

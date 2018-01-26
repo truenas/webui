@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MdGridListModule } from '@angular/material';
+import { MatGridListModule } from '@angular/material';
 
 import { RestService, WebSocketService } from '../../services/';
 

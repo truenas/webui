@@ -1,8 +1,8 @@
 <div [id]="config.name" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <md-input-container class="full-width">
-    <textarea mdInput [placeholder]="config.placeholder" [formControlName]="config.name" rows="4" [ngClass]="config.class">
+  <mat-input-container class="full-width">
+    <textarea matInput [placeholder]="config.placeholder" [formControlName]="config.name" rows="4" [ngClass]="config.class">
     </textarea>
-  </md-input-container>
+  </mat-input-container>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <md-error *ngIf="config.hasErrors">{{config.errors}}</md-error>
+  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

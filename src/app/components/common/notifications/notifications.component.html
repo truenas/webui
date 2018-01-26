@@ -2,27 +2,27 @@
   <div class="text-center mat-bg-primary pt-1 pb-1">
     <h6 class="m-0">Notifications</h6>
   </div>
-  <md-nav-list class="notification-list" role="list">
+  <mat-nav-list class="notification-list" role="list">
     <!-- Notification item -->
-    <md-list-item *ngIf="notifications.length === 0" class="notific-item" role="listitem">
-      <md-icon color="primary" class="notific-icon">info</md-icon>
+    <mat-list-item *ngIf="notifications.length === 0" class="notific-item" role="listitem">
+      <mat-icon color="primary" class="notific-icon">info</mat-icon>
       <div class="mat-list-text">
         <h4 class="message">There are no alert notifications.</h4>
       </div>
-    </md-list-item>
-    <md-list-item *ngFor="let n of notifications" class="notific-item" role="listitem">
-      <md-icon [color]="n.color" class="notific-icon">{{n.icon}}</md-icon>
+    </mat-list-item>
+    <mat-list-item *ngFor="let n of notifications" class="notific-item" role="listitem">
+      <mat-icon [color]="n.color" class="notific-icon">{{n.icon}}</mat-icon>
       <a title="Click to dismiss"  (click)="turnMeOff(n,$event)">
         <div class="mat-list-text">
           <h4 class="message">{{n.message}}</h4>
           <small class="time text-muted">{{n.time}}</small>
         </div>
       </a>
-    </md-list-item>
+    </mat-list-item>
     <div class="text-center mt-1" *ngIf="notifications.length">
       <small><a href="#" (click)="closeAll($event)">Clear All Notifications</a></small>
     </div>
-    <md-list-item *ngFor="let n of dismissedNotifications" class="notific-item" role="listitem">
+    <mat-list-item *ngFor="let n of dismissedNotifications" class="notific-item" role="listitem">
       <span style="font-weight: bolder;">Closed</span>
       <a title="Click to Re-Open" (click)="turnMeOn(n, $event)">
         <div class="mat-list-text">
@@ -30,8 +30,8 @@
           <small class="time text-muted">{{n.time}}</small>
         </div>
       </a>
-    </md-list-item>
-  </md-nav-list>
+    </mat-list-item>
+  </mat-nav-list>
   <div class="text-center mt-1" *ngIf="dismissedNotifications.length">
     <small><a href="#" (click)="reopenAll($event)">Re-Open All Notifications</a></small>
   </div>

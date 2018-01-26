@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {Router} from '@angular/router';
-import {MdProgressBar, MdButton, MdSnackBar} from '@angular/material';
+import { Router } from '@angular/router';
+import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 
 import {WebSocketService} from '../../../services/ws.service';
 
@@ -10,8 +10,8 @@ import {WebSocketService} from '../../../services/ws.service';
   styleUrls: ['./signin.component.css']
 })
 export class SigninComponent implements OnInit {
-  @ViewChild(MdProgressBar) progressBar: MdProgressBar;
-  @ViewChild(MdButton) submitButton: MdButton;
+  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
+  @ViewChild(MatButton) submitButton: MatButton;
 
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
@@ -21,7 +21,7 @@ export class SigninComponent implements OnInit {
     username: 'root',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router, private snackBar: MdSnackBar) {
+  constructor(private ws: WebSocketService, private router: Router, private snackBar: MatSnackBar) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;

@@ -11,7 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 
 import { Injectable } from '@angular/core';
@@ -63,7 +63,7 @@ export class VolumesListTableConfig {
     private _router: Router,
     private _classId: string,
     private title: string,
-    public mdDialog: MdDialog,
+    public mdDialog: MatDialog,
     protected rest: RestService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
@@ -268,9 +268,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MdDialog, protected erdService: ErdService) {
+    protected mdDialog: MatDialog, protected erdService: ErdService) {
     super(rest, router, ws, _eRef, dialog, loader, erdService);
-
   }
 
   

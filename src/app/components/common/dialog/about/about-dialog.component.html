@@ -1,55 +1,55 @@
 <div class="bg-photo">
-	<h1 md-dialog-title>About</h1>
-	<div md-dialog-content class="system-info">
-		<md-list>
-			<md-list-item>
-  			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+	<h1 mat-dialog-title>About</h1>
+	<div mat-dialog-content class="system-info">
+		<mat-list>
+			<mat-list-item>
+  			<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
     		<span class="cdk-visually-hidden">Label Icon</span>
-  			<label mdLine class="mr-1"><strong>Version:</strong></label>
-    		<p mdLine>{{info.version}} </p>
-  		</md-list-item>
-  		<md-list-item *ngIf="info.hostname">
-				<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+  			<label mat-line class="mr-1"><strong>Version:</strong></label>
+    		<p mat-line>{{info.version}} </p>
+  		</mat-list-item>
+  		<mat-list-item *ngIf="info.hostname">
+				<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
 	  		<span class="cdk-visually-hidden">Label Icon</span>
-				<label mdLine class="mr-1"><strong>Hostname:</strong></label>
-	  		<p mdLine>{{info.hostname}} </p>
-			</md-list-item>
-			<md-list-item>
-				<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+				<label mat-line class="mr-1"><strong>Hostname:</strong></label>
+	  		<p mat-line>{{info.hostname}} </p>
+			</mat-list-item>
+			<mat-list-item>
+				<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
 	  		<span class="cdk-visually-hidden">Label Icon</span>
-				<label mdLine class="mr-1"><strong>Uptime:</strong></label>
-	  		<p mdLine>{{info.uptime}} </p>
-			</md-list-item>
-			<md-list-item *ngFor="let ip of ipAddress">
-			  <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+				<label mat-line class="mr-1"><strong>Uptime:</strong></label>
+	  		<p mat-line>{{info.uptime}} </p>
+			</mat-list-item>
+			<mat-list-item *ngFor="let ip of ipAddress">
+			  <mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
     		<span class="cdk-visually-hidden mr-1">Label Icon</span>
-  			<label mdLine class="mr-1"><strong>IP:</strong></label>
-    		<p mdLine>{{ip}} </p>
-  		</md-list-item>
-  		<md-list-item>
-  			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+  			<label mat-line class="mr-1"><strong>IP:</strong></label>
+    		<p mat-line>{{ip}} </p>
+  		</mat-list-item>
+  		<mat-list-item>
+  			<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
     		<span class="cdk-visually-hidden">Label Icon</span>
-  			<label mdLine class="mr-1"><strong>Physical Memory:</strong></label>
-    		<p mdLine>{{info.physmem}} </p>
-  		</md-list-item>
-  		<md-list-item>
-  			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+  			<label mat-line class="mr-1"><strong>Physical Memory:</strong></label>
+    		<p mat-line>{{info.physmem}} </p>
+  		</mat-list-item>
+  		<mat-list-item>
+  			<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
     		<span class="cdk-visually-hidden">Label Icon</span>
-  			<label mdLine class="mr-1"><strong>Model:</strong></label>
-    		<p mdLine>{{info.model}} </p>
-  		</md-list-item>
-  		<md-list-item>
-  			<md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+  			<label mat-line class="mr-1"><strong>Model:</strong></label>
+    		<p mat-line>{{info.model}} </p>
+  		</mat-list-item>
+  		<mat-list-item>
+  			<mat-icon mat-list-icon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
     		<span class="cdk-visually-hidden">Label Icon</span>
-  			<label mdLine class="mr-1"><strong>Average Load:</strong></label>
-    		<p mdLine>{{info.loadavg}} </p>
-  		</md-list-item>
+  			<label mat-line class="mr-1"><strong>Average Load:</strong></label>
+    		<p mat-line>{{info.loadavg}} </p>
+  		</mat-list-item>
 			
-		</md-list>
+		</mat-list>
 	</div>
 </div>
 
-<div md-dialog-actions>
+<div mat-dialog-actions>
   <span fxFlex class="copyright-txt">FreeNAS® © 2017 - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
   <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">Close</button>
 </div>

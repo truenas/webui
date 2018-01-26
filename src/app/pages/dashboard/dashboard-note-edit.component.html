@@ -2,7 +2,7 @@
 <p *ngIf="success" type="success">Successfully updated.</p>
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 
-<div class="md-content">
+<div class="mat-content">
 	<form (ngSubmit)="onSubmit($event)" class="form-wrap">
 		<div class="fieldset-container fieldset-display-{{ fieldSetDisplay }}">
 			<ng-container *ngFor="let fieldSet of fieldSets; let i = index">
@@ -14,10 +14,10 @@
 				</div>
 			</ng-container>
 		</div>
-		<md-card-actions>
-			<button class="btn btn-block btn-warning" type="submit" md-raised-button color="primary">Save</button>
-			<button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" md-raised-button color="accent">Cancel</button>
-		</md-card-actions>
+		<mat-card-actions>
+			<button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">Save</button>
+			<button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-raised-button color="accent">Cancel</button>
+		</mat-card-actions>
 	</form>
 </div>
 

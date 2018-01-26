@@ -1,17 +1,17 @@
 <div class="page-wrap height-100 mat-bg-primary">
   <div class="session-form-hold">
-    <md-progress-bar mode="determinate" class="session-progress"></md-progress-bar>
-    <md-card>
-      <md-card-content>
+    <mat-progress-bar mode="determinate" class="session-progress"></mat-progress-bar>
+    <mat-card>
+      <mat-card-content>
         <div class="text-center pb-1">
           <img src="assets/images/logo-full.svg" alt="FreeNAS logo">
           <p class="text-muted">Sign up to use our service</p>
         </div>
         <form #signupForm="ngForm" (ngSubmit)="signup()">
           <div class="">
-            <md-input-container class="full-width">
+            <mat-input-container class="full-width">
               <input
-                mdInput
+                matInput
                 type="email"
                 name="email"
                 required
@@ -20,7 +20,7 @@
                 placeholder="Your Email"
                 pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
                 value="">
-            </md-input-container>
+            </mat-input-container>
             <small 
               *ngIf="email.errors && (email.dirty || email.touched) && (email.errors.required)" 
               class="form-error-msg"> Email is required </small>
@@ -31,61 +31,61 @@
           </div>
 
           <div class="">
-            <md-input-container class="full-width">
+            <mat-input-container class="full-width">
               <input 
                 type="password"
                 name="password"
                 required
-                mdInput
+                matInput
                 appEqualValidator="confirmPassword"
                 reverse="true"
                 [(ngModel)]="signupData.password"
                 #password="ngModel"
                 placeholder="Password" 
                 value="">
-            </md-input-container>
+            </mat-input-container>
             <small 
               *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)" 
               class="form-error-msg"> Password is required </small>
           </div>
           
           <div class="">
-            <md-input-container class="full-width">
+            <mat-input-container class="full-width">
               <input
                 type="password"
                 name="confirmPassword"
                 required
-                mdInput
+                matInput
                 appEqualValidator="password"
                 [(ngModel)]="signupData.confirmPassword"
                 #confirmPassword="ngModel"
                 placeholder="Confirm Password"
                 value="">
-            </md-input-container>
+            </mat-input-container>
             <small 
               *ngIf="confirmPassword.errors && (confirmPassword.dirty || confirmPassword.touched)" 
               class="form-error-msg"> Password mismatch </small>
           </div>
           
           <div class="pb-1">
-            <md-checkbox
+            <mat-checkbox
               name="isAgreed"
               required
               [(ngModel)]="signupData.isAgreed"
               #isAgreed="ngModel" 
-              class="pb-1">I have read and agree to the terms of service.</md-checkbox>
+              class="pb-1">I have read and agree to the terms of service.</mat-checkbox>
 
               <small 
                 *ngIf="!isAgreed.value && (isAgreed.dirty || isAgreed.touched)" 
                 class="form-error-msg"> You must agree to the terms and conditions </small>
           </div>
 
-          <button md-raised-button class="mat-primary full-width mb-1" [disabled]="signupForm.invalid || !isAgreed.value">Sign up</button>
+          <button mat-raised-button class="mat-primary full-width mb-1" [disabled]="signupForm.invalid || !isAgreed.value">Sign up</button>
           <div class="text-center">
             <a [routerLink]="['/sessions/signin']" class="mat-primary text-center full-width">Sign in to existing account</a>
           </div>
         </form>
-      </md-card-content>
-    </md-card>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

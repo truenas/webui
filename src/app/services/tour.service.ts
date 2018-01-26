@@ -9,7 +9,7 @@ import { EntityUtils } from '../pages/common/entity/utils'
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 import * as hopscotch from 'hopscotch';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class TourService {
@@ -18,7 +18,7 @@ export class TourService {
     private activeRoute: ActivatedRoute,
     protected ws: WebSocketService,
     protected rest: RestService,
-    public snackBar: MdSnackBar) {};
+    public snackBar: MatSnackBar) {};
 
   GeneralSteps = [{
       title: 'Sidebar Controls',
