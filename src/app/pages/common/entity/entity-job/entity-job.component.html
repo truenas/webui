@@ -7,7 +7,7 @@
 			[value]="progressTotalPercent"
 			bufferValue="bufferValue">
     	</mat-progress-bar>
-    	{{ progressTotalPercent }}%
+    	{{ progressTotalPercent | number: '.2'}}%
     </div>
     <div>
 		<span *ngIf="description">{{ description }}</span>
