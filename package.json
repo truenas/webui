@@ -8,7 +8,7 @@
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
-    "start": "ng serve --proxy-config proxy.config.json --aot",
+    "start": "ng serve --proxy-config proxy.config.json",
     "start:dev:aot": "ng serve --proxy-config proxy.config.json --aot",
     "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "ng serve --prod",
@@ -88,7 +88,7 @@
     "zone.js": "0.8.20"
   },
   "devDependencies": {
-    "@angular/cli": "1.5.5",
+    "@angular/cli": "1.7.0-beta.2",
     "@angular/compiler-cli": "5.2.2",
     "@types/c3": "0.4.52",
     "@types/chartist": "0.9.38",
@@ -111,6 +111,6 @@
     "protractor": "5.3.0",
     "ts-node": "4.1.0",
     "tslint": "5.9.1",
-    "typescript": "2.4.2"
+    "typescript": "2.6.2"
   }
 }
