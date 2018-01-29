@@ -35,7 +35,7 @@ xpaths = {'usernameTxtBox': "/html/body/app-root/app-auth-layout/app-signin/div/
 class login_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
-        driver.get(baseurl)
+        driver.get(ui_url)
 
     def test_01_login(self):
         print ("loging in FreeNAS new webui- woot woot")
@@ -49,7 +49,7 @@ class login_test(unittest.TestCase):
         # check if the dashboard opens
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a") 
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
         page_data=ui_element.text
         print ("The page now is: " + page_data)
@@ -74,8 +74,10 @@ class login_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_login_test(webdriver):
+def run_login_test(webdriver, ip):
     global driver
     driver = webdriver
+    global ui_url
+    ui_url = "http://%s/ui" % ip
     suite = unittest.TestLoader().loadTestsFromTestCase(login_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
