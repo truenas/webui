@@ -13,6 +13,7 @@
     "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "ng serve --prod",
     "start:prod:aot": "ng serve --prod --aot",
+    "prod": "node --max-old-space-size=4096 ./node_modules/@angular/cli/bin/ng build --prod",
     "build": "npm run clean:dist && ng build",
     "build:prod": "npm run build -- --prod",
     "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
