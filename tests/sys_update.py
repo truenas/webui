@@ -24,11 +24,10 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
-           'navSystem' : "//*[@id='nav-2']/div/a[1]",
-          'submenuUpdate' : "//*[@id='2-9']",
-         'buttonChecknow' : "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[3]/div/button[1]"
-        }
+xpaths = { 'navSystem' : "//*[@id='nav-2']/div/a[1]",
+           'submenuUpdate' : "//*[@id='2-9']",
+           'buttonChecknow' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card/div/div[3]/div/button[1]"
+         }
 
 
 class check_update_test(unittest.TestCase):
@@ -48,11 +47,11 @@ class check_update_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['submenuUpdate']).click()
 
         # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[4]/div[1]/button").click()
+        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
+            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
 
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -64,8 +63,8 @@ class check_update_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['buttonChecknow']).click()
         time.sleep(2)
         # get the ui element, check if first element is present, if yes, check value text if as expected
-        if self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]"):
-            ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]")
+        if self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]"):
+            ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]")
             update_data=ui_element.text
             if update_data == "Upgrade":
                 print ("There is an available upgrade")
@@ -84,8 +83,6 @@ class check_update_test(unittest.TestCase):
         else:
             print ("There is an unexpected issue")
 
-        # assert response
-        time.sleep(5)
         # Close the System Tab
 #        driver.find_element_by_xpath(xpaths['navSystem']).click()
         time.sleep(5)
