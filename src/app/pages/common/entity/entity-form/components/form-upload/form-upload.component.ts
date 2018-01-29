@@ -39,7 +39,7 @@ export class FormUploadComponent {
       },
       withCredentials: true,
       headers: {
-        Authorization: 'Token ' + ws.token,
+        Authorization: 'Basic ' + btoa(ws.username + ':' + ws.password),
       }
     };
   }

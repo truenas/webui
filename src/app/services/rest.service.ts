@@ -71,7 +71,8 @@ export class RestService {
   request(method: RequestMethod, path: string, options: Object, useBaseUrl?: boolean) {
     const headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': 'Token ' + this.ws.token
+      'Authorization':
+      'Basic ' + btoa(this.ws.username + ':' + this.ws.password)
     });
 
     const requestUrl: string = (typeof (useBaseUrl) !== "undefined" && useBaseUrl === false)
