@@ -62,22 +62,15 @@ except getopt.GetoptError as e:
     print(UsageMSG)
     sys.exit(1)
 
-#if "--ip" not in myopts:
-#    print("Option '--ip' is missing")
-#    print(UsageMSG)
-#    sys.exit(1)
-
 for output, arg in myopts:
     if output == '--ip':
         ip = arg
-    else:
-        ip = None
     if output == "--test-name":
         test_name = arg
-    else:
-        test_name = None
 
-if ip is None:
+try:
+    ip
+except NameError:
     print("Option '--ip' is missing")
     print(UsageMSG)
     sys.exit(1)
@@ -90,26 +83,9 @@ runDriver = webDriver()
 run_login_test(runDriver, ip)
 # run_guide_test(runDriver)
 
-if (test_name == "account"):
-    print ("Running: Accounts Test")
-    run_create_user_test(runDriver)
-    run_create_group_test(runDriver)
-    run_delete_test(runDriver)
-elif (test_name == "system"):
-    run_check_update_test(runDriver)
-    run_conf_system_advanced(runDriver)
-elif (test_name == "guide"):
-    print ("Running: Guide Tests")
-    run_view_guide_test(runDriver)
-elif (test_name == "service"):
-    print ("Running: Guide Tests")
-    run_configure_ssh_test(runDriver)
-    run_configure_afp_test(runDriver)
-    run_configure_webdav_test(runDriver)
-elif (test_name == "theme"):
-    print ("Running: Theme Tests")
-    run_change_theme_test(runDriver)
-else:
+try:
+    test_name
+except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
@@ -121,6 +97,26 @@ else:
     run_configure_webdav_test(runDriver)
     run_delete_test(runDriver)
     run_change_theme_test(runDriver)
+else:
+    if (test_name == "account"):
+        print ("Running: Accounts Test")
+        run_create_user_test(runDriver)
+        run_create_group_test(runDriver)
+        run_delete_test(runDriver)
+    elif (test_name == "system"):
+        run_check_update_test(runDriver)
+        run_conf_system_advanced(runDriver)
+    elif (test_name == "guide"):
+        print ("Running: Guide Tests")
+        run_view_guide_test(runDriver)
+    elif (test_name == "service"):
+        print ("Running: Guide Tests")
+        run_configure_ssh_test(runDriver)
+        run_configure_afp_test(runDriver)
+        run_configure_webdav_test(runDriver)
+    elif (test_name == "theme"):
+        print ("Running: Theme Tests")
+        run_change_theme_test(runDriver)
 
 run_logout_test(runDriver)
 # turning off autoflush, the default mode
