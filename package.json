@@ -42,8 +42,8 @@
     "@angular/forms": "5.2.2",
     "@angular/http": "5.2.2",
     "@angular/material": "5.1.0",
-    "@angular/platform-browser": "5.2.2",
-    "@angular/platform-browser-dynamic": "5.2.2",
+    "@angular/platform-browser": "^5.2.2",
+    "@angular/platform-browser-dynamic": "^5.2.2",
     "@angular/router": "5.2.2",
     "@ng-idle/core": "2.0.0-beta.12",
     "@ng-idle/keepalive": "2.0.0-beta.12",
@@ -90,8 +90,8 @@
     "zone.js": "0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "^1.6.6",
-    "@angular/compiler-cli": "^5.2.2",
+    "@angular/cli": "1.6.6",
+    "@angular/compiler-cli": "5.2.2",
     "@types/c3": "0.4.44",
     "@types/chartist": "0.9.35",
     "@types/hopscotch": "0.2.28",
