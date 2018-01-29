@@ -7,7 +7,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
+import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
@@ -56,8 +56,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private rest: RestService,
     private dialogService: DialogService,
     private tour: TourService,
-    public dialog: MdDialog,
-    public snackBar: MdSnackBar,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar,
     private idle: Idle ) {
 
     idle.setIdle(10); // 10 seconds for delaying

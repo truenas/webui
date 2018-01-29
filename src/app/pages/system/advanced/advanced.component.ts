@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from "../../../services/ws.service";
 import { RestService } from "../../../services/rest.service";
-import { Observable } from "rxjs/Observable";
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
-import { MdSnackBar, MdDialog } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
+import { Observable, Subject, Subscription } from 'rxjs/Rx';
 
 @Component({
   selector: 'app-system-advanced',
@@ -46,7 +46,7 @@ export class AdvancedComponent implements OnInit {
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
-    public snackBar: MdSnackBar) {}
+    public snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);
@@ -78,18 +78,27 @@ export class AdvancedComponent implements OnInit {
     this.dialog.confirm("Generating Debug File", "Run this in the background?");
     this.ws.job('system.debug').subscribe((res) => {
       if (res.state === "SUCCESS") {
-        this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
-        window.open('/legacy/system/debug/download/');
+        this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
+          (res) => {
+            this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
+            window.open(res[1]);
+          },
+          (err) => {
+            this.openSnackBar("Please check the network connection", "Failed");
+          }
+        );
       }
     }, () => {
 
     }, () => {
-          if (this.job.state == 'SUCCESS') {
-            console.log("success:",this.job);
-          } else if (this.job.state == 'FAILED') {
-            this.openSnackBar("Please check the network connection", "Failed");
-          }
+      if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
+        this.openSnackBar("Please check the network connection", "Failed");
+      }
     });
+  }
+
+  generateDownloadUrl(file_path) {
+    return this.ws.call('filesystem.get', file_path);
   }
 
   buildForm(system: any) {
@@ -126,6 +135,6 @@ export class AdvancedComponent implements OnInit {
       }, res => {
         this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
         this.load.close();
-      })
+      });
   }
 }

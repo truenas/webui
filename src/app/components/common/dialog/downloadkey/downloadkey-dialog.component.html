@@ -1,12 +1,12 @@
-<h1 md-dialog-title>WARNING!</h1>
-<div md-dialog-content>
+<h1 mat-dialog-title>WARNING!</h1>
+<div mat-dialog-content>
 	<p>Backup your recovery key now! If the key is lost, the data on the disks will also be lost with no hope of recovery.</p>
 	<p>>>> Click the 'Download Recovery Key' button to download your key <<<</p>
 	<p>This type of encryption is primarily targeted at users who are storing sensitive data and want the ability to remove disks from the pool and dispose of/re-use them without concern for erasure.
 	iXsystems, Inc. can not be held responsible for any lost or unrecoverable data as a consequence of using this feature.</p>
 	<a class="download-link" (click)="downloadKey()">Download Recovery Key</a>
 </div>
-<div md-dialog-actions>
+<div mat-dialog-actions>
   &nbsp;
   <span fxFlex></span>
   <button class="mat-raised-button mat-primary" [disabled]="!isDownloaded" (click)="dialogRef.close(true)">Done</button>

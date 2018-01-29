@@ -1,11 +1,11 @@
 <div class="panel_container">
-		<md-icon id="table_actions_menue_button" [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">{{icon_name}}</md-icon>
-<md-menu #appMenu="mdMenu">
+  <mat-icon id="table_actions_menue_button" [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">{{icon_name}}</mat-icon>
+  <mat-menu #appMenu="matMenu">
     <span *ngFor="let action of actions">
-			<button id="action_button_{{ action?.label }}" md-menu-item *ngIf="!entity.conf.isActionVisible
+			<button id="action_button_{{ action?.label }}" mat-menu-item *ngIf="!entity.conf.isActionVisible
 						|| entity.conf.isActionVisible.bind(entity.conf)(action.id, row)" (click)="action.onClick(this.row);">
 				<span>{{ action?.label }}</span>
     </button>
     </span>
-</md-menu>
+  </mat-menu>
 </div>

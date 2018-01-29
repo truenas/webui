@@ -1,131 +1,150 @@
 <div id="dashboardcontainerdiv" class="dashboard-wrap">
-  <md-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
-    <md-card-title>
-      <div class="mat-toolbar mat-card-toolbar">
-        <div class="mat-card-title-text">System Information</div>
-      </div>
-    </md-card-title>
-    <md-card-content>
-      <md-list>
-        <md-list-item>
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Uptime:</strong></label>
-          <p mdLine>{{info.uptime}} </p>
-        </md-list-item>
-        <md-list-item>
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Version:</strong></label>
-          <p mdLine>{{info.version}} </p>
-        </md-list-item>
-        <md-list-item>
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Model:</strong></label>
-          <p mdLine>{{info.model}} </p>
-        </md-list-item>
-        <md-list-item>
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Average Load:</strong></label>
-          <p mdLine>{{info.loadavg}} </p>
-        </md-list-item>
-        <md-list-item>
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Physical Memory:</strong></label>
-          <p mdLine>{{info.physmem}} </p>
-        </md-list-item>
-        <md-list-item *ngIf="info.hostname">
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden">Label Icon</span>
-          <label mdLine class="mr-1"><strong>Hostname:</strong></label>
-          <p mdLine>{{info.hostname}} </p>
-        </md-list-item>
-        <md-list-item *ngFor="let ip of ipAddress">
-          <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
-          <span class="cdk-visually-hidden mr-1">Label Icon</span>
-          <label mdLine class="mr-1"><strong>IP:</strong></label>
-          <p mdLine>{{ip}} </p>
-        </md-list-item>
-      </md-list>
-    </md-card-content>
-  </md-card>
-  <md-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
-    <md-card-title>
+  <mat-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+      <mat-card-title>
+        <div class="mat-toolbar mat-card-toolbar">
+				<div class="mat-card-title-text">System Information</div>
+        </div>
+      </mat-card-title>
+      <mat-card-content>
+      	<mat-list>
+      		<mat-list-item>
+      			<mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label matLine class="mr-1"><strong>Uptime:</strong></label>
+        		<p matLine>{{info.uptime}} </p>
+      		</mat-list-item>
+      		<mat-list-item>
+      			<mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label matLine class="mr-1"><strong>Version:</strong></label>
+        		<p matLine>{{info.version}} </p>
+      		</mat-list-item>
+      		<mat-list-item>
+      			<mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label matLine class="mr-1"><strong>Model:</strong></label>
+        		<p matLine>{{info.model}} </p>
+      		</mat-list-item>
+      		<mat-list-item>
+      			<mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label matLine class="mr-1"><strong>Average Load:</strong></label>
+        		<p matLine>{{info.loadavg}} </p>
+      		</mat-list-item>
+      		<mat-list-item>
+      			<mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label matLine class="mr-1"><strong>Physical Memory:</strong></label>
+        		<p matLine>{{info.physmem}} </p>
+      		</mat-list-item>
+      		<mat-list-item *ngIf="info.hostname">
+      			<mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden">Label Icon</span>
+      			<label matLine class="mr-1"><strong>Hostname:</strong></label>
+        		<p matLine>{{info.hostname}} </p>
+      		</mat-list-item>
+  			  <mat-list-item *ngFor="let ip of ipAddress">
+  				  <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
+        		<span class="cdk-visually-hidden mr-1">Label Icon</span>
+      			<label matLine class="mr-1"><strong>IP:</strong></label>
+        		<p matLine>{{ip}} </p>
+      		</mat-list-item>
+  		</mat-list>
+      </mat-card-content>
+    </mat-card>
+      <mat-card class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+    <mat-card-title>
       <div class="mat-toolbar mat-card-toolbar">
         <div class="mat-card-title-text">Network Information</div>
       </div>
-    </md-card-title>
-    <md-card-content>
-      <md-list>
+    </mat-card-title>
+    <mat-card-content>
+      <mat-list>
         <div *ngIf="network_info.ips && network_info.ips.lagg0">
-          <md-list-item *ngFor="let ipv4 of network_info.ips.lagg0.IPV4">
-            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+          <mat-list-item *ngFor="let ipv4 of network_info.ips.lagg0.IPV4">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
             <span class="cdk-visually-hidden mr-1">Label Icon</span>
-            <label mdLine class="mr-1"><strong>IPv4:</strong></label>
-            <p mdLine>{{ipv4}} </p>
-          </md-list-item>
+            <label matLine class="mr-1"><strong>IPv4:</strong></label>
+            <p matLine>{{ipv4}} </p>
+          </mat-list-item>
         </div>
         <div *ngIf="network_info.ips && network_info.ips.lagg0">
-          <md-list-item *ngFor="let ipv6 of network_info.ips.lagg0.IPV6">
-            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+          <mat-list-item *ngFor="let ipv6 of network_info.ips.lagg0.IPV6">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
             <span class="cdk-visually-hidden mr-1">Label Icon</span>
-            <label mdLine class="mr-1"><strong>IPv6:</strong></label>
-            <p mdLine>{{ipv6}} </p>
-          </md-list-item>
+            <label matLine class="mr-1"><strong>IPv6:</strong></label>
+            <p matLine>{{ipv6}} </p>
+          </mat-list-item>
         </div>
         <div *ngIf="network_info.default_routes">
-          <md-list-item *ngFor="let route of network_info.default_routes">
-            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+          <mat-list-item *ngFor="let route of network_info.default_routes">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
             <span class="cdk-visually-hidden mr-1">Label Icon</span>
-            <label mdLine class="mr-1"><strong>Routes:</strong></label>
-            <p mdLine>{{route}} </p>
-          </md-list-item>
+            <label matLine class="mr-1"><strong>Routes:</strong></label>
+            <p matLine>{{route}} </p>
+          </mat-list-item>
         </div>
         <div *ngIf="network_info.nameservers">
-          <md-list-item *ngFor="let nameserver of network_info.nameservers; let i=index">
-            <md-icon mdListIcon aria-hidden="true" color="primary" class="mr-1">label</md-icon>
+          <mat-list-item *ngFor="let nameserver of network_info.nameservers; let i=index">
+            <mat-icon matListIcon aria-hidden="true" color="primary" class="mr-1">label</mat-icon>
             <span class="cdk-visually-hidden mr-1">Label Icon</span>
-            <label mdLine class="mr-1"><strong>Nameserver{{i + 1}}: </strong></label>
-            <p mdLine>{{nameserver}} </p>
-          </md-list-item>
+            <label matLine class="mr-1"><strong>Nameserver{{i + 1}}: </strong></label>
+            <p matLine>{{nameserver}} </p>
+          </mat-list-item>
         </div>
-      </md-list>
-    </md-card-content>
-  </md-card>
-  <md-card *ngFor="let graph of graphs" class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
-    <md-card-title>
-      <div class="mat-toolbar mat-card-toolbar">
-        <div class="mat-card-title-text">
-          <span>{{ graph.title }}</span>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  	<mat-card
+  		*ngFor="let graph of graphs" 
+  		class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+  	  <mat-card-title>
+        <div class="mat-toolbar mat-card-toolbar">
+			<div class="mat-card-title-text">
+				<span>{{ graph.title }}</span>
+			</div>
         </div>
-      </div>
-    </md-card-title>
-    <md-card-content>
-      <line-chart [dataList]="graph.dataList" [legends]="graph.legends" [type]="graph.type || 'Line'" [series]="graph.series" [divideBy]="graph.divideBy" [chartFormatter]="chartFormatter"></line-chart>
-    </md-card-content>
-  </md-card>
-  <!-- Notes -->
-  <div *ngFor="let card of cards; let i=index" class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
-    <ng-template #cardfront let-name="name">
-      <md-card-title>{{card.title}}</md-card-title>
-      <md-card-content>{{card.content}}</md-card-content>
-      <md-card-actions>
-        <button md-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
-        <button md-raised-button color="primary" (click)="deleteNote(card.id)">Delete</button>
-      </md-card-actions>
-    </ng-template>
-    <ng-template #cardback let-name="backname">
-      <dashboard-note-edit class="dashboard-note-cardback" *ngIf="cards[i].template == 'edit'" [isNew]="cards[i].isNew" [machineId]="cards[i].id" [cardNote]="cards[i]" (cancel)="cancel(i)" (saved)="toggleForm($event.flipState,cards[i],'none', $event.id);refreshNote(cards[i].id)"></dashboard-note-edit>
-    </ng-template>
-    <entity-card [ngStyle]="noteStyle" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="true"></entity-card>
-  </div>
-  <!-- end of Notes -->
+      </mat-card-title>
+  	  <mat-card-content>
+  	  	<line-chart 
+  	  	[dataList]="graph.dataList" 
+  	  	[legends]="graph.legends" 
+  	  	[type]="graph.type || 'Line'" 
+  	  	[series]="graph.series" 
+  	  	[divideBy]="graph.divideBy"
+  	  	[chartFormatter]="chartFormatter"></line-chart>
+  	  	
+  	  </mat-card-content>
+  	</mat-card>
+    <!-- Notes -->
+    <div *ngFor="let card of cards; let i=index" class="dashboard-item p-0 mt-1 mr-1 mb-05 ml-1">
+      <ng-template #cardfront let-name="name">
+        <mat-card-title>{{card.title}}</mat-card-title>
+        <mat-card-content>{{card.content}}</mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+          <button mat-raised-button color="primary" (click)="deleteNote(card.id)">Delete</button>
+        </mat-card-actions>
+      </ng-template>
+
+      <ng-template #cardback let-name="backname">
+        <dashboard-note-edit class="dashboard-note-cardback"
+                         *ngIf="cards[i].template == 'edit'"
+                         [isNew]="cards[i].isNew"
+                         [machineId]="cards[i].id"
+                         [cardNote]="cards[i]"
+                         (cancel)="cancel(i)"
+                         (saved)="toggleForm($event.flipState,cards[i],'none', $event.id);refreshNote(cards[i].id)"
+                         ></dashboard-note-edit>
+      </ng-template>
+
+      <entity-card [ngStyle]="noteStyle" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="true"></entity-card>
+    </div>
+    <!-- end of Notes -->
 </div>
 <section class="fab">
-  <button md-fab class="md-fab-bottom-right-1" color="primary" mdTooltip="Add a note" (click)="addNote()">
-    <md-icon class="md-16 ">add</md-icon>
+  <button mat-fab class="mat-fab-bottom-right-1" color="primary" matTooltip="Add a note" (click)="addNote()">
+    <mat-icon class="md-16 ">add</mat-icon>
   </button>
 </section>

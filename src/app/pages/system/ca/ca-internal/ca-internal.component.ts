@@ -40,9 +40,8 @@ export class CertificateAuthorityInternalComponent {
       type : 'input',
       name : 'cert_name',
       placeholder : 'Identifier',
-      tooltip: 'Required; enter a descriptive name for the\
- CA using only alphanumeric, underscore\
- (_), and dash (-) characters.',
+      tooltip: 'Enter a descriptive name for the CA using\
+ only alphanumeric, underscore (_), and dash (-) characters.',
     },
     {
       type : 'select',
@@ -90,27 +89,27 @@ export class CertificateAuthorityInternalComponent {
       type : 'input',
       name : 'cert_state',
       placeholder : 'State',
-      tooltip: 'Required; enter the state or province of\
- the organization.',
+      tooltip: 'Enter the state or province of the\
+ organization.',
     },
     {
       type : 'input',
       name : 'cert_city',
       placeholder : 'Locality',
-      tooltip: 'Required; enter the location of the organization.',
+      tooltip: 'Enter the location of the organization.',
     },
     {
       type : 'input',
       name : 'cert_organization',
       placeholder : 'Organization',
-      tooltip: 'Required; enter the name of the\
- company or organization.',
+      tooltip: 'Enter the name of the company or\
+ organization.',
     },
     {
       type : 'input',
       name : 'cert_email',
       placeholder : 'Email',
-      tooltip: 'Required; enter the email address for the person\
+      tooltip: 'Enter the email address for the person\
  responsible for the CA.',
       validation : [ Validators.email ]
     },
@@ -118,8 +117,9 @@ export class CertificateAuthorityInternalComponent {
       type : 'input',
       name : 'cert_common',
       placeholder : 'Common Name',
-      tooltip: 'Required; enter the fully-qualified hostname\
- (FQDN) of the FreeNAS® system.',
+      tooltip: 'Enter the fully-qualified hostname (FQDN) of the\
+ system. This name **must** be unique within a certificate\
+ chain.',
     },
     {
       type : 'textarea',

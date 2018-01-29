@@ -1,6 +1,6 @@
 import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
-
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 
 @Component({
@@ -23,9 +23,9 @@ export class EntityJobComponent implements OnInit {
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() failure = new EventEmitter();
-  constructor(public dialogRef: MdDialogRef < EntityJobComponent > ,
+  constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
-    @Inject(MD_DIALOG_DATA) public data: any) {}
+    @Inject(MAT_DIALOG_DATA) public data: any) {}
 
   ngOnInit() {
     this.dialogRef.updateSize('25%', '20%');

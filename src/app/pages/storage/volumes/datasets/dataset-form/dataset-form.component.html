@@ -1,18 +1,18 @@
 <p *ngIf="success" type="success">Successfully updated.</p>
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
-<md-card>
-  <div class="md-content">
+<mat-card>
+  <div class="mat-content">
     <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm">
       <ng-container *ngFor="let field of fieldConfig;" 
         dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
       </ng-container>
-      <md-card-actions>
-        <button md-raised-button class="btn btn-block btn-warning" type="submit" color="primary" [disabled]="!entityForm.form.valid">Save</button>
-        <button md-raised-button *ngIf="route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
+      <mat-card-actions>
+        <button mat-raised-button class="btn btn-block btn-warning" type="submit" color="primary" [disabled]="!entityForm.form.valid">Save</button>
+        <button mat-raised-button *ngIf="route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
         <span *ngFor="let custBtn of custActions">
-          <button md-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" class="btn  btn-block btn-default" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+          <button mat-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" class="btn  btn-block btn-default" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
         </span>
-      </md-card-actions>
+      </mat-card-actions>
     </form>
   </div>  
-</md-card>
+</mat-card>

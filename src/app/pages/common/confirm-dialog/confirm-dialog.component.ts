@@ -1,4 +1,4 @@
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 
 @Component({
@@ -13,7 +13,7 @@ export class ConfirmDialog {
   public hideCheckBox: boolean = false;
   public isSubmitEnabled: boolean = false;
 
-  constructor(public dialogRef: MdDialogRef < ConfirmDialog > ) {
+  constructor(public dialogRef: MatDialogRef < ConfirmDialog > ) {
 
   }
 

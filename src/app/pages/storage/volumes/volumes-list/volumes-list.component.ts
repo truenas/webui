@@ -11,7 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 
 import { Injectable } from '@angular/core';
@@ -247,6 +247,8 @@ export class VolumesListTableConfig {
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
+    console.log("Log point 1");
+
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
@@ -266,9 +268,18 @@ export class VolumesListTableConfig {
       if( "/mnt" === data[i].parentPath ) {
         data[i].parentPath = "0";
       }
-      data[i].availStr = filesize(data[i].avail, { standard: "iec" });
-      data[i].usedStr = filesize(data[i].used, { standard: "iec" }) + " (" + data[i].used_pct + ")";
-      data[i].volumesListTableConfig = null;
+
+      try {
+        data[i].availStr = filesize(data[i].avail, { standard: "iec" });
+      } catch(error) {
+        data[i].availStr = "" + data[i].avail;
+      }
+
+      try {
+        data[i].usedStr = filesize(data[i].used, { standard: "iec" });
+      } catch(error) {
+        data[i].usedStr = "" + data[i].used;
+      }
 
       if (data[i].type === 'dataset' && typeof (data[i].dataset_data) !== "undefined" && typeof (data[i].dataset_data.data) !== "undefined") {
         for (let k = 0; k < data[i].dataset_data.data.length; k++) {
@@ -309,9 +320,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MdDialog, protected erdService: ErdService) {
+    protected mdDialog: MatDialog, protected erdService: ErdService) {
     super(rest, router, ws, _eRef, dialog, loader, erdService);
-
   }
 
   public repaintMe() {

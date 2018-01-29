@@ -1,113 +1,110 @@
-<md-toolbar class="topbar">
-  <!-- Sidenav toggle button -->
-  <button md-icon-button id="sidenavToggle" (click)="toggleSidenav()" md-tooltip="Toggle Hide/Open">
-    <md-icon>menu</md-icon>
-  </button>
-  <!-- Sidenav toggle collapse -->
-  <button md-icon-button id="collapseToggle" fxHide.lt-md="true" (click)="toggleCollapse()" md-tooltip="Toggle Collapse" class="toggle-collapsed">
-    <md-icon>chevron_left</md-icon>
-  </button>
-  <!-- Search form
+<mat-toolbar class="topbar lola">
+  <mat-toolbar-row>
+    <!-- Sidenav toggle button -->
+    <button mat-icon-button id="sidenavToggle" (click)="toggleSidenav()" matTooltip="Toggle Hide/Open">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <!-- Sidenav toggle collapse -->
+    <button mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" matTooltip="Toggle Collapse" class="toggle-collapsed">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <!-- Search form
   <div
   fxFlex
   fxHide.lt-sm="true"
   class="search-bar">
     <form class="top-search-form">
-      <md-icon role="img">search</md-icon>
+      <mat-icon role="img">search</mat-icon>
       <input autofocus="true" placeholder="Search" type="text">
     </form>
   </div -->
-  <span fxFlex></span>
-  <!--loading icon-->
-  <button *ngIf="showResilvering" md-icon-button id="resilver" mdTooltip="resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
-    <md-icon class="fa-spin">autorenew</md-icon>
-  </button>
-  <button *ngIf="showReplication" md-icon-button id="replication" mdTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
-    <md-icon class="movement">content_copy</md-icon>
-  </button>
-
-  <!-- Theme Switcher -->
-  <button md-icon-button id="schemeToggle" [style.overflow]="'visible'" mdTooltip="FreeNAS Themes" [mdMenuTriggerFor]="themeMenu" class="topbar-button-right">
-    <md-icon>format_color_fill</md-icon>
-  </button>
-  <md-menu #themeMenu="mdMenu" >
-    <md-grid-list class="theme-list" cols="1" rowHeight="24px">
-      <md-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme)">
-        <div md-menu-item [title]="theme.name">
-          <div [style.background]="theme.baseColor" class="egret-swatch"></div>
-          <md-icon class="active-icon" *ngIf="theme.isActive">check</md-icon>
-        </div>
-        <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
-      </md-grid-tile>
-    </md-grid-list>
-  </md-menu>
-
-  <button md-icon-button (click)="startTour()" class="topbar-button-right" mdTooltip="Guide Tour" [style.overflow]="'visible'">
-    <md-icon>flight_takeoff</md-icon>
-  </button>
-
-  <!-- Notification toggle button -->
-  <button md-icon-button mdTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
-    <md-icon>notifications</md-icon>
-    <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
-  </button>
-
-  <!-- Top left user menu -->
-  <button md-icon-button [mdMenuTriggerFor]="accountMenu" class="topbar-button-right">
-    <md-icon>settings</md-icon>
-  </button>
-  <md-menu #accountMenu="mdMenu">
-    <button md-menu-item (click)="$event.stopPropagation()" [mdMenuTriggerFor]="languageMenu">
-      <md-icon>translate</md-icon>
-      <ng-container *ngFor="let lang of availableLangs">
-        <span *ngIf="lang.code == currentLang">{{ lang.name }}</span>
-      </ng-container>
+    <span fxFlex></span>
+    <!--loading icon-->
+    <button *ngIf="showResilvering" mat-icon-button id="resilver" matTooltip="resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
+      <mat-icon class="fa-spin">autorenew</mat-icon>
     </button>
-    <button md-menu-item [routerLink]="['/account/users/edit/1']">
-      <md-icon>account_box</md-icon>
-      <span>Account</span>
+    <button *ngIf="showReplication" mat-icon-button id="replication" matTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
+      <mat-icon class="movement">content_copy</mat-icon>
     </button>
-    <button md-menu-item [routerLink]="['/account/users/change-password']">
-      <md-icon>dialpad</md-icon>
-      <span>Change Password</span>
+    <!-- Theme Switcher -->
+    <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="FreeNAS Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
+      <mat-icon>format_color_fill</mat-icon>
     </button>
-    <button md-menu-item [routerLink]="['/system/general']">
-      <md-icon>settings</md-icon>
-      <span>Settings</span>
+    <mat-menu #themeMenu="matMenu">
+      <mat-grid-list class="theme-list" cols="1" rowHeight="24px">
+        <mat-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme)">
+          <div mat-menu-item [title]="theme.name">
+            <div [style.background]="theme.baseColor" class="egret-swatch"></div>
+            <mat-icon class="active-icon" *ngIf="theme.isActive">check</mat-icon>
+          </div>
+          <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-menu>
+    <button mat-icon-button (click)="startTour()" class="topbar-button-right" matTooltip="Guide Tour" [style.overflow]="'visible'">
+      <mat-icon>flight_takeoff</mat-icon>
     </button>
-    <!-- button md-menu-item>
-      <md-icon>notifications_off</md-icon>
+    <!-- Notification toggle button -->
+    <button mat-icon-button matTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+      <mat-icon>notifications</mat-icon>
+      <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
+    </button>
+    <!-- Top left user menu -->
+    <button mat-icon-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #accountMenu="matMenu">
+      <button mat-menu-item (click)="$event.stopPropagation()" [matMenuTriggerFor]="languageMenu">
+        <mat-icon>translate</mat-icon>
+        <ng-container *ngFor="let lang of availableLangs">
+          <span *ngIf="lang.code == currentLang">{{ lang.name }}</span>
+        </ng-container>
+      </button>
+      <button mat-menu-item [routerLink]="['/account/users/edit/1']">
+        <mat-icon>account_box</mat-icon>
+        <span>Account</span>
+      </button>
+      <button mat-menu-item [routerLink]="['/account/users/change-password']">
+        <mat-icon>dialpad</mat-icon>
+        <span>Change Password</span>
+      </button>
+      <button mat-menu-item [routerLink]="['/system/general']">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+      <!-- button mat-menu-item>
+      <mat-icon>notifications_off</mat-icon>
       <span>Disable alerts</span>
     </button -->
-    <button md-menu-item (click)="signOut()">
-      <md-icon>exit_to_app</md-icon>
-      <span>Logout</span>
-    </button>
-    <button md-menu-item (click)="onReboot()">
-      <md-icon>replay</md-icon>
-      <span>Reboot</span>
-    </button>
-    <button md-menu-item (click)="onShutdown()">
-      <md-icon>power_settings_new</md-icon>
-      <span>Shutdown</span>
-    </button>
-    <button md-menu-item (click)="onShowAbout()">
-      <md-icon>info_outline</md-icon>
-      <span>About</span>
-    </button>
-    <a md-menu-item href="/legacy/">
-      <md-icon>accessible</md-icon>
-      <span>Legacy UI</span>
-    </a>
-  </md-menu>
-
-  <md-menu #languageMenu="mdMenu" [overlapTrigger]="false" xPosition="after">
-    <ng-container *ngFor="let lang of availableLangs">
-      <button md-menu-item (click)="setLang(lang.code)">
-        <span class="flag-icon" [ngClass]="{'flag-icon-us': lang.code === 'en'}" *ngIf="lang.code == 'en'">{{ lang.name }}</span>
-        <span class="flag-icon" [ngClass]="{'flag-icon-es': lang.code === 'es'}" *ngIf="lang.code == 'es'">{{ lang.name }}</span>
-        <span class="flag-icon" [ngClass]="{'flag-icon-cn': lang.code === 'zh'}" *ngIf="lang.code == 'zh'">{{ lang.name }}</span>
+      <button mat-menu-item (click)="signOut()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
       </button>
-    </ng-container>
-  </md-menu>
-</md-toolbar>
+      <button mat-menu-item (click)="onReboot()">
+        <mat-icon>replay</mat-icon>
+        <span>Reboot</span>
+      </button>
+      <button mat-menu-item (click)="onShutdown()">
+        <mat-icon>power_settings_new</mat-icon>
+        <span>Shutdown</span>
+      </button>
+      <button mat-menu-item (click)="onShowAbout()">
+        <mat-icon>info_outline</mat-icon>
+        <span>About</span>
+      </button>
+      <a mat-menu-item href="/legacy/">
+        <mat-icon>accessible</mat-icon>
+        <span>Legacy UI</span>
+      </a>
+    </mat-menu>
+    <mat-menu #languageMenu="matMenu" [overlapTrigger]="false" xPosition="after">
+      <ng-container *ngFor="let lang of availableLangs">
+        <button mat-menu-item (click)="setLang(lang.code)">
+          <span class="flag-icon" [ngClass]="{'flag-icon-us': lang.code === 'en'}" *ngIf="lang.code == 'en'">{{ lang.name }}</span>
+          <span class="flag-icon" [ngClass]="{'flag-icon-es': lang.code === 'es'}" *ngIf="lang.code == 'es'">{{ lang.name }}</span>
+          <span class="flag-icon" [ngClass]="{'flag-icon-cn': lang.code === 'zh'}" *ngIf="lang.code == 'zh'">{{ lang.name }}</span>
+        </button>
+      </ng-container>
+    </mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>

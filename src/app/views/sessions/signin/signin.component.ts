@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {Router} from '@angular/router';
-import {MdProgressBar, MdButton, MdSnackBar} from '@angular/material';
+import { Router } from '@angular/router';
+import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 
 import {WebSocketService} from '../../../services/ws.service';
 
@@ -10,8 +10,8 @@ import {WebSocketService} from '../../../services/ws.service';
   styleUrls: ['./signin.component.css']
 })
 export class SigninComponent implements OnInit {
-  @ViewChild(MdProgressBar) progressBar: MdProgressBar;
-  @ViewChild(MdButton) submitButton: MdButton;
+  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
+  @ViewChild(MatButton) submitButton: MatButton;
 
   private failed: Boolean = false;
   public is_freenas: Boolean = false;
@@ -21,7 +21,7 @@ export class SigninComponent implements OnInit {
     username: 'root',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router, private snackBar: MdSnackBar) {
+  constructor(private ws: WebSocketService, private router: Router, private snackBar: MatSnackBar) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
@@ -30,7 +30,7 @@ export class SigninComponent implements OnInit {
    }
 
   ngOnInit() {
-    if (this.ws.username && this.ws.password && this.ws.redirectUrl) {
+    if (this.ws.token && this.ws.redirectUrl) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
       }
@@ -38,7 +38,7 @@ export class SigninComponent implements OnInit {
         this.progressBar.mode = 'indeterminate';
       }
 
-      this.ws.login(this.ws.username, this.ws.password)
+      this.ws.login_token(this.ws.token)
                        .subscribe((result) => { this.loginCallback(result); });
     }
   }
@@ -64,12 +64,18 @@ export class SigninComponent implements OnInit {
   }
 
   successLogin() {
-    if (this.ws.redirectUrl) {
-      this.router.navigateByUrl(this.ws.redirectUrl);
-      this.ws.redirectUrl = '';
-    } else {
-      this.router.navigate([ '/dashboard' ]);
-    }
+    this.ws.call('auth.generate_token', [60]).subscribe((result) => {
+      if (result) {
+        this.ws.token = result;
+
+        if (this.ws.redirectUrl) {
+          this.router.navigateByUrl(this.ws.redirectUrl);
+          this.ws.redirectUrl = '';
+        } else {
+          this.router.navigate([ '/dashboard' ]);
+        }
+      }
+    });
   }
 
   errorLogin() {
@@ -78,7 +84,12 @@ export class SigninComponent implements OnInit {
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
     this.signinData.username = 'root';
-    this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
+    if (typeof(this.ws.token) === 'undefined') {
+      this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
+    } else {
+      this.snackBar.open('Token expired, please log back in', 'OKAY', {duration: 4000});
+      this.ws.token = null;
+    }
   }
 
 }

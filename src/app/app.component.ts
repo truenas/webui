@@ -4,7 +4,7 @@ import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRoute
 import { URLSearchParams, } from '@angular/http';
 
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private activeRoute: ActivatedRoute,
     private routePartsService: RoutePartsService,
-    public snackBar: MdSnackBar,
+    public snackBar: MatSnackBar,
     private ws: WebSocketService,
     private rest: RestService,
     private api: ApiService,
@@ -51,10 +51,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.changePageTitle();
-    let self = this;
-    window.addEventListener('beforeunload', function(e) {
-      self.ws.logout(); 
-    }, false);
   }
 
   changePageTitle() {

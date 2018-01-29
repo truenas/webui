@@ -1,18 +1,18 @@
-<md-card>
+<mat-card>
   <div>
     <div>
-      <md-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
-        (change)="toggleAutoCheck()">Automatically check for new updates</md-checkbox>
+      <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
+        (change)="toggleAutoCheck()">Automatically check for new updates</mat-checkbox>
     </div>
     <div>
-      <md-select class="form-control full-width" [(ngModel)]="train">
-        <md-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</md-option>
-      </md-select>
+      <mat-select class="form-control full-width" [(ngModel)]="train">
+        <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</mat-option>
+      </mat-select>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <button md-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">Check Now</button>
-        <button md-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">Update and Reboot</button>
+        <button mat-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">Check Now</button>
+        <button mat-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">Update and Reboot</button>
       </div>
     </div>
     <div class="row">
@@ -47,26 +47,26 @@
       </div>
     </div>
   </div>
-</md-card>
-<md-card class="p-0" *ngIf="releaseNotes">
-  <md-card-title>
+</mat-card>
+<mat-card class="p-0" *ngIf="releaseNotes">
+  <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
       <div class="mat-card-title-text">Release Notes</div>
     </div>
-  </md-card-title>
-  <md-card-content>
-    <a md-button href="{{releaseNotes}}" target="_blank">Check Release Notes</a>
-  </md-card-content>
-</md-card>
-<md-card class="p-0" *ngIf="changeLog">
-  <md-card-title>
+  </mat-card-title>
+  <mat-card-content>
+    <a mat-button href="{{releaseNotes}}" target="_blank">Check Release Notes</a>
+  </mat-card-content>
+</mat-card>
+<mat-card class="p-0" *ngIf="changeLog">
+  <mat-card-title>
     <div class="mat-toolbar mat-card-toolbar">
       <div class="mat-card-title-text">Change log</div>
     </div>
-  </md-card-title>
-  <md-card-content>
+  </mat-card-title>
+  <mat-card-content>
       <markdown>
           {{changeLog}}
       </markdown>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

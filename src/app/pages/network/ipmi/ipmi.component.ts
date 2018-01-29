@@ -2,7 +2,7 @@ import {ApplicationRef, Component, Injector, OnInit, Input, ViewChild, ElementRe
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
-import { MaterialModule, MdTableModule } from '@angular/material';
+import { MaterialModule } from '../../../appMaterial.module';
 
 import {
   RestService,
@@ -27,13 +27,13 @@ import {EntityUtils} from '../../common/entity/utils';
 @Component({
   selector : 'app-ipmi',
   template : `
-  <md-card>
-  <md-select #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
-    <md-option *ngFor="let channel of channels" [value]="channel.value">
+  <mat-card>
+  <mat-select #selectedChannel name="channel" placeholder="Channel" (change)="switchChannel()" [(ngModel)]="selectedValue">
+    <mat-option *ngFor="let channel of channels" [value]="channel.value">
       Channel {{channel.value}}
-    </md-option>
-  </md-select>
-  </md-card>
+    </mat-option>
+  </mat-select>
+  </mat-card>
   <entity-form [conf]="this"></entity-form>
   `,
   providers : [ TooltipsService ],

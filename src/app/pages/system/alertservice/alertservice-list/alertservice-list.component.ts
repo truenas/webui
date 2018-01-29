@@ -4,7 +4,9 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services/';
-import { DialogService } from 'app/services/dialog.service';
+import { MatDialog } from '@angular/material';
+
+import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
 
 @Component({
@@ -31,7 +33,7 @@ export class AlertServiceListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, public dialog: DialogService) { }
+    protected _injector: Injector, protected _appRef: ApplicationRef, public dialog: MatDialog) { }
 
 
   afterInit(entityList: any) {
@@ -49,7 +51,11 @@ export class AlertServiceListComponent {
       onClick: () => {
 
         this.ws.call("consul.create_fake_alert").subscribe(()=>{
-          this.dialog.Info("Test Alert", "Test alert was successfully sent to all configured alert services");
+          const dialogRef = this.dialog.open(TestAlertModalDialogComponent, {});
+
+          dialogRef.afterClosed().subscribe((result) => {
+            // The dialog was closed
+          });
         });
 
         

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MdProgressBar, MdButton } from '@angular/material';
+import { MatProgressBar, MatButton } from '@angular/material';
 
 @Component({
   selector: 'app-signup',
@@ -7,8 +7,8 @@ import { MdProgressBar, MdButton } from '@angular/material';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
-  @ViewChild(MdProgressBar) progressBar: MdProgressBar;
-  @ViewChild(MdButton) submitButton: MdButton;
+  @ViewChild(MatProgressBar) progressBar: MatProgressBar;
+  @ViewChild(MatButton) submitButton: MatButton;
   signupData = {
     email: '',
     password: '',

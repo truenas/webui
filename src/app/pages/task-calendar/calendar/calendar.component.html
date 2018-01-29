@@ -1,16 +1,16 @@
-<md-card class="p-0">
-  <md-card-title class="mat-bg-primary">
+<mat-card class="p-0">
+  <mat-card-title class="mat-bg-primary">
     <div [ngStyle]="{overflow: 'hidden'}" class="card-title-text calendar-title">
       <!-- Arrow navigations -->
       <div class="cal-top-col text-center">
-        <button md-icon-button mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate">
-          <md-icon>chevron_left</md-icon>
+        <button mat-icon-button mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate">
+          <mat-icon>chevron_left</mat-icon>
         </button>
-        <button md-icon-button mwlCalendarToday [(viewDate)]="viewDate">
-          <md-icon>today</md-icon>
+        <button mat-icon-button mwlCalendarToday [(viewDate)]="viewDate">
+          <mat-icon>today</mat-icon>
         </button>
-        <button md-icon-button mwlCalendarNextView [view]="view" [(viewDate)]="viewDate">
-          <md-icon>chevron_right</md-icon>
+        <button mat-icon-button mwlCalendarNextView [view]="view" [(viewDate)]="viewDate">
+          <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
       <!-- Date title -->
@@ -19,21 +19,21 @@
       </div>
       <!-- Month, day, week view toggle buttons -->
       <div class="cal-top-col text-center">
-        <button md-icon-button md-tooltip="Month View" (click)="view = 'month'" [class.active]="view === 'month'">
-          <md-icon>view_comfy</md-icon>
+        <button mat-icon-button matTooltip="Month View" (click)="view = 'month'" [class.active]="view === 'month'">
+          <mat-icon>view_comfy</mat-icon>
         </button>
-        <button md-icon-button md-tooltip="Week View" (click)="view = 'week'" [class.active]="view === 'week'">
-          <md-icon>view_week</md-icon>
+        <button mat-icon-button matTooltip="Week View" (click)="view = 'week'" [class.active]="view === 'week'">
+          <mat-icon>view_week</mat-icon>
         </button>
-        <button md-icon-button md-tooltip="Day View" (click)="view = 'day'" [class.active]="view === 'day'">
-          <md-icon>view_day</md-icon>
+        <button mat-icon-button matTooltip="Day View" (click)="view = 'day'" [class.active]="view === 'day'">
+          <mat-icon>view_day</mat-icon>
         </button>
       </div>
     </div>
-    <md-divider></md-divider>
-  </md-card-title>
+    <mat-divider></mat-divider>
+  </mat-card-title>
   <!-- Calendar -->
-  <md-card-content class="p-0">
+  <mat-card-content class="p-0">
     <div [ngSwitch]="view">
       <mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
       </mwl-calendar-month-view>
@@ -42,19 +42,19 @@
       <mwl-calendar-day-view *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
       </mwl-calendar-day-view>
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>
 <!-- Popup modal -->
 <ng-template #modalContent let-close="close">
   <div class="p-0">
     <div class="card-title-text">
       <span [style.lineHeight]="'40px'">Event action occurred</span>
       <span fxFlex></span>
-      <button md-icon-button (click)="closeDialog()">
-        <md-icon>close</md-icon>
+      <button mat-icon-button (click)="closeDialog()">
+        <mat-icon>close</mat-icon>
       </button>
     </div>
-    <md-divider class="mb-1"></md-divider>
+    <mat-divider class="mb-1"></mat-divider>
     <div>
       <div>
         Action:
@@ -70,13 +70,13 @@
 <!-- Fab speed dail -->
 <smd-fab-speed-dial #myFab [direction]="direction" [animationMode]="animationMode" (mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
   <smd-fab-trigger [spin]="spin">
-    <button md-fab>
-      <md-icon>list</md-icon>
+    <button mat-fab>
+      <mat-icon>list</mat-icon>
     </button>
   </smd-fab-trigger>
   <smd-fab-actions>
-    <button *ngFor="let task of tasks" md-mini-fab (click)="addTask(task.name)" mdTooltip="{{task.label}}">
-      <md-icon>{{task.icon}}</md-icon>
+    <button *ngFor="let task of tasks" mat-mini-fab (click)="addTask(task.name)" matTooltip="{{task.label}}">
+      <mat-icon>{{task.icon}}</mat-icon>
     </button>
   </smd-fab-actions>
 </smd-fab-speed-dial>

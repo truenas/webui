@@ -28,16 +28,16 @@ xpaths = {
         'navAccount': "//*[@id='nav-1']/div/a[1]",
         'submenuUser': "//*[@id='1-1']",
         'submenuGroup': "//*[@id='1-0']",
-        'newUser': "//*[@id='1']/form-input/div/md-input-container/div/div[1]/div/input",
-        'primaryGroupcheckbox': "//*[@id='2']/form-checkbox/div/md-checkbox/label/div",
-        'primaryGroupdropdown': "//*[@id='3']/form-select/div/md-select/div",
-        'newUserName': "//*[@id='7']/form-input/div/md-input-container/div/div[1]/div/input",
-        'newUserPass': "//*[@id='9']/form-input/div/md-input-container/div/div[1]/div/input",
-        'newUserPassConf': "//*[@id='10']/form-input/div/md-input-container/div/div[1]/div/input",
-        'permitSudocheckbox': "//*[@id='13']/form-checkbox/div/md-checkbox/label/div",
-        'deleteConfirm': "/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
-        'fabTrigger': "//*[@id='entity-table-component']/div[1]/app-entity-table-add-actions/div/smd-fab-speed-dial/div",
-        'fabAction': "//*[@id='entity-table-component']/div[1]/app-entity-table-add-actions/div/smd-fab-speed-dial/div/smd-fab-actions/button"
+        'newUser': "//*[@id='username']/mat-input-container/div/div[1]/div/input",
+        'primaryGroupcheckbox': "//*[@id='group_create']/mat-checkbox/label/div",
+        'primaryGroupdropdown': "//*[@id='group']/mat-select/div/div[1]",
+        'newUserName': "//*[@id='full_name']/mat-input-container/div/div[1]/div/input",
+        'newUserPass': "//*[@id='password']/mat-input-container/div/div[1]/div/input",
+        'newUserPassConf': "//*[@id='password_conf']/mat-input-container/div/div[1]/div/input",
+        'permitSudocheckbox': "//*[@id='sudo']/mat-checkbox/label/div",
+        'fabTrigger': "//*[@id='myFab']/div/smd-fab-trigger/button",
+        'fabAction': "//*[@id='add_action_button']",
+        'saveButton': "//*[@id='save_button']"
         }
 
 
@@ -58,7 +58,7 @@ class create_user_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuUser']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -68,8 +68,8 @@ class create_user_test(unittest.TestCase):
     def test_02_create_newuser(self):
         print (" creating a new user with create new primary group")
         # cancelling the tour
-        if self.is_element_present(By.XPATH, "/html/body/div[5]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[5]/div[1]/button").click()
+        if self.is_element_present(By.XPATH, "/html/body/div[6]/div[1]/button"):
+            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
         # scroll down to find hover tab
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
@@ -89,7 +89,7 @@ class create_user_test(unittest.TestCase):
         # Enter Password Conf
         driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
         # Click on create new User button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
 
@@ -127,7 +127,7 @@ class create_user_test(unittest.TestCase):
         # Enter Password Conf
         driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
         # Click on create new User button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
 
@@ -157,7 +157,7 @@ class create_user_test(unittest.TestCase):
         # check Permit Sudo Checkbox
         driver.find_element_by_xpath(xpaths['permitSudocheckbox']).click()
         # Click on create new User button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
         # check if the the user list is loaded after addding a new user
@@ -189,7 +189,7 @@ class create_user_test(unittest.TestCase):
         # Enter Password Conf
         driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
         # Click on create new User button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
         time.sleep(20)

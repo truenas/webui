@@ -1,13 +1,13 @@
-<h1 md-dialog-title>{{title}}</h1>
-<div md-dialog-content>
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
 	<div *ngIf="job && job.state == 'RUNNING'">
-	    <md-progress-bar class="example-margin"
+	    <mat-progress-bar class="example-margin"
 			color="primary"
 			mode="indeterminate"
 			[value]="progressTotalPercent"
 			bufferValue="bufferValue">
-    	</md-progress-bar>
-    	{{ progressTotalPercent }}%
+    	</mat-progress-bar>
+    	{{ progressTotalPercent | number: '.2'}}%
     </div>
     <div>
 		<span *ngIf="description">{{ description }}</span>
@@ -16,6 +16,6 @@
 		<span *ngIf="!description">Starting job...</span>
     </div>
 </div>
-<div md-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
-    <button md-button md-dialog-close="close">Close</button>
+<div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">
+    <button mat-button mat-dialog-close="close">Close</button>
 </div>

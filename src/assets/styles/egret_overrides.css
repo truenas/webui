@@ -15,8 +15,13 @@ topbar{
     top:0;
 }
 
-.mat-toolbar{
-  min-height:48px;
+div.mat-toolbar{
+  min-height:64px;
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 16px;
+  flex-direction: column;
 }
 
 .mat-toolbar-row{
@@ -136,4 +141,32 @@ vm-cards md-card{
   width: 100% !important;
   height: 100% !important;
   position:absolute;
+}
+
+/* mat-sidenav */
+mat-sidenav-content.fn-maincontent {
+    transform: translate3d(0px, 0px, 0px);
+}
+
+body.collapsed-menu mat-sidenav.mat-sidenav-closed mat-sidenav-content.fn-maincontent {
+    margin-left: 48px !important;
+    margin-right: 0px !important;
+    transform: translate3d(0px, 0px, 0px);
+}
+
+body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.fn-maincontent {
+    margin-left: 48px !important;
+    margin-right: 0px !important;
+    transform: translate3d(0px, 0px, 0px);
+}
+
+.mat-sidenav.mat-sidenav-opened,
+.mat-sidenav.mat-sidenav-opening {
+    transform: translate3d(0,0,0);
+}
+
+/* side menu*/
+.mat-nav-list .mat-list-item {
+    display: block;
+    height: auto !important;
 }

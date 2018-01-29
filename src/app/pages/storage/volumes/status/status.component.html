@@ -6,15 +6,15 @@
   </div>
 
   <div class="padding-16">
-    <md-list>
-      <md-list-item>State: {{status.state}}</md-list-item>
-      <md-list-item>Bytes Processed: {{status.bytes_processed}}</md-list-item>
-      <md-list-item>Bytes to Process: {{status.bytes_to_process}}</md-list-item>
-      <md-list-item>Finished: {{status.percentage}}</md-list-item>
-      <md-list-item>Start Time: {{status.start_time | date:'short'}}</md-list-item>
-      <md-list-item>End Time: {{status.end_time | date:'short'}}</md-list-item>
-      <md-list-item>Errors: {{status.errors}}</md-list-item>
-    </md-list>
+    <mat-list>
+      <mat-list-item>State: {{status.state}}</mat-list-item>
+      <mat-list-item>Bytes Processed: {{status.bytes_processed}}</mat-list-item>
+      <mat-list-item>Bytes to Process: {{status.bytes_to_process}}</mat-list-item>
+      <mat-list-item>Finished: {{status.percentage}}</mat-list-item>
+      <mat-list-item>Start Time: {{status.start_time | date:'short'}}</mat-list-item>
+      <mat-list-item>End Time: {{status.end_time | date:'short'}}</mat-list-item>
+      <mat-list-item>Errors: {{status.errors}}</mat-list-item>
+    </mat-list>
   </div>
 </div>
 <ng-template #emptyVolume class="material mat-card mat-card-table">

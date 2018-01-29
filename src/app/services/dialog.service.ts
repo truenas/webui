@@ -2,17 +2,17 @@ import { Observable } from 'rxjs/Rx';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
-import { MdDialogRef, MdDialog, MdDialogConfig } from '@angular/material';
+import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class DialogService {
 
-    constructor(private dialog: MdDialog) { }
+    constructor(private dialog: MatDialog) { }
 
     public confirm(title: string, message: string, hideCheckBox?: boolean): Observable<boolean> {
 
-        let dialogRef: MdDialogRef<ConfirmDialog>;
+        let dialogRef: MatDialogRef<ConfirmDialog>;
 
         dialogRef = this.dialog.open(ConfirmDialog);
 
@@ -28,7 +28,7 @@ export class DialogService {
 
     public errorReport(title: string, message: string, backtrace: string): Observable<boolean> {
 
-        let dialogRef: MdDialogRef<ErrorDialog>;
+        let dialogRef: MatDialogRef<ErrorDialog>;
 
         dialogRef = this.dialog.open(ErrorDialog);
 
@@ -41,7 +41,7 @@ export class DialogService {
 
     public Info(title: string, info: string ): Observable<boolean> {
         
-        let dialogRef: MdDialogRef<InfoDialog>;
+        let dialogRef: MatDialogRef<InfoDialog>;
 
         dialogRef = this.dialog.open(InfoDialog);
 

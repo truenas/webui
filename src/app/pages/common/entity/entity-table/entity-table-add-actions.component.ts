@@ -13,15 +13,15 @@ import {EntityTableComponent} from './entity-table.component';
 		<smd-fab-speed-dial id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
 				(mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
 			<smd-fab-trigger [spin]="spin">
-				<button md-fab><md-icon>list</md-icon></button>
+				<button mat-fab><mat-icon>list</mat-icon></button>
 			</smd-fab-trigger>
 
 			<smd-fab-actions>
-				<button  id="add_action_button" *ngIf="this.entity.conf.route_add" md-mini-fab (click)="this.entity.doAdd()" mdTooltip="{{this.entity.conf.route_add_tooltip}}">
-					<md-icon>add</md-icon>
+				<button id="add_action_button" *ngIf="this.entity.conf.route_add" mat-mini-fab (click)="this.entity.doAdd()" matTooltip="{{this.entity.conf.route_add_tooltip}}">
+					<mat-icon>add</mat-icon>
 				</button>
-				<button id="add_action_button_{{action?.label}}" *ngFor="let action of actions" md-mini-fab (click)="action.onClick()" mdTooltip="{{action.label}}">
-					<md-icon>{{action.icon}}</md-icon>
+				<button id="add_action_button_{{action?.label}}" *ngFor="let action of actions" mat-mini-fab (click)="action.onClick()" matTooltip="{{action.label}}">
+					<mat-icon>{{action.icon}}</mat-icon>
 				</button>
 			</smd-fab-actions>
 		</smd-fab-speed-dial>

@@ -49,7 +49,7 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'input',
       name : 'cert_name',
       placeholder : 'Identifier',
-      tooltip: 'Required; enter a descriptive name for the\
+      tooltip: 'Enter a descriptive name for the\
  certificate using only alphanumeric, underscore\
  (_), and dash (-) characters.',
     },
@@ -130,8 +130,9 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'input',
       name : 'cert_common',
       placeholder : 'Common Name',
-      tooltip: 'Required; enter the fully-qualified hostname\
- (FQDN) of the FreeNAS® system.',
+      tooltip: 'Enter the fully-qualified hostname (FQDN) of the\
+ system. This name **must** be unique within a certificate\
+ chain.',
     },
     {
       type : 'textarea',

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div id="volumes-list.component_html" class="material mat-card mat-card-table" *ngIf="paintMe === true">
 
 
@@ -44,83 +45,97 @@
                                   [columnMinWidth]="50"
                                   [expandedRowKeys]="['1']">
                         <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
+=======
+<div id="volumes-list.component_html" class="material mat-card mat-card-table">
+  <div class="mat-toolbar mat-card-toolbar">
+    <div class="mat-card-title-text">{{ title }}</div>
+    <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+  </div>
+  <div>
+    <br/>
+  </div>
+  <div *ngIf="zfsPoolRows.length > 0">
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{row.name}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{row.status}} ({{row.usedStr}} Used / {{row.availStr}} Free)
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <div style="margin-top: 8px; float: right; padding-bottom: 20px;">
+            <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
+          </div>
+          <br/>
+        </div>
+        <div>
+          <br/>
+        </div>
+        <div>
+          <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
+            <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
+>>>>>>> dec9c65c4a696c290c3d66b30ffd97cc7a5656a3
                             <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
                             </dxo-popup>
                         </dxo-editing -->
-
-                        <dxi-column dataField="name">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        <dxi-column dataField="type" caption="Type">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        <dxi-column dataField="usedStr" caption="Used">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        <dxi-column dataField="availStr" [width]="Available">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        
-                        <dxi-column dataField="compression" [width]="Compression">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        
-                        <dxi-column dataField="readonly" [width]="Readonly">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        
-                        <dxi-column dataField="dedup" [width]="Dedup">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-                        
-                        <dxi-column dataField="path" [width]="Path">
-                            <dxi-validation-rule type="required"></dxi-validation-rule>
-                        </dxi-column>
-
-                        <dxi-column caption="" 
-                                    [width]="Action"
-                                    [allowFiltering]="false"
-                                    [allowSorting]="false" 
-                                    cellTemplate="cellTemplate"></dxi-column>
-                        
-                        <div *dxTemplate="let rowData of 'cellTemplate'">
-                            <div class="panel_container">
-                                <md-icon [mdMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</md-icon>
-                                <md-menu #appMenu="mdMenu">
-                                    <span *ngFor="let action of rowData.data.actions">
-                                        <button md-menu-item  (click)="action.onClick( rowData.data );">
+            <dxi-column dataField="name">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="type" caption="Type">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="usedStr" caption="Used">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="availStr" [width]="Available">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="compression" [width]="Compression">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="readonly" [width]="Readonly">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="dedup" [width]="Dedup">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="path" [width]="Path">
+              <dxi-validation-rule type="required"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column caption="" [width]="Action" [allowFiltering]="false" [allowSorting]="false" cellTemplate="cellTemplate"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplate'">
+              <div class="panel_container">
+                <mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
+                <mat-menu #appMenu="matMenu">
+                  <span *ngFor="let action of rowData.data.actions">
+                                        <button mat-menu-item  (click)="action.onClick( rowData.data );">
                                             <span>{{ action.label }}</span>
-                                        </button>
-                                    </span>
-                                </md-menu>
-                            </div>
-                        </div>
-
-                    </dx-tree-list>
-                </div>
-
-
-            </md-expansion-panel>
-        </md-accordion>
-    </div>
-
-    <div *ngIf="zfsPoolRows.length < 1">
-        <md-card>
-            <md-card-content>
-                No ZFS Pools found.
-            </md-card-content>
-        </md-card>
-        <br/>
-        <br/>
-    </div>
-
-    <div>
-        <br/>
-    </div>
-
-    <div>
-        <br/>
-    </div>
-
-
+                  </button>
+                  </span>
+                </mat-menu>
+              </div>
+            </div>
+          </dx-tree-list>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div *ngIf="zfsPoolRows.length < 1">
+    <mat-card>
+      <mat-card-content>
+        No ZFS Pools found.
+      </mat-card-content>
+    </mat-card>
+    <br/>
+    <br/>
+  </div>
+  <div>
+    <br/>
+  </div>
+  <div>
+    <br/>
+  </div>
 </div>

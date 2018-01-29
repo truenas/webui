@@ -6,7 +6,7 @@ import {Subscription} from 'rxjs';
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   selector : 'import-list',
@@ -21,7 +21,7 @@ export class VolumeImportListComponent {
     constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected dialog: MdDialog
+              protected dialog: MatDialog
     ){}
 
     public columns: Array<any> = [

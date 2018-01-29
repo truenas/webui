@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {RestService} from "../../../../services/rest.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
-import {MdSnackBar} from "@angular/material";
+import {MatSnackBar} from "@angular/material";
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
@@ -47,7 +47,7 @@ export class ChangePasswordComponent {
 
   constructor(protected rest: RestService, protected router: Router,
               protected loader: AppLoaderService,
-              public snackBar: MdSnackBar) {
+              public snackBar: MatSnackBar) {
   }
 
 }
