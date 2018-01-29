@@ -129,7 +129,7 @@ export class CertificateInternalComponent {
       name : 'cert_common',
       placeholder : 'Common Name',
       tooltip: 'Enter the fully-qualified hostname (FQDN) of the\
- FreeNAS® system. This name **must** be unique within a certificate\
+ system. This name **must** be unique within a certificate\
  chain.',
     },
     {
