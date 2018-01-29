@@ -26,9 +26,8 @@ except ImportError:
 
 xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
            'navSystem' : "//*[@id='nav-2']/div/a[1]",
-          'submenuAdvanced' : "//*[@id='2-3']",
-         'buttonChecknow' : "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[3]/div/button[1]"
-        }
+           'submenuAdvanced' : "//*[@id='2-3']",
+         }
 
 class conf_system_advanced(unittest.TestCase):
     @classmethod
@@ -41,11 +40,11 @@ class conf_system_advanced(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
 
         # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[4]/div[1]/button").click()
+        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
+            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
 
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
