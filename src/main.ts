@@ -10,4 +10,5 @@ if (environment.production) {
   }
 
   
+  // Please build stupid jenkins
 platformBrowserDynamic().bootstrapModule(AppModule);
