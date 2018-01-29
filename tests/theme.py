@@ -24,7 +24,7 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'themeBar' : "//*[@id='schemeToggle']/span/md-icon"
+xpaths = { 'themeBar' : "//*[@id='schemeToggle']/span/mat-icon"
           }
 
 
@@ -71,7 +71,7 @@ class change_theme_test(unittest.TestCase):
         # Click on the theme Button
         driver.find_element_by_xpath(xpaths['themeBar']).click()
         # Select 1st theme
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div/div/md-grid-list/div/md-grid-tile[" + str(which) + "]/figure/div/div[2]").click()
+        driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/mat-grid-list/div/mat-grid-tile[" + str(which) + "]/figure/div").click()
         time.sleep(3)
 
 
