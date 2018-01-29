@@ -13,7 +13,6 @@
     "start:dev": "ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "ng serve --prod",
     "start:prod:aot": "ng serve --prod --aot",
-    "prod": "node --max-old-space-size=4096 ./node_modules/@angular/cli/bin/ng build --prod",
     "build": "npm run clean:dist && ng build",
     "build:prod": "npm run build -- --prod",
     "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
@@ -91,7 +90,7 @@
     "zone.js": "0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "1.6.6",
+    "@angular/cli": "1.7.0-beta.2",
     "@angular/compiler-cli": "5.2.2",
     "@types/c3": "0.4.44",
     "@types/chartist": "0.9.35",
