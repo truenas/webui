@@ -26,11 +26,12 @@ except ImportError:
 
 
 xpaths = {
-          'submenuGroup' : "//*[@id='1-0']",
-         'newGroupName' : "//*[@id='1']/form-input/div/md-input-container/div/div[1]/div/input",
-        'deleteConfirm' : "/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
-        'fabTrigger' : "//*[@id='entity-table-component']/div[1]/app-entity-table-add-actions/div/smd-fab-speed-dial",
-        'fabAction' : "//*[@id='entity-table-component']/div[1]/app-entity-table-add-actions/div/smd-fab-speed-dial/div/smd-fab-actions/button"
+          'submenuGroup': "//*[@id='1-0']",
+          'newGroupName': "//*[@id='bsdgrp_group']/mat-input-container/div/div[1]/div/input",
+          'fabTrigger': "//*[@id='myFab']/div/smd-fab-trigger/button",
+          'fabAction': "//*[@id='add_action_button']/span/mat-icon",
+          'savButton': "//*[@id='save_button']",
+          'permitsudoCheckbox: "//*[@id='bsdgrp_sudo']/mat-checkbox/label/div"'
         }
 
 class create_group_test(unittest.TestCase):
@@ -47,7 +48,7 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         time.sleep(2)
         # get the ui element
-        ui_element1=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li[2]/a")
+        ui_element1=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
         page_data=ui_element1.text
         print ("the Page now is: " + page_data)
@@ -71,7 +72,7 @@ class create_group_test(unittest.TestCase):
         time.sleep(1)
         driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
         # Click on save new Group button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-group-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
 
@@ -91,9 +92,9 @@ class create_group_test(unittest.TestCase):
         time.sleep(1)
         driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroupname)
         # Check Permit Sudo  checkbox
-        driver.find_element_by_xpath("//*[@id='2']/form-checkbox/div/md-checkbox/label/div").click()
+        driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
         # Click on save new Group button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-group-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
 
@@ -115,7 +116,7 @@ class create_group_test(unittest.TestCase):
         time.sleep(1)
         driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
         # Click on save new Group button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-group-form/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
         time.sleep(20)
