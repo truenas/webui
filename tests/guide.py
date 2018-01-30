@@ -1,3 +1,4 @@
+
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
@@ -26,7 +27,6 @@ except ImportError:
 
 xpaths = { 'navGuide' : "//*[@id='nav-15']/div/a[1]",
           'version' : "/html/body/div/nav/div[1]/a",
-         'XPATH' : "//*[@id='3']/form-select/div/md-select/div"
           }
 
 
@@ -55,14 +55,14 @@ class view_guide_test(unittest.TestCase):
         if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
             driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
 
-        # get the ui element
-        ui_element=driver.find_element_by_xpath(xpaths['version'])
+#        driver.find_element_by_xpath("/html/body/div/nav/div[2]/ul/li[1]/a").click()
+#        ui_element=driver.find_element_by_xpath("/html/body/div/section/div/div/div[2]/div/p[5]")
         # get the weather data
-        page_data=ui_element.text
-        print ("The version of FreeNAS guide is:  " + page_data)
+#        page_data=ui_element.text
+#        print ("The version of FreeNAS guide is:  " + page_data)
         # assert response to check version of freenas guide
-        self.assertTrue("FreeNAS" in page_data)
-        time.sleep(10)
+#        self.assertTrue("FreeNAS" in page_data)
+#        time.sleep(10)
 
 
     # method to test if an element is present

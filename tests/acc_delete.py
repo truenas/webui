@@ -135,9 +135,11 @@ class delete_test(unittest.TestCase):
         if (type == "user"):
             num = 7
             delNum = 2
+            path = "User"
         elif (type == "group"):
             num = 4
             delNum = 3
+            path = "Group"
 
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenu' + path]).click()
