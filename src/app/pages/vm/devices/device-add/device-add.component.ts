@@ -78,12 +78,12 @@ export class DeviceAddComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.ws.call('vm.query', [[[ "name", "=", this.conf.vm ]]]).subscribe((res) => {
-      let formvalue = _.cloneDeep(this.formGroup.value);
+      const formvalue = _.cloneDeep(this.formGroup.value);
       this.route_success = [ 'vm', this.vmid, 'devices', this.conf.vm ];
       this.route_cancel = [ 'vm', this.vmid, 'devices', this.conf.vm ];
       this.error = null;
-      let payload = {};
-      let devices = [];
+      const payload = {};
+      const devices = [];
       if (this.conf.dtype === 'NIC') {
         devices.push({
           "dtype" : 'NIC',
@@ -132,11 +132,11 @@ export class DeviceAddComponent implements OnInit {
       this.busy =
           this.ws.call('vm.create_device', [ this.conf.pk, payload ])
               .subscribe(
-                  (res) => {
+                  (res1) => {
                     this.router.navigate(
                         new Array('').concat(this.conf.route_success));
                   },
-                  (res) => { new EntityUtils().handleError(this, res); });
+                  (res1) => { new EntityUtils().handleError(this, res1); });
     });
   }
 }

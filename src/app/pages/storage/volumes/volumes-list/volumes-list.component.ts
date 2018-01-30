@@ -58,30 +58,33 @@ export class VolumesListTableConfig {
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
   protected route_add_tooltip = "Create ZFS Pool";
   public rowData: ZfsPoolData[] = [];
-  
+
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
     private _classId: string,
     private title: string,
-    public mdDialog: MdDialog,
+    public mdDialog: MatDialog,
     protected rest: RestService,
     protected dialogService: DialogService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
-      
+
       this.rest.get(this.resource_name, {}).subscribe((res) => {
         this.rowData = [];
-  
+
         this.rowData = this.resourceTransformIncomingRestData(res.data);
-       });
+      }, (res) => {
+        alert("error");
+        console.log("error", res);
+      });
     }
 
-    
-    
+
+
   }
- 
+
   getAddActions() {
     const actions = [];
     actions.push({
@@ -123,51 +126,49 @@ export class VolumesListTableConfig {
       actions.push({
         label: "Lock",
         onClick: (row1) => {
-          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name ).subscribe((confirmResult)=>{
-            if( confirmResult === true ) {
-              
-              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({})}).subscribe((restPostResp)=>{
+          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+            if (confirmResult === true) {
+
+              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                 console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Lock", "Locked " + row1.name ).subscribe((infoResult)=>{
+                this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
                   this.parentVolumesListComponent.repaintMe();
                 });
+              }, (res) => {
+                this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
               });
-
             }
           });
         }
       });
 
-      /**
-       * 
-       * This unlock code is the right API.. but Im not sure about where to get the 
-       * unlock's passphrase parameter.... 
-       * 
+
       actions.push({
         label: "Un-Lock",
         onClick: (row1) => {
-          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id ).subscribe((confirmResult)=>{
-            if( confirmResult === true ) {
+          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id).subscribe((confirmResult) => {
+            if (confirmResult === true) {
 
-              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: ""})}).subscribe((restPostResp)=>{
+              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: "" }) }).subscribe((restPostResp) => {
                 console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname ).subscribe((infoResult)=>{
+                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname).subscribe((infoResult) => {
                   this.parentVolumesListComponent.repaintMe();
                 });
+              }, (res) => {
+                this.dialogService.errorReport("Error getting unlocking volume", res.message, res.stack);
               });
 
-              
+
             }
           });
         }
       });
-      **/
 
       if (rowData.vol_encrypt > 0) {
         actions.push({
           label: "Download Encrypt Key",
           onClick: (row1) => {
-            let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+            const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
           }
         });
       }
@@ -201,7 +202,7 @@ export class VolumesListTableConfig {
           ]));
         }
       });
-      if (rowData.path.indexOf('/') != -1) {
+      if (rowData.path.indexOf('/') !== -1) {
         actions.push({
           label: "Delete Dataset",
           onClick: (row1) => {
@@ -215,14 +216,14 @@ export class VolumesListTableConfig {
           label: "Edit Permissions",
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id",row1.path.split('/')[0], "dataset",
+              "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
               "permissions", row1.path
             ]));
           }
         });
       }
     }
-    if (rowData.type == "zvol") {
+    if (rowData.type === "zvol") {
       actions.push({
         label: "Delete Zvol",
         onClick: (row1) => {
@@ -255,29 +256,29 @@ export class VolumesListTableConfig {
 
     for (let i = 0; i < data.length; i++) {
       data[i].nodePath = data[i].mountpoint;
-      
+
       if (data[i].status !== '-') {
         // THEN THIS A ZFS_POOL DON'T ADD    data[i].type = 'zpool'
         continue;
-      } else if( typeof(data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
+      } else if (typeof (data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
         continue;
       }
 
-      data[i].parentPath =  data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/") );
+      data[i].parentPath = data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/"));
 
-      if( "/mnt" === data[i].parentPath ) {
+      if ("/mnt" === data[i].parentPath) {
         data[i].parentPath = "0";
       }
 
       try {
         data[i].availStr = filesize(data[i].avail, { standard: "iec" });
-      } catch(error) {
+      } catch (error) {
         data[i].availStr = "" + data[i].avail;
       }
 
       try {
         data[i].usedStr = filesize(data[i].used, { standard: "iec" });
-      } catch(error) {
+      } catch (error) {
         data[i].usedStr = "" + data[i].used;
       }
 
@@ -313,15 +314,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialog);
+  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
   expanded = false;
   public paintMe = true;
 
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService) {
-    super(rest, router, ws, _eRef, dialog, loader, erdService);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService);
   }
 
   public repaintMe() {
@@ -330,24 +331,24 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   ngOnInit(): void {
-    while(this.zfsPoolRows.length > 0 ) {
+    while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialog);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService);
         volume.type = 'zpool';
-        
+
         try {
           volume.availStr = filesize(volume.avail, { standard: "iec" });
-        } catch( error ) {
+        } catch (error) {
           volume.availStr = "" + volume.avail;
         }
 
         try {
           volume.usedStr = filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
-        } catch( error ) {
+        } catch (error) {
           volume.usedStr = "" + volume.used;
         }
         this.zfsPoolRows.push(volume);
@@ -358,6 +359,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       }
 
       this.paintMe = true;
+    }, (res) => {
+      this.dialogService.errorReport("Error getting volume data", res.message, res.stack);
     });
 
   }
@@ -366,6 +369,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   }
 
- 
+
 
 }

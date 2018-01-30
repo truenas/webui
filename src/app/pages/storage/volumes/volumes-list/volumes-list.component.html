@@ -1,51 +1,3 @@
-<<<<<<< HEAD
-<div id="volumes-list.component_html" class="material mat-card mat-card-table" *ngIf="paintMe === true">
-
-
-
-    <div class="mat-toolbar mat-card-toolbar">
-        <div class="mat-card-title-text">{{ title }}</div>
-        <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
-    </div>
-
-    <div>
-        <br/>
-    </div>
-
-    <div *ngIf="zfsPoolRows.length > 0">
-        <md-accordion>
-            <md-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
-                <md-expansion-panel-header>
-                    <md-panel-title>
-                        {{row.name}}
-                    </md-panel-title>
-                    <md-panel-description>
-                        {{row.status}} ({{row.usedStr}} Used / {{row.availStr}} Free)
-                    </md-panel-description>
-                </md-expansion-panel-header>
-                <div>
-                    <div style="margin-top: 8px; float: right; padding-bottom: 20px;">
-                        <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
-                    </div>
-                    <br/>
-                </div>
-
-                <div>
-                    <br/>
-                </div>
-                    
-                <div>
-                    <dx-tree-list keyExpr="nodePath" 
-                                  parentIdExpr="parentPath"
-                                  [dataSource]="row.volumesListTableConfig.rowData" 
-                                  [showRowLines]="true" 
-                                  [allowColumnResizing]="true"
-                                  [columnAutoWidth]="true"
-                                  [columnResizingMode]="'widget'"
-                                  [columnMinWidth]="50"
-                                  [expandedRowKeys]="['1']">
-                        <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
-=======
 <div id="volumes-list.component_html" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">{{ title }}</div>
@@ -76,11 +28,6 @@
         </div>
         <div>
           <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
-            <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
->>>>>>> dec9c65c4a696c290c3d66b30ffd97cc7a5656a3
-                            <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
-                            </dxo-popup>
-                        </dxo-editing -->
             <dxi-column dataField="name">
               <dxi-validation-rule type="required"></dxi-validation-rule>
             </dxi-column>

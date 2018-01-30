@@ -24,11 +24,11 @@ export class RestService {
   name: string;
   // needs to be more dynamic this should be changed later to use http or https
   // depending on if it is available
-  private baseUrl: string = "/api/v1.0/";
+  private baseUrl = "/api/v1.0/";
   public openapi: Observable<Object>;
 
   constructor(private http: Http, private ws: WebSocketService) {
-    let self = this;
+    const self = this;
     this.http = http;
     this.openapi = Observable.create(function (observer) {
       self.get('swagger.json', {}).subscribe((res) => {
