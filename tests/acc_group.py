@@ -30,7 +30,7 @@ xpaths = {
           'newGroupName': "//*[@id='bsdgrp_group']/mat-input-container/div/div[1]/div/input",
           'fabTrigger': "//*[@id='myFab']/div/smd-fab-trigger/button",
           'fabAction': "//*[@id='add_action_button']/span/mat-icon",
-          'savButton': "//*[@id='save_button']",
+          'saveButton': "//*[@id='save_button']",
           'permitsudoCheckbox': "//*[@id='bsdgrp_sudo']/mat-checkbox/label/div"
         }
 
@@ -138,16 +138,13 @@ class create_group_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
+        if self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]"):
+            driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
+        if self.is_element_present(By.XPATH,"/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1"):
+            ui_element=driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1")
             error_element=ui_element.text
             print (error_element)
-            ui_element.click()
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[2]/button"):
-            ui_element2=driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
-            error_element2=ui_element2.text
-            print (error_element2)
-            ui_element2.click()
+            driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/div[2]/button").click()
 
 
     @classmethod

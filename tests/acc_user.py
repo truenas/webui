@@ -30,7 +30,7 @@ xpaths = {
         'submenuGroup': "//*[@id='1-0']",
         'newUser': "//*[@id='username']/mat-input-container/div/div[1]/div/input",
         'primaryGroupcheckbox': "//*[@id='group_create']/mat-checkbox/label/div",
-        'primaryGroupdropdown': "//*[@id='group']/mat-select/div/div[1]",
+        'primaryGroupdropdown': "//*[@id='3']/form-select/div/mat-select/div/div[1]",
         'newUserName': "//*[@id='full_name']/mat-input-container/div/div[1]/div/input",
         'newUserPass': "//*[@id='password']/mat-input-container/div/div[1]/div/input",
         'newUserPassConf': "//*[@id='password_conf']/mat-input-container/div/div[1]/div/input",
@@ -91,6 +91,7 @@ class create_user_test(unittest.TestCase):
         # Click on create new User button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
+        time.sleep(1)
         self.error_check()
 
     def test_03_create_newuser_primarygroup_uncheck(self):
@@ -113,7 +114,9 @@ class create_user_test(unittest.TestCase):
         # uncheck create primary group  Checkbox
         driver.find_element_by_xpath(xpaths['primaryGroupcheckbox']).click()
         # click on primary group dropdownlist
-        driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
+        d = driver.find_element_by_xpath(xpaths['primaryGroupdropdown'])
+        d.click()
+#        Select(d).select_by_visible_text("userNAS")
         # select the element from the dropdown list by using selectlist function
         time.sleep(2)
         driver.find_element_by_xpath("//*[contains(text(), 'userNAS')]").click()
@@ -167,8 +170,8 @@ class create_user_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuUser']).click()
         # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[4]/div[1]/button").click()
+        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
+            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
 
         # scroll down to find hover tab
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
@@ -210,47 +213,14 @@ class create_user_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[4]/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
+        if self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]"):
+            driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
+        if self.is_element_present(By.XPATH,"/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1"):
+            ui_element=driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1")
             error_element=ui_element.text
             print (error_element)
-            ui_element.click()
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div/div[2]/md-dialog-container/error-dialog/div[2]/button"):
-            ui_element2=driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/md-dialog-container/error-dialog/div[2]/button")
-            error_element2=ui_element2.text
-            print (error_element2)
-            ui_element2.click()
+            driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/div[2]/button").click()
 
-
-    def delete(self, name):
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # click on the item per page option
-        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[3]/md-paginator/div[1]/md-select/div").click()
-        # click select the highest number i.e 100
-        driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[4]").click()
-        # wait till the list is loaded
-        time.sleep(5)
-        index = 0
-        ui_text = "null"
-        for x in range(0, 5):
-            if self.is_element_present(By.XPATH, "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
-                ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
-                ui_text = ui_element.text
-            if (ui_text == name):
-                index = x
-                break
-            ui_element = " "
-
-        # click on the 3 dots
-        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(index) + "]/datatable-body-row/div[2]/datatable-body-cell[7]/div/app-entity-table-actions/div/md-icon").click()
-        # click on delete option
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div/div/span[2]/button/div").click()
-        # click on confirmation checkbox
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div").click()
-        # click on Ok
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[2]/button[1]").click()
-        print (newusernameuncheck + " deleted")
 
     def selectlist(self, element):
         for i in range(0,10):
