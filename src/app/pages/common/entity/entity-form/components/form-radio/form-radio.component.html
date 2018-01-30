@@ -1,4 +1,4 @@
-<div [id]="config.name" class="dynamic-field mat-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field mat-radio" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
   <mat-radio-group [formControlName]="config.name">
     <mat-radio-button *ngFor="let option of config.options" [value]="option.value" >

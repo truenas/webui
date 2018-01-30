@@ -3,15 +3,15 @@ import * as _ from 'lodash';
 export class EntityUtils {
 
   handleError(entity: any, res: any) {
-    if (res.code == 409) {
+    if (res.code === 409) {
       this.handleObjError(entity, res);
-    } else if (res.code == 400) {
+    } else if (res.code === 400) {
       if (typeof res.error === 'object') {
         this.handleObjError(entity, res);
       } else {
         entity.error = res.error;
       }
-    } else if (res.code == 500) {
+    } else if (res.code === 500) {
       if (res.error.error_message) {
         entity.error = res.error.error_message;
       } else {
@@ -26,12 +26,12 @@ export class EntityUtils {
   handleObjError(entity: any, res: any) {
     let scroll = false;
     entity.error = '';
-    for (let i in res.error) {
+    for (const i in res.error) {
       if (res.error.hasOwnProperty(i)) {
-        let field = res.error[i];
-        let fc :any  = _.find(entity.fieldConfig, {'name' : i});
+        const field = res.error[i];
+        const fc = _.find(entity.fieldConfig, {'name' : i});
         if (fc) {
-          let element = document.getElementById(i);
+          const element = document.getElementById(i);
           if (element) {
             if (entity.conf.advanced_field && 
               _.indexOf(entity.conf.advanced_field, i) > 0 &&

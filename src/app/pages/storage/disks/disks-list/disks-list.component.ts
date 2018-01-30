@@ -115,8 +115,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public title = "View Disks";
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) {
-    super(rest, router, ws, _eRef, dialog, loader, erdService);
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) {
+    super(rest, router, ws, _eRef, dialogService, loader, erdService);
       this.conf = new DisksListConfig(this.router, "", "");
   }
 

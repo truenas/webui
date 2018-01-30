@@ -53,7 +53,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) { }
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) { }
 
   ngOnInit() {
     
@@ -264,7 +264,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doDelete(id) {
-    this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+    this.dialogService.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -341,7 +341,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doMultiDelete(selected) {
-    this.dialog.confirm("Delete", "Are you sure you want to delete selected itme(s)?").subscribe((res) => {
+    this.dialogService.confirm("Delete", "Are you sure you want to delete selected itme(s)?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

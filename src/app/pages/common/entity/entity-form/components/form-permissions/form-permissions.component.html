@@ -1,4 +1,4 @@
-<div [id]="config.name" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 	<label>{{ config.placeholder }}</label>
 	<mat-input-container class="full-width" style="display:none">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"

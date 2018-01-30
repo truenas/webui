@@ -28,10 +28,6 @@
         </div>
         <div>
           <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
-            <!--dxo-editing mode="popup" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true">
-                            <dxo-popup title="Employee Info" [showTitle]="true" [width]="700" [height]="295" [position]="{ my: 'top', at: 'top', of: window }">
-                            </dxo-popup>
-                        </dxo-editing -->
             <dxi-column dataField="name">
               <dxi-validation-rule type="required"></dxi-validation-rule>
             </dxi-column>
