@@ -25,7 +25,7 @@ except ImportError:
     import unittest
 
 xpaths = { 'navGuide' : "//*[@id='nav-15']/div/a[1]",
-          'XPATH2' : "//*[@id='2']/form-checkbox/div/md-checkbox/label/div",
+          'version' : "/html/body/div/nav/div[1]/a",
          'XPATH' : "//*[@id='3']/form-select/div/md-select/div"
           }
 
@@ -43,7 +43,7 @@ class view_guide_test(unittest.TestCase):
         # allowing page to load by giving explicit time(in seconds)
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -52,11 +52,11 @@ class view_guide_test(unittest.TestCase):
 
     def test_02_check_version(self):
         # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[4]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[4]/div[1]/button").click()
+        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
+            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
 
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='freenas-version-user-guide']/h1")
+        ui_element=driver.find_element_by_xpath(xpaths['version'])
         # get the weather data
         page_data=ui_element.text
         print ("The version of FreeNAS guide is:  " + page_data)
