@@ -18,7 +18,8 @@ export class WebSocketService {
   socket: WebSocket;
   connected: boolean = false;
   loggedIn: boolean = false;
-  @LocalStorage() token;
+  @LocalStorage() username;
+  @LocalStorage() password;
   redirectUrl: string = '';
   shuttingdown = false;
 
@@ -65,14 +66,6 @@ export class WebSocketService {
   ping() {
     if (this.connected) {
       this.socket.send(JSON.stringify({"msg" : "ping", "id" : UUID.UUID()}));
-      if (typeof(this.token) !== 'undefined') {
-        // check to see if the token is still valid (keepalive)
-        this.call('auth.token', [ this.token ]).subscribe((result) => {
-          if (!result) {
-            this._router.navigate(['/sessions/signin']);
-          }
-        });
-      }
       setTimeout(this.ping.bind(this), 20000);
     }
   }
@@ -207,41 +200,32 @@ export class WebSocketService {
   }
 
   login(username, password): Observable<any> {
+    this.username = username;
+    this.password = password;
     return Observable.create((observer) => {
       this.call('auth.login', [ username, password ]).subscribe((result) => {
-        this.loginCallback(result, observer);
-      });
-    });
-  }
+        if (result === true) {
+          this.loggedIn = true;
 
-  loginCallback(result, observer) {
-    if (result === true) {
-      this.loggedIn = true;
-      
-      // Subscribe to all events by default
-      this.send({
-        "id" : UUID.UUID(),
-        "name" : "*",
-        "msg" : "sub",
-      });
-    } else {
-      this.loggedIn = false;
-    }
-    observer.next(result);
-    observer.complete();
-  }
-
-  login_token(token): Observable<any> {
-    return Observable.create((observer) => {
-      this.call('auth.token', [ token ]).subscribe((result) => {
-        this.loginCallback(result, observer);
+          // Subscribe to all events by default
+          this.send({
+            "id" : UUID.UUID(),
+            "name" : "*",
+            "msg" : "sub",
+          });
+        } else {
+          this.loggedIn = false;
+        }
+        observer.next(result);
+        observer.complete();
       });
     });
   }
 
   clearCredentials() {
     this.loggedIn = false;
-    this.token = null;
+    this.username = '';
+    this.password = '';
   }
 
   prepare_shutdown() {
