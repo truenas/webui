@@ -23,3 +23,11 @@
   font-weight: 400;
   font-size: 1rem;
 }
+
+.copyright-txt {
+  margin: 0;
+  padding: 0;
+  line-height: 40px;
+  position: absolute;
+  right: 4px;
+}
