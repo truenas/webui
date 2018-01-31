@@ -35,7 +35,7 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 export class DeviceEditComponent implements OnInit {
 
   
-  public resource_name: 'vm/device';
+  public resource_name: string = 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
@@ -50,8 +50,8 @@ export class DeviceEditComponent implements OnInit {
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
   public conf: any = {};
-  public hasConf: true;
-  public success: false;
+  public hasConf:  boolean = true;
+  public success: boolean = false;
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;
