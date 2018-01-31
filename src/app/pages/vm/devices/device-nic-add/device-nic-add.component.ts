@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewContainerRef
 } from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
@@ -40,6 +40,7 @@ export class DeviceNicAddComponent {
  performace.',
       type: 'select',
       options : [],
+      validation : [ Validators.required ]
     },
     {
       name : 'NIC_mac',
@@ -49,6 +50,7 @@ export class DeviceNicAddComponent {
  desired address into the field.',
       type: 'input',
       value : '00:a0:98:FF:FF:FF',
+      validation : [ Validators.required ]
     },
     {
       name : 'nic_attach',
@@ -58,6 +60,7 @@ export class DeviceNicAddComponent {
  cards.',
       type: 'select',
       options : [],
+      validation : [ Validators.required ]
     },
   ];
   private nic_attach: any;

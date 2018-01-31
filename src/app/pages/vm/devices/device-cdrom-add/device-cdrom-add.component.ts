@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewContainerRef
 } from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
@@ -33,7 +33,9 @@ export class DeviceCdromAddComponent {
       placeholder : 'CDROM Path',
       tooltip : 'Select the path to the CDROM. The image must be\
  present on an accessible portion of the FreeNAS storage.',
+      validation : [ Validators.required ]
     },
+    
   ];
   protected dtype: string = 'CDROM';
 

@@ -243,7 +243,7 @@ export class DeviceEditComponent implements OnInit {
   }
   private nic_attach: any;
   private nicType:  any;
-  private ipAddress: any;
+  private vnc_bind: any;
 
   afterInit(){
     let self = this;
@@ -280,9 +280,9 @@ export class DeviceEditComponent implements OnInit {
       }
       else if(device[0].dtype === 'VNC'){
         this.systemGeneralService.getIPChoices().subscribe((ipchoices) => {
-          this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+          this.vnc_bind = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
           for(const ipchoice of ipchoices){
-            this.ipAddress.options.push({label : ipchoice[1], value : ipchoice[0]});
+            this.vnc_bind.options.push({label : ipchoice[1], value : ipchoice[0]});
           }
         });
         this.setgetValues(device[0].attributes, vnc_lookup_table);
