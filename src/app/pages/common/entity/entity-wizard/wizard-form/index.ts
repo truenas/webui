@@ -1,0 +1,1 @@
+export { WizardFormComponent } from './wizard-form.component';
