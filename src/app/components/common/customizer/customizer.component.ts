@@ -7,8 +7,8 @@ import { NavigationService } from "../../../services/navigation/navigation.servi
   styleUrls: ['./customizer.component.css']
 })
 export class CustomizerComponent implements OnInit {
-  isCustomizerOpen: boolean = false;
-  selectedMenu: string = 'icon-menu';
+  isCustomizerOpen = false;
+  selectedMenu = 'icon-menu';
   @Input() breadcrumb;
   sidenavTypes = [{
     name: 'Default Menu',
