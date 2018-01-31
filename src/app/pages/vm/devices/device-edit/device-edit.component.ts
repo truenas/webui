@@ -35,7 +35,7 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 export class DeviceEditComponent implements OnInit {
 
   
-  public resource_name: string = 'vm/device';
+  public resource_name: 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
@@ -50,8 +50,11 @@ export class DeviceEditComponent implements OnInit {
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
   public conf: any = {};
-  public hasConf: boolean = true;
-  public success: boolean = false;
+  public hasConf: true;
+  public success: false;
+  private nic_attach: any;
+  private nicType:  any;
+  private vnc_bind: any;
   
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -63,7 +66,7 @@ export class DeviceEditComponent implements OnInit {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected networkService: NetworkService,
               protected systemGeneralService: SystemGeneralService,
-              private entityFormService : EntityFormService,
+              private entityFormService: EntityFormService,
               public vmService: VmService) {}
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -243,14 +246,11 @@ export class DeviceEditComponent implements OnInit {
     }
     this.afterInit();
   }
-  private nic_attach: any;
-  private nicType:  any;
-  private vnc_bind: any;
 
   afterInit(){
-    let self = this;
+    const self = this;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    let vnc_lookup_table: Object = {
+    const vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
       'vnc_resolution' : 'VNC_resolution',
       'wait' : 'VNC_wait',
@@ -258,20 +258,20 @@ export class DeviceEditComponent implements OnInit {
       'vnc_password':'vnc_password',
       'vnc_web':'vnc_web'
     };
-    let nic_lookup_table: Object = {
+    const nic_lookup_table: Object = {
       'mac' : 'NIC_mac',
       'type' : 'NIC_type',
       'nic_attach':'nic_attach'
     };
-    let disk_lookup_table: Object = {
+    const disk_lookup_table: Object = {
       'path' : "DISK_zvol",
       'type' : "DISK_mode",
       'sectorsize': "DISK_sectorsize",
     };
-    let cdrom_lookup_table: Object = {
+    const cdrom_lookup_table: Object = {
       'path' : "CDROM_path",
     };
-    let rawfile_lookup_table: Object = {
+    const rawfile_lookup_table: Object = {
       'path' : 'RAW_path',
       'sectorsize': 'RAW_sectorsize',
       'type':'RAW_mode'
