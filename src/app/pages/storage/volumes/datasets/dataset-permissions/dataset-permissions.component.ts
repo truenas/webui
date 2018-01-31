@@ -50,7 +50,7 @@ export class DatasetPermissionsComponent {
       name: 'mp_acl',
       placeholder: 'ACL Type',
       tooltip: 'Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
- type that matches the type of client accessing the dataset.',
+ type that matches the type of client accessing the volume/dataset.',
  options: [{label:'unix', value: 'unix'},
                 {label:'windows', value: 'windows'}],
       value: 'unix'
