@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 
 
 import {RestService, WebSocketService, NetworkService} from '../../../../services/';
+import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'app-device-nic-add',
@@ -50,7 +51,7 @@ export class DeviceNicAddComponent {
  desired address into the field.',
       type: 'input',
       value : '00:a0:98:FF:FF:FF',
-      validation : [ Validators.required ]
+      validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
     },
     {
       name : 'nic_attach',

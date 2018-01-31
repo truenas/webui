@@ -23,6 +23,7 @@ import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
+import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'device-edit',
@@ -107,6 +108,7 @@ export class DeviceEditComponent implements OnInit {
  enter the desired address into the field.',
           type: 'input',
           value : '',
+          validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
         },
         {
           name : 'nic_attach',
