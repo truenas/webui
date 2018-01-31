@@ -6,6 +6,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 @Component({
   selector: 'system-reboot',
   templateUrl: './reboot.component.html',
+  styleUrls: ['./reboot.component.css']
 })
 export class RebootComponent implements OnInit {
 
