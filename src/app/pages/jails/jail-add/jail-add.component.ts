@@ -660,21 +660,23 @@ export class JailAddComponent implements OnInit {
         if (value[i] == undefined) {
           delete value[i];
         } else {
-          if (_.indexOf(this.TFfields, i) > 0) {
+          console.log(i);
+          if (_.indexOf(this.TFfields, i) > -1) {
             if (value[i]) {
               property.push(i + '=1');
             } else {
               property.push(i + '=0');
             }
             delete value[i];
-          } else if (_.indexOf(this.OFfields, i) > 0) {
+          } else if (_.indexOf(this.OFfields, i) > -1) {
             if (value[i]) {
                 property.push(i + '=on');
               } else {
                 property.push(i + '=off');
               }
               delete value[i];
-          } else if (_.indexOf(this.YNfields, i) > 0) {
+          } else if (_.indexOf(this.YNfields, i) > -1) {
+            console.log('YNfield');
             if (value[i]) {
                 property.push(i + '=yes');
               } else {
