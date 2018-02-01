@@ -133,10 +133,43 @@ export class JailWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    (<FormGroup>entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
       if (res) {
-        (<FormGroup>entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
       }
     })
+  }
+
+  beforeSubmit(value) {
+    let property: any = [];
+
+    for (let i in value) {
+      if (value.hasOwnProperty(i)) {
+        if (value[i] == undefined) {
+          delete value[i];
+        } else {
+          if (i == 'dhcp' || i == 'vnet') {
+            if (i == 'dhcp') {
+              property.push('bpf=yes');
+            }
+
+            if (value[i]) {
+              property.push(i + '=on');
+            } else {
+              property.push(i + '=off');
+            }
+            delete value[i];
+          } else {
+            if (i != 'uuid' && i != 'release') {
+              property.push(i + '=' + value[i]);
+              delete value[i];
+            }
+          }
+        }
+      }
+    }
+    value['props'] = property;
+
+    return value;
   }
 }
