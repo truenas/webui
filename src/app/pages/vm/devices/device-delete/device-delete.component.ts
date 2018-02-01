@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {RestService} from '../../../../services/rest.service';
+import {WebSocketService} from '../../../../services/ws.service';
+import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-vm-device-delete',
@@ -16,13 +18,21 @@ export class DeviceDeleteComponent {
   protected skipGet: boolean = true;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService) {}
+              protected rest: RestService, protected ws: WebSocketService,
+              protected loader: AppLoaderService ) {}
 
-  afterInit(deviceAdd: any) {
+  afterInit(entityDelete: any) {
     this.route.params.subscribe(params => {
       this.vmid = params['vmid'];
       this.vm = params['name'];
       this.route_success = [ 'vm', this.vmid, 'devices', this.vm ];
+    });
+  }
+  customSubmit(entityDelete: any){
+    this.ws.call('datastore.delete', ['vm.device', entityDelete.pk]).subscribe(
+      (res)=>{
+        this.loader.close();
+        this.router.navigate(new Array('').concat(this.route_success));
     });
   }
 }
