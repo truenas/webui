@@ -4,21 +4,29 @@ import { RestService, WebSocketService } from '../../../services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
+import * as _ from 'lodash';
+import { JailService } from '../../../services/';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'jail-wizard',
-  template: '<entity-wizard [conf]="this"></entity-wizard>'
+  template: '<entity-wizard [conf]="this"></entity-wizard>',
+  providers: [JailService]
 })
 export class JailWizardComponent {
 
-  isLinear = false;
+  protected addWsCall = 'jail.create';
+  public route_success: string[] = ['jails'];
+
+  isLinear = true;
   firstFormGroup: FormGroup;
 
   protected wizardConfig: Wizard[] = [{
-      label: 'Plese fill Jail Info',
+      label: 'Plese fill jail Info',
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
+          required: true,
           placeholder: 'Jails Name',
           tooltip: 'Mandatory. Can only contain letters, numbers, dashes,\
  or the underscore character.',
@@ -26,6 +34,7 @@ export class JailWizardComponent {
         {
           type: 'select',
           name: 'release',
+          required: true,
           placeholder: 'Release',
           tooltip: 'Select the release for the jail.',
           options: [],
@@ -33,19 +42,38 @@ export class JailWizardComponent {
       ]
     },
     {
-      label: 'Plese fill Config Jail Network',
+      label: 'Plese config jail network',
       fieldConfig: [{
+          type: 'checkbox',
+          name: 'dhcp',
+          placeholder: 'IPv4 DHCP',
+        },
+        {
           type: 'input',
           name: 'ip4_addr',
           placeholder: 'IPv4 Address',
           tooltip: 'This and the other IPv4 settings are grayed out if\
  <b>IPv4 DHCP</b> is checked. Enter a unique IP address that is in the\
  local network and not already used by any other computer.',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'input',
           name: 'defaultrouter',
-          placeholder: 'Default Router',
+          placeholder: 'Default Router For IPv4',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          }]
         },
         {
           type: 'input',
@@ -61,11 +89,6 @@ export class JailWizardComponent {
           placeholder: 'Default Router For IPv6',
         },
         {
-          type: 'input',
-          name: 'notes',
-          placeholder: 'Note',
-        },
-        {
           type: 'checkbox',
           name: 'vnet',
           placeholder: 'Vnet',
@@ -74,8 +97,46 @@ export class JailWizardComponent {
     },
   ]
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) {
+  protected releaseField: any;
+  protected currentServerVersion: any;
+
+  constructor(protected rest: RestService, protected ws: WebSocketService, protected jailService: JailService, ) {
 
   }
 
+  preInit() {
+    this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
+    this.ws.call('system.info').subscribe((res) => {
+        this.currentServerVersion = Number(_.split(res.version, '-')[1]);
+        this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
+          for (let j in res_local) {
+            let rlVersion = Number(_.split(res_local[j], '-')[0]);
+            if (this.currentServerVersion >= Math.floor(rlVersion)) {
+              this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
+            }
+          }
+          this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
+            for (let i in res_remote) {
+              if (_.indexOf(res_local, res_remote[i]) < 0) {
+                let rmVersion = Number(_.split(res_remote[i], '-')[0]);
+                if (this.currentServerVersion >= Math.floor(rmVersion)) {
+                  this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+                }
+              }
+            }
+          });
+        });
+      },
+      (res) => {
+        new EntityUtils().handleError(this, res);
+      });
+  }
+
+  afterInit(entityWizard: EntityWizardComponent) {
+    (<FormGroup>entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+      if (res) {
+        (<FormGroup>entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+      }
+    })
+  }
 }
