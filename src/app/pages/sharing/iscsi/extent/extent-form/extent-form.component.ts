@@ -77,7 +77,7 @@ export class ExtentFormComponent {
     },
     {
       type: 'input',
-      name: 'iscsi_target_extent_(<any>window).filesize',
+      name: 'iscsi_target_extent_filesize',
       placeholder: 'Extent size',
       tooltip: 'If the size is specified as <i>0</i>, the file must\
  already exist and the actual file size will be used. Otherwise,\
@@ -173,7 +173,7 @@ different block size.',
   ];
   protected fileFieldGroup: any[] = [
     'iscsi_target_extent_path',
-    'iscsi_target_extent_(<any>window).filesize',
+    'iscsi_target_extent_filesize',
   ];
   protected extent_type_control: any;
   protected extent_disk_control: any;
