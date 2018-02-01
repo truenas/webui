@@ -43,12 +43,14 @@ export class VdevComponent implements OnInit {
 
   addDisk(disk: any) { 
     this.disks.push(disk);
+    this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
   }
 
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
+    this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
   }

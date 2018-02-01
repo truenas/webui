@@ -258,11 +258,13 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   addDisk(disk: any) {
      this.disks.push(disk);
+     this.disks = [...this.disks];
      this.temp.push(disk);
   }
   
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
+    this.disks = [...this.disks];
     this.temp.splice(this.temp.indexOf(disk), 1);
     this.dirty = true;
   }
