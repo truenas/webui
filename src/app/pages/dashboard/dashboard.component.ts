@@ -1,7 +1,6 @@
 import { ChartFormatter } from '../../components/common/lineChart/lineChart.component';
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as _ from 'lodash';
-import filesize from 'filesize';
 
 import {
   RestService,
@@ -36,7 +35,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public ipAddress: any = [];
   public chartFormatter: ChartFormatter = {
     format(value, ratio, id) {
-      return filesize(value, {standard: "iec"});
+      return (<any>window).filesize(value, {standard: "iec"});
     }
   };
   public graphs: ChartConfigData[] = [
@@ -109,8 +108,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
    parseResponse(data){
-    let key = _.keys(data);
-    var card: NoteCard = {
+    const key = _.keys(data);
+    const card: NoteCard = {
       id:key[0],
       title:key[0].substring(5),
       content:data[key[0]],
@@ -140,7 +139,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     });
     this.ws.call('stats.get_sources').subscribe((res) => {
-      let gLegends = [], gDataList = [];
+      const gLegends = [], gDataList = [];
       
       for (const prop in res) {
         if (prop.startsWith("disk-") && !prop.startsWith("disk-cd")) {
@@ -165,13 +164,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // get notes
     this.rest.get("account/users/1", {}).subscribe((res) => {
       this.notes = [];
-      for (let i in res.data.bsdusr_attributes) {
+      for (const i in res.data.bsdusr_attributes) {
         if (_.startsWith(i, 'note_')) {
           this.notes.push(_.pick(res.data.bsdusr_attributes, i));
         }
       }
       for (let i = 0; i < this.notes.length; i++) {
-        let card = this.parseResponse(this.notes[i]);
+        const card = this.parseResponse(this.notes[i]);
         this.cards.push(card);
       }
     });
@@ -182,8 +181,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   addNote() {
-    let index = this.cards.length;
-    let card: NoteCard = {
+    const index = this.cards.length;
+    const card: NoteCard = {
       id: "",
       title:"",
       content:"",
@@ -216,7 +215,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   focusVM(index){
-    for(var i = 0; i < this.cards.length; i++){
+    for(let i = 0; i < this.cards.length; i++){
       if(i !== index && this.cards[i].isFlipped ){
         this.cards[i].isFlipped = false;
         this.cards[i].lazyLoaded = false;
@@ -235,12 +234,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     card.template = template;
     card.isFlipped = flipState;
     card.lazyLoaded = !card.lazyLoaded;
-    var index = this.cards.indexOf(card);
+    const index = this.cards.indexOf(card);
     this.focusVM(index);
   }
 
   cancel(index){
-    let card = this.cards[index];
+    const card = this.cards[index];
     if(card.isNew){
       this.cards.splice(index,1);
     } else {
@@ -251,8 +250,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getNote(index) {
     this.rest.get("account/users/1", {}).subscribe((res) => {
-      for (let i in res.data.bsdusr_attributes) {
-        if (i == index) {
+      for (const i in res.data.bsdusr_attributes) {
+        if (i === index) {
           _.find(this.cards, {id: index})['content'] = res.data.bsdusr_attributes[i];
           this.notes.push(_.pick(res.data.bsdusr_attributes, i));
         }

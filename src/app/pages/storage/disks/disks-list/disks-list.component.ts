@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
-import filesize from 'filesize';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -73,7 +72,7 @@ export class DisksListConfig {
     rowValue(row, attr) {
       switch (attr) {
         case 'disk_size':
-          return filesize(row[attr], { standard: "iec" });
+          return (<any>window).filesize(row[attr], { standard: "iec" });
         default:
           return row[attr];
       }
@@ -132,13 +131,13 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         volume.type = 'zpool';
         volume.isReady = false;
         try {
-          volume.avail = filesize(volume.avail, { standard: "iec" });
+          volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
         } catch( error ) {
           console.log("error", error );
         }
 
         try {
-          volume.used = filesize(volume.used, { standard: "iec" });
+          volume.used = (<any>window).filesize(volume.used, { standard: "iec" });
         } catch( error ) {
           console.log("error", error );
         }
