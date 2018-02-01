@@ -9,7 +9,6 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import filesize from 'filesize';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
@@ -122,7 +121,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this.disks = [];
       for (let i in res) {
         res[i]['real_capacity'] = res[i]['capacity'];
-        res[i]['capacity'] = filesize(res[i]['capacity'], {standard : "iec"});
+        res[i]['capacity'] = (<any>window).filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
 

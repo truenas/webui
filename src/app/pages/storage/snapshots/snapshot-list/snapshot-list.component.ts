@@ -1,7 +1,5 @@
 import { Component, ElementRef, Injector, ApplicationRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import filesize from 'filesize';
-
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from 'app/services';
@@ -13,9 +11,9 @@ import { WebSocketService } from 'app/services';
 export class SnapshotListComponent {
 
   public title = "Snapshots";
-  protected resource_name: string = 'storage/snapshot';
+  protected resource_name = 'storage/snapshot';
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
-  protected route_add_tooltip: string = "Add Snapshot";
+  protected route_add_tooltip = "Add Snapshot";
   protected entityList: any;
   public busy: Subscription;
   public sub: Subscription;
@@ -32,9 +30,9 @@ export class SnapshotListComponent {
   rowValue(row, attr) {
     switch (attr) {
       case 'used':
-        return filesize(row[attr], { standard: "iec" });
+        return (<any>window).filesize(row[attr], { standard: "iec" });
       case 'refer':
-        return filesize(row[attr], { standard: "iec" });
+        return (<any>window).filesize(row[attr], { standard: "iec" });
       default:
         return row[attr];
     }

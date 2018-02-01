@@ -8,7 +8,6 @@ import {
   FormGroup,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import filesize from 'filesize';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
@@ -34,7 +33,7 @@ export class DatasetPermissionsComponent {
   public data: Object = {};
   public error: string;
   public busy: Subscription;
-  protected fs: any = filesize;
+  protected fs: any = (<any>window).filesize;
   protected route_success: string[] = [ 'storage', 'volumes' ];
   protected resource_name = 'storage/permission';
 

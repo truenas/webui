@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
-import filesize from 'filesize';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -165,6 +164,26 @@ export class VolumesListTableConfig {
       });
 
       if (rowData.vol_encrypt > 0) {
+
+        actions.push({
+          label: "Encryption Rekey",
+          onClick: (row1) => {
+            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+  
+                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  console.log("restPostResp", restPostResp);
+                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
+                });
+              }
+            });
+          }
+        });
+        
         actions.push({
           label: "Download Encrypt Key",
           onClick: (row1) => {
@@ -271,13 +290,13 @@ export class VolumesListTableConfig {
       }
 
       try {
-        data[i].availStr = filesize(data[i].avail, { standard: "iec" });
+        data[i].availStr = (<any>window).filesize(data[i].avail, { standard: "iec" });
       } catch (error) {
         data[i].availStr = "" + data[i].avail;
       }
 
       try {
-        data[i].usedStr = filesize(data[i].used, { standard: "iec" });
+        data[i].usedStr = (<any>window).filesize(data[i].used, { standard: "iec" });
       } catch (error) {
         data[i].usedStr = "" + data[i].used;
       }
@@ -341,13 +360,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         volume.type = 'zpool';
 
         try {
-          volume.availStr = filesize(volume.avail, { standard: "iec" });
+          volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
         } catch (error) {
           volume.availStr = "" + volume.avail;
         }
 
         try {
-          volume.usedStr = filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
+          volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
         } catch (error) {
           volume.usedStr = "" + volume.used;
         }

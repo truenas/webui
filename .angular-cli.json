@@ -54,7 +54,8 @@
             "vendor/Chart.min.js",
             "../node_modules/quill/dist/quill.min.js",
             "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
-            "../node_modules/devextreme/dist/js/dx.all.js"
+            "../node_modules/devextreme/dist/js/dx.all.js",
+            "../node_modules/filesize/lib/filesize.js"
            
         ],
         "environmentSource": "environments/environment.ts",

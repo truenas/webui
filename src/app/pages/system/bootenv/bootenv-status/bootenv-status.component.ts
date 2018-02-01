@@ -1,6 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
-import filesize from 'filesize';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
