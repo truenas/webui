@@ -177,7 +177,8 @@ export class VolumesListTableConfig {
                     this.parentVolumesListComponent.repaintMe();
                   });
                 }, (res) => {
-                  this.dialogService.errorReport("Error Adding recovery key to volume", res.message, res.stack);
+                  console.log("error ub recoverykey api", res);
+                  this.dialogService.errorReport("Error Adding recovery key to volume", res.error.error_message, res.error.traceback);
                 });
               }
             });
