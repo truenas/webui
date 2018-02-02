@@ -203,24 +203,7 @@ export class VolumesListTableConfig {
           }
         });
         
-        actions.push({
-          label: "Encryption Rekey",
-          onClick: (row1) => {
-            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-  
-                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
-                }, (res) => {
-                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
-                });
-              }
-            });
-          }
-        });
+    
         
         actions.push({
           label: "Encryption Rekey",
@@ -230,7 +213,7 @@ export class VolumesListTableConfig {
   
                 this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
+                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name + " " + restPostResp.content).subscribe((infoResult) => {
                     this.parentVolumesListComponent.repaintMe();
                   });
                 }, (res) => {
