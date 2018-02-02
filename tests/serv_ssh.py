@@ -26,8 +26,8 @@ except ImportError:
 
 
 xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
-          'turnoffConfirm' : "/html/body/div[4]/div/div[2]/md-dialog-container/app-confirm/div[2]/button[1]",
-          'status' : "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[14]/md-card/div[2]/div[1]/md-chip"
+          'turnoffConfirm' : "/html/body/div[5]/div[3]/div/mat-dialog-container/app-confirm/div[2]/button[1]",
+          'status' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[1]/mat-chip"
         }
 
 class configure_ssh_test(unittest.TestCase):
@@ -43,7 +43,7 @@ class configure_ssh_test(unittest.TestCase):
         # allowing the button to load
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -67,11 +67,12 @@ class configure_ssh_test(unittest.TestCase):
         print (" configuring ssh service with root access")
         time.sleep(2)
         # click on configure button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[14]/md-card/div[2]/div[3]/button").click()
-        # click on Login as Root with Passsword
-        driver.find_element_by_xpath("//*[@id='2']/form-checkbox/div/md-checkbox/label/div").click()
+        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button").click()
+        # uncheck on Login as Root with Passsword
+        driver.find_element_by_xpath("//*[@id='ssh_rootlogin']/mat-checkbox/label/div").click()
         # click on save button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/ssh-edit/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath("//*[@id='save_button']").click()
+        time.sleep(1)
 
 
     def test_04_turnoff_ssh(self):
@@ -103,14 +104,14 @@ class configure_ssh_test(unittest.TestCase):
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/md-chip")
+        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
         if to == "start":        
             if status_data == "STOPPED": 
                 # Click on the afp toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/button").click()
+                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -118,7 +119,7 @@ class configure_ssh_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the afp toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/button").click()
+                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):

@@ -6,7 +6,6 @@ import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/view
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { Subject } from 'rxjs/Subject';
-import filesize from 'filesize';
 
 @Component({
   selector: 'vm-summary',
@@ -66,13 +65,13 @@ export class VmSummaryComponent implements AfterViewInit {
 
   // rest.get('storage/volume/', {}).subscribe((res) => {});
   setPoolData(evt:CoreEvent){
-    let usedObj = filesize(evt.data[0].used, {output: "object", exponent:3});
+    let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
     let used: ChartData = {
       legend: 'Used', 
       data: [usedObj.value]
     };
 
-    let  availableObj = filesize(evt.data[0].avail, {output: "object", exponent:3});
+    let  availableObj = (<any>window).filesize(evt.data[0].avail, {output: "object", exponent:3});
     let available: ChartData = {
       legend:'Available', 
       data: [availableObj.value]

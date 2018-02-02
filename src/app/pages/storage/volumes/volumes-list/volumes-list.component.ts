@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
-import filesize from 'filesize';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -58,28 +57,33 @@ export class VolumesListTableConfig {
   protected route_add: string[] = ['storage', 'volumes', 'manager'];
   protected route_add_tooltip = "Create ZFS Pool";
   public rowData: ZfsPoolData[] = [];
-  
+
   constructor(
+    private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
     private _classId: string,
     private title: string,
     public mdDialog: MatDialog,
-    protected rest: RestService) {
+    protected rest: RestService,
+    protected dialogService: DialogService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
-      
+
       this.rest.get(this.resource_name, {}).subscribe((res) => {
         this.rowData = [];
-  
+
         this.rowData = this.resourceTransformIncomingRestData(res.data);
-       });
+      }, (res) => {
+        alert("error");
+        console.log("error", res);
+      });
     }
 
-    
-    
+
+
   }
- 
+
   getAddActions() {
     const actions = [];
     actions.push({
@@ -118,23 +122,78 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row1.id]));
         }
       });
+      actions.push({
+        label: "Lock",
+        onClick: (row1) => {
+          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+            if (confirmResult === true) {
+
+              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                console.log("restPostResp", restPostResp);
+                this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              }, (res) => {
+                this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
+              });
+            }
+          });
+        }
+      });
+
+
+      actions.push({
+        label: "Un-Lock",
+        onClick: (row1) => {
+          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id).subscribe((confirmResult) => {
+            if (confirmResult === true) {
+
+              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: "" }) }).subscribe((restPostResp) => {
+                console.log("restPostResp", restPostResp);
+                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname).subscribe((infoResult) => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              }, (res) => {
+                this.dialogService.errorReport("Error getting unlocking volume", res.message, res.stack);
+              });
+
+
+            }
+          });
+        }
+      });
 
       if (rowData.vol_encrypt > 0) {
+
+        actions.push({
+          label: "Encryption Rekey",
+          onClick: (row1) => {
+            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+  
+                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  console.log("restPostResp", restPostResp);
+                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
+                });
+              }
+            });
+          }
+        });
+        
         actions.push({
           label: "Download Encrypt Key",
           onClick: (row1) => {
-            let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-
-            dialogRef.componentInstance.volumeId = row1.id;
-            dialogRef.afterClosed().subscribe(result => {
-              this._router.navigate(['/', 'storage', 'volumes']);
-            });
+            const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
           }
         });
       }
     }
 
-    if (rowData.type == "dataset") {
+    if (rowData.type === "dataset") {
       actions.push({
         label: "Add Dataset",
         onClick: (row1) => {
@@ -162,7 +221,7 @@ export class VolumesListTableConfig {
           ]));
         }
       });
-      if (rowData.path.indexOf('/') != -1) {
+      if (rowData.path.indexOf('/') !== -1) {
         actions.push({
           label: "Delete Dataset",
           onClick: (row1) => {
@@ -176,14 +235,14 @@ export class VolumesListTableConfig {
           label: "Edit Permissions",
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id",row1.path.split('/')[0], "dataset",
+              "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
               "permissions", row1.path
             ]));
           }
         });
       }
     }
-    if (rowData.type == "zvol") {
+    if (rowData.type === "zvol") {
       actions.push({
         label: "Delete Zvol",
         onClick: (row1) => {
@@ -208,28 +267,39 @@ export class VolumesListTableConfig {
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
+    console.log("Log point 1");
+
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
     for (let i = 0; i < data.length; i++) {
       data[i].nodePath = data[i].mountpoint;
-      
+
       if (data[i].status !== '-') {
         // THEN THIS A ZFS_POOL DON'T ADD    data[i].type = 'zpool'
         continue;
-      } else if( typeof(data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
+      } else if (typeof (data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
         continue;
       }
 
-      data[i].parentPath =  data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/") );
+      data[i].parentPath = data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/"));
 
-      if( "/mnt" === data[i].parentPath ) {
+      if ("/mnt" === data[i].parentPath) {
         data[i].parentPath = "0";
       }
-      data[i].availStr = filesize(data[i].avail, { standard: "iec" });
-      data[i].usedStr = filesize(data[i].used, { standard: "iec" }) + " (" + data[i].used_pct + ")";
-      data[i].volumesListTableConfig = null;
+
+      try {
+        data[i].availStr = (<any>window).filesize(data[i].avail, { standard: "iec" });
+      } catch (error) {
+        data[i].availStr = "" + data[i].avail;
+      }
+
+      try {
+        data[i].usedStr = (<any>window).filesize(data[i].used, { standard: "iec" });
+      } catch (error) {
+        data[i].usedStr = "" + data[i].used;
+      }
 
       if (data[i].type === 'dataset' && typeof (data[i].dataset_data) !== "undefined" && typeof (data[i].dataset_data.data) !== "undefined") {
         for (let k = 0; k < data[i].dataset_data.data.length; k++) {
@@ -263,32 +333,41 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this.router, "", "Volumes", this.mdDialog, this.rest);
+  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
   expanded = false;
+  public paintMe = true;
+
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialog: DialogService, protected loader: AppLoaderService,
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService) {
-    super(rest, router, ws, _eRef, dialog, loader, erdService);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService);
   }
 
-  
+  public repaintMe() {
+    this.paintMe = false;
+    this.ngOnInit();
+  }
 
   ngOnInit(): void {
+    while (this.zfsPoolRows.length > 0) {
+      this.zfsPoolRows.pop();
+    }
+
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this.router, volume.id, volume.name, this.mdDialog, this.rest);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService);
         volume.type = 'zpool';
-        
+
         try {
-          volume.availStr = filesize(volume.avail, { standard: "iec" });
-        } catch( error ) {
+          volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
+        } catch (error) {
           volume.availStr = "" + volume.avail;
         }
 
         try {
-          volume.usedStr = filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
-        } catch( error ) {
+          volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
+        } catch (error) {
           volume.usedStr = "" + volume.used;
         }
         this.zfsPoolRows.push(volume);
@@ -297,6 +376,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       if (this.zfsPoolRows.length === 1) {
         this.expanded = true;
       }
+
+      this.paintMe = true;
+    }, (res) => {
+      this.dialogService.errorReport("Error getting volume data", res.message, res.stack);
     });
 
   }
@@ -305,6 +388,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   }
 
- 
+
 
 }

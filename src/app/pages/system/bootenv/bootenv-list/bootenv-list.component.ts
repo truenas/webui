@@ -1,6 +1,5 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import filesize from 'filesize';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs/Observable';

@@ -23,9 +23,9 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
-           'turnoffConfirm' : "/html/body/div[4]/div/div[2]/md-dialog-container/app-confirm/div[2]/button[1]",
-          'status' : "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[17]/md-card/div[2]/div[1]/md-chip"
+xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
+           'turnoffConfirm': "/html/body/div[5]/div[3]/div/mat-dialog-container/app-confirm/div[2]/button[1]",
+          'status': "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button"
         }
 
 
@@ -43,7 +43,7 @@ class configure_webdav_test(unittest.TestCase):
         # check if the Services page is open
         time.sleep(1)
         # get the ui element
-        ui_element_page=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li")
+        ui_element_page=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
         page_data=ui_element_page.text
         print ("the Page now is: " + page_data)
@@ -59,15 +59,15 @@ class configure_webdav_test(unittest.TestCase):
         print (" configuring webdav service")
         time.sleep(1)
         # click on configure button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[17]/md-card/div[2]/div[3]/button").click()
+        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[17]/mat-card/div[2]/div[3]/button").click()
         time.sleep(1)
         # Enter password newuserpassword
-        driver.find_element_by_xpath("//*[@id='5']/form-input/div/md-input-container/div/div[1]/div/input").clear()
-        driver.find_element_by_xpath("//*[@id='5']/form-input/div/md-input-container/div/div[1]/div/input").send_keys(newuserpassword)
+        driver.find_element_by_xpath("//*[@id='webdav_password']/mat-input-container/div/div[1]/div/input").clear()
+        driver.find_element_by_xpath("//*[@id='webdav_password']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
         # Enter password confirmation newuserpassword
-        driver.find_element_by_xpath("//*[@id='6']/form-input/div/md-input-container/div/div[1]/div/input").send_keys(newuserpassword)
+        driver.find_element_by_xpath("//*[@id='webdav_password2']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
         # Click on save button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/webdav-edit/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath("//*[@id='save_button']").click()
         # Next step-- To check if the new user is present in the list via automation
 
     def test_03_turnoff_webdav (self):
@@ -94,22 +94,22 @@ class configure_webdav_test(unittest.TestCase):
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/md-chip")
+        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
-        if to == "start":        
-            if status_data == "STOPPED": 
+        if to == "start":
+            if status_data == "STOPPED":
                 # Click on the afp toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/button").click()
+                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
                 print ("the status is already " + status_data)
         elif to == "stop":
             if status_data == "RUNNING":
-                # Click on the afp toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/button").click()
+                #Click on the afp toggle button
+                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):

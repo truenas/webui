@@ -24,7 +24,7 @@
             "../node_modules/quill/dist/quill.core.css",
             "../node_modules/quill/dist/quill.snow.css",
             "../node_modules/dragula/dist/dragula.css",
-            "../node_modules/angular-calendar/dist/css/angular-calendar.css",
+            "../node_modules/angular-calendar/css/angular-calendar.css",
             "../node_modules/hopscotch/dist/css/hopscotch.min.css",
             "../node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
             "../node_modules/chartist/dist/chartist.min.css",
@@ -54,7 +54,8 @@
             "vendor/Chart.min.js",
             "../node_modules/quill/dist/quill.min.js",
             "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
-            "../node_modules/devextreme/dist/js/dx.all.js"
+            "../node_modules/devextreme/dist/js/dx.all.js",
+            "../node_modules/filesize/lib/filesize.js"
            
         ],
         "environmentSource": "environments/environment.ts",

@@ -6,7 +6,7 @@ import {
   QueryList,
   ViewChild
 } from '@angular/core';
-import filesize from 'filesize';
+
 
 @Component({
   selector : 'app-vdev',
@@ -93,7 +93,7 @@ export class VdevComponent implements OnInit {
       estimate = totalsize; // stripe
     }
         
-    this.size = filesize(estimate, {standard : "iec"});
+    this.size = (<any>window).filesize(estimate, {standard : "iec"});
   }
 
   onSelect({ selected }) {

@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: 'testalerts-dialog',
-  styleUrls: ['./testalerts-dialog.component.css'],
   templateUrl:'./testalerts-dialog.component.html'
 })
 export class TestAlertModalDialogComponent implements OnInit {

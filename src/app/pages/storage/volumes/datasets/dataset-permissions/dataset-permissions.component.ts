@@ -8,7 +8,6 @@ import {
   FormGroup,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import filesize from 'filesize';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
@@ -34,7 +33,7 @@ export class DatasetPermissionsComponent {
   public data: Object = {};
   public error: string;
   public busy: Subscription;
-  protected fs: any = filesize;
+  protected fs: any = (<any>window).filesize;
   protected route_success: string[] = [ 'storage', 'volumes' ];
   protected resource_name = 'storage/permission';
 
@@ -49,7 +48,9 @@ export class DatasetPermissionsComponent {
       type: 'select',
       name: 'mp_acl',
       placeholder: 'ACL Type',
-      options: [{label:'unix', value: 'unix'},
+      tooltip: 'Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
+ type that matches the type of client accessing the volume/dataset.',
+ options: [{label:'unix', value: 'unix'},
                 {label:'windows', value: 'windows'}],
       value: 'unix'
     },
@@ -57,17 +58,25 @@ export class DatasetPermissionsComponent {
       type: 'permissions',
       name: 'mp_mode',
       placeholder: 'Mode',
+      tooltip: 'Only applies to Unix or Mac permission types.\
+ Note that the mode cannot be changed when Windows is selected.',
     },
     {
       type: 'select',
       name: 'mp_user',
       placeholder: 'User',
+      tooltip: 'Select the user to control the volume/dataset.\
+ Note that users manually created or imported from a directory service will\
+ appear in the drop-down menu.',
       options: [],
     },
     {
       type: 'select',
       name: 'mp_group',
       placeholder: 'Group',
+      tooltip: 'Select the group to control the volume/dataset.\
+ Note that groups manually created or imported from a directory service will\
+ appear in the drop-down menu.',
       options: [],
     },
   ];

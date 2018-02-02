@@ -1,6 +1,5 @@
 import {Component, ElementRef} from '@angular/core';
 import {Router} from '@angular/router';
-import filesize from 'filesize';
 
 import {RestService} from '../../../../services/rest.service';
 

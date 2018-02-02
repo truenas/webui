@@ -37,7 +37,7 @@
             <div [style.background]="theme.baseColor" class="egret-swatch"></div>
             <mat-icon class="active-icon" *ngIf="theme.isActive">check</mat-icon>
           </div>
-          <span class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
+          <span style="cursor: pointer;"  class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
         </mat-grid-tile>
       </mat-grid-list>
     </mat-menu>

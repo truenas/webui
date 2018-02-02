@@ -23,6 +23,7 @@ import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
+import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'device-edit',
@@ -49,8 +50,11 @@ export class DeviceEditComponent implements OnInit {
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
   public conf: any = {};
-  public hasConf: boolean = true;
+  public hasConf:  boolean = true;
   public success: boolean = false;
+  private nic_attach: any;
+  private nicType:  any;
+  private vnc_bind: any;
   
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -62,7 +66,7 @@ export class DeviceEditComponent implements OnInit {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected networkService: NetworkService,
               protected systemGeneralService: SystemGeneralService,
-              private entityFormService : EntityFormService,
+              private entityFormService: EntityFormService,
               public vmService: VmService) {}
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
@@ -107,6 +111,7 @@ export class DeviceEditComponent implements OnInit {
  enter the desired address into the field.',
           type: 'input',
           value : '',
+          validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
         },
         {
           name : 'nic_attach',
@@ -241,14 +246,11 @@ export class DeviceEditComponent implements OnInit {
     }
     this.afterInit();
   }
-  private nic_attach: any;
-  private nicType:  any;
-  private ipAddress: any;
 
   afterInit(){
-    let self = this;
+    const self = this;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    let vnc_lookup_table: Object = {
+    const vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
       'vnc_resolution' : 'VNC_resolution',
       'wait' : 'VNC_wait',
@@ -256,104 +258,79 @@ export class DeviceEditComponent implements OnInit {
       'vnc_password':'vnc_password',
       'vnc_web':'vnc_web'
     };
-    let nic_lookup_table: Object = {
+    const nic_lookup_table: Object = {
       'mac' : 'NIC_mac',
       'type' : 'NIC_type',
       'nic_attach':'nic_attach'
     };
-    let disk_lookup_table: Object = {
+    const disk_lookup_table: Object = {
       'path' : "DISK_zvol",
       'type' : "DISK_mode",
       'sectorsize': "DISK_sectorsize",
     };
-    let cdrom_lookup_table: Object = {
+    const cdrom_lookup_table: Object = {
       'path' : "CDROM_path",
     };
-    let rawfile_lookup_table: Object = {
+    const rawfile_lookup_table: Object = {
       'path' : 'RAW_path',
       'sectorsize': 'RAW_sectorsize',
       'type':'RAW_mode'
     };
-    this.vmService.getVM(this.vm).subscribe((vm) => {
-      for (let device of vm.devices) {
-        switch (device.dtype) {
-          case 'VNC': {
-            this.setgetValues(device.attributes, vnc_lookup_table);
-            if (this.dtype === 'VNC') {  
-            this.systemGeneralService.getIPChoices().subscribe((res) => {
-              if (res.length > 0) {
-                self.ipAddress = _.find(self.fieldConfig, {'name' : 'vnc_bind'});
-                if (this.ipAddress ){
-                  for(let i in res){
-                    let item = res[i];
-                    self.ipAddress.options.push({label : item[1], value : item[0]});
-                  }
-                }
-              }
-            })
-          }
-            break;
-          };
-          case 'NIC': {
-            this.setgetValues(device.attributes, nic_lookup_table);
-            if (this.dtype === 'NIC') {     
-            this.networkService.getAllNicChoices().subscribe((res) => {
-              self.nic_attach = _.find(self.fieldConfig, {'name' : 'nic_attach'});
-              if (this.nic_attach ){
-                for(let i in res){
-                  let item = res[i];
-                  self.nic_attach.options.push({label : item[1], value : item[0]});
-                }
-              }
-            });
-            this.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
-            .subscribe((res) => {
-              self.nicType = _.find(self.fieldConfig, {name : "NIC_type"});
-              if (this.nicType ){
-                for(let i in res){
-                  let item = res[i];
-                  self.nicType.options.push({label : item[1], value : item[0]});
-                }
-              }
-            });
-          }
-            break;
-          };
-          case 'CDROM': {
-            if (this.dtype === 'CDROM') {
-            this.setgetValues(device.attributes, cdrom_lookup_table);
-            break;
-            }
-          };
-          case 'DISK': {
-            if (this.dtype === 'DISK') {
-            this.setgetValues(device.attributes, disk_lookup_table);
-              this.vmService.getStorageVolumes().subscribe((res) => {
-                let data = new EntityUtils().flattenData(res.data);
-                self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
-                for (let dataset of data) {
-                  if (dataset.type === 'zvol') {
-                    self.DISK_zvol.options.push({label : dataset.name, value : dataset.path});
-                  };
-                };
-              });
-            }
-            break;
-          };
-          case 'RAW': {
-            if (this.dtype === 'RAW') {
-            this.setgetValues(device.attributes, rawfile_lookup_table);
-            break;
-            }
-          };
-        }
+    this.ws.call('datastore.query', ['vm.device', [["id", "=", this.pk]]]).subscribe((device)=>{
+      if (device[0].dtype === 'CDROM'){
+        this.setgetValues(device[0].attributes, cdrom_lookup_table);
       }
-    });
+      else if(device[0].dtype === 'VNC'){
+        this.systemGeneralService.getIPChoices().subscribe((ipchoices) => {
+          this.vnc_bind = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+          for(const ipchoice of ipchoices){
+            this.vnc_bind.options.push({label : ipchoice[1], value : ipchoice[0]});
+          }
+        });
+        this.setgetValues(device[0].attributes, vnc_lookup_table);
+      }
+      else if(device[0].dtype === 'NIC'){
+        this.networkService.getAllNicChoices().subscribe((nics) => {
+          this.nic_attach = _.find(self.fieldConfig, {'name' : 'nic_attach'});
+          if (this.nic_attach ){
+            for(const nic of nics){
+              this.nic_attach.options.push({label : nic[1], value : nic[0]});
+            };
+          }
+        });
+        this.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
+        .subscribe((NIC_types) => {
+          this.nicType = _.find(self.fieldConfig, {name : "NIC_type"});
+          if (this.nicType ){
+            for(const NIC_type of NIC_types){
+              self.nicType.options.push({label : NIC_type[1], value : NIC_type[0]});
+            };
+          }
+        });
+        this.setgetValues(device[0].attributes, nic_lookup_table);
+      }
+      else if (device[0].dtype === 'DISK'){
+        this.vmService.getStorageVolumes().subscribe((res) => {
+          const disks = new EntityUtils().flattenData(res.data);
+          self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
+          for (const disk of disks) {
+            if (disk.type === 'zvol') {
+              self.DISK_zvol.options.push({label : disk.name, value : disk.path});
+            };
+          };
+        });
+        this.setgetValues(device[0].attributes, disk_lookup_table);
+      }
+      else {
+        this.setgetValues(device[0].attributes, rawfile_lookup_table);
+        }
+      
+    })
   }
   
   setgetValues(data, lookupTable) {
-    for (let i in data) {
-      let fg = this.formGroup.controls[lookupTable[i]];
+    for (const i in data) {
+      const fg = this.formGroup.controls[lookupTable[i]];
       if (fg) {
         fg.setValue(data[i]);
       }
@@ -385,87 +362,57 @@ export class DeviceEditComponent implements OnInit {
   }
 
   onSubmit(event: Event) {
-    this.vmService.getVM(this.vm).subscribe((vm) => {
-      this.error = null;
-      let payload = {};
-      let devices = [];
-      let formvalue = _.cloneDeep(this.formGroup.value);
-          for (let device of vm.devices) {
-            if (device.dtype === 'NIC') {
-              devices.push({
-                'dtype' : 'NIC',
-                'attributes' : {
-                  'type' : formvalue.NIC_type ? formvalue.NIC_type
-                                              : device.attributes.type,
-                  'mac' : formvalue.NIC_mac ? formvalue.NIC_mac
-                                            : device.attributes.mac,
-                  'nic_attach' : formvalue.nic_attach ? formvalue.nic_attach
-                                            : device.attributes.nic_attach,
-                }
-              })
+    const formvalue = _.cloneDeep(this.formGroup.value);
+    const payload = {};
+
+        if (this.dtype === 'NIC') {
+            payload['dtype'] = 'NIC'
+            payload['attributes'] = {
+            'type' : formvalue.NIC_type,
+            'mac' : formvalue.NIC_mac,
+            'nic_attach' : formvalue.nic_attach
             }
-          if (device.dtype === 'VNC') {
-            devices.push({
-              'dtype' : 'VNC',
-              'attributes' : {
-                'wait' : new EntityUtils().bool(formvalue.VNC_wait
-                                                    ? formvalue.VNC_wait
-                                                    : device.attributes.wait),
-                'vnc_port' : formvalue.VNC_port ? formvalue.VNC_port
-                                                : device.attributes.port,
-                'vnc_resolution' : formvalue.VNC_resolution
-                                        ? formvalue.VNC_resolution
-                                        : device.attributes.vnc_resolution,
-                'vnc_bind' : formvalue.vnc_bind 
-                                      ? formvalue.vnc_bind
-                                      : device.attributes.vnc_bind,
-                'vnc_password' : formvalue.vnc_password 
-                                      ? formvalue.vnc_password
-                                      : device.attributes.vnc_password,
-                'vnc_web' : formvalue.vnc_web 
-                                      ? formvalue.vnc_web
-                                      : device.attributes.vnc_web,
-                }
-            })
           }
-          if (device.dtype === 'DISK') {
-            devices.push({
-              'dtype' : 'DISK',
-              'attributes' : {
-                'type' : formvalue.DISK_mode ? formvalue.DISK_mode
-                                              : device.attributes.type,
-                'path' : formvalue.DISK_zvol ? formvalue.DISK_zvol
-                                              : device.attributes.path
+
+          if (this.dtype === 'VNC') {
+            payload['dtype'] = 'VNC'
+            payload['attributes'] = {
+              'wait' : new EntityUtils().bool(formvalue.VNC_wait),
+              'vnc_port' : formvalue.VNC_port,
+              'vnc_resolution' : formvalue.VNC_resolution,
+              'vnc_bind' : formvalue.vnc_bind,
+              'vnc_password' : formvalue.vnc_password,
+              'vnc_web' : formvalue.vnc_web,
+          }
+        }
+
+        if (this.dtype  === 'DISK') {
+            payload['dtype'] = 'DISK'
+            payload['attributes'] = {
+                'type' : formvalue.DISK_mode, 
+                'path' : formvalue.DISK_zvol,
               }
-            })
-          }
-          if (device.dtype === 'CDROM') {
-                devices.push({
-                  'dtype' : 'CDROM',
-                  'attributes' : {
-                    'path' : formvalue.CDROM_path ? formvalue.CDROM_path
-                                                  : device.attributes.path
-                  }
-              })
             }
-          
-          if (device.dtype === 'RAW') {
-            devices.push({
-              'dtype' : 'RAW',
-              'attributes' : {
-                'path' : formvalue.RAW_path ? formvalue.RAW_path
-                                              : device.attributes.path,
-                'sectorsize' : formvalue.RAW_sectorsize ? formvalue.RAW_sectorsize : device.attributes.sectorsize,
-                'mode': formvalue.RAW_mode ? formvalue.RAW_mode : device.attributes.mode,
-                }
-              })
+        if (this.dtype === 'CDROM') {
+            payload['dtype'] = 'CDROM'
+            payload['attributes'] = {
+              'path' : formvalue.CDROM_path
             }
+            }
+        if (this.dtype === 'RAW') {
+            payload['dtype'] ='RAW'
+            payload['attributes'] = {
+              'path' : formvalue.RAW_path,
+              'sectorsize' : formvalue.RAW_sectorsize,
+              'mode': formvalue.RAW_mode 
+              }
+            }
+          this.ws.call(
+            'datastore.update', ['vm.device', this.pk, payload]).subscribe(
+              (res) => { this.router.navigate(new Array('').concat(this.route_success));
+            },
+
+            );
           }
-      payload['devices'] = devices;
-      this.busy = this.ws.call('vm.update', [ this.vmid, payload ]).subscribe(
-        (res) => { this.router.navigate(new Array('').concat(this.route_success));},
-        (res) => { new EntityUtils().handleError(this, res);}
-      );
-    });
-  }
+ 
 }
