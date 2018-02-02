@@ -1,0 +1,30 @@
+<!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
+<mat-card>
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit($event)">
+    <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray">
+      <div *ngFor="let step of conf.wizardConfig; let i = index">
+        <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
+          <ng-template matStepLabel>{{step.label}}</ng-template>
+          <ng-container *ngFor="let field of step.fieldConfig; let j = index">
+            <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{j}}">
+              <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formArray?.get([i])" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
+              </div>
+            </div>
+          </ng-container>
+          <div>
+            <button mat-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">Back</button>
+            <button mat-button matStepperNext type="button">Next</button>
+          </div>
+        </mat-step>
+      </div>
+      <mat-step>
+        <ng-template matStepLabel>Confirm your information</ng-template>
+        Everything seems correct.
+        <div>
+          <button mat-button matStepperPrevious type="button">Back</button>
+          <button type="Submit" mat-button>Submit</button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </form>
+</mat-card>

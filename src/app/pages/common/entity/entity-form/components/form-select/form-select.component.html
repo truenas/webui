@@ -1,12 +1,11 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <mat-select class="form-control full-width" [formControlName]="config.name"
-      [multiple]="config.multiple"
-      [placeholder]="config.placeholder"
-      (change)="onChangeOption($event)">
-    <mat-option *ngFor="let option of config.options" [value]="option.value">
-      {{ option.label }}
-    </mat-option>
-  </mat-select>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+  <mat-form-field class="full-width">
+    <mat-select [formControlName]="config.name" [multiple]="config.multiple" [required]="config.required" [placeholder]="config.placeholder" (change)="onChangeOption($event)">
+      <mat-option *ngFor="let option of config.options" [value]="option.value">
+        {{ option.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

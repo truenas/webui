@@ -1,5 +1,3 @@
-mat-select {
-  padding-bottom: 1.29688em;
-  padding: .4375em 0;
-  border-top: .84375em solid transparent;
+.has-tooltip mat-form-field.full-width {
+	width: calc( 100% - 25px )
 }
