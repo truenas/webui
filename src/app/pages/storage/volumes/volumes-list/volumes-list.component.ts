@@ -166,6 +166,63 @@ export class VolumesListTableConfig {
       if (rowData.vol_encrypt > 0) {
 
         actions.push({
+          label: "Add Recovery Key",
+          onClick: (row1) => {
+            this.dialogService.confirm("Add Recovery Key", "Add recovery key to volume: " + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+  
+                this.rest.post(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  console.log("restPostResp", restPostResp);
+                  this.dialogService.Info("Added Recovery Key", "Successfully added recovery key to volume " + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.dialogService.errorReport("Error Adding recovery key to volume", res.message, res.stack);
+                });
+              }
+            });
+          }
+        });
+        
+        actions.push({
+          label: "Delete Recovery Key",
+          onClick: (row1) => {
+            this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+  
+                this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  console.log("restPostResp", restPostResp);
+                  this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.dialogService.errorReport("Error Deleting recovery key for volume", res.message, res.stack);
+                });
+              }
+            });
+          }
+        });
+        
+        actions.push({
+          label: "Encryption Rekey",
+          onClick: (row1) => {
+            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+  
+                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  console.log("restPostResp", restPostResp);
+                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
+                });
+              }
+            });
+          }
+        });
+        
+        actions.push({
           label: "Encryption Rekey",
           onClick: (row1) => {
             this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
