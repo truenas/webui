@@ -1,7 +1,7 @@
 <!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
 <mat-card>
-  <form [formGroup]="formGroup">
-    <mat-horizontal-stepper [linear]="isLinear" formArrayName="formArray">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit($event)">
+    <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray">
       <div *ngFor="let step of conf.wizardConfig; let i = index">
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
           <ng-template matStepLabel>{{step.label}}</ng-template>
@@ -12,8 +12,8 @@
             </div>
           </ng-container>
           <div>
-            <button mat-button matStepperPrevious *ngIf="i == 0 ? false : true">Back</button>
-            <button mat-button matStepperNext>Next</button>
+            <button mat-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">Back</button>
+            <button mat-button matStepperNext type="button">Next</button>
           </div>
         </mat-step>
       </div>
@@ -21,8 +21,8 @@
         <ng-template matStepLabel>Confirm your information</ng-template>
         Everything seems correct.
         <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button type="button" mat-button>Sumbit</button>
+          <button mat-button matStepperPrevious type="button">Back</button>
+          <button type="Sumbit" mat-button>Sumbit</button>
         </div>
       </mat-step>
     </mat-horizontal-stepper>
