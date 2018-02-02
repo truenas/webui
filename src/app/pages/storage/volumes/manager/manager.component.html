@@ -3,6 +3,7 @@
     <div class="mat-card-title-text">ZFS Pool Manager</div>
   </div>
   <div class="mat-content p-1">
+    <div class="manager">
     <div class="m-3">
       <div *ngIf="isNew;else extend">
       <mat-input-container>
@@ -90,14 +91,15 @@
         </div>
       </div>
     </div>
+  </div>
   <div class="buttons">
-  <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
-        <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Save</button>
-        <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
-        <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
-        <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>
-        <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">Add Log</button>
-        <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">Add Spare</button>
-    </div>
+    <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
+    <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Save</button>
+    <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
+    <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
+    <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>
+    <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">Add Log</button>
+    <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">Add Spare</button>
+  </div>
   </div>
 </mat-card>
