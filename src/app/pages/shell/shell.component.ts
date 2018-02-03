@@ -53,7 +53,7 @@ export class ShellComponent implements OnInit, OnChanges {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
         if (value !== undefined) {
-           this.xterm.write(value);
+          this.xterm.write(value);
         }
       });
       this.initializeTerminal();
@@ -88,16 +88,16 @@ export class ShellComponent implements OnInit, OnChanges {
       rowNum = 10;
     }
 
-     this.xterm = new (<any>window).Terminal({
-       'cursorBlink': true,
-       'tabStopWidth': 4,
-       'cols': 80,
-       'rows': parseInt(rowNum.toFixed()),
-       'focus': true
-     });
-     this.xterm.open(this.container.nativeElement);
-     this.xterm.attach(this.ss);
-     this.xterm._initialized = true;
+    this.xterm = new (<any>window).Terminal({
+      'cursorBlink': true,
+      'tabStopWidth': 4,
+      'cols': 80,
+      'rows': parseInt(rowNum.toFixed()),
+      'focus': true
+    });
+    this.xterm.open(this.container.nativeElement);
+    this.xterm.attach(this.ss);
+    this.xterm._initialized = true;
   }
 
   initializeWebShell(res: string) {
