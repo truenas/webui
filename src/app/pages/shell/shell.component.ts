@@ -76,7 +76,7 @@ export class ShellComponent implements OnInit, OnChanges {
       let changedProp = changes[propName];
       // reprint prompt
       if (propName == 'prompt' && this.xterm != null) {
-         this.xterm.write(this.clearLine + this.prompt)
+        this.xterm.write(this.clearLine + this.prompt)
       }
     }
   }
