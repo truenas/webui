@@ -2,7 +2,6 @@
 .tooltip {
     display: inline-block;
     position: relative;
-    overflow:auto;
 }
 
 /* Tooltip text */
