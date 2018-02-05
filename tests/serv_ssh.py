@@ -72,7 +72,7 @@ class configure_ssh_test(unittest.TestCase):
         driver.find_element_by_xpath("//*[@id='ssh_rootlogin']/mat-checkbox/label/div").click()
         # click on save button
         driver.find_element_by_xpath("//*[@id='save_button']").click()
-        time.sleep(1)
+        time.sleep(5)
 
 
     def test_04_turnoff_ssh(self):
