@@ -60,6 +60,7 @@ export class StorageFormComponent {
     {
       type: 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name: 'source',
       placeholder: 'Source',
       tooltip: 'Directory or dataset on the FreeNAS system which will\
@@ -67,9 +68,9 @@ export class StorageFormComponent {
  the volume or dataset being used by the jail.',
     },
     {
-      // type: 'explorer',
-      // initial: '/mnt/iocage/jails/test6/root',
-      type: 'input',
+      type: 'explorer',
+      initial: '/mnt/iocage/jails',
+      explorerType: 'directory',
       name: 'destination',
       placeholder: 'Destination',
       tooltip: 'Select an existing, empty directory within the\
@@ -90,6 +91,7 @@ export class StorageFormComponent {
     private dialog: DialogService) {}
 
   preInit(entityForm: any) {
+    let destination_field = _.find(this.fieldConfig, {'name': 'destination'});
     this.jail = _.find(this.fieldConfig, { 'name': 'jail' });
     this.aroute.params.subscribe(params => {
       this.route_success.push(params['jail']);
@@ -99,6 +101,7 @@ export class StorageFormComponent {
       this.queryCallOption = { "action": "LIST", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" };
       if (this.jailID) {
         this.jail.value = this.jailID;
+        destination_field.initial += '/' + this.jailID + '/root';
       }
     });
   }
