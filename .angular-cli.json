@@ -55,7 +55,10 @@
             "../node_modules/quill/dist/quill.min.js",
             "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
             "../node_modules/devextreme/dist/js/dx.all.js",
-            "../node_modules/filesize/lib/filesize.js"
+            "../node_modules/filesize/lib/filesize.js",
+            "../node_modules/xterm/dist/xterm.js",
+            "../node_modules/xterm/dist/addons/attach/attach.js",
+            "../node_modules/xterm/dist/addons/fit/fit.js"
            
         ],
         "environmentSource": "environments/environment.ts",
