@@ -145,21 +145,8 @@ export class VolumesListTableConfig {
       actions.push({
         label: "Un-Lock",
         onClick: (row1) => {
-          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id).subscribe((confirmResult) => {
-            if (confirmResult === true) {
-
-              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: "" }) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.dialogService.errorReport("Error getting unlocking volume", res.message, res.stack);
-              });
-
-
-            }
-          });
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "unlock", row1.id]));
         }
       });
 
