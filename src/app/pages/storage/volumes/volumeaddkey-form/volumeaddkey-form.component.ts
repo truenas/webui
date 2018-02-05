@@ -24,7 +24,7 @@ import { DialogService } from 'app/services/dialog.service';
   selector : 'app-volumeunlock-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class VolumeUnlockFormComponent {
+export class VolumeAddkeyFormComponent {
 
   protected resource_name = 'storage/volume';
   protected route_success: string[] = [ 'storage', 'volumes'];
@@ -71,15 +71,14 @@ export class VolumeUnlockFormComponent {
   }
 
   customSubmit(value) {
-    this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
-      this.dialogService.Info("Unlocked Volume", "Successfully un-locked volume " + value.name);
-      
+      this.dialogService.Info("Rekeyed Volume", "Successfully Added Key to volume " + value.name);
+
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
-
     }, (res) => {
-      this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
+      this.dialogService.errorReport("Error getting adding key for volume", res.message, res.stack);
     });
   }
   

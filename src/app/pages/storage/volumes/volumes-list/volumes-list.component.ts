@@ -155,20 +155,8 @@ export class VolumesListTableConfig {
         actions.push({
           label: "Add Recovery Key",
           onClick: (row1) => {
-            this.dialogService.confirm("Add Recovery Key", "Add recovery key to volume: " + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-  
-                this.rest.post(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Added Recovery Key", "Successfully added recovery key to volume " + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
-                }, (res) => {
-                  console.log("error ub recoverykey api", res);
-                  this.dialogService.errorReport("Error Adding recovery key to volume", res.error.error_message, res.error.traceback);
-                });
-              }
-            });
+            this._router.navigate(new Array('/').concat(
+              ["storage", "volumes", "addkey", row1.id]));
           }
         });
         
@@ -196,19 +184,9 @@ export class VolumesListTableConfig {
         actions.push({
           label: "Encryption Rekey",
           onClick: (row1) => {
-            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-  
-                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name + " " + restPostResp.content).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
-                }, (res) => {
-                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
-                });
-              }
-            });
+            this._router.navigate(new Array('/').concat(
+              ["storage", "volumes", "rekey", row1.id]));
+          
           }
         });
         

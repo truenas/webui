@@ -37,6 +37,8 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxTreeListModule } from 'devextreme-angular';
 import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form';
+import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
+import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 
 
 @NgModule({
@@ -55,6 +57,8 @@ import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunloc
     // VolumesEditComponent,
     VolumeDeleteComponent,
     VolumeUnlockFormComponent,
+    VolumeRekeyFormComponent,
+    VolumeAddkeyFormComponent,
     ZvolDeleteComponent,
     ZvolAddComponent,
     ZvolEditComponent,

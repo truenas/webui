@@ -24,6 +24,7 @@ import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
+import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 
 export const routes: Routes = [
   {
@@ -71,14 +72,18 @@ export const routes: Routes = [
         {
           path: 'status/:pk', component: StatusComponent,
           data: {title: 'Scrub Status', breadcrumb:'Scrub Status' }},
-        //{ path: 'edit/:pk', component: VolumesEditComponent },
-        
         {
           path : 'delete/:pk', component : VolumeDeleteComponent,
           data: {title: 'Delete Volume', breadcrumb:'Delete Volume' }},
         {
           path : 'unlock/:pk', component : VolumeUnlockFormComponent,
-          data: {title: 'Unlock Volume', breadcrumb:'Unlock Volume' }}
+          data: {title: 'Unlock Volume', breadcrumb:'Unlock Volume' }},
+        {
+            path : 'rekey/:pk', component : VolumeRekeyFormComponent,
+            data: {title: 'Rekey Volume', breadcrumb:'Rekey Volume' }},
+        {
+              path : 'addkey/:pk', component : VolumeRekeyFormComponent,
+              data: {title: 'Rekey Volume', breadcrumb:'Add Key Volume' }}
       ]},
 
 
