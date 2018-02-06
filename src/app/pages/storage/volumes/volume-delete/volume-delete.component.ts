@@ -15,6 +15,6 @@ import {RestService} from '../../../../services/rest.service';
 })
 export class VolumeDeleteComponent {
 
-  protected resource_name: string = 'storage/volume/';
+  protected resource_name = 'storage/volume/';
   protected route_success: string[] = [ 'storage', 'volumes' ];
 }

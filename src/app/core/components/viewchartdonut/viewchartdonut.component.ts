@@ -18,6 +18,7 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
   }
 
   ngOnInit() {
+    this.showLegendValues = true;
   }
 
   makeConfig(){
@@ -47,7 +48,9 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
         }
       }
     }
-
+    this.tooltipOptions = {
+      show:false
+    }
     return this.chartConfig;
   }
 
