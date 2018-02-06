@@ -9,9 +9,14 @@ import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { MatDialog } from '@angular/material';
+import { validateBasis } from '@angular/flex-layout';
+
 
 @Component({
-  selector: 'vm-wizard',
+  selector: 'app-vm-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers : [ VmService ]
 })
@@ -22,6 +27,7 @@ export class VMWizardComponent {
 
   isLinear = true;
   firstFormGroup: FormGroup;
+  protected dialogRef: any;
 
   protected wizardConfig: Wizard[] = [{
       label: 'OS category',
@@ -38,6 +44,20 @@ export class VMWizardComponent {
             {label: 'freeBSD', value: 'freeBSD'},
           ],
         },
+      { type: 'input',
+        name : 'name',
+        placeholder : 'Name of the VM',
+      },
+      { type: 'select',
+        name : 'bootloader',
+        placeholder : 'Boot Loader Type',
+        options: []
+      },
+      { type: 'checkbox',
+        name : 'autostart',
+        placeholder : 'Start on Boot',
+        value: true
+      }
       ]
     },
     {
@@ -60,9 +80,15 @@ export class VMWizardComponent {
       label: 'Hard Disk Drive',
       fieldConfig: [
         {
+          type: 'input',
+          name: 'volsize',
+          placeholder : 'please specify size for zvol\'s (GB\'s)',
+          tooltip: '',
+        },
+        {
           type: 'select',
-          name: 'zvol',
-          placeholder : 'please select a zvol',
+          name: 'datastore',
+          placeholder : 'please select a datastore.',
           tooltip: '',
           options: []
         },
@@ -109,7 +135,7 @@ export class VMWizardComponent {
       label: 'Installation Media',
       fieldConfig: [{
           type: 'explorer',
-          name: 'path',
+          name: 'iso_path',
           placeholder : 'What ISO do you want to boot?',
           initial: '/mnt',
           tooltip: '',
@@ -123,9 +149,12 @@ export class VMWizardComponent {
   private zvol: any;
   private nic_attach: any;
   private nicType:  any;
+  private bootloader: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, 
-    public vmService: VmService, public networkService: NetworkService) {
+    public vmService: VmService, public networkService: NetworkService,
+    protected loader: AppLoaderService, protected dialog: MatDialog, 
+    private router: Router) {
 
   }
 
@@ -138,21 +167,23 @@ export class VMWizardComponent {
       if (res === 'windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
       }
       else {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
       }
     });
-    this.vmService.getStorageVolumes().subscribe((res) => {
-      const data = new EntityUtils().flattenData(res.data);
-      this.zvol = _.find(this.wizardConfig[2].fieldConfig, {name:'zvol'});
-     
-      for (const dataset of data) {
-        if (dataset.type === 'zvol') {
-          this.zvol.options.push({label : dataset.name, value : '/dev/zvol/' + dataset.path});
-        };
+    this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
+      this.zvol = _.find(this.wizardConfig[2].fieldConfig, { name : 'datastore' });
+      for (const idx in filesystem_res) {
+        if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
+          this.zvol.options.push(
+            {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
+        }
       };
+
     });
     this.networkService.getAllNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[3].fieldConfig, {'name' : 'nic_attach'});
@@ -160,46 +191,45 @@ export class VMWizardComponent {
         this.nic_attach.options.push({label : item[1], value : item[0]});
       });
     });
-    this.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
-        .subscribe((res) => {
+    this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
           this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
           res.forEach((item) => {
             this.nicType.options.push({label : item[1], value : item[0]});
           });
         });
+        this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
+          this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
+          res.forEach((item) => {
+            this.bootloader.options.push({label : item[1], value : item[0]})
+          });
+        });
   }
 
-  beforeSubmit(value) {
-    console.log(value);
-    // let property: any = [];
-
-    // for (let i in value) {
-    //   if (value.hasOwnProperty(i)) {
-    //     if (value[i] == undefined) {
-    //       delete value[i];
-    //     } else {
-    //       if (i == 'dhcp' || i == 'vnet') {
-    //         if (i == 'dhcp') {
-    //           property.push('bpf=yes');
-    //         }
-
-    //         if (value[i]) {
-    //           property.push(i + '=on');
-    //         } else {
-    //           property.push(i + '=off');
-    //         }
-    //         delete value[i];
-    //       } else {
-    //         if (i != 'uuid' && i != 'release') {
-    //           property.push(i + '=' + value[i]);
-    //           delete value[i];
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-    // value['props'] = property;
-
-    // return value;
+  customSubmit(value) {
+    const payload = {}
+    const vm_payload = {}
+    payload["name"] = value.datastore+"/"+value.name;
+    payload["type"] = "VOLUME";
+    payload["volsize"] = value.volsize * 1024 * 1000 * 1000;
+    payload["volblocksize"] = "512";
+    vm_payload["vm_type"]= "Bhyve";
+    vm_payload["memory"]= value.memory;
+    vm_payload["name"] = value.name;
+    vm_payload["vcpus"] = value.vcpus;
+    vm_payload["memory"] = value.memory;
+    vm_payload["bootloader"] = value.bootloader;
+    vm_payload["autoloader"] = value.autoloader;
+    vm_payload["devices"] = [
+      {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
+      {"dtype": "DISK", "attributes": {"path": "/dev/zvol/"+value.datastore+"/"+value.path, "type": "AHCI", "sectorsize": 0}},
+      {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
+    ]
+    this.loader.open();
+    this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
+      this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+        this.loader.close();
+        this.router.navigate(['/vm']);
+      });
+    });
   }
 }
