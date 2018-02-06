@@ -162,6 +162,9 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
 }
 
 /* Event Rects (Can't decide if I like these. Will ask Kris) */
+.c3-event-rects{
+  cursor:crosshair !important;
+}
 /*
 
 .c3.line g.c3-event-rects,

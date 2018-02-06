@@ -70,9 +70,16 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
         this.showLegendValues = true;
       }
       let time = raw[0].x;
-      for(let i in raw){
-        this.legend[i].value = raw[i].value;
-        this.legend[i].x = time;
+      //console.log("******** TOOLTIP VALUES ********");
+      for(let index = 0; index < this.legend.length; index++){
+        //console.log("Looking for value");
+        for(let i = 0; i < raw.length; i++){
+          if(this.legend[index].name == raw[i].name){
+            this.legend[index].value = raw[i].value;
+            //console.log(this.legend);
+          }
+        }
+        this.legend[index].x = time;
       }
       return '<div style="display:none">' + time + '</div>';
     }
