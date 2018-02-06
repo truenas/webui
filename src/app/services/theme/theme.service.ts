@@ -129,7 +129,7 @@ export class ThemeService {
     this.freenasThemes.forEach((t) => {
       t.isActive = (t.name === theme.name);
     });
-    //this.saveCurrentTheme();
+    this.saveCurrentTheme();
     this.core.emit({name:'ThemeChanged'});
   }
 
