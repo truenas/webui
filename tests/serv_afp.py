@@ -46,7 +46,6 @@ class configure_afp_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
-
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
@@ -56,6 +55,8 @@ class configure_afp_test(unittest.TestCase):
         print (" check if afp turned on")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        time.sleep(2)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("1")
 
@@ -110,7 +111,7 @@ class configure_afp_test(unittest.TestCase):
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-            else: 
+            else:
                 print ("the status is already" + status_data)
 
 
