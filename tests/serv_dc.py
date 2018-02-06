@@ -47,28 +47,31 @@ class conf_dc_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         self.status_change("3", "start")
+        # dc test takes almost takes 18 seconds to turn on
+        time.sleep(18)
 
     def test_02_checkif_dc_on (self):
         print (" check if dc turned on")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("3")
 
     def test_03_turnoff_dc (self):
         print (" turning off the dc service")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_change("3", "stop")
+        # dc takes almost 22 sec to turn off
+        time.sleep(22)
 
     def test_04_checkif_dc_off (self):
         print (" check if dc turned off")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("3")
         time.sleep(10)

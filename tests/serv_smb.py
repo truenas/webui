@@ -48,8 +48,9 @@ class conf_smb_test(unittest.TestCase):
         self.assertTrue("Services" in page_data)
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
         self.status_change("2", "start")
+        #smb test takes almost 6 min to turn on and display
+        time.sleep(7)
 
     def test_02_checkif_smb_on (self):
         print (" check if smb turned on")
