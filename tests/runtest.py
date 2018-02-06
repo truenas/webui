@@ -95,9 +95,9 @@ except NameError:
     run_conf_email_test(runDriver)
     run_conf_sysadvance_test(runDriver)
     run_view_guide_test(runDriver)
-    run_conf_ssh_test(runDriver)
     run_conf_afp_test(runDriver)
     run_conf_smb_test(runDriver)
+    run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_delete_test(runDriver)
     run_change_theme_test(runDriver)
@@ -116,9 +116,9 @@ else:
         run_view_guide_test(runDriver)
     elif (test_name == "service"):
         print ("Running: Guide Tests")
-        run_conf_ssh_test(runDriver)
         run_conf_afp_test(runDriver)
         run_conf_smb_test(runDriver)
+        run_conf_ssh_test(runDriver)
         run_conf_webdav_test(runDriver)
     elif (test_name == "theme"):
         print ("Running: Theme Tests")

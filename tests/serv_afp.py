@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 4
+# Test case count: 5
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -33,11 +33,11 @@ class conf_afp_test(unittest.TestCase):
         driver.implicitly_wait(30)
         pass
 
-    def test_01_turnon_afp (self):
-        print (" turning on the afp service")
-        # Click Service Menu
+    def test_01_nav_services(self):
+        # Click  Service menu
+        print ("navigating to service menu")
         driver.find_element_by_xpath(xpaths['navService']).click()
-        # check if the Service page is opens
+        # allowing the button to load
         time.sleep(1)
         # get the ui element
         ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
@@ -46,33 +46,34 @@ class conf_afp_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
+
+    def test_02_turnon_afp (self):
+        print (" turning on the afp service")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_change("1", "start")
 
-    def test_02_checkif_afp_on (self):
+    def test_03_checkif_afp_on (self):
         print (" check if afp turned on")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
+#        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+#        time.sleep(2)
         driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("1")
 
-    def test_03_turnoff_afp (self):
+    def test_04_turnoff_afp (self):
         print (" turning off the afp service")
-        # Click Service Menu
-        driver.find_element_by_xpath(xpaths['navService']).click()
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_change("1", "stop")
 
-    def test_04_checkif_afp_off (self):
+    def test_05_checkif_afp_off (self):
         print (" check if afp turned off")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("1")
         time.sleep(10)

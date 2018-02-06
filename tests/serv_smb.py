@@ -60,8 +60,6 @@ class conf_smb_test(unittest.TestCase):
 
     def test_03_turnoff_smb (self):
         print (" turning off the smb service")
-        # Click Service Menu
-        driver.find_element_by_xpath(xpaths['navService']).click()
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
