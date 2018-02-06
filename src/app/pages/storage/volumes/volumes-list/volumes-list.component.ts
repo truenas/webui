@@ -145,42 +145,48 @@ export class VolumesListTableConfig {
       actions.push({
         label: "Un-Lock",
         onClick: (row1) => {
-          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id).subscribe((confirmResult) => {
-            if (confirmResult === true) {
-
-              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: "" }) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.dialogService.errorReport("Error getting unlocking volume", res.message, res.stack);
-              });
-
-
-            }
-          });
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "unlock", row1.id]));
         }
       });
 
       if (rowData.vol_encrypt > 0) {
 
         actions.push({
-          label: "Encryption Rekey",
+          label: "Add Recovery Key",
           onClick: (row1) => {
-            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "volumes", "addkey", row1.id]));
+          }
+        });
+        
+        actions.push({
+          label: "Delete Recovery Key",
+          onClick: (row1) => {
+            this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
               if (confirmResult === true) {
   
-                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
+                  this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
                     this.parentVolumesListComponent.repaintMe();
                   });
                 }, (res) => {
-                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
+                  this.dialogService.errorReport("Error Deleting recovery key for volume", res.message, res.stack);
                 });
               }
             });
+          }
+        });
+        
+    
+        
+        actions.push({
+          label: "Encryption Rekey",
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "volumes", "rekey", row1.id]));
+          
           }
         });
         
