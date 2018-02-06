@@ -241,6 +241,12 @@ export class VmCardsComponent implements OnInit {
     this.updateCards(card);
     this.toggleForm(true,this.cards[index],'edit');
   }
+  addVMWizard(){
+    this.router.navigate(
+      new Array('').concat([ "vm", "wizard" ])
+    );
+
+  }
 
 
   deleteVM(index) {

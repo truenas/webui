@@ -90,6 +90,13 @@ export class VmListComponent {
         });
       }
     });
+        actions.push({
+      label : "wizard",
+      onClick : (row) => {
+        this.router.navigate(
+            new Array('').concat([ "", "wizard" ]));
+      }
+    });
     return actions;
   }
   getCardActions(row) {
@@ -126,5 +133,15 @@ export class VmListComponent {
       }
     });
     return actions;
+  }
+  getAddActions() {
+    return [{
+        label: "Jail Wizard",
+        icon: "beach_access",
+        onClick: () => {
+          this.router.navigate(
+            new Array('').concat(["jails", "wizard"]));
+        }
+      }]
   }
 }
