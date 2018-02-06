@@ -30,7 +30,7 @@ xpaths = {
         'submenuGroup': "//*[@id='1-0']",
         'newUser': "//*[@id='username']/mat-input-container/div/div[1]/div/input",
         'primaryGroupcheckbox': "//*[@id='group_create']/mat-checkbox/label/div",
-        'primaryGroupdropdown': "//*[@id='3']/form-select/div/mat-select/div/div[1]",
+        'primaryGroupdropdown': '//*[@id="group"]/mat-form-field/div/div[1]/div/mat-select/div/div[1]',
         'newUserName': "//*[@id='full_name']/mat-input-container/div/div[1]/div/input",
         'newUserPass': "//*[@id='password']/mat-input-container/div/div[1]/div/input",
         'newUserPassConf': "//*[@id='password_conf']/mat-input-container/div/div[1]/div/input",
@@ -214,13 +214,12 @@ class create_user_test(unittest.TestCase):
 
     def error_check(self):
         if self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]"):
+            if self.is_element_present(By.XPATH,"/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1"):
+                ui_element=driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1")
+                error_element=ui_element.text
+                print (error_element)
             driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
-        if self.is_element_present(By.XPATH,"/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1")
-            error_element=ui_element.text
-            print (error_element)
-            driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/div[2]/button").click()
-
+            print ("Duplicate user cannot be created")
 
     def selectlist(self, element):
         for i in range(0,10):

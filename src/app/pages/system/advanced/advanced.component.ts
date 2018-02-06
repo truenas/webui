@@ -42,6 +42,24 @@ export class AdvancedComponent implements OnInit {
     adv_cpu_in_percentage: '',
   };
 
+  public adv_consolemenu_tooltip = ''
+  public adv_serialconsole_tooltip = ''
+  public adv_serialspeed = ''
+  public adv_swapondrive_tooltip = ''
+  public adv_consolescreensaver = ''
+  public adv_consolescreensaver_tooltip = ''
+  public adv_powerdaemon_tooltip = ''
+  public adv_autotune_tooltip = ''
+  public adv_debugkernel_tooltip = ''
+  public adv_consolemsg_tooltip = ''
+  public adv_motd_tooltip = ''
+  public adv_traceback_tooltip = ''
+  public adv_uploadcrash = ''
+  public adv_periodic_notifyuser_tooltip = ''
+  public adv_graphite_tooltip = ''
+  public adv_fqdn_syslog_tooltip = ''
+  public adv_cpu_in_percentage_tooltip = ''
+
   constructor(private rest: RestService,
     private load: AppLoaderService,
     private dialog: DialogService,
@@ -75,24 +93,30 @@ export class AdvancedComponent implements OnInit {
   }
 
   saveDebug() {
-    this.dialog.confirm("Generating Debug File", "Run this in the background?");
-    this.ws.job('system.debug').subscribe((res) => {
-      if (res.state === "SUCCESS") {
-        this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
-          (res) => {
-            this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
-            window.open(res[1]);
-          },
-          (err) => {
+    this.dialog.confirm("Generating Debug File", "Run this in the background?").subscribe((res) => {
+      if (res) {
+        this.ws.job('system.debug').subscribe((res) => {
+          console.log(res);
+          if (res.state === "SUCCESS") {
+            this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
+              (res) => {
+                this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
+                window.open(res[1]);
+              },
+              (err) => {
+                this.openSnackBar("Please check the network connection", "Failed");
+              }
+            );
+          }
+        }, () => {
+
+        }, () => {
+          if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
             this.openSnackBar("Please check the network connection", "Failed");
           }
-        );
-      }
-    }, () => {
-
-    }, () => {
-      if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
-        this.openSnackBar("Please check the network connection", "Failed");
+        });
+      } else {
+        console.log("User canceled");
       }
     });
   }
