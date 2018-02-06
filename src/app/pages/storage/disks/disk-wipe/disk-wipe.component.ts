@@ -34,7 +34,7 @@ export class DiskWipeComponent implements OnInit {
       type: 'input',
       name: 'disk_name',
       placeholder: 'Name',
-      tooltip : 'Disk to wipe. test',
+      tooltip : 'Disk to wipe.',
       readonly: true
     },
     {
