@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 3
+# Test case count: 5
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -55,7 +55,7 @@ class configure_webdav_test(unittest.TestCase):
         self.status_change("17", "start")
 
 
-    def test_03_checkif_webdav_on (self):
+    def test_02_checkif_webdav_on (self):
         print (" check if webdav turned on")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
@@ -63,7 +63,7 @@ class configure_webdav_test(unittest.TestCase):
         self.status_check("17")
 
 
-    def test_02_configure_webdav(self):
+    def test_03_configure_webdav(self):
         print (" configuring webdav service")
         time.sleep(1)
         # click on configure button
@@ -81,7 +81,7 @@ class configure_webdav_test(unittest.TestCase):
         driver.find_element_by_xpath("//*[@id='save_button']").click()
         # Next step-- To check if the new user is present in the list via automation
 
-    def test_03_turnoff_webdav (self):
+    def test_04_turnoff_webdav (self):
         print (" turning off the webdav service")
         # Click Service Menu
         driver.find_element_by_xpath(xpaths['navService']).click()
@@ -90,7 +90,7 @@ class configure_webdav_test(unittest.TestCase):
         time.sleep(2)
         self.status_change("17", "stop")
 
-    def test_03_checkif_wedbdav_off (self):
+    def test_05_checkif_wedbdav_off (self):
         print (" check if webdave turned off")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
