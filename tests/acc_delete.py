@@ -165,9 +165,13 @@ class delete_test(unittest.TestCase):
         # click on delete option
         driver.find_element_by_xpath("//*[@id='action_button_Delete']").click()
         # check confirmation checkbox
-        driver.find_element_by_xpath("/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div").click()
+        for i in range(0,10):
+            if (self.is_element_present(By.XPATH,"/html/body/div[" + str(i) + "]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div")):
+                driver.find_element_by_xpath("/html/body/div[" + str(i) + "]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div").click()
+                print ("loop-" + str(i))
+                break
         # click on confirmation button
-        driver.find_element_by_xpath("/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/button[1]").click()
+        driver.find_element_by_xpath("//*[contains(text(), 'OK')]").click()
 
     @classmethod
     def tearDownClass(inst):
