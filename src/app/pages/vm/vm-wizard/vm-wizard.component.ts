@@ -221,7 +221,7 @@ export class VMWizardComponent {
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-      {"dtype": "DISK", "attributes": {"path": "/dev/zvol/"+value.datastore+"/"+value.path, "type": "AHCI", "sectorsize": 0}},
+      {"dtype": "DISK", "attributes": {"path": "/dev/zvol/"+value.datastore+"/"+value.name, "type": "AHCI", "sectorsize": 0}},
       {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
     ]
     this.loader.open();
