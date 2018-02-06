@@ -23,7 +23,7 @@ from serv_smb import run_configure_smb_test
 from serv_webdav import run_configure_webdav_test
 from sys_update import run_check_update_test
 from sys_email import run_conf_email_test
-from sys_advanced import run_conf_system_advanced_test
+from sys_advanced import run_conf_sysadvance_test
 from guide import run_view_guide_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
@@ -93,7 +93,7 @@ except NameError:
     run_create_group_test(runDriver)
     run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
-    run_conf_system_advanced(runDriver)
+    run_conf_sysadvance(runDriver)
     run_view_guide_test(runDriver)
     run_configure_ssh_test(runDriver)
     run_configure_afp_test(runDriver)
@@ -110,7 +110,7 @@ else:
     elif (test_name == "system"):
         run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
-        run_conf_system_advanced_test(runDriver)
+        run_conf_sysadvance_test(runDriver)
     elif (test_name == "guide"):
         print ("Running: Guide Tests")
         run_view_guide_test(runDriver)
