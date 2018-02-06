@@ -22,7 +22,8 @@ from serv_afp import run_configure_afp_test
 from serv_smb import run_configure_smb_test
 from serv_webdav import run_configure_webdav_test
 from sys_update import run_check_update_test
-from sys_advanced import run_conf_system_advanced
+from sys_email import run_conf_email_test
+from sys_advanced import run_conf_system_advanced_test
 from guide import run_view_guide_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
@@ -91,6 +92,7 @@ except NameError:
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
     run_check_update_test(runDriver)
+    run_conf_email_test(runDriver)
     run_conf_system_advanced(runDriver)
     run_view_guide_test(runDriver)
     run_configure_ssh_test(runDriver)
@@ -107,7 +109,8 @@ else:
         run_delete_test(runDriver)
     elif (test_name == "system"):
         run_check_update_test(runDriver)
-        run_conf_system_advanced(runDriver)
+        run_conf_email_test(runDriver)
+        run_conf_system_advanced_test(runDriver)
     elif (test_name == "guide"):
         print ("Running: Guide Tests")
         run_view_guide_test(runDriver)
@@ -172,6 +175,9 @@ if path.exists('sys_update.pyc'):
 
 if path.exists('sys_advanced.pyc'):
     call(["rm", "sys_advanced.pyc"])
+
+if path.exists('sys_email.pyc'):
+    call(["rm", "sys_email.pyc"])
 
 if path.exists('acc_delete.pyc'):
     call(["rm", "acc_delete.pyc"])
