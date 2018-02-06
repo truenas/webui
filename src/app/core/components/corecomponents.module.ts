@@ -16,6 +16,10 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+
+import { AnimationDirective } from 'app/core/directives/animation.directive';
+
 /*
  *
  * This is the Core Module. By importing this module you'll 
@@ -31,6 +35,7 @@ import { ViewChartLineComponent } from './viewchartline/viewchartline.component'
     FlexLayoutModule
   ],
   declarations: [
+    AnimationDirective,
     PageComponent,
     ViewComponent,
     CardComponent,
@@ -43,12 +48,14 @@ import { ViewChartLineComponent } from './viewchartline/viewchartline.component'
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
-    ViewChartLineComponent
+    ViewChartLineComponent,
+    WidgetComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
     MaterialModule,
     FlexLayoutModule,
+    AnimationDirective,
     Display,
     DisplayContainer,
     PageComponent,
@@ -61,7 +68,8 @@ import { ViewChartLineComponent } from './viewchartline/viewchartline.component'
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
-    CardComponent
+    CardComponent,
+    WidgetComponent
   ],
   entryComponents:[
     DisplayContainer,
@@ -74,7 +82,8 @@ import { ViewChartLineComponent } from './viewchartline/viewchartline.component'
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
-    CardComponent
+    CardComponent,
+    WidgetComponent
   ]
 })
 export class CoreComponents {}
