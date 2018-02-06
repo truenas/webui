@@ -8,7 +8,7 @@
   </div>
   <div *ngIf="zfsPoolRows.length > 0">
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded">
+      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="epansionpanel_zfs_{{row.name}}" >
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{row.name}}
@@ -18,7 +18,7 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
-          <div style="margin-top: 8px; float: right; padding-bottom: 20px;">
+          <div style="margin-top: 8px; float: right; padding-bottom: 20px;"> 
             <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
           </div>
           <br/>
@@ -28,36 +28,70 @@
         </div>
         <div>
           <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
-            <dxi-column dataField="name">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="type" caption="Type">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="usedStr" caption="Used">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="availStr" [width]="Available">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="compression" [width]="Compression">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="readonly" [width]="Readonly">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="dedup" [width]="Dedup">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
-            <dxi-column dataField="path" [width]="Path">
-              <dxi-validation-rule type="required"></dxi-validation-rule>
-            </dxi-column>
+            
+            <dxi-column dataField='name' [width]="Name" cellTemplate="cellTemplateName"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplateName'">
+              <div class="panel_container" id="row_name_{{rowData.data.name}}">
+                {{rowData.data.name}}
+              </div>
+            </div>
+
+            <dxi-column dataField='type' [width]="Type" cellTemplate="cellTemplateType"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplateType'">
+              <div class="panel_container" id="row_type_{{rowData.data.name}}">
+                {{rowData.data.type}}
+              </div>
+            </div>
+
+            <dxi-column dataField='usedStr' [width]="Used" cellTemplate="cellTemplateusedStr"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplateusedStr'">
+              <div class="panel_container" id="row_usedStr_{{rowData.data.name}}">
+                {{rowData.data.usedStr}}
+              </div>
+            </div>
+
+            <dxi-column dataField='availStr' [width]="Avail" cellTemplate="cellTemplateavailStr"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplateavailStr'">
+              <div class="panel_container" id="row_availStr_{{rowData.data.name}}">
+                {{rowData.data.availStr}}
+              </div>
+            </div>
+
+            <dxi-column dataField='compression' [width]="Compression" cellTemplate="cellTemplatecompression"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatecompression'">
+              <div class="panel_container" id="row_compression_{{rowData.data.name}}">
+                {{rowData.data.compression}}
+              </div>
+            </div>
+            
+            
+            <dxi-column dataField='readonly' [width]="Readonly" cellTemplate="cellTemplatereadonly"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatereadonly'">
+              <div class="panel_container" id="row_readonly_{{rowData.data.name}}">
+                {{rowData.data.readonly}}
+              </div>
+            </div>
+            
+            <dxi-column dataField='dedup' [width]="Dedup" cellTemplate="cellTemplatededup"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatededup'">
+              <div class="panel_container" id="row_dedup_{{rowData.data.name}}">
+                {{rowData.data.dedup}}
+              </div>
+            </div>
+            
+            <dxi-column dataField='path' [width]="Path" cellTemplate="cellTemplatepath"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatepath'">
+              <div class="panel_container" id="row_path_{{rowData.data.name}}">
+                {{rowData.data.path}}
+              </div>
+            </div>
+            
             <dxi-column caption="" [width]="Action" [allowFiltering]="false" [allowSorting]="false" cellTemplate="cellTemplate"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplate'">
-              <div class="panel_container">
+              <div class="panel_container" id="menu_{{rowData.data.name}}">
                 <mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'">more_vert</mat-icon>
                 <mat-menu #appMenu="matMenu">
-                  <span *ngFor="let action of rowData.data.actions">
+                  <span *ngFor="let action of rowData.data.actions" id="buttonAction_{{rowData.data.name}}">
                                         <button mat-menu-item  (click)="action.onClick( rowData.data );">
                                             <span>{{ action.label }}</span>
                   </button>
