@@ -4,6 +4,7 @@ mat-card.card-filter.mat-card{
   width: 85%;
   margin: 24px auto 0;
   overflow:visible;
+  padding:0;
 }
 
 mat-card.card-filter.mat-card .mat-card-content{
@@ -18,7 +19,7 @@ mat-card.card-filter.mat-card .mat-card-header > div{
 mat-card.card-filter .filter-field{
   width:70%;
   margin-right:5%;
-  MARGIN-TOP:10px;
+  margin-top:12px;
 }
 
 mat-card.card-filter .filter-field mat-icon{
@@ -33,17 +34,18 @@ mat-card.card-filter .view-controls{
   text-align:right;
   min-width: 274px;
   margin-right: 16px;
+  margin-top:10px;
 }
 
 mat-card.card-filter .view-controls .mat-button-toggle-group{
   top:10px;
   position:relative;
-  margin:0 16px;
+  margin:2px 16px;
 }
 
 mat-card.card-filter .view-controls .add-vm{
   position: relative;
-  top: 16px;  
+  top: 10px;  
 }
 
 .card-filter mat-input-container.mat-input-container{

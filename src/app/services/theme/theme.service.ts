@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 export interface Theme {
   name: string;
@@ -13,45 +14,23 @@ export interface Theme {
 
 @Injectable()
 export class ThemeService {
-  readonly freeThemeDefaultIndex = 3;
+  readonly freeThemeDefaultIndex = 0;
 
   public freenasThemes: Theme[] = [
     {
-      name: 'egret-dark-purple',
-      label: 'Dark Purple',
-      baseColor: '#9c27b0',
-      isActive: false,
-      hasDarkLogo: false
-    }, {
-      name: 'egret-dark-pink',
-      label: 'Dark Pink',
-      baseColor: '#e91e63',
-      isActive: false,
-      hasDarkLogo: false
-    }, {
-      name: 'egret-blue',
-      label: 'Blue',
-      baseColor: '#2196f3',
-      isActive: false,
-      hasDarkLogo: true
-    }, {
       name: 'ix-blue',
       label: 'iX Blue',
       baseColor: '#0095D5',
-      accentColors:['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896'],
+      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
       isActive: true,
       hasDarkLogo: false
-    }, {
-      name: 'egret-indigo',
-      label: 'Indigo',
-      baseColor: '#3f51b5',
-      isActive: false,
-      hasDarkLogo: false
-    }, {
+    }, 
+    {
       name: 'solarized-dark',
       label: 'Solarized Dark',
       baseColor: '#073642',
       accentColors:['#d33682', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
+      // Order is magenta, cyan, red, blue, green, orange, yellow, violet
       /*
        $yellow:    #b58900;
        $orange:    #cb4b16;
@@ -64,26 +43,67 @@ export class ThemeService {
        * */
       isActive: false,
       hasDarkLogo: false
-    }, {
-      name: 'freenas-warriors',
-      label: 'Warriors',
-      baseColor: '#fdb927',
+    }, 
+    {
+      name: 'egret-dark-purple',
+      label: 'Dark Purple',
+      baseColor: '#9c27b0',
       isActive: false,
-      hasDarkLogo: true
-    }, {
+      hasDarkLogo: false
+    },
+    {
+      name: 'egret-indigo',
+      label: 'Indigo',
+      baseColor: '#3f51b5',
+      isActive: false,
+      hasDarkLogo: false
+    }, 
+    {
       name: 'freenas-sharks',
       label: 'Sharks',
       baseColor: '#088696',
       isActive: false,
       hasDarkLogo: false
-    }];
+    }
+    /*{
+      name: 'egret-dark-pink',
+      label: 'Dark Pink',
+      baseColor: '#e91e63',
+      isActive: false,
+      hasDarkLogo: false
+    },*/ 
+    /*{
+      name: 'egret-blue',
+      label: 'Blue',
+      baseColor: '#2196f3',
+      isActive: false,
+      hasDarkLogo: true
+    }, */
+    /*{
+      name: 'freenas-warriors',
+      label: 'Warriors',
+      baseColor: '#fdb927',
+      isActive: false,
+      hasDarkLogo: true
+    }, */
+  ];
 
   savedUserTheme = "";
 
-  constructor(private rest: RestService, private ws: WebSocketService) {
+  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService) {
 
     this.rest.get("account/users/1", {}).subscribe((res) => {
+      console.log("******** THEME SERVICE CONTRUCTOR ********");
+      console.log(res.data);
       this.savedUserTheme = res.data.bsdusr_attributes.usertheme;
+
+      // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
+      // the default in the middleware. This is a workaround until that
+      // default value can be changed
+      if(this.savedUserTheme == "egret-blue"){
+        this.savedUserTheme = "ix-blue";
+      }
+
       this.freenasThemes.forEach((t) => {
         t.isActive = (t.name === this.savedUserTheme);
       });
@@ -109,9 +129,15 @@ export class ThemeService {
     this.freenasThemes.forEach((t) => {
       t.isActive = (t.name === theme.name);
     });
+    this.saveCurrentTheme();
+    this.core.emit({name:'ThemeChanged'});
+  }
 
-    this.ws.call('user.set_attribute', [1, 'usertheme', theme.name]).subscribe((res_ws) => {
-      console.log("Saved usertheme:", res_ws, theme.name);
+  saveCurrentTheme(){
+    let theme = this.currentTheme();
+    //this.rest.put("account/users/1", {bsdusr_attributes:{usertheme:theme.name}}).subscribe((res) => {
+    this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
+      console.log("Saved usertheme:", res, theme.name);
     });
   }
 }
