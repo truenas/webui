@@ -25,10 +25,10 @@ except ImportError:
     import unittest
 
 xpaths = {
-         'rootButton' : "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/topbar/md-toolbar/div/md-toolbar-row/button[6]/span/md-icon",
-         'logoutButton' : "/html/body/div[3]/div[3]/div/div/button[5]/div",
+         'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]",
+         'logoutButton' : "/html/body/div[5]/div[3]/div/div/button[5]",
          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
-         'logoutconfirmationButton' : "/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div/button[1]"
+         'logoutconfirmationButton' : "/html/body/div[5]/div[5]/div/mat-dialog-container/confirm-dialog/div/button[1]"
         }
 
 class logout_test(unittest.TestCase):

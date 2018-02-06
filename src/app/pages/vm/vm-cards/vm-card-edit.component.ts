@@ -36,24 +36,59 @@ export class VmCardEditComponent {
       name:'Config',
       class:'config',
       config:[
-	{ type: 'input', name: 'name', placeholder: 'Name'},
-	{ type: 'input', name : 'description', placeholder : 'Description'}
+	{ 
+    type: 'input', 
+    name: 'name', 
+    placeholder: 'Name',
+    tooltip: 'Enter a name to identify the VM.',
+  },
+  { type: 'input', 
+  name : 'description', 
+  placeholder : 'Description',
+  tooltip: 'Enter a short description of the VM or its purpose.',
+}
       ]
     },
     {
       name:'Boot Options',
       class:'boot-options',
       config:[
-	{ type: 'checkbox', name : 'autostart', placeholder : 'Start on Boot', class:'inline'},
-	{ type: 'select', name : 'bootloader', placeholder : 'Boot Loader Type', options: [] , class:'inline'}
+	{ 
+    type: 'checkbox', 
+    name: 'autostart', 
+    placeholder: 'Start on Boot', 
+    tooltip: 'When checked, start the VM automatically on boot.',
+    class:'inline'},
+	{ 
+    type: 'select', 
+    name: 'bootloader', 
+    placeholder: 'Boot Loader Type',
+    tooltip: 'Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b>\
+ (Compatibility Support Mode) for older operating systems that only\
+ understand BIOS booting.',
+    options: [] , class:'inline'}
       ]
     },
     {
       name:'Resources',
       class:'resources',
       config:[
-	{ type : 'input', name: 'vcpus'  ,placeholder : 'Virtual CPUs',class:'inline'},
-	{ type: 'input', name : 'memory', placeholder : 'Memory Size (MiB)', class:'inline'}
+	{ 
+    type: 'input', 
+    name: 'vcpus',
+    placeholder : 'Virtual CPUs',
+    tooltip: 'Select the number of virtual CPUs allocated to the VM.\
+ The maximum is 16, although the host CPU might limit the maximum number.\
+ The operating system used in the VM might also have operational or licensing\
+ restrictions on the number of CPUs allowed.',
+
+    class:'inline'},
+	{ 
+    type: 'input', 
+    name: 'memory', 
+    placeholder: 'Memory Size (MiB)', 
+    tooltip: 'Select the megabytes of RAM allocated to the VM.',
+    class:'inline'}
       ]
     }
   ];

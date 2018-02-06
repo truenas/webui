@@ -104,8 +104,9 @@ export class CertificateCSRComponent {
       type : 'input',
       name : 'cert_common',
       placeholder : 'Common Name',
-      tooltip: 'Enter the fully-qualified\
- hostname (FQDN) of the FreeNAS® system.',
+      tooltip: 'Enter the fully-qualified hostname (FQDN) of the\
+ system. This name **must** be unique within a certificate\
+ chain.',
     },
     {
       type : 'textarea',

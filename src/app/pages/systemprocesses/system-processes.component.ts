@@ -10,10 +10,10 @@ import {
 import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
-import * as xterm from "xterm";
-import * as Terminal from 'xterm/dist/xterm';
-import 'xterm/dist/addons/fit/fit.js';
-import 'xterm/dist/addons/attach/attach.js';
+// import * as xterm from "xterm";
+// import * as Terminal from 'xterm/dist/xterm';
+// import 'xterm/dist/addons/fit/fit.js';
+// import 'xterm/dist/addons/attach/attach.js';
 
 @Component({
   selector: 'app-system-processes',
@@ -49,7 +49,7 @@ export class SystemProcessesComponent implements OnInit {
   };
 
   initializeTerminal() {
-    this.xterm = new Terminal({
+    this.xterm = new (<any>window).Terminal({
       //'cursorBlink': true,
       //'tabStopWidth': 4,
       'cols': 80,

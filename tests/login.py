@@ -26,21 +26,16 @@ try:
 except ImportError:
     import unittest
 
-xpaths = {'usernameTxtBox': "/html/body/app-root/app-auth-layout/"
-          "app-signin/div/div/md-card/md-card-content/div[1]/form/"
-          "div[1]/md-input-container/div/div[1]/div/input",
-          'passwordTxtBox': "/html/body/app-root/app-auth-layout/"
-          "app-signin/div/div/md-card/md-card-content/div[1]/form/"
-          "div[2]/md-input-container/div/div[1]/div/input",
-          'submitButton': "/html/body/app-root/app-auth-layout/"
-          "app-signin/div/div/md-card/md-card-content/div[1]/form/button",
+xpaths = {'usernameTxtBox': "/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input",
+          'passwordTxtBox': "/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[2]/mat-input-container/div/div[1]/div/input",
+          'submitButton': "/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/button",
           }
 
 
 class login_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
-        driver.get(baseurl)
+        driver.get(ui_url)
 
     def test_01_login(self):
         print ("loging in FreeNAS new webui- woot woot")
@@ -54,7 +49,7 @@ class login_test(unittest.TestCase):
         # check if the dashboard opens
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li") 
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
         page_data=ui_element.text
         print ("The page now is: " + page_data)
@@ -63,6 +58,7 @@ class login_test(unittest.TestCase):
         # cancelling the tour
         if self.is_element_present(By.XPATH, "/html/body/div[5]/div[1]/button"):
             driver.find_element_by_xpath("/html/body/div[5]/div[1]/button").click()
+        driver.execute_script("document.body.style.zoom='50 %'")
 
     # method to test if an element is present
     def is_element_present(self, how, what):
@@ -79,8 +75,10 @@ class login_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_login_test(webdriver):
+def run_login_test(webdriver, ip):
     global driver
     driver = webdriver
+    global ui_url
+    ui_url = "http://%s/ui" % ip
     suite = unittest.TestLoader().loadTestsFromTestCase(login_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

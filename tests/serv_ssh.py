@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 4
+# Test case count: 6
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -26,9 +26,8 @@ except ImportError:
 
 
 xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
-          'turnoffConfirm' : "/html/body/div[4]/div/div[2]/md-dialog-container/app-confirm/div[2]/button[1]",
-          'status' : "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[14]/md-card/div[2]/div[1]/md-chip"
-        }
+          'turnoffConfirm' : "//*[contains(text(), 'OK')]"
+         }
 
 class configure_ssh_test(unittest.TestCase):
     @classmethod
@@ -43,14 +42,12 @@ class configure_ssh_test(unittest.TestCase):
         # allowing the button to load
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
-
-
 
     def test_02_turnon_ssh (self):
         # click Service Menu
@@ -63,18 +60,27 @@ class configure_ssh_test(unittest.TestCase):
         time.sleep(2)
         self.status_change("14", "start")
 
-    def test_03_configure_ssh(self):
+    def test_03_checkif_ssh_on (self):
+        print (" check if ssh turned on")
+        # scroll down
+        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        time.sleep(2)
+        self.status_check("14")
+
+
+    def test_04_configure_ssh(self):
         print (" configuring ssh service with root access")
         time.sleep(2)
         # click on configure button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[14]/md-card/div[2]/div[3]/button").click()
-        # click on Login as Root with Passsword
-        driver.find_element_by_xpath("//*[@id='2']/form-checkbox/div/md-checkbox/label/div").click()
+        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button").click()
+        # uncheck on Login as Root with Passsword
+        driver.find_element_by_xpath("//*[@id='ssh_rootlogin']/mat-checkbox/label/div").click()
         # click on save button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/ssh-edit/entity-form/md-card/div/form/md-card-actions/button[1]").click()
+        driver.find_element_by_xpath("//*[@id='save_button']").click()
+        time.sleep(5)
 
 
-    def test_04_turnoff_ssh(self):
+    def test_05_turnoff_ssh(self):
         # click Service Menu
         driver.find_element_by_xpath(xpaths['navService']).click()
         # allowing the button to load
@@ -84,6 +90,14 @@ class configure_ssh_test(unittest.TestCase):
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "stop")
+
+
+    def test_06_checkif_ssh_off (self):
+        print (" check if ssh turned on")
+        # scroll down
+        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        time.sleep(2)
+        self.status_check("14")
         time.sleep(10)
 
         # Next step-- To check if the new user is present in the list via automation
@@ -103,28 +117,36 @@ class configure_ssh_test(unittest.TestCase):
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/md-chip")
+        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
         # get the status data
         status_data=ui_element_status.text
-        print ("current status is: " + status_data)
-        if to == "start":        
-            if status_data == "STOPPED": 
-                # Click on the afp toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/button").click()
+        if to == "start":
+            if status_data == "STOPPED":
+                # Click on the toggle button
+                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
                 print ("the status is already " + status_data)
         elif to == "stop":
             if status_data == "RUNNING":
-                #Click on the afp toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/services/div/service[" + str(which) + "]/md-card/div[2]/div[1]/button").click()
+                #Click on the toggle button
+                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
             else: 
                 print ("the status is already" + status_data)
+
+
+    def status_check(self, which):
+        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        # get the status data
+        status_data=ui_element_status.text
+        print ("current status is: " + status_data)
+
+
 
 
     @classmethod

@@ -96,6 +96,9 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
             this.loader.close(); 
             new EntityUtils().handleError(this, res); });
           }
+    else if (this.conf.customSubmit) {
+      this.busy = this.conf.customSubmit(this);
+    }
           else {
             this.busy = this.rest.delete(this.conf.resource_name + '/' + this.pk, data)
                     .subscribe(

@@ -42,8 +42,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     code: 'zh',
   }]
   continuosStreaming: Subscription;
-  showReplication: boolean = false;
-  showResilvering: boolean = false;
+  showReplication = false;
+  showResilvering = false;
   replicationDetails;
   resilveringDetails;
 

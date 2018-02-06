@@ -48,7 +48,7 @@ class delete_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuUser']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -77,7 +77,7 @@ class delete_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/app-breadcrumb/div/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -133,42 +133,23 @@ class delete_test(unittest.TestCase):
         # num specifies the column of the 3 dots which is different in user/group
         # delNum speifies the option number where del is after clicking on the 3 dots
         if (type == "user"):
-            path = "User"
             num = 7
             delNum = 2
+            path = "User"
         elif (type == "group"):
-            path = "Group"
             num = 4
             delNum = 3
+            path = "Group"
 
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenu' + path]).click()
-        # click on the item per page option
-#        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[3]/md-paginator/div[1]/md-select/div").click()
-#        time.sleep(1)
-        # click select the highest number i.e 100
-
-#        for y in range(0, 10):
-#            if self.is_element_present(By.XPATH, "/html/body/div[3]/div[2]/div/div/md-option[" + str(y) + "]"):
-#                search=driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[" + str(y) + "]")
-#                #get element data
-#                search_data=search.text
-#                print ("Loop first condition satisfied at: " + str(y))
-#                if search_data == "100":
-#                    driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[" + str(y) + "]").click()
-#                    print ("Loop Second condition satisfied at: "+ str(y))
-#                    break
-#            else:
-#                print ("Loop not working at all")
-
-#        driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[4]").click()
         # wait till the list is loaded
         time.sleep(2)
         index = 1
         ui_text = "null"
-        for x in range(1, 8):
-            if self.is_element_present(By.XPATH, "/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-" + path + "-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
-                ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-" + path + "-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
+        for x in range(1, 10):
+            if self.is_element_present(By.XPATH, "//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
+                ui_element=driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x
@@ -179,36 +160,14 @@ class delete_test(unittest.TestCase):
         time.sleep(1)
 
         # click on the 3 dots
-        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(index) + "]/datatable-body-row/div[2]/datatable-body-cell[" + str(num) + "]/div/app-entity-table-actions/div/md-icon").click()
+        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[" + str(num) + "]/div/app-entity-table-actions/div/mat-icon").click()
         time.sleep(1)
-#        """
-#        for z in range(0, 10):
-#            if self.is_element_present(By.XPATH,"/html/body/div[4]/div[" + str(z) + "]/div/div/span[" + str(delNum) + "]/button"):
-#                print ("first condition satisfied at z=" + str(z))
-#                ui_option = driver.find_element_by_xpath("/html/body/div[4]/div[" + str(z) + "]/div/div/span[" + str(delNum) + "]/button")
-#                ui_text = ui_option.text
-#                if (ui_text == "Delete"):
-#                    print ("second condition satisfied at z= " + str(z))
-#                    driver.find_element_by_xpath("/html/body/div[4]/div[" + str(z) + "]/div/div/span[" + str(delNum) + "]/button").click()
-#                    print ("Delete click attempted")
-                    #click on confirmation checkbox
-#                    driver.find_element_by_xpath("/html/body/div[4]/div[" + str(z) + "]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div").click()
-                    #click on Ok
-#                    driver.find_element_by_xpath("/html/body/div[4]/div[" + str(z) + "]/div[2]/md-dialog-container/confirm-dialog/div[2]/button[1]").click()
-#                    print (name + " deleted")
-#                    break
-#            ui_option = " "
-#        """
         # click on delete option
-        driver.find_element_by_xpath("/html/body/div[4]/div[" + str(index + 1) + "]/div/div/span[" + str(delNum) + "]/button/div").click()
-#        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div/div/span[3]/button/div").click()
-        # click on confirmation checkbox
-#        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div").click()
-        # click on Ok
-#        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[2]/button[1]").click()
-#        print (name + " deleted")
-
-
+        driver.find_element_by_xpath("//*[@id='action_button_Delete']").click()
+        # check confirmation checkbox
+        driver.find_element_by_xpath("/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div").click()
+        # click on confirmation button
+        driver.find_element_by_xpath("/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/button[1]").click()
 
     @classmethod
     def tearDownClass(inst):

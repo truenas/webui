@@ -69,7 +69,9 @@ export class ServiceWebdavComponent implements OnInit {
       tooltip : 'Select the SSL certificate to use for encrypted\
  connections. Navigate to the <b>System -> Certificates</b> page to\
  create a certificate.',
-      options : []
+      options: [
+        {label: '---', value: null}
+      ]
     },
     {
       type : 'select',
@@ -115,12 +117,14 @@ export class ServiceWebdavComponent implements OnInit {
     this.systemGeneralService.getCertificates().subscribe((res) => {
       this.webdav_certssl =
           _.find(this.fieldConfig, {'name' : 'webdav_certssl'});
-      res.data.forEach((item) => {
+      res.forEach((item) => {
         this.webdav_certssl.options.push(
             {label : item.cert_common, value : item.id});
       });
     });
   }
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityForm: any) {
+    entityForm.formGroup.controls['webdav_password2'].setValue('davtest');
+  }
 }

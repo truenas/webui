@@ -18,7 +18,7 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
-  constructor() {}
+  
 
   defaultMenu: IMenuItem[] = [{
       name: 'Dashboard',
@@ -168,18 +168,18 @@ export class NavigationService {
       // ]
     },
     {
-      name: 'VMs',
-      type: 'link',
-      tooltip: 'Virtualization',
-      icon: 'laptop_windows',
-      state: 'vm'
-    },
-    {
       name: 'Reporting',
       type: 'link',
       tooltip: 'Reports',
       icon: 'insert_chart',
       state: 'reportsdashboard',
+    },
+    {
+      name: 'VMs',
+      type: 'link',
+      tooltip: 'Virtualization',
+      icon: 'laptop_windows',
+      state: 'vm'
     },
     //  {
     //    name: 'GUIDE',
@@ -220,11 +220,13 @@ export class NavigationService {
 
   // Icon menu TITLE at the very top of navigation.
   // This title will appear if any icon type item is present in menu.
-  iconTypeMenuTitle: string = 'Frequently Accessed';
+  iconTypeMenuTitle = 'Frequently Accessed';
   // sets defaultMenu as default;
   menuItems = new BehaviorSubject < IMenuItem[] > (this.defaultMenu);
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
+
+  constructor() {}
 
   publishNavigationChange(menuType: string) {
     this.menuItems.next(this.defaultMenu);

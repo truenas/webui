@@ -6,7 +6,7 @@ import {
   QueryList,
   ViewChild
 } from '@angular/core';
-import filesize from 'filesize';
+
 
 @Component({
   selector : 'app-vdev',
@@ -43,12 +43,14 @@ export class VdevComponent implements OnInit {
 
   addDisk(disk: any) { 
     this.disks.push(disk);
+    this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
   }
 
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
+    this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
   }
@@ -93,7 +95,7 @@ export class VdevComponent implements OnInit {
       estimate = totalsize; // stripe
     }
         
-    this.size = filesize(estimate, {standard : "iec"});
+    this.size = (<any>window).filesize(estimate, {standard : "iec"});
   }
 
   onSelect({ selected }) {

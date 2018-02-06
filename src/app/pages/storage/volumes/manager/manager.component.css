@@ -27,6 +27,10 @@
 	max-width: 450px;
 }
 
+.buttons {
+	display: block;
+}
+
 h4 {
 	text-align: center;
 }
