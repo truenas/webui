@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
-//import * as c3 from 'c3';
+import * as d3 from 'd3';
 
 interface TimeData {
   start: number;
@@ -99,7 +99,10 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           }
         },
         y:{
-          inner:false
+          inner:true,
+          /*tick:{
+            format: d3.format(this.units)
+          }*/
         }
       },
       data: {
@@ -111,9 +114,9 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
         //height: this.height
         },
       subchart: {
-        show: true,
+        show: false,
         size:{
-          height:32
+          height:24
         }
       },
       zoom:{
@@ -124,6 +127,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
         show:false
       },
       tooltip:{
+        //show:false,
         grouped:true,
         /*position:(data, width, height, element) => {
           let x = (parseInt(element.getAttribute('x')));
@@ -135,7 +139,8 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           this.tooltipHeight = String((h*0.8));
           return {top: y, left: left}
         },*/
-        /*contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+        contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+          //console.log(this.data);
           //if(!this.tooltipHeight){ return "";}
           //let tthSplit = this.tooltipHeight.split('px');
           //let tth = Math.floor(Number(tthSplit[0]));
@@ -144,7 +149,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           let time = raw[0].x;
           //DEBUG: console.log(time);
           //let preList = '<div style="min-height:' + this.tooltipHeight + ';"><table>';
-          let preList = '<div><table>';
+          /*let preList = '<div><table>';
           let list = '<tr><td><strong>' + time + '</strong></td></tr>';
           let postList = '</table></div>';
           for(let i in raw){
@@ -154,8 +159,9 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
             list += markup;
           }
           //let focus = defaultTitleFormat(d);
-          return preList + list + postList;
-        },*/
+          return preList + list + postList;*/
+          return '<div style="display:none;">tooltips disabled</div>'
+        },
         format: {
           value: (value, ratio, id, index) => {
             if(this.units){

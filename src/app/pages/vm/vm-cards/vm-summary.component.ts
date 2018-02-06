@@ -36,6 +36,12 @@ export class VmSummaryComponent implements AfterViewInit {
       this.setNetData(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
+      this.cpuChart.refresh();
+      this.zpoolChart.refresh();
+      this.netChart.refresh();
+    });
+
     // Pool Stats
     this.core.emit({name:"PoolDataRequest"});
     // CPU Stats (dataList eg. {source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"})
@@ -116,7 +122,7 @@ export class VmSummaryComponent implements AfterViewInit {
     this.cpuChart.units = '%';
     this.cpuChart.timeSeries = true;
     this.cpuChart.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
-    this.cpuChart.timeData = evt.data.meta;
+      this.cpuChart.timeData = evt.data.meta;
     this.cpuChart.data = parsedData;//[cpuUser];
     this.cpuChart.width = this.chartSize;
     this.cpuChart.height = this.chartSize;
