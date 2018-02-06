@@ -25,7 +25,17 @@ except ImportError:
     import unittest
 
 xpaths = { 'themeBar' : "//*[@id='schemeToggle']/span/mat-icon"
-          }
+         }
+theme_name = { 'theme1' : 'Dark Purple',
+               'theme2' : 'Dark Pink',
+               'theme3' : 'Blue',
+               'theme4' : 'iX Blue',
+               'theme5' : 'Indigo',
+               'theme6' : 'Solarized Dark',
+               'theme7' : 'Warriors',
+               'theme8' : 'Sharks'
+              }
+
 
 
 class change_theme_test(unittest.TestCase):
@@ -35,25 +45,28 @@ class change_theme_test(unittest.TestCase):
         pass
 
     def test_01_theme1(self):
-        self.theme_change("1")
+        self.theme_change(theme_name['theme1'])
 
     def test_02_theme2(self):
-        self.theme_change("2")
+        self.theme_change(theme_name['theme2'])
 
     def test_03_theme3(self):
-        self.theme_change("3")
+        self.theme_change(theme_name['theme3'])
 
     def test_04_theme4(self):
-        self.theme_change("4")
+        self.theme_change(theme_name['theme4'])
 
     def test_05_theme5(self):
-        self.theme_change("5")
+        self.theme_change(theme_name['theme5'])
 
     def test_06_theme6(self):
-        self.theme_change("6")
+        self.theme_change(theme_name['theme6'])
 
     def test_07_theme7(self):
-        self.theme_change("7")
+        self.theme_change(theme_name['theme7'])
+
+    def test_08_theme8(self):
+        self.theme_change(theme_name['theme8'])
 
 
     # method to test if an element is present
@@ -70,8 +83,8 @@ class change_theme_test(unittest.TestCase):
     def theme_change(self, which):
         # Click on the theme Button
         driver.find_element_by_xpath(xpaths['themeBar']).click()
-        # Select 1st theme
-        driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/mat-grid-list/div/mat-grid-tile[" + str(which) + "]/figure/div").click()
+        print ("selecting theme: " + which)
+        driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
         time.sleep(3)
 
 
