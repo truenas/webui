@@ -122,7 +122,7 @@ class configure_ssh_test(unittest.TestCase):
         status_data=ui_element_status.text
         if to == "start":
             if status_data == "STOPPED":
-                # Click on the afp toggle button
+                # Click on the toggle button
                 driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 print ("status has now changed to running")
@@ -130,7 +130,7 @@ class configure_ssh_test(unittest.TestCase):
                 print ("the status is already " + status_data)
         elif to == "stop":
             if status_data == "RUNNING":
-                #Click on the afp toggle button
+                #Click on the toggle button
                 driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
