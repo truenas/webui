@@ -58,6 +58,7 @@ class login_test(unittest.TestCase):
         # cancelling the tour
         if self.is_element_present(By.XPATH, "/html/body/div[5]/div[1]/button"):
             driver.find_element_by_xpath("/html/body/div[5]/div[1]/button").click()
+        driver.execute_script("document.body.style.zoom='50 %'")
 
     # method to test if an element is present
     def is_element_present(self, how, what):
