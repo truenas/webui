@@ -17,10 +17,10 @@ from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
 from acc_user import run_create_user_test
-from serv_ssh import run_configure_ssh_test
-from serv_afp import run_configure_afp_test
-from serv_smb import run_configure_smb_test
-from serv_webdav import run_configure_webdav_test
+from serv_ssh import run_conf_ssh_test
+from serv_afp import run_conf_afp_test
+from serv_smb import run_conf_smb_test
+from serv_webdav import run_conf_webdav_test
 from sys_update import run_check_update_test
 from sys_email import run_conf_email_test
 from sys_advanced import run_conf_sysadvance_test
@@ -95,10 +95,10 @@ except NameError:
     run_conf_email_test(runDriver)
     run_conf_sysadvance(runDriver)
     run_view_guide_test(runDriver)
-    run_configure_ssh_test(runDriver)
-    run_configure_afp_test(runDriver)
-    run_configure_smb_test(runDriver)
-    run_configure_webdav_test(runDriver)
+    run_conf_ssh_test(runDriver)
+    run_conf_afp_test(runDriver)
+    run_conf_smb_test(runDriver)
+    run_conf_webdav_test(runDriver)
     run_delete_test(runDriver)
     run_change_theme_test(runDriver)
 else:
@@ -116,10 +116,10 @@ else:
         run_view_guide_test(runDriver)
     elif (test_name == "service"):
         print ("Running: Guide Tests")
-        run_configure_ssh_test(runDriver)
-        run_configure_afp_test(runDriver)
-        run_configure_smb_test(runDriver)
-        run_configure_webdav_test(runDriver)
+        run_conf_ssh_test(runDriver)
+        run_conf_afp_test(runDriver)
+        run_conf_smb_test(runDriver)
+        run_conf_webdav_test(runDriver)
     elif (test_name == "theme"):
         print ("Running: Theme Tests")
         run_change_theme_test(runDriver)

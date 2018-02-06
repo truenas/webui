@@ -29,7 +29,7 @@ xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
           'turnoffConfirm' : "//*[contains(text(), 'OK')]"
          }
 
-class configure_ssh_test(unittest.TestCase):
+class conf_ssh_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
@@ -154,8 +154,8 @@ class configure_ssh_test(unittest.TestCase):
         pass
 
 
-def run_configure_ssh_test(webdriver):
+def run_conf_ssh_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(configure_ssh_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_ssh_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

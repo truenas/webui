@@ -27,7 +27,7 @@ xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
            'turnoffConfirm': "//*[contains(text(), 'OK')]"
          }
 
-class configure_smb_test(unittest.TestCase):
+class conf_smb_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
@@ -124,8 +124,8 @@ class configure_smb_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_configure_smb_test(webdriver):
+def run_conf_smb_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(configure_smb_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_smb_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
