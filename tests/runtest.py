@@ -17,12 +17,14 @@ from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
 from acc_user import run_create_user_test
-from serv_ssh import run_configure_ssh_test
-from serv_afp import run_configure_afp_test
-from serv_smb import run_configure_smb_test
-from serv_webdav import run_configure_webdav_test
+from serv_ssh import run_conf_ssh_test
+from serv_afp import run_conf_afp_test
+from serv_smb import run_conf_smb_test
+from serv_dc import run_conf_dc_test
+from serv_webdav import run_conf_webdav_test
 from sys_update import run_check_update_test
-from sys_advanced import run_conf_system_advanced
+from sys_email import run_conf_email_test
+from sys_advanced import run_conf_sysadvance_test
 from guide import run_view_guide_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
@@ -91,12 +93,14 @@ except NameError:
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
     run_check_update_test(runDriver)
-    run_conf_system_advanced(runDriver)
+    run_conf_email_test(runDriver)
+    run_conf_sysadvance_test(runDriver)
+    run_conf_afp_test(runDriver)
+    run_conf_smb_test(runDriver)
+    run_conf_dc_test(runDriver)
+    run_conf_ssh_test(runDriver)
+    run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
-    run_configure_ssh_test(runDriver)
-    run_configure_afp_test(runDriver)
-    run_configure_smb_test(runDriver)
-    run_configure_webdav_test(runDriver)
     run_delete_test(runDriver)
     run_change_theme_test(runDriver)
 else:
@@ -107,16 +111,18 @@ else:
         run_delete_test(runDriver)
     elif (test_name == "system"):
         run_check_update_test(runDriver)
-        run_conf_system_advanced(runDriver)
+        run_conf_email_test(runDriver)
+        run_conf_sysadvance_test(runDriver)
+    elif (test_name == "service"):
+        print ("Running: Guide Tests")
+        run_conf_afp_test(runDriver)
+        run_conf_smb_test(runDriver)
+        run_conf_dc_test(runDriver)
+        run_conf_ssh_test(runDriver)
+        run_conf_webdav_test(runDriver)
     elif (test_name == "guide"):
         print ("Running: Guide Tests")
         run_view_guide_test(runDriver)
-    elif (test_name == "service"):
-        print ("Running: Guide Tests")
-        run_configure_ssh_test(runDriver)
-        run_configure_afp_test(runDriver)
-        run_configure_smb_test(runDriver)
-        run_configure_webdav_test(runDriver)
     elif (test_name == "theme"):
         print ("Running: Theme Tests")
         run_change_theme_test(runDriver)
@@ -128,6 +134,12 @@ run_logout_test(runDriver)
 # run_creat_nameofthetest(runDriver)
 
 # cleaning up files
+if path.exists('driver.pyc'):
+    call(["rm", "driver.pyc"])
+
+if path.exists('driverU.pyc'):
+    call(["rm", "driverU.pyc"])
+
 if path.exists('login.pyc'):
     call(["rm", "login.pyc"])
 
@@ -137,32 +149,17 @@ if path.exists('source.pyc'):
 if path.exists('acc_user.pyc'):
     call(["rm", "acc_user.pyc"])
 
-if path.exists('serv_ssh.pyc'):
-    call(["rm", "serv_ssh.pyc"])
-
 if path.exists('acc_group.pyc'):
     call(["rm", "acc_group.pyc"])
-
-if path.exists('logout.pyc'):
-    call(["rm", "logout.pyc"])
-
-if path.exists('guide.pyc'):
-    call(["rm", "guide.pyc"])
-
-if path.exists('driver.pyc'):
-    call(["rm", "driver.pyc"])
-
-if path.exists('guide_old.pyc'):
-    call(["rm", "guide_old.pyc"])
-
-if path.exists('driverU.pyc'):
-    call(["rm", "driverU.pyc"])
 
 if path.exists('serv_afp.pyc'):
     call(["rm", "serv_afp.pyc"])
 
 if path.exists('serv_smb.pyc'):
     call(["rm", "serv_smb.pyc"])
+
+if path.exists('serv_ssh.pyc'):
+    call(["rm", "serv_ssh.pyc"])
 
 if path.exists('serv_webdav.pyc'):
     call(["rm", "serv_webdav.pyc"])
@@ -173,6 +170,12 @@ if path.exists('sys_update.pyc'):
 if path.exists('sys_advanced.pyc'):
     call(["rm", "sys_advanced.pyc"])
 
+if path.exists('sys_email.pyc'):
+    call(["rm", "sys_email.pyc"])
+
+if path.exists('guide.pyc'):
+    call(["rm", "guide.pyc"])
+
 if path.exists('acc_delete.pyc'):
     call(["rm", "acc_delete.pyc"])
 
@@ -181,6 +184,9 @@ if path.exists('theme.pyc'):
 
 if path.exists('autoflush.pyc'):
     call(["rm", "autoflush.pyc"])
+
+if path.exists('logout.pyc'):
+    call(["rm", "logout.pyc"])
 
 # if path.exists('example.pyc'):
 #    call(["rm", "example.pyc"])

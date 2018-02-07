@@ -27,14 +27,14 @@ xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
            'turnoffConfirm': "//*[contains(text(), 'OK')]"
          }
 
-class conf_smb_test(unittest.TestCase):
+class conf_dc_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    def test_01_turnon_smb (self):
-        print (" turning on the smb service")
+    def test_01_turnon_dc (self):
+        print (" turning on the dc service")
         # Click Service Menu
         driver.find_element_by_xpath(xpaths['navService']).click()
         # check if the Service page is opens
@@ -47,31 +47,33 @@ class conf_smb_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        self.status_change("2", "start")
-        #smb test takes almost 6 min to turn on and display
-        time.sleep(7)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+        self.status_change("3", "start")
+        # dc test takes almost takes 18 seconds to turn on
+        time.sleep(18)
 
-    def test_02_checkif_smb_on (self):
-        print (" check if smb turned on")
+    def test_02_checkif_dc_on (self):
+        print (" check if dc turned on")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
-        self.status_check("2")
+        self.status_check("3")
 
-    def test_03_turnoff_smb (self):
-        print (" turning off the smb service")
+    def test_03_turnoff_dc (self):
+        print (" turning off the dc service")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
-        self.status_change("2", "stop")
+        self.status_change("3", "stop")
+        # dc takes almost 22 sec to turn off
+        time.sleep(22)
 
-    def test_04_checkif_smb_off (self):
-        print (" check if smb turned off")
+    def test_04_checkif_dc_off (self):
+        print (" check if dc turned off")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
-        self.status_check("2")
+        self.status_check("3")
         time.sleep(10)
 
 
@@ -123,8 +125,8 @@ class conf_smb_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_smb_test(webdriver):
+def run_conf_dc_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_smb_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_dc_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

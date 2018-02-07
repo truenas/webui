@@ -1,2 +1,0 @@
-nav_shell, 
-nav_guide
