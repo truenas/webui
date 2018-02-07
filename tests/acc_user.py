@@ -117,8 +117,7 @@ class create_user_test(unittest.TestCase):
         # uncheck create primary group  Checkbox
         driver.find_element_by_xpath(xpaths['primaryGroupcheckbox']).click()
         # click on primary group dropdownlist
-        d = driver.find_element_by_xpath(xpaths['primaryGroupdropdown'])
-        d.click()
+        driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
 #        Select(d).select_by_visible_text("userNAS")
         # select the element from the dropdown list by using selectlist function
         time.sleep(2)

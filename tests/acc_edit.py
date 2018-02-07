@@ -64,9 +64,9 @@ class edit_test(unittest.TestCase):
         ui_email=driver.find_element_by_xpath("//*[@id='email']/mat-input-container/div/div[1]/div/input")
         # get the weather data
         email_data=ui_email.text
-        print ("the email for user " + newusername + " is " + email_data)
+        print ("the email for user " + newusername + " is " + ui_email)
         # assert response
-        self.assertTrue(newuseremail in email_data)
+        self.assertTrue(newuseremail in ui_email)
 
     def test_01_02_edit_userNAS_sudo(self):
         print ("Changing permission to sudo user ")
