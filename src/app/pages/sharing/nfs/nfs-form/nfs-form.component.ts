@@ -31,6 +31,7 @@ export class NFSFormComponent {
         tooltip: 'Browse to the volume or dataset to be shared. Click\
  <b>Add extra path</b> to select multiple paths.',
         type: 'explorer',
+        explorerType: 'directory',
         initial: '/mnt',
       },
       {

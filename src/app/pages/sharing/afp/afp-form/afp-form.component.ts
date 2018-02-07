@@ -22,6 +22,7 @@ export class AFPFormComponent implements OnDestroy {
     {
       type : 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name: 'afp_path',
       placeholder: 'Path',
       tooltip: 'Browse to the voume or dataset to share. Do not nest\

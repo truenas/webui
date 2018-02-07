@@ -22,6 +22,7 @@ export class SMBFormComponent implements OnDestroy {
     {
       type : 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name: 'cifs_path',
       placeholder: 'Path',
       tooltip: 'Select volume, dataset, or directory to share.'

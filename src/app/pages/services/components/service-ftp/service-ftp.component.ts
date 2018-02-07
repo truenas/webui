@@ -84,6 +84,7 @@ export class ServiceFTPComponent implements OnInit {
     {
       type : 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name : 'ftp_anonpath',
       placeholder : 'Path',
       tooltip: 'Root directory for anonymous FTP connections.',
