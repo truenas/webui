@@ -45,11 +45,10 @@ class check_update_test(unittest.TestCase):
         time.sleep(1)
         # Click on the Update submenu
         driver.find_element_by_xpath(xpaths['submenuUpdate']).click()
-
+        error_check_sys()
         # cancelling the tour
         if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
             driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
-
         # get the ui element
         ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
         # get the weather data
@@ -70,18 +69,23 @@ class check_update_test(unittest.TestCase):
                 print ("There is an available upgrade")
                 # assert response
                 self.assertTrue("Upgrade" in update_data)
+                error_check_sys()
             else:
                 print ("There is an unexpected issue: it is not an upgrade")
+                error_check_sys()
         elif self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div"):
             ui_element2=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div")
             update_data2=ui_element2.text
             if "No" in update_data2:
                 print ("There is no update available")
                 self.assertTrue("No" in update_data2)
+                error_check_sys()
             else: 
                 print ("There is an unexpected issue: something wrong with no update available element:" + update_data2)
+                error_check_sys()
         else:
             print ("There is an unexpected issue")
+            error_check_sys()
 
         # Close the System Tab
 #        driver.find_element_by_xpath(xpaths['navSystem']).click()
@@ -97,6 +101,12 @@ class check_update_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
+
+    def error_check_sys():
+        if (driver.is_element_present(By.XPATH, "/html/body/div[5]/div[4]/div/mat-dialog-container/error-dialog/h1")):
+            driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
+
+
 
     @classmethod
     def tearDownClass(inst):

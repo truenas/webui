@@ -162,7 +162,8 @@ export class ActiveDirectoryComponent {
       placeholder : 'Domain Controller',
       tooltip : 'Will automatically be added to the SRV record for the\
  domain and, when multiple controllers are specified, FreeNAS selects\
- the closest DC which responds.',
+ the closest DC which responds. Use a short form of the FQDN like\
+ <b>exampleserver</b>.',
     },
     {
       type : 'input',

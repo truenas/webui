@@ -26,6 +26,7 @@ from sys_update import run_check_update_test
 from sys_email import run_conf_email_test
 from sys_advanced import run_conf_sysadvance_test
 from guide import run_view_guide_test
+from acc_edit import run_edit_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
 from logout import run_logout_test
@@ -92,7 +93,7 @@ except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
-    run_check_update_test(runDriver)
+#    run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
     run_conf_sysadvance_test(runDriver)
     run_conf_afp_test(runDriver)
@@ -101,6 +102,7 @@ except NameError:
     run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
+    run_edit_test(runDriver)
     run_delete_test(runDriver)
     run_change_theme_test(runDriver)
 else:
@@ -108,9 +110,10 @@ else:
         print ("Running: Accounts Test")
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
+        run_edit_test(runDriver)
         run_delete_test(runDriver)
     elif (test_name == "system"):
-        run_check_update_test(runDriver)
+#        run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
         run_conf_sysadvance_test(runDriver)
     elif (test_name == "service"):
