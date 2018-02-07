@@ -97,6 +97,58 @@ export class VolumesListTableConfig {
     return actions;
   }
 
+  getEncryptedActions(rowData: any) {
+    const actions = [];
+
+    actions.push({
+      label: "Add Recovery Key",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "addkey", row1.id]));
+      }
+    });
+
+    actions.push({
+      label: "Delete Recovery Key",
+      onClick: (row1) => {
+        this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
+          if (confirmResult === true) {
+
+            this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              console.log("restPostResp", restPostResp);
+              this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.dialogService.errorReport("Error Deleting recovery key for volume", res.message, res.stack);
+            });
+          }
+        });
+      }
+    });
+
+
+
+    actions.push({
+      label: "Encryption Rekey",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "rekey", row1.id]));
+
+      }
+    });
+
+    actions.push({
+      label: "Download Encrypt Key",
+      onClick: (row1) => {
+        const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+      }
+    });
+
+
+    return actions;
+  }
+
   getActions(rowData: any) {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
@@ -150,53 +202,7 @@ export class VolumesListTableConfig {
         }
       });
 
-      if (rowData.vol_encrypt > 0) {
 
-        actions.push({
-          label: "Add Recovery Key",
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "volumes", "addkey", row1.id]));
-          }
-        });
-        
-        actions.push({
-          label: "Delete Recovery Key",
-          onClick: (row1) => {
-            this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-  
-                this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
-                }, (res) => {
-                  this.dialogService.errorReport("Error Deleting recovery key for volume", res.message, res.stack);
-                });
-              }
-            });
-          }
-        });
-        
-    
-        
-        actions.push({
-          label: "Encryption Rekey",
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "volumes", "rekey", row1.id]));
-          
-          }
-        });
-        
-        actions.push({
-          label: "Download Encrypt Key",
-          onClick: (row1) => {
-            const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-          }
-        });
-      }
     }
 
     if (rowData.type === "dataset") {
@@ -340,6 +346,21 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
   conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
+
+  actionComponent = {
+    getActions: (row) => {
+      return this.conf.getActions(row);
+    },
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService)
+  };
+
+  actionEncryptedComponent = {
+    getActions: (row) => {
+      return this.conf.getEncryptedActions(row);
+    },
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService)
+  };
+
   expanded = false;
   public paintMe = true;
 

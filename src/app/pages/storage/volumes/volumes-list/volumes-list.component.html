@@ -11,6 +11,12 @@
       <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="epansionpanel_zfs_{{row.name}}" >
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On">
+                <mat-icon>lock_outline</mat-icon> 
+            </div>
+            <div *ngIf="row.vol_encrypt < 1" class="panel_status_enc"  title="Encryption Off">
+                <mat-icon>lock_open</mat-icon> 
+             </div>
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
@@ -18,8 +24,11 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
-          <div style="margin-top: 8px; float: right; padding-bottom: 20px;"> 
-            <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
+            <div *ngIf="row.vol_encrypt > 0" class="global_volume_based_action_menu" title="Encryption Operations">
+                <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
+            </div>
+            <div class="global_volume_based_action_menu" title="Standard Volume Operations"> 
+            <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row"></app-entity-table-actions>
           </div>
           <br/>
         </div>
