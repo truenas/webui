@@ -28,15 +28,16 @@
 }
 
 .fields {
-	display: block;
+	display: flex;
 }
 
 .manager {
-	display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 .buttons {
-	display: block;
+	display: flex;
 }
 
 h4 {
