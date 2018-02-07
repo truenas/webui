@@ -146,7 +146,7 @@ export class VMWizardComponent {
 
   protected releaseField: any;
   protected currentServerVersion: any;
-  private zvol: any;
+  private datastore: any;
   private nic_attach: any;
   private nicType:  any;
   private bootloader: any;
@@ -176,39 +176,54 @@ export class VMWizardComponent {
       }
     });
     this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
-      this.zvol = _.find(this.wizardConfig[2].fieldConfig, { name : 'datastore' });
+      this.datastore = _.find(this.wizardConfig[2].fieldConfig, { name : 'datastore' });
       for (const idx in filesystem_res) {
         if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
-          this.zvol.options.push(
+          this.datastore.options.push(
             {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
         }
       };
-
+    ( < FormGroup > entityWizard.formArray.get([2])).controls['datastore'].setValue(
+      this.datastore.options[0].value
+    )
     });
+
     this.networkService.getAllNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[3].fieldConfig, {'name' : 'nic_attach'});
       res.forEach((item) => {
         this.nic_attach.options.push({label : item[1], value : item[0]});
       });
+      ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
+        this.nic_attach.options[0].value
+      )
+
     });
     this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
           this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
           res.forEach((item) => {
             this.nicType.options.push({label : item[1], value : item[0]});
           });
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
+          this.nicType.options[0].value
+        )
         });
+
         this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
           this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
           res.forEach((item) => {
             this.bootloader.options.push({label : item[1], value : item[0]})
           });
+        ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
+          this.bootloader.options[0].value
+        )
         });
+
   }
 
   customSubmit(value) {
     const payload = {}
     const vm_payload = {}
-    payload["name"] = value.datastore+"/"+value.name;
+    payload["name"] = value.datastore+"/"+value.name+"-"+Math.random().toString(36).substring(7);
     payload["type"] = "VOLUME";
     payload["volsize"] = value.volsize * 1024 * 1000 * 1000;
     payload["volblocksize"] = "512";
@@ -230,6 +245,8 @@ export class VMWizardComponent {
         this.loader.close();
         this.router.navigate(['/vm']);
       });
+    },(error) => {
+      this.loader.close();
     });
   }
 }
