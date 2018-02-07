@@ -37,6 +37,9 @@ class conf_system_email_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_system_email(self):
+        a = driver.find_element_by_xpath(xpaths['navSystem'])
+        a.click()
+        time.sleep(1)
         driver.find_element_by_xpath(xpaths['submenuEmail']).click()
         # cancelling the tour
         if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
