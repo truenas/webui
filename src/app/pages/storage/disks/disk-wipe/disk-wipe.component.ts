@@ -34,12 +34,18 @@ export class DiskWipeComponent implements OnInit {
       type: 'input',
       name: 'disk_name',
       placeholder: 'Name',
+      tooltip : 'Disk to wipe.',
       readonly: true
     },
     {
       type: 'select',
       name: 'wipe_method',
       placeholder: 'Method',
+      tooltip : '<i>Quick</i> erases only the partitioning information\
+ on a disk, making it easy to reuse, but without clearing other old\
+ data. <i>Full with zeros</i> overwrites the entire disk with zeros.\
+ <i>Full with random data</i> overwrites the entire disk with random\
+ binary data.',
       options: [],
     }
   ];

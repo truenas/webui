@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 9
+# Test case count: 4
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -31,7 +31,7 @@ xpaths = {
         'submenuGroup' : "//*[@id='1-0']",
         }
 
-class delete_test(unittest.TestCase):
+class edit_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
@@ -55,20 +55,24 @@ class delete_test(unittest.TestCase):
         # assert response
         self.assertTrue("User" in page_data)
 
-    def test_01_01_delete_user(self):
-        print (" deleting a user: " + newusername)
+    def test_01_01_edit_userNAS_email(self):
+        print ("Check if the email has been registered ")
         time.sleep(2)
-        self.delete("user", newusername)
+        #call edit funtion on the userNAS
+        self.edit("user", newusername)
+        # get the ui element
+        ui_email=driver.find_element_by_xpath("//*[@id='email']/mat-input-container/div/div[1]/div/input")
+        # get the weather data
+        email_data=ui_email.text
+        print ("the email for user " + newusername + " is " + ui_email)
+        # assert response
+        self.assertTrue(newuseremail in ui_email)
 
-    def test_01_02_delete_user(self):
-        print (" deleting a user: " + newusernameuncheck)
-        time.sleep(2)
-        self.delete("user", newusernameuncheck)
-
-    def test_01_03_delete_user(self):
-        print (" deleting a user: " + superusername)
-        time.sleep(2)
-        self.delete("user", superusername)
+    def test_01_02_edit_userNAS_sudo(self):
+        print ("Changing permission to sudo user ")
+        # Changing permission to sudo
+        ui_sudo=driver.find_element_by_xpath("//*[@id='sudo']/mat-checkbox")
+        driver.find_element_by_xpath("//*[@id='save_button']").click()
         time.sleep(2)
 
     def test_02_00_nav_acc_group(self):
@@ -84,27 +88,16 @@ class delete_test(unittest.TestCase):
         # assert response
         self.assertTrue("Group" in page_data)
 
-    def test_02_01_delete_group(self):
-        print (" deleting a group: " + newusername)
+    def test_02_01_edit_groupNAS_sudo(self):
+        print ("change permission of groupNAS to sudo")
         time.sleep(2)
-        self.delete("group", newusername)
-
-    def test_02_02_delete_group(self):
-        print (" deleting a group: " + superusername)
-        time.sleep(2)
-        self.delete("group", superusername)
-
-    def test_02_03_delete_group(self):
-        print (" deleting a group: " + newgroupname)
-        time.sleep(2)
-        self.delete("group", newgroupname)
-
-    def test_02_04_delete_group(self):
-        print (" deleting a group: " + supergroupname)
-        time.sleep(2)
-        self.delete("group", supergroupname)
+        self.edit("group", newgroupname)
+        driver.find_element_by_xpath("//*[@id='bsdgrp_sudo']/mat-checkbox/label/div").click()
+        driver.find_element_by_xpath("//*[@id='save_button']").click()
         time.sleep(20)
-
+        #closing the account menu
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
+        time.sleep(3)
 
     # Next step-- To check if the new user is present in the list via automation
 
@@ -127,18 +120,18 @@ class delete_test(unittest.TestCase):
             print (error_element)
             driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button").click()
 
-    def delete(self, type, name):
+    def edit(self, type, name):
         # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
         # path plugs in the xpath of user or group , submenu{User/Group}
         # num specifies the column of the 3 dots which is different in user/group
-        # delNum speifies the option number where del is after clicking on the 3 dots
+        # delNum speifies the option number where edit is after clicking on the 3 dots
         if (type == "user"):
             num = 7
-            delNum = 2
+            delNum = 1
             path = "User"
         elif (type == "group"):
             num = 4
-            delNum = 3
+            delNum = 2
             path = "Group"
 
         # Click User submenu
@@ -155,30 +148,20 @@ class delete_test(unittest.TestCase):
                 index = x
                 break
             ui_element = " "
-
         print ("index, delNum, num: " + str(index) + ", " + str(delNum) + "," + str(num))
         time.sleep(1)
-
         # click on the 3 dots
         driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[" + str(num) + "]/div/app-entity-table-actions/div/mat-icon").click()
         time.sleep(1)
-        # click on delete option
-        driver.find_element_by_xpath("//*[@id='action_button_Delete']").click()
-        # check confirmation checkbox
-        for i in range(0,10):
-            if (self.is_element_present(By.XPATH,"/html/body/div[" + str(i) + "]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div")):
-                driver.find_element_by_xpath("/html/body/div[" + str(i) + "]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div").click()
-                print ("loop-" + str(i))
-                break
-        # click on confirmation button
-        driver.find_element_by_xpath("//*[contains(text(), 'OK')]").click()
+        # click on edit option
+        driver.find_element_by_xpath("//*[@id='action_button_Edit']").click()
 
     @classmethod
     def tearDownClass(inst):
         pass
 
-def run_delete_test(webdriver):
+def run_edit_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(delete_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(edit_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

@@ -120,5 +120,6 @@ i {
   -webkit-backface-visibility: hidden;
   z-index: 2;
   margin:0;
+  padding:0 !important;
   overflow:hidden;
 }

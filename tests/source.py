@@ -4,26 +4,25 @@
 
 from os import getcwd
 
-#username for the machine
+# username for the machine
 username = "root"
-#password for the machine
+# password for the machine
 password = "testing"
-#new user with create primary group check
+# new user with create primary group check
 newusername = "userNAS"
-#new user full name
+# new user full name
 newuserfname = "user NAS"
-#userpassword
+# new user email
+newuseremail = "test@ixsystems.com"
+# userpassword
 newuserpassword = "abcd1234"
-#usergroupname
+# usergroupname
 newgroupname = "groupNAS"
-
-#new user with create primary group UNcheck
+# new user with create primary group UNcheck
 newusernameuncheck = "userNASuncheck"
-#new user full name
+# new user full name
 newuserfnameuncheck = "user NASuncheck"
-
-
-#new user with sudo permit
+# new user with sudo permit
 superusername = "superNAS"
 
 superuserfname = "super NAS"
@@ -34,7 +33,7 @@ supergroupname = "supergroupNAS"
 
 results_xml = getcwd() + '/results/'
 
-#method to test if an element is present-not used in the current script
+# method to test if an element is present-not used in the current script
 def is_element_present_source(self, how, what):
   """
   Helper method to confirm the presence of an element on page

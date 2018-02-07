@@ -29,12 +29,12 @@ xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
            'submenuAdvanced' : "//*[@id='2-3']",
          }
 
-class conf_system_advanced(unittest.TestCase):
+class conf_sysadvance_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
-    
+
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_system_advanced(self):
         driver.find_element_by_xpath(xpaths['submenuAdvanced']).click()
@@ -105,8 +105,8 @@ class conf_system_advanced(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_system_advanced(webdriver):
+def run_conf_sysadvance_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_system_advanced)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_sysadvance_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
