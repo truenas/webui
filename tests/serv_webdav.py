@@ -79,7 +79,7 @@ class conf_webdav_test(unittest.TestCase):
         driver.find_element_by_xpath("//*[@id='webdav_password2']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
         # Click on save button
         driver.find_element_by_xpath("//*[@id='save_button']").click()
-        # Next step-- To check if the new user is present in the list via automation
+        time.sleep(5)
 
     def test_04_turnoff_webdav (self):
         print (" turning off the webdav service")
