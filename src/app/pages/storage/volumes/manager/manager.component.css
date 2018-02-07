@@ -27,6 +27,14 @@
 	max-width: 450px;
 }
 
+.fields {
+	display: block;
+}
+
+.manager {
+	display: block;
+}
+
 .buttons {
 	display: block;
 }
@@ -35,3 +43,6 @@ h4 {
 	text-align: center;
 }
 
+.volumeTooltip {
+	display: auto;
+}

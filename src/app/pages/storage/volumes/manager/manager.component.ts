@@ -57,6 +57,10 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public dirty = false;
 
   public busy: Subscription;
+  
+  public name_tooltip = '';
+  public encryption_tooltip = '';
+  public suggested_layout_tooltip = '';
 
   constructor(
     private rest: RestService, 

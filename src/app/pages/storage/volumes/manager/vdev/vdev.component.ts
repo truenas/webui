@@ -26,6 +26,8 @@ export class VdevComponent implements OnInit {
   public id: number;
   public size;
 
+  public vdev_type_tooltip = '';
+
   constructor(public elementRef: ElementRef) {}
 
   ngOnInit() {

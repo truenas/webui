@@ -24,3 +24,7 @@
 .vdev-close {
     flex: 0 0 auto;
 }
+
+.vdevTooltip {
+    display: auto; 
+}
