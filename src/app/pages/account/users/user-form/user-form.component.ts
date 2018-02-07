@@ -82,7 +82,7 @@ export class UserFormComponent {
     {
       type : 'explorer',
       initial: '/mnt',
-
+      explorerType: 'directory',
       name: 'home',
       placeholder: 'Home Directory',
       value: '/nonexistent',

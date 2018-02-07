@@ -35,6 +35,7 @@ export class ServiceTFTPComponent {
     {
       type : 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name : 'tftp_directory',
       placeholder : 'Directory',
       tooltip : 'Browse to an <b>existing</b> directory to be used for\

@@ -31,6 +31,7 @@ export class WebdavFormComponent {
         type : 'explorer',
         initial: '/mnt',
         name : 'webdav_path',
+        explorerType: 'directory',
         placeholder : 'Path',
         tooltip: 'Browse to the volume or dataset to share.'
       },
