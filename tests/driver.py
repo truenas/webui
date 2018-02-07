@@ -15,6 +15,7 @@ from serv_webdav import run_conf_webdav_test
 from sys_update import run_check_update_test
 from sys_email import run_conf_email_test
 from sys_advanced import run_conf_sysadvance_test
+from acc_edit import run_edit_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
 from guide import run_view_guide_test
