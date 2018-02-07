@@ -73,7 +73,7 @@ export class ServiceDCComponent {
       name : 'dc_forest_level',
       label : 'Forest Level',
       placeholder : 'Forest Level',
-      tooltip: 'Choices are <i>2000, 2003, 2008</i> or <i>2008_R2</i>.\
+      tooltip: 'Choices are <i>2000, 2003, 2008, 2008_R2, 2012,</i> or <i>2012_R2</i>.\
  Refer to <a\
  href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"\
  target="_blank">Understanding Active Directory Domain Services (AD DS)\
