@@ -93,7 +93,7 @@ except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
-    run_check_update_test(runDriver)
+#    run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
     run_conf_sysadvance_test(runDriver)
     run_conf_afp_test(runDriver)
