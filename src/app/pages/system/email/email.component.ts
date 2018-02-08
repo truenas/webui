@@ -179,7 +179,7 @@ afterInit(entityEdit: any) {
           this.dialogservice.Info("email", "Test email sent successfully!")
         });
         this.dialogRef.componentInstance.failure.subscribe((e_res) => {
-          this.dialogRef.componentInstance.setDiscription(e_res.error);
+          this.dialogRef.componentInstance.setDescription(e_res.error);
         });
       });
     }

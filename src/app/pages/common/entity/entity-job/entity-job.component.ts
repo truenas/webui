@@ -42,7 +42,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  setDiscription(desc: string) {
+  setDescription(desc: string) {
     this.description = desc;
   }
 
@@ -121,7 +121,7 @@ export class EntityJobComponent implements OnInit {
         (res) => {
           this.job = res;
           if (this.job.code == 202) {
-            this.setDiscription(this.job.data);
+            this.setDescription(this.job.data);
             this.success.emit(this.job);
           } else {
             this.progress.emit(this.job);
