@@ -10,6 +10,7 @@ from acc_group import run_create_group_test
 from acc_user import run_create_user_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
+from serv_ftp import run_conf_ftp_test
 from serv_dc import run_conf_dc_test
 from serv_webdav import run_conf_webdav_test
 from sys_update import run_check_update_test
