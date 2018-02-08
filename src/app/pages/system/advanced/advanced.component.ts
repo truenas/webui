@@ -1,64 +1,149 @@
-import { Component, OnInit } from '@angular/core';
-import { WebSocketService } from "../../../services/ws.service";
-import { RestService } from "../../../services/rest.service";
+import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import * as _ from 'lodash';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { RestService, UserService, WebSocketService } from '../../../services/';
+import {
+  FieldConfig
+} from '../../common/entity/entity-form/models/field-config.interface';
+
 
 @Component({
   selector: 'app-system-advanced',
   templateUrl: 'advanced.component.html',
   styleUrls: ['advanced.component.css']
 })
+
 export class AdvancedComponent implements OnInit {
-
-  isReady: boolean = false;
-  error: string;
-  success: string;
-  users: any;
-  ports: any;
+  protected resource_name: string = 'system/advanced';
   public job: any = {};
-  protected dialogRef: any;
-  systemAdvancedSettings = {
-    adv_consolemenu: '',
-    adv_serialconsole: '',
-    adv_serialport: '',
-    adv_serialspeed: '',
-    adv_swapondrive: '',
-    adv_consolescreensaver: '',
-    adv_powerdaemon: '',
-    adv_autotune: '',
-    adv_debugkernel: '',
-    adv_consolemsg: '',
-    adv_motd: '',
-    adv_traceback: '',
-    adv_advancedmode: '',
-    adv_uploadcrash: '',
-    adv_periodic_notifyuser: '',
-    adv_graphite: '',
-    adv_fqdn_syslog: '',
-    adv_cpu_in_percentage: '',
-  };
 
-  public adv_consolemenu_tooltip = ''
-  public adv_serialconsole_tooltip = ''
-  public adv_serialspeed = ''
-  public adv_swapondrive_tooltip = ''
-  public adv_consolescreensaver = ''
-  public adv_consolescreensaver_tooltip = ''
-  public adv_powerdaemon_tooltip = ''
-  public adv_autotune_tooltip = ''
-  public adv_debugkernel_tooltip = ''
-  public adv_consolemsg_tooltip = ''
-  public adv_motd_tooltip = ''
-  public adv_traceback_tooltip = ''
-  public adv_uploadcrash = ''
-  public adv_periodic_notifyuser_tooltip = ''
-  public adv_graphite_tooltip = ''
-  public adv_fqdn_syslog_tooltip = ''
-  public adv_cpu_in_percentage_tooltip = ''
+  public fieldConfig: FieldConfig[] = [{
+    type: 'checkbox',
+    name: 'adv_consolemenu',
+    placeholder: 'Enable Console Menu',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_serialconsole',
+    placeholder: 'Enable Serial Console',
+    tooltip: ''
+  }, {
+    type: 'select',
+    name: 'adv_serialport',
+    placeholder: 'Serial Port',
+    options: [
+      { label: '---', value: null},
+    ],
+    tooltip: '',
+    relation: [
+      {
+        action : 'DISABLE',
+        when : [{
+          name: 'adv_serialconsole',
+          value: false
+        }]
+      }
+    ]
+  }, {
+    type: 'select',
+    name: 'adv_serialspeed',
+    placeholder: 'Serial Speed',
+    options: [
+        { label: '---', value: null},
+        { label: '9600', value: "9600" },
+        { label: '19200', value: "19200" },
+        { label: '38400', value: "38400" },
+        { label: '57600', value: "57600" },
+        { label: '115200', value: "115200" },
+    ],
+    tooltip: '',
+    relation: [
+      {
+        action : 'DISABLE',
+        when : [{
+          name: 'adv_serialconsole',
+          value: false
+        }]
+      }
+    ],
+  }, {
+    type: 'input',
+    name: 'adv_swapondrive',
+    placeholder: 'Swap size on each drive in GiB, affects new disks only. Setting this to 0 disables swap creation completely (STRONGLY DISCOURAGED).',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_consolescreensaver',
+    placeholder: 'Enable Console Screensaver',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_powerdaemon',
+    placeholder: 'Enable Power Saving Daemon',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_autotune',
+    placeholder: 'Enable autotune',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_debugkernel',
+    placeholder: 'Enable Debug Kernel',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_consolemsg',
+    placeholder: 'Show console messages',
+    tooltip: ''
+  }, {
+    type: 'textarea',
+    name: 'adv_motd',
+    placeholder: 'MOTD Banner',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_traceback',
+    placeholder: 'Show tracebacks in case',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_advancedmode',
+    placeholder: 'Show advanced fields by default',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_uploadcrash',
+    placeholder: 'Enable automatic upload of kernel crash dumps and daily telemetry',
+    tooltip: ''
+  }, {
+    type: 'select',
+    name: 'adv_periodic_notifyuser',
+    placeholder: 'Periodic Notification User',
+    options: [],
+    tooltip: ''
+  }, {
+    type: 'input',
+    name: 'adv_graphite',
+    placeholder: 'Remote Graphite Server Hostname',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_fqdn_syslog',
+    placeholder: 'Use FQDN for logging',
+    tooltip: ''
+  }, {
+    type: 'checkbox',
+    name: 'adv_cpu_in_percentage',
+    placeholder: 'Report CPU usage in percentage',
+    tooltip: ''
+  }];
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
@@ -66,99 +151,65 @@ export class AdvancedComponent implements OnInit {
     private ws: WebSocketService,
     public snackBar: MatSnackBar) {}
 
-  ngOnInit(): void {
-    const deviceInfo = this.ws.call('device.get_info', ['SERIAL']);
-    const users = this.rest.get('account/users/', { limit: 0 });
-    const systemSettings = this.rest.get('system/advanced', { limit: 0 });
-    Observable.forkJoin([deviceInfo, users, systemSettings]).subscribe(results => {
-      // listing serial ports
-      this.ports = results[0];
-      // users with their data
-      this.users = results[1].data;
-      // setting current system data
-      console.log(results[2].data);
-      this.buildForm(results[2].data);
-      // readying the page
-      this.isReady = true;
-    }, res => {
-      this.isReady = true;
-      this.error = 'Something went wrong, please try again later.';
-    });
-  }
-
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 5000
     });
   }
 
-  saveDebug() {
-    this.dialog.confirm("Generating Debug File", "Run this in the background?").subscribe((res) => {
-      if (res) {
-        this.ws.job('system.debug').subscribe((res) => {
-          console.log(res);
-          if (res.state === "SUCCESS") {
-            this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
-              (res) => {
-                this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
-                window.open(res[1]);
-              },
-              (err) => {
-                this.openSnackBar("Please check the network connection", "Failed");
-              }
-            );
-          }
-        }, () => {
+  ngOnInit() {}
 
-        }, () => {
-          if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
-            this.openSnackBar("Please check the network connection", "Failed");
-          }
-        });
-      } else {
-        console.log("User canceled");
-      }
+  public adv_serialport: any;
+  public adv_periodic_notifyuser: any;
+
+  afterInit(entityEdit: any) {
+    entityEdit.ws.call('device.get_info', ['SERIAL']).subscribe((res) => {
+      let adv_serialport =
+        _.find(this.fieldConfig, { 'name': 'adv_serialport' });
+      res.forEach((item) => {
+        adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
+      });
+    });
+
+    this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
+      let adv_periodic_notifyuser =
+        _.find(this.fieldConfig, { 'name': 'adv_periodic_notifyuser' });
+      res.data.forEach((item) => {
+        adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
+      });
     });
   }
+  public custActions: Array < any > = [{
+      id: 'basic_mode',
+      name: 'Save Debug',
+      function: () => {
+        this.dialog.confirm("Generating Debug File", "Run this in the background?").subscribe((res) => {
+              if (res) {
+                this.ws.job('system.debug').subscribe((res) => {
+                  console.log(res);
+                  if (res.state === "SUCCESS") {
+                    this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
+                      (res) => {
+                        this.openSnackBar("Redirecting to download. Make sure pop-ups are enabled in the browser.", "Success");
+                        window.open(res[1]);
+                      },
+                      (err) => {
+                        this.openSnackBar("Please check the network connection", "Failed");
+                      }
+                    );
+                  }
+                }, () => {
 
-  generateDownloadUrl(file_path) {
-    return this.ws.call('filesystem.get', file_path);
-  }
-
-  buildForm(system: any) {
-    this.systemAdvancedSettings = {
-      adv_consolemenu: system.adv_consolemenu,
-      adv_serialconsole: system.adv_serialconsole,
-      adv_serialport: system.adv_serialport,
-      adv_serialspeed: system.adv_serialspeed,
-      adv_swapondrive: system.adv_swapondrive,
-      adv_consolescreensaver: system.adv_consolescreensaver,
-      adv_powerdaemon: system.adv_powerdaemon,
-      adv_autotune: system.adv_autotune,
-      adv_debugkernel: system.adv_debugkernel,
-      adv_consolemsg: system.adv_consolemsg,
-      adv_motd: system.adv_motd,
-      adv_traceback: system.adv_traceback,
-      adv_advancedmode: system.adv_advancedmode,
-      adv_uploadcrash: system.adv_uploadcrash,
-      adv_periodic_notifyuser: system.adv_periodic_notifyuser,
-      adv_graphite: system.adv_graphite,
-      adv_fqdn_syslog: system.adv_fqdn_syslog,
-      adv_cpu_in_percentage: system.adv_cpu_in_percentage,
-    };
-  }
-
-  onFormSubmit() {
-    this.load.open('Updating settings...');
-    this.rest.put('system/advanced', { body: this.systemAdvancedSettings })
-      .subscribe(res => {
-        this.systemAdvancedSettings = res.data;
-        this.success = 'System settings updated';
-        setTimeout(() => this.success = '', 5000);
-        this.load.close();
-      }, res => {
-        this.dialog.errorReport(res.error, res.reason, res.trace.formatted);
-        this.load.close();
-      });
-  }
+                }, () => {
+                  if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
+                    this.openSnackBar("Please check the network connection", "Failed");
+                  }
+                });
+              } else {
+                console.log("User canceled");
+              }
+            });        
+      }
+    }
+  ];
 }
