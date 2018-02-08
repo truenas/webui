@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 5
+# Test case count: 4
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -27,80 +27,55 @@ xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
            'turnoffConfirm': "//*[contains(text(), 'OK')]"
          }
 
-
-class conf_webdav_test(unittest.TestCase):
+class conf_ftp_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
         pass
 
-    def test_01_turnon_webdav (self):
-        print (" turning on the webdav service")
+    def test_01_turnon_ftp (self):
+        print (" turning on the ftp service")
         # Click Service Menu
         driver.find_element_by_xpath(xpaths['navService']).click()
-
-        # check if the Services page is open
+        # check if the Service page is opens
         time.sleep(1)
         # get the ui element
-        ui_element_page=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
+        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
         # get the weather data
-        page_data=ui_element_page.text
+        page_data=ui_element.text
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
+        # scroll down
+        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        self.status_change("5", "start")
+        #smb test takes almost 6 min to turn on and display
+        time.sleep(7)
 
+    def test_02_checkif_ftp_on (self):
+        print (" check if ftp turned on")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
-        self.status_change("17", "start")
+        self.status_check("5")
 
-
-    def test_02_checkif_webdav_on (self):
-        print (" check if webdav turned on")
+    def test_03_turnoff_ftp (self):
+        print (" turning off the ftp service")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
-        self.status_check("17")
+        self.status_change("5", "stop")
 
-
-    def test_03_configure_webdav(self):
-        print (" configuring webdav service")
-        time.sleep(1)
-        # click on configure button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[17]/mat-card/div[2]/div[3]/button").click()
-        time.sleep(1)
-        # Enter password newuserpassword
-        driver.find_element_by_xpath("//*[@id='webdav_password']/mat-input-container/div/div[1]/div/input").clear()
-        print ("clear the webdav password field")
-        driver.find_element_by_xpath("//*[@id='webdav_password']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
-        # Enter password confirmation newuserpassword
-        driver.find_element_by_xpath("//*[@id='webdav_password2']/mat-input-container/div/div[1]/div/input").clear()
-        print ("clear the webdav password2 field")
-        driver.find_element_by_xpath("//*[@id='webdav_password2']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
-        # Click on save button
-        driver.find_element_by_xpath("//*[@id='save_button']").click()
-        #wait till saving is finished
-        time.sleep(5)
-
-    def test_04_turnoff_webdav (self):
-        print (" turning off the webdav service")
-        # Click Service Menu
-        driver.find_element_by_xpath(xpaths['navService']).click()
+    def test_04_checkif_ftp_off (self):
+        print (" check if ftp turned off")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
-        self.status_change("17", "stop")
-
-    def test_05_checkif_wedbdav_off (self):
-        print (" check if webdave turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        self.status_check("17")
+        self.status_check("5")
         time.sleep(10)
 
 
-    # method to test if an element is present
+    #method to test if an element is present
     def is_element_present(self, how, what):
         """
         Helper method to confirm the presence of an element on page
@@ -133,8 +108,9 @@ class conf_webdav_test(unittest.TestCase):
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-            else: 
+            else:
                 print ("the status is already" + status_data)
+
 
     def status_check(self, which):
         ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
@@ -147,8 +123,8 @@ class conf_webdav_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_conf_webdav_test(webdriver):
+def run_conf_ftp_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(conf_webdav_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_ftp_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
