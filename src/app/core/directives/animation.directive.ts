@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Renderer2, OnChanges, Input } from '@angular/core';
-import { tween, styler } from 'popmotion';
+import { tween, styler, keyframes } from 'popmotion';
 import { TweenProps } from 'popmotion/src/animations/tween/types';
 import { Value } from 'popmotion/src/reactions/value';
 import { Subject } from 'rxjs/Subject';
@@ -11,9 +11,13 @@ export class AnimationDirective implements OnChanges{
   //@Input() target:ElementRef; //May have to implement this later
   @Input() animation: string;
   @Input() reverse:boolean;
+
   // Use these for looped animations
   @Input() shake:boolean;
   @Input() shaking: any;
+  @Input() colorLoop: string[];
+  @Input() colorLoopActive:any;
+
 
   private elStyler: any;
   private motion: any; // Stores Tweens
@@ -23,13 +27,20 @@ export class AnimationDirective implements OnChanges{
   }
 
   ngOnChanges(changes){
+    this.parent = this.elRef.nativeElement;
+    this.elStyler = styler(this.parent);
+
     if(changes.animation){
-      this.parent = this.elRef.nativeElement;
-      this.elStyler = styler(this.parent);
       this.animate();
     }
     if(changes.shake){
       this.shakeAnimation();
+    }
+
+    if(changes.colorLoop){
+      //this.parent = this.elRef.nativeElement;
+      //this.elStyler = styler(this.parent);
+      this.colorLoopAnimation();
     }
   }
 
@@ -147,5 +158,37 @@ export class AnimationDirective implements OnChanges{
      return s;
   }
 
+  colorLoopAnimation(){
+    const s = keyframes({
+      values: this.colorLoop,
+      duration: 60000,
+      //ease: easing.linear,
+      loop: Infinity,
+    });
+
+    const startColorLoop = () => { 
+      const a = s.start(this.elStyler.set('background-color'));
+      return a;
+    }
+
+    if(!this.colorLoopActive && this.colorLoop.length > 0){
+      this.colorLoopActive  = startColorLoop();
+    }
+
+    const reset = () => {
+      this.colorLoopActive.stop();
+      this.elStyler.set({'background-color':'rgba(0,0,0,0.15)'})
+    }
+    reset();
+
+    if(this.colorLoop){
+      console.log("Starting the Color Loop");
+      this.colorLoopActive.resume();
+    } else if(!this.colorLoop){
+      console.log("Stopping the Color Loop");
+      reset();
+    }
+     //return s;
+  }
 }
 

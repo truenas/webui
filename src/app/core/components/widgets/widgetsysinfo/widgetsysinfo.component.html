@@ -1,0 +1,47 @@
+<div class="widget widget-{{widgetSize}}">
+  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <!--<mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar" >
+        <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        </mat-toolbar-row>
+      <mat-menu #menu="matMenu" color="warn">
+        <button mat-menu-item (click)="toggleConfig()">
+          <mat-icon>settings</mat-icon>
+          <span>Configure</span>
+        </button>
+        </mat-menu>-->
+      <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between center" fxFlex="100">
+        <div fxFlex="40" class="card-bg-wrapper">
+          <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
+          <div class="logo-bg" *ngIf="cardBg == 'logo.svg'" animate [colorLoop]="themeAccentColors"><img class="os-logo" src="assets/images/logo.svg"></div>
+        </div>
+        <div fxFlex="60">
+        <mat-list role="list" *ngIf="data">
+          <mat-list-item *ngIf="!data.system_product"><h1>FreeNAS</h1></mat-list-item>
+          <mat-list-item role="listitem" *ngIf="data.system_product"><h1>{{data.system_product}}</h1></mat-list-item>
+          <mat-list-item role="listitem" *ngIf="data.system_serial"><span class="bold">Serial Number: </span>  {{data.system_serial}}</mat-list-item>
+          <mat-list-item role="listitem" *ngIf="data.license"><span class="bold">License: </span>  {{data.license}}</mat-list-item>
+          <mat-list-item role="listitem"><span class="bold">OS Version: </span>  {{data.version}}</mat-list-item>
+          <mat-list-item role="listitem"><span class="bold">Processor: </span>  {{data.model}} ({{data.cores}} cores)</mat-list-item>
+          <mat-list-item role="listitem"><span class="bold">Memory: </span>  {{memory}}</mat-list-item>
+          <mat-list-item role="listitem"><span class="bold">HostName: </span>  {{data.hostname}}</mat-list-item>
+          <mat-list-item role="listitem"><span class="bold">Uptime: </span>  {{data.uptime}}</mat-list-item>
+          <mat-list-item role="listitem">
+            <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel}}</button>
+          </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-card-content>
+      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
+    </mat-card>
+    <mat-card class="back">
+      <mat-card-content>
+        <h3>Form goes here</h3>
+      </mat-card-content>
+      <div class="widget-footer"><button mat-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>
+    </mat-card>
+  </div>
+</div>

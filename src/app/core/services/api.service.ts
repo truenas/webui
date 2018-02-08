@@ -30,6 +30,15 @@ export class ApiService {
         responseEvent: "PoolData"
       }
     },
+    UpdateCheck:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"update.check_available",
+        args: [],
+        responseEvent: "UpdateChecked"
+      }
+    },
     /*VmProfilesRequest:{
      protocol:"websocket",
      version:"1",
@@ -80,6 +89,24 @@ export class ApiService {
         namespace:"vm.delete",
         args:[],
         responseEvent:"VmDeleted"
+      }
+    },
+    SysInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"system.info",
+        args:[],
+        responseEvent:"SysInfo"
+      }
+    },
+    NetInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_sources",
+        args:[],
+        responseEvent:"NetInfo"
       }
     },
     StatsRequest:{

@@ -17,6 +17,8 @@ import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.compone
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
+import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
 
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 
@@ -49,7 +51,9 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewChartPieComponent,
     ViewChartGaugeComponent,
     ViewChartLineComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetSysInfoComponent,
+    WidgetCpuHistoryComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -69,7 +73,9 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewButtonComponent,
     ViewControllerComponent,
     CardComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetSysInfoComponent,
+    WidgetCpuHistoryComponent
   ],
   entryComponents:[
     DisplayContainer,
@@ -83,7 +89,9 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewButtonComponent,
     ViewControllerComponent,
     CardComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetSysInfoComponent,
+    WidgetCpuHistoryComponent
   ]
 })
 export class CoreComponents {}
