@@ -93,6 +93,9 @@ preInit(entityForm: any) {
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogRef.close(false);
       this.openSnackBar("Device successfully attached", "Success");
+      this.router.navigate(
+        new Array('').concat('system','bootenv')
+      );
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogRef.componentInstance.setDiscription(res.error);
