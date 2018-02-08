@@ -116,7 +116,7 @@ export class DiskWipeComponent implements OnInit {
 
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Wipe" }, disableClose: true });
         this.dialogRef.componentInstance.progressNumberType = "nopercent";
-        this.dialogRef.componentInstance.setDiscription("Wiping Disk...");
+        this.dialogRef.componentInstance.setDescription("Wiping Disk...");
         this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((res) => {
@@ -124,7 +124,7 @@ export class DiskWipeComponent implements OnInit {
           this.openSnackBar("Disk successfully wiped", "Success");
         });
         this.dialogRef.componentInstance.failure.subscribe((res) => {
-          this.dialogRef.componentInstance.setDiscription(res.error);
+          this.dialogRef.componentInstance.setDescription(res.error);
         });
       }
     });

@@ -87,7 +87,7 @@ export class ImportDiskComponent {
   customSubmit(payload){
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Importing Disk" }});
     this.dialogRef.componentInstance.progressNumberType = "nopercent";
-    this.dialogRef.componentInstance.setDiscription("Importing Disk...");
+    this.dialogRef.componentInstance.setDescription("Importing Disk...");
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {

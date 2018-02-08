@@ -8,10 +8,12 @@ import {
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Rx';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
@@ -29,6 +31,7 @@ export class BootEnvAttachFormComponent {
   protected addCall = 'boot.attach';
   protected pk: any;
   protected isNew: boolean = true;
+  protected dialogRef: any;
 
 
   protected entityForm: any;
@@ -54,7 +57,8 @@ export class BootEnvAttachFormComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef) {}
+              protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected dialog: MatDialog, public snackBar: MatSnackBar,) {}
 
 preInit(entityForm: any) {
   this.route.params.subscribe(params => {
@@ -71,12 +75,31 @@ preInit(entityForm: any) {
         this.diskChoice.options.push({label : item.name, value : item.name});
       });
     });
-    entityForm.submitFunction = this.submitFunction;
+    
   }
-  submitFunction(entityForm){
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action , {
+      duration: 5000
+    });
+  }
+  customSubmit(entityForm){
     const payload = {};
     payload['expand'] = entityForm.expand;
-    return this.ws.call('boot.attach', [entityForm.dev, payload]);
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Attach Device" }, disableClose: true });
+    this.dialogRef.componentInstance.progressNumberType = "nopercent";
+    this.dialogRef.componentInstance.setDescription("Attaching Device...");
+    this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(false);
+      this.openSnackBar("Device successfully attached", "Success");
+      this.router.navigate(
+        new Array('').concat('system','bootenv')
+      );
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogRef.componentInstance.setDescription(res.error);
+    });
   }
 
 }
