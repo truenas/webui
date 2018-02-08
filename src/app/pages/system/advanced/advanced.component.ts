@@ -42,23 +42,55 @@ export class AdvancedComponent implements OnInit {
     adv_cpu_in_percentage: '',
   };
 
-  public adv_consolemenu_tooltip = ''
-  public adv_serialconsole_tooltip = ''
-  public adv_serialspeed = ''
-  public adv_swapondrive_tooltip = ''
-  public adv_consolescreensaver = ''
-  public adv_consolescreensaver_tooltip = ''
-  public adv_powerdaemon_tooltip = ''
-  public adv_autotune_tooltip = ''
-  public adv_debugkernel_tooltip = ''
-  public adv_consolemsg_tooltip = ''
-  public adv_motd_tooltip = ''
-  public adv_traceback_tooltip = ''
-  public adv_uploadcrash = ''
-  public adv_periodic_notifyuser_tooltip = ''
-  public adv_graphite_tooltip = ''
-  public adv_fqdn_syslog_tooltip = ''
-  public adv_cpu_in_percentage_tooltip = ''
+  public adv_consolemenu_tooltip = 'Uncheck this to add a login prompt\
+ to the system before the console menu is shown.';
+  public adv_serialconsole_tooltip = '<b>Do not</b> check this box if\
+ the <b>serial port</b> is disabled.';
+  public adv_serialport_tooltip = 'Select the serial port address in\
+ hex.';
+  public adv_serialspeed_tooltip = 'Choose the speed in <i>bps</i> used\
+ by the serial port.';
+  public adv_swapondrive_tooltip = 'By default, all data disks are\
+ created with this amount of swap. This setting does not affect log or\
+ cache devices as they are created without swap.';
+  public adv_consolescreensaver_tooltip = 'Enable or disable the console\
+ screensaver.';
+  public adv_powerdaemon_tooltip = '<a\
+ href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ target="_blank">powerd(8)</a> monitors the system state and sets the\
+ CPU frequency accordingly.';
+  public adv_autotune_tooltip = 'Enables the <b>autotune</b> script\
+ which attempts to optimize the system depending on the installed\
+ hardware. <b>Warning:</b> Autotuning should only be used as a temporary\
+ measure and is not a permanent fix for system hardware issues. See\
+ <b>Chapter 5.4.1: Autotune</b> in the <a href="ui/guide">Guide</a> for\
+ more information.';
+  public adv_debugkernel_tooltip = 'When checked, the next system boot\
+ uses a debug version of the kernel.';
+  public adv_consolemsg_tooltip = 'Display console messages in real time\
+ at the bottom of the browser. Click the <b>Console</b> to bring up a\
+ scrollable screen. Check the <b>Stop</b> refresh box in the scrollable\
+ screen to pause updating and uncheck the box to continue to watch the\
+ messages as they occur.';
+  public adv_motd_tooltip = 'Write a message to be shown when a user\
+ logs in with SSH.';
+  public adv_traceback_tooltip = 'Provides a pop-up window of diagnostic\
+ information when a fatal error occurs.';
+  public adv_advancedmode_tooltip: 'Many GUI menus provide an\
+ <b>Advanced Mode</b> button to access additional features. Enabling\
+ this shows these features by default.';
+  public adv_uploadcrash_tooltip = 'Report kernel crash dumps and daily\
+ performance measurements to iXsystems.';
+  public adv_periodic_notifyuser_tooltip = 'Choose a user to receive\
+ security output emails. This output runs nightly, but only sends an\
+ email when the system reboots or encounters an error.';
+  public adv_graphite_tooltip = 'Enter the IP address or hostname of a\
+ remote server running Graphite.';
+  public adv_fqdn_syslog_tooltip = 'Check to include the\
+ Fully-Qualified Domain Name (FQDN) in logs to precisely identify\
+ systems with similar hostnames.';
+  public adv_cpu_in_percentage_tooltip = 'Check to display CPU usage\
+ as percentages in <b>Reporting</b>.'
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
