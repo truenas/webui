@@ -31,6 +31,7 @@ import {VmTableComponent} from './vm-cards/vm-table.component';
 import {routing} from './vm.routing';
 import { VmSummaryComponent } from './vm-cards/vm-summary.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { VMWizardComponent } from './vm-wizard/';
 
 @NgModule({
   imports : [
@@ -55,6 +56,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
     DeviceEditComponent,
     DeviceRawFileAddComponent,
     VmSummaryComponent,
+    VMWizardComponent
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
 })
