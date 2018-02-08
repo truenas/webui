@@ -113,7 +113,7 @@ else:
         run_edit_test(runDriver)
         run_delete_test(runDriver)
     elif (test_name == "system"):
-#        run_check_update_test(runDriver)
+        run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
         run_conf_sysadvance_test(runDriver)
     elif (test_name == "service"):

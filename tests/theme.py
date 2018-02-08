@@ -84,8 +84,12 @@ class change_theme_test(unittest.TestCase):
         # Click on the theme Button
         driver.find_element_by_xpath(xpaths['themeBar']).click()
         print ("selecting theme: " + which)
-        driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
-        time.sleep(3)
+        if (self.is_element_present(By.XPATH, "//*[contains(text(), \'" + which + "\'  )]")):
+            driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
+            time.sleep(3)
+        else:
+            print (" Theme not present so making theme default ixblue")
+            driver.find_element_by_xpath("//*[contains(text(), 'iX Blue')]").click()
 
 
     @classmethod
