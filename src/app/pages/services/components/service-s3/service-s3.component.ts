@@ -81,6 +81,7 @@ export class ServiceS3Component implements OnInit {
     {
       type : 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name : 'storage_path',
       placeholder : 'Disk',
       tooltip: 'S3 filesystem directory.',

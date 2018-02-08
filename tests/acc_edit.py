@@ -63,17 +63,17 @@ class edit_test(unittest.TestCase):
         # get the ui element
         ui_email=driver.find_element_by_xpath("//*[@id='email']/mat-input-container/div/div[1]/div/input")
         # get the weather data
-        email_data=ui_email.text
-        print ("the email for user " + newusername + " is " + ui_email)
+        email_data=ui_email.get_attribute('value')
+        print ("the email for user " + newusername + " is " + email_data)
         # assert response
-        self.assertTrue(newuseremail in ui_email)
+        self.assertTrue(newuseremail in email_data)
 
     def test_01_02_edit_userNAS_sudo(self):
         print ("Changing permission to sudo user ")
         # Changing permission to sudo
         ui_sudo=driver.find_element_by_xpath("//*[@id='sudo']/mat-checkbox")
         driver.find_element_by_xpath("//*[@id='save_button']").click()
-        time.sleep(2)
+        time.sleep(15)
 
     def test_02_00_nav_acc_group(self):
         # Click  Account menu

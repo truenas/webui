@@ -61,6 +61,7 @@ export class ServiceAFPComponent {
     {
       type : 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name : 'afp_srv_dbpath',
       placeholder : 'Database Path',
       tooltip: 'Sets the database information to be stored in path.\
