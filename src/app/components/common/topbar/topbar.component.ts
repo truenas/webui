@@ -16,8 +16,9 @@ import { Subscription } from "rxjs/Subscription";
 
 @Component({
   selector: 'topbar',
-  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
-  templateUrl: './topbar.template.html'
+//  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
+styleUrls: ['./topbar.component.css'],
+templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
 
