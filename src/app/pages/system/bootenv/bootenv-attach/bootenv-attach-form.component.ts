@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MdDialog, MdSnackBar } from '@angular/material';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Rx';
@@ -58,7 +58,7 @@ export class BootEnvAttachFormComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected dialog: MatDialog, public snackBar: MatSnackBar,) {}
+              protected dialog: MdDialog, public snackBar: MdSnackBar,) {}
 
 preInit(entityForm: any) {
   this.route.params.subscribe(params => {
