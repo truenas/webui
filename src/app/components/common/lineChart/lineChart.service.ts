@@ -96,6 +96,9 @@ export class LineChartService {
       });
 
       dataHandlerInterface.handleDataFunc(linechartData);
+    }, (error)=>{
+      console.error("Application got error in LineChart.service.ts calling data for list observce objects in log ->", dataList, error);
+      return false;
     });
   }
 
