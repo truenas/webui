@@ -4,102 +4,105 @@
   </div>
   <div class="mat-content p-1">
     <div class="manager">
-    <div class="m-3">
-      <div *ngIf="isNew;else extend">
-      <mat-input-container>
-          <input matInput placeholder="Name" [(ngModel)]="name" required>
-      </mat-input-container>
-        <mat-checkbox
-          [(ngModel)]="isEncrypted"
-          class="form-control"
-           placeholder="Encryption"
-           (change)="isEncryptedChecked()" >
-           Encryption
-        </mat-checkbox>
-        <div>
-          <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+      <div class="fields m-3">
+        <div *ngIf="isNew;else extend">
+          <mat-input-container>
+            <input matInput placeholder="Name" [(ngModel)]="name" required>
+          </mat-input-container>
+          <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+          <mat-checkbox
+            [(ngModel)]="isEncrypted"
+            class="form-control"
+             placeholder="Encryption"
+             (change)="isEncryptedChecked()" >
+             Encryption
+          </mat-checkbox>
+          <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
+          <div>
+            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+            <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
+          </div>
         </div>
+        <ng-template #extend>
+          <mat-input-container>
+            <input matInput placeholder="Name" [value]="name" disabled>
+          </mat-input-container>
+          <mat-error *ngIf="isEncrypted">Extending an encrypted volume will reset the passphrase and recovery key!</mat-error>
+        </ng-template>
       </div>
-      <ng-template #extend>
-        <mat-input-container>
-          <input matInput placeholder="Name" [value]="name" disabled>
-        </mat-input-container>
-        <mat-error *ngIf="isEncrypted">Extending an encrypted volume will reset the passphrase and recovery key!</mat-error>
-      </ng-template>
-    </div>
-    <div class="wrapper">
-      <div class="disks">
-          <h4>Available Disks</h4>
-            <ngx-datatable
-              #table
-              class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
-              [rows]="disks"
-              [headerHeight]="50"
-              [rowHeight]="50"
-              [footerHeight]="50"
-              [columnMode]="'force'"
-              [limit]="10"
-              [selected] = "selected"
-              [selectionType]="'checkbox'"
-              (select)='onSelect($event)'>
-              <ngx-datatable-column
-                [width]="30"
-                [sortable]="false"
-                [canAutoResize]="false"
-                [draggable]="false"
-                [resizeable]="false"
-                [headerCheckboxable]="true"
-                [checkboxable]="true">
-              </ngx-datatable-column>
-              <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
-              <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
-            </ngx-datatable>
-            <mat-input-container>
-                <input matInput
-                  id="nameFilter"
-                  type='text'
-                  placeholder='Filter disks by name'
-                  (keyup)='updateFilter($event)'
-                />
-              </mat-input-container>
+      <div class="wrapper">
+        <div class="disks">
+            <h4>Available Disks</h4>
+              <ngx-datatable
+                #table
+                class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
+                [rows]="disks"
+                [headerHeight]="50"
+                [rowHeight]="50"
+                [footerHeight]="50"
+                [columnMode]="'force'"
+                [limit]="10"
+                [selected] = "selected"
+                [selectionType]="'checkbox'"
+                (select)='onSelect($event)'>
+                <ngx-datatable-column
+                  [width]="30"
+                  [sortable]="false"
+                  [canAutoResize]="false"
+                  [draggable]="false"
+                  [resizeable]="false"
+                  [headerCheckboxable]="true"
+                  [checkboxable]="true">
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
+                <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
+              </ngx-datatable>
               <mat-input-container>
-                <input matInput
-                  id="capacityFilter"
-                  type='text'
-                  placeholder='Filter disks by capacity'
-                  (keyup)='updateFilter($event)'
-                />
-              </mat-input-container>
-              <mat-error *ngIf="re_has_errors">{{re_errors}}</mat-error>
+                  <input matInput
+                    id="nameFilter"
+                    type='text'
+                    placeholder='Filter disks by name'
+                    (keyup)='updateFilter($event)'
+                  />
+                </mat-input-container>
+                <mat-input-container>
+                  <input matInput
+                    id="capacityFilter"
+                    type='text'
+                    placeholder='Filter disks by capacity'
+                    (keyup)='updateFilter($event)'
+                  />
+                </mat-input-container>
+                <mat-error *ngIf="re_has_errors">{{re_errors}}</mat-error>
+        </div>
+        <div class="pool">
+          <div>
+            <h4>Data VDevs</h4>
+            <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.cache.length > 0">
+            <h4>Cache VDev</h4>
+            <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.log.length > 0">
+            <h4>Log VDev</h4>
+            <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+          <div *ngIf="vdevs.spare.length > 0">
+            <h4>Spare VDev</h4>
+            <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
+          </div>
+        </div>
       </div>
-      <div class="pool">
-        <div>
-          <h4>Data VDevs</h4>
-          <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
-        </div>
-        <div *ngIf="vdevs.cache.length > 0">
-          <h4>Cache VDev</h4>
-          <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
-        </div>
-        <div *ngIf="vdevs.log.length > 0">
-          <h4>Log VDev</h4>
-          <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
-        </div>
-        <div *ngIf="vdevs.spare.length > 0">
-          <h4>Spare VDev</h4>
-          <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
-        </div>
+      <div class="buttons">
+        <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
+        <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Save</button>
+        <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
+        <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
+        <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>
+        <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">Add Log</button>
+        <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">Add Spare</button>
       </div>
     </div>
-  </div>
-  <div class="buttons">
-    <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
-    <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Save</button>
-    <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
-    <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
-    <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>
-    <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">Add Log</button>
-    <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">Add Spare</button>
-  </div>
   </div>
 </mat-card>

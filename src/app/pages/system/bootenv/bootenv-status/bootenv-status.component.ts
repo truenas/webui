@@ -2,12 +2,14 @@ import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material';
 
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { DialogService } from '../../../../services/';
 import { debug } from 'util';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 
 @Component({
@@ -35,7 +37,7 @@ export class BootStatusListComponent {
   };
 
   constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog:DialogService, protected loader: AppLoaderService,) {}
+    private dialog:DialogService, protected loader: AppLoaderService, public snackBar: MatSnackBar,) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
@@ -114,6 +116,11 @@ export class BootStatusListComponent {
     }
     return data;
   };
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action , {
+      duration: 5000
+    });
+  }
 
   detach(disk:any){
     disk = disk.substring(5, disk.length);
@@ -122,8 +129,9 @@ export class BootStatusListComponent {
       (res) => {
         this.loader.close();
         this._router.navigate(
-          new Array('').concat('system','bootenv','status')
+          new Array('').concat('system','bootenv')
         );
+        this.openSnackBar("Device successfully detached", "Success");
       },
       (res) => {
         this.loader.close();
