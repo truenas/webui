@@ -20,7 +20,10 @@ from acc_user import run_create_user_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
+from serv_dns import run_conf_dns_test
 from serv_ftp import run_conf_ftp_test
+from serv_iscsi import run_conf_iscsi_test
+from serv_lldp import run_conf_lldp_test
 from serv_dc import run_conf_dc_test
 from serv_webdav import run_conf_webdav_test
 from sys_update import run_check_update_test
@@ -99,7 +102,10 @@ except NameError:
     run_conf_sysadvance_test(runDriver)
     run_conf_afp_test(runDriver)
     run_conf_smb_test(runDriver)
+    run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
+    run_conf_iscsi_test(runDriver)
+    run_conf_lldp_test(runDriver)
     run_conf_dc_test(runDriver)
     run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
@@ -122,7 +128,10 @@ else:
         print ("Running: Guide Tests")
         run_conf_afp_test(runDriver)
         run_conf_smb_test(runDriver)
+        run_conf_dns_test(runDriver)
         run_conf_ftp_test(runDriver)
+        run_conf_iscsi_test(runDriver)
+        run_conf_lldp_test(runDriver)
         run_conf_dc_test(runDriver)
         run_conf_ssh_test(runDriver)
         run_conf_webdav_test(runDriver)
@@ -164,8 +173,17 @@ if path.exists('serv_afp.pyc'):
 if path.exists('serv_smb.pyc'):
     call(["rm", "serv_smb.pyc"])
 
+if path.exists('serv_dns.pyc'):
+    call(["rm", "serv_dns.pyc"])
+
 if path.exists('serv_ftp.pyc'):
     call(["rm", "serv_ftp.pyc"])
+
+if path.exists('serv_iscsi.pyc'):
+    call(["rm", "serv_iscsi.pyc"])
+
+if path.exists('serv_lldp.pyc'):
+    call(["rm", "serv_lldp.pyc"])
 
 if path.exists('serv_ssh.pyc'):
     call(["rm", "serv_ssh.pyc"])

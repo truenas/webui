@@ -20,7 +20,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "clean:dist": "npm run rimraf -- dist",
-    "clean:coverage": "npm run rimraf -- coverage"
+    "clean:coverage": "npm run rimraf -- coverage",
+    "reinstall": "npm run rimraf package-lock.json; npm run rimraf node_modules; npm cache clear -f; npm install"
   },
   "repository": {
     "type": "git",
@@ -94,7 +95,7 @@
     "zone.js": "0.8.20"
   },
   "devDependencies": {
-    "@angular/cli": "1.7.0-beta.3",
+    "@angular/cli": "1.7.0-rc.0",
     "@angular/compiler-cli": "5.2.2",
     "@types/c3": "0.4.52",
     "@types/chartist": "0.9.38",
