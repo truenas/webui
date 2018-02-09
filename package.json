@@ -84,6 +84,7 @@
     "perfect-scrollbar": "0.7.1",
     "raven-js": "3.17.0",
     "rxjs": "5.5.5",
+    "style-loader": "0.20.1",
     "webpack": "3.10.0",
     "xterm": "2.9.2",
     "zone.js": "0.8.4"

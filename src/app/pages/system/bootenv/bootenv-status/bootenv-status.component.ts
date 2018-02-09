@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import filesize from 'filesize';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { MatSnackBar } from '@angular/material';
+import { MdSnackBar } from '@angular/material';
 
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -38,7 +38,7 @@ export class BootStatusListComponent {
   };
 
   constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog:DialogService, protected loader: AppLoaderService, public snackBar: MatSnackBar,) {}
+    private dialog:DialogService, protected loader: AppLoaderService, public snackBar: MdSnackBar,) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
