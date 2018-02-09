@@ -20,7 +20,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "clean:dist": "npm run rimraf -- dist",
-    "clean:coverage": "npm run rimraf -- coverage"
+    "clean:coverage": "npm run rimraf -- coverage",
+    "reinstall": "npm run rimraf package-lock.json; npm run rimraf node_modules; npm cache clear -f; npm install"
   },
   "repository": {
     "type": "git",
