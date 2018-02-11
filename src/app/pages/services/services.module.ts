@@ -23,7 +23,6 @@ import {ServiceSSHComponent} from './components/service-ssh';
 import {ServiceTFTPComponent} from './components/service-tftp';
 import {ServiceUPSComponent} from './components/service-ups';
 import {ServiceWebdavComponent} from './components/service-webdav';
-import {Service} from './components/service.component';
 import {Services} from './services.component';
 import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
@@ -31,7 +30,7 @@ import {routing} from './services.routing';
 @NgModule({
   imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule ],
   declarations : [
-    Service, Services, ServiceSSHComponent, ServiceAFPComponent,
+    Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, ServiceSMARTComponent, ServiceNFSComponent,
     ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
