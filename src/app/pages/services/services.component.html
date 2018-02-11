@@ -1,0 +1,52 @@
+<mat-card class="card-filter">
+  <mat-card-header>
+    <div class="filter-field">
+      <mat-icon role="img">search</mat-icon>
+      <div class="card-filter-field">
+        <mat-input-container floatPlaceholder="Filter Service">
+          <input matInput #filter placeholder="Filter Service" [ngModel]="searchTerm" (ngModelChange)="displayFilter('title',$event)">
+        </mat-input-container>
+      </div>
+    </div>
+    <div class="view-controls">
+      <mat-button-toggle-group #viewMode="matButtonToggleGroup">
+        <mat-button-toggle value="cards">Cards</mat-button-toggle>
+        <mat-button-toggle value="slim">Slim</mat-button-toggle>
+        <mat-button-toggle value="table">Table</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="viewMode.value == 'table'" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxLayoutGap="5%">
+      <services-table [conf]="this" [data]="cards" fxFlex="100" fxLayout="column"></services-table>
+    </div>
+  </mat-card-content>
+</mat-card>
+<div class="entity-cards-container" *ngIf="viewMode.value == 'cards' || viewMode.value == 'slim'">
+  <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" [ngClass]="{'slim':viewMode.value == 'slim'}">
+    <ng-template #cardfront let-name="name">
+      <!-- Template for front face of card -->
+      <div class="service-card">
+        <div *ngIf="viewMode.value == 'cards'" class="service-bg"></div>
+        <div class="side-content section">
+          <div class="side-content-header">
+            <button mat-fab class="service-power-btn" [ngClass]="{'service-power-btn-off':card.state == 'STOPPED','service-power-btn-on':card.state == 'RUNNING','service-power-btn-crash':card.state == 'CRASHED'}" (click)="toggle(card)" matTooltip="{{ card.state }}" matTooltipPosition="right">
+              <mat-icon>power_settings_new</mat-icon>
+            </button>
+            <h3>{{ card.label }}</h3>
+            <mat-chip class="service-state">{{ card.state }}</mat-chip>
+          </div>
+          <div class="stats-info">
+            <label matLine class="mr-1"><strong>Auto-start:</strong></label>
+            <mat-checkbox [(ngModel)]="card.enable" (change)="enableToggle($event, card)"></mat-checkbox>
+          </div>
+          <div class="service-controls">
+            <button mat-raised-button color="primary" (click)="editService(card.title)">Configure</button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <!-- Create your cards here -->
+    <entity-card [ngStyle]="cardStyles()" [conf]="cards[i]" [front]="cardfront" [back]="cardback" [lazyLoaded]="cards[i].lazyLoaded"></entity-card>
+  </div>
+</div>
