@@ -24,9 +24,9 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'outgoingMail' : "//*[@id='em_outgoingserver']/mat-input-container/div/div[1]/div/input",
-           'navSystem' : "//*[@id='nav-2']/div/a[1]",
-           'submenuEmail' : "//*[@id='2-4']",
+xpaths = { 'outgoingMail' : '//*[@id="em_outgoingserver"]/mat-input-container/div/div[1]/div/input',
+           'navSystem' : '//*[@id="nav-2"]/div/a[1]',
+           'submenuEmail' : '//*[@id="2-4"]'
          }
 
 class conf_system_email_test(unittest.TestCase):
@@ -41,10 +41,10 @@ class conf_system_email_test(unittest.TestCase):
         time.sleep(1)
         driver.find_element_by_xpath(xpaths['submenuEmail']).click()
         # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
+        if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+            driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -56,7 +56,7 @@ class conf_system_email_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['outgoingMail']).clear()
         print ("configuring outgoing server to test@ixsystems.com")
         driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
-        driver.find_element_by_xpath("//*[@id='save_button']").click()
+        driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(5)
 
     # method to test if an element is present
