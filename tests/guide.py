@@ -25,8 +25,8 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navGuide' : "//*[@id='nav-15']/div/a[1]",
-          'version' : "/html/body/div/nav/div[1]/a",
+xpaths = { 'navGuide' : '//*[@id="nav-15"]/div/a[1]',
+          'version' : '/html/body/div/nav/div[1]/a'
           }
 
 
@@ -43,7 +43,7 @@ class view_guide_test(unittest.TestCase):
         # allowing page to load by giving explicit time(in seconds)
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -52,8 +52,8 @@ class view_guide_test(unittest.TestCase):
 
     def test_02_check_version(self):
         # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
+        if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+            driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
 
 #        driver.find_element_by_xpath("/html/body/div/nav/div[2]/ul/li[1]/a").click()
 #        ui_element=driver.find_element_by_xpath("/html/body/div/section/div/div/div[2]/div/p[5]")
