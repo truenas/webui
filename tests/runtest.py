@@ -9,7 +9,8 @@ import getopt
 from subprocess import call
 from os import path
 # when running for jenkins user driver, and when running on  an ubuntu system user driverU, because of  capabilities
-from driver import webDriver
+
+#from driver import webDriver
 #from driverU import webDriver
 # Importing test
 # from autoflush import autoflush
@@ -51,6 +52,9 @@ Optional Commands:
 --test-name <test_name>    - name of tests targeted
                             [account, system, guide, service, theme]
 
+--driver <d_v>             - version of the driver
+                             [U]
+
 """ % argument[0]
 
 # if have no argument stop
@@ -59,9 +63,9 @@ if len(argument) == 1:
     exit()
 
 # list of argument that should be use.
-optionlist = ["ip=", "test-name="]
+optionlist = ["ip=", "test-name=", "driver="]
 testlist = ["account", "system", "guide", "service", "theme"]
-
+versionlist = ["U"]
 # look if all the argument are there.
 try:
     myopts, args = getopt.getopt(argument[1:], 'it', optionlist)
@@ -75,6 +79,8 @@ for output, arg in myopts:
         ip = arg
     if output == "--test-name":
         test_name = arg
+    if output == "--driver":
+        driver_v = arg
 
 try:
     ip
@@ -82,6 +88,18 @@ except NameError:
     print("Option '--ip' is missing")
     print(UsageMSG)
     sys.exit(1)
+
+try:
+    driver_v
+except NameError:
+    from driver import webDriver
+    print ("Running jenkin/truos driver")
+
+else:
+    if (driver_v == "U"):
+        from driverU import webDriver
+        print ("Running Ubuntu driver")
+
 
 global runDriver
 runDriver = webDriver()
