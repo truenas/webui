@@ -26,12 +26,12 @@ except ImportError:
 
 
 xpaths = {
-          'submenuGroup': "//*[@id='1-0']",
-          'newGroupName': "//*[@id='bsdgrp_group']/mat-input-container/div/div[1]/div/input",
-          'fabTrigger': "//*[@id='myFab']/div/smd-fab-trigger/button",
-          'fabAction': "//*[@id='add_action_button']/span/mat-icon",
-          'saveButton': "//*[@id='save_button']",
-          'permitsudoCheckbox': "//*[@id='bsdgrp_sudo']/mat-checkbox/label/div"
+          'submenuGroup': '//*[@id="1-0"]',
+          'newGroupName': '//*[@id="bsdgrp_group"]/mat-input-container/div/div[1]/div/input',
+          'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
+          'fabAction': '//*[@id="add_action_button"]/span/mat-icon',
+          'saveButton': '//*[@id="save_button"]',
+          'permitsudoCheckbox': '//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div'
         }
 
 class create_group_test(unittest.TestCase):
@@ -48,7 +48,7 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         time.sleep(2)
         # get the ui element
-        ui_element1=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+        ui_element1=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
         # get the weather data
         page_data=ui_element1.text
         print ("the Page now is: " + page_data)
@@ -138,12 +138,12 @@ class create_group_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]"):
-            if self.is_element_present(By.XPATH,"/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1"):
-                ui_element=driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1")
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+                ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
-            driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
+            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
 
     @classmethod
