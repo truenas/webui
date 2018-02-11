@@ -26,9 +26,9 @@ except ImportError:
 
 
 xpaths = {
-        'navAccount' : "//*[@id='nav-1']/div/a[1]",
-        'submenuUser' : "//*[@id='1-1']",
-        'submenuGroup' : "//*[@id='1-0']",
+        'navAccount' : '//*[@id="nav-1"]/div/a[1]',
+        'submenuUser' : '//*[@id="1-1"]',
+        'submenuGroup' : '//*[@id="1-0"]'
         }
 
 class delete_test(unittest.TestCase):
@@ -48,7 +48,7 @@ class delete_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuUser']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -77,7 +77,7 @@ class delete_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -121,11 +121,11 @@ class delete_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,"/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p")
+        if self.is_element_present(By.XPATH,'/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p'):
+            ui_element=driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p')
             error_element=ui_element.text
             print (error_element)
-            driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button").click()
+            driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button').click()
 
     def delete(self, type, name):
         # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
@@ -148,8 +148,8 @@ class delete_test(unittest.TestCase):
         index = 1
         ui_text = "null"
         for x in range(1, 10):
-            if self.is_element_present(By.XPATH, "//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
-                ui_element=driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
+            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x
@@ -160,18 +160,18 @@ class delete_test(unittest.TestCase):
         time.sleep(1)
 
         # click on the 3 dots
-        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[" + str(num) + "]/div/app-entity-table-actions/div/mat-icon").click()
+        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on delete option
-        driver.find_element_by_xpath("//*[@id='action_button_Delete']").click()
+        driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
         # check confirmation checkbox
         for i in range(0,10):
-            if (self.is_element_present(By.XPATH,"/html/body/div[" + str(i) + "]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div")):
-                driver.find_element_by_xpath("/html/body/div[" + str(i) + "]/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div").click()
+            if (self.is_element_present(By.XPATH,'/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div')):
+                driver.find_element_by_xpath('/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div').click()
                 print ("loop-" + str(i))
                 break
         # click on confirmation button
-        driver.find_element_by_xpath("//*[contains(text(), 'OK')]").click()
+        driver.find_element_by_xpath('//*[contains(text(), "OK")]').click()
 
     @classmethod
     def tearDownClass(inst):
