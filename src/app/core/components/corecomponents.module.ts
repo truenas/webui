@@ -20,6 +20,7 @@ import { ViewChartLineComponent } from './viewchartline/viewchartline.component'
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
+import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
@@ -59,6 +60,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     WidgetComponent,
     WidgetSysInfoComponent,
     WidgetCpuHistoryComponent,
+    WidgetMemoryHistoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetPoolComponent
@@ -84,6 +86,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     WidgetComponent,
     WidgetSysInfoComponent,
     WidgetCpuHistoryComponent,
+    WidgetMemoryHistoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetPoolComponent
@@ -103,6 +106,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     WidgetComponent,
     WidgetSysInfoComponent,
     WidgetCpuHistoryComponent,
+    WidgetMemoryHistoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
     WidgetPoolComponent
