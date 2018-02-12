@@ -129,6 +129,14 @@ export class VolumesListTableConfig {
     });
     
     actions.push({
+      label: "Create Recovery Key",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "createkey", row1.id]));
+      }
+    });
+
+    actions.push({
       label: "Add Recovery Key",
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
