@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -48,6 +49,11 @@ export class WidgetComponent implements AfterViewInit {
     }
 
     this.isFlipped = !this.isFlipped;
+  }
+
+  setPreferences(form:NgForm){
+    console.log("******** FORM SUBMITTED!! ********");
+    console.log(form);
   }
 
 }

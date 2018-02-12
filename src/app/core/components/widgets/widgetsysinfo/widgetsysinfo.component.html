@@ -17,6 +17,7 @@
         <div fxFlex="40" class="card-bg-wrapper">
           <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
           <div class="logo-bg" *ngIf="cardBg == 'logo.svg'" animate [colorLoop]="themeAccentColors"><img class="os-logo" src="assets/images/logo.svg"></div>
+          <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
         </div>
         <div fxFlex="60">
         <mat-list role="list" *ngIf="data">
@@ -27,7 +28,7 @@
           <mat-list-item role="listitem"><span class="bold">OS Version: </span>  {{data.version}}</mat-list-item>
           <mat-list-item role="listitem"><span class="bold">Processor: </span>  {{data.model}} ({{data.cores}} cores)</mat-list-item>
           <mat-list-item role="listitem"><span class="bold">Memory: </span>  {{memory}}</mat-list-item>
-          <mat-list-item role="listitem"><span class="bold">HostName: </span>  {{data.hostname}}</mat-list-item>
+          <mat-list-item role="listitem"><span class="bold">HostName: </span>  {{data.hostname}} <span class="bold" style="margin-left:16px">IP Addr: </span>  {{ip}}</mat-list-item>
           <mat-list-item role="listitem"><span class="bold">Uptime: </span>  {{data.uptime}}</mat-list-item>
           <mat-list-item role="listitem">
             <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel}}</button>

@@ -136,7 +136,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
           legendHtmlItem.value = d[i].data[0];
           this.showLegendValues = true;
         }
-        this.legend.push(legendHtmlItem)
+        this.legend.push(legendHtmlItem);
       }
       this._data = result;
 

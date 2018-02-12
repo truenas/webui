@@ -1,5 +1,15 @@
+.widget{
+  margin-bottom:32px;
+}
+
 .widget .viewchart-wrapper{
   width:100%;
+}
+
+.widget.line .viewchart-wrapper,
+.widget.spline .viewchart-wrapper,
+.widget.area .viewchart-wrapper,
+.widget.area-spline .viewchart-wrapper{
   position:absolute !important;
   bottom:0;
 }
@@ -162,7 +172,10 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
 }
 
 /* Event Rects (Can't decide if I like these. Will ask Kris) */
-.c3-event-rects{
+.line .c3-event-rects,
+.spline .c3-event-rects,
+.area .c3-event-rects,
+.area-spline .c3-event-rects{
   cursor:crosshair !important;
 }
 /*

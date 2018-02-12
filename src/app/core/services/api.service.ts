@@ -30,6 +30,15 @@ export class ApiService {
         responseEvent: "PoolData"
       }
     },
+    PoolDisksRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"pool.get_disks",
+        args: [],
+        responseEvent: "PoolDisks"
+      }
+    },
     UpdateCheck:{
       apiCall:{
         protocol:"websocket",
@@ -156,7 +165,16 @@ export class ApiService {
         cloneRes.meta.legend = l;
         return cloneRes;
       }
-    }
+    },
+    DisksInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"disk.query",
+        args: [],
+        responseEvent: "DisksInfo"
+      }
+    },
   } 
 
     constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {

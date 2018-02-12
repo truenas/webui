@@ -2,6 +2,7 @@ import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
+import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -65,5 +66,13 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
      this.chartCpu.height = this.chartSize;
   }
 
+  setPreferences(form:NgForm){
+    let filtered: string[] = [];
+    for(let i in form.value){
+      if(form.value[i]){
+        filtered.push(i);
+      }
+    }
+  }
 
 }
