@@ -83,15 +83,16 @@ class change_theme_test(unittest.TestCase):
     def theme_change(self, which):
         # Click on the theme Button
         driver.find_element_by_xpath(xpaths['themeBar']).click()
+        time.sleep(1)
         print ("selecting theme: " + which)
         if (self.is_element_present(By.XPATH, "//*[contains(text(), \'" + which + "\'  )]")):
             print ("attempting to click on theme: " + which)
             driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
-            time.sleep(3)
+            time.sleep(2)
         else:
             print (" Theme not present so making theme default ixblue")
             driver.find_element_by_xpath("//*[contains(text(), 'iX Blue')]").click()
-            time.sleep(3)
+            time.sleep(2)
 
     @classmethod
     def tearDownClass(inst):
