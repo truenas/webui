@@ -30,7 +30,7 @@ import {  DialogService } from '../../../../services/';
 import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
 
 
-interface Formconfiguration {
+export interface Formconfiguration {
   saveSubmitText?;
   preInit?;
   resource_name?;
@@ -42,7 +42,7 @@ interface Formconfiguration {
   isNew?;
   pk?;
   custom_get_query?;
-  fieldConfig?;
+  fieldConfig?: FieldConfig[];
   resourceTransformIncomingRestData?;
   route_usebaseUrl?;
   afterInit?;

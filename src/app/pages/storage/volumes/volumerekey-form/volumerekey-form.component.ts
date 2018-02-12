@@ -19,23 +19,26 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 
 @Component({
   selector : 'app-volumeunlock-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class VolumeRekeyFormComponent {
+export class VolumeRekeyFormComponent  implements Formconfiguration {
 
-  protected resource_name = 'storage/volume';
-  protected route_success: string[] = [ 'storage', 'volumes'];
-  protected isNew = false;
-  protected isEntity = true;
-  protected entityData = {
+  saveSubmitText: "ReKey Volume"; 
+
+  resource_name = 'storage/volume';
+  route_success: string[] = [ 'storage', 'volumes'];
+  isNew = false;
+  isEntity = true;
+  entityData = {
     name: "",
     passphrase: ""
   };
   
-  protected fieldConfig: FieldConfig[] = [
+  fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'name',
