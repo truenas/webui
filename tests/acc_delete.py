@@ -136,10 +136,12 @@ class delete_test(unittest.TestCase):
             num = 7
             delNum = 2
             path = "User"
+            plug = "bsdusr_username"
         elif (type == "group"):
             num = 4
             delNum = 3
             path = "Group"
+            plug = "bsdgrp_group"
 
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenu' + path]).click()
@@ -147,31 +149,37 @@ class delete_test(unittest.TestCase):
         time.sleep(2)
         index = 1
         ui_text = "null"
-        for x in range(1, 10):
-            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
-                ui_text = ui_element.text
-            if (ui_text == name):
-                index = x
-                break
-            ui_element = " "
+        if (self.is_element_present(By.XPATH, '//*[@id="' + plug + '_' + name  + '\"]' )):
+            print ("username/groupname- " + name + " exists")
 
-        print ("index, delNum, num: " + str(index) + ", " + str(delNum) + "," + str(num))
-        time.sleep(1)
+            for x in range(1, 10):
+                if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                    ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+                    ui_text = ui_element.text
+                if (ui_text == name):
+                    index = x
+                    break
+                ui_element = " "
 
-        # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
-        time.sleep(1)
-        # click on delete option
-        driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
-        # check confirmation checkbox
-        for i in range(0,10):
-            if (self.is_element_present(By.XPATH,'/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div')):
-                driver.find_element_by_xpath('/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div').click()
-                print ("loop-" + str(i))
-                break
-        # click on confirmation button
-        driver.find_element_by_xpath('//*[contains(text(), "OK")]').click()
+            print ("index, delNum, num: " + str(index) + ", " + str(delNum) + "," + str(num))
+            time.sleep(1)
+
+            # click on the 3 dots
+            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+            time.sleep(1)
+            # click on delete option
+            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
+            # check confirmation checkbox
+            for i in range(0,10):
+                if (self.is_element_present(By.XPATH,'/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div')):
+                    driver.find_element_by_xpath('/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div').click()
+                    print ("loop-" + str(i))
+                    break
+            # click on confirmation button
+            driver.find_element_by_xpath('//*[contains(text(), "OK")]').click()
+
+        else:
+            print ("username/groupname- " + name + " does not exists..skipping")
 
     @classmethod
     def tearDownClass(inst):
