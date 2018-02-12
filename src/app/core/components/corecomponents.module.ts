@@ -24,6 +24,8 @@ import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetlo
 import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
+import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
+import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
 import { AnimationDirective } from 'app/core/directives/animation.directive';
@@ -65,6 +67,8 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     WidgetMemoryHistoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
+    WidgetNoteComponent,
+    WidgetNotesCollectionComponent,
     WidgetPoolComponent
   ],
   exports: [ // Modules and Components here
@@ -92,6 +96,8 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     WidgetMemoryHistoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
+    WidgetNoteComponent,
+    WidgetNotesCollectionComponent,
     WidgetPoolComponent
   ],
   entryComponents:[
@@ -113,6 +119,8 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     WidgetMemoryHistoryComponent,
     WidgetStorageComponent,
     WidgetStorageCollectionComponent,
+    WidgetNoteComponent,
+    WidgetNotesCollectionComponent,
     WidgetPoolComponent
   ]
 })
