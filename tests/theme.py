@@ -91,7 +91,7 @@ class change_theme_test(unittest.TestCase):
         else:
             print (" Theme not present so making theme default ixblue")
             driver.find_element_by_xpath("//*[contains(text(), 'iX Blue')]").click()
-
+            time.sleep(3)
 
     @classmethod
     def tearDownClass(inst):
