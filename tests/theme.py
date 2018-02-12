@@ -85,6 +85,7 @@ class change_theme_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['themeBar']).click()
         print ("selecting theme: " + which)
         if (self.is_element_present(By.XPATH, "//*[contains(text(), \'" + which + "\'  )]")):
+            print ("attempting to click on theme: " + which)
             driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
             time.sleep(3)
         else:
