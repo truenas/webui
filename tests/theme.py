@@ -26,14 +26,14 @@ except ImportError:
 
 xpaths = { 'themeBar' : "//*[@id='schemeToggle']/span/mat-icon"
          }
-theme_name = { 'theme1' : 'Dark Purple',
-               'theme2' : 'Dark Pink',
-               'theme3' : 'Blue',
-               'theme4' : 'iX Blue',
-               'theme5' : 'Indigo',
+theme_name = { 'theme1' : 'iX Blue',
+               'theme2' : 'Solarized Dark',
+               'theme3' : 'Dark Purple',
+               'theme4' : 'Indigo',
+               'theme5' : 'Sharks',
                'theme6' : 'Solarized Dark',
-               'theme7' : 'Warriors',
-               'theme8' : 'Sharks'
+               'theme7' : 'Dark Purple',
+               'theme8' : 'iX Blue'
               }
 
 
