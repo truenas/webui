@@ -27,7 +27,7 @@ import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-fo
 })
 export class VolumeUnlockFormComponent  implements Formconfiguration {
 
-  saveSubmitText: "Unlock Volume Key";
+  saveSubmitText = "Unlock";
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -82,7 +82,7 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
         ["storage", "volumes"]));
 
     }, (res) => {
-      this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
+      this.dialogService.errorReport("Error Unlocking", res.message, res.stack);
     });
   }
   

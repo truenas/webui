@@ -27,7 +27,7 @@ import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-fo
 })
 export class VolumeRekeyFormComponent  implements Formconfiguration {
 
-  saveSubmitText: "ReKey Volume"; 
+  saveSubmitText = "ReKey"; 
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -81,7 +81,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
-      this.dialogService.errorReport("Error getting keying volume", res.message, res.stack);
+      this.dialogService.errorReport("Error re keying volume", res.message, res.stack);
     });
   }
   

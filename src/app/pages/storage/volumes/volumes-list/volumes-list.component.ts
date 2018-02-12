@@ -112,7 +112,7 @@ export class VolumesListTableConfig {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
-              this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
+              this.dialogService.errorReport("Error locking volume", res.message, res.stack);
             });
           }
         });
@@ -148,7 +148,7 @@ export class VolumesListTableConfig {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
-              this.dialogService.errorReport("Error Deleting recovery key for volume", res.message, res.stack);
+              this.dialogService.errorReport("Error Deleting Key", res.message, res.stack);
             });
           }
         });

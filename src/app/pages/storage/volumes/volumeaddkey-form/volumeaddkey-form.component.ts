@@ -27,7 +27,7 @@ import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-fo
 })
 export class VolumeAddkeyFormComponent implements Formconfiguration {
 
-  saveSubmitText: "Add Volume Key";
+  saveSubmitText = "Add Key";
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -81,7 +81,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
-      this.dialogService.errorReport("Error getting adding key for volume", res.message, res.stack);
+      this.dialogService.errorReport("Error adding key to volume", res.message, res.stack);
     });
   }
   

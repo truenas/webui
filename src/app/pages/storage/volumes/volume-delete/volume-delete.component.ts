@@ -16,7 +16,7 @@ import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-fo
 })
 export class VolumeDeleteComponent implements Formconfiguration {
 
-  saveSubmitText: "Delete Volume";
+  saveSubmitText = "Delete Key";
   resource_name = 'storage/volume/';
   route_success: string[] = [ 'storage', 'volumes' ];
   
