@@ -208,6 +208,49 @@ export class ApiService {
         return cloneRes;
       }
     },
+    StatsLoadAvgRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        //Do some stuff here
+        let dataList = [];
+        let oldDataList = redef.args[0];
+        let options = redef.args[1];
+
+        for(let i in oldDataList){
+          dataList.push({
+            source:"processes",
+            type:"ps_" + oldDataList[i],
+            dataset:"value"
+          });
+        }
+        
+        redef.args = [dataList,options];
+        redef.responseEvent = 'StatsLoadAvgData';
+        return redef;
+      },
+      postProcessor(res){
+        console.log("******** LOAD STAT RESPONSE ********");
+        console.log(res);
+        //return res;
+        
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          let spl = legend[i].split("processes/ps_state-");
+          l.push(spl[1]);
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
+      }
+    },
     DisksInfoRequest:{
       apiCall:{
         protocol:"websocket",

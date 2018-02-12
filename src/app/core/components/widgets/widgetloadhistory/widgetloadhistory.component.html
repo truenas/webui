@@ -1,0 +1,31 @@
+<div class="widget widget-{{widgetSize}}">
+  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
+        <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
+        <button mat-icon-button (click)="toggleConfig()">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </mat-toolbar-row>
+      <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="center start" fxFlex="100">
+        <viewchartline fxFlex="100" fxFlexAlign="end" #chartLoad [width]="chartSize" [height]="chartSize" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>
+      </mat-card-content>
+      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
+    </mat-card>
+    <mat-card class="back">
+      <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
+        <form (ngSubmit)="setPreferences(f)" #f="ngForm" id="preferences" *ngIf="chartLoad.legend.length > 0">
+          <ng-container *ngFor="let legend of chartLoad.legend; let i=index">
+            <mat-checkbox ngModel name="{{chartLoad.legend[i].name}}">
+              {{chartLoad.legend[i].name}}
+            </mat-checkbox><br>
+          </ng-container>
+        </form>
+      </mat-card-content>
+      <div class="widget-footer">
+        <button mat-raised-button color="accent" (click)="toggleConfig()">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">Save</button>
+      </div>
+    </mat-card>
+  </div>
+</div>

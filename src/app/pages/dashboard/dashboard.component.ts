@@ -18,6 +18,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     <widget-storage-collection fxFlex="48" [widgetSize]="medium" [widgetFlex]="zPoolFlex" [collectionLayout]="'row'"></widget-storage-collection>
     <widget-cpu-history fxFlex="30" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-cpu-history>
     <widget-memory-history fxFlex="30" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-memory-history>
+    <widget-load-history fxFlex="30" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-load-history>
   
     <button mat-fab color="primary" (click)="toggleShake()" style="position:fixed; z-index:30;bottom:24px; right:24px;"><mat-icon role="img">settings</mat-icon></button>
   </div>
