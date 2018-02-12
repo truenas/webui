@@ -42,6 +42,10 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     {
       type : 'input',
       name : 'name',
+      isHidden: true
+    },{
+      type : 'input',
+      name : 'name',
       placeholder: 'passphrase',
       isHidden: true
     },{

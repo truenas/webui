@@ -35,14 +35,14 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   isEntity = true;
   entityData = {
     name: "",
-    passphrase: ""
+    passphrase: "",
+    passphrase2: ""
   };
   
   fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'name',
-      placeholder: 'passphrase',
       isHidden: true
     },{
       type : 'input',
@@ -79,9 +79,10 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
-    this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    console.log("VALUE", value);
+    this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
-      this.dialogService.Info("Rekeyed Volume", "Successfully Created Key to volume " + value.name);
+      this.dialogService.Info("Created Volume Key", "Successfully Created Key to volume " + value.name);
 
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));

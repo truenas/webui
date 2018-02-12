@@ -42,7 +42,6 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     {
       type : 'input',
       name : 'name',
-      placeholder: 'passphrase',
       isHidden: true
     },{
       type : 'input',

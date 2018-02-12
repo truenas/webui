@@ -42,7 +42,6 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     {
       type : 'input',
       name : 'name',
-      placeholder: 'passphrase',
       isHidden: true
     },{
       type : 'input',
