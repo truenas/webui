@@ -26,14 +26,14 @@ except ImportError:
 
 xpaths = { 'themeBar' : "//*[@id='schemeToggle']/span/mat-icon"
          }
-theme_name = { 'theme1' : 'Dark Purple',
-               'theme2' : 'Dark Pink',
-               'theme3' : 'Blue',
-               'theme4' : 'iX Blue',
-               'theme5' : 'Indigo',
+theme_name = { 'theme1' : 'iX Blue',
+               'theme2' : 'Solarized Dark',
+               'theme3' : 'Dark Purple',
+               'theme4' : 'Indigo',
+               'theme5' : 'Sharks',
                'theme6' : 'Solarized Dark',
-               'theme7' : 'Warriors',
-               'theme8' : 'Sharks'
+               'theme7' : 'Dark Purple',
+               'theme8' : 'iX Blue'
               }
 
 
@@ -83,14 +83,16 @@ class change_theme_test(unittest.TestCase):
     def theme_change(self, which):
         # Click on the theme Button
         driver.find_element_by_xpath(xpaths['themeBar']).click()
+        time.sleep(1)
         print ("selecting theme: " + which)
         if (self.is_element_present(By.XPATH, "//*[contains(text(), \'" + which + "\'  )]")):
+            print ("attempting to click on theme: " + which)
             driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
-            time.sleep(3)
+            time.sleep(2)
         else:
             print (" Theme not present so making theme default ixblue")
             driver.find_element_by_xpath("//*[contains(text(), 'iX Blue')]").click()
-
+            time.sleep(2)
 
     @classmethod
     def tearDownClass(inst):
