@@ -38,7 +38,7 @@
         <div>
           <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
             
-            <dxi-column dataField='name' [width]="Name" cellTemplate="cellTemplateName"></dxi-column>
+            <dxi-column dataField='name' cellTemplate="cellTemplateName"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplateName'">
               <div class="panel_container" id="row_name_{{rowData.data.name}}">
                 {{rowData.data.name}}

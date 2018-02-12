@@ -101,6 +101,34 @@ export class VolumesListTableConfig {
     const actions = [];
 
     actions.push({
+      label: "Lock",
+      onClick: (row1) => {
+        this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+          if (confirmResult === true) {
+
+            this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              console.log("restPostResp", restPostResp);
+              this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
+            });
+          }
+        });
+      }
+    });
+
+
+    actions.push({
+      label: "Un-Lock",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "unlock", row1.id]));
+      }
+    });
+    
+    actions.push({
       label: "Add Recovery Key",
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
@@ -126,8 +154,6 @@ export class VolumesListTableConfig {
         });
       }
     });
-
-
 
     actions.push({
       label: "Encryption Rekey",
@@ -174,34 +200,6 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row1.id]));
         }
       });
-      actions.push({
-        label: "Lock",
-        onClick: (row1) => {
-          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
-            if (confirmResult === true) {
-
-              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
-              });
-            }
-          });
-        }
-      });
-
-
-      actions.push({
-        label: "Un-Lock",
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "unlock", row1.id]));
-        }
-      });
-
 
     }
 
