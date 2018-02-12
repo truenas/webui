@@ -23,8 +23,8 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
-           'turnoffConfirm': "//*[contains(text(), 'OK')]"
+xpaths = { 'navService': '//*[@id="nav-8"]/div/a[1]',
+           'turnoffConfirm': '//*[contains(text(), "OK")]'
          }
 
 class conf_dc_test(unittest.TestCase):
@@ -40,7 +40,7 @@ class conf_dc_test(unittest.TestCase):
         # check if the Service page is opens
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -91,7 +91,7 @@ class conf_dc_test(unittest.TestCase):
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         if to == "start":
@@ -105,7 +105,7 @@ class conf_dc_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
@@ -115,7 +115,7 @@ class conf_dc_test(unittest.TestCase):
 
 
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)

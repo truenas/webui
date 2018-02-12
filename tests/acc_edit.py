@@ -26,9 +26,9 @@ except ImportError:
 
 
 xpaths = {
-        'navAccount' : "//*[@id='nav-1']/div/a[1]",
-        'submenuUser' : "//*[@id='1-1']",
-        'submenuGroup' : "//*[@id='1-0']",
+        'navAccount' : '//*[@id="nav-1"]/div/a[1]',
+        'submenuUser' : '//*[@id="1-1"]',
+        'submenuGroup' : '//*[@id="1-0"]',
         }
 
 class edit_test(unittest.TestCase):
@@ -48,7 +48,7 @@ class edit_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuUser']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -61,7 +61,7 @@ class edit_test(unittest.TestCase):
         #call edit funtion on the userNAS
         self.edit("user", newusername)
         # get the ui element
-        ui_email=driver.find_element_by_xpath("//*[@id='email']/mat-input-container/div/div[1]/div/input")
+        ui_email=driver.find_element_by_xpath('//*[@id="email"]/mat-input-container/div/div[1]/div/input')
         # get the weather data
         email_data=ui_email.get_attribute('value')
         print ("the email for user " + newusername + " is " + email_data)
@@ -71,8 +71,8 @@ class edit_test(unittest.TestCase):
     def test_01_02_edit_userNAS_sudo(self):
         print ("Changing permission to sudo user ")
         # Changing permission to sudo
-        ui_sudo=driver.find_element_by_xpath("//*[@id='sudo']/mat-checkbox")
-        driver.find_element_by_xpath("//*[@id='save_button']").click()
+        ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
+        driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(15)
 
     def test_02_00_nav_acc_group(self):
@@ -81,7 +81,7 @@ class edit_test(unittest.TestCase):
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
@@ -92,8 +92,8 @@ class edit_test(unittest.TestCase):
         print ("change permission of groupNAS to sudo")
         time.sleep(2)
         self.edit("group", newgroupname)
-        driver.find_element_by_xpath("//*[@id='bsdgrp_sudo']/mat-checkbox/label/div").click()
-        driver.find_element_by_xpath("//*[@id='save_button']").click()
+        driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
+        driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(20)
         #closing the account menu
         driver.find_element_by_xpath(xpaths['navAccount']).click()
@@ -114,11 +114,11 @@ class edit_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH,"/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p"):
-            ui_element=driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p")
+        if self.is_element_present(By.XPATH,'/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p'):
+            ui_element=driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[1]/p')
             error_element=ui_element.text
             print (error_element)
-            driver.find_element_by_xpath("/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button").click()
+            driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/md-dialog-container/error-dialog/div[2]/button').click()
 
     def edit(self, type, name):
         # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
@@ -141,8 +141,8 @@ class edit_test(unittest.TestCase):
         index = 1
         ui_text = "null"
         for x in range(1, 10):
-            if self.is_element_present(By.XPATH, "//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div"):
-                ui_element=driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div")
+            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x
@@ -151,10 +151,10 @@ class edit_test(unittest.TestCase):
         print ("index, delNum, num: " + str(index) + ", " + str(delNum) + "," + str(num))
         time.sleep(1)
         # click on the 3 dots
-        driver.find_element_by_xpath("//*[@id='entity-table-component']/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[" + str(x) + "]/datatable-body-row/div[2]/datatable-body-cell[" + str(num) + "]/div/app-entity-table-actions/div/mat-icon").click()
+        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on edit option
-        driver.find_element_by_xpath("//*[@id='action_button_Edit']").click()
+        driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
 
     @classmethod
     def tearDownClass(inst):
