@@ -49,6 +49,11 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       name : 'passphrase',
       placeholder: 'passphrase',
       tooltip: 'Geli Passphrase'
+    },{
+      type : 'input',
+      name : 'passphrase2',
+      placeholder: 'passphrase2 must match above',
+      tooltip: 'Geli Passphrase must match above'
     }
   ];
 
