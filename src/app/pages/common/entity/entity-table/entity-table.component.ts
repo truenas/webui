@@ -30,7 +30,7 @@ export interface InputTableConf {
   route_add?: string[];
   queryRes?: any [];
   isActionVisible?: any;
-
+  config?: any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);

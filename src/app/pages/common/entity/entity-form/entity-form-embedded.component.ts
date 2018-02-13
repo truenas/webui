@@ -51,6 +51,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public submitFunction = this.editSubmit;
   private isNew = false;
   public hasConf = true;
+  public saveSubmitText = "Save";
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -89,6 +90,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   ngOnInit() {
+    if(this.conf.saveSubmitText) {
+      this.saveSubmitText = this.conf.saveSubmitText;
+    }
+    
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }

@@ -16,7 +16,7 @@ import {
 
 
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
@@ -27,15 +27,14 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 
 @Component({
   selector : 'device-edit',
-  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
-  styleUrls : [ '../../../common/entity/entity-form/entity-form.component.scss' ],
+  template : `<device-add [conf]="this"></device-add>`,
   providers : [ VmService ]
 })
 
 export class DeviceEditComponent implements OnInit {
 
   
-  public resource_name: string = 'vm/device';
+  public resource_name = 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
@@ -50,8 +49,8 @@ export class DeviceEditComponent implements OnInit {
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
   public conf: any = {};
-  public hasConf:  boolean = true;
-  public success: boolean = false;
+  public hasConf = true;
+  public success = false;
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;

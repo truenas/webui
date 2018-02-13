@@ -53,8 +53,11 @@ export interface Formconfiguration {
   dataAttributeHandler?;
   route_cancel?;
   route_success?;
+  route_delete?;
   custom_edit_query?;
   custom_add_query?
+  custActions?: any[];
+  
   beforeSubmit?;
   customSubmit?;
   clean?;
