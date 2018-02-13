@@ -47,9 +47,9 @@ class conf_dc_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
 
-        self.service_search("Domain Controller")
+#        self.service_search("Domain Controller")
         # scroll down
-#        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         self.status_change("3", "start")
         # dc test takes almost takes 18 seconds to turn on
         time.sleep(18)

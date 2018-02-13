@@ -46,9 +46,9 @@ class conf_lldp_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
-        self.service_search("Domain Controller")
+#        self.service_search("Domain Controller")
         # scroll down
-#        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         self.status_change("7", "start")
 
     def test_02_checkif_lldp_on (self):
