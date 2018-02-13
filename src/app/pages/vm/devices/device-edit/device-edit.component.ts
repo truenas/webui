@@ -390,7 +390,7 @@ export class DeviceEditComponent implements OnInit {
             payload['dtype'] = 'DISK'
             payload['attributes'] = {
                 'type' : formvalue.DISK_mode, 
-                'path' : formvalue.DISK_zvol,
+                'path' : "/dev/zvol/"+formvalue.DISK_zvol,
               }
             }
         if (this.dtype === 'CDROM') {
