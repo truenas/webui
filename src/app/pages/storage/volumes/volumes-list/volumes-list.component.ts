@@ -101,36 +101,40 @@ export class VolumesListTableConfig implements InputTableConf {
   getEncryptedActions(rowData: any) {
     const actions = [];
 
-    actions.push({
-      label: "Lock",
-      onClick: (row1) => {
-        this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
-          if (confirmResult === true) {
-            this.loader.open();
-            this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-              console.log("restPostResp", restPostResp);
-              this.loader.close();
-              
-              this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
-                this.parentVolumesListComponent.repaintMe();
+    if( rowData.vol_encrypt === 2 ) {
+      actions.push({
+        label: "Lock",
+        onClick: (row1) => {
+          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+            if (confirmResult === true) {
+              this.loader.open();
+              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                console.log("restPostResp", restPostResp);
+                this.loader.close();
+                
+                this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport("Error locking volume", res.message, res.stack);
               });
-            }, (res) => {
-              this.loader.close();
-              this.dialogService.errorReport("Error locking volume", res.message, res.stack);
-            });
-          }
-        });
-      }
-    });
+            }
+          });
+        }
+      });
+
+      actions.push({
+        label: "Un-Lock",
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "unlock", row1.id]));
+        }
+      });
+   }
 
 
-    actions.push({
-      label: "Un-Lock",
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "unlock", row1.id]));
-      }
-    });
+   
     
     actions.push({
       label: "Create Recovery Key",
