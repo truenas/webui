@@ -26,9 +26,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   selector : 'app-volumeunlock-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class VolumeAddkeyFormComponent implements Formconfiguration {
+export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
-  saveSubmitText = "Add Key";
+  saveSubmitText = "Create";
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -36,7 +36,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   isEntity = true;
   entityData = {
     name: "",
-    passphrase: ""
+    passphrase: "",
+    passphrase2: ""
   };
   
   fieldConfig: FieldConfig[] = [
@@ -49,6 +50,11 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       name : 'passphrase',
       placeholder: 'passphrase',
       tooltip: 'Geli Passphrase'
+    },{
+      type : 'input',
+      name : 'passphrase2',
+      placeholder: 'passphrase2 must match above',
+      tooltip: 'Geli Passphrase must match above'
     }
   ];
 
@@ -76,16 +82,17 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
 
   customSubmit(value) {
     this.loader.open();
-
-    return this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    console.log("VALUE", value);
+    return this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Rekeyed Volume", "Successfully Added Key to volume " + value.name);
+      this.dialogService.Info("Created Volume Key", "Successfully Created Key to volume " + value.name);
+
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error adding key to volume", res.message, res.stack);
+      this.dialogService.errorReport("Error Creating key to volume", res.message, res.stack);
     });
   }
   

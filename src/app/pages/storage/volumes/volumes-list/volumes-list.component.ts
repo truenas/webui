@@ -4,7 +4,7 @@ import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -50,12 +50,12 @@ export interface ZfsPoolData {
 }
 
 
-export class VolumesListTableConfig {
-  protected hideTopActions = true;
-  protected flattenedVolData: any;
-  protected resource_name = 'storage/volume';
-  protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip = "Create ZFS Pool";
+export class VolumesListTableConfig implements InputTableConf {
+  public hideTopActions = true;
+  public flattenedVolData: any;
+  public resource_name = 'storage/volume';
+  public route_add: string[] = ['storage', 'volumes', 'manager'];
+  public route_add_tooltip = "Create ZFS Pool";
   public rowData: ZfsPoolData[] = [];
 
   constructor(
@@ -65,7 +65,8 @@ export class VolumesListTableConfig {
     private title: string,
     public mdDialog: MatDialog,
     protected rest: RestService,
-    protected dialogService: DialogService) {
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -97,6 +98,99 @@ export class VolumesListTableConfig {
     return actions;
   }
 
+  getEncryptedActions(rowData: any) {
+    const actions = [];
+
+    actions.push({
+      label: "Lock",
+      onClick: (row1) => {
+        this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+          if (confirmResult === true) {
+            this.loader.open();
+            this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              console.log("restPostResp", restPostResp);
+              this.loader.close();
+              
+              this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport("Error locking volume", res.message, res.stack);
+            });
+          }
+        });
+      }
+    });
+
+
+    actions.push({
+      label: "Un-Lock",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "unlock", row1.id]));
+      }
+    });
+    
+    actions.push({
+      label: "Create Recovery Key",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "createkey", row1.id]));
+      }
+    });
+
+    actions.push({
+      label: "Add Recovery Key",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "addkey", row1.id]));
+      }
+    });
+
+    actions.push({
+      label: "Delete Recovery Key",
+      onClick: (row1) => {
+        this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
+          if (confirmResult === true) {
+            this.loader.open();
+            
+            this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              console.log("restPostResp", restPostResp);
+              this.loader.close();
+              
+              this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport("Error Deleting Key", res.message, res.stack);
+            });
+          }
+        });
+      }
+    });
+
+    actions.push({
+      label: "Encryption Rekey",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "rekey", row1.id]));
+
+      }
+    });
+
+    actions.push({
+      label: "Download Encrypt Key",
+      onClick: (row1) => {
+        const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+      }
+    });
+
+
+    return actions;
+  }
+
   getActions(rowData: any) {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
@@ -122,81 +216,7 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row1.id]));
         }
       });
-      actions.push({
-        label: "Lock",
-        onClick: (row1) => {
-          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
-            if (confirmResult === true) {
 
-              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
-              });
-            }
-          });
-        }
-      });
-
-
-      actions.push({
-        label: "Un-Lock",
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "unlock", row1.id]));
-        }
-      });
-
-      if (rowData.vol_encrypt > 0) {
-
-        actions.push({
-          label: "Add Recovery Key",
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "volumes", "addkey", row1.id]));
-          }
-        });
-        
-        actions.push({
-          label: "Delete Recovery Key",
-          onClick: (row1) => {
-            this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-  
-                this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
-                }, (res) => {
-                  this.dialogService.errorReport("Error Deleting recovery key for volume", res.message, res.stack);
-                });
-              }
-            });
-          }
-        });
-        
-    
-        
-        actions.push({
-          label: "Encryption Rekey",
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "volumes", "rekey", row1.id]));
-          
-          }
-        });
-        
-        actions.push({
-          label: "Download Encrypt Key",
-          onClick: (row1) => {
-            const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-          }
-        });
-      }
     }
 
     if (rowData.type === "dataset") {
@@ -339,7 +359,22 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader);
+
+  actionComponent = {
+    getActions: (row) => {
+      return this.conf.getActions(row);
+    },
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader)
+  };
+
+  actionEncryptedComponent = {
+    getActions: (row) => {
+      return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
+    },
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader)
+  };
+
   expanded = false;
   public paintMe = true;
 
@@ -362,7 +397,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader);
         volume.type = 'zpool';
 
         try {

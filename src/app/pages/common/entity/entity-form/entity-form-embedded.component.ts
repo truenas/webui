@@ -9,12 +9,13 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
-  ViewChildren
+  ViewChildren,
+  OnChanges,
+  AfterViewInit
 } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -26,6 +27,8 @@ import {FieldConfig} from './models/field-config.interface';
 import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
+import { Subscription } from 'rxjs/Subscription';
+import { Formconfiguration } from './entity-form.component';
 
 @Component({
   selector : 'entity-form-embedded',
@@ -33,9 +36,9 @@ import {FieldRelationService} from './services/field-relation.service';
   styleUrls : [ './entity-form-embedded.component.css' ],
   providers : [ EntityFormService, FieldRelationService ]
 })
-export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
+export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
-  @Input('conf') conf: any;
+  @Input('conf') conf: Formconfiguration;
   @Input()  args: string;
 
   protected pk: any;
@@ -46,8 +49,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   protected resourceName: string;
   public getFunction;
   public submitFunction = this.editSubmit;
-  private isNew: boolean = false;
-  public hasConf: boolean = true;
+  private isNew = false;
+  public hasConf = true;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -66,7 +69,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
   public sub: any;
   public error: string;
-  public success: boolean = false;
+  public success = false;
   public data: Object = {};
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -79,7 +82,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
-      if (item.type == 'TOP') {
+      if (item.type === 'TOP') {
 	this.templateTop = item.templateRef;
       }
     });
@@ -124,18 +127,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
     this.fieldSets = this.conf.fieldSets;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-      for (let i in this.fieldConfig) {
-	let config = this.fieldConfig[i];
-	if (config.relation.length > 0) {
-	  this.setRelation(config);
-	}
+      for (const i in this.fieldConfig) {
+        const config = this.fieldConfig[i];
+        if (config.relation.length > 0) {
+          this.setRelation(config);
+        }
       }
 
     if (this.conf.queryCall) {
       if(this.pk) {
-	this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
+	      this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
       } else {
-	this.getFunction = this.ws.call(this.conf.queryCall, []);
+	      this.getFunction = this.ws.call(this.conf.queryCall, []);
       }
     } else {
       let getQuery = this.resourceName;
@@ -151,11 +154,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 	if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
 	  this.data = this.conf.resourceTransformIncomingRestData(this.data);
 	}
-	for (let i in this.data) {
-	  let fg = this.formGroup.controls[i];
+	for (const i in this.data) {
+	  const fg = this.formGroup.controls[i];
 	  if (fg) {
-	    let current_field = this.fieldConfig.find((control) => control.name === i);
-	    if (current_field.type == "array") {
+	    const current_field = this.fieldConfig.find((control) => control.name === i);
+	    if (current_field.type === "array") {
 	      this.setArrayValue(this.data[i], fg, i);
 	    } else {
 	      fg.setValue(this.data[i]);
@@ -191,8 +194,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   }
 
   addCall(body: any) {
-    let payload = []
-    let call = this.conf.addCall;
+    const payload = []
+    const call = this.conf.addCall;
     payload.push(body)
     return this.ws.call(call, payload);
   }
@@ -207,7 +210,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   }
 
   editCall(body: any) {
-    let call = this.conf.editCall;
+    const call = this.conf.editCall;
 
     return this.ws.call(call, body);
   }
@@ -228,7 +231,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
     this.success = false;
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-    for (let i in value) {
+    for (const i in value) {
       if (value.hasOwnProperty(i)) {
 	if (this.conf['clean_' + i]) {
 	  value = this.conf['clean_' + i](value, i);
@@ -316,9 +319,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
 
   setArrayValue(data: any[], formArray: any, name: string) {
     let array_controls: any;
-    for (let i in this.fieldConfig) {
-      let config = this.fieldConfig[i];
-      if (config.name == name) {
+    for (const i in this.fieldConfig) {
+      const config = this.fieldConfig[i];
+      if (config.name === name) {
 	array_controls = config.formarray;
       }
     }
@@ -331,9 +334,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
       this.conf.initialCount += 1;
       this.conf.initialCount_default += 1;
 
-      let formGroup = this.entityFormService.createFormGroup(array_controls);
-      for (let i in value) {
-	let formControl = formGroup.controls[i];
+      const formGroup = this.entityFormService.createFormGroup(array_controls);
+      for (const i in value) {
+	const formControl = formGroup.controls[i];
 	formControl.setValue(value[i]);
       }
       formArray.insert(index, formGroup);
@@ -341,10 +344,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   }
 
   setRelation(config: FieldConfig) {
-    let activations =
+    const activations =
       this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
-      let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
 	activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled);
 
@@ -357,7 +360,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy {
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
   }
