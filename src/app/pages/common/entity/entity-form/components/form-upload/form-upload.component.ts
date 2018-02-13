@@ -41,19 +41,22 @@ export class FormUploadComponent {
     this.options = {
       url: '/_upload',
       type: "uploadFile",
+      method: 'POST',
       data: {
         data: JSON.stringify({
-          method: 'config.upload',
-        }),
+          "method": "filesystem.put",
+          "params": ["/tmp/form_upload/test.conf", { "mode": "493" }]
+        })
       },
       withCredentials: true,
       headers: {
-        Authorization: 'Token ' + ws.token,
+        Authorization: 'Token ' + this.ws.token,
       }
     };
   }
 
   handleUpload(ufile: UploadFile) {
+    console.log("handle triggered");
     if (ufile.progress.status === UploadStatus.Done) {
       let resp = JSON.parse(ufile.response);
       this.jobId = resp.job_id;
@@ -95,6 +98,7 @@ export class FormUploadComponent {
 
   startUpload(): void {
     console.log("started");
+    console.log(this.files);
     const event: CustomUploadInput = {
       type: 'uploadAll',
       url: '/_upload',
@@ -103,11 +107,11 @@ export class FormUploadComponent {
         data: JSON.stringify({
           "method": "filesystem.put",
           "params": ["/tmp/form_upload/test.conf", { "mode": "493" }]
-        }),
-        withCredentials: true,
-        headers: {
-          Authorization: 'Token ' + this.ws.token,
-        }
+        })
+      },
+      withCredentials: true,
+      headers: {
+        Authorization: 'Token ' + this.ws.token,
       }
     };
 
