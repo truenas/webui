@@ -126,13 +126,13 @@ class conf_dc_test(unittest.TestCase):
         # range is 0-3 so that loop runs 3 times, because it takes almost 3 to scroll down in automated trueos browser
         driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         for i in range(0,3):
-        if (driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')):
-            ui_service_name=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')
-            if (ui_service_name.text == which):
-                break
-        else:
-            driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
-            print ("searching for service" + which + " Attempt:" + i)
+            if (driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')):
+                ui_service_name=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')
+                if (ui_service_name.text == which):
+                    break
+            else:
+                driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
+                print ("searching for service" + which + " Attempt:" + i)
 
     @classmethod
     def tearDownClass(inst):
