@@ -19,24 +19,32 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-volumeunlock-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class VolumeUnlockFormComponent {
+export class VolumeUnlockFormComponent  implements Formconfiguration {
 
-  protected resource_name = 'storage/volume';
-  protected route_success: string[] = [ 'storage', 'volumes'];
-  protected isNew = false;
-  protected isEntity = true;
-  protected entityData = {
+  saveSubmitText = "Unlock";
+
+  resource_name = 'storage/volume';
+  route_success: string[] = [ 'storage', 'volumes'];
+  isNew = false;
+  isEntity = true;
+  entityData = {
     name: "",
     passphrase: ""
   };
   
-  protected fieldConfig: FieldConfig[] = [
+  fieldConfig: FieldConfig[] = [
     {
+      type : 'input',
+      name : 'name',
+      isHidden: true
+    },{
       type : 'input',
       name : 'name',
       placeholder: 'passphrase',
@@ -61,7 +69,8 @@ export class VolumeUnlockFormComponent {
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
-      protected dialogService: DialogService
+      protected dialogService: DialogService,
+      protected loader: AppLoaderService
   ) {
 
   }
@@ -71,15 +80,18 @@ export class VolumeUnlockFormComponent {
   }
 
   customSubmit(value) {
-    this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    this.loader.open();
+    return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
+      this.loader.close();
       this.dialogService.Info("Unlocked Volume", "Successfully un-locked volume " + value.name);
       
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
 
     }, (res) => {
-      this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
+      this.loader.close();
+      this.dialogService.errorReport("Error Unlocking", res.message, res.stack);
     });
   }
   

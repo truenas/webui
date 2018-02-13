@@ -7,12 +7,14 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
-  ViewChildren
+  ViewChildren,
+  AfterViewInit,
+  OnChanges
 } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Rx';
 import { MatSnackBar } from '@angular/material';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -28,15 +30,60 @@ import {  DialogService } from '../../../../services/';
 import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
 
 
+export interface Formconfiguration {
+  fieldSets?;
+  fieldSetDisplay?;
+  saveSubmitText?;
+  preInit?;
+  resource_name?;
+  isEntity?;
+  addCall?;
+  editCall?;
+  queryCall?;
+  queryCallOption?;
+  isNew?;
+  pk?;
+  custom_get_query?;
+  fieldConfig?: FieldConfig[];
+  resourceTransformIncomingRestData?;
+  route_usebaseUrl?;
+  afterInit?;
+  initial?;
+  dataHandler?;
+  dataAttributeHandler?;
+  route_cancel?;
+  route_success?;
+  route_delete?;
+  custom_edit_query?;
+  custom_add_query?
+  custActions?: any[];
+  
+  beforeSubmit?;
+  customSubmit?;
+  clean?;
+  errorReport?;
+  hide_fileds?;
+  isBasicMode?
+  advanced_field?
+  basic_field?;
+  route_conf?;
+  preHandler?;
+  initialCount?
+  initialCount_default?;
+
+  goBack?();
+  onSuccess?(res);
+}
+
 @Component({
   selector : 'entity-form',
   templateUrl : './entity-form.component.html',
   styleUrls : [ './entity-form.component.scss' ],
   providers : [ EntityFormService, FieldRelationService ]
 })
-export class EntityFormComponent implements OnInit, OnDestroy {
+export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
-  @Input('conf') conf: any;
+  @Input('conf') conf: Formconfiguration;
 
   protected pk: any;
   public formGroup: FormGroup;
@@ -44,12 +91,13 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   protected resourceName: string;
   public getFunction;
   public submitFunction = this.editSubmit;
-  private isNew: boolean = false;
-  public hasConf: boolean = true;
+  private isNew = false;
+  public hasConf = true;
   public wsResponse;
   public wsfg;
   public wsResponseIdx;
   public queryResponse;
+  public saveSubmitText = "Save";
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -68,7 +116,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   public sub: any;
   public error: string;
-  public success: boolean = false;
+  public success = false;
   public data: Object = {};
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -83,13 +131,16 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {
-      if (item.type == 'TOP') {
+      if (item.type === 'TOP') {
         this.templateTop = item.templateRef;
       }
     });
   }
 
   ngOnInit() {
+    if(this.conf.saveSubmitText) {
+      this.saveSubmitText = this.conf.saveSubmitText;
+    }
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -120,8 +171,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.fieldConfig = this.conf.fieldConfig;
       this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-      for (let i in this.fieldConfig) {
-        let config = this.fieldConfig[i];
+      for (const i in this.fieldConfig) {
+        const config = this.fieldConfig[i];
         if (config.relation.length > 0) {
           this.setRelation(config);
         }
@@ -155,11 +206,11 @@ export class EntityFormComponent implements OnInit, OnDestroy {
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
             }
-            for (let i in this.data) {
-              let fg = this.formGroup.controls[i];
+            for (const i in this.data) {
+              const fg = this.formGroup.controls[i];
               if (fg) {
-                let current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.type == "array") {
+                const current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.type === "array") {
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   fg.setValue(this.data[i]);
@@ -169,12 +220,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
           } else {
             this.queryResponse = res;
             this.wsResponse = res[0];
-            for (let i in this.wsResponse){
+            for (const i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
               this.wsResponseIdx = this.wsResponse[i];
               if (this.wsfg) {
-                let current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.type == "array") {
+                const current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.type === "array") {
                     this.setArrayValue(this.wsResponse[i], this.wsfg, i);
                 } else {
                   if (this.conf.dataHandler) {
@@ -230,8 +281,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   addCall(body: any) {
-    let payload = []
-    let call = this.conf.addCall;
+    const payload = []
+    const call = this.conf.addCall;
     payload.push(body)
     return this.ws.call(call, payload);
   }
@@ -246,8 +297,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   editCall(body: any) {
-    let payload = []
-    let call = this.conf.editCall;
+    const payload = []
+    const call = this.conf.editCall;
     payload.push(body);
     return this.ws.call(call, payload);
   }
@@ -268,7 +319,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
     this.success = false;
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-    for (let i in value) {
+    for (const i in value) {
       if (value.hasOwnProperty(i)) {
         if (this.conf['clean_' + i]) {
           value = this.conf['clean_' + i](value, i);
@@ -303,7 +354,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
                             this.success = true;
                           }
 
-                          if (this.conf.resource_name == "system/advanced") {                            
+                          if (this.conf.resource_name === "system/advanced") {                            
                             this.adminLayout.onShowConsoleFooterBar(value['adv_consolemsg']);
                           }                          
                         },
@@ -332,12 +383,12 @@ export class EntityFormComponent implements OnInit, OnDestroy {
         return false;
       }
     } else {
-      if (this.conf.basic_field != undefined && this.conf.basic_field.indexOf(id) > -1) {
+      if (this.conf.basic_field !== undefined && this.conf.basic_field.indexOf(id) > -1) {
         return false;
       }
     }
 
-    if (this.conf.hide_fileds != undefined) {
+    if (this.conf.hide_fileds !== undefined) {
       if (this.conf.hide_fileds.indexOf(id) > -1) {
         return false;
       }
@@ -379,9 +430,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
 
   setArrayValue(data: any[], formArray: any, name: string) {
     let array_controls: any;
-    for (let i in this.fieldConfig) {
-      let config = this.fieldConfig[i];
-      if (config.name == name) {
+    for (const i in this.fieldConfig) {
+      const config = this.fieldConfig[i];
+      if (config.name === name) {
         array_controls = config.formarray;
       }
     }
@@ -394,9 +445,9 @@ export class EntityFormComponent implements OnInit, OnDestroy {
       this.conf.initialCount += 1;
       this.conf.initialCount_default += 1;
 
-      let formGroup = this.entityFormService.createFormGroup(array_controls);
-      for (let i in value) {
-        let formControl = formGroup.controls[i];
+      const formGroup = this.entityFormService.createFormGroup(array_controls);
+      for (const i in value) {
+        const formControl = formGroup.controls[i];
         formControl.setValue(value[i]);
       }
       formArray.insert(index, formGroup);
@@ -404,10 +455,10 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   setRelation(config: FieldConfig) {
-    let activations =
+    const activations =
         this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
-      let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
           activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled);
 
@@ -420,7 +471,7 @@ export class EntityFormComponent implements OnInit, OnDestroy {
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    let tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled);
   }

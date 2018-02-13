@@ -19,7 +19,7 @@ export class EntityTableActionsComponent implements OnInit {
   @Input('icon_name') icon_name = "more_vert";
 
   public actions: any[];
-  public showMenu: boolean = true;
+  public showMenu = true;
 
   menuActionVisible(id: string) {
     if (id === 'edit' || id === 'delete') {

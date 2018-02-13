@@ -26,8 +26,7 @@ import {EntityTemplateDirective} from '../../../common/entity/entity-template.di
 
 @Component({
   selector : 'device-add',
-  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
-  styleUrls : [ '../../../common/entity/entity-form/entity-form.component.scss' ]
+    template : `<entity-form [conf]="this"></entity-form>`
 })
 export class DeviceAddComponent implements OnInit {
 

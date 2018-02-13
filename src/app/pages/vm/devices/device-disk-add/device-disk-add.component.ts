@@ -23,11 +23,11 @@ import {EntityUtils} from '../../../common/entity/utils';
 })
 export class DeviceDiskAddComponent {
 
-  protected resource_name: string = 'vm/device';
-  protected pk: any;
+  public resource_name = 'vm/device';
+  public pk: any;
   public vm: string;
-  protected route_success: string[];
-  protected dtype: string = 'DISK';
+  public route_success: string[];
+  public dtype = 'DISK';
   private DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [
     {
@@ -69,10 +69,10 @@ export class DeviceDiskAddComponent {
       this.route_success = [ 'vm', this.pk, 'devices', this.vm ];
     });
     this.vmService.getStorageVolumes().subscribe((res) => {
-      let data = new EntityUtils().flattenData(res.data);
+      const data = new EntityUtils().flattenData(res.data);
       this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
      
-      for (let dataset of data) {
+      for (const dataset of data) {
         if (dataset.type === 'zvol') {
           this.DISK_zvol.options.push({label : dataset.name, value : '/dev/zvol/' + dataset.path});
         };
