@@ -73,7 +73,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
-    this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    return this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.dialogService.Info("Rekeyed Volume", "Successfully Added Key to volume " + value.name);
 

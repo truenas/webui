@@ -78,7 +78,7 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
   }
 
   customSubmit(value) {
-    this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+    return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.dialogService.Info("Unlocked Volume", "Successfully un-locked volume " + value.name);
       

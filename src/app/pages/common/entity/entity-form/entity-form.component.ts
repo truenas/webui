@@ -31,6 +31,8 @@ import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-
 
 
 export interface Formconfiguration {
+  fieldSets?;
+  fieldSetDisplay?;
   saveSubmitText?;
   preInit?;
   resource_name?;
@@ -65,6 +67,9 @@ export interface Formconfiguration {
   preHandler?;
   initialCount?
   initialCount_default?;
+
+  goBack?();
+  onSuccess?(res);
 }
 
 @Component({

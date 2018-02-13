@@ -80,7 +80,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
   customSubmit(value) {
     console.log("VALUE", value);
-    this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
+    return this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.dialogService.Info("Created Volume Key", "Successfully Created Key to volume " + value.name);
 

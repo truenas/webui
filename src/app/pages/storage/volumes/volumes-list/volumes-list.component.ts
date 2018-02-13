@@ -4,7 +4,7 @@ import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -50,12 +50,12 @@ export interface ZfsPoolData {
 }
 
 
-export class VolumesListTableConfig {
-  protected hideTopActions = true;
-  protected flattenedVolData: any;
-  protected resource_name = 'storage/volume';
-  protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip = "Create ZFS Pool";
+export class VolumesListTableConfig implements InputTableConf {
+  public hideTopActions = true;
+  public flattenedVolData: any;
+  public resource_name = 'storage/volume';
+  public route_add: string[] = ['storage', 'volumes', 'manager'];
+  public route_add_tooltip = "Create ZFS Pool";
   public rowData: ZfsPoolData[] = [];
 
   constructor(
@@ -351,7 +351,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
 
   actionComponent = {
     getActions: (row) => {
@@ -362,7 +362,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   actionEncryptedComponent = {
     getActions: (row) => {
-      return this.conf.getEncryptedActions(row);
+      return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
     conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService)
   };
