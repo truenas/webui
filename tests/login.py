@@ -26,9 +26,9 @@ try:
 except ImportError:
     import unittest
 
-xpaths = {'usernameTxtBox': "/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input",
-          'passwordTxtBox': "/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[2]/mat-input-container/div/div[1]/div/input",
-          'submitButton': "/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/button",
+xpaths = {'usernameTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[1]/mat-input-container/div/div[1]/div/input',
+          'passwordTxtBox': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/div[2]/mat-input-container/div/div[1]/div/input',
+          'submitButton': '/html/body/app-root/app-auth-layout/app-signin/div/div/mat-card/mat-card-content/div[1]/form/button'
           }
 
 
@@ -49,15 +49,15 @@ class login_test(unittest.TestCase):
         # check if the dashboard opens
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
         # get the weather data
         page_data=ui_element.text
         print ("The page now is: " + page_data)
         # assert response
         self.assertTrue("Dashboard" in page_data)
         # cancelling the tour
-        if self.is_element_present(By.XPATH, "/html/body/div[5]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[5]/div[1]/button").click()
+        if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
+            driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
         driver.execute_script("document.body.style.zoom='50 %'")
 
     # method to test if an element is present

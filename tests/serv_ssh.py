@@ -25,8 +25,8 @@ except ImportError:
     import unittest
 
 
-xpaths = { 'navService' : "//*[@id='nav-8']/div/a[1]",
-          'turnoffConfirm' : "//*[contains(text(), 'OK')]"
+xpaths = { 'navService' : '//*[@id="nav-8"]/div/a[1]',
+          'turnoffConfirm' : '//*[contains(text(), "OK")]'
          }
 
 class conf_ssh_test(unittest.TestCase):
@@ -58,11 +58,11 @@ class conf_ssh_test(unittest.TestCase):
         print (" configuring ssh service with root access")
         time.sleep(2)
         # click on configure button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button").click()
+        driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button').click()
         # uncheck on Login as Root with Passsword
-        driver.find_element_by_xpath("//*[@id='ssh_rootlogin']/mat-checkbox/label/div").click()
+        driver.find_element_by_xpath('//*[@id="ssh_rootlogin"]/mat-checkbox/label/div').click()
         # click on save button
-        driver.find_element_by_xpath("//*[@id='save_button']").click()
+        driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(5)
 
     def test_04_turnoff_ssh(self):
@@ -101,13 +101,13 @@ class conf_ssh_test(unittest.TestCase):
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         if to == "start":
             if status_data == "STOPPED":
                 # Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -115,7 +115,7 @@ class conf_ssh_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
@@ -125,7 +125,7 @@ class conf_ssh_test(unittest.TestCase):
 
 
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
