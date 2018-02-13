@@ -46,8 +46,10 @@ class conf_dc_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
+
+        self.service_search("Domain Controller")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+#        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         self.status_change("3", "start")
         # dc test takes almost takes 18 seconds to turn on
         time.sleep(18)
@@ -120,6 +122,17 @@ class conf_dc_test(unittest.TestCase):
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
 
+    def service_search(self, which):
+        # range is 0-3 so that loop runs 3 times, because it takes almost 3 to scroll down in automated trueos browser
+        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+        for i in range(0,3):
+        if (driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')):
+            ui_service_name=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')
+            if (ui_service_name.text == which):
+                break
+        else:
+            driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
+            print ("searching for service" + which + " Attempt:" + i)
 
     @classmethod
     def tearDownClass(inst):
