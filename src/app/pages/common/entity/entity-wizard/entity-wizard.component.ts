@@ -110,6 +110,10 @@ export class EntityWizardComponent implements OnInit {
       activations, < FormGroup > this.formArray.get(stepIndex));
     this.setDisabled(config.name, tobeDisabled, stepIndex);
   }
+  displaySummary(){
+    // console.log(this.formGroup.controls.value);
+    // return this.formGroup.controls.value;
+  }
 
   onSubmit(event: Event) {
     let value = {};
