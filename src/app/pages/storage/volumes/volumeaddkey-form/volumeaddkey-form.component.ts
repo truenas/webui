@@ -20,6 +20,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-volumeunlock-form',
@@ -63,7 +64,8 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
-      protected dialogService: DialogService
+      protected dialogService: DialogService,
+      protected loader: AppLoaderService
   ) {
 
   }
@@ -73,13 +75,16 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
+    this.loader.open();
+
     return this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
+      this.loader.close();
       this.dialogService.Info("Rekeyed Volume", "Successfully Added Key to volume " + value.name);
-
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
+      this.loader.close();
       this.dialogService.errorReport("Error adding key to volume", res.message, res.stack);
     });
   }

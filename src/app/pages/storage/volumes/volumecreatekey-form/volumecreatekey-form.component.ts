@@ -20,6 +20,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-volumeunlock-form',
@@ -69,7 +70,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       protected ws: WebSocketService,
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
-      protected dialogService: DialogService
+      protected dialogService: DialogService,
+      protected loader: AppLoaderService
   ) {
 
   }
@@ -79,14 +81,17 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   }
 
   customSubmit(value) {
+    this.loader.open();
     console.log("VALUE", value);
     return this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
+      this.loader.close();
       this.dialogService.Info("Created Volume Key", "Successfully Created Key to volume " + value.name);
 
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
+      this.loader.close();
       this.dialogService.errorReport("Error Creating key to volume", res.message, res.stack);
     });
   }

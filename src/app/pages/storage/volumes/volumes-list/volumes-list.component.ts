@@ -65,7 +65,8 @@ export class VolumesListTableConfig implements InputTableConf {
     private title: string,
     public mdDialog: MatDialog,
     protected rest: RestService,
-    protected dialogService: DialogService) {
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -105,13 +106,16 @@ export class VolumesListTableConfig implements InputTableConf {
       onClick: (row1) => {
         this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
           if (confirmResult === true) {
-
+            this.loader.open();
             this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
               console.log("restPostResp", restPostResp);
+              this.loader.close();
+              
               this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
+              this.loader.close();
               this.dialogService.errorReport("Error locking volume", res.message, res.stack);
             });
           }
@@ -149,13 +153,17 @@ export class VolumesListTableConfig implements InputTableConf {
       onClick: (row1) => {
         this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
           if (confirmResult === true) {
-
+            this.loader.open();
+            
             this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
               console.log("restPostResp", restPostResp);
+              this.loader.close();
+              
               this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
+              this.loader.close();
               this.dialogService.errorReport("Error Deleting Key", res.message, res.stack);
             });
           }
@@ -351,20 +359,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = "Volumes";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService)
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService)
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader)
   };
 
   expanded = false;
@@ -389,7 +397,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader);
         volume.type = 'zpool';
 
         try {

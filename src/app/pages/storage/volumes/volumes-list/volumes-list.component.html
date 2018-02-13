@@ -14,8 +14,7 @@
             <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
                 <mat-icon>lock_outline</mat-icon> 
             </div>
-            <div *ngIf="row.vol_encrypt < 1" class="panel_status_enc"  title="Encryption Off"  id="volume_encrypt_off_{{row.name}}">
-                <mat-icon>lock_open</mat-icon> 
+             <div *ngIf="row.vol_encrypt < 1" class="panel_status_enc"  title="Encryption Off"  id="volume_encrypt_off_{{row.name}}">
              </div>
             {{row.name}}
           </mat-panel-title>
