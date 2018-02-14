@@ -12,10 +12,14 @@ import { EntityJobComponent } from '../../../entity-job/entity-job.component';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 
 import { NgFileSelectDirective, UploadStatus, UploadOutput, UploadInput, UploadFile, humanizeBytes, UploaderOptions } from 'ngx-uploader';
+import { RequestOptions, Http } from '@angular/http';
+import { HttpHeaders } from '@angular/common/http'
+import { Headers } from '@angular/http';
 import { CustomUploadInput } from './upload-input-interface.component';
 @Component({
-  selector: 'form-upload',
-  templateUrl: './form-upload.component.html',
+  selector: 'app-form-upload',
+  template: `<input type="file" placeholder="Upload file" (change)="onFileUpload($event)" accept=".iso">`,
+  // template: `<input type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".iso">`,
   styleUrls: ['../dynamic-field/dynamic-field.css'],
 })
 export class FormUploadComponent {
@@ -31,29 +35,33 @@ export class FormUploadComponent {
   public sub: Subscription;
   public observer: Observer < any > ;
   public jobId: Number;
+  public apiEndPoint ='';
   @ViewChild(NgFileSelectDirective) file: NgFileSelectDirective;
 
   constructor(@Inject(NgZone) private zone: NgZone,
-    protected ws: WebSocketService) {
-    this.files = []; // local uploading files array
-    this.uploadInput = new EventEmitter < CustomUploadInput > (); // input events
-    this.humanizeBytes = humanizeBytes;
-    this.options = {
-      url: '/_upload',
-      type: "uploadFile",
-      method: 'POST',
-      data: {
-        data: JSON.stringify({
-          "method": "filesystem.put",
-          "params": ["/tmp/form_upload/test.conf", { "mode": "493" }]
-        })
-      },
-      withCredentials: true,
-      headers: {
-        Authorization: 'Token ' + this.ws.token,
-      }
-    };
-  }
+    protected ws: WebSocketService, protected http: Http) {
+
+    }
+  //   {
+  //   this.files = []; // local uploading files array
+  //   this.uploadInput = new EventEmitter < CustomUploadInput > (); // input events
+  //   this.humanizeBytes = humanizeBytes;
+  //   this.options = {
+  //     url: '/_upload',
+  //     type: "uploadFile",
+  //     method: 'POST',
+  //     data: {
+  //       data: JSON.stringify({
+  //         "method": "filesystem.put",
+  //         "params": ["/tmp/form_upload/test.conf", { "mode": "493" }]
+  //       })
+  //     },
+  //     withCredentials: true,
+  //     headers: {
+  //       Authorization: 'Token ' + this.ws.token,
+  //     }
+  //   };
+  // }
 
   handleUpload(ufile: UploadFile) {
     console.log("handle triggered");
@@ -100,12 +108,12 @@ export class FormUploadComponent {
     console.log("started");
     const event: CustomUploadInput = {
       type: 'uploadAll',
-      url: '/_upload',
+      url: '/mnt/data/iso_dataset',
       method: 'POST',
       data: {
         data: JSON.stringify({
           "method": "filesystem.put",
-          "params": ["/tmp/form_upload/test.conf", { "mode": "493" }]
+          "params": ["/Users/vaibhavchauhan/FreeNAS-11-201802080558-31414ad.iso", { "mode": "493" }]
         })
       },
       withCredentials: true,
@@ -115,7 +123,7 @@ export class FormUploadComponent {
     };
 
     this.uploadInput.emit(event);
-    this.doSubmit(event);
+    //this.doSubmit(event);
   }
 
   // uploadFile(): Observable < HttpEvent < any >> {
@@ -164,4 +172,46 @@ export class FormUploadComponent {
       .subscribe();
     this.busy.push(this.sub);
   }
+  fileChange(event) {
+    const fileList: FileList = event.target.files;
+    if(fileList.length > 0) {
+      const file: File = fileList[0];
+      const formData:FormData = new FormData();
+        formData.append('uploadFile', file, file.name);
+        const headers = new Headers();
+        /** No need to include Content-Type in Angular 4 */
+        headers.append('Content-Type', 'multipart/form-data');
+        headers.append('Accept', 'application/json');
+        const options = new RequestOptions(
+          { headers: headers }
+        );
+        console.log(formData);
+        console.log(options); 
+        this.http.post(`${this.apiEndPoint}`, formData, options)
+            .map(res => res.json())
+            .catch(error => Observable.throw(error))
+            .subscribe(
+                data => console.log('success'),
+                error => console.log(error)
+            )
+    }
+}
+onFileUpload(event: EventTarget) {
+
+  const eventObj: MSInputMethodContext = <MSInputMethodContext>event;
+  const target: HTMLInputElement = <HTMLInputElement>eventObj.target;
+  const files: FileList = target.files;
+
+  const formData: FormData = new FormData();
+
+  for (let i = 0; i < files.length; i++) {
+    formData.append('file', files[i]);
+  }
+
+  // POST
+  this.http.post(this.apiEndPoint, formData).subscribe(
+    data => console.log('success'),
+    error => console.log(error)
+  );
+}
 }
