@@ -159,13 +159,40 @@ export class VMWizardComponent {
     },
     {
       label: 'Installation Media',
-      fieldConfig: [{
+      fieldConfig: [
+        {
+          type: 'radio',
+          name: 'download_iso',
+          placeholder : 'Download an ISO',
+          tooltip: '',
+          options:[{label:"yes", value: true}, 
+                   {label:"no", value: false}],
+          value: false,
+        },
+        {
           type: 'explorer',
           name: 'iso_path',
-          placeholder : 'What ISO do you want to boot?',
+          placeholder : 'Please choose an installation media',
           initial: '/mnt',
           tooltip: '',
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          isHidden: false
+        },
+        {
+          type: 'explorer',
+          name: 'download_iso_path',
+          placeholder : 'select a Dataset for downloading your ISO',
+          initial: '/mnt',
+          tooltip: '',
+          explorerType: 'directory',
+          isHidden: true
+        },
+        {
+          type: 'upload',
+          name: 'upload_iso',
+          placeholder : 'Choose File',
+          tooltip: '',
+          isHidden: true
         },
       ]
     },
@@ -211,6 +238,18 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+      }
+      
+    });
+    ( < FormGroup > entityWizard.formArray.get([4]).get('download_iso')).valueChanges.subscribe((res) => {
+      if (res){
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'download_iso_path'}).isHidden = false;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = true;
+      } else {
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'download_iso_path'}).isHidden = true;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = false;
       }
       
     });
