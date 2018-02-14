@@ -24,7 +24,6 @@ export class VMWizardComponent {
 
   protected addWsCall = 'vm.create';
   public route_success: string[] = ['vm'];
-  public summary = true;
 
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -185,10 +184,10 @@ export class VMWizardComponent {
     private router: Router) {
 
   }
-  displaySummary(){
-    //execute this fucntion to display summary of values about to be submitted.
-    // return this.formGroup.controls.value;
+
+  preInit() {
   }
+
   afterInit(entityWizard: EntityWizardComponent) {
     
     ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
@@ -202,9 +201,7 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
       }
-    }
-    
-  );
+    });
     ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
         _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
