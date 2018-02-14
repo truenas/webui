@@ -98,7 +98,6 @@ export class FormUploadComponent {
 
   startUpload(): void {
     console.log("started");
-    console.log(this.files);
     const event: CustomUploadInput = {
       type: 'uploadAll',
       url: '/_upload',
