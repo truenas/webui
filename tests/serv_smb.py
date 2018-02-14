@@ -47,29 +47,23 @@ class conf_smb_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
         self.status_change("2", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
 
     def test_02_checkif_smb_on (self):
         print (" check if smb turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("2")
 
     def test_03_turnoff_smb (self):
         print (" turning off the smb service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("2", "stop")
 
     def test_04_checkif_smb_off (self):
         print (" check if smb turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("2")
         time.sleep(10)

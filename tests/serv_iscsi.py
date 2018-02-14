@@ -47,29 +47,23 @@ class conf_iscsi_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)
         self.status_change("6", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(3)
 
     def test_02_checkif_iscsi_on (self):
         print (" check if iscsi turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("6")
 
     def test_03_turnoff_iscsi (self):
         print (" turning off the iscsi service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("6", "stop")
 
     def test_04_checkif_iscsi_off (self):
         print (" check if iscsi turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("6")
         time.sleep(10)

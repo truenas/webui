@@ -50,15 +50,13 @@ class conf_webdav_test(unittest.TestCase):
         self.assertTrue("Services" in page_data)
 
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("17", "start")
 
 
     def test_02_checkif_webdav_on (self):
         print (" check if webdav turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("17")
 

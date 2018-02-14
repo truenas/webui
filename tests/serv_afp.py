@@ -50,30 +50,22 @@ class conf_afp_test(unittest.TestCase):
     def test_02_turnon_afp (self):
         print (" turning on the afp service")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+        driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_change("1", "start")
 
     def test_03_checkif_afp_on (self):
         print (" check if afp turned on")
-        # scroll down
-#        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-#        time.sleep(2)
-        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("1")
 
     def test_04_turnoff_afp (self):
         print (" turning off the afp service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_change("1", "stop")
 
     def test_05_checkif_afp_off (self):
         print (" check if afp turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_check("1")
         time.sleep(10)

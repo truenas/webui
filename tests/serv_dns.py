@@ -47,29 +47,23 @@ class conf_dns_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)
         self.status_change("4", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
 
     def test_02_checkif_dns_on (self):
         print (" check if dns turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("4")
 
     def test_03_turnoff_dns (self):
         print (" turning off the dns service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("4", "stop")
 
     def test_04_checkif_dns_off (self):
         print (" check if dns turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("4")
         time.sleep(10)

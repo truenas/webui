@@ -43,7 +43,7 @@ class conf_ssh_test(unittest.TestCase):
         time.sleep(1)
         print (" turning on the ssh service")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "start")
 

@@ -47,29 +47,23 @@ class conf_ftp_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)
         self.status_change("5", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
 
     def test_02_checkif_ftp_on (self):
         print (" check if ftp turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("5")
 
     def test_03_turnoff_ftp (self):
         print (" turning off the ftp service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("5", "stop")
 
     def test_04_checkif_ftp_off (self):
         print (" check if ftp turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("5")
         time.sleep(10)

@@ -46,22 +46,18 @@ class conf_lldp_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
-#        self.service_search("Domain Controller")
+#        self.service_search("LLDP")
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
         self.status_change("7", "start")
 
     def test_02_checkif_lldp_on (self):
         print (" check if lldp turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("7")
 
     def test_03_turnoff_lldp (self):
         print (" turning off the lldp service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("7", "stop")
         #lldp takes almost 7 sec to turn off
@@ -69,8 +65,6 @@ class conf_lldp_test(unittest.TestCase):
 
     def test_04_checkif_lldp_off (self):
         print (" check if ftp turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("7")
         time.sleep(10)
@@ -121,7 +115,7 @@ class conf_lldp_test(unittest.TestCase):
 
     def service_search(self, which):
         # range is 0-3 so that loop runs 3 times, because it takes almost 3 to scroll down in automated trueos browser
-        driver.find_element_by_tag_name('html').send_keys(Keys.HOME)
+        driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
         for i in range(0,3):
             if (self.is_element_present(By.XPATH,'/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')):
                 ui_service_name=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')
@@ -129,7 +123,7 @@ class conf_lldp_test(unittest.TestCase):
                     break
                     print (which  + " service is found")
             else:
-                driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
+                driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
                 print ("searching for service" + which + " Attempt:" + str(i))
 
 
