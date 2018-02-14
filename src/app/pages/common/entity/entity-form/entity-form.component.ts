@@ -14,6 +14,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import { MatSnackBar } from '@angular/material';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
@@ -79,7 +80,8 @@ export class EntityFormComponent implements OnInit, OnDestroy {
               protected loader: AppLoaderService,
               public snackBar: MatSnackBar,
               public adminLayout: AdminLayoutComponent,
-              private dialog:DialogService) {}
+              private dialog:DialogService,
+              public translate: TranslateService) {}
 
   ngAfterViewInit() {
     this.templates.forEach((item) => {

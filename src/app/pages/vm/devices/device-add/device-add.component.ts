@@ -18,7 +18,7 @@ import {
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
-
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
@@ -54,7 +54,8 @@ export class DeviceAddComponent implements OnInit {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected entityFormService: EntityFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              private location: Location) {}
+              private location: Location,
+              public translate: TranslateService) {}
 
   ngOnInit() {
     this.fieldConfig = this.conf.fieldConfig;

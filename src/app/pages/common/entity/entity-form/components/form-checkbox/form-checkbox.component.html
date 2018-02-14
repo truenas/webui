@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 		<mat-checkbox [formControlName]="config.name">
 		</mat-checkbox>
-		<label>{{ config.placeholder }}</label>
+		<label>{{ config.placeholder | translate }}</label>
 		<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
 		<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

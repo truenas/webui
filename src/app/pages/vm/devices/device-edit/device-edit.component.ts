@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
@@ -67,7 +67,8 @@ export class DeviceEditComponent implements OnInit {
               protected networkService: NetworkService,
               protected systemGeneralService: SystemGeneralService,
               private entityFormService: EntityFormService,
-              public vmService: VmService) {}
+              public vmService: VmService,
+              public translate: TranslateService) {}
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.vmid = params['vmid'];

@@ -1,9 +1,9 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
     <mat-input-container class="full-width">
-        <input matInput [type]="'text'" [placeholder]="config.placeholder" [formControlName]="config.name">
+        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name">
     </mat-input-container>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-    <button mat-button (click)="toggleTree()" type="button">Browse</button>
+    <button mat-button (click)="toggleTree()" type="button">{{"BROWSE" | translate}}</button>
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
         <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
             <mat-icon>folder</mat-icon>

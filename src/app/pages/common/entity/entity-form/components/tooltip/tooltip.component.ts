@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { TooltipPosition } from '@angular/material';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector : 'tooltip',
@@ -12,6 +13,8 @@ export class TooltipComponent {
 
   public isShowTooltip: Boolean;
   public tooltipMsgStyle: any;
+
+  constructor(public translate: TranslateService) {}
 
   showTooltip($event) {
     this.isShowTooltip = $event;
