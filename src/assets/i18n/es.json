@@ -1,9 +1,15 @@
 {
   "DASHBOARD": "Tablero",
-  "APPS": "Apps",
-  "INBOX": "Mensaje",
-  "CHAT": "Charla",
+  "ACCOUNT": "Cuenta",
+  "USERS": "Usuarios",
+  "GROUPS": "Groupos",
   "CALENDAR": "Calendario",
+  "REPORTING": "Informes",
+  "SYSTEM": "Sistema",
+
+  "UID_PLACEHOLDER": "Usuario ID",
+  "UID_TOOLTIP": "Por convención, las cuentas de usuario tienen una ID mayor que \n1000 y las cuentas del sistema tienen una ID igual al número de puerto predeterminado \nusado por el servicio.",
+
   "DIALOGS": "Diálogo",
   "CONFIRM": "Confirmar",
   "LOADER": "Loader",
@@ -53,10 +59,15 @@
   "OTHERS": "Otros",
   "GALLERY": "Gallery",
   "PRICINGS": "Pricings",
-  "USERS": "Users",
   "BLANK": "Blank",
   "MATICONS": "Material Iconos",
   "ADD": "Añadir",
   "ITEM": "ít.",
-  "SUBITEM": "Subitem"
+  "SUBITEM": "Subitem",
+  
+  "SAVE": "Salvar",
+  "DELETE": "Borrar",
+  "SUBMIT": "Enviar",
+  "CANCEL": "Poder",
+  "BROWSE": "Visitazo"
 }

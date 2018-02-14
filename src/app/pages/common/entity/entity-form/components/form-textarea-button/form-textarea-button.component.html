@@ -1,6 +1,6 @@
 <div id="{{config.name}}" class="dynamic-field form-textarea" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <mat-input-container class="full-width">
-    <input type="text" #textAreaSSH matInput [placeholder]="config.placeholder" [formControlName]="config.name" [ngClass]="config.class" />
+    <input type="text" #textAreaSSH matInput [placeholder]="config.placeholder | translate" [formControlName]="config.name" [ngClass]="config.class" />
   </mat-input-container>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>

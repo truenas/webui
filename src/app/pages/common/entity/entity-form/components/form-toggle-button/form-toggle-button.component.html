@@ -1,9 +1,9 @@
 <div id="{{config.name}}" class="toggle-button" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config.isHidden">
-  <label>{{ config.placeholder }}</label>
+  <label>{{ config.placeholder | translate }}</label>
   <br>
   <mat-button-toggle-group multiple class="toggle-button-wrap toggle-button-group">
     <mat-button-toggle *ngFor="let option of config.options" [value]="option.value" (change)="check(option)" [checked]="option.checked" buttonToggleGroupMultiple>
-      {{ option.label }}
+      {{ option.label | translate }}
     </mat-button-toggle>
   </mat-button-toggle-group>
 </div>

@@ -11,6 +11,11 @@
       <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="epansionpanel_zfs_{{row.name}}" >
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <div *ngIf="row.vol_encrypt > 0" class="panel_status_enc" title="Encryption On" id="volume_encrypt_on_{{row.name}}">
+                <mat-icon>lock_outline</mat-icon> 
+            </div>
+             <div *ngIf="row.vol_encrypt < 1" class="panel_status_enc"  title="Encryption Off"  id="volume_encrypt_off_{{row.name}}">
+             </div>
             {{row.name}}
           </mat-panel-title>
           <mat-panel-description>
@@ -18,8 +23,11 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
-          <div style="margin-top: 8px; float: right; padding-bottom: 20px;"> 
-            <app-entity-table-actions [icon_name]="'menu'" [entity]="this" [row]="row"></app-entity-table-actions>
+            <div *ngIf="row.vol_encrypt > 0" class="global_volume_based_action_menu" title="Encryption Operations">
+                <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
+            </div>
+            <div class="global_volume_based_action_menu" title="Standard Volume Operations"> 
+            <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row"></app-entity-table-actions>
           </div>
           <br/>
         </div>
@@ -29,7 +37,7 @@
         <div>
           <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
             
-            <dxi-column dataField='name' [width]="Name" cellTemplate="cellTemplateName"></dxi-column>
+            <dxi-column dataField='name' cellTemplate="cellTemplateName"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplateName'">
               <div class="panel_container" id="row_name_{{rowData.data.name}}">
                 {{rowData.data.name}}

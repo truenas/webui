@@ -13,6 +13,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
+import { TranslateModule } from 'ng2-translate/ng2-translate';
 
 import { EntityDeleteComponent } from './entity-delete/entity-delete.component';
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
@@ -53,7 +54,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, NgxDatatableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule,
+    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule
   ],
   declarations: [
     EntityDeleteComponent,

@@ -39,6 +39,7 @@ import { DxTreeListModule } from 'devextreme-angular';
 import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
+import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
 
 
 @NgModule({
@@ -59,6 +60,7 @@ import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddke
     VolumeUnlockFormComponent,
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
+    VolumeCreatekeyFormComponent,
     ZvolDeleteComponent,
     ZvolAddComponent,
     ZvolEditComponent,
