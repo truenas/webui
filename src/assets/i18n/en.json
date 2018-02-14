@@ -1,10 +1,15 @@
 {
   "DASHBOARD": "Dashboard",
-  "REPORTING": "Reporting",
-  "APPS": "Apps",
-  "INBOX": "Inbox",
-  "CHAT": "Chat",
+  "ACCOUNT": "Account",
+  "USERS": "Users",
+  "GROUPS": "Groups",
   "CALENDAR": "Calendar",
+  "REPORTING": "Reporting",
+  "SYSTEM": "System",
+
+  "UID_PLACEHOLDER": "User ID",
+  "UID_TOOLTIP": "By convention, user accounts have an ID greater than \n1000 and system accounts have an ID equal to the default port number \nused by the service.",
+
   "DIALOGS": "Dialogs",
   "CONFIRM": "Confirm",
   "LOADER": "Loader",
@@ -54,10 +59,15 @@
   "OTHERS": "Others",
   "GALLERY": "Gallery",
   "PRICINGS": "Pricings",
-  "USERS": "Users",
   "BLANK": "Blank",
   "MATICONS": "Material Icons",
   "ADD": "Add",
   "ITEM": "Item",
-  "SUBITEM": "Subitem"
+  "SUBITEM": "Subitem",
+
+  "SAVE": "Save",
+  "DELETE": "Delete",
+  "SUBMIT": "Submit",
+  "CANCEL": "Cancel",
+  "BROWSE": "Browse"
 }
