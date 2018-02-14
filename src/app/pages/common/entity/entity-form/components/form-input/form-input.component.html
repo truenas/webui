@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
 	<mat-input-container class="full-width">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
-			[placeholder]="config.placeholder"
+			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
 			[formControlName]="config.name"
 			[readonly]="config.readonly"

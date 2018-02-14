@@ -13,8 +13,8 @@ import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/v
 import { ErdService } from 'app/services/erd.service';
 
 export class DisksListConfig {
-    protected flattenedVolData: any;
-    protected resource_name = 'storage/disk/';
+    public flattenedVolData: any;
+    public resource_name = 'storage/disk/';
     public hideTopActions = true;
     public diskMap: Map<string,string> = new Map<string,string>();
     
