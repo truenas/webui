@@ -46,8 +46,6 @@ class conf_iscsi_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
-        # scroll down
-        driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)
         self.status_change("6", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(3)

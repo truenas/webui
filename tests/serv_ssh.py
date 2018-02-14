@@ -49,8 +49,6 @@ class conf_ssh_test(unittest.TestCase):
 
     def test_02_checkif_ssh_on (self):
         print (" check if ssh turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("14")
 
@@ -78,8 +76,6 @@ class conf_ssh_test(unittest.TestCase):
 
     def test_05_checkif_ssh_off (self):
         print (" check if ssh turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("14")
         time.sleep(10)

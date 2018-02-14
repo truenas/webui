@@ -91,8 +91,6 @@ class conf_webdav_test(unittest.TestCase):
 
     def test_05_checkif_wedbdav_off (self):
         print (" check if webdave turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("17")
         time.sleep(10)
