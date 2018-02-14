@@ -4,7 +4,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Subscription } from 'rxjs';
+
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
@@ -16,6 +16,46 @@ import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
 import { ErdService } from 'app/services/erd.service';
+import { Subscription } from 'rxjs/Subscription';
+
+
+
+export interface InputTableConf {
+  
+  columns?:any[];
+  hideTopActions?: boolean;
+  queryCallOption?: any;
+  resource_name?: string;
+  route_edit?: string;
+  route_add?: string[];
+  queryRes?: any [];
+  isActionVisible?: any;
+  config?: any;
+  addRows?(entity: EntityTableComponent);
+  changeEvent?(entity: EntityTableComponent);
+  preInit?(entity: EntityTableComponent);
+  afterInit?(entity: EntityTableComponent);
+  dataHandler?(entity: EntityTableComponent);
+  queryCall?(resp);
+  resourceTransformIncomingRestData?(data);
+  getActions?(row): any [];
+  getAddActions?(): any [];
+  rowValue?(row, attr): any;
+  wsDelete?(resp): any;
+  wsMultiDelete?(resp): any;
+  wsMultiDeleteParams?(selected): any;
+  updateMultiAction?(selected): any;
+}
+
+export interface SortingConfig {
+  columns: any[];
+}
+
+export interface TableConfig {
+  paging: boolean;
+  sorting: SortingConfig;
+}
+
 
 
 @Component({
@@ -27,7 +67,7 @@ import { ErdService } from 'app/services/erd.service';
 export class EntityTableComponent implements OnInit, AfterViewInit {
 
   @Input() title = '';
-  @Input('conf') conf: any;
+  @Input('conf') conf: InputTableConf;
   
   @ViewChild('filter') filter: ElementRef;
  
@@ -45,11 +85,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public currentRows: any[] = []; // Rows applying filter
   public seenRows: any[] = [];
   public getFunction;
-  public config: any = {
+  public config: TableConfig = {
     paging: true,
     sorting: { columns: this.columns },
   };
-  protected loaderOpen: boolean = false;
+
+  protected loaderOpen = false;
   public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
@@ -116,14 +157,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   getData() {
-    let sort: Array<String> = [];
+    const sort: Array<String> = [];
     let options: Object = new Object();
 
-    for (let i in this.config.sorting.columns) {
-      let col = this.config.sorting.columns[i];
-      if (col.sort == 'asc') {
+    for (const i in this.config.sorting.columns) {
+      const col = this.config.sorting.columns[i];
+      if (col.sort === 'asc') {
         sort.push(col.name);
-      } else if (col.sort == 'desc') {
+      } else if (col.sort === 'desc') {
         sort.push('-' + col.name);
       }
     }
@@ -182,7 +223,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
 
     for (let i = 0; i < rows.length; i++) {
-      for (let attr in rows[i]) {
+      for (const attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
           rows[i][attr] = this.rowValue(rows[i], attr);
         }
@@ -207,7 +248,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   trClass(row) {
-    let classes = [];
+    const classes = [];
 
     classes.push('treegrid-' + row.id);
     if (row._parent) {
@@ -224,11 +265,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       return [{
         id: "edit",
         label: "Edit",
-        onClick: (row) => { this.doEdit(row.id); },
+        onClick: (rowinner) => { this.doEdit(rowinner.id); },
       }, {
         id: "delete",
         label: "Delete",
-        onClick: (row) => { this.doDelete(row.id); },
+        onClick: (rowinner) => { this.doDelete(rowinner.id); },
       },]
     }
   }
@@ -268,22 +309,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        let data = {};
+        const data = {};
         if (this.conf.wsDelete) {
           this.busy = this.ws.call(this.conf.wsDelete, [id]).subscribe(
-            (res) => { this.getData() },
-            (res) => {
-              new EntityUtils().handleError(this, res);
+            (resinner) => { this.getData() },
+            (resinner) => {
+              new EntityUtils().handleError(this, resinner);
               this.loader.close();
             }
           );
         } else {
           this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-            (res) => {
+            (resinner) => {
               this.getData();
             },
-            (res) => {
-              new EntityUtils().handleError(this, res);
+            (resinner) => {
+              new EntityUtils().handleError(this, resinner);
               this.loader.close();
             }
           );
