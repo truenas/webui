@@ -1,5 +1,7 @@
 import {Component, ViewContainerRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { TranslateService } from 'ng2-translate/ng2-translate';
+
 import {EntityFormService} from '../../services/entity-form.service';
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -11,11 +13,13 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
   styleUrls : [ '../dynamic-field/dynamic-field.css' ],
 })
 export class FormReadFileComponent implements Field {
-  constructor (private entityFormService : EntityFormService){}
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
   public fileString;
+
+  constructor(private entityFormService: EntityFormService,
+              public translate: TranslateService) {}
  
   changeListener($event): void {
     this.readFile($event.target);

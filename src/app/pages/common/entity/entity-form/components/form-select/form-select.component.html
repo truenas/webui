@@ -1,8 +1,8 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <mat-form-field class="full-width">
-    <mat-select [formControlName]="config.name" [multiple]="config.multiple" [required]="config.required" [placeholder]="config.placeholder" (change)="onChangeOption($event)">
+    <mat-select [formControlName]="config.name" [multiple]="config.multiple" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let option of config.options" [value]="option.value">
-        {{ option.label }}
+        {{ option.label | translate }}
       </mat-option>
     </mat-select>
   </mat-form-field>
