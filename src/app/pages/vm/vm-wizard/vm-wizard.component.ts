@@ -192,7 +192,8 @@ export class VMWizardComponent {
           name: 'upload_iso',
           placeholder : 'Choose File',
           tooltip: '',
-          isHidden: true
+          isHidden: true,
+          acceptedFiles: ',.iso'
         },
       ]
     },

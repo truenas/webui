@@ -10,5 +10,5 @@ export interface FieldConfig {
   initialCount?: number, readonly?: boolean, initial?: string,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, required?: boolean,
-  customEventMethod?(data:any), onChangeOption?(data:any)
+  acceptedFiles?: string, customEventMethod?(data:any), onChangeOption?(data:any), 
 }
