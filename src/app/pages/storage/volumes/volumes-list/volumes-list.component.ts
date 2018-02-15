@@ -195,6 +195,8 @@ export class VolumesListTableConfig implements InputTableConf {
       label: "Download Encrypt Key",
       onClick: (row1) => {
         const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+        dialogRef.componentInstance.volumeId = row1.id;
+                
       }
     });
 
