@@ -1,21 +1,11 @@
  <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
   <mat-card-content>
-    <input type="file"  (ngModel)="filename" placeholder="Upload file" [formControlName]="config.name" accept="{{ config.acceptedFiles }}">
+    <input type="file" #fileInput placeholder="Upload file" accept="{{config.acceptedFiles}}">
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="onFileUpload()">Upload</button> 
+      <button mat-raised-button type="button" (click)="upload()">Upload</button>
   </mat-card-actions>
   <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
   </div>
-
-
-<!-- Backup previous working changes, 
-  <label>{{ config.placeholder }}</label>
-  <mat-card-content>
-    <input type="file" (change)="onFileUpload($event)" placeholder="Upload file" accept="{{config.acceptedFiles}}">
-  </mat-card-content>
-  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
-  </div> -->

@@ -22,6 +22,7 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['../dynamic-field/dynamic-field.css'],
 })
 export class FormUploadComponent {
+  @ViewChild('fileInput') fileInput;
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -37,48 +38,29 @@ export class FormUploadComponent {
     private dialog:DialogService, public snackBar: MatSnackBar) {
 
   }
-//   startUpload(): void {
-//     const event: CustomUploadInput = {
-//       type: 'uploadAll',
-//       url: '/mnt/data/iso_dataset',
-//       method: 'POST',
-//       data: {
-//         data: JSON.stringify({
-//           "method": "filesystem.put",
-//           "params": ["/mnt/data/iso_dataset/9781783555130-PYTHON_MACHINE_LEARNING.pdf", { "mode": "493" }]
-//         })
-//       },
-//       withCredentials: true,
-//       headers: {
-//         Authorization: 'Token ' + this.ws.token,
-//       }
-//     };
-  
-// }
-onFileUpload(event: EventTarget) {
+private upload() {
   this.loader.open();
-
-  const eventObj: MSInputMethodContext = <MSInputMethodContext>event;
-  const target: HTMLInputElement = <HTMLInputElement>eventObj.target;
-  const files: FileList = target.files;
-
-  const formData: FormData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    formData.append('file', files[i]);
+  
+  const fileBrowser = this.fileInput.nativeElement;
+  if (fileBrowser.files && fileBrowser.files[0]) {
+    const formData: FormData = new FormData();
+    formData.append('files', fileBrowser.files[0]);
     formData.append('data', JSON.stringify({
       "method": "filesystem.put",
-      "params": ["/tmp/"+files[i].name, { "mode": "493" }]
-    }))
-  }
-  this.http.post(this.apiEndPoint, formData).subscribe(
-    (data) => {
-      this.loader.close();
-      this.snackBar.open("your files are uploaded", 'close', { duration: 5000 })
-    },
-    (error) => {
-      this.loader.close();
-      this.dialog.errorReport(error.status, error.statusText, error._body);
-    }
-  );
+      "params": ["/tmp/"+fileBrowser.files[0].name, { "mode": "493" }]
+    }));
+
+    this.http.post(this.apiEndPoint, formData).subscribe(
+      (data) => {
+        this.loader.close();
+        this.snackBar.open("your files are uploaded", 'close', { duration: 5000 });
+      },
+      (error) => {
+        this.loader.close();
+        this.dialog.errorReport(error.status, error.statusText, error._body);
+        
+      }
+    );
+  };
 }
 }
