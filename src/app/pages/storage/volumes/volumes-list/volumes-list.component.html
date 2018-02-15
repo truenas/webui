@@ -7,7 +7,7 @@
     <br/>
   </div>
   <div *ngIf="zfsPoolRows.length > 0">
-    <mat-accordion>
+    <mat-accordion [multi]="true">
       <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="expanded" id="epansionpanel_zfs_{{row.name}}" >
         <mat-expansion-panel-header>
           <mat-panel-title>
