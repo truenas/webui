@@ -33,8 +33,8 @@ export class UserFormComponent {
     {
       type : 'input',
       name : 'uid',
-      placeholder : 'UID_PLACEHOLDER',
-      tooltip : 'UID_TOOLTIP',
+      placeholder : 'USERS_UID_PLACEHOLDER',
+      tooltip : 'USERS_UID_TOOLTIP',
       validation : [ Validators.required ]
     },
     {
