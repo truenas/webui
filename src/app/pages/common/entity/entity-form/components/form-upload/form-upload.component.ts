@@ -35,19 +35,18 @@ export class FormUploadComponent {
 
   constructor(
     protected ws: WebSocketService, protected http: Http, private loader: AppLoaderService,
-    private dialog:DialogService, public snackBar: MatSnackBar) {
+    private dialog:DialogService, public snackBar: MatSnackBar) {}
 
-  }
-private upload() {
+  upload(location = "/tmp/") {
   this.loader.open();
   
   const fileBrowser = this.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
     const formData: FormData = new FormData();
-    formData.append('files', fileBrowser.files[0]);
+    formData.append('file', fileBrowser.files[0]);
     formData.append('data', JSON.stringify({
       "method": "filesystem.put",
-      "params": ["/tmp/"+fileBrowser.files[0].name, { "mode": "493" }]
+      "params": [location + fileBrowser.files[0].name, { "mode": "493" }]
     }));
 
     this.http.post(this.apiEndPoint, formData).subscribe(

@@ -1,7 +1,7 @@
  <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
   <label>{{ config.placeholder }}</label>
   <mat-card-content>
-    <input type="file" #fileInput placeholder="Upload file" accept="{{config.acceptedFiles}}">
+    <input type="file" #fileInput accept="{{config.acceptedFiles}}">
   </mat-card-content>
   <mat-card-actions>
       <button mat-raised-button type="button" (click)="upload()">Upload</button>
