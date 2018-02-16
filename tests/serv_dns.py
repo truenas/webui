@@ -46,30 +46,22 @@ class conf_dns_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         self.status_change("4", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
 
     def test_02_checkif_dns_on (self):
         print (" check if dns turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("4")
 
     def test_03_turnoff_dns (self):
         print (" turning off the dns service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("4", "stop")
 
     def test_04_checkif_dns_off (self):
         print (" check if dns turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("4")
         time.sleep(10)
@@ -86,16 +78,18 @@ class conf_dns_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
+        buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
         if to == "start":
             if status_data == "STOPPED":
                 # Click on the toggle button
-                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
+                buttonToggle.click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -103,7 +97,7 @@ class conf_dns_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
+                buttonToggle.click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
@@ -113,10 +107,11 @@ class conf_dns_test(unittest.TestCase):
 
 
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
+
 
 
     @classmethod

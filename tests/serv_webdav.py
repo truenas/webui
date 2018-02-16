@@ -24,7 +24,10 @@ except ImportError:
     import unittest
 
 xpaths = { 'navService': '//*[@id="nav-8"]/div/a[1]',
-           'turnoffConfirm': '//*[contains(text(), "OK")]'
+           'turnoffConfirm': '//*[contains(text(), "OK")]',
+           'configButton' : '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[17]/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[3]/button',
+           'webdavPassword' : '//*[@id="webdav_password"]/mat-input-container/div/div[1]/div/input',
+           'webdavPassword2' : '//*[@id="webdav_password2"]/mat-input-container/div/div[1]/div/input'
          }
 
 
@@ -50,15 +53,13 @@ class conf_webdav_test(unittest.TestCase):
         self.assertTrue("Services" in page_data)
 
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("17", "start")
 
 
     def test_02_checkif_webdav_on (self):
         print (" check if webdav turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("17")
 
@@ -67,16 +68,16 @@ class conf_webdav_test(unittest.TestCase):
         print (" configuring webdav service")
         time.sleep(1)
         # click on configure button
-        driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[17]/mat-card/div[2]/div[3]/button').click()
+        driver.find_element_by_xpath(xpaths['configButton']).click()
         time.sleep(1)
         # Enter password newuserpassword
-        driver.find_element_by_xpath('//*[@id="webdav_password"]/mat-input-container/div/div[1]/div/input').clear()
+        driver.find_element_by_xpath(xpaths['webdavPassword']).clear()
         print ("clear the webdav password field")
-        driver.find_element_by_xpath('//*[@id="webdav_password"]/mat-input-container/div/div[1]/div/input').send_keys(newuserpassword)
+        driver.find_element_by_xpath(xpaths['webdavPassword']).send_keys(newuserpassword)
         # Enter password confirmation newuserpassword
-        driver.find_element_by_xpath('//*[@id="webdav_password2"]/mat-input-container/div/div[1]/div/input').clear()
+        driver.find_element_by_xpath(xpaths['webdavPassword2']).clear()
         print ("clear the webdav password2 field")
-        driver.find_element_by_xpath('//*[@id="webdav_password2"]/mat-input-container/div/div[1]/div/input').send_keys(newuserpassword)
+        driver.find_element_by_xpath(xpaths['webdavPassword2']).send_keys(newuserpassword)
         # Click on save button
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         #wait till saving is finished
@@ -93,8 +94,6 @@ class conf_webdav_test(unittest.TestCase):
 
     def test_05_checkif_wedbdav_off (self):
         print (" check if webdave turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("17")
         time.sleep(10)
@@ -111,16 +110,18 @@ class conf_webdav_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
+        buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
         if to == "start":
             if status_data == "STOPPED":
                 # Click on the toggle button
-                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
+                buttonToggle.click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -128,19 +129,22 @@ class conf_webdav_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
+                buttonToggle.click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-            else: 
+            else:
                 print ("the status is already" + status_data)
 
+
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
+
+
 
 
     @classmethod

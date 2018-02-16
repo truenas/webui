@@ -26,7 +26,9 @@ except ImportError:
 
 
 xpaths = { 'navService' : '//*[@id="nav-8"]/div/a[1]',
-          'turnoffConfirm' : '//*[contains(text(), "OK")]'
+          'turnoffConfirm' : '//*[contains(text(), "OK")]',
+          'configButton' : '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[14]/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[3]/button',
+          'rootCheckbox' : '//*[@id="ssh_rootlogin"]/mat-checkbox/label/div'
          }
 
 class conf_ssh_test(unittest.TestCase):
@@ -43,14 +45,12 @@ class conf_ssh_test(unittest.TestCase):
         time.sleep(1)
         print (" turning on the ssh service")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "start")
 
     def test_02_checkif_ssh_on (self):
         print (" check if ssh turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("14")
 
@@ -58,7 +58,7 @@ class conf_ssh_test(unittest.TestCase):
         print (" configuring ssh service with root access")
         time.sleep(2)
         # click on configure button
-        driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button').click()
+        driver.find_element_by_xpath(xpaths['configButton']).click()
         # uncheck on Login as Root with Passsword
         driver.find_element_by_xpath('//*[@id="ssh_rootlogin"]/mat-checkbox/label/div').click()
         # click on save button
@@ -78,8 +78,6 @@ class conf_ssh_test(unittest.TestCase):
 
     def test_05_checkif_ssh_off (self):
         print (" check if ssh turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("14")
         time.sleep(10)
@@ -98,16 +96,18 @@ class conf_ssh_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
+        buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
         if to == "start":
             if status_data == "STOPPED":
                 # Click on the toggle button
-                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
+                buttonToggle.click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -115,17 +115,17 @@ class conf_ssh_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/button').click()
+                buttonToggle.click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-            else: 
+            else:
                 print ("the status is already" + status_data)
 
 
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which) + ']/mat-card/div[2]/div[1]/mat-chip')
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
