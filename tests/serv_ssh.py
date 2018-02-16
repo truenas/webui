@@ -26,7 +26,9 @@ except ImportError:
 
 
 xpaths = { 'navService' : '//*[@id="nav-8"]/div/a[1]',
-          'turnoffConfirm' : '//*[contains(text(), "OK")]'
+          'turnoffConfirm' : '//*[contains(text(), "OK")]',
+          'configButton' : '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[14]/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[3]/button',
+          'rootCheckbox' : '//*[@id="ssh_rootlogin"]/mat-checkbox/label/div'
          }
 
 class conf_ssh_test(unittest.TestCase):
@@ -56,7 +58,7 @@ class conf_ssh_test(unittest.TestCase):
         print (" configuring ssh service with root access")
         time.sleep(2)
         # click on configure button
-        driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[14]/mat-card/div[2]/div[3]/button').click()
+        driver.find_element_by_xpath(xpaths['configButton']).click()
         # uncheck on Login as Root with Passsword
         driver.find_element_by_xpath('//*[@id="ssh_rootlogin"]/mat-checkbox/label/div').click()
         # click on save button
