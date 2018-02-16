@@ -4,7 +4,7 @@
     <input type="file" #fileInput accept="{{config.acceptedFiles}}">
   </mat-card-content>
   <mat-card-actions>
-      <button mat-raised-button type="button" (click)="upload()">Upload</button>
+      <button mat-raised-button type="button" (click)="upload(config.fileLocation)">Upload</button>
   </mat-card-actions>
   <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>

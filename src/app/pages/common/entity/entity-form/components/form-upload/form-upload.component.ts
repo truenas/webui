@@ -46,7 +46,7 @@ export class FormUploadComponent {
     formData.append('file', fileBrowser.files[0]);
     formData.append('data', JSON.stringify({
       "method": "filesystem.put",
-      "params": [location + fileBrowser.files[0].name, { "mode": "493" }]
+      "params": [location + '/' + fileBrowser.files[0].name, { "mode": "493" }]
     }));
 
     this.http.post(this.apiEndPoint, formData).subscribe(
