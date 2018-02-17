@@ -313,47 +313,58 @@ export class VolumesListTableConfig implements InputTableConf {
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
     for (let i = 0; i < data.length; i++) {
-      data[i].nodePath = data[i].mountpoint;
+      const dataObj = data[i];
 
-      if (data[i].status !== '-') {
-        // THEN THIS A ZFS_POOL DON'T ADD    data[i].type = 'zpool'
+      dataObj.nodePath =  dataObj.mountpoint;
+
+      if( typeof(dataObj.nodePath) === "undefined" && typeof(dataObj.path) !== "undefined" ) {
+        dataObj.nodePath = "/mnt/" + dataObj.path;
+      }
+      
+      if (dataObj.status !== '-') {
+        // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
         continue;
-      } else if (typeof (data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
+      } else if (typeof (dataObj.nodePath) === "undefined" || dataObj.nodePath.indexOf("/") === -1) {
         continue;
       }
 
-      data[i].parentPath = data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/"));
+      dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
 
-      if ("/mnt" === data[i].parentPath) {
-        data[i].parentPath = "0";
+      if ("/mnt" === dataObj.parentPath ) {
+        dataObj.parentPath = "0";
+      }
+
+
+      try {
+        dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
+      } catch (error) {
+        dataObj.availStr = "" + dataObj.avail;
       }
 
       try {
-        data[i].availStr = (<any>window).filesize(data[i].avail, { standard: "iec" });
+        dataObj.usedStr = (<any>window).filesize(dataObj.used, { standard: "iec" });
       } catch (error) {
-        data[i].availStr = "" + data[i].avail;
+        dataObj.usedStr = "" + dataObj.used;
       }
 
-      try {
-        data[i].usedStr = (<any>window).filesize(data[i].used, { standard: "iec" });
-      } catch (error) {
-        data[i].usedStr = "" + data[i].used;
-      }
+      dataObj.compression = "";
+      dataObj.readonly = "";
+      dataObj.dedub = "";
 
-      if (data[i].type === 'dataset' && typeof (data[i].dataset_data) !== "undefined" && typeof (data[i].dataset_data.data) !== "undefined") {
-        for (let k = 0; k < data[i].dataset_data.data.length; k++) {
-          if (data[i].dataset_data.data[k].name === data[i].nodePath) {
-            data[i].compression = data[i].dataset_data.data[k].compression;
-            data[i].readonly = data[i].dataset_data.data[k].readonly;
-            data[i].dedup = data[i].dataset_data.data[k].dedup;
+      if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
+        for (let k = 0; k < dataObj.dataset_data.data.length; k++) {
+          if (dataObj.dataset_data.data[k].name === dataObj.nodePath) {
+            dataObj.compression = dataObj.dataset_data.data[k].compression;
+            dataObj.readonly = dataObj.dataset_data.data[k].readonly;
+            dataObj.dedup = dataObj.dataset_data.data[k].dedup;
           }
 
         }
       }
 
-      data[i].actions = this.getActions(data[i]);
+      dataObj.actions = this.getActions(dataObj);
 
-      returnData.push(data[i]);
+      returnData.push(dataObj);
     }
 
     return returnData;
