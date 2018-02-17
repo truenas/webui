@@ -162,7 +162,7 @@ export class VMWizardComponent {
       fieldConfig: [
         {
           type: 'radio',
-          name: 'upload_iso',
+          name: 'upload_iso_radio',
           placeholder : 'Upload an ISO',
           tooltip: '',
           options:[{label:"yes", value: true}, 
@@ -194,7 +194,7 @@ export class VMWizardComponent {
           tooltip: '',
           isHidden: true,
           acceptedFiles: ',.iso',
-          fileLocation: '/mnt/data/iso_dataset',
+          fileLocation: '',
         },
       ]
     },
@@ -243,7 +243,7 @@ export class VMWizardComponent {
       }
       
     });
-    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_radio')).valueChanges.subscribe((res) => {
       if (res){
         _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
         _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
