@@ -95,6 +95,7 @@ vm-cards mat-card.front {
 
 .side-content-header{
   position:relative;
+  padding:16px;
 }
 .side-content button.vm-power-btn {
  box-shadow:none; 
@@ -128,10 +129,10 @@ vm-cards mat-card.front {
   text-align:left;
 }
 
-.vm-power-btn-on.mat-fab,
-.vm-power-btn-off.mat-fab{
+.vm-power-btn.mat-fab,
+.vm-power-btn.mat-fab{
   box-shadow:0px 3px 3px rgba(0,0,0,0.5)!important;
-  top: 16px;
+  top: 28px;
   left: -28px;
   position: absolute;
 }
