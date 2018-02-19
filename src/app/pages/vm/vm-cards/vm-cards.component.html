@@ -121,7 +121,7 @@
 
 
         <div class="vm-controls">
-          <button mat-raised-button color="primary" (click)="vnc(i)">VNC</button>
+          <button mat-raised-button color="primary" [disabled]="!cards[i].vnc" (click)="vnc(i)">VNC</button>
           <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
           <button mat-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
         </div>
