@@ -42,8 +42,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
       // Hardware detection
       switch(evt.data.system_product){
         case "FREENAS-MINI-2.0":
-          this.cardBg = 'freenas_mini.png';
-          //this.cardBg = 'logo.svg';
+          //this.cardBg = 'freenas_mini.png';
+          this.cardBg = 'logo.svg';
         break;
         case "FREENAS-MINI-XL":
           this.cardBg = 'freenas_mini_xl.png';

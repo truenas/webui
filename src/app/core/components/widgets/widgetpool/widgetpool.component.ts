@@ -79,7 +79,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         console.log("**** WidgetVolumeComponent DISKS ****");
         console.log(evt.data);
         // Simulate massive array
-        for(let i = 0; i < 12; i++){
+        for(let i = 0; i < 90; i++){
           this.disks.push("ada" + i);
         }
         //this.disks = evt.data;

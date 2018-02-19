@@ -17,6 +17,7 @@
         </div>
         <div fxFlex="40">
           <mat-grid-list [cols]="gridCols" rowHeight="24px" role="list" *ngIf="disks.length > 0"[ngClass]="{'high-density': gridCols == 8}">
+            <mat-grid-tile [colspan]="gridCols" ><span class="disk-grid-header">Disks in Use</span></mat-grid-tile>
             <mat-grid-tile *ngFor="let disk of disks; let i=index" class="disk-tile" (click)="setSelectedDisk(i)">
                 <mat-icon class="disk-icon" role="img">local_laundry_service</mat-icon>
                 <span class="disk-name">{{disks[i]}}</span>

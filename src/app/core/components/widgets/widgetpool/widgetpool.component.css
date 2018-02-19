@@ -1,3 +1,10 @@
+.disk-grid-header{
+  background-color: rgba(0,0,0,0.75);
+  width: 100%;
+  font-weight: bold;
+  color: #fff;
+}
+
 .disk-tile{
   background-color:rgba(0,0,0,0.15);
 }
