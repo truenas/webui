@@ -10,6 +10,7 @@ import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import {UUID} from 'angular2-uuid';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-admin-layout',
@@ -24,6 +25,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMsg: String = "";
   consoleMSgList: any[] = [];
   public is_freenas: Boolean = false;
+  // we will just have to add to this list as more languages are added
+  public supportedLanguages = ["en",
+                               "es",
+                               "zh"
+                              ]
 
   @ViewChild(MatSidenav) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -55,7 +61,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
     // Translator init
     const browserLang: string = translate.getBrowserLang();
-    translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+    const langSupported = _.indexOf(this.supportedLanguages, browserLang);
+    translate.use(langSupported > -1 ? browserLang : 'en');
   }
 
   ngOnInit() {

@@ -54,3 +54,6 @@ _pycache_
 .cache
 config.py
 auto_config.py
+
+# i18n-translate
+/src/assets/i18n/.i18n-editor-metadata
