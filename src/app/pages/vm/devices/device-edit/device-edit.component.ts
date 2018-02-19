@@ -27,7 +27,7 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 
 @Component({
   selector : 'device-edit',
-  template : `<device-add [conf]="this"></device-add>`,
+  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
   providers : [ VmService ]
 })
 
