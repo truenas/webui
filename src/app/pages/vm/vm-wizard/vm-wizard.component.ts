@@ -160,15 +160,15 @@ export class VMWizardComponent {
     {
       label: 'Installation Media',
       fieldConfig: [
-        {
-          type: 'radio',
-          name: 'upload_iso_radio',
-          placeholder : 'Upload an ISO',
-          tooltip: '',
-          options:[{label:"yes", value: true}, 
-                   {label:"no", value: false}],
-          value: false,
-        },
+        // {
+        //   type: 'radio',
+        //   name: 'upload_iso_radio',
+        //   placeholder : 'Upload an ISO',
+        //   tooltip: '',
+        //   options:[{label:"yes", value: true}, 
+        //            {label:"no", value: false}],
+        //   value: false,
+        // },
         {
           type: 'explorer',
           name: 'iso_path',
@@ -176,7 +176,7 @@ export class VMWizardComponent {
           initial: '/mnt',
           tooltip: '',
           validation : [ Validators.required ],
-          isHidden: false
+          // isHidden: false
         },
         {
           type: 'explorer',
@@ -185,14 +185,14 @@ export class VMWizardComponent {
           initial: '/mnt',
           tooltip: '',
           explorerType: 'directory',
-          isHidden: true
+          // isHidden: true
         },
         {
           type: 'upload',
           name: 'upload_iso',
           placeholder : '',
           tooltip: '',
-          isHidden: true,
+          // isHidden: true,
           acceptedFiles: ',.iso',
           fileLocation: '',
         },
@@ -214,8 +214,6 @@ export class VMWizardComponent {
 
   }
 
-  preInit() {
-  }
 
   afterInit(entityWizard: EntityWizardComponent) {
     
@@ -243,18 +241,18 @@ export class VMWizardComponent {
       }
       
     });
-    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_radio')).valueChanges.subscribe((res) => {
-      if (res){
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = true;
-      } else {
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = false;
-      }
+    // ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_radio')).valueChanges.subscribe((res) => {
+    //   if (res){
+    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
+    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
+    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = true;
+    //   } else {
+    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
+    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
+    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = false;
+    //   }
       
-    });
+    // });
     ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
       if (res){
         _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
