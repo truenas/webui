@@ -160,15 +160,6 @@ export class VMWizardComponent {
     {
       label: 'Installation Media',
       fieldConfig: [
-        // {
-        //   type: 'radio',
-        //   name: 'upload_iso_radio',
-        //   placeholder : 'Upload an ISO',
-        //   tooltip: '',
-        //   options:[{label:"yes", value: true}, 
-        //            {label:"no", value: false}],
-        //   value: false,
-        // },
         {
           type: 'explorer',
           name: 'iso_path',
@@ -179,20 +170,27 @@ export class VMWizardComponent {
           // isHidden: false
         },
         {
+          type: 'checkbox',
+          name: 'upload_iso_checkbox',
+          placeholder : 'Check to Upload an ISO.',
+          tooltip: '',
+          value: false,
+        },
+        {
           type: 'explorer',
           name: 'upload_iso_path',
           placeholder : 'select a Dataset for uploading your ISO',
           initial: '/mnt',
           tooltip: '',
           explorerType: 'directory',
-          // isHidden: true
+          isHidden: true
         },
         {
           type: 'upload',
           name: 'upload_iso',
           placeholder : '',
           tooltip: '',
-          // isHidden: true,
+          isHidden: true,
           acceptedFiles: ',.iso',
           fileLocation: '',
         },
@@ -241,18 +239,16 @@ export class VMWizardComponent {
       }
       
     });
-    // ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_radio')).valueChanges.subscribe((res) => {
-    //   if (res){
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = true;
-    //   } else {
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'iso_path'}).isHidden = false;
-    //   }
+    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
+      if (res){
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
+      } else {
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
+      }
       
-    // });
+    });
     ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
       if (res){
         _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
