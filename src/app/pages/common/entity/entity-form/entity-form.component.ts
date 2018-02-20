@@ -98,7 +98,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public wsfg;
   public wsResponseIdx;
   public queryResponse;
-  public saveSubmitText = "Save";
+  public saveSubmitText = "SAVE";
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');

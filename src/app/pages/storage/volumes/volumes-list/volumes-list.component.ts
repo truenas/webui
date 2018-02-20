@@ -11,6 +11,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 
 import { Injectable } from '@angular/core';
@@ -66,7 +67,8 @@ export class VolumesListTableConfig implements InputTableConf {
     public mdDialog: MatDialog,
     protected rest: RestService,
     protected dialogService: DialogService,
-    protected loader: AppLoaderService) {
+    protected loader: AppLoaderService,
+    protected translate: TranslateService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -216,7 +218,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
-        label: "Delete",
+        label: "DELETE",
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "volumes", "delete", row1.id]));
@@ -381,22 +383,22 @@ export class VolumesListTableConfig implements InputTableConf {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  title = "Volumes";
+  title = "ZFS_POOLS";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader)
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader)
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
   };
 
   expanded = false;
@@ -405,8 +407,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MatDialog, protected erdService: ErdService) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService);
+    protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService) {
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
   }
 
   public repaintMe() {
@@ -421,7 +423,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
         volume.type = 'zpool';
 
         try {

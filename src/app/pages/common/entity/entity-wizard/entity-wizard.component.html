@@ -4,7 +4,7 @@
     <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray">
       <div *ngFor="let step of conf.wizardConfig; let i = index">
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
-          <ng-template matStepLabel>{{step.label}}</ng-template>
+          <ng-template matStepLabel>{{step.label | translate}}</ng-template>
           <ng-container *ngFor="let field of step.fieldConfig; let j = index">
             <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{j}}">
               <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formArray?.get([i])" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
@@ -12,17 +12,17 @@
             </div>
           </ng-container>
           <div>
-            <button mat-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">Back</button>
-            <button mat-button matStepperNext type="button">Next</button>
+            <button mat-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">{{"BACK" | translate}}</button>
+            <button mat-button matStepperNext type="button">{{"NEXT" | translate}}</button>
           </div>
         </mat-step>
       </div>
       <mat-step>
-        <ng-template matStepLabel>Confirm your information</ng-template>
-        Everything seems correct.
+        <ng-template matStepLabel>{{"WIZARD_CONFIRM_TITLE" | translate}}</ng-template>
+        {{"WIZARD_CONFIRM_MESSAGE" | translate}}
         <div>
-          <button mat-button matStepperPrevious type="button">Back</button>
-          <button type="Submit" mat-button>Submit</button>
+          <button mat-button matStepperPrevious type="button">{{"BACK" | translate}}</button>
+          <button type="Submit" mat-button>{{"SUBMIT" | translate}}</button>
         </div>
       </mat-step>
     </mat-horizontal-stepper>
