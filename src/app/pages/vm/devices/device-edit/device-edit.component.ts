@@ -33,7 +33,7 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 
 export class DeviceEditComponent implements OnInit {
 
-  
+  saveSubmitText = "Save";
   public resource_name = 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
@@ -54,7 +54,7 @@ export class DeviceEditComponent implements OnInit {
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;
-  
+ 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
