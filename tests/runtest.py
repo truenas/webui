@@ -18,6 +18,7 @@ from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
 from acc_user import run_create_user_test
+from net_conf import run_conf_network_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
@@ -64,7 +65,7 @@ if len(argument) == 1:
 
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
-testlist = ["account", "system", "guide", "service", "theme"]
+testlist = ["account", "network", "system", "guide", "service", "theme"]
 versionlist = ["U"]
 # look if all the argument are there.
 try:
@@ -115,6 +116,7 @@ except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
+    run_conf_network_test(runDriver)
 #    run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
     run_conf_sysadvance_test(runDriver)
@@ -138,6 +140,8 @@ else:
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
         run_delete_test(runDriver)
+    elif (test_name == "network"):
+        run_conf_network_test(runDriver)
     elif (test_name == "system"):
         run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
@@ -187,6 +191,9 @@ if path.exists('acc_group.pyc'):
 
 if path.exists('serv_afp.pyc'):
     call(["rm", "serv_afp.pyc"])
+
+if path.exists('net_conf.pyc'):
+    call(["rm", "net_conf.pyc"])
 
 if path.exists('serv_smb.pyc'):
     call(["rm", "serv_smb.pyc"])
