@@ -90,7 +90,7 @@ export class ShellComponent implements OnInit, OnChanges {
 
     this.xterm = new (<any>window).Terminal({
       'cursorBlink': true,
-      'tabStopWidth': 4,
+      'tabStopWidth': 8,
       'cols': 80,
       'rows': parseInt(rowNum.toFixed()),
       'focus': true
