@@ -2,6 +2,7 @@ import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'entity-job',
@@ -25,7 +26,7 @@ export class EntityJobComponent implements OnInit {
   @Output() failure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
-    @Inject(MAT_DIALOG_DATA) public data: any) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService) {}
 
   ngOnInit() {
     this.dialogRef.updateSize('25%', '20%');

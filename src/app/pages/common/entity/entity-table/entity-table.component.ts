@@ -4,6 +4,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
@@ -94,7 +95,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public selected = [];
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) { }
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
+    protected erdService: ErdService, protected translate: TranslateService) { }
 
   ngOnInit() {
     
@@ -264,11 +266,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       return [{
         id: "edit",
-        label: "Edit",
+        label: "EDIT",
         onClick: (rowinner) => { this.doEdit(rowinner.id); },
       }, {
         id: "delete",
-        label: "Delete",
+        label: "DELETE",
         onClick: (rowinner) => { this.doDelete(rowinner.id); },
       },]
     }
