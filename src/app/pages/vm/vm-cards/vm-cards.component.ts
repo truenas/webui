@@ -26,6 +26,7 @@ interface VmProfile {
   vcpus?:string;
   memory?:string;
   lazyLoaded?:boolean;
+  vnc?:boolean;
   template?:string; // for back face of card
   cardActions?:Array<any>;
   isNew:boolean;
@@ -130,7 +131,7 @@ export class VmCardsComponent implements OnInit {
   }
 
   parseResponse(data){
-    var card: VmProfile = { 
+    let card: VmProfile = { 
       name:data.name,
       id:data.id,
       description:data.description,
@@ -141,6 +142,7 @@ export class VmCardsComponent implements OnInit {
       vcpus:data.vcpus,
       memory:data.memory,
       lazyLoaded: false,
+      vnc:false, // Until we verify otherwise we assume false
       template:'none',
       isNew:false,
       cardActions:[]
@@ -154,7 +156,8 @@ export class VmCardsComponent implements OnInit {
 
   setVmList(res:CoreEvent, init?:string) { 
     for(var i = 0; i < res.data.length; i++){
-      var card = this.parseResponse(res.data[i]);
+      let card = this.parseResponse(res.data[i]);
+      this.checkVnc(card);
       this.cache.push(card);
     }   
     if(init){
@@ -354,11 +357,22 @@ export class VmCardsComponent implements OnInit {
   }
 
   vnc(index){
-    var vm = this.cards[index];
+    let vm = this.cards[index];
     this.ws.call('vm.get_vnc_web', [ vm.id ]).subscribe((res) => {
       for (let item in res){
         window.open(res[item]);
       }   
+    }); 
+  }
+
+  checkVnc(card){
+    let result:boolean = false;
+    this.ws.call('vm.get_vnc_web', [ card.id ]).subscribe((res) => {
+      if(res.length > 0 ){
+        card.vnc = true;
+      } else {
+        card.vnc = false;
+      }
     }); 
   }
 }

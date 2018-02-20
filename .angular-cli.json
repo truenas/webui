@@ -10,7 +10,8 @@
         "outDir": "dist",
         "assets": [
             "assets",
-            "favicon.ico"
+            "favicon.ico",
+            "icons"
         ],
         "index": "index.html",
         "main": "main.ts",
@@ -30,6 +31,7 @@
             "../node_modules/chartist/dist/chartist.min.css",
             "../node_modules/@swimlane/ngx-datatable/assets/icons.css",
             "../node_modules/c3/c3.min.css",
+            "../node_modules/devextreme/dist/css/dx.spa.css",
             "../node_modules/devextreme/dist/css/dx.common.css",
             "../node_modules/devextreme/dist/css/dx.light.css",
             "../node_modules/angular-tree-component/dist/angular-tree-component.css",
