@@ -75,7 +75,7 @@
 					<div id="{{col.prop}}_{{row[col.prop]}}" 
 					     title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
 						<img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-						{{row[col.prop] | translate}}
+						{{row[col.prop]}}
 					  </div>
 					</ng-template>
 			</ngx-datatable-column>
