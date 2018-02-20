@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-// import { JailService } from '../../../services/';
+
 import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
@@ -47,6 +47,7 @@ export class VMWizardComponent {
       { type: 'input',
         name : 'name',
         placeholder : 'Name of the VM',
+        validation : [ Validators.required ]
       },
       { type: 'select',
         name : 'bootloader',
@@ -57,7 +58,12 @@ export class VMWizardComponent {
         name : 'autostart',
         placeholder : 'Start on Boot',
         value: true
-      }
+      },
+      { type: 'checkbox',
+      name : 'enable_vnc',
+      placeholder : 'Enanble VNC',
+      value: true
+    }
       ]
     },
     {
@@ -80,17 +86,37 @@ export class VMWizardComponent {
       label: 'Hard Disk Drive',
       fieldConfig: [
         {
+          type: 'radio',
+          name: 'disk_radio',
+          placeholder : 'Create New Disk',
+          tooltip: '',
+          options:[{label:"yes", value: true}, 
+                   {label:"no", value: false}],
+          value: true,
+        },
+        {
           type: 'input',
           name: 'volsize',
           placeholder : 'please specify size for zvol\'s (GB\'s)',
           tooltip: '',
+          isHidden: false
         },
         {
           type: 'select',
           name: 'datastore',
           placeholder : 'please select a datastore.',
           tooltip: '',
-          options: []
+          options: [],
+          isHidden: false
+        },
+        {
+          type: 'explorer',
+          name: 'hdd_path',
+          placeholder: 'select an existing disk',
+          tooltip: '',
+          explorerType: "zvol",
+          initial: '/mnt',
+          isHidden: true
         },
       ]
     },
@@ -133,12 +159,40 @@ export class VMWizardComponent {
     },
     {
       label: 'Installation Media',
-      fieldConfig: [{
+      fieldConfig: [
+        {
           type: 'explorer',
           name: 'iso_path',
-          placeholder : 'What ISO do you want to boot?',
+          placeholder : 'Please choose an installation media',
           initial: '/mnt',
           tooltip: '',
+          validation : [ Validators.required ],
+          // isHidden: false
+        },
+        {
+          type: 'checkbox',
+          name: 'upload_iso_checkbox',
+          placeholder : 'Check to Upload an ISO.',
+          tooltip: '',
+          value: false,
+        },
+        {
+          type: 'explorer',
+          name: 'upload_iso_path',
+          placeholder : 'select a Dataset for uploading your ISO',
+          initial: '/mnt',
+          tooltip: '',
+          explorerType: 'directory',
+          isHidden: true
+        },
+        {
+          type: 'upload',
+          name: 'upload_iso',
+          placeholder : '',
+          tooltip: '',
+          isHidden: true,
+          acceptedFiles: ',.iso',
+          fileLocation: '',
         },
       ]
     },
@@ -158,8 +212,6 @@ export class VMWizardComponent {
 
   }
 
-  preInit() {
-  }
 
   afterInit(entityWizard: EntityWizardComponent) {
     
@@ -174,6 +226,34 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
       }
+    });
+    ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
+      if (res){
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = false;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = true;
+      } else {
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
+        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+      }
+      
+    });
+    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
+      if (res){
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
+      } else {
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
+      }
+      
+    });
+    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
+      if (res){
+        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
+      }
+
     });
     this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
       this.datastore = _.find(this.wizardConfig[2].fieldConfig, { name : 'datastore' });
@@ -219,11 +299,15 @@ export class VMWizardComponent {
         });
 
   }
+  getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
 
   customSubmit(value) {
+    const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const payload = {}
     const vm_payload = {}
-    payload["name"] = value.datastore+"/"+value.name+"-"+Math.random().toString(36).substring(7);
+    payload["name"] = hdd
     payload["type"] = "VOLUME";
     payload["volsize"] = value.volsize * 1024 * 1000 * 1000;
     payload["volblocksize"] = "512";
@@ -236,17 +320,56 @@ export class VMWizardComponent {
     vm_payload["autoloader"] = value.autoloader;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-      {"dtype": "DISK", "attributes": {"path": "/dev/zvol/"+value.datastore+"/"+value.name, "type": "AHCI", "sectorsize": 0}},
+      {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
       {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
     ]
+    if(value.enable_vnc){
+      this.ws.call('interfaces.ipv4_in_use').subscribe((res)=>{
+        vm_payload["devices"].push(
+          {
+            "dtype": "VNC", "attributes": {
+              "wait": true, 
+              "vnc_port": String(this.getRndInteger(5553,6553)), 
+              "vnc_resolution": "1024x768",
+              "vnc_bind": res[0], 
+              "vnc_password": "", 
+              "vnc_web": true 
+            }
+          }
+      )
+      })
+
+    }
     this.loader.open();
-    this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
+    if( value.hdd_path ){
+      for (const device of vm_payload["devices"]){
+        if (device.dtype === "DISK"){
+          device.attributes.path = '/dev/zvol/'+ value.hdd_path.substring(5);
+        };
+      };
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.router.navigate(['/vm']);
-      });
     },(error) => {
       this.loader.close();
     });
+
+    } else {
+      this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
+        for (const device of vm_payload["devices"]){
+          if (device.dtype === "DISK"){
+            const orig_hdd = device.attributes.path;
+            device.attributes.path = '/dev/zvol/' + orig_hdd
+          };
+        };
+        this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+          this.loader.close();
+          this.router.navigate(['/vm']);
+        });
+      },(error) => {
+        this.loader.close();
+      });
+    }
+
   }
 }
