@@ -11,6 +11,7 @@ import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
+import { LanguageService } from "../../../services/language.service"
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 
@@ -31,17 +32,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   interval: any;
 
-  currentLang = 'en';
-  availableLangs = [{
-    name: 'English',
-    code: 'en',
-  }, {
-    name: 'Spanish',
-    code: 'es',
-  }, {
-    name: '中文',
-    code: 'zh',
-  }]
   continuosStreaming: Subscription;
   showReplication = false;
   showResilvering = false;
@@ -55,6 +45,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private ws: WebSocketService,
     private rest: RestService,
+    public language: LanguageService,
     private dialogService: DialogService,
     private tour: TourService,
     public dialog: MatDialog,
@@ -134,8 +125,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   setLang(lang) {
-    this.currentLang = lang;
-    this.onLangChange.emit(this.currentLang);
+    this.language.currentLang = lang;
+    this.onLangChange.emit(this.language.currentLang);
   }
 
   changeTheme(theme) {

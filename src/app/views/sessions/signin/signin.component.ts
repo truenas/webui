@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {WebSocketService} from '../../../services/ws.service';
 
@@ -21,7 +22,8 @@ export class SigninComponent implements OnInit {
     username: 'root',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router, private snackBar: MatSnackBar) {
+  constructor(private ws: WebSocketService, private router: Router, 
+    private snackBar: MatSnackBar, public translate: TranslateService) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
