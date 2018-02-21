@@ -126,8 +126,9 @@ except NameError:
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)
-    run_conf_lldp_test(runDriver)
-    run_conf_ssh_test(runDriver)
+# temporary shutdown 
+#    run_conf_lldp_test(runDriver)
+#    run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
