@@ -155,6 +155,7 @@ export class VmCardsComponent implements OnInit {
   }
 
   setVmList(res:CoreEvent, init?:string) { 
+    this.cache = [];
     for(var i = 0; i < res.data.length; i++){
       let card = this.parseResponse(res.data[i]);
       this.checkVnc(card);
