@@ -38,6 +38,7 @@
   "MATICONS": "Material Iconos",
   "MENU": "Menú",
   "NEXT": "Siguiente",
+  "OK": "Bueno",
   "OTHERS": "Otros",
   "PAGES": "Página",
   "PAGING": "Paging",
@@ -56,7 +57,9 @@
     "PLEASE_ENTER_USERNAME": "Por favor, ingrese su nombre de usuario",
     "PLEASE_ENTER_USERNAME_AGAIN": "Por favor ingrese su nombre de usuario nuevamente",
     "SIGN_IN": "Registrarse",
-    "SYSTEM_NOT_AVAILABLE": "El sistema aún no está disponible, por favor espere"
+    "SYSTEM_NOT_AVAILABLE": "El sistema aún no está disponible, por favor espere",
+    "TOKEN_EXPIRED": "Token caducado, vuelva a iniciar sesión",
+    "USER_OR_PASSWORD_INCORRECT": "Nombre de usuario o contraseña incorrecta"
   },
   "SIGNUP": "Regístrate",
   "SLIDER": "Slider",

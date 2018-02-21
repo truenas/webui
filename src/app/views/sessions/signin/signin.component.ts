@@ -86,12 +86,18 @@ export class SigninComponent implements OnInit {
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
     this.signinData.username = 'root';
+    let message = '';
     if (this.ws.token === null) {
-      this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
+      message = 'SIGNIN.USER_OR_PASSWORD_INCORRECT';
     } else {
-      this.snackBar.open('Token expired, please log back in', 'OKAY', {duration: 4000});
+      message = 'SIGNIN.TOKEN_EXPIRED';
       this.ws.token = null;
     }
+    this.translate.get('OK').subscribe((ok: string) => {
+      this.translate.get(message).subscribe((res: string) => {
+        this.snackBar.open(res, ok, {duration: 4000});
+      });
+    });
   }
 
 }

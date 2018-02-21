@@ -38,6 +38,7 @@
   "MATICONS": "Material Icons",
   "MENU": "Menu",
   "NEXT": "Next",
+  "OK": "Ok",
   "OTHERS": "Others",
   "PAGES": "Pages",
   "PAGING": "Paging",
@@ -56,7 +57,9 @@
     "PLEASE_ENTER_USERNAME": "Please enter your username",
     "PLEASE_ENTER_USERNAME_AGAIN": "Please enter your username again",
     "SIGN_IN": "Sign in",
-    "SYSTEM_NOT_AVAILABLE": "System is not yet available, please wait"
+    "SYSTEM_NOT_AVAILABLE": "System is not yet available, please wait",
+    "TOKEN_EXPIRED": "Token expired, please log back in",
+    "USER_OR_PASSWORD_INCORRECT": "Username or Password is incorrect"
   },
   "SIGNUP": "Signup",
   "SLIDER": "Slider",
