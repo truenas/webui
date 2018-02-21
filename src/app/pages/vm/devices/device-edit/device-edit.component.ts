@@ -27,13 +27,13 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 
 @Component({
   selector : 'device-edit',
-  template : `<device-add [conf]="this"></device-add>`,
+  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
   providers : [ VmService ]
 })
 
 export class DeviceEditComponent implements OnInit {
 
-  
+  saveSubmitText = "Save";
   public resource_name = 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
@@ -54,7 +54,7 @@ export class DeviceEditComponent implements OnInit {
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;
-  
+ 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
@@ -390,7 +390,7 @@ export class DeviceEditComponent implements OnInit {
             payload['dtype'] = 'DISK'
             payload['attributes'] = {
                 'type' : formvalue.DISK_mode, 
-                'path' : formvalue.DISK_zvol,
+                'path' : "/dev/zvol/"+formvalue.DISK_zvol,
               }
             }
         if (this.dtype === 'CDROM') {
