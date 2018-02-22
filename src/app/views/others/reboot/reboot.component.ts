@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../../services/ws.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'system-reboot',
@@ -10,7 +11,8 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 })
 export class RebootComponent implements OnInit {
 
-  constructor(protected ws: WebSocketService, protected router: Router, protected loader: AppLoaderService, ) {
+  constructor(protected ws: WebSocketService, protected router: Router, 
+    protected loader: AppLoaderService, public translate: TranslateService) {
     setTimeout(() => {
       this.isWSConnected();
     }, 1000);

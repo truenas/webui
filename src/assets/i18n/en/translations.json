@@ -46,10 +46,12 @@
   "PRICINGS": "Pricings",
   "PROGRESS": "Progress",
   "RADIO": "Radio",
+  "REBOOT_MSG": "System is rebooting...",
   "REPORTING": "Reporting",
   "SAVE": "Save",
   "SELECT": "Select",
   "SESSIONS": "Sessions",
+  "SHUTDOWN_MSG": "System is shutting down...",
   "SIGNIN": {
     "BACK_TO_OLD_UI": "Back to the Old UI",
     "PLEASE_ENTER_PASSWORD": "Please enter your password",
