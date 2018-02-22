@@ -188,8 +188,9 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'After <a\
  href="http://doc.freenas.org/11/storage.html#create-zvol"\
  target="_blank">creating a zvol</a>, select it from the list.',
-          type: 'select',
-          options: []
+          type: 'explorer',
+          explorerType: "zvol",
+          initial: '/mnt',
         },
         {
           name : 'DISK_mode',
@@ -310,15 +311,7 @@ export class DeviceEditComponent implements OnInit {
         this.setgetValues(device[0].attributes, nic_lookup_table);
       }
       else if (device[0].dtype === 'DISK'){
-        this.vmService.getStorageVolumes().subscribe((res) => {
-          const disks = new EntityUtils().flattenData(res.data);
-          self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
-          for (const disk of disks) {
-            if (disk.type === 'zvol') {
-              self.DISK_zvol.options.push({label : disk.name, value : disk.path});
-            };
-          };
-        });
+        self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
         this.setgetValues(device[0].attributes, disk_lookup_table);
       }
       else {
@@ -390,7 +383,7 @@ export class DeviceEditComponent implements OnInit {
             payload['dtype'] = 'DISK'
             payload['attributes'] = {
                 'type' : formvalue.DISK_mode, 
-                'path' : "/dev/zvol/"+formvalue.DISK_zvol,
+                'path' : formvalue.DISK_zvol,
               }
             }
         if (this.dtype === 'CDROM') {
