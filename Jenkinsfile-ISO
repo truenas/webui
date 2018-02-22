@@ -65,7 +65,7 @@ pipeline {
       }
       steps {
         echo 'Starting QA API testing'
-        setBuildStatus("Performing QA testing", "PENDING");
+        setBuildStatus("QA testing in progress", "PENDING");
         unstash 'iso'
         sh 'ixautomation --destroy-all-vm'
         sh 'rm -rf ${WORKSPACE}/tests/results'
