@@ -25,7 +25,17 @@ except ImportError:
     import unittest
 
 xpaths = { 'themeBar' : "//*[@id='schemeToggle']/span/mat-icon"
-          }
+         }
+theme_name = { 'theme1' : 'iX Blue',
+               'theme2' : 'Solarized Dark',
+               'theme3' : 'Dark Purple',
+               'theme4' : 'Indigo',
+               'theme5' : 'Sharks',
+               'theme6' : 'Solarized Dark',
+               'theme7' : 'Dark Purple',
+               'theme8' : 'iX Blue'
+              }
+
 
 
 class change_theme_test(unittest.TestCase):
@@ -35,25 +45,28 @@ class change_theme_test(unittest.TestCase):
         pass
 
     def test_01_theme1(self):
-        self.theme_change("1")
+        self.theme_change(theme_name['theme1'])
 
     def test_02_theme2(self):
-        self.theme_change("2")
+        self.theme_change(theme_name['theme2'])
 
     def test_03_theme3(self):
-        self.theme_change("3")
+        self.theme_change(theme_name['theme3'])
 
     def test_04_theme4(self):
-        self.theme_change("4")
+        self.theme_change(theme_name['theme4'])
 
     def test_05_theme5(self):
-        self.theme_change("5")
+        self.theme_change(theme_name['theme5'])
 
     def test_06_theme6(self):
-        self.theme_change("6")
+        self.theme_change(theme_name['theme6'])
 
     def test_07_theme7(self):
-        self.theme_change("7")
+        self.theme_change(theme_name['theme7'])
+
+    def test_08_theme8(self):
+        self.theme_change(theme_name['theme8'])
 
 
     # method to test if an element is present
@@ -70,10 +83,16 @@ class change_theme_test(unittest.TestCase):
     def theme_change(self, which):
         # Click on the theme Button
         driver.find_element_by_xpath(xpaths['themeBar']).click()
-        # Select 1st theme
-        driver.find_element_by_xpath("/html/body/div[5]/div[2]/div/div/mat-grid-list/div/mat-grid-tile[" + str(which) + "]/figure/div").click()
-        time.sleep(3)
-
+        time.sleep(1)
+        print ("selecting theme: " + which)
+        if (self.is_element_present(By.XPATH, "//*[contains(text(), \'" + which + "\'  )]")):
+            print ("attempting to click on theme: " + which)
+            driver.find_element_by_xpath("//*[contains(text(), \'" + which + "\'  )]").click()
+            time.sleep(2)
+        else:
+            print (" Theme not present so making theme default ixblue")
+            driver.find_element_by_xpath("//*[contains(text(), 'iX Blue')]").click()
+            time.sleep(2)
 
     @classmethod
     def tearDownClass(inst):

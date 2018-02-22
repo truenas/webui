@@ -4,13 +4,14 @@ import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 
 import { Injectable } from '@angular/core';
@@ -50,12 +51,12 @@ export interface ZfsPoolData {
 }
 
 
-export class VolumesListTableConfig {
-  protected hideTopActions = true;
-  protected flattenedVolData: any;
-  protected resource_name = 'storage/volume';
-  protected route_add: string[] = ['storage', 'volumes', 'manager'];
-  protected route_add_tooltip = "Create ZFS Pool";
+export class VolumesListTableConfig implements InputTableConf {
+  public hideTopActions = true;
+  public flattenedVolData: any;
+  public resource_name = 'storage/volume';
+  public route_add: string[] = ['storage', 'volumes', 'manager'];
+  public route_add_tooltip = "Create ZFS Pool";
   public rowData: ZfsPoolData[] = [];
 
   constructor(
@@ -65,7 +66,9 @@ export class VolumesListTableConfig {
     private title: string,
     public mdDialog: MatDialog,
     protected rest: RestService,
-    protected dialogService: DialogService) {
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected translate: TranslateService) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -97,6 +100,112 @@ export class VolumesListTableConfig {
     return actions;
   }
 
+  getEncryptedActions(rowData: any) {
+    const actions = [];
+
+    if( rowData.vol_encrypt === 2 ) {
+      
+      if( rowData.status !== "LOCKED") {
+        actions.push({
+          label: "Lock",
+          onClick: (row1) => {
+            this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+                this.loader.open();
+                this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  console.log("restPostResp", restPostResp);
+                  this.loader.close();
+                  
+                  this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport("Error locking volume", res.message, res.stack);
+                });
+              }
+            });
+          }
+        });
+      
+      }
+      
+      if( rowData.status === "LOCKED") {
+        actions.push({
+          label: "Un-Lock",
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "volumes", "unlock", row1.id]));
+          }
+        });
+      }
+      
+   }
+
+
+   
+    
+    actions.push({
+      label: "Create Recovery Key",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "createkey", row1.id]));
+      }
+    });
+
+    actions.push({
+      label: "Add Recovery Key",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "addkey", row1.id]));
+      }
+    });
+
+    actions.push({
+      label: "Delete Recovery Key",
+      onClick: (row1) => {
+        this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
+          if (confirmResult === true) {
+            this.loader.open();
+            
+            this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              console.log("restPostResp", restPostResp);
+              this.loader.close();
+              
+              this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport("Error Deleting Key", res.message, res.stack);
+            });
+          }
+        });
+      }
+    });
+
+    actions.push({
+      label: "Encryption Rekey",
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "rekey", row1.id]));
+
+      }
+    });
+
+    actions.push({
+      label: "Download Encrypt Key",
+      onClick: (row1) => {
+        const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+        dialogRef.componentInstance.volumeId = row1.id;
+                
+      }
+    });
+
+
+    return actions;
+  }
+
   getActions(rowData: any) {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
@@ -109,7 +218,7 @@ export class VolumesListTableConfig {
         }
       });
       actions.push({
-        label: "Delete",
+        label: "DELETE",
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "volumes", "delete", row1.id]));
@@ -122,75 +231,7 @@ export class VolumesListTableConfig {
             ["storage", "volumes", "status", row1.id]));
         }
       });
-      actions.push({
-        label: "Lock",
-        onClick: (row1) => {
-          this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
-            if (confirmResult === true) {
 
-              this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.dialogService.errorReport("Error getting locking volume", res.message, res.stack);
-              });
-            }
-          });
-        }
-      });
-
-
-      actions.push({
-        label: "Un-Lock",
-        onClick: (row1) => {
-          this.dialogService.confirm("Un-Lock", "Proceed with un locking the volume: " + row1.id).subscribe((confirmResult) => {
-            if (confirmResult === true) {
-
-              this.rest.post(this.resource_name + "/" + row1.name + "/unlock/", { body: JSON.stringify({ passphrase: "" }) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.dialogService.Info("Un-Lock", "Un Locked " + row1.iname).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              }, (res) => {
-                this.dialogService.errorReport("Error getting unlocking volume", res.message, res.stack);
-              });
-
-
-            }
-          });
-        }
-      });
-
-      if (rowData.vol_encrypt > 0) {
-
-        actions.push({
-          label: "Encryption Rekey",
-          onClick: (row1) => {
-            this.dialogService.confirm("Rekey Encrypted Volume", "Proceed with rekey-ing the volume: " + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-  
-                this.rest.post(this.resource_name + "/" + row1.name + "/rekey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
-                  this.dialogService.Info("Rkey Encrypted Volume", "Successfully re-keyed the volume " + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
-                }, (res) => {
-                  this.dialogService.errorReport("Error Re-Keying the volume", res.message, res.stack);
-                });
-              }
-            });
-          }
-        });
-        
-        actions.push({
-          label: "Download Encrypt Key",
-          onClick: (row1) => {
-            const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-          }
-        });
-      }
     }
 
     if (rowData.type === "dataset") {
@@ -274,47 +315,58 @@ export class VolumesListTableConfig {
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
     for (let i = 0; i < data.length; i++) {
-      data[i].nodePath = data[i].mountpoint;
+      const dataObj = data[i];
 
-      if (data[i].status !== '-') {
-        // THEN THIS A ZFS_POOL DON'T ADD    data[i].type = 'zpool'
+      dataObj.nodePath =  dataObj.mountpoint;
+
+      if( typeof(dataObj.nodePath) === "undefined" && typeof(dataObj.path) !== "undefined" ) {
+        dataObj.nodePath = "/mnt/" + dataObj.path;
+      }
+      
+      if (dataObj.status !== '-') {
+        // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
         continue;
-      } else if (typeof (data[i].nodePath) === "undefined" || data[i].nodePath.indexOf("/") === -1) {
+      } else if (typeof (dataObj.nodePath) === "undefined" || dataObj.nodePath.indexOf("/") === -1) {
         continue;
       }
 
-      data[i].parentPath = data[i].nodePath.slice(0, data[i].nodePath.lastIndexOf("/"));
+      dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
 
-      if ("/mnt" === data[i].parentPath) {
-        data[i].parentPath = "0";
+      if ("/mnt" === dataObj.parentPath ) {
+        dataObj.parentPath = "0";
+      }
+
+
+      try {
+        dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
+      } catch (error) {
+        dataObj.availStr = "" + dataObj.avail;
       }
 
       try {
-        data[i].availStr = (<any>window).filesize(data[i].avail, { standard: "iec" });
+        dataObj.usedStr = (<any>window).filesize(dataObj.used, { standard: "iec" });
       } catch (error) {
-        data[i].availStr = "" + data[i].avail;
+        dataObj.usedStr = "" + dataObj.used;
       }
 
-      try {
-        data[i].usedStr = (<any>window).filesize(data[i].used, { standard: "iec" });
-      } catch (error) {
-        data[i].usedStr = "" + data[i].used;
-      }
+      dataObj.compression = "";
+      dataObj.readonly = "";
+      dataObj.dedub = "";
 
-      if (data[i].type === 'dataset' && typeof (data[i].dataset_data) !== "undefined" && typeof (data[i].dataset_data.data) !== "undefined") {
-        for (let k = 0; k < data[i].dataset_data.data.length; k++) {
-          if (data[i].dataset_data.data[k].name === data[i].nodePath) {
-            data[i].compression = data[i].dataset_data.data[k].compression;
-            data[i].readonly = data[i].dataset_data.data[k].readonly;
-            data[i].dedup = data[i].dataset_data.data[k].dedup;
+      if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
+        for (let k = 0; k < dataObj.dataset_data.data.length; k++) {
+          if (dataObj.dataset_data.data[k].name === dataObj.nodePath) {
+            dataObj.compression = dataObj.dataset_data.data[k].compression;
+            dataObj.readonly = dataObj.dataset_data.data[k].readonly;
+            dataObj.dedup = dataObj.dataset_data.data[k].dedup;
           }
 
         }
       }
 
-      data[i].actions = this.getActions(data[i]);
+      dataObj.actions = this.getActions(dataObj);
 
-      returnData.push(data[i]);
+      returnData.push(dataObj);
     }
 
     return returnData;
@@ -331,17 +383,32 @@ export class VolumesListTableConfig {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  title = "Volumes";
+  title = "ZFS_POOLS";
   zfsPoolRows: ZfsPoolData[] = [];
-  conf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
+
+  actionComponent = {
+    getActions: (row) => {
+      return this.conf.getActions(row);
+    },
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
+  };
+
+  actionEncryptedComponent = {
+    getActions: (row) => {
+      return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
+    },
+    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
+  };
+
   expanded = false;
   public paintMe = true;
 
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MatDialog, protected erdService: ErdService) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService);
+    protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService) {
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
   }
 
   public repaintMe() {
@@ -356,7 +423,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
         volume.type = 'zpool';
 
         try {

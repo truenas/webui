@@ -13,10 +13,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
@@ -28,14 +28,13 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 @Component({
   selector : 'device-edit',
   templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
-  styleUrls : [ '../../../common/entity/entity-form/entity-form.component.scss' ],
   providers : [ VmService ]
 })
 
 export class DeviceEditComponent implements OnInit {
 
-  
-  public resource_name: string = 'vm/device';
+  saveSubmitText = "Save";
+  public resource_name = 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
@@ -50,12 +49,12 @@ export class DeviceEditComponent implements OnInit {
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
   public conf: any = {};
-  public hasConf:  boolean = true;
-  public success: boolean = false;
+  public hasConf = true;
+  public success = false;
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;
-  
+ 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
@@ -67,7 +66,8 @@ export class DeviceEditComponent implements OnInit {
               protected networkService: NetworkService,
               protected systemGeneralService: SystemGeneralService,
               private entityFormService: EntityFormService,
-              public vmService: VmService) {}
+              public vmService: VmService,
+              public translate: TranslateService) {}
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.vmid = params['vmid'];
@@ -390,7 +390,7 @@ export class DeviceEditComponent implements OnInit {
             payload['dtype'] = 'DISK'
             payload['attributes'] = {
                 'type' : formvalue.DISK_mode, 
-                'path' : formvalue.DISK_zvol,
+                'path' : "/dev/zvol/"+formvalue.DISK_zvol,
               }
             }
         if (this.dtype === 'CDROM') {

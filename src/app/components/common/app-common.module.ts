@@ -35,6 +35,7 @@ import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { LineChartComponent } from './lineChart';
 import { LineChartService } from './lineChart/lineChart.service';
+import { LanguageService } from '../../services/language.service';
 
 @NgModule({
   imports: [
@@ -68,7 +69,7 @@ import { LineChartService } from './lineChart/lineChart.service';
     NavigationComponent,
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, LineChartComponent
   ],
-  providers: [ThemeService, DialogService, LineChartService],
+  providers: [ThemeService, DialogService, LineChartService, LanguageService],
   exports: [LineChartComponent]
 })
 export class AppCommonModule {}

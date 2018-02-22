@@ -2,6 +2,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MaterialModule} from '../../appMaterial.module';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import {EntityModule} from '../common/entity/entity.module';
 import {AppConfirmModule} from "../../services/app-confirm/app-confirm.module";
@@ -22,19 +23,19 @@ import {ServiceSSHComponent} from './components/service-ssh';
 import {ServiceTFTPComponent} from './components/service-tftp';
 import {ServiceUPSComponent} from './components/service-ups';
 import {ServiceWebdavComponent} from './components/service-webdav';
-import {Service} from './components/service.component';
 import {Services} from './services.component';
+import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
 
 @NgModule({
-  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule ],
+  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule ],
   declarations : [
-    Service, Services, ServiceSSHComponent, ServiceAFPComponent,
+    Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,
     ServiceRSYNCComponent, ServiceSMARTComponent, ServiceNFSComponent,
     ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
     ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component
+    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
   ],
   providers : []
 })

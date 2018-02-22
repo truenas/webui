@@ -8,6 +8,7 @@ import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
+import { LanguageService } from '../../../../services/language.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import {UUID} from 'angular2-uuid';
 
@@ -24,6 +25,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMsg: String = "";
   consoleMSgList: any[] = [];
   public is_freenas: Boolean = false;
+  // we will just have to add to this list as more languages are added
 
   @ViewChild(MatSidenav) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -35,6 +37,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected rest: RestService,
     protected ws: WebSocketService,
     public translate: TranslateService,
+    protected language: LanguageService,
     public dialog: MatDialog) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{
@@ -54,8 +57,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
 
     // Translator init
-    const browserLang: string = translate.getBrowserLang();
-    translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+    language.getBrowserLanguage();
   }
 
   ngOnInit() {

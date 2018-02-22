@@ -23,12 +23,15 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
-           'turnoffConfirm': "//*[contains(text(), 'OK')]"
+xpaths = { 'navService': '//*[@id="nav-8"]/div/a[1]',
+           'turnoffConfirm': '//*[contains(text(), "OK")]',
+           'configButton' : '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[17]/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[3]/button',
+           'webdavPassword' : '//*[@id="webdav_password"]/mat-input-container/div/div[1]/div/input',
+           'webdavPassword2' : '//*[@id="webdav_password2"]/mat-input-container/div/div[1]/div/input'
          }
 
 
-class configure_webdav_test(unittest.TestCase):
+class conf_webdav_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
@@ -42,7 +45,7 @@ class configure_webdav_test(unittest.TestCase):
         # check if the Services page is open
         time.sleep(1)
         # get the ui element
-        ui_element_page=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
+        ui_element_page=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
         # get the weather data
         page_data=ui_element_page.text
         print ("the Page now is: " + page_data)
@@ -50,15 +53,13 @@ class configure_webdav_test(unittest.TestCase):
         self.assertTrue("Services" in page_data)
 
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("17", "start")
 
 
     def test_02_checkif_webdav_on (self):
         print (" check if webdav turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("17")
 
@@ -67,19 +68,20 @@ class configure_webdav_test(unittest.TestCase):
         print (" configuring webdav service")
         time.sleep(1)
         # click on configure button
-        driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[17]/mat-card/div[2]/div[3]/button").click()
+        driver.find_element_by_xpath(xpaths['configButton']).click()
         time.sleep(1)
         # Enter password newuserpassword
-        driver.find_element_by_xpath("//*[@id='webdav_password']/mat-input-container/div/div[1]/div/input").clear()
+        driver.find_element_by_xpath(xpaths['webdavPassword']).clear()
         print ("clear the webdav password field")
-        driver.find_element_by_xpath("//*[@id='webdav_password']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
+        driver.find_element_by_xpath(xpaths['webdavPassword']).send_keys(newuserpassword)
         # Enter password confirmation newuserpassword
-        driver.find_element_by_xpath("//*[@id='webdav_password2']/mat-input-container/div/div[1]/div/input").clear()
+        driver.find_element_by_xpath(xpaths['webdavPassword2']).clear()
         print ("clear the webdav password2 field")
-        driver.find_element_by_xpath("//*[@id='webdav_password2']/mat-input-container/div/div[1]/div/input").send_keys(newuserpassword)
+        driver.find_element_by_xpath(xpaths['webdavPassword2']).send_keys(newuserpassword)
         # Click on save button
-        driver.find_element_by_xpath("//*[@id='save_button']").click()
-        # Next step-- To check if the new user is present in the list via automation
+        driver.find_element_by_xpath('//*[@id="save_button"]').click()
+        #wait till saving is finished
+        time.sleep(5)
 
     def test_04_turnoff_webdav (self):
         print (" turning off the webdav service")
@@ -92,8 +94,6 @@ class configure_webdav_test(unittest.TestCase):
 
     def test_05_checkif_wedbdav_off (self):
         print (" check if webdave turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("17")
         time.sleep(10)
@@ -110,16 +110,18 @@ class configure_webdav_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
+        buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
         if to == "start":
             if status_data == "STOPPED":
                 # Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                buttonToggle.click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -127,27 +129,30 @@ class configure_webdav_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                buttonToggle.click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
-            else: 
+            else:
                 print ("the status is already" + status_data)
 
+
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
+
+
 
 
     @classmethod
     def tearDownClass(inst):
         pass
 
-def run_configure_webdav_test(webdriver):
+def run_conf_webdav_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(configure_webdav_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(conf_webdav_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)

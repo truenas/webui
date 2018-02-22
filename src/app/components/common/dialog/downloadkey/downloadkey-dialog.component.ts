@@ -33,6 +33,10 @@ export class DownloadKeyModalDialog {
         window.open("http://" + environment.remote + res);
         this.isDownloaded = true;
       }
+    }, (resError)=>{
+      this.isDownloaded = true;
+      this.loader.close();
+    
     });
   }
 }

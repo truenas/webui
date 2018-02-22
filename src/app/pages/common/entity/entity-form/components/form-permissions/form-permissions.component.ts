@@ -1,5 +1,6 @@
 import {Component, ViewContainerRef, OnInit, OnDestroy} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -34,6 +35,8 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   private formatRe = new RegExp('^[0-7][0-7][0-7]$');
+
+  constructor(public translate: TranslateService) {}
 
   toggleOwnerRead() {
     if (this.ownerRead) {

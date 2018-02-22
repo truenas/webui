@@ -26,6 +26,8 @@ interface VmProfile {
   vcpus?:string;
   memory?:string;
   lazyLoaded?:boolean;
+  vnc?:boolean;
+  devices?:any,
   template?:string; // for back face of card
   cardActions?:Array<any>;
   isNew:boolean;
@@ -74,18 +76,41 @@ export class VmCardsComponent implements OnInit {
       this.setVm(evt);
     });
 
+    this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
+      console.log("VmStatus! *********");
+      console.log(evt);
+
+      let cardIndex = this.getCardIndex('id',evt.sender[0]);
+      this.cards[cardIndex].state = evt.data.state.toLowerCase();
+
+      let cacheIndex = this.getCardIndex('id',evt.sender[0],true);
+      this.cache[cacheIndex].state = evt.data.state.toLowerCase();
+    });
+
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
       console.log("VmStarted! *********");
-      console.log(evt);
-      let index = this.getCardIndex('id',evt.sender[0]);
-      this.refreshVM(index,evt.sender[0]); // Can't use this because API doesn't return vm.id
+      //console.log(evt);
+      //let index = this.getCardIndex('id',evt.sender[0]);
+      //this.refreshVM(index,evt.sender[0]); // Can't use this because API doesn't return vm.id
+
+      let cardIndex = this.getCardIndex('id',evt.sender[0]);
+      this.cards[cardIndex].state = 'running';
+
+      let cacheIndex = this.getCardIndex('id',evt.sender[0],true);
+      this.cache[cacheIndex].state = 'running';
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
       console.log("VmStopped! *********");
-      console.log(evt);
-      let index = this.getCardIndex('id',evt.sender[0]);
-      this.refreshVM(index,evt.sender[0]); // Workaround: sender returns the request params
+      //console.log(evt);
+      //let index = this.getCardIndex('id',evt.sender[0]);
+      //this.refreshVM(index,evt.sender[0]); // Workaround: sender returns the request params
+
+      let cardIndex = this.getCardIndex('id',evt.sender[0]);
+      this.cards[cardIndex].state = 'stopped';
+
+      let cacheIndex = this.getCardIndex('id',evt.sender[0],true);
+      this.cache[cacheIndex].state = 'stopped';
     });
 
     this.core.register({observerClass:this,eventName:"VmDeleted"}).subscribe((evt:CoreEvent) => {
@@ -97,9 +122,15 @@ export class VmCardsComponent implements OnInit {
     this.getVmList();
   }
 
-  getCardIndex(key,value){
-    for(let i = 0; i < this.cards.length; i++){
-      if(this.cards[i][key] == value){
+  getCardIndex(key:any,value:any,cache?:boolean){
+    let target: any[];
+    if(cache == true){
+      target = this.cache;
+    } else{
+      target = this.cards;
+    }
+    for(let i = 0; i < target.length; i++){
+      if(target[i][key] == value){
         return i;
       }
     }
@@ -130,21 +161,29 @@ export class VmCardsComponent implements OnInit {
   }
 
   parseResponse(data){
-    var card: VmProfile = { 
+    let card: VmProfile = { 
       name:data.name,
       id:data.id,
       description:data.description,
       info:data.info,
       bootloader:data.bootloader,
-      state:data.state.toLowerCase(),
+      state:"Checking...",
+      //state:data.state.toLowerCase(),
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
       lazyLoaded: false,
+      vnc:false, // Until we verify otherwise we assume false
+      devices:data.devices,
       template:'none',
       isNew:false,
       cardActions:[]
     }   
+    if(card.devices.length > 0){
+      console.log(card.devices);
+      card.vnc = this.checkVnc(card.devices);
+      console.log(card.vnc);
+    }
     return card;
   }
 
@@ -153,8 +192,10 @@ export class VmCardsComponent implements OnInit {
   }
 
   setVmList(res:CoreEvent, init?:string) { 
+    this.cache = [];
     for(var i = 0; i < res.data.length; i++){
-      var card = this.parseResponse(res.data[i]);
+      let card = this.parseResponse(res.data[i]);
+      //this.checkVnc(card);
       this.cache.push(card);
     }   
     if(init){
@@ -162,6 +203,7 @@ export class VmCardsComponent implements OnInit {
     } else {
       this.updateCards();
     }
+    this.checkStatus();
   }
 
 
@@ -179,19 +221,25 @@ export class VmCardsComponent implements OnInit {
 
   setVm(evt:CoreEvent){
     let res = evt.data[0];
-    let currentIndex = this.getCardIndex("id",res.id)
+    console.log(res.id);
+    let currentIndex = this.getCardIndex("id",res.id);
+    let cacheIndex = this.getCardIndex("id",res.id);
+
     if(!res.state){
       //DEBUG: console.log(currentIndex);
       let currentState = this.cards[currentIndex].state;
-      res.state = currentState;
+      //res.state = currentState;
     }
     let card = this.parseResponse(res);
     let index = currentIndex;
     
+
     // delay to allow flip animation
     setTimeout( () => {
-      this.cards[index] = card;
-      this.updateCache();
+      this.cards[currentIndex] = card;
+      this.cache[cacheIndex] = card;
+      this.checkStatus(res.id);
+      //this.updateCache();
     },300);
   }
 
@@ -240,6 +288,12 @@ export class VmCardsComponent implements OnInit {
     //this.cards.push(card);
     this.updateCards(card);
     this.toggleForm(true,this.cards[index],'edit');
+  }
+  addVMWizard(){
+    this.router.navigate(
+      new Array('').concat([ "vm", "wizard" ])
+    );
+
   }
 
 
@@ -319,7 +373,6 @@ export class VmCardsComponent implements OnInit {
 
   // toggles VM on/off
   toggleVmState(index){
-    console.log("TOGGLE-VM-STATE");
     let vm = this.cards[index];
     let eventName: string;
     if (vm.state != 'running') {
@@ -348,11 +401,41 @@ export class VmCardsComponent implements OnInit {
   }
 
   vnc(index){
-    var vm = this.cards[index];
+    let vm = this.cards[index];
     this.ws.call('vm.get_vnc_web', [ vm.id ]).subscribe((res) => {
       for (let item in res){
         window.open(res[item]);
       }   
     }); 
   }
+
+  checkVnc(devices){
+    console.log(devices);
+    if(!devices || devices.length == 0){
+      console.warn("Devices not found");
+      return false;
+    }
+    for(let i=0; i < devices.length; i++){
+      if(devices && devices[i].dtype == "VNC"){
+        return devices[i].attributes.vnc_web;
+      }
+    }
+  }
+
+  checkStatus(id?:number){
+    if(id){
+      this.core.emit({
+        name:"VmStatusRequest",
+        data:[id]
+      });
+    } else {
+      for(let i = 0; i < this.cache.length; i++){
+        this.core.emit({
+          name:"VmStatusRequest",
+          data:[this.cache[i].id]
+        });
+    }
+    }
+  }
+
 }

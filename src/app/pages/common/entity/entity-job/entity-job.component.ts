@@ -2,6 +2,7 @@ import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'entity-job',
@@ -25,7 +26,7 @@ export class EntityJobComponent implements OnInit {
   @Output() failure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
-    @Inject(MAT_DIALOG_DATA) public data: any) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService) {}
 
   ngOnInit() {
     this.dialogRef.updateSize('25%', '20%');
@@ -42,7 +43,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  setDiscription(desc: string) {
+  setDescription(desc: string) {
     this.description = desc;
   }
 
@@ -121,7 +122,7 @@ export class EntityJobComponent implements OnInit {
         (res) => {
           this.job = res;
           if (this.job.code == 202) {
-            this.setDiscription(this.job.data);
+            this.setDescription(this.job.data);
             this.success.emit(this.job);
           } else {
             this.progress.emit(this.job);

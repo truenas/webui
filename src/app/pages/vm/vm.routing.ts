@@ -11,6 +11,7 @@ import {DeviceVncAddComponent} from './devices/device-vnc-add/';
 import {VmFormComponent} from './vm-form/';
 import {VmListComponent} from './vm-list/';
 import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/'
+import {VMWizardComponent} from './vm-wizard/'
 
 // export const routes: Routes = [
 //   --{path : 'add', component : VmFormComponent},
@@ -42,6 +43,11 @@ export const routes: Routes = [
     {
       path:'add', component : VmFormComponent,
       data: {title: 'Add', breadcrumb: 'Add'},
+    },
+    {
+      path: 'wizard',
+      component: VMWizardComponent,
+      data: { title: 'Wizard', breadcrumb: 'Wizard'},
     },
     {
       path : ':pk/devices/:name',

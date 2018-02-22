@@ -1,0 +1,187 @@
+/* Search Field */
+
+mat-card.card-filter.mat-card {
+  width: 85%;
+  margin: 24px auto 0;
+  overflow: visible;
+  padding: 0;
+}
+
+mat-card.card-filter.mat-card .mat-card-content {
+  padding: 8px 0;
+}
+
+mat-card.card-filter.mat-card .mat-card-header>div {
+  /*display:inline-block;*/
+}
+
+
+mat-card.card-filter .filter-field {
+  width: 70%;
+  margin-right: 5%;
+  margin-top: 12px;
+}
+
+mat-card.card-filter .filter-field mat-icon {
+  width: 2%;
+  position: absolute;
+  top: 24px;
+}
+
+mat-card.card-filter .view-controls {
+  width: 22%;
+  position: relative;
+  text-align: right;
+  min-width: 274px;
+  margin-right: 16px;
+  margin-top: 10px;
+}
+
+mat-card.card-filter .view-controls .mat-button-toggle-group {
+  top: 10px;
+  position: relative;
+  margin: 2px 16px;
+}
+
+.card-filter mat-input-container.mat-input-container {
+  width: 97%;
+  padding-left: 32px;
+}
+
+
+
+/* cards */
+
+.entity-cards-container .entity-card-wrapper {
+  display: inline-flex;
+  padding: 0 32px;
+  text-align: left;
+}
+
+.entity-cards-container {
+  text-align: center;
+}
+
+service-cards mat-card.front {
+  padding: 0 !important;
+  min-height: 320px;
+}
+
+.service-bg {
+  width: 25%;
+  text-align: center;
+  background-color: #d0d0d0;
+  /*background-image:url('../../../../assets/images/card-bg_tech-swoosh.jpg');*/
+  background-size: cover;
+  background-position: 50%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  color: #efefef;
+}
+
+.side-content-header {
+  position: relative;
+}
+
+.side-content button.service-power-btn {
+  box-shadow: none;
+}
+
+.side-content {
+  margin-left: 25%;
+  text-align: center;
+}
+
+.side-content ul.stats {
+  list-style-type: none;
+}
+
+.side-content .service-controls {
+  position: absolute;
+  padding: 16px 0;
+  width: 75%;
+  text-align: center;
+  bottom: 0;
+}
+
+.side-content .stats-info {
+  width: 100%;
+  margin-bottom: 50px !important;
+  margin-top: 50px !important;
+}
+
+.side-content .stats-info td.stat-label,
+.side-content .stats-info td.stat {
+  text-align: left;
+}
+
+.service-power-btn-on.mat-fab,
+.service-power-btn-off.mat-fab,
+.service-power-btn-crash.mat-fab {
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.5)!important;
+  top: 16px;
+  left: -28px;
+  position: absolute;
+}
+
+mat-chip.service-state,
+mat-chip.service-state-on,
+mat-chip.service-state-off {
+  padding: 4px 10px;
+}
+
+mat-chip.service-state {
+  background-color: #666 !important;
+  color: #fff !important;
+}
+
+mat-chip.service-state-on,
+.service-power-btn-on.mat-fab {
+  background-color: #41bd45 !important;
+  color: #fff !important;
+}
+
+.service-state-off,
+.service-power-btn-off.mat-fab {
+  background-color: #900 !important;
+  color: #fff !important;
+}
+
+.card-close {
+  background: none;
+  border: none;
+  position: fixed;
+  top: 5px;
+  right: 0px;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.card-close mat-icon.mat-icon.material-icons {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+/* Slim Cards */
+
+.slim .side-content .stats-info {
+  width: 100%;
+  margin-top: 20px !important;
+}
+
+.slim .side-content {
+  margin: 0;
+}
+
+.slim .service-controls {
+  width: 100%;
+}
+
+.slim .service-power-btn {
+  top: initial;
+  bottom: 65px;
+  left: 114.5px;
+  position: fixed;
+}

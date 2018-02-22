@@ -20,7 +20,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "clean:dist": "npm run rimraf -- dist",
-    "clean:coverage": "npm run rimraf -- coverage"
+    "clean:coverage": "npm run rimraf -- coverage",
+    "reinstall": "npm run rimraf package-lock.json; npm run rimraf node_modules; npm cache clear -f; npm install"
   },
   "repository": {
     "type": "git",
@@ -69,7 +70,7 @@
     "element-resize-detector": "1.1.13",
     "engine.io": "3.1.4",
     "filesize": "3.5.11",
-    "flag-icon-css": "2.9.0",
+    "flag-icon-css": "2.8.0",
     "hammerjs": "2.0.8",
     "hopscotch": "0.3.1",
     "lodash": "4.17.4",

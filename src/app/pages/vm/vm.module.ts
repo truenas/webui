@@ -4,6 +4,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
+import { TranslateModule } from 'ng2-translate/ng2-translate';
 
 //import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -31,11 +32,12 @@ import {VmTableComponent} from './vm-cards/vm-table.component';
 import {routing} from './vm.routing';
 import { VmSummaryComponent } from './vm-cards/vm-summary.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { VMWizardComponent } from './vm-wizard/';
 
 @NgModule({
   imports : [
     CoreComponents,
-    EntityModule, CommonModule, FormsModule,
+    EntityModule, CommonModule, FormsModule, TranslateModule,
 	  ReactiveFormsModule, routing, MaterialModule, NgxDatatableModule, FlexLayoutModule//, BrowserModule
   ],
   declarations : [
@@ -55,6 +57,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
     DeviceEditComponent,
     DeviceRawFileAddComponent,
     VmSummaryComponent,
+    VMWizardComponent
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
 })

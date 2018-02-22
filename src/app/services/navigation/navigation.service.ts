@@ -21,27 +21,27 @@ export class NavigationService {
   
 
   defaultMenu: IMenuItem[] = [{
-      name: 'Dashboard',
+      name: 'DASHBOARD',
       type: 'link',
-      tooltip: 'Dashboard',
+      tooltip: 'DASHBOARD',
       icon: 'dashboard',
       state: 'dashboard',
     },
     {
-      name: 'Account',
+      name: 'ACCOUNT',
       type: 'dropDown',
-      tooltip: 'Account',
+      tooltip: 'ACCOUNT',
       icon: 'people',
       state: 'account',
       sub: [
-        { name: 'Groups', state: 'groups' },
-        { name: 'Users', state: 'users' },
+        { name: 'GROUPS', state: 'groups' },
+        { name: 'USERS', state: 'users' },
       ]
     },
     {
-      name: 'System',
+      name: 'SYSTEM',
       type: 'dropDown',
-      tooltip: 'System',
+      tooltip: 'SYSTEM',
       icon: 'computer',
       state: 'system',
       sub: [

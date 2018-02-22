@@ -1,20 +1,20 @@
 <h1 mat-dialog-title>
   <mat-icon class="warning-icon">report_problem</mat-icon>
-  {{ title }}
+  {{ title | translate }}
 </h1>
 <div mat-dialog-content>
-  <p>{{message}}</p>
+  <p>{{message | translate}}</p>
   <div class="more-info" (click)="toggleOpen($event)">
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
     <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
     <span>More info...</span>
   </div>
   <div class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}">
-    <textarea matInput>{{backtrace}}</textarea>
+    <textarea matInput>Error: {{backtrace}}</textarea>
   </div>  
 </div>
 <div mat-dialog-actions>
   &nbsp;
   <span fxFlex></span>
-  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">Close</button>
+  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">{{"CLOSE" | translate}}</button>
 </div>
