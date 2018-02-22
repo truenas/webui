@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -24,7 +24,7 @@ export class VMWizardComponent {
 
   protected addWsCall = 'vm.create';
   public route_success: string[] = ['vm'];
-
+  public summary = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
@@ -216,7 +216,20 @@ export class VMWizardComponent {
   afterInit(entityWizard: EntityWizardComponent) {
     
     ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
-      if (res === 'windows') {
+      ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
+        this.summary['vcpus'] = vcpus;
+      });
+      ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
+        this.summary['memory'] = memory;
+      });
+      ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
+        this.summary['volsize'] = volsize;
+      });
+      ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
+        this.summary['iso_path'] = iso_path;
+      });
+      this.summary['OS'] = res;
+      if (res === 'windows') {  
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);

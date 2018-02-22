@@ -19,6 +19,11 @@
       </div>
       <mat-step>
         <ng-template matStepLabel>{{"WIZARD_CONFIRM_TITLE" | translate}}</ng-template>
+        <p> OS: {{ conf.summary.OS }} </p>
+        <p> vcpus: {{ conf.summary.vcpus }} </p>
+        <p> memory: {{ conf.summary.memory }} </p>
+        <p> volsize: {{ conf.summary.volsize }} </p>
+        <p> ISO: {{ conf.summary.iso_path }} </p>
         {{"WIZARD_CONFIRM_MESSAGE" | translate}}
         <div>
           <button mat-button matStepperPrevious type="button">{{"BACK" | translate}}</button>
