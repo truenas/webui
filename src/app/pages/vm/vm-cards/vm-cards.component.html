@@ -122,7 +122,7 @@
 
         <div class="vm-controls">
           <span matTooltip="{{(!cards[i].vnc) ? 'Web VNC Disabled: Please create a VNC device and restart your VM.' : 'Web VNC'}}" matTooltipPosition="above">
-            <button mat-raised-button color="primary" [disabled]="!cards[i].vnc" (click)="vnc(i)">VNC</button>
+            <button mat-raised-button color="primary" [disabled]="(!cards[i].vnc || cards[i].state == 'stopped')" (click)="vnc(i)">VNC</button>
           </span>
           <span matTooltip="Edit Devices" matTooltipPosition="above">
            <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>

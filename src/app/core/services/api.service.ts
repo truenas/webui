@@ -30,22 +30,24 @@ export class ApiService {
         responseEvent: "PoolData"
       }
     },
-    /*VmProfilesRequest:{
-     protocol:"websocket",
-     version:"1",
-     namespace: "vm.query",
-     //args: [],
-     responseEvent: "VmProfiles"
-    },*/
     VmProfilesRequest:{
       apiCall:{
-        protocol:"rest",
-        version:"1.0",
-        operation: "get",
-        namespace: "vm/vm",
+        protocol:"websocket",
+        version:"2.0", // Middleware returns device info but no status
+        namespace: "vm.query",
+        //args: [],
         responseEvent: "VmProfiles"
       }
     },
+    /*VmProfilesRequest:{
+     apiCall:{
+       protocol:"rest",
+       version:"1.0",// Middleware returns status but no device info
+       operation: "get",
+       namespace: "vm/vm",
+       responseEvent: "VmProfiles"
+     }
+    },*/
     VmProfileRequest:{
       apiCall:{
         protocol:"websocket",
@@ -53,6 +55,15 @@ export class ApiService {
         namespace:"vm.query",
         args: [],// eg. [["id", "=", "foo"]]
         responseEvent: "VmProfile"
+      }
+    },
+    VmStatusRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"vm.status",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "VmStatus"
       }
     },
     VmStart:{
@@ -113,7 +124,7 @@ export class ApiService {
             dataset:"value"
           });
         }
-        
+
         redef.args = [dataList,options];
         redef.responseEvent = 'StatsCpuData';
         return redef;
@@ -132,123 +143,123 @@ export class ApiService {
     }
   } 
 
-    constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
-      console.log("*** New Instance of API Service ***");
-      this.registerDefinitions();
-    }
+  constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
+    console.log("*** New Instance of API Service ***");
+    this.registerDefinitions();
+  }
 
-    registerDefinitions(){
-      //DEBUG: console.log("APISERVICE: Registering API Definitions");
-      for(var def in this.apiDefinitions){
-        //DEBUG: console.log("def = " + def);
-        this.core.register({observerClass:this, eventName:def}).subscribe(
-          (evt:CoreEvent) => {
-            //Process Event if CoreEvent is in the api definitions list
-            if(this.apiDefinitions[evt.name]){
-              //DEBUG: console.log(evt);
-              let apiDef = this.apiDefinitions[evt.name];
-              //DEBUG: console.log(apiDef)
-              //let call = this.parseCoreEvent(evt);
-              if(apiDef.apiCall.protocol == 'websocket'){
-                this.callWebsocket(evt,apiDef);
-              } else if(apiDef.apiCall.protocol == 'rest'){
-                this.callRest(evt,apiDef);
-              }
+  registerDefinitions(){
+    //DEBUG: console.log("APISERVICE: Registering API Definitions");
+    for(var def in this.apiDefinitions){
+      //DEBUG: console.log("def = " + def);
+      this.core.register({observerClass:this, eventName:def}).subscribe(
+        (evt:CoreEvent) => {
+          //Process Event if CoreEvent is in the api definitions list
+          if(this.apiDefinitions[evt.name]){
+            //DEBUG: console.log(evt);
+            let apiDef = this.apiDefinitions[evt.name];
+            //DEBUG: console.log(apiDef)
+            //let call = this.parseCoreEvent(evt);
+            if(apiDef.apiCall.protocol == 'websocket'){
+              this.callWebsocket(evt,apiDef);
+            } else if(apiDef.apiCall.protocol == 'rest'){
+              this.callRest(evt,apiDef);
             }
-          },
-          (err) => {
-            //DEBUG: console.log(err)
-            });
-      }
+          }
+        },
+        (err) => {
+          //DEBUG: console.log(err)
+          });
     }
+  }
 
-    private callRest(evt,def){
-      let baseUrl = "/api/v" + def.apiCall.version + "/";
-      let cloneDef = Object.assign({},def);
-      if(evt.data){
-        // PreProcessor: ApiDefinition manipulates call to be sent out.
-        if(def.preProcessor){
-          cloneDef.apiCall = def.preProcessor(def.apiCall);
-        }
-
-        let call = cloneDef.apiCall;//this.parseEventRest(evt);
-        call.args = evt.data;
-        this.rest[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res) => {
-          //DEBUG: console.log("*** API Response:");
-          //DEBUG: console.log(res)
-
-          // PostProcess
-          if(def.postProcessor){
-            res = def.postProcessor(res);
-          }
-
-          this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
-        });
-      } else {
-        // PreProcessor: ApiDefinition manipulates call to be sent out.
-        if(def.preProcessor){
-          cloneDef.apiCall = def.preProcessor(def.apiCall);
-        }
-
-        let call = cloneDef.apiCall;//this.parseEventRest(evt);
-        call.args = evt.data;
-        this.rest[call.operation](baseUrl + call.namespace,{}, false).subscribe((res) => {
-          //DEBUG: console.log("*** API Response:");
-          //DEBUG: console.log(call);
-
-          // PostProcess
-          if(def.postProcessor){
-            res = def.postProcessor(res);
-          }
-
-          this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
-        });
+  private callRest(evt,def){
+    let baseUrl = "/api/v" + def.apiCall.version + "/";
+    let cloneDef = Object.assign({},def);
+    if(evt.data){
+      // PreProcessor: ApiDefinition manipulates call to be sent out.
+      if(def.preProcessor){
+        cloneDef.apiCall = def.preProcessor(def.apiCall);
       }
 
-    }
+      let call = cloneDef.apiCall;//this.parseEventRest(evt);
+      call.args = evt.data;
+      this.rest[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res) => {
+        //DEBUG: console.log("*** API Response:");
+        //DEBUG: console.log(res)
 
-    private callWebsocket(evt:CoreEvent,def){
-      let cloneDef = Object.assign({}, def);
-
-      if(evt.data){
-        cloneDef.apiCall.args = evt.data;
-
-        // PreProcessor: ApiDefinition manipulates call to be sent out.
-        if(def.preProcessor){
-          cloneDef.apiCall = def.preProcessor(def.apiCall);
+        // PostProcess
+        if(def.postProcessor){
+          res = def.postProcessor(res);
         }
 
-        let call = cloneDef.apiCall;//this.parseEventWs(evt);
-        this.ws.call(call.namespace, call.args).subscribe((res) => {
-          //DEBUG: console.log("*** API Response:");
-          //DEBUG: console.log(call)
-
-          // PostProcess
-          if(def.postProcessor){
-            res = def.postProcessor(res);
-          }
-
-          this.core.emit({name:call.responseEvent, data:res, sender: evt.data});
-        });
-      } else {
-        // PreProcessor: ApiDefinition manipulates call to be sent out.
-        if(def.preProcessor){
-          cloneDef.apiCall = def.preProcessor(def.apiCall);
-        }
-
-        let call = cloneDef.apiCall;//this.parseEventWs(evt);
-        this.ws.call(call.namespace).subscribe((res) => {
-          //DEBUG: console.log("*** API Response:");
-          //DEBUG: console.log(call);
-
-          // PostProcess
-          if(def.postProcessor){
-            res = def.postProcessor(res);
-          }
-
-          this.core.emit({name:call.responseEvent, data:res, sender:evt.data });
-        });
+        this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
+      });
+    } else {
+      // PreProcessor: ApiDefinition manipulates call to be sent out.
+      if(def.preProcessor){
+        cloneDef.apiCall = def.preProcessor(def.apiCall);
       }
+
+      let call = cloneDef.apiCall;//this.parseEventRest(evt);
+      call.args = evt.data;
+      this.rest[call.operation](baseUrl + call.namespace,{}, false).subscribe((res) => {
+        //DEBUG: console.log("*** API Response:");
+        //DEBUG: console.log(call);
+
+        // PostProcess
+        if(def.postProcessor){
+          res = def.postProcessor(res);
+        }
+
+        this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
+      });
     }
+
+  }
+
+  private callWebsocket(evt:CoreEvent,def){
+    let cloneDef = Object.assign({}, def);
+
+    if(evt.data){
+      cloneDef.apiCall.args = evt.data;
+
+      // PreProcessor: ApiDefinition manipulates call to be sent out.
+      if(def.preProcessor){
+        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      }
+
+      let call = cloneDef.apiCall;//this.parseEventWs(evt);
+      this.ws.call(call.namespace, call.args).subscribe((res) => {
+        //DEBUG: console.log("*** API Response:");
+        //DEBUG: console.log(call)
+
+        // PostProcess
+        if(def.postProcessor){
+          res = def.postProcessor(res);
+        }
+
+        this.core.emit({name:call.responseEvent, data:res, sender: evt.data});
+      });
+    } else {
+      // PreProcessor: ApiDefinition manipulates call to be sent out.
+      if(def.preProcessor){
+        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      }
+
+      let call = cloneDef.apiCall;//this.parseEventWs(evt);
+      this.ws.call(call.namespace).subscribe((res) => {
+        //DEBUG: console.log("*** API Response:");
+        //DEBUG: console.log(call);
+
+        // PostProcess
+        if(def.postProcessor){
+          res = def.postProcessor(res);
+        }
+
+        this.core.emit({name:call.responseEvent, data:res, sender:evt.data });
+      });
+    }
+  }
 
 }
