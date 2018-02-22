@@ -30,7 +30,6 @@ export class ApiService {
         responseEvent: "PoolData"
       }
     },
-<<<<<<< HEAD
     PoolDisksRequest:{
       apiCall:{
         protocol:"websocket",
