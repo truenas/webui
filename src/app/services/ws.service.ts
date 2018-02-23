@@ -68,7 +68,7 @@ export class WebSocketService {
       if (typeof(this.token) !== 'undefined') {
         // check to see if the token is still valid (keepalive)
         this.call('auth.token', [ this.token ]).subscribe((result) => {
-          if (!result) {
+          if (!result && !this.shuttingdown) {
             this._router.navigate(['/sessions/signin']);
           }
         });
