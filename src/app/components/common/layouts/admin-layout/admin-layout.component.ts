@@ -4,7 +4,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
 import { MatSidenav, MatDialog, MatDialogRef } from '@angular/material';
-import { TranslateService } from 'ng2-translate/ng2-translate';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { ThemeService } from '../../../../services/theme/theme.service';
@@ -36,8 +35,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private media: ObservableMedia,
     protected rest: RestService,
     protected ws: WebSocketService,
-    public translate: TranslateService,
-    protected language: LanguageService,
+    public language: LanguageService,
     public dialog: MatDialog) {
     // detect server type
     ws.call('system.is_freenas').subscribe((res)=>{

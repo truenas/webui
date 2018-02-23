@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 @Injectable()
 export class LanguageService {
 
-  currentLang = 'en';
+  currentLang = '';
   availableLangs = [{
     name: 'English',
     code: 'en',
@@ -25,9 +25,17 @@ export class LanguageService {
   }
 
   getBrowserLanguage() {
-    const browserLang = this.translate.getBrowserLang();
-    if (_.find(this.availableLangs, {"code": browserLang})) {
-      this.currentLang = browserLang;
+    if (this.currentLang === '') { // we only want it to grab the browser language once
+      const browserLang = this.translate.getBrowserLang();
+      this.setLang(browserLang);
+    }
+  }
+
+  setLang(lang: any) {
+    if (_.find(this.availableLangs, {"code": lang})) {
+      this.currentLang = lang;
+    } else {
+      this.currentLang = 'en';
     }
 
     this.translate.use(this.currentLang);
