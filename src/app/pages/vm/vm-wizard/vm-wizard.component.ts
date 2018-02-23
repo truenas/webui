@@ -28,6 +28,8 @@ export class VMWizardComponent {
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
+  objectKeys = Object.keys;
+  summary_title = "VM Summary";
 
   protected wizardConfig: Wizard[] = [{
       label: 'OS category',
@@ -216,19 +218,19 @@ export class VMWizardComponent {
   afterInit(entityWizard: EntityWizardComponent) {
     
     ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
+      this.summary['guest operating system'] = res;
       ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
-        this.summary['vcpus'] = vcpus;
+        this.summary['Number of CPU'] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary['memory'] = memory;
+        this.summary['Memory'] = memory;
       });
       ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
-        this.summary['volsize'] = volsize;
+        this.summary['Hard Disk Size'] = volsize;
       });
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
-        this.summary['iso_path'] = iso_path;
+        this.summary['Installation Media'] = iso_path;
       });
-      this.summary['OS'] = res;
       if (res === 'windows') {  
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
@@ -301,16 +303,15 @@ export class VMWizardComponent {
         )
         });
 
-        this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-          this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
-          res.forEach((item) => {
-            this.bootloader.options.push({label : item[1], value : item[0]})
-          });
-        ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
-          this.bootloader.options[0].value
-        )
+      this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
+        this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
+        res.forEach((item) => {
+          this.bootloader.options.push({label : item[1], value : item[0]})
         });
-
+      ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
+        this.bootloader.options[0].value
+      )
+      });
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
