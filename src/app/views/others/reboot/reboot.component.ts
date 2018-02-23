@@ -4,6 +4,7 @@ import { WebSocketService } from '../../../services/ws.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from 'ng2-translate/ng2-translate';
 import { DialogService } from '../../../services/dialog.service';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'system-reboot',
@@ -14,7 +15,7 @@ export class RebootComponent implements OnInit {
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService) {
+    protected dialogService: DialogService, protected dialog: MatDialog) {
   }
 
   isWSConnected() {
@@ -30,6 +31,7 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.dialog.closeAll();
     this.ws.call('system.reboot', {}).subscribe(
       (res) => {
       },
