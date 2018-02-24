@@ -3,9 +3,9 @@
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
-        <button mat-icon-button (click)="toggleConfig()">
+        <ng-template *ngIf="configurable"><button mat-icon-button (click)="toggleConfig()">
           <mat-icon>settings</mat-icon>
-        </button>
+          </button></ng-template>
       </mat-toolbar-row>
       <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="center start" fxFlex="100">
         <viewchartline fxFlex="100" fxFlexAlign="end" #chartLoad [width]="chartSize" [height]="chartSize" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>

@@ -20,9 +20,10 @@ export class WidgetComponent implements AfterViewInit {
   protected core:CoreService;
   protected themeService: ThemeService;
   @Input() widgetSize: string;
+  @Input() configurable:boolean = false;
   public title:string = "Widget Base Class";
   public chartSize:number;
-  public configurable: boolean = true;
+  //public configurable: boolean = true;
   public flipAnimation = "stop";
   public flipDirection = "vertical";
   public isFlipped: boolean = false;

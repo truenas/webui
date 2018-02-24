@@ -55,6 +55,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   //public diskDetails:Disk[] = [];
   public selectedDisk:number = -1;
   public gridCols:number = 4;
+  @Input() configurable:boolean;
 
   constructor(){
     super();

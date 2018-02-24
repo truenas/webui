@@ -7,9 +7,9 @@
             {{title}}: {{volumeData.vol_name}} <span class="pool-status">{{volumeData.status}}</span>
           </div>
         </h4>
-        <button mat-icon-button (click)="toggleConfig()">
+        <ng-template *ngIf="configurable"><button mat-icon-button (click)="toggleConfig()">
           <mat-icon>settings</mat-icon>
-        </button>
+          </button></ng-template>
       </mat-toolbar-row>
       <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="space-around center" fxFlex="100">
         <div fxFlex="40" style="position:relative;">
