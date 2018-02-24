@@ -62,9 +62,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Tasks',
+      name: 'TASKS',
       type: 'dropDown',
-      tooltip: 'Tasks',
+      tooltip: 'TASKS',
       icon: 'date_range',
       state: 'tasks',
       sub: [
@@ -79,9 +79,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Network',
+      name: 'NETWORK',
       type: 'dropDown',
-      tooltip: 'Network',
+      tooltip: 'NETWORK',
       icon: 'device_hub',
       state: 'network',
       sub: [
@@ -95,9 +95,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Storage',
+      name: 'STORAGE',
       type: 'dropDown',
-      tooltip: 'Storage',
+      tooltip: 'STORAGE',
       icon: 'storage',
       state: 'storage',
       sub: [
@@ -109,9 +109,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Directory Service',
+      name: 'DIRECTORY_SERVICE',
       type: 'dropDown',
-      tooltip: 'Directory Service',
+      tooltip: 'DIRECTORY_SERVICE',
       icon: 'group_work',
       state: 'directoryservice',
       sub: [
@@ -123,9 +123,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Sharing',
+      name: 'SHARING',
       type: 'dropDown',
-      tooltip: 'Sharing',
+      tooltip: 'SHARING',
       icon: 'folder_shared',
       state: 'sharing',
       sub: [
@@ -137,16 +137,16 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Services',
+      name: 'SERVICES',
       type: 'link',
-      tooltip: 'Services',
+      tooltip: 'SERVICES',
       icon: 'tune',
       state: 'services'
     },
     {
-      name: 'Plugins',
+      name: 'PLUGINS',
       type: 'dropDown',
-      tooltip: 'Plugins',
+      tooltip: 'PLUGINS',
       icon: 'extension',
       state: 'plugins',
       sub: [
@@ -155,9 +155,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Jails',
+      name: 'JAILS',
       type: 'link',
-      tooltip: 'Jails',
+      tooltip: 'JAILS',
       icon: 'apps',
       state: 'jails',
       // sub: [
@@ -168,16 +168,16 @@ export class NavigationService {
       // ]
     },
     {
-      name: 'Reporting',
+      name: 'REPORTING',
       type: 'link',
-      tooltip: 'Reports',
+      tooltip: 'REPORTING',
       icon: 'insert_chart',
       state: 'reportsdashboard',
     },
     {
-      name: 'VMs',
+      name: 'VIRTUAL_MACHINES',
       type: 'link',
-      tooltip: 'Virtualization',
+      tooltip: 'VIRTUAL_MACHINES',
       icon: 'laptop_windows',
       state: 'vm'
     },
@@ -196,23 +196,23 @@ export class NavigationService {
     //    state: 'wizard'
     //  }
     {
-      name: 'Display System Processes',
+      name: 'DISPLAY_SYSTEM_PROCESSES',
       type: 'link',
-      tooltip: 'System Processes',
+      tooltip: 'SYSTEM_PROCESSES',
       icon: 'perm_data_setting',
       state: 'systemprocesses'
     },
     {
-      name: 'Shell',
+      name: 'SHELL',
       type: 'link',
-      tooltip: 'Shell',
+      tooltip: 'SHELL',
       icon: 'code',
       state: 'shell'
     },
     {
-      name: 'Guide',
+      name: 'GUIDE',
       type: 'link',
-      tooltip: 'Guide',
+      tooltip: 'GUIDE',
       icon: 'info',
       state: 'guide',
     }
