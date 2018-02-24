@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 import { Router, ActivatedRoute, NavigationEnd, ActivatedRouteSnapshot, Params, PRIMARY_OUTLET } from "@angular/router";
 
 interface IRoutePart {
@@ -11,7 +12,8 @@ interface IRoutePart {
 @Injectable()
 export class RoutePartsService {
   public routeParts: IRoutePart[];
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(private activatedRoute: ActivatedRoute, private router: Router,
+              protected translate: TranslateService) {}
 
   ngOnInit() {
   }
@@ -26,11 +28,13 @@ export class RoutePartsService {
         for(let i = 1; i < snapshot.url.length; i++) {
           targetUrl = targetUrl + '/' + snapshot.url[i];
         }
-        routeParts.push({
-          title: snapshot.data['title'], 
-          breadcrumb: snapshot.data['breadcrumb'] , 
-          url: targetUrl
-        });
+        this.translate.get(snapshot.data['title']).subscribe((title) => {
+          routeParts.push({
+            title: title, 
+            breadcrumb: snapshot.data['breadcrumb'] , 
+            url: targetUrl
+          });
+        })
       }
     }
     return routeParts.reverse();
