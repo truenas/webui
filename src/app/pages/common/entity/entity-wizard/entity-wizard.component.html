@@ -19,6 +19,12 @@
       </div>
       <mat-step>
         <ng-template matStepLabel>{{"WIZARD_CONFIRM_TITLE" | translate}}</ng-template>
+        <div *ngIf="conf.summary">
+          <div> {{ conf.summary_title }}</div>
+            <div *ngFor="let key of conf.objectKeys(conf.summary)">
+                <div>{{key + ' : ' + conf.summary[key]}}</div>
+            </div>
+        </div>
         {{"WIZARD_CONFIRM_MESSAGE" | translate}}
         <div>
           <button mat-button matStepperPrevious type="button">{{"BACK" | translate}}</button>
