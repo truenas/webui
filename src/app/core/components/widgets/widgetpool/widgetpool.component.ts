@@ -51,10 +51,13 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   @Input() volumeData:VolumeData;
   public volumeName:string = "";
   public volumeId:number;
+  public diskSets:any[][] = [[]];
   public disks: string[] = [];
-  //public diskDetails:Disk[] = [];
+  public diskDetails:Disk[] = [];
   public selectedDisk:number = -1;
   public gridCols:number = 4;
+  public currentDiskSet:number = 0;
+  //public _slideProps:any = {x:0,y:0};
   @Input() configurable:boolean;
 
   constructor(){
@@ -77,10 +80,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       if(evt.sender[0] == this.volumeData.id){
-        console.log("**** WidgetVolumeComponent DISKS ****");
-        console.log(evt.data);
+        //console.log("**** WidgetVolumeComponent DISKS ****");
+        //console.log(evt.data);
         // Simulate massive array
-        for(let i = 0; i < 90; i++){
+        for(let i = 0; i < 256; i++){
           this.disks.push("ada" + i);
         }
         //this.disks = evt.data;
@@ -88,23 +91,48 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         if(this.disks.length > 16){
           this.gridCols = 8;
         }
+        
+        if(this.disks.length > 32){
+          let total = Math.ceil(this.disks.length/32);
+          let set = 0;
+          let last = 32*total-1
+          for(let i = 0; i < (32*total); i++ ){
+              //console.log("Set " + set);
+            let modulo = i % 32;
+            this.diskSets[set].push(this.disks[i]);
+            if(modulo == 31){
+              set++
+
+              if(i < last){this.diskSets.push([]);}
+              //console.log("New Set #" + set);
+            }
+
+          }
+        } else {
+          this.diskSets[0] = this.disks;
+        }
+        console.log(this.diskSets);
+        
+        if(evt.data.length > 0){
+          this.setSelectedDisk(0);
+        }
       }
     });
 
-    /*this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
-      //this.setDisksData(evt);
-    });*/
+      this.setDisksData(evt);
+    });
 
     this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe(() => {
       this.chartZvol.refresh();
     });
 
     //this.core.emit({name:"PoolDataRequest"});
-    //this.core.emit({name:"DisksInfoRequest"});
+    this.core.emit({name:"DisksInfoRequest"});
   }
 
-  /*setDisksData(evt:CoreEvent){
+  setDisksData(evt:CoreEvent){
     console.log("******** DISKS INFO ********");
     console.log(evt);
     for(let i in evt.data){
@@ -122,15 +150,20 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
       this.diskDetails.push(disk);
     }
-  }*/
-
-  /*get volumeData(){
-    return this._volumeData;
   }
 
-  set volumeData(vd:VolumeData){
-    this._volumeData = vd;
-    this.parseVolumeData();
+  /*get slideProps(){
+    return this._slideProps;
+  }
+
+  set slideProps(num){
+    let slideW = 100/this.diskSets.length;
+    let origin = this.currentDiskSet;
+    let destination = num;
+    console.log("Origin = " + origin + " && destination = " + destination);
+    this._slideProps = {x:String((origin-destination)*slideW) + '%'}
+    //this._slideProps = {x:String(destination*-1) + '%'}
+    console.warn(this._slideProps);
   }*/
 
   parseVolumeData(){
@@ -174,10 +207,21 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   setSelectedDisk(index?:number){
     if(index >= 0){
-      this.selectedDisk = index;
+      //this.selectedDisk = index;
+      for(let i = 0; i < this.diskDetails.length; i++){
+        if(this.diskDetails[i].name == this.disks[index]){
+          this.selectedDisk = i;
+        }
+      }
     } else {
       this.selectedDisk = -1;
     }
+  }
+
+  setCurrentDiskSet(num:number){
+    //this.slideProps = num;
+    this.currentDiskSet = num;
+    //console.log("Selected Disk Set = " + String(this.currentDiskSet));
   }
 
 }

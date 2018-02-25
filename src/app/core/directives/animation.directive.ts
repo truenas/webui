@@ -4,6 +4,11 @@ import { TweenProps } from 'popmotion/src/animations/tween/types';
 import { Value } from 'popmotion/src/reactions/value';
 import { Subject } from 'rxjs/Subject';
 
+interface Coordinates {
+  x?: string;
+  y?: string;
+}
+
 @Directive({selector: '[animate]'})
 export class AnimationDirective implements OnChanges{
 
@@ -11,6 +16,7 @@ export class AnimationDirective implements OnChanges{
   //@Input() target:ElementRef; //May have to implement this later
   @Input() animation: string;
   @Input() reverse:boolean;
+  @Input() slideProps:Coordinates;
 
   // Use these for looped animations
   @Input() shake:boolean;
@@ -33,6 +39,10 @@ export class AnimationDirective implements OnChanges{
     if(changes.animation){
       this.animate();
     }
+    if(changes.slideProps){
+      this.animate();
+    }
+
     if(changes.shake){
       this.shakeAnimation();
     }
@@ -54,6 +64,10 @@ export class AnimationDirective implements OnChanges{
           console.log(this.inMotion);
           this.inMotion.pause()
         }
+      break;
+      case 'slide':
+        this.motion = this.slide();
+        this.motion.start(this.elStyler.set);
       break;
       case 'flipV':
         this.motion = this.flipV();
@@ -158,6 +172,52 @@ export class AnimationDirective implements OnChanges{
      return s;
   }
 
+  slide(){
+    console.log("**** SLIDE ANIMATION ****");
+
+    let startX:  number;
+    let finishX:  number;
+    let startY:  number;
+    let finishY:  number;
+
+    
+    let fromProps:any = {};
+    let toProps:any = {};
+
+    if(this.slideProps.x){
+      // Detect and convert if percentage value
+      if(this.slideProps.x.search("%") != -1){
+        finishX = this.percentToPx(this.slideProps.x,'width');
+      } else {
+        finishX = Number(this.slideProps.x);
+      }
+      startX = this.elStyler.get('translateX');
+      fromProps.x = startX;
+      toProps.x = finishX;
+      console.warn(startX)
+    }
+    if(this.slideProps.y){
+      // Detect and convert if percentage value
+      if(this.slideProps.y.search("%") != -1){
+        finishY = this.percentToPx(this.slideProps.y,'height');
+      } else {
+        finishY = Number(this.slideProps.y);
+      }
+      startY = this.elStyler.get('translateY');
+      fromProps.y = startY;
+      toProps.y = finishY;
+    }
+
+    let s = tween({
+      from: fromProps,
+      to: toProps,
+      //ease: easing.easeInOut,
+      //flip: 0,
+      duration: 500
+    });
+     return s;
+  }
+
   colorLoopAnimation(){
     const s = keyframes({
       values: this.colorLoop,
@@ -190,5 +250,15 @@ export class AnimationDirective implements OnChanges{
     }
      //return s;
   }
+
+  percentToPx(value:string,dim:string):number{
+    let d = this.elStyler.get(dim);
+    let spl = value.split('%');
+    let num = Number(spl[0])/100;
+    let result = d*num;
+    console.warn(result);
+    return result;
+  }
+
 }
 

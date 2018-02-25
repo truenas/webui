@@ -1,8 +1,26 @@
+.card-title-text{
+  display:table;
+  font-size:1.42em;
+}
+.card-title-items{
+  display:table-row;
+}
+.card-title-items div{
+  display:table-cell;
+  vertical-align:middle;
+}
+
+
 .disk-grid-header{
   background-color: rgba(0,0,0,0.75);
   width: 100%;
   font-weight: bold;
   color: #fff;
+}
+
+.disk-array-ui{
+  border-left:solid 1px rgba(0,0,0,0.1);
+  border-right:solid 1px rgba(0,0,0,0.1);
 }
 
 .disk-tile{
@@ -48,8 +66,17 @@
   padding: 8px;
 }
 
+.disk-detail-header{
+  text-align:left;
+}
+
+span.disk-detail-title,
+.disk-detail span.label{
+  font-weight:bold;
+  color:#666;
+}
+
 span.disk-detail-title {
-  font-weight: bold;
   font-size: 1.25em;
   text-align: left;
 }
@@ -60,15 +87,40 @@ span.disk-detail-subtitle {
   opacity: 0.65;
 }
 
-.disk-detail span.label{
-  font-weight:bold;
-}
-
 .pool-status{
   background-color: #333;
   color: #fff;
   border-radius: 2px;
   font-weight: bold;
-  font-size: 12px;
-  padding: 6px;
+  font-size: 0.6em;
+  padding: 6px 6px 4px;
+  margin-left: 4px;
+  margin-top: 2px;
+  display: block;
+  cursor:default;
+}
+
+.disk-detail-section {
+  display:table;
+  width: 100%;
+  text-align: left;
+  margin-top: 8px;
+}
+.disk-detail-item{
+  display:table-row;
+}
+.disk-detail-item > div{
+  display:table-cell;
+}
+
+/* Disk Sets */
+.diskset-wrapper-mask{
+  width:100%;
+}
+.diskset-wrapper-mask{
+  overflow:hidden;
+}
+.diskset{
+  float:left;
+  width:100%;
 }
