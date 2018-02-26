@@ -74,7 +74,7 @@ export class RestService {
       'Authorization': 'Token ' + this.ws.token
     });
 
-    if (!path.match(/\/$/)) {
+    if (!path.match(/\/$/) && !path.match(/\?/)) {
       path = path + '/';
     }
 
