@@ -173,7 +173,7 @@ export class UserFormComponent {
       type : 'select',
       name : 'groups',
       placeholder : 'Auxiliary Groups',
-      tooltip : 'Add this user to more groups. Choose one or more groups from the dropdown list.'
+      tooltip : 'Add this user to more groups. Choose one or more groups from the dropdown list.',
       options : [],
       multiple : true
     },
