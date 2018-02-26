@@ -92,6 +92,9 @@ export class JailWizardComponent {
           type: 'checkbox',
           name: 'vnet',
           placeholder: 'Vnet',
+          required: false,
+          hasErrors: false,
+          errors: '',
         }
       ]
     },
@@ -136,8 +139,20 @@ export class JailWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
       if (res) {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
+      } else {
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
       }
-    })
+    });
+    ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
+      if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
+      } else {
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = false;
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = '';
+      }
+    });
   }
 
   beforeSubmit(value) {
