@@ -181,7 +181,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       data: [availableObj.value]
     };
 
-    this.chartZvol.units = '%';
+    this.chartZvol.units = 'GB';
     this.chartZvol.title = this.volumeData.name;
     this.chartZvol.data = [used,available];
     let percentage = this.volumeData.used_pct.split("%");

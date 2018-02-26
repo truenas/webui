@@ -18,6 +18,7 @@
 
 .legend-wrapper{
   padding: 0 8px;
+  min-height:45px;
 }
 
 .legend-html{}
@@ -206,6 +207,10 @@ g.c3-brush + g{
 .c3-chart-arcs-title,
 .gauge .c3-chart-arc text.c3-gauge-value{
   fill:#999;
+}
+
+.donut text.c3-chart-arcs-title{
+  font-size:24px;
 }
 
 

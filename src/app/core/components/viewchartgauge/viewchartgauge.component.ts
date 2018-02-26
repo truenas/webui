@@ -43,8 +43,11 @@ export class ViewChartGaugeComponent extends ViewChartComponent implements OnIni
       },
       gauge:{
         label:{
-          show: this.gaugeConfig.label
-        }
+          //show: this.gaugeConfig.label
+          show: false
+        },
+        width:15,
+        fullCircle:true
       },
       size:{
         //width: this.width,
