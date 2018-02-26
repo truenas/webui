@@ -43,7 +43,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
   @ViewChild(DatatableComponent) table: DatatableComponent;
   public temp = [];
-  
+
   public name: string;
   public resource_name = 'storage/volume/';
   public pk: any;
@@ -57,17 +57,24 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public dirty = false;
 
   public busy: Subscription;
-  
-  public name_tooltip = '';
-  public encryption_tooltip = '';
-  public suggested_layout_tooltip = '';
+
+  public name_tooltip = 'ZFS volumes must conform to strict naming\
+ <a href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
+ target="_blank">conventions</a>. Choose a memorable name that will\
+ stick out in the logs.';
+  public encryption_tooltip = '<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ target="_blank">GELI</a> encryption is available for ZFS volumes.\
+ <b>WARNING:</b>Read the "Ecryption" section (Section 8.1.1.1) of the\
+ <a href="guide">Guide</a> before activating this option.';
+  public suggested_layout_tooltip = 'Arranges available disks in a\
+ system recommended formation.';
 
   constructor(
-    private rest: RestService, 
+    private rest: RestService,
     private ws: WebSocketService,
-    private router: Router, 
-    private dragulaService: DragulaService, 
-    private dialog:DialogService, 
+    private router: Router,
+    private dragulaService: DragulaService,
+    private dialog:DialogService,
     public snackBar: MatSnackBar,
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
@@ -151,7 +158,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.dragulaService.destroy("pool-vdev");
   }
 
-  addVdev(group) { 
+  addVdev(group) {
     this.dirty = true;
     this.vdevs[group].push({});
   }
@@ -181,7 +188,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
         let layout = [];
         this.vdevComponents.forEach((vdev) => {
           let disks = [];
-          vdev.getDisks().forEach((disk) => { 
+          vdev.getDisks().forEach((disk) => {
             disks.push(disk.devname); });
           if (disks.length > 0) {
             layout.push({ vdevtype: vdev.type, disks: disks });
@@ -213,7 +220,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
               }
               else {
                 this.router.navigate(['/', 'storage', 'volumes']);
-              }      
+              }
             },
             (res) => {
               this.loader.close();
@@ -265,7 +272,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks = [...this.disks];
      this.temp.push(disk);
   }
-  
+
   removeDisk(disk: any) {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.disks = [...this.disks];
@@ -315,7 +322,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   suggestLayout() {
     // todo: add more layouts, manipulating multiple vdevs is hard
     this.suggestRedundancyLayout();
-  }  
+  }
 
   suggestRedundancyLayout() {
     for (let i = 0; i < this.suggestable_disks.length; i++) {
