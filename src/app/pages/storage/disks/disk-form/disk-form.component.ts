@@ -14,7 +14,7 @@ export class DiskFormComponent {
 
   protected route_success: string[] = ['storage', 'disks'];
   protected resource_name: string = 'storage/disk/';
-  protected isEntity: boolean = true;
+  protected isEntity = true;
 
   protected fieldConfig: FieldConfig[] = [
     {

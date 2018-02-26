@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -18,6 +19,8 @@ export class FormToggleButtonComponent implements Field, OnInit {
   public groupValue: Array < any >= [];
   protected init: boolean;
   protected control: any;
+
+  constructor(public translate: TranslateService) {}
 
   ngOnInit() {
     this.init = true;

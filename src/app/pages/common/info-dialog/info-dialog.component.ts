@@ -1,5 +1,6 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'info-dialog',
@@ -12,7 +13,7 @@ export class InfoDialog {
   public info: string;
 
 
-  constructor(public dialogRef: MatDialogRef < InfoDialog > ) {
+  constructor(public dialogRef: MatDialogRef < InfoDialog >, protected translate: TranslateService ) {
     
   }
 

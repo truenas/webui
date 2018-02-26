@@ -10,7 +10,8 @@
         "outDir": "dist",
         "assets": [
             "assets",
-            "favicon.ico"
+            "favicon.ico",
+            "icons"
         ],
         "index": "index.html",
         "main": "main.ts",
@@ -30,6 +31,7 @@
             "../node_modules/chartist/dist/chartist.min.css",
             "../node_modules/@swimlane/ngx-datatable/assets/icons.css",
             "../node_modules/c3/c3.min.css",
+            "../node_modules/devextreme/dist/css/dx.spa.css",
             "../node_modules/devextreme/dist/css/dx.common.css",
             "../node_modules/devextreme/dist/css/dx.light.css",
             "../node_modules/angular-tree-component/dist/angular-tree-component.css",
@@ -55,7 +57,10 @@
             "../node_modules/quill/dist/quill.min.js",
             "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
             "../node_modules/devextreme/dist/js/dx.all.js",
-            "../node_modules/filesize/lib/filesize.js"
+            "../node_modules/filesize/lib/filesize.js",
+            "../node_modules/xterm/dist/xterm.js",
+            "../node_modules/xterm/dist/addons/attach/attach.js",
+            "../node_modules/xterm/dist/addons/fit/fit.js"
            
         ],
         "environmentSource": "environments/environment.ts",

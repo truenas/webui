@@ -27,11 +27,23 @@
 	max-width: 450px;
 }
 
+.fields {
+	display: flex;
+}
+
+.manager {
+    display: flex;
+    flex-direction: column;
+}
+
 .buttons {
-	display: block;
+	display: flex;
 }
 
 h4 {
 	text-align: center;
 }
 
+.volumeTooltip {
+	display: auto;
+}

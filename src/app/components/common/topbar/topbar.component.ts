@@ -11,13 +11,16 @@ import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
+import { LanguageService } from "../../../services/language.service"
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'topbar',
-  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
-  templateUrl: './topbar.template.html'
+//  styleUrls: ['./topbar.component.css', '../../../../../node_modules/flag-icon-css/css/flag-icon.css'],
+styleUrls: ['./topbar.component.css'],
+templateUrl: './topbar.template.html'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
 
@@ -30,17 +33,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   interval: any;
 
-  currentLang = 'en';
-  availableLangs = [{
-    name: 'English',
-    code: 'en',
-  }, {
-    name: 'Spanish',
-    code: 'es',
-  }, {
-    name: '中文',
-    code: 'zh',
-  }]
   continuosStreaming: Subscription;
   showReplication = false;
   showResilvering = false;
@@ -54,11 +46,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private activeRoute: ActivatedRoute,
     private ws: WebSocketService,
     private rest: RestService,
+    public language: LanguageService,
     private dialogService: DialogService,
     private tour: TourService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    private idle: Idle ) {
+    private idle: Idle,
+    public translate: TranslateService ) {
 
     idle.setIdle(10); // 10 seconds for delaying
     idle.setTimeout(900); // 15 minutes for waiting of activity
@@ -133,8 +127,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   setLang(lang) {
-    this.currentLang = lang;
-    this.onLangChange.emit(this.currentLang);
+    this.language.currentLang = lang;
+    this.onLangChange.emit(this.language.currentLang);
   }
 
   changeTheme(theme) {
@@ -174,36 +168,26 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onShutdown() {
-    this.dialogService.confirm("Shut Down", "Shut down the system?").subscribe((res) => {
-      if (res) {
-        this.ws.call('system.shutdown', {}).subscribe(
-        (res) => {
-        },
-        (res) => { // error on shutdown
-          this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
-        },
-        () => { // show reboot screen
-          this.ws.prepare_shutdown();
-          this.router.navigate(['/others/shutdown']);
+    this.translate.get('SHUTDOWN').subscribe((shutdown: string) => {
+      this.translate.get('SHUTDOWN_PROMPT').subscribe((shutdown_prompt: string) => {
+        this.dialogService.confirm(shutdown, shutdown_prompt).subscribe((res) => {
+          if (res) {
+            this.router.navigate(['/others/shutdown']);
+          }
         });
-      }
+      });
     });
   }
 
   onReboot() {
-    this.dialogService.confirm("Reboot", "Reboot the system?").subscribe((res) => {
-      if (res) {
-        this.ws.call('system.reboot', {}).subscribe(
-          (res) => {
-          },
-          (res) => { // error on reboot
-            this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
-          },
-          () => { // show reboot screen
-            this.ws.prepare_shutdown();
+    this.translate.get('REBOOT').subscribe((reboot: string) => {
+      this.translate.get('REBOOT_PROMPT').subscribe((reboot_prompt: string) => {
+        this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
+          if (res) {
             this.router.navigate(['/others/reboot']);
-          });
-      }
+          }
+        });
+      });
     });
   }
 

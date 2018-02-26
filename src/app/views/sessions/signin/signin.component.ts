@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {WebSocketService} from '../../../services/ws.service';
 
@@ -21,7 +22,8 @@ export class SigninComponent implements OnInit {
     username: 'root',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router, private snackBar: MatSnackBar) {
+  constructor(private ws: WebSocketService, private router: Router, 
+    private snackBar: MatSnackBar, public translate: TranslateService) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
@@ -84,12 +86,18 @@ export class SigninComponent implements OnInit {
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
     this.signinData.username = 'root';
+    let message = '';
     if (this.ws.token === null) {
-      this.snackBar.open('Username or Password is incorrect', 'OKAY', {duration: 4000});
+      message = 'SIGNIN.USER_OR_PASSWORD_INCORRECT';
     } else {
-      this.snackBar.open('Token expired, please log back in', 'OKAY', {duration: 4000});
+      message = 'SIGNIN.TOKEN_EXPIRED';
       this.ws.token = null;
     }
+    this.translate.get('OK').subscribe((ok: string) => {
+      this.translate.get(message).subscribe((res: string) => {
+        this.snackBar.open(res, ok, {duration: 4000});
+      });
+    });
   }
 
 }

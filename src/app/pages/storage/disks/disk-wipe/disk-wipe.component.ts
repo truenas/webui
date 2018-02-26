@@ -34,12 +34,18 @@ export class DiskWipeComponent implements OnInit {
       type: 'input',
       name: 'disk_name',
       placeholder: 'Name',
+      tooltip : 'Disk to wipe.',
       readonly: true
     },
     {
       type: 'select',
       name: 'wipe_method',
       placeholder: 'Method',
+      tooltip : '<i>Quick</i> erases only the partitioning information\
+ on a disk, making it easy to reuse, but without clearing other old\
+ data. <i>Full with zeros</i> overwrites the entire disk with zeros.\
+ <i>Full with random data</i> overwrites the entire disk with random\
+ binary data.',
       options: [],
     }
   ];
@@ -110,7 +116,7 @@ export class DiskWipeComponent implements OnInit {
 
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Wipe" }, disableClose: true });
         this.dialogRef.componentInstance.progressNumberType = "nopercent";
-        this.dialogRef.componentInstance.setDiscription("Wiping Disk...");
+        this.dialogRef.componentInstance.setDescription("Wiping Disk...");
         this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((res) => {
@@ -118,7 +124,7 @@ export class DiskWipeComponent implements OnInit {
           this.openSnackBar("Disk successfully wiped", "Success");
         });
         this.dialogRef.componentInstance.failure.subscribe((res) => {
-          this.dialogRef.componentInstance.setDiscription(res.error);
+          this.dialogRef.componentInstance.setDescription(res.error);
         });
       }
     });

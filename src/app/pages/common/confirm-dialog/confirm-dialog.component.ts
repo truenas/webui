@@ -1,5 +1,6 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'confirm-dialog',
@@ -13,7 +14,7 @@ export class ConfirmDialog {
   public hideCheckBox: boolean = false;
   public isSubmitEnabled: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef < ConfirmDialog > ) {
+  constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
 
   }
 

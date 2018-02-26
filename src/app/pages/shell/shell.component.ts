@@ -12,10 +12,10 @@ import {
 import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
-import * as xterm from "xterm";
-import * as Terminal from 'xterm/dist/xterm';
-import 'xterm/dist/addons/fit/fit.js';
-import 'xterm/dist/addons/attach/attach.js';
+//import * as xterm from "xterm";
+//import * as Terminal from 'xterm/dist/xterm';
+//import 'xterm/dist/addons/fit/fit.js';
+//import 'xterm/dist/addons/attach/attach.js';
 import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 
 @Component({
@@ -88,9 +88,9 @@ export class ShellComponent implements OnInit, OnChanges {
       rowNum = 10;
     }
 
-    this.xterm = new Terminal({
+    this.xterm = new (<any>window).Terminal({
       'cursorBlink': true,
-      'tabStopWidth': 4,
+      'tabStopWidth': 8,
       'cols': 80,
       'rows': parseInt(rowNum.toFixed()),
       'focus': true

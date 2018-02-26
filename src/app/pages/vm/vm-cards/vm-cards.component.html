@@ -26,6 +26,9 @@
       <button mat-mini-fab class="add-vm" (click)="addVM()">
         <mat-icon>add</mat-icon>
       </button>
+      <button mat-mini-fab class="add-vm" (click)="addVMWizard()">
+        <mat-icon>add</mat-icon>
+      </button>
     </div>
   </mat-card-header>
 
@@ -118,9 +121,15 @@
 
 
         <div class="vm-controls">
-          <button mat-raised-button color="primary" (click)="vnc(i)">VNC</button>
-          <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
-          <button mat-raised-button color="primary" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+          <span matTooltip="{{(!cards[i].vnc) ? 'Web VNC Disabled: Please create a VNC device and restart your VM.' : 'Web VNC'}}" matTooltipPosition="above">
+            <button mat-raised-button color="primary" [disabled]="(!cards[i].vnc || cards[i].state == 'stopped')" (click)="vnc(i)">VNC</button>
+          </span>
+          <span matTooltip="Edit Devices" matTooltipPosition="above">
+           <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
+          </span>
+          <span matTooltip="{{(cards[i].state == 'running') ? 'Cannot edit VM if running' : 'Edit VM'}}" matTooltipPosition="above">
+            <button mat-raised-button color="primary" [disabled]="(cards[i].state == 'running')" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
+          </span>
         </div>
       </div>
     </ng-template>

@@ -1,5 +1,54 @@
+.widget .viewchart-wrapper{
+  width:100%;
+  position:absolute !important;
+  bottom:0;
+}
+
+/* Legends */
+
+.legend-wrapper{
+  padding: 0 8px;
+}
+
+.legend-html{}
+
+.legend-item{
+  padding:8px 0;
+  cursor:pointer;
+}
+
+.legend-item-disabled{
+  opacity:0.15;
+}
+
+.legend-x.legend-item{
+  font-weight: bold;
+  font-size: larger;
+  text-align: left;
+}
+
+.legend-item .legend-name{
+  text-transform:capitalize;
+}
+
+.legend-item .legend-value{
+  min-width:60px;
+  /*text-align:right;*/
+  display:inline-block;
+}
+
+.legend-item .legend-swatch{
+  width: 12px;
+  height: 12px;
+  border: solid #000 0px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 12px 2px 0;
+}
+
 /* Charts */
-.c3 text,.c3-tooltip-container{
+.c3 text,.c3-tooltip-container,
+.c3-chart-arcs-title, .c3-gauge-value{
   font-family:"Droid Sans Mono";
   color:rgba(0,0,0,0.55);
 }
@@ -10,15 +59,16 @@
 
 /* Chart Tooltips */
 .c3-tooltip-container{
+  display:none;
   /*background-color: rgba(0,0,0,0.9) !important;*/
   /*background:linear-gradient(0deg,rgba(0,0,0,0.49),rgba(33,33,33,0.79)) !important;*/
-  background:linear-gradient(0deg,rgba(0,0,0,0.7), rgba(33,33,33,1))!important;
+  /*background:linear-gradient(0deg,rgba(0,0,0,0.7), rgba(33,33,33,1))!important;
   color: #fff !important;
   box-shadow: 0px 2px 4px rgba(0,0,0,0.85) !important;
   margin: .333333rem;
   overflow: hidden;
   padding:16px;
-  border-radius:2px;
+  border-radius:2px;*/
   /*font-family:"Roboto Medium";*/
 }
 
@@ -102,14 +152,47 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
   stroke-width:0px;
 }
 
+/* Y axis & ticks  */
+.c3-axis-y path.domain {
+  stroke-width: 0;
+}
+
+.c3-axis-y g.tick line{
+  stroke-width:0;
+}
+
+/* Event Rects (Can't decide if I like these. Will ask Kris) */
+.c3-event-rects{
+  cursor:crosshair !important;
+}
+/*
+
+.c3.line g.c3-event-rects,
+.c3.spline g.c3-event-rects,
+.c3.area-line g.c3-event-rects,
+.c3.area-spline g.c3-event-rects{
+  fill: rgba(0,0,0,0);
+  fill-opacity:1 !important;
+  stroke: rgba(128,128,128,0.0325);
+}
+
+.c3.line g.c3-event-rects rect.c3-event-rect:nth-child(odd),
+.c3.spline g.c3-event-rects rect.c3-event-rect:nth-child(odd),
+.c3.area-line g.c3-event-rects rect.c3-event-rect:nth-child(odd),
+.c3.area-spline g.c3-event-rects rect.c3-event-rect:nth-child(odd){
+  fill: rgba(128,128,128,0.075) !important;
+}
+*/
+
 /* SUBCHARTS */
 g.c3-brush + g{
   opacity:0 !important;
 }
 
-
-
-
-
+/* Titles and text */
+.c3-chart-arcs-title,
+.gauge .c3-chart-arc text.c3-gauge-value{
+  fill:#999;
+}
 
 

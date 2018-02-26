@@ -39,3 +39,8 @@ mat-select {
   padding: .4375em 0;
   border-top: .84375em solid transparent;
 }
+
+.advancedTooltip {
+  position: absolute !important;
+  right: 20px;
+}

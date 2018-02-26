@@ -11,6 +11,7 @@ import {
   MatSnackBarModule,
  } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { TranslateModule } from 'ng2-translate/ng2-translate';
 
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
@@ -30,6 +31,7 @@ import { SessionsRoutes } from "./sessions.routing";
     MatCheckboxModule,
     MatSnackBarModule,
     FlexLayoutModule,
+    TranslateModule,
     RouterModule.forChild(SessionsRoutes)
   ],
   declarations: [ForgotPasswordComponent, LockscreenComponent, SigninComponent, SignupComponent]

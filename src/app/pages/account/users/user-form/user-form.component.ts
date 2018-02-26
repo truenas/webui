@@ -33,10 +33,8 @@ export class UserFormComponent {
     {
       type : 'input',
       name : 'uid',
-      placeholder : 'User ID',
-      tooltip : 'By convention, user accounts have an ID greater than\
- 1000 and system accounts have an ID equal to the default port number\
- used by the service.',
+      placeholder : 'USERS_UID_PLACEHOLDER',
+      tooltip : 'USERS_UID_TOOLTIP',
       validation : [ Validators.required ]
     },
     {
@@ -82,7 +80,7 @@ export class UserFormComponent {
     {
       type : 'explorer',
       initial: '/mnt',
-
+      explorerType: 'directory',
       name: 'home',
       placeholder: 'Home Directory',
       value: '/nonexistent',

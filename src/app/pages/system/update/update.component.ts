@@ -6,6 +6,7 @@ import { RestService, WebSocketService } from '../../../services/';
 import { MarkdownModule } from 'angular2-markdown';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { DialogService } from '../../../services/dialog.service';
 import * as _ from 'lodash';
 import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -34,16 +35,8 @@ export class UpdateComponent implements OnInit {
 
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
-    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, protected loader: AppLoaderService) {
-    router.events.subscribe((res) => {
-      if (res instanceof NavigationStart) {
-        if (res.url == '/sessions/signin' && !this.ws.connected) {
-          this.dialogRef.close();
-          this.ws.prepare_shutdown();
-          router.navigate(['/others/reboot']);
-        }
-      }
-    })
+    protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
+    protected loader: AppLoaderService, protected dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -130,8 +123,13 @@ export class UpdateComponent implements OnInit {
 
   update() {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
-    this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: true }]);
+    this.dialogRef.componentInstance.setCall('update.update', [{ train: this.train, reboot: false }]);
     this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.router.navigate(['/others/reboot']);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
+    });
   }
-
 }

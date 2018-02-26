@@ -1,5 +1,6 @@
 import {Component, ViewContainerRef, ViewChild, ElementRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -17,6 +18,8 @@ export class FormTextareaButtonComponent implements Field {
 
   @ViewChild("textAreaSSH")
   textAreaSSH: ElementRef;
+
+  constructor(public translate: TranslateService) {}
 
   customEventMethod($event) {
 

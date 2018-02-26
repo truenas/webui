@@ -54,6 +54,7 @@ export class RsyncFormComponent {
       type : 'explorer',
       initial: '/mnt',
       name: 'rsync_path',
+      explorerType: 'directory',
       placeholder: 'Path',
       tooltip: 'Browse to the path to be copied; note that a path\
  length greater than 255 characters will fail.',

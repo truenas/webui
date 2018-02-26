@@ -46,6 +46,7 @@
                 <mat-option value="raidz3" *ngIf="getDisks().length >= 5">Raid-z3</mat-option>
             </mat-select>
             Estimated raw capacity: {{size}}
+            <tooltip class="vdevTooltip" [message]=vdev_type_tooltip></tooltip>
         </div>
         </div>
         <div class="vdev-close">

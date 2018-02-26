@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -23,4 +24,5 @@ export class FormButtonComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
+  constructor(public translate: TranslateService) {}
 }
