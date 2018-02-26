@@ -16,6 +16,7 @@ import { AppBlankComponent } from './app-blank/app-blank.component';
 import { OthersRoutes } from "./others.routing";
 import { RebootComponent } from "./reboot/reboot.component";
 import { ShutdownComponent } from "./shutdown/shutdown.component";
+import { TranslateModule } from 'ng2-translate/ng2-translate';
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import { ShutdownComponent } from "./shutdown/shutdown.component";
     MatSlideToggleModule,
     MatGridListModule,
     FlexLayoutModule,
+    TranslateModule,
     RouterModule.forChild(OthersRoutes)
   ],
   declarations: [AppBlankComponent, RebootComponent, ShutdownComponent]

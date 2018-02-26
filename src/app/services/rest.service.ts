@@ -74,6 +74,10 @@ export class RestService {
       'Authorization': 'Token ' + this.ws.token
     });
 
+    if (!path.match(/\/$/)) {
+      path = path + '/';
+    }
+
     const requestUrl: string = (typeof (useBaseUrl) !== "undefined" && useBaseUrl === false)
       ? path : this.baseUrl + path;
 

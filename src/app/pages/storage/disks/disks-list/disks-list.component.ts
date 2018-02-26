@@ -11,10 +11,11 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { ErdService } from 'app/services/erd.service';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 export class DisksListConfig {
-    protected flattenedVolData: any;
-    protected resource_name = 'storage/disk/';
+    public flattenedVolData: any;
+    public resource_name = 'storage/disk/';
     public hideTopActions = true;
     public diskMap: Map<string,string> = new Map<string,string>();
     
@@ -114,8 +115,9 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public title = "View Disks";
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, protected erdService: ErdService) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService);
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
+    protected erdService: ErdService, protected translate: TranslateService) {
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
       this.conf = new DisksListConfig(this.router, "", "");
   }
 

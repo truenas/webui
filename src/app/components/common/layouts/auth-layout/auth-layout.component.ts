@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LanguageService } from '../../../../services/language.service';
 
 @Component({
   selector: 'app-auth-layout',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AuthLayoutComponent implements OnInit {
 
-  constructor() { }
+  constructor(public language: LanguageService) {
+    // Translator init
+    language.getBrowserLanguage();
+  }
 
   ngOnInit() {
   }

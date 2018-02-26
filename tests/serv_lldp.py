@@ -23,8 +23,8 @@ try:
 except ImportError:
     import unittest
 
-xpaths = { 'navService': "//*[@id='nav-8']/div/a[1]",
-           'turnoffConfirm': "//*[contains(text(), 'OK')]"
+xpaths = { 'navService': '//*[@id="nav-8"]/div/a[1]',
+           'turnoffConfirm': '//*[contains(text(), "OK")]'
          }
 
 class conf_lldp_test(unittest.TestCase):
@@ -40,27 +40,24 @@ class conf_lldp_test(unittest.TestCase):
         # check if the Service page is opens
         time.sleep(1)
         # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li/a")
+        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
         # get the weather data
         page_data=ui_element.text
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
+#        self.service_search("LLDP")
         # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
+        driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
         self.status_change("7", "start")
 
     def test_02_checkif_lldp_on (self):
         print (" check if lldp turned on")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("7")
 
     def test_03_turnoff_lldp (self):
         print (" turning off the lldp service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("7", "stop")
         #lldp takes almost 7 sec to turn off
@@ -68,8 +65,6 @@ class conf_lldp_test(unittest.TestCase):
 
     def test_04_checkif_lldp_off (self):
         print (" check if ftp turned off")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_check("7")
         time.sleep(10)
@@ -86,16 +81,18 @@ class conf_lldp_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+
     def status_change(self, which, to):
         print ("executing the status change function with input " + which + " + " + to)
         # get the ui element
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
+        buttonToggle = driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/button')
         if to == "start":
             if status_data == "STOPPED":
                 # Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                buttonToggle.click()
                 time.sleep(1)
                 print ("status has now changed to running")
             else:
@@ -103,7 +100,7 @@ class conf_lldp_test(unittest.TestCase):
         elif to == "stop":
             if status_data == "RUNNING":
                 #Click on the toggle button
-                driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/button").click()
+                buttonToggle.click()
                 time.sleep(1)
                 # re-confirming if the turning off the service
                 if self.is_element_present(By.XPATH,xpaths['turnoffConfirm']):
@@ -113,10 +110,24 @@ class conf_lldp_test(unittest.TestCase):
 
 
     def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[" + str(which) + "]/mat-card/div[2]/div[1]/mat-chip")
+        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
+
+
+    def service_search(self, which):
+        # range is 0-3 so that loop runs 3 times, because it takes almost 3 to scroll down in automated trueos browser
+        driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
+        for i in range(0,3):
+            if (self.is_element_present(By.XPATH,'/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')):
+                ui_service_name=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/service[' + str(which)  +  ']/mat-card/div[2]/div[1]/mat-chip')
+                if (ui_service_name.text == which):
+                    break
+                    print (which  + " service is found")
+            else:
+                driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
+                print ("searching for service" + which + " Attempt:" + str(i))
 
 
     @classmethod

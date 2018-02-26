@@ -9,7 +9,8 @@ import getopt
 from subprocess import call
 from os import path
 # when running for jenkins user driver, and when running on  an ubuntu system user driverU, because of  capabilities
-from driver import webDriver
+
+#from driver import webDriver
 #from driverU import webDriver
 # Importing test
 # from autoflush import autoflush
@@ -17,6 +18,7 @@ from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
 from acc_user import run_create_user_test
+from net_conf import run_conf_network_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
@@ -51,6 +53,9 @@ Optional Commands:
 --test-name <test_name>    - name of tests targeted
                             [account, system, guide, service, theme]
 
+--driver <d_v>             - version of the driver
+                             [U]
+
 """ % argument[0]
 
 # if have no argument stop
@@ -59,9 +64,9 @@ if len(argument) == 1:
     exit()
 
 # list of argument that should be use.
-optionlist = ["ip=", "test-name="]
-testlist = ["account", "system", "guide", "service", "theme"]
-
+optionlist = ["ip=", "test-name=", "driver="]
+testlist = ["account", "network", "system", "guide", "service", "theme"]
+versionlist = ["U"]
 # look if all the argument are there.
 try:
     myopts, args = getopt.getopt(argument[1:], 'it', optionlist)
@@ -75,6 +80,8 @@ for output, arg in myopts:
         ip = arg
     if output == "--test-name":
         test_name = arg
+    if output == "--driver":
+        driver_v = arg
 
 try:
     ip
@@ -82,6 +89,18 @@ except NameError:
     print("Option '--ip' is missing")
     print(UsageMSG)
     sys.exit(1)
+
+try:
+    driver_v
+except NameError:
+    from driver import webDriver
+    print ("Running jenkin/truos driver")
+
+else:
+    if (driver_v == "U"):
+        from driverU import webDriver
+        print ("Running Ubuntu driver")
+
 
 global runDriver
 runDriver = webDriver()
@@ -97,17 +116,19 @@ except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
-#    run_check_update_test(runDriver)
+    run_conf_network_test(runDriver)
+    run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
     run_conf_sysadvance_test(runDriver)
     run_conf_afp_test(runDriver)
     run_conf_smb_test(runDriver)
+    run_conf_dc_test(runDriver)
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)
-    run_conf_lldp_test(runDriver)
-    run_conf_dc_test(runDriver)
-    run_conf_ssh_test(runDriver)
+# temporary shutdown 
+#    run_conf_lldp_test(runDriver)
+#    run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
@@ -120,6 +141,8 @@ else:
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
         run_delete_test(runDriver)
+    elif (test_name == "network"):
+        run_conf_network_test(runDriver)
     elif (test_name == "system"):
         run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
@@ -128,11 +151,11 @@ else:
         print ("Running: Guide Tests")
         run_conf_afp_test(runDriver)
         run_conf_smb_test(runDriver)
+        run_conf_dc_test(runDriver)
         run_conf_dns_test(runDriver)
         run_conf_ftp_test(runDriver)
         run_conf_iscsi_test(runDriver)
         run_conf_lldp_test(runDriver)
-        run_conf_dc_test(runDriver)
         run_conf_ssh_test(runDriver)
         run_conf_webdav_test(runDriver)
     elif (test_name == "guide"):
@@ -169,6 +192,9 @@ if path.exists('acc_group.pyc'):
 
 if path.exists('serv_afp.pyc'):
     call(["rm", "serv_afp.pyc"])
+
+if path.exists('net_conf.pyc'):
+    call(["rm", "net_conf.pyc"])
 
 if path.exists('serv_smb.pyc'):
     call(["rm", "serv_smb.pyc"])

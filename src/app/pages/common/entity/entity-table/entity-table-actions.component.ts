@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {RestService} from '../../../../services/rest.service';
 
@@ -19,7 +20,9 @@ export class EntityTableActionsComponent implements OnInit {
   @Input('icon_name') icon_name = "more_vert";
 
   public actions: any[];
-  public showMenu: boolean = true;
+  public showMenu = true;
+
+  constructor(protected translate: TranslateService) { }
 
   menuActionVisible(id: string) {
     if (id === 'edit' || id === 'delete') {

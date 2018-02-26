@@ -38,7 +38,7 @@ import { ErdService } from 'app/services/erd.service';
 import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
 export function createTranslateLoader(http: Http) {
-  return new TranslateStaticLoader(http, './assets/i18n', '.json');
+  return new TranslateStaticLoader(http, './assets/i18n', '/translations.json');
 }
 
 @NgModule({

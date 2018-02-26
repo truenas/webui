@@ -13,10 +13,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services/';
 import {VmService} from '../../../../services/vm.service';
@@ -28,14 +28,13 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 @Component({
   selector : 'device-edit',
   templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
-  styleUrls : [ '../../../common/entity/entity-form/entity-form.component.scss' ],
   providers : [ VmService ]
 })
 
 export class DeviceEditComponent implements OnInit {
 
-  
-  public resource_name: string = 'vm/device';
+  saveSubmitText = "Save";
+  public resource_name = 'vm/device';
   public route_cancel: string[];
   public route_success: string[];
   public vmid: any;
@@ -50,12 +49,12 @@ export class DeviceEditComponent implements OnInit {
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
   public conf: any = {};
-  public hasConf:  boolean = true;
-  public success: boolean = false;
+  public hasConf = true;
+  public success = false;
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;
-  
+ 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
@@ -67,7 +66,8 @@ export class DeviceEditComponent implements OnInit {
               protected networkService: NetworkService,
               protected systemGeneralService: SystemGeneralService,
               private entityFormService: EntityFormService,
-              public vmService: VmService) {}
+              public vmService: VmService,
+              public translate: TranslateService) {}
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
       this.vmid = params['vmid'];
@@ -188,8 +188,9 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'After <a\
  href="http://doc.freenas.org/11/storage.html#create-zvol"\
  target="_blank">creating a zvol</a>, select it from the list.',
-          type: 'select',
-          options: []
+          type: 'explorer',
+          explorerType: "zvol",
+          initial: '/mnt',
         },
         {
           name : 'DISK_mode',
@@ -310,15 +311,7 @@ export class DeviceEditComponent implements OnInit {
         this.setgetValues(device[0].attributes, nic_lookup_table);
       }
       else if (device[0].dtype === 'DISK'){
-        this.vmService.getStorageVolumes().subscribe((res) => {
-          const disks = new EntityUtils().flattenData(res.data);
-          self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
-          for (const disk of disks) {
-            if (disk.type === 'zvol') {
-              self.DISK_zvol.options.push({label : disk.name, value : disk.path});
-            };
-          };
-        });
+        self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
         this.setgetValues(device[0].attributes, disk_lookup_table);
       }
       else {

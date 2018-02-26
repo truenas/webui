@@ -2,7 +2,7 @@
 		<mat-checkbox [formControlName]="config.name" [required]="config.required">
 			{{ config.placeholder }}
 		</mat-checkbox>
-		<!-- <label>{{ config.placeholder }}</label> -->
+		<label>{{ config.placeholder | translate }}</label>
 		<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
 		<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

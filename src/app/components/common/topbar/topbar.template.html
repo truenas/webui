@@ -56,8 +56,8 @@
     <mat-menu #accountMenu="matMenu">
       <button mat-menu-item (click)="$event.stopPropagation()" [matMenuTriggerFor]="languageMenu">
         <mat-icon>translate</mat-icon>
-        <ng-container *ngFor="let lang of availableLangs">
-          <span *ngIf="lang.code == currentLang">{{ lang.name }}</span>
+        <ng-container *ngFor="let lang of language.availableLangs">
+          <span *ngIf="lang.code == language.currentLang">{{ lang.name }}</span>
         </ng-container>
       </button>
       <button mat-menu-item [routerLink]="['/account/users/edit/1']">
@@ -98,7 +98,7 @@
       </a>
     </mat-menu>
     <mat-menu #languageMenu="matMenu" [overlapTrigger]="false" xPosition="after">
-      <ng-container *ngFor="let lang of availableLangs">
+      <ng-container *ngFor="let lang of language.availableLangs">
         <button mat-menu-item (click)="setLang(lang.code)">
           <span class="flag-icon" [ngClass]="{'flag-icon-us': lang.code === 'en'}" *ngIf="lang.code == 'en'">{{ lang.name }}</span>
           <span class="flag-icon" [ngClass]="{'flag-icon-es': lang.code === 'es'}" *ngIf="lang.code == 'es'">{{ lang.name }}</span>

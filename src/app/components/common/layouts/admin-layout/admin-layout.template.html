@@ -44,7 +44,7 @@
     <!-- Top Bar -->
     <!-- Template reference variables of Left sidebar and Right notification is supplied -->
     <!-- Listens language change event -->
-    <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="translate.use($event)"></topbar>
+    <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setLang($event)"></topbar>
     <!-- App content -->
     <app-breadcrumb></app-breadcrumb>
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
