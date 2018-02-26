@@ -31,82 +31,82 @@ export const rootRouterConfig: Routes = [{
     children: [{
         path: 'dashboard',
         loadChildren: './pages/dashboard/dashboard.module#DashboardModule',
-        data: { title: 'Dashboard', breadcrumb: 'DASHBOARD' }
+        data: { title: 'DASHBOARD', breadcrumb: 'DASHBOARD' }
       },
       {
         path: 'account',
         loadChildren: './pages/account/account.module#AccountModule',
-        data: { title: 'Account', breadcrumb: 'Account'}
+        data: { title: 'ACCOUNT', breadcrumb: 'ACCOUNT'}
       },
       {
         path: 'system',
         loadChildren: './pages/system/system.module#SystemModule',
-        data: { title: 'System', breadcrumb: 'System'}
+        data: { title: 'SYSTEM', breadcrumb: 'SYSTEM'}
       },
       {
         path: 'tasks',
         loadChildren: './pages/task-calendar/task-calendar.module#TaskCalendarModule',
-        data: { title: 'Tasks', breadcrumb: 'Tasks'}
+        data: { title: 'TASKS', breadcrumb: 'TASKS'}
       },
       {
         path:'network',
         loadChildren: 'app/pages/network/network.module#NetworkModule',
-        data: { title: 'Network', breadcrumb: 'Network' }
+        data: { title: 'NETWORK', breadcrumb: 'NETWORK' }
       },
       {
         path:'services',
         loadChildren: 'app/pages/services/services.module#ServicesModule',
-        data: { title: 'Services', breadcrumb: 'Services' }
+        data: { title: 'SERVICES', breadcrumb: 'SERVICES' }
       },
       {
         path: 'directoryservice',
         loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
-        data: { title: 'directoryservice', breadcrumb: 'Directory Service' }
+        data: { title: 'DIRECTORY_SERVICE', breadcrumb: 'DIRECTORY_SERVICE' }
       },
       {
         path: 'vm',
         loadChildren: 'app/pages/vm/vm.module#VmModule',
-        data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' }
+        data: { title: 'VIRTUAL_MACHINES', breadcrumb: 'VIRTUAL_MACHINES' }
       },
       {
         path: 'sharing',
         loadChildren: 'app/pages/sharing/sharing.module#SharingModule',
-        data: { title: 'Sharing', breadcrumb: 'Sharing'}
+        data: { title: 'SHARING', breadcrumb: 'SHARING'}
       },
       {
         path: 'storage',
         loadChildren: './pages/storage/storage.module#StorageModule',
-        data: { title: 'Storage', breadcrumb: 'Storage' }
+        data: { title: 'STORAGE', breadcrumb: 'STORAGE' }
       },
       {
         path: 'plugins',
         loadChildren: './pages/plugins/plugins.module#PluginsModule',
-        data: { title: 'Plugins', breadcrumb: 'Plugins' },
+        data: { title: 'PLUGINS', breadcrumb: 'PLUGINS' },
       },
       {
         path: 'jails',
         loadChildren: './pages/jails/jails.module#JailsModule',
-        data: { title: 'Jails', breadcrumb: 'Jails' },
+        data: { title: 'JAILS', breadcrumb: 'JAILS' },
       },
       {
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
-        data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
+        data: { title: 'REPORTING', breadcrumb: 'REPORTING' }
       },
       {
         path: 'systemprocesses',
         loadChildren : 'app/pages/systemprocesses/system-processes.module#SystemProcessesModule',
-        data: { title: 'System Processes', breadcrumb: 'System Processes'}
+        data: { title: 'SYSTEM_PROCESSES', breadcrumb: 'SYSTEM_PROCESSES'}
       },
       {
         path : 'shell',
         loadChildren : './pages/shell/shell.module#ShellModule',
-        data: { title: 'Shell', breadcrumb: 'SHELL'}
+        data: { title: 'SHELL', breadcrumb: 'SHELL'}
       },
       {
         path : 'guide',
         loadChildren : './pages/guide/guide.module#GuideModule',
-        data: { title: 'Guide', breadcrumb: 'Guide'}
+        data: { title: 'GUIDE', breadcrumb: 'GUIDE'}
       }
     ]
   },
