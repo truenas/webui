@@ -78,6 +78,11 @@ export class StorageFormComponent {
  not exist yet, enter the desired directory name and check the\
  <b>Create directory</b> box.',
     },
+    {
+      type: 'checkbox',
+      name: 'readonly',
+      placeholder: 'Read-Only',
+    },
   ];
 
   private jail: any;
@@ -91,7 +96,7 @@ export class StorageFormComponent {
     private dialog: DialogService) {}
 
   preInit(entityForm: any) {
-    let destination_field = _.find(this.fieldConfig, {'name': 'destination'});
+    let destination_field = _.find(this.fieldConfig, { 'name': 'destination' });
     this.jail = _.find(this.fieldConfig, { 'name': 'jail' });
     this.aroute.params.subscribe(params => {
       this.route_success.push(params['jail']);
@@ -131,6 +136,12 @@ export class StorageFormComponent {
     entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId][0]);
     entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId][1]);
 
+    if (entityList.queryResponse[this.mountpointId][3] == 'ro') {
+      entityList.formGroup.controls['readonly'].setValue(true);
+    } else if (entityList.queryResponse[this.mountpointId][3] == 'rw') {
+      entityList.formGroup.controls['readonly'].setValue(false);
+    }
+
     this.mountPointEdit.source = entityList.queryResponse[this.mountpointId][0];
     this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId][1];
     this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId][2];
@@ -151,13 +162,22 @@ export class StorageFormComponent {
       this.mountPointEdit.source = value['source'];
       this.mountPointEdit.destination = value['destination'];
       this.mountPointEdit.index = this.mountpointId;
+      if (value['readonly']) {
+        this.mountPointEdit.fsoptions = "ro";
+      } else {
+        this.mountPointEdit.fsoptions = "rw";
+      }
       mountPoint = this.mountPointEdit;
     } else {
       // add mode
       this.mountPointAdd.source = value['source'];
       this.mountPointAdd.destination = value['destination'];
       this.mountPointAdd.fstype = "nullfs";
-      this.mountPointAdd.fsoptions = "ro";
+      if (value['readonly']) {
+        this.mountPointAdd.fsoptions = "ro";
+      } else {
+        this.mountPointAdd.fsoptions = "rw";
+      }
       this.mountPointAdd.dump = "0";
       this.mountPointAdd.pass = "0";
       mountPoint = this.mountPointAdd;
