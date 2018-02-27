@@ -26,7 +26,10 @@ export class VdevComponent implements OnInit {
   public id: number;
   public size;
 
-  public vdev_type_tooltip = '';
+  public vdev_type_tooltip = 'Choose a <b>Stripe</b>, <b>Mirror</b>, or\
+ <b>Raid-Z</b> configuration for the chosen disk layout. See the\
+ <b>Storage/Volumes</b> section of the <a href="guide">Guide</a> for\
+ more details.';
 
   constructor(public elementRef: ElementRef) {}
 
@@ -43,7 +46,7 @@ export class VdevComponent implements OnInit {
     return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
-  addDisk(disk: any) { 
+  addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -86,7 +89,7 @@ export class VdevComponent implements OnInit {
     }
     totalsize = smallestdisk * this.disks.length;
     if (this.type === "mirror") {
-      estimate = smallestdisk; 
+      estimate = smallestdisk;
     } else if (this.type === "raidz") {
       estimate = totalsize - smallestdisk;
     } else if (this.type === "raidz2") {
@@ -96,7 +99,7 @@ export class VdevComponent implements OnInit {
     } else {
       estimate = totalsize; // stripe
     }
-        
+
     this.size = (<any>window).filesize(estimate, {standard : "iec"});
   }
 
@@ -123,13 +126,13 @@ export class VdevComponent implements OnInit {
 
   getDisks() { return this.disks; }
 
-  onTypeChange(e) { 
+  onTypeChange(e) {
     this.estimateSize();
     //console.log(e, this.group);
   }
 
-  remove() { 
-    while (this.disks.length > 0) { 
+  remove() {
+    while (this.disks.length > 0) {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);
