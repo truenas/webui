@@ -283,6 +283,9 @@ export class ServiceFTPComponent implements OnInit {
       type : 'checkbox',
       name : 'ftp_tls_opt_no_cert_request',
       placeholder : 'TLS No Certificate Request',
+      tooltip : 'Try checking this box if the client cannot connect and\
+ it is suspected the client software is not properly handling the\
+ server’s certificate request.',
     },
     {
       type : 'checkbox',

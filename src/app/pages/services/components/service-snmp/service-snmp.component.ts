@@ -54,8 +54,9 @@ export class ServiceSNMPComponent {
       name : 'community',
       placeholder : 'Community',
       tooltip: 'Default is <i>public</i> and <b>should be changed for\
- security reasons;</b> can only contain alphanumeric characters, underscores, dashes,\
- periods, and spaces; this value can be empty for SNMPv3 networks.',
+ security reasons</b>. This can only contain alphanumeric characters,\
+ underscores, dashes, periods, and spaces. This value can be left empty\
+ for <i>SNMPv3</i> networks.',
     },
     {
       type : 'checkbox',
@@ -67,12 +68,12 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'v3_username',
       placeholder : 'Username',
-      tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked; specify\
- the username to register with this service; refer to\
- <a href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html" target="_blank">snmpd.conf(5)</a>\
- for more information regarding the configuration of this setting as\
- well as the <b>Authentication Type</b>, <b>Password</b>, <b>Privacy Protocol</b>, and\
- <b>Privacy Passphrase</b> fields.',
+      tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked.\
+ Specify the username to register with this service. Refer to <a\
+ href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
+ target="_blank">snmpd.conf(5)</a> for more details about configuration\
+ and the <b>Authentication Type</b>, <b>Password</b>,\
+ <b>Privacy Protocol</b>, and <b>Privacy Passphrase</b> fields.',
       relation : [ {
         action : 'DISABLE',
         when : [ {name : 'v3', value : false} ]
@@ -82,8 +83,7 @@ export class ServiceSNMPComponent {
       type : 'select',
       name : 'v3_authtype',
       label : 'Authentic Type',
-      tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked;\
- choices are <i>MD5</i> or </i>SHA</i>.',
+      tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked.',
       options : [
         {label : '---', value : ""}, {label : 'MD5', value : 'MD5'},
         {label : 'SHA', value : 'SHA'}
@@ -98,8 +98,8 @@ export class ServiceSNMPComponent {
       name : 'v3_password',
       inputType : 'password',
       placeholder : 'password',
-      tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked; specify\
- and confirm a password of at least eight characters.',
+      tooltip: 'Only applies if <b>SNMP v3 Support</b> is checked.\
+ Specify and confirm a password of at least eight characters.',
       validation :
           [ Validators.minLength(8), matchOtherValidator('v3_password2') ],
       relation : [ {
@@ -123,7 +123,7 @@ export class ServiceSNMPComponent {
       name : 'v3_privproto',
       label : 'Privacy Protocol',
       tooltip: 'Only applies if <b>SNMP v3 Support<b> is\
- checked; choices are <i>AES</i> or <i>DES</i>.',
+ checked.',
       options : [
         {label : '---', value : null},
         {label : 'AES', value : 'AES'},
@@ -163,13 +163,17 @@ export class ServiceSNMPComponent {
       type : 'textarea',
       name : 'options',
       placeholder : 'Auxiliary Parameters',
-      tooltip: 'Additional <a href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html" target="_blank">snmpd.conf(5)</a>\
- options not covered in this screen, one per line.',
+      tooltip: 'Enter any additional <a\
+ href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
+ target="_blank">snmpd.conf(5)</a> options, one per line.',
     },
     {
       type : 'select',
       name : 'loglevel',
       placeholder : 'Log Level',
+      tooltip : 'Choose how many log entries to create. Choices range\
+ from the least log entries (<b>Emergency</b>) to the most\
+ (<b>Debug</b>).',
       options : [
         {label : 'Emergency', value :0},
         {label : 'Alert', value :1},

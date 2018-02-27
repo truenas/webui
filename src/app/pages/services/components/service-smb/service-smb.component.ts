@@ -33,15 +33,15 @@ export class ServiceSMBComponent implements OnInit {
   protected query_call = "directoryservice.idmap_";
   protected idmap_type = 'tdb'
   protected targetDS = '5';
-  
-  
+
+
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cifs_srv_netbiosname',
       placeholder: 'NetBIOS Name',
       tooltip: 'Automatically populated with the original hostname\
- of the system; limited to 15 characters; it must be\
- different from the Workgroup name.',
+ of the system. This is limited to 15 characters and must be\
+ different from the <b>Workgroup</b> name.',
     },
     {
       type: 'input',
@@ -54,15 +54,17 @@ export class ServiceSMBComponent implements OnInit {
       name: 'cifs_srv_workgroup',
       placeholder: 'Workgroup',
       tooltip: 'Must match Windows workgroup\
- name; this setting is ignored if the <a href="http://doc.freenas.org/11/directoryservice.html#active-directory" target="_blank">Active Directory</a>\
- or <a href="http://doc.freenas.org/11/directoryservice.html#ldap" target="_blank">LDAP</a>\
- service is running.',
+ name. This setting is ignored if the\
+ <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+ target="_blank">Active Directory</a> or <a\
+ href="http://doc.freenas.org/11/directoryservice.html#ldap"\
+ target="_blank">LDAP</a> service is running.',
     },
     {
       type: 'input',
       name: 'cifs_srv_description',
       placeholder: 'Description',
-      tooltip: 'Enter server description; this field is optional.',
+      tooltip: 'Optional. Enter a server description.',
     },
     {
       type: 'select',
@@ -132,8 +134,8 @@ export class ServiceSMBComponent implements OnInit {
       type: 'checkbox',
       name: 'cifs_srv_domain_logons',
       placeholder: 'Domain Logons',
-      tooltip: 'Check this box if it is necessary to provide the netlogin service\
- for older Windows clients.',
+      tooltip: 'Check this box if it is necessary to provide the netlogin\
+ service for older Windows clients.',
     },
     {
       type: 'checkbox',
@@ -152,14 +154,14 @@ export class ServiceSMBComponent implements OnInit {
  nobody; account must have permission to access the shared\
  volume/dataset; if Guest Account user is deleted, resets to nobody.',
     },
-    { type: 'permissions', 
-      name: 'cifs_srv_filemask', 
+    { type: 'permissions',
+      name: 'cifs_srv_filemask',
       placeholder: 'File Mask',
       tooltip: 'Overrides default file creation mask of 0666 which\
  creates files with read and write access for everybody.',
     },
-    { type: 'permissions', 
-      name: 'cifs_srv_dirmask', 
+    { type: 'permissions',
+      name: 'cifs_srv_dirmask',
       placeholder: 'Directory Mask',
       tooltip: 'Overrides default directory creation mask of 0777\
  which grants directory read, write and execute access for everybody.',
@@ -177,7 +179,8 @@ export class ServiceSMBComponent implements OnInit {
       name: 'cifs_srv_smb_options',
       placeholder: 'Auxiliary Parameters',
       tooltip: '<b>smb.conf</b> options not covered elsewhere in this\
- screen; see the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html" target="_blank">Samba Guide </a>\
+ screen; see the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
+ target="_blank">Samba Guide </a>\
  for additional settings.',
     },
     {
@@ -215,7 +218,8 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: 'Uncheck this box to allow cross-domain\
  authentication, to allow users and groups to be managed on\
  another forest, or to allow permissions to be delegated from\
- <a href="http://doc.freenas.org/11/directoryservice.html#active-directory" target="_blank">Active Directory</a>\
+ <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+ target="_blank">Active Directory</a>\
  users and groups to domain admins on another forest.',
     },
     {
@@ -238,11 +242,18 @@ export class ServiceSMBComponent implements OnInit {
       type: 'input',
       name: 'idmap_tdb_range_low',
       placeholder: 'Range Low',
+      tooltip: 'The beginning UID/GID for which this system is\
+ authoritative. Any UID/GID lower than this value is ignored, providing\
+ a way to avoid accidental UID/GID overlaps between local and remotely\
+ defined IDs.',
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_high',
-      placeholder: 'Range High'
+      placeholder: 'Range High',
+      tooltip: 'The ending UID/GID for which this system is authoritative.\
+ Any UID/GID higher than this value is ignored, providing a way to avoid\
+ accidental UID/GID overlaps between local and remotely defined IDs.',
     }
   ];
 

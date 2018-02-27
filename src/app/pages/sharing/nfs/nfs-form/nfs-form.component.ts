@@ -48,16 +48,6 @@ export class NFSFormComponent {
  list of selected <b>Path</b> entries.',
     },
     {
-      type: 'textarea',
-      name : 'nfs_network',
-      placeholder : 'Network',
-    },
-    {
-      type: 'textarea',
-      name: 'nfs_hosts',
-      placeholder: 'Hosts',
-    },
-    {
       type: 'checkbox',
       name: 'nfs_alldirs',
       placeholder: 'All dirs',
