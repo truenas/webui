@@ -29,14 +29,20 @@ export class VolumeDeleteComponent implements Formconfiguration {
     
     fieldConfig: FieldConfig[] = [
       {
+        type : 'input',
+        name : 'name',
+        isHidden: true
+      },{
         type : 'checkbox',
-        name : 'destory',
+        name : 'destroy',
+        value : false,
         placeholder : "Destroy the Volumes data ?",
         tooltip: "(unchecked means leave alone/intact)"
         
       },{
         type : 'checkbox',
         name : 'cascade',
+        value : false,
         placeholder: 'Destroy the shares related to the volume ?',
         tooltip: '(unchecked means leave alone/intact)'
       }
