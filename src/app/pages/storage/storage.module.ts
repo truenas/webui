@@ -24,7 +24,7 @@ import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manage
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
 import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
-import { VolumeImportListComponent } from './volumes/import-list/';
+import { VolumeImportListComponent } from './volumes/volume-import/';
 import { routing } from './storage.routing';
 import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add'
