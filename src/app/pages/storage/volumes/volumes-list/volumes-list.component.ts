@@ -211,17 +211,17 @@ export class VolumesListTableConfig implements InputTableConf {
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
       actions.push({
+        label: "Detach Volume",
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "detachvolume", row1.id]));
+        }
+      });
+      actions.push({
         label: "Extend",
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "volumes", "manager", row1.id]));
-        }
-      });
-      actions.push({
-        label: "DELETE",
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "delete", row1.id]));
         }
       });
       actions.push({
@@ -232,6 +232,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
 
+    
     }
 
     if (rowData.type === "dataset") {

@@ -85,8 +85,8 @@ export const routes: Routes = [
             data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
           },
           {
-            path: 'delete/:pk', component: VolumeDeleteComponent,
-            data: { title: 'Delete Volume', breadcrumb: 'Delete Volume' }
+            path: 'detachvolume/:pk', component: VolumeDeleteComponent,
+            data: { title: 'Detach Volume', breadcrumb: 'Detach Volume' }
           },
           {
             path: 'unlock/:pk', component: VolumeUnlockFormComponent,
