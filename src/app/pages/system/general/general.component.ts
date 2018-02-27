@@ -64,7 +64,8 @@ export class GeneralComponent {
       placeholder: 'WebGUI HTTP Port',
       tooltip : 'Allow configuring a non-standard port to access the GUI\
  over <i>HTTP</i>. Changing this setting may require changing a\
- <a href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted" target="_blank"><ins>Firefox configuration setting</ins></a>.',
+ <a href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted"\
+ target="_blank">Firefox configuration setting</a>.',
       inputType: 'number',
       validation: [Validators.required]
     },
@@ -84,9 +85,10 @@ export class GeneralComponent {
       tooltip : 'Required for <i>HTTPS</i>. Browse to the location of the\
  certificate to use for encrypted connections. If there are no\
  certificates, create a\
- <a href="http://doc.freenas.org/11/system.html#cas" target="_blank"><ins>Certificate Authority (CA)</ins></a>\
- then the\
- <a href="http://doc.freenas.org/11/system.html#certificates" target="_blank"><ins>Certificate</ins></a>.',
+ <a href="http://doc.freenas.org/11/system.html#cas"\
+ target="_blank">Certificate Authority (CA)</a> then the\
+ <a href="http://doc.freenas.org/11/system.html#certificates"\
+ target="_blank">Certificate</a>.',
       options: [
         {label: '---', value: null}
       ]
@@ -104,7 +106,8 @@ export class GeneralComponent {
       placeholder: 'Language (Require UI reload)',
       tooltip : 'Select a localization and reload the browser.\
  Localization progress is viewable on\
- <a href="https://weblate.trueos.org/projects/freenas/#languages" target="_blank"><ins>Weblate</ins></a>.',
+ <a href="https://weblate.trueos.org/projects/freenas/#languages"\
+ target="_blank">Weblate</a>.',
       options: [
         {label: '---', value: null}
       ]
@@ -147,7 +150,9 @@ export class GeneralComponent {
       type: 'upload',
       name: '',
       placeholder: 'Test',
-      
+      tooltip: 'Browse to the location of a previously saved\
+ configuration file to restore that configuration. The system may need\
+ to reboot to load the restored configuration.',
     }
   ];
 

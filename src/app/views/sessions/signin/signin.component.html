@@ -13,7 +13,7 @@
           <form #signinForm="ngForm" (ngSubmit)="signin()">
             <div class="">
               <mat-input-container class="full-width">
-                <input matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'USERNAME' | translate}}" value="">
+                <input matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                   <span *ngIf="!failed">{{"SIGNIN.PLEASE_ENTER_USERNAME" | translate}}</span>
                   <span *ngIf="failed">{{"SIGNIN.PLEASE_ENTER_USERNAME_AGAIN" | translate}}</span>
@@ -22,7 +22,7 @@
             </div>
             <div class="">
               <mat-input-container class="full-width">
-                <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'PASSWORD' | translate}}" value="">
+                <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
                 <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
                     <span *ngIf="!failed">{{"SIGNIN.PLEASE_ENTER_PASSWORD" | translate}}</span>
                     <span *ngIf="failed">{{"SIGNIN.PLEASE_ENTER_PASSWORD_AGAIN" | translate}}</span>

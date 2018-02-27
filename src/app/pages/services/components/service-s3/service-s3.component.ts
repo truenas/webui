@@ -105,6 +105,8 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'certificate',
       placeholder : 'Certificate',
+      tooltip : 'Add an SSL certificate to be used for secure S3\
+ connections. To create a certificate, use <b>System/Certificates</b>.',
       options : []
     },
   ];
@@ -137,7 +139,7 @@ export class ServiceS3Component implements OnInit {
       entityForm.formGroup.controls['browser'].setValue(res.browser);
       entityForm.formGroup.controls['mode'].setValue(res.mode);
       entityForm.formGroup.controls['certificate'].setValue(res.certificate);
-    }) 
+    })
     entityForm.submitFunction = this.submitFunction;
 
   }
