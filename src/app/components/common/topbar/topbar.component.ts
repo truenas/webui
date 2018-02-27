@@ -168,7 +168,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onShutdown() {
-    this.translate.get('SHUTDOWN').subscribe((shutdown: string) => {
+    this.translate.get('Shutdown').subscribe((shutdown: string) => {
       this.translate.get('SHUTDOWN_PROMPT').subscribe((shutdown_prompt: string) => {
         this.dialogService.confirm(shutdown, shutdown_prompt).subscribe((res) => {
           if (res) {
@@ -180,7 +180,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onReboot() {
-    this.translate.get('REBOOT').subscribe((reboot: string) => {
+    this.translate.get('Reboot').subscribe((reboot: string) => {
       this.translate.get('REBOOT_PROMPT').subscribe((reboot_prompt: string) => {
         this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
           if (res) {
@@ -206,10 +206,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   showReplicationDetails(){
-    this.snackBar.open(this.replicationDetails.repl_status.toString(), 'OKAY');
+    this.translate.get('Ok').subscribe((ok: string) => {
+      this.snackBar.open(this.replicationDetails.repl_status.toString(), ok);
+    });
   }
 
   showResilveringDetails() {
-    this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, 'OKAY');
+    this.translate.get('Ok').subscribe((ok: string) => {
+      this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
+    });
   }
 }

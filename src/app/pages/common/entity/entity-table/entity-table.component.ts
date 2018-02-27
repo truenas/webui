@@ -266,11 +266,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       return [{
         id: "edit",
-        label: "EDIT",
+        label: "Edit",
         onClick: (rowinner) => { this.doEdit(rowinner.id); },
       }, {
         id: "delete",
-        label: "DELETE",
+        label: "Delete",
         onClick: (rowinner) => { this.doDelete(rowinner.id); },
       },]
     }

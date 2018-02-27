@@ -218,7 +218,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
-        label: "DELETE",
+        label: "Delete",
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "volumes", "delete", row1.id]));
