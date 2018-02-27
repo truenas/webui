@@ -145,14 +145,6 @@ export class GeneralComponent {
       tooltip : 'Define an\
  <i>IP address_or_hostname:optional_port_number</i> to send logs. When\
  set, log entries write to both the console and remote server.',
-    },
-    {
-      type: 'upload',
-      name: '',
-      placeholder: 'Test',
-      tooltip: 'Browse to the location of a previously saved\
- configuration file to restore that configuration. The system may need\
- to reboot to load the restored configuration.',
     }
   ];
 
