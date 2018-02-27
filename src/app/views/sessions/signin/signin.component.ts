@@ -93,7 +93,7 @@ export class SigninComponent implements OnInit {
       message = 'SIGNIN.TOKEN_EXPIRED';
       this.ws.token = null;
     }
-    this.translate.get('OK').subscribe((ok: string) => {
+    this.translate.get('Ok').subscribe((ok: string) => {
       this.translate.get(message).subscribe((res: string) => {
         this.snackBar.open(res, ok, {duration: 4000});
       });
