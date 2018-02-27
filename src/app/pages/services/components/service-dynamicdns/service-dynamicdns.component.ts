@@ -98,11 +98,15 @@ export class ServiceDDNSComponent {
       type : 'input',
       name : 'ddns_fupdateperiod',
       placeholder : 'Forced Update Period',
+      tooltip : 'Not recommended. Enter an interval in seconds for the\
+ system to force IP updates.',
     },
     {
       type : 'input',
       name : 'lldp_location',
       placeholder : 'Auxiliary Parameters',
+      tooltip : 'Enter any additional parameters to pass to the provider\
+ during a record update.',
     },
   ];
 
