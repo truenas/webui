@@ -179,7 +179,7 @@ class delete_test(unittest.TestCase):
                     print ("loop-" + str(i))
                     break
             # click on confirmation button
-            driver.find_element_by_xpath('//*[contains(text(), "OK")]').click()
+            driver.find_element_by_xpath('//*[contains(text(), "Ok")]').click()
 
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
