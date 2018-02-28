@@ -185,7 +185,7 @@ afterInit(entityEdit: any) {
     }
   }
   public custActions: Array < any > = [{
-    id: 'basic_mode',
+    id: 'send_mail',
     name: 'Send Mail',
     function: () => {
       if (this.rootEmail){
