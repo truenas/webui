@@ -34,16 +34,20 @@ export class CAFormComponent {
       type: 'input',
       name: 'cert_name',
       placeholder: 'Identifier'
+      tooltip: 'Enter a descriptive name for the certificate using only\
+ alphanumeric, underscore (_), and dash (-) characters.'
     },
     {
       type: 'input',
       name: 'cert_certificate',
-      placeholder: 'Certificate'
+      placeholder: 'Certificate',
+      tooltip: 'Paste the contents of the certificate here.'
     },
     {
       type: 'input',
       name: 'cert_privatekey',
-      placeholder: 'Private Key'
+      placeholder: 'Private Key',
+      tooltip: 'Paste the contents of the private key here.'
     }
   ];
 
