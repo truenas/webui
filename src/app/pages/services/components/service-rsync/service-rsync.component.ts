@@ -11,7 +11,13 @@ import {
 
 @Component({
   selector : 'rsync-edit',
-  template : ` <entity-form [conf]="this"></entity-form>`
+  template : ` 
+  <mat-tab-group>
+  <mat-tab label="configure">
+  <entity-form [conf]="this"></entity-form>
+  </mat-tab>
+  </mat-tab-group>
+  `
 })
 
 export class ServiceRSYNCComponent {
