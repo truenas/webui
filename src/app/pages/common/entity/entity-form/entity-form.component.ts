@@ -478,5 +478,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  ngOnDestroy() { this.sub.unsubscribe(); }
+  ngOnDestroy() {
+    if(this.sub){
+      this.sub.unsubscribe();
+    }
+  }
 }
