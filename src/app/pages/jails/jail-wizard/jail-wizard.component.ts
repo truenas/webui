@@ -22,31 +22,34 @@ export class JailWizardComponent {
   firstFormGroup: FormGroup;
 
   protected wizardConfig: Wizard[] = [{
-      label: 'Plese fill jail Info',
+      label: 'Name the jail and choose a FreeBSD release.',
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
           required: true,
           placeholder: 'Jails Name',
-          tooltip: 'Mandatory. Can only contain letters, numbers, dashes,\
- or the underscore character.',
+          tooltip: 'Mandatory. Can only contain alphanumeric characters,\
+ dashes (-), or underscores (_).',
         },
         {
           type: 'select',
           name: 'release',
           required: true,
           placeholder: 'Release',
-          tooltip: 'Select the release for the jail.',
+          tooltip: 'Select the FreeBSD release to use as the jail\
+ operating system.',
           options: [],
         },
       ]
     },
     {
-      label: 'Plese config jail network',
+      label: 'Configure jail networking',
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
           placeholder: 'IPv4 DHCP',
+          tooltip: 'Check this to automatically configure IPv4 settings\
+ for the jail.',
         },
         {
           type: 'input',
@@ -67,6 +70,7 @@ export class JailWizardComponent {
           type: 'input',
           name: 'defaultrouter',
           placeholder: 'Default Router For IPv4',
+          tooltip: 'Enter the IPv4 route for the jail to use.',
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -87,11 +91,17 @@ export class JailWizardComponent {
           type: 'input',
           name: 'defaultrouter6',
           placeholder: 'Default Router For IPv6',
+          tooltip: 'Enter the IPv6 route for the jail to use.',
         },
         {
           type: 'checkbox',
           name: 'vnet',
           placeholder: 'Vnet',
+          tooltip: 'Check to have this jail use virtual networking.\
+ <b>Warning:</b> Jails with virtual networking enabled can experience\
+ instability. See the <a\
+ href="http://iocage.readthedocs.io/en/latest/known-issues.html#vnet-vimage-issues"\
+ target=_blank>iocage documentation</a> for more details.',
           required: false,
           hasErrors: false,
           errors: '',
