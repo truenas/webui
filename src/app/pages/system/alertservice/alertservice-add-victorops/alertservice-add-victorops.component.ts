@@ -31,7 +31,6 @@ export class AlertServiceAddVictoropsComponent {
   protected isEntity = true;
 
 
-
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -43,11 +42,10 @@ export class AlertServiceAddVictoropsComponent {
       type : 'input',
       name : 'routing_key',
       placeholder: 'routing_key',
-      tooltip: 'Paste the routing key here. Refer \
-      to the\
- <a href="https://help.victorops.com/knowledge-base/routing-keys/"\
- target="_blank"> VictorOps Knowledge-base</a> for more information\
- about routing keys.',
+      tooltip: 'Paste the routing key here. Refer to the <a\
+ href="https://help.victorops.com/knowledge-base/routing-keys/"\
+ target="_blank">VictorOps Knowledge-base</a> for more information about\
+ routing keys.',
     },{
       type : 'input',
       name : 'api_key',
