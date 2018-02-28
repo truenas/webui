@@ -29,9 +29,8 @@ export class AlertServiceAddMattermostComponent {
   protected route_success: string[] = [ 'system', 'alertservice'];
   protected isNew = true;
   protected isEntity = true;
-  
-  
-  
+
+
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -58,26 +57,29 @@ export class AlertServiceAddMattermostComponent {
       type : 'input',
       name : 'url',
       placeholder: 'url',
-      tooltip:'Paste the incoming webhook URL asssociated\
- with this service.\
- Refer to the <a href="https://docs.mattermost.com/developer/webhooks-incoming.html" target="_blank">Mattermost User Guide</a>\
- for more information about incoming webhooks.',
+      tooltip:'Paste the incoming webhook URL associated with this\
+ service. Refer to the <a\
+ href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
+ target="_blank">Mattermost User Guide</a> for more information about\
+ incoming webhooks.',
     },{
       type : 'input',
       name : 'channel',
       placeholder: 'channel',
-      tooltip: 'Enter the name of the desired channel\
- that will recieve the notifications. This overides the default\
- channel in the Incoming Webhook settings.\
- Refer to the <a href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels" target="_blank">Mattermost User Guide</a>\
- for more information about managing channels.',
+      tooltip: 'Enter the name of the channel to receive notifications.\
+ This overrides the default channel in the Incoming Webhook settings.\
+ Refer to the <a\
+ href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
+ target="_blank">Mattermost User Guide</a> for more information about\
+ managing channels.',
     },{
       type : 'input',
       name : 'team',
       placeholder: 'team',
-      tooltip: 'Enter the Mattermost team name.\
- Refer to the <a href="https://docs.mattermost.com/help/getting-started/creating-teams.html" target="_blank">Mattermost User Guide</a>\
- for more information about creating teams.',
+      tooltip: 'Enter the Mattermost team name. Refer to the <a\
+ href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
+ target="_blank">Mattermost User Guide</a> for more information about\
+ creating teams.',
     },
     {
       type : 'checkbox',
