@@ -47,6 +47,7 @@ export class StorageListComponent {
   afterInit(entityTable) {
     entityTable.doDelete = this.doDelete;
     entityTable.jailId = this.jailId;
+    entityTable.dialog = this.dialog;
     this.getData = entityTable.getData;
   }
 
