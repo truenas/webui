@@ -29,8 +29,8 @@ export class AlertServiceEditPagerdutyComponent {
   protected route_success: string[] = [ 'system', 'alertservice'];
   protected isNew = false;
   protected isEntity = true;
-  
-  
+
+
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -41,12 +41,19 @@ export class AlertServiceEditPagerdutyComponent {
       type : 'input',
       name : 'client_name',
       placeholder: 'client_name',
-      tooltip: 'Enter the monitoring client name.',
+      tooltip: 'Enter the monitoring <b>client name</b>.\
+ To locate the client name, sign in to the PagerDuty web interface and\
+ navigate <b>Configuration -> Services -> Integrations</b>. Find the\
+ name of the desired integration, which is the same as the client name.',
     },{
       type : 'input',
       name : 'service_key',
       placeholder: 'service_key',
-      tooltip: 'Paste the service_key for the service.',
+      tooltip: 'Paste the <b>service key</b> or <b>integration key</b>\
+ for the service. To find the service key, sign in to the PagerDuty web\
+ interface and navigate <b>Configuration -> Services -> Integrations</b>.\
+ Click the desired integration. Here is an example service key:\
+ <b>3jf2f2f3df7647fdj222bc3vbe1897dj</b>.',
     },
     {
       type : 'checkbox',
@@ -60,10 +67,9 @@ export class AlertServiceEditPagerdutyComponent {
   resourceTransformIncomingRestData(data:any): any {
     data.client_name = data.attributes.client_name;
     data.service_key = data.attributes.service_key;
-    
+
     return data;
   };
-
 
   constructor(
       protected router: Router,
