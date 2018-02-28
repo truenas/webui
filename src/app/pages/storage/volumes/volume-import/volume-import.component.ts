@@ -10,6 +10,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { ZfsPoolData } from '../volumes-list/volumes-list.component';
 import { DialogService } from 'app/services/dialog.service';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'volume-import',
@@ -26,15 +27,16 @@ export class VolumeImportListComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService) {
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService) {
 
     this.fieldConfig = [
       {
-        type: 'select',
+        type: 'input',
         name: 'volume_id',
         placeholder: 'Volume/Dataset',
-        tooltip: 'Select an existing ZFS volume, dataset, or zvol.',
-        options: []
+        tooltip: 'Select an existing ZFS volume, dataset, or zvol.'
       },
       {
         type: 'checkbox',
@@ -49,6 +51,7 @@ export class VolumeImportListComponent {
 
   ngAfterViewInit(): void {
 
+    /*
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
 
@@ -65,8 +68,23 @@ export class VolumeImportListComponent {
 
 
     });
-
+    */
   }
 
+  customSubmit(value) {
+    this.loader.open();
+    console.log("VALUE", value);
+    return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id}) }).subscribe((restPostResp) => {
+      console.log("restPostResp", restPostResp);
+      this.loader.close();
+      this.dialogService.Info("Imported Volume", "Successfully Created Key to volume " + value.volume_id);
+
+      this.router.navigate(new Array('/').concat(
+        ["storage", "volumes"]));
+    }, (res) => {
+      this.loader.close();
+      this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
+    });
+  }
 
 }
