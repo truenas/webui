@@ -33,14 +33,15 @@ export class VolumeImportListComponent {
 
     this.fieldConfig = [
       {
-        type: 'input',
+        type: 'select',
         name: 'volume_id',
         placeholder: 'Volume/Dataset',
-        tooltip: 'Select an existing ZFS volume, dataset, or zvol.'
+        tooltip: 'Select an existing ZFS volume, dataset, or zvol.',
+        options: []
       },
       {
         type: 'checkbox',
-        name: 'encryptedVolume',
+        name: 'is_decrypted',
         placeholder: 'Un-Encrypt Volume',
         tooltip: 'Check this to un encryptd volume before importing.',
       }
@@ -51,13 +52,12 @@ export class VolumeImportListComponent {
 
   ngAfterViewInit(): void {
 
-    /*
-    this.rest.get("storage/volume", {}).subscribe((res) => {
-      res.data.forEach((volume: ZfsPoolData) => {
+    this.rest.get("storage/volume_import", {}).subscribe((res) => {
+      res.data.forEach((volume) => {
 
         this.fieldConfig[0].options.push({
-          label: volume.name,
-          value: volume.name
+          label: volume.id,
+          value: volume.id
         });
         this.initialized = true;
 
@@ -68,13 +68,12 @@ export class VolumeImportListComponent {
 
 
     });
-    */
   }
 
   customSubmit(value) {
     this.loader.open();
     console.log("VALUE", value);
-    return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id}) }).subscribe((restPostResp) => {
+    return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
       this.dialogService.Info("Imported Volume", "Successfully Created Key to volume " + value.volume_id);
