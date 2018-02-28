@@ -13,6 +13,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 @Component({
   selector: 'cron-job-add',
   templateUrl: './cron-form.component.html',
+  styleUrls: ['cron-form.component.css'],
   providers: [TaskService, UserService, EntityFormService]
 })
 export class CronFormComponent implements OnInit {
