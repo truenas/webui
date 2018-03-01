@@ -95,7 +95,7 @@ class edit_test(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
 
-   def test_03_close_navAccount(self):
+    def test_03_close_navAccount(self):
         print (" closing account menu")
         driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)

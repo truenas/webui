@@ -104,7 +104,7 @@ class delete_test(unittest.TestCase):
         time.sleep(2)
         self.delete("group", supergroupname)
 
-   def test_03_close_navAccount(self):
+    def test_03_close_navAccount(self):
         print (" closing account menu")
         driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)

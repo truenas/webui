@@ -121,7 +121,7 @@ class create_group_test(unittest.TestCase):
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
 
-   def test_05_close_navAccount(self):
+    def test_05_close_navAccount(self):
         print (" closing account menu")
         driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)
