@@ -50,6 +50,7 @@ class create_user_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_acc_user(self):
+        self.error_check()
         # Click  Account menu
         print (" navigating to the user submenu")
         a = driver.find_element_by_xpath(xpaths['navAccount'])
