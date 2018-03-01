@@ -29,6 +29,7 @@ export class UpdateComponent implements OnInit {
   public autoCheck = false;
   public train: string;
   public trains: any[];
+  public selectedTrain;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -50,6 +51,17 @@ export class UpdateComponent implements OnInit {
         this.trains.push({ name: i });
       }
       this.train = res.selected;
+      this.selectedTrain = res.selected;
+    });
+  }
+
+  onTrainChanged(event){
+    this.dialogService.confirm("Switch Train", "Are you sure you want ot switch train?").subscribe((res)=>{
+      if (res) {
+        this.train = event.value;
+      }else {
+        this.train = this.selectedTrain;
+      }
     });
   }
 
