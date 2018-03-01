@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 9
+# Test case count: 10
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -103,8 +103,11 @@ class delete_test(unittest.TestCase):
         print (" deleting a group: " + supergroupname)
         time.sleep(2)
         self.delete("group", supergroupname)
-        time.sleep(20)
 
+    def test_03_close_navAccount(self):
+        print (" closing account menu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
+        time.sleep(20)
 
     # Next step-- To check if the new user is present in the list via automation
 
@@ -137,13 +140,13 @@ class delete_test(unittest.TestCase):
             delNum = 2
             path = "User"
             plug = "bsdusr_username"
-            ED_DEL = "DELETE"
+#            ED_DEL = "DELETE"
         elif (type == "group"):
             num = 4
             delNum = 3
             path = "Group"
             plug = "bsdgrp_group"
-            ED_DEL = "Delete"
+#            ED_DEL = "Delete"
 
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenu' + path]).click()
@@ -171,7 +174,7 @@ class delete_test(unittest.TestCase):
             time.sleep(1)
             # click on delete option
 #            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
-            driver.find_element_by_xpath('//*[@id="action_button_' + ED_DEL + '\"]').click()
+            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
             # check confirmation checkbox
             for i in range(0,10):
                 if (self.is_element_present(By.XPATH,'/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div')):
