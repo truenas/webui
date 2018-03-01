@@ -1,5 +1,5 @@
 import { RestService, WebSocketService } from '../../../services';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -7,10 +7,15 @@ import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-jail-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  templateUrl: './jail-list.component.html' 
 })
-export class JailListComponent {
+export class JailListComponent implements OnInit {
 
+  public isPoolActivated: boolean = false;
+  public selectedPool;
+  public activatedPool: any;
+  public availablePools;
   public title = "Instances";
   protected queryCall = 'jail.query';
   protected route_add: string[] = ['jails', 'add'];
@@ -104,7 +109,13 @@ export class JailListComponent {
   ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
-  afterInit(entityList: any) { this.entityList = entityList; }
+  ngOnInit(){
+    this.getActivatedPool();
+    this.getAvailablePools();
+  }
+  afterInit(entityList: any) {
+    this.entityList = entityList; 
+  }
 
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'start' && row.state === "up") {
@@ -115,6 +126,30 @@ export class JailListComponent {
     return true;
   }
 
+  getActivatedPool(){
+    this.ws.call('jail.get_activated_pool').subscribe((res)=>{
+      if (res != null) {
+        this.activatedPool = res;
+        this.isPoolActivated = true;
+      }
+    })
+  }
+
+  getAvailablePools(){
+    this.ws.call('pool.query').subscribe( (res)=> {
+      this.availablePools = res;
+    })
+  }
+
+  activatePool(){
+    console.log(this.selectedPool);
+    if (this.selectedPool!=null) {
+      this.ws.call('jail.activate', [this.selectedPool.name]).subscribe(res=>{
+        console.log(res);
+      });
+    }   
+    this.isPoolActivated = true;
+  }
   getActions(parentRow) {
     return [{
         id: "edit",
