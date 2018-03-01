@@ -1,4 +1,5 @@
 <mat-card>
+    <form autocomplete="off">
     <div class="mat-content">
         <p>
             Before filing a bug report or feature request, search <a href="http://bugs.freenas.org"> http://bugs.freenas.org </a>to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new
@@ -10,7 +11,7 @@
         </p>
         <br>
         <mat-input-container class="full-width">
-            <input matInput placeholder="username" (blur)="onBlurMethod()" [(ngModel)]="username" name="username">
+            <input matInput placeholder="username" [(ngModel)]="username" name="username">
         </mat-input-container>
         <br>
         <mat-input-container class="full-width">
@@ -39,9 +40,7 @@
         <mat-input-container class="full-width">
             <textarea matInput matAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
         </mat-input-container>
-        <br>
-        <input type="file" ng2FileSelect multiple />
-        <br>
         <button mat-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">Submit Ticket</button>
     </div>
+    </form>
 </mat-card>
