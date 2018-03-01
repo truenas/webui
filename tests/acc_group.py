@@ -26,6 +26,7 @@ except ImportError:
 
 
 xpaths = {
+          'navAccount': '//*[@id="nav-1"]/div/a[1]',
           'submenuGroup': '//*[@id="1-0"]',
           'newGroupName': '//*[@id="bsdgrp_group"]/mat-input-container/div/div[1]/div/input',
           'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
