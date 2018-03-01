@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 5
+# Test case count: 6
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -94,10 +94,11 @@ class edit_test(unittest.TestCase):
         self.edit("group", newgroupname)
         driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
-        time.sleep(20)
-        #closing the account menu
+
+   def test_03_close_navAccount(self):
+        print (" closing account menu")
         driver.find_element_by_xpath(xpaths['navAccount']).click()
-        time.sleep(3)
+        time.sleep(20)
 
     # Next step-- To check if the new user is present in the list via automation
 

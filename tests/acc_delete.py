@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 9
+# Test case count: 10
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -103,8 +103,11 @@ class delete_test(unittest.TestCase):
         print (" deleting a group: " + supergroupname)
         time.sleep(2)
         self.delete("group", supergroupname)
-        time.sleep(20)
 
+   def test_03_close_navAccount(self):
+        print (" closing account menu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
+        time.sleep(20)
 
     # Next step-- To check if the new user is present in the list via automation
 

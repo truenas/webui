@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 4
+# Test case count: 5
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -44,6 +44,7 @@ class create_group_test(unittest.TestCase):
     def test_01_nav_acc_group(self):
         # Click  Account menu
         print (" navigating to the group submenu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         time.sleep(2)
@@ -119,6 +120,10 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
+
+   def test_05_close_navAccount(self):
+        print (" closing account menu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)
 
 
