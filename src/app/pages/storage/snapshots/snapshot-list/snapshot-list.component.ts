@@ -59,7 +59,7 @@ export class SnapshotListComponent {
       label: "Clone",
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "snapshot", "clone", row1.id]));
+          ["storage", "snapshots", "clone", row1.id]));
       }
     });
     if (parentRow.mostrecent) {
@@ -67,7 +67,7 @@ export class SnapshotListComponent {
         label: "Rollback",
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "snapshot", "rollback", row1.id]));
+            ["storage", "snapshots", "rollback", row1.id]));
         }
       });
     }
