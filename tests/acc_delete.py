@@ -137,13 +137,13 @@ class delete_test(unittest.TestCase):
             delNum = 2
             path = "User"
             plug = "bsdusr_username"
-            ED_DEL = "DELETE"
+#            ED_DEL = "DELETE"
         elif (type == "group"):
             num = 4
             delNum = 3
             path = "Group"
             plug = "bsdgrp_group"
-            ED_DEL = "Delete"
+#            ED_DEL = "Delete"
 
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenu' + path]).click()
@@ -171,7 +171,7 @@ class delete_test(unittest.TestCase):
             time.sleep(1)
             # click on delete option
 #            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
-            driver.find_element_by_xpath('//*[@id="action_button_' + ED_DEL + '\"]').click()
+            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
             # check confirmation checkbox
             for i in range(0,10):
                 if (self.is_element_present(By.XPATH,'/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[1]/mat-checkbox/label/div')):

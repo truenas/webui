@@ -215,12 +215,12 @@ class create_user_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "CLOSE")]'):
             if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
-            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
+            driver.find_element_by_xpath('//*[contains(text(), "CLOSE")]').click()
             print ("Duplicate user cannot be created")
 
     def selectlist(self, element):
