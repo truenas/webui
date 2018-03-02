@@ -5,7 +5,8 @@
         (change)="toggleAutoCheck()">{{"UPDATE.AUTO_CHECK" | translate}}</mat-checkbox>
     </div>
     <div class="row">
-      <mat-select [placeholder]="'Train' | translate" class="form-control full-width" [(ngModel)]="train">
+      <mat-select [placeholder]="'Train' | translate" class="form-control full-width" [(ngModel)]="train"  (change)="onTrainChanged($event)">
+
         <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</mat-option>
       </mat-select>
     </div>
