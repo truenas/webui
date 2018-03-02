@@ -29,8 +29,8 @@ export class AlertServiceEditAWSComponent {
   protected route_success: string[] = [ 'system', 'alertservice'];
   protected isNew = false;
   protected isEntity = true;
-  
-  
+
+
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -50,36 +50,34 @@ export class AlertServiceEditAWSComponent {
       type: 'input',
       name: 'topic_arn',
       placeholder: 'topic_arn',
-      tooltip: 'Paste the Topic Amazon Resource Name (ARN) to publish to.\
- Here is an example ARN:\
+      tooltip: 'Enter the Topic Amazon Resource Name (ARN) for\
+ publishing. Here is an example ARN:\
  <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
     },
     {
       type : 'input',
       name : 'base_url',
       placeholder : 'base_url',
-      tooltip: 'Example: http://s3.example.com',
+      tooltip: 'Enter the base url for the S3 system.',
     },
     {
       type : 'input',
       name : 'aws_access_key_id',
       placeholder : 'key id',
-      tooltip: 'Paste the AWS Access Key ID for the\
- AWS account here.',
+      tooltip: 'Enter the AWS Access Key ID for the AWS account.',
     },
     {
       type: 'input',
       name: 'aws_secret_access_key',
       placeholder: 'secret access key',
-      tooltip: 'Paste the AWS Secret Access Key for the AWS\
- account here.',
+      tooltip: 'Enter the AWS Secret Access Key for the AWS account.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
       placeholder : 'Enabled',
-      tooltip: 'Check this box to enable the Amazon Web Service\
- Simple Notification Service.',
+      tooltip: 'Check to enable the Amazon Web Service Simple\
+ Notification Service.',
     },
   ];
 

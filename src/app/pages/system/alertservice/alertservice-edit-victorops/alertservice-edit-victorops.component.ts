@@ -29,8 +29,8 @@ export class AlertServiceEditVictoropsComponent {
   protected route_success: string[] = [ 'system', 'alertservice'];
   protected isNew = false;
   protected isEntity = true;
-  
-  
+
+
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -42,32 +42,31 @@ export class AlertServiceEditVictoropsComponent {
       type : 'input',
       name : 'routing_key',
       placeholder: 'routing_key',
-      tooltip: 'Paste the routing key here. Refer to the <a href="https://help.victorops.com/knowledge-base/routing-keys/" target="_blank"> VictorOps Knowledge-base</a>\
- for more information about routing keys.',
+      tooltip: 'Paste the routing key here. Refer to the <a\
+ href="https://help.victorops.com/knowledge-base/routing-keys/"\
+ target="_blank">VictorOps Knowledge-base</a> for more information about\
+ routing keys.',
     },{
       type : 'input',
       name : 'api_key',
       placeholder: 'api_key',
-      tooltip: 'Paste the API key from the\
-       VictorOps web portal.',
+      tooltip: 'Paste the API key from the VictorOps web portal.',
     },
     {
       type : 'checkbox',
       name : 'enabled',
       placeholder : 'Enabled',
-      tooltip: 'Check this box to enable the VictorOps\
-      alert service.',
+      tooltip: 'Check this box to enable the VictorOps alert service.',
     },
   ];
 
-  
+
   resourceTransformIncomingRestData(data:any): any {
     data.routing_key = data.attributes.routing_key;
     data.api_key = data.attributes.api_key;
-    
+
     return data;
   };
-
 
   constructor(
       protected router: Router,
