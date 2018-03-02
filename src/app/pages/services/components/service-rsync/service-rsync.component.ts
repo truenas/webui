@@ -13,8 +13,8 @@ export class ServiceRSYNCComponent implements OnInit {
 
   public activedTab = 'Configuration';
   public navLinks: Array < any > = [{
-      label: 'Configuration',
-      path: '/services/rsync/configuration',
+      label: 'Configure',
+      path: '/services/rsync/configure',
     },
     {
       label: 'Rsync Module',

@@ -7,11 +7,11 @@ import {WebSocketService} from "../../../../../../services/ws.service";
 import {RestService} from "../../../../../../services/rest.service";
 
 @Component({
-  selector : 'app-rsync-configuration',
+  selector : 'app-configure-rsync',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 
-export class RSYNCconfigurationComponent {
+export class CconfigureRYSNCComponent {
   protected resource_name = 'services/rsyncd';
   protected route_success: string[] = [ 'services' ];
 
