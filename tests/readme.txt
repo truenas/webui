@@ -65,8 +65,8 @@ This virtual machine will be the FreeNAS target running ui tests with firefox.
 
 Important Notes regarding actual test scripts
 
-sudo python3.6 runtest.py --ip 10.20.21.216 --test-name account
-
+Jenkin/TrueOS: sudo python3.6 runtest.py --ip 10.20.21.216 --test-name account 
+Ubuntu: sudo python runtest.py --ip 10.20.21.216 --test-name account --driver U
 Runtest
 	#For running tests on a desktop, use driverU and for jenkins use driver
 	#Use a fixed delay on the end of each script to fix script execution issue(similar to race condition)
