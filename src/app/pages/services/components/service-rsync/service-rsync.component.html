@@ -1,0 +1,12 @@
+<mat-card>
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+      {{link.label}}
+    </a>
+    </nav>
+    <router-outlet>
+      <app-rsync-configuration *ngIf="activedTab == 'Configuration'"></app-rsync-configuration>
+      <!-- <app-rsync-module-list *ngIf="activedTab == 'module'"></app-rsync-module-list> -->
+    </router-outlet>
+  </mat-card>
+  

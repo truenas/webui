@@ -15,6 +15,8 @@ import {ServiceFTPComponent} from './components/service-ftp';
 import {ServiceLLDPComponent} from './components/service-lldp';
 import {ServiceNFSComponent} from './components/service-nfs';
 import {ServiceRSYNCComponent} from './components/service-rsync';
+// import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list';
+import {RSYNCconfigurationComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-form'
 import {ServiceS3Component} from './components/service-s3';
 import {ServiceSMARTComponent} from './components/service-smart';
 import {ServiceSMBComponent} from './components/service-smb';
@@ -32,7 +34,7 @@ import {routing} from './services.routing';
   declarations : [
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,
-    ServiceRSYNCComponent, ServiceSMARTComponent, ServiceNFSComponent,
+    ServiceRSYNCComponent, RSYNCconfigurationComponent, ServiceSMARTComponent, ServiceNFSComponent,
     ServiceTFTPComponent, ServiceUPSComponent, ServiceDDNSComponent,
     ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
     ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent

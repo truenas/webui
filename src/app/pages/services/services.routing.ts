@@ -9,6 +9,8 @@ import {ServiceFTPComponent} from './components/service-ftp/';
 import {ServiceLLDPComponent} from './components/service-lldp/';
 import {ServiceNFSComponent} from './components/service-nfs/';
 import {ServiceRSYNCComponent} from './components/service-rsync/';
+import {RSYNCconfigurationComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-form'
+// import {RSYNCconfigurationListComponent} from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list/';
 import {ServiceS3Component} from './components/service-s3/';
 import {ServiceSMARTComponent} from './components/service-smart/';
 import {ServiceSMBComponent} from './components/service-smb/';
@@ -54,6 +56,18 @@ export const routes: Routes = [
     data: { title: 'rsync', breadcrumb: 'Rsync'},
     path : 'rsync',
     component : ServiceRSYNCComponent,
+    children: [
+      {
+        path: 'configuration',
+        component: RSYNCconfigurationComponent,
+        data: { title: 'configuration', breadcrumb: 'Configuration' },
+      },
+      // {
+      //   path: 'RSYNCModule',
+      //   component: RSYNCconfigurationListComponent,
+      //   data: { title: 'RSYNModule', breadcrumb: 'RSYNModule' },
+      // }
+    ]
   },
   {
     data: { title: 'smartd', breadcrumb: 'SMARTD'},
