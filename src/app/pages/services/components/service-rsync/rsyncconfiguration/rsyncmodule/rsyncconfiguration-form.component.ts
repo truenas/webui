@@ -1,8 +1,8 @@
-import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { FormGroup, Validators } from '@angular/forms';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+import { WebSocketService } from '../../../../../../services';
 
 @Component({
   selector : 'app-rsync-configuration-form',
@@ -12,7 +12,7 @@ import { FieldConfig } from '../../../../../common/entity/entity-form/models/fie
 export class RYSNCConfigurationFormComponent {
     protected resource_name = 'services/rsyncmod/';
     protected addCall = 'rsyncmod.create';
-    protected route_success: string[] = [ 'rsync','rsync-module' ];
+    protected route_success: string[] = [ 'services','rsync','rsync-module' ];
     protected isEntity = true;
     public formGroup: FormGroup;
     public fieldConfig: FieldConfig[] = [
@@ -20,7 +20,8 @@ export class RYSNCConfigurationFormComponent {
         type: 'input',
         name: 'name',
         placeholder: 'Name',
-        tooltip: ''
+        tooltip: '',
+        validation: Validators.required
     },
     {
         type: 'input',
@@ -35,12 +36,17 @@ export class RYSNCConfigurationFormComponent {
         placeholder: 'Path',
         name: 'path',
         tooltip: '',
+        validation: Validators.required
     },
     {
         type: 'select',
         name: 'mode',
         placeholder: 'Access Mode',
-        options: [],
+        options: [
+            { label: 'Read Only', value:'ro' },
+            { label: 'Write Only', value:'wo' },
+            { label: 'Read and Write', value:'rw' },
+        ],
         tooltip: '',
     },
     {
@@ -82,17 +88,29 @@ export class RYSNCConfigurationFormComponent {
         tooltip: ''
       },
 
-
-    ]
-    afterInit(entityForm: any) {
-        entityForm.submitFunction = this.submitFunction;
+    ];
+    private group: any;
+    private user: any;
+    constructor( protected ws: WebSocketService) {
 
     }
-    submitFunction(){
-        const auxPayLoad = []
-        const payload = {};
-        const formvalue = _.cloneDeep(this.formGroup.value);
-        console.log(formvalue);
+    afterInit(entityForm: any) {
+        this.user = _.find(this.fieldConfig, {name : "user"});
+        entityForm.ws.call('user.query').subscribe((users) => {
+            users.forEach((user) => {
+                this.user.options.push({label : user.username, value : user.id})
+                });
+            });
+        this.group = _.find(this.fieldConfig, {name : "group"});
+        entityForm.ws.call('group.query').subscribe((groups) => {
+            groups.forEach((group) => {
+                this.group.options.push({label : group.group, value : group.id})
+                });
+            });
+        if (!entityForm.isNew) {
+
+        }
+
     }
 
 }
