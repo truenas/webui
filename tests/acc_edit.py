@@ -95,9 +95,6 @@ class edit_test(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(20)
-        #closing the account menu
-        driver.find_element_by_xpath(xpaths['navAccount']).click()
-        time.sleep(3)
 
     # Next step-- To check if the new user is present in the list via automation
 
@@ -129,12 +126,12 @@ class edit_test(unittest.TestCase):
             num = 7
             delNum = 1
             path = "User"
-            ED = "EDIT"
+           # ED = "EDIT"
         elif (type == "group"):
             num = 4
             delNum = 2
             path = "Group"
-            ED = "Edit"
+           # ED = "Edit"
 
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenu' + path]).click()
@@ -156,7 +153,7 @@ class edit_test(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on edit option
-        driver.find_element_by_xpath('//*[@id="action_button_' + ED + '\"]').click()
+        driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
 
     @classmethod
     def tearDownClass(inst):

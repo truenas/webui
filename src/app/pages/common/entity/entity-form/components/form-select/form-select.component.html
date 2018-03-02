@@ -2,7 +2,7 @@
   <mat-form-field class="full-width">
     <mat-select [formControlName]="config.name" [multiple]="config.multiple" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let option of config.options" [value]="option.value">
-        {{ option.label | translate }}
+        {{ option.label }}
       </mat-option>
     </mat-select>
   </mat-form-field>

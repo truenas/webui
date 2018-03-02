@@ -22,9 +22,6 @@ import { MatDialog } from '@angular/material';
 @Component({
   selector : 'app-email',
   template : `
-  <mat-card>
-  <button mat-button class="btn btn-primary" (click)="sendMail()" >Send Test Email</button>
-  </mat-card>
   <entity-form [conf]="this"></entity-form>
   `
 })
@@ -186,4 +183,48 @@ afterInit(entityEdit: any) {
     else{
       this.dialogservice.Info("email", "please setup root user email address");
     }
-  }}
+  }
+  public custActions: Array < any > = [{
+    id: 'send_mail',
+    name: 'Send Mail',
+    function: () => {
+      if (this.rootEmail){
+        const value = _.cloneDeep(this.entityEdit.formGroup.value);
+        const mailObj = {
+          "subject" : "Test message from FreeNAS",
+          "text" : "This is a test message from FreeNAS",
+        };
+        const security_table = {
+          'plain':'PLAIN',
+          'ssl': 'SSL',
+          'tls': 'TLS'
+        };
+        this.ws.call('system.info').subscribe((res) => {
+          const mail_form_payload = {}
+          mail_form_payload['fromemail'] = value.em_fromemail
+          mail_form_payload['outgoingserver']= value.em_outgoingserver
+          mail_form_payload['port']= value.em_port
+          mail_form_payload['security']= security_table[value.em_security]
+          mail_form_payload['smtp']= value.em_smtp
+          mail_form_payload['user']= value.em_user
+          mail_form_payload['pass']= value.em_pass1
+          mailObj['subject'] += " hostname: " + res['hostname'];
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
+          this.dialogRef.componentInstance.setCall('mail.send', [mailObj, mail_form_payload]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((s_res)=>{
+            this.dialogRef.close(false);
+            this.dialogservice.Info("email", "Test email sent successfully!")
+          });
+          this.dialogRef.componentInstance.failure.subscribe((e_res) => {
+            this.dialogRef.componentInstance.setDescription(e_res.error);
+          });
+        });
+      }
+      else{
+        this.dialogservice.Info("email", "please setup root user email address");
+      }       
+    }
+  }
+];
+}

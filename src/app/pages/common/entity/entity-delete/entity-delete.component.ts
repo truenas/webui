@@ -68,7 +68,11 @@ export class EntityDeleteComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() { this.sub.unsubscribe(); }
+  ngOnDestroy() {
+    if(this.sub){
+      this.sub.unsubscribe();
+    }
+  }
 
   toggleSubmit(data) {
     this.isSubmitEnabled = data.checked;

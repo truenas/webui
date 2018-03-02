@@ -1,0 +1,18 @@
+<div *ngIf="!isPoolActivated;else jail_list">
+  <div class="mat-content">
+    <mat-card>
+    <form>
+      <div class="form-wrap">
+        <label for="power">Select a Pool</label>
+        <mat-select class="form-control full-width" placeholder="Select a pool" required [(ngModel)]="selectedPool" name="Pool">
+          <mat-option *ngFor="let pool of availablePools" [value]="pool">{{pool.name}}</mat-option>
+        </mat-select>
+      </div>
+      <button mat-raised-button color="primary" (click)="activatePool()">Activate</button>
+    </form>
+    </mat-card>
+  </div>
+</div>
+<ng-template #jail_list>
+  <entity-table [title]="title" [conf]="this"></entity-table>
+</ng-template>

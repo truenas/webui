@@ -5,7 +5,9 @@
 			[attr.value]="config.value"
 			[formControlName]="config.name"
 			[readonly]="config.readonly"
-      [required]="config.required">
+			[required]="config.required"
+			[max]="config.max"
+			[min]="config.min">
 	</mat-input-container>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
 	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>

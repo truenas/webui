@@ -61,7 +61,9 @@ export class ShellComponent implements OnInit, OnChanges {
   }
 
   ngOnDestroy() {
-    this.shellSubscription.unsubscribe();
+    if(this.shellSubscription){
+      this.shellSubscription.unsubscribe();
+    }
   };
 
   resetDefault() {
