@@ -55,14 +55,41 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  onTrainChanged(event){
-    this.dialogService.confirm("Switch Train", "Are you sure you want ot switch train?").subscribe((res)=>{
-      if (res) {
-        this.train = event.value;
-      }else {
-        this.train = this.selectedTrain;
+  validUpdate(originalVersion, newVersion) {
+    const oriVer = originalVersion.split('-')[1];
+    const oriTrain = originalVersion.split('-')[2];
+    const newVer = newVersion.split('-')[1];
+    const newTrain = newVersion.split('-')[2];
+    if ((!isNaN(oriVer) && !isNaN(newVer)) && (newVer >= oriVer)) {
+      if (oriTrain == newTrain) {
+        return true;
+      } else if ((oriTrain == 'STABLE') && (newTrain == 'Nightlies')) {
+        return true;
+      } else {
+        return false
       }
-    });
+    } else if((!isNaN(oriVer) && isNaN(newVer)) && (newVer >= oriVer) && (oriTrain == newTrain)){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  onTrainChanged(event){
+    var isValid = this.validUpdate(this.selectedTrain, event.value);
+    if (isValid) {
+      this.dialogService.confirm("Switch Train", "Are you sure you want ot switch train?").subscribe((res)=>{
+        if (res) {
+          this.train = event.value;
+        }else {
+          this.train = this.selectedTrain;
+        }
+      });
+    } else {
+      this.dialogService.Info("Confirm", "You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train").subscribe(res => {
+        this.train = this.selectedTrain;
+      });
+    }
   }
 
   toggleAutoCheck() {
