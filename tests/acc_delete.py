@@ -41,8 +41,6 @@ class delete_test(unittest.TestCase):
     def test_01_00_nav_acc_user(self):
         # Click  Account menu
         print (" navigating to the user submenu")
-        a = driver.find_element_by_xpath(xpaths['navAccount'])
-        a.click()
         # allowing the button to load
         time.sleep(1)
         # Click User submenu
