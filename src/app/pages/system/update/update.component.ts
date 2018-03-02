@@ -86,7 +86,7 @@ export class UpdateComponent implements OnInit {
         }
       });
     } else {
-      this.dialogService.Info("Confirm", "You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train").subscribe(res => {
+      this.dialogService.Info("Confirm", "You're not allowed to change away from the train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train").subscribe(res => {
         this.train = this.selectedTrain;
       });
     }
