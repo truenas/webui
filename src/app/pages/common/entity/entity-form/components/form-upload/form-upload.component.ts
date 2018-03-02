@@ -3,6 +3,7 @@ import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Observable, Observer, Subscription } from 'rxjs';
 import { HttpClient, HttpParams, HttpRequest, HttpEvent, HttpHeaders } from '@angular/common/http';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -19,7 +20,7 @@ import { MatSnackBar } from '@angular/material';
 @Component({
   selector: 'app-form-upload',
   templateUrl: './form-upload.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.css', 'form-upload.component.css'],
 })
 export class FormUploadComponent {
   @ViewChild('fileInput') fileInput;
@@ -35,7 +36,7 @@ export class FormUploadComponent {
 
   constructor(
     protected ws: WebSocketService, protected http: Http, private loader: AppLoaderService,
-    private dialog:DialogService, public snackBar: MatSnackBar) {}
+    private dialog:DialogService, public snackBar: MatSnackBar, public translate: TranslateService) {}
 
   upload(location = "/tmp/") {
   this.loader.open();

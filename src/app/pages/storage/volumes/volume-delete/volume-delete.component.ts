@@ -39,12 +39,6 @@ export class VolumeDeleteComponent implements Formconfiguration {
         placeholder : "Destroy the Volumes data ?",
         tooltip: "(unchecked means leave alone/intact)"
         
-      },{
-        type : 'checkbox',
-        name : 'cascade',
-        value : false,
-        placeholder: 'Destroy the shares related to the volume ?',
-        tooltip: '(unchecked means leave alone/intact)'
       }
     ];
   
@@ -72,18 +66,33 @@ export class VolumeDeleteComponent implements Formconfiguration {
   
     customSubmit(value) {
       this.loader.open();
-      
-      return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({destroy: value.destroy, cascade: value.cascade }) }).subscribe((restPostResp) => {
-        console.log("restPostResp", restPostResp);
-        this.loader.close();
-        this.dialogService.Info("Detached/Deleted Volume", "Successfully Detached volume " + value.name);
-  
-        this.router.navigate(new Array('/').concat(
-          ["storage", "volumes"]));
-      }, (res) => {
-        this.loader.close();
-        this.dialogService.errorReport("Error Detaching volume", res.message, res.stack);
-      });
+      if( value.destroy === false ) {
+        return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({destroy: value.destroy}) }).subscribe((restPostResp) => {
+          console.log("restPostResp", restPostResp);
+          this.loader.close();
+          this.dialogService.Info("Detached/Deleted Volume", "Successfully Detached volume " + value.name);
+    
+          this.router.navigate(new Array('/').concat(
+            ["storage", "volumes"]));
+        }, (res) => {
+          this.loader.close();
+          this.dialogService.errorReport("Error Detaching volume", res.message, res.stack);
+        });
+      } else {
+        return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+          console.log("restPostResp", restPostResp);
+          this.loader.close();
+          this.dialogService.Info("Detached/Deleted Volume", "Successfully Detached volume " + value.name);
+    
+          this.router.navigate(new Array('/').concat(
+            ["storage", "volumes"]));
+        }, (res) => {
+          this.loader.close();
+          this.dialogService.errorReport("Error Detaching volume", res.message, res.stack);
+        });
+      }
+
+    
     }
     
   }

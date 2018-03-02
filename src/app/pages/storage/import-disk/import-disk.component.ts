@@ -73,13 +73,11 @@ export class ImportDiskComponent {
   
   afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
-    this.ws.call('disk.get_unused', [true]).subscribe((res)=>{
+    
+    this.rest.get("storage/disk", {}).subscribe((res)=>{
       res.forEach((item) => {
-        let partitions = item['partitions'];
-        for (let i = 0; i < partitions.length; i++) {
-          let name = partitions[i].path.replace(/^\/dev\//, '');
-          this.volume.options.push({label : name, value : partitions[i].path});
-        }
+        this.volume.options.push({label : item.disk_name, value : item.disk_name});
+        
       });
     });
   }

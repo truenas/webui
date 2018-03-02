@@ -714,19 +714,19 @@ export class JailEditComponent implements OnInit {
           newRelease = value[i];
           delete value[i];
         }
-        if (_.indexOf(this.TFfields, i) > 0) {
+        if (_.indexOf(this.TFfields, i) > -1) {
           if (value[i]) {
             value[i] = '1';
           } else {
             value[i] = '0';
           }
-        } else if (_.indexOf(this.OFfields, i) > 0) {
+        } else if (_.indexOf(this.OFfields, i) > -1) {
           if (value[i]) {
             value[i] = 'on';
           } else {
             value[i] = 'off';
           }
-        } else if (_.indexOf(this.YNfields, i) > 0) {
+        } else if (_.indexOf(this.YNfields, i) > -1) {
           if (value[i]) {
             value[i] = 'yes';
           } else {
