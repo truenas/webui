@@ -33,7 +33,7 @@ export class CAFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cert_name',
-      placeholder: 'Identifier'
+      placeholder: 'Identifier',
       tooltip: 'Enter a descriptive name for the certificate using only\
  alphanumeric, underscore (_), and dash (-) characters.'
     },
