@@ -46,6 +46,7 @@ class create_group_test(unittest.TestCase):
         # Click  Account menu
         print (" navigating to the group submenu")
         driver.find_element_by_xpath(xpaths['navAccount']).click()
+        time.sleep(1)
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         time.sleep(2)
