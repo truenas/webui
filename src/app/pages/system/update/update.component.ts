@@ -10,9 +10,11 @@ import { DialogService } from '../../../services/dialog.service';
 import * as _ from 'lodash';
 import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { TranslateService } from 'ng2-translate/ng2-translate';
 
 @Component({
   selector: 'app-update',
+  styleUrls: ['update.component.css'],
   templateUrl: './update.component.html',
 })
 export class UpdateComponent implements OnInit {
@@ -37,7 +39,7 @@ export class UpdateComponent implements OnInit {
   protected dialogRef: any;
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
-    protected loader: AppLoaderService, protected dialogService: DialogService) {
+    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
   }
 
   ngOnInit() {
