@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 5
+# Test case count: 6
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -50,6 +50,7 @@ class create_user_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_acc_user(self):
+        self.error_check()
         # Click  Account menu
         print (" navigating to the user submenu")
         a = driver.find_element_by_xpath(xpaths['navAccount'])
@@ -197,7 +198,12 @@ class create_user_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
+
+    def test_06_close_navAccount(self):
+        print (" closing account menu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)
+
 
 
     # Next step-- To check if the new user is present in the list via automation
@@ -215,12 +221,12 @@ class create_user_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "CLOSE")]'):
             if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
-            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
+            driver.find_element_by_xpath('//*[contains(text(), "CLOSE")]').click()
             print ("Duplicate user cannot be created")
 
     def selectlist(self, element):

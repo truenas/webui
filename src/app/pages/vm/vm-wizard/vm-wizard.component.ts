@@ -317,7 +317,7 @@ export class VMWizardComponent {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-  customSubmit(value) {
+async customSubmit(value) {
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const payload = {}
     const vm_payload = {}
@@ -338,22 +338,8 @@ export class VMWizardComponent {
       {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
     ]
     if(value.enable_vnc){
-      this.ws.call('interfaces.ipv4_in_use').subscribe((res)=>{
-        vm_payload["devices"].push(
-          {
-            "dtype": "VNC", "attributes": {
-              "wait": true, 
-              "vnc_port": String(this.getRndInteger(5553,6553)), 
-              "vnc_resolution": "1024x768",
-              "vnc_bind": res[0], 
-              "vnc_password": "", 
-              "vnc_web": true 
-            }
-          }
-      )
-      })
-
-    }
+      await this.create_vnc_device(vm_payload);
+    };
     this.loader.open();
     if( value.hdd_path ){
       for (const device of vm_payload["devices"]){
@@ -385,5 +371,21 @@ export class VMWizardComponent {
       });
     }
 
+  }
+  async create_vnc_device(vm_payload: any) {
+    await this.ws.call('interfaces.ipv4_in_use').toPromise().then( res=>{
+      vm_payload["devices"].push(
+        {
+          "dtype": "VNC", "attributes": {
+            "wait": true, 
+            "vnc_port": String(this.getRndInteger(5553,6553)), 
+            "vnc_resolution": "1024x768",
+            "vnc_bind": res[0], 
+            "vnc_password": "", 
+            "vnc_web": true 
+          }
+        }
+    );
+    }); 
   }
 }

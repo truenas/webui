@@ -1,7 +1,7 @@
 # Author: Rishabh Chauhan
 # License: BSD
 # Location for tests  of FreeNAS new GUI
-# Test case count: 4
+# Test case count: 5
 
 from source import *
 from selenium.webdriver.common.keys import Keys
@@ -26,6 +26,7 @@ except ImportError:
 
 
 xpaths = {
+          'navAccount': '//*[@id="nav-1"]/div/a[1]',
           'submenuGroup': '//*[@id="1-0"]',
           'newGroupName': '//*[@id="bsdgrp_group"]/mat-input-container/div/div[1]/div/input',
           'fabTrigger': '//*[@id="myFab"]/div/smd-fab-trigger/button',
@@ -44,6 +45,8 @@ class create_group_test(unittest.TestCase):
     def test_01_nav_acc_group(self):
         # Click  Account menu
         print (" navigating to the group submenu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
+        time.sleep(1)
         # Click User submenu
         driver.find_element_by_xpath(xpaths['submenuGroup']).click()
         time.sleep(2)
@@ -119,6 +122,10 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
+
+    def test_05_close_navAccount(self):
+        print (" closing account menu")
+        driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)
 
 
@@ -138,12 +145,12 @@ class create_group_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "CLOSE")]'):
             if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
-            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
+            driver.find_element_by_xpath('//*[contains(text(), "CLOSE")]').click()
             print ("Duplicate user cannot be created")
 
     @classmethod

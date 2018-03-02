@@ -60,6 +60,7 @@ export class StorageFormComponent {
     {
       type: 'explorer',
       initial: '/mnt',
+      explorerType: 'directory',
       name: 'source',
       placeholder: 'Source',
       tooltip: 'Directory or dataset on the FreeNAS system which will\
@@ -67,15 +68,20 @@ export class StorageFormComponent {
  the volume or dataset being used by the jail.',
     },
     {
-      // type: 'explorer',
-      // initial: '/mnt/iocage/jails/test6/root',
-      type: 'input',
+      type: 'explorer',
+      initial: '/mnt/iocage/jails',
+      explorerType: 'directory',
       name: 'destination',
       placeholder: 'Destination',
       tooltip: 'Select an existing, empty directory within the\
  jail to link to the <b>Source</b> storage area. If that directory does\
  not exist yet, enter the desired directory name and check the\
  <b>Create directory</b> box.',
+    },
+    {
+      type: 'checkbox',
+      name: 'readonly',
+      placeholder: 'Read-Only',
     },
   ];
 
@@ -90,6 +96,7 @@ export class StorageFormComponent {
     private dialog: DialogService) {}
 
   preInit(entityForm: any) {
+    let destination_field = _.find(this.fieldConfig, { 'name': 'destination' });
     this.jail = _.find(this.fieldConfig, { 'name': 'jail' });
     this.aroute.params.subscribe(params => {
       this.route_success.push(params['jail']);
@@ -99,6 +106,7 @@ export class StorageFormComponent {
       this.queryCallOption = { "action": "LIST", "source": "", "destination": "", "fstype": "", "fsoptions": "", "dump": "", "pass": "" };
       if (this.jailID) {
         this.jail.value = this.jailID;
+        destination_field.initial += '/' + this.jailID + '/root';
       }
     });
   }
@@ -128,6 +136,12 @@ export class StorageFormComponent {
     entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId][0]);
     entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId][1]);
 
+    if (entityList.queryResponse[this.mountpointId][3] == 'ro') {
+      entityList.formGroup.controls['readonly'].setValue(true);
+    } else if (entityList.queryResponse[this.mountpointId][3] == 'rw') {
+      entityList.formGroup.controls['readonly'].setValue(false);
+    }
+
     this.mountPointEdit.source = entityList.queryResponse[this.mountpointId][0];
     this.mountPointEdit.destination = entityList.queryResponse[this.mountpointId][1];
     this.mountPointEdit.fstype = entityList.queryResponse[this.mountpointId][2];
@@ -148,13 +162,22 @@ export class StorageFormComponent {
       this.mountPointEdit.source = value['source'];
       this.mountPointEdit.destination = value['destination'];
       this.mountPointEdit.index = this.mountpointId;
+      if (value['readonly']) {
+        this.mountPointEdit.fsoptions = "ro";
+      } else {
+        this.mountPointEdit.fsoptions = "rw";
+      }
       mountPoint = this.mountPointEdit;
     } else {
       // add mode
       this.mountPointAdd.source = value['source'];
       this.mountPointAdd.destination = value['destination'];
       this.mountPointAdd.fstype = "nullfs";
-      this.mountPointAdd.fsoptions = "ro";
+      if (value['readonly']) {
+        this.mountPointAdd.fsoptions = "ro";
+      } else {
+        this.mountPointAdd.fsoptions = "rw";
+      }
       this.mountPointAdd.dump = "0";
       this.mountPointAdd.pass = "0";
       mountPoint = this.mountPointAdd;

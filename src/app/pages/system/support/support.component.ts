@@ -46,9 +46,15 @@ export class SupportComponent {
   };
 
   openDialog() {
-    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Update"}});
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket"}});
     dialogRef.componentInstance.setCall('support.new_ticket', [this.payload]);
     dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.componentInstance.setDescription(res.result.url);
+    }),
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.setDescription(res.error);
+    });
   }
 
   onBlurMethod(){

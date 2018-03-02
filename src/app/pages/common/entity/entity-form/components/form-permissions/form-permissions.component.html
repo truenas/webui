@@ -1,12 +1,15 @@
 <div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-	<label>{{ config.placeholder | translate }}</label>
-	<mat-input-container class="full-width" style="display:none">
-		<input matInput [type]="config.inputType ? config.inputType : 'text'"
-			[placeholder]="config.placeholder"
-			[attr.value]="config.value"
-			[formControlName]="config.name"
-			>
-	</mat-input-container>
+	<div class="top">
+		<label>{{ config.placeholder | translate }}</label>
+		<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+		<mat-input-container class="full-width" style="display:none">
+			<input matInput [type]="config.inputType ? config.inputType : 'text'"
+				[placeholder]="config.placeholder"
+				[attr.value]="config.value"
+				[formControlName]="config.name"
+				>
+		</mat-input-container>
+	</div>
 		<table>
 			<tr>
 				<td></td>
@@ -66,6 +69,6 @@
 				</td>
 			</tr>
 		</table>
-	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	
 	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>
