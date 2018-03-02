@@ -26,6 +26,7 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
+import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
 
 export const routes: Routes = [
   {
@@ -79,6 +80,10 @@ export const routes: Routes = [
           {
             path: 'import_list', component: VolumeImportListComponent,
             data: { title: 'Import Volume', breadcrumb: 'Import Volume' }
+          },
+          {
+            path: 'unencryptimport_list', component: VolumeUnencryptImportListComponent,
+            data: { title: 'UnEncrypt Volumes', breadcrumb: 'UnEncrypt Volumes' }
           },
           {
             path: 'status/:pk', component: StatusComponent,
@@ -171,7 +176,8 @@ export const routes: Routes = [
       {
         path: 'import-disk', component: ImportDiskComponent,
         data: { title: 'Import Disk', breadcrumb: 'Import Disk' }
-      },
+      }
+      
     ]
   }
 ];

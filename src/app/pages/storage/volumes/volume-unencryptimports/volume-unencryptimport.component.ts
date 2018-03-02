@@ -14,17 +14,18 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 
 @Component({
-  selector: 'volume-import',
-  templateUrl: './volume-import.component.html'
+  selector: 'volume-unencryptimport',
+  templateUrl: './volume-unencryptimport.component.html'
 })
 
-export class VolumeImportListComponent implements Formconfiguration {
-  public resource_name: string = 'storage/volume_import';
+export class VolumeUnencryptImportListComponent implements Formconfiguration {
+  public resource_name: string = 'storage/volume_unencrypt';
   public route_success: string[] = ['storage', 'volumes'];
   public isEntity = true;
   public isNew = true;
   public fieldConfig: FieldConfig[] = [];
   public initialized = true;
+  public saveSubmitText = "UnEncrypt Volumes";
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -34,11 +35,10 @@ export class VolumeImportListComponent implements Formconfiguration {
 
     this.fieldConfig = [
       {
-        type: 'select',
-        name: 'volume_id',
-        placeholder: 'Volume/Dataset',
-        tooltip: 'Select an existing ZFS volume, dataset, or zvol.',
-        options: []
+        type: 'upload',
+        name: 'encryption_key_file',
+        placeholder: 'Encryption Key File',
+        tooltip: 'Encryption key used to un encryptd volumes before showing import.',
       }
     ];
 
@@ -71,13 +71,13 @@ export class VolumeImportListComponent implements Formconfiguration {
     return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Imported Volume", "Successfully Created Key to volume " + value.volume_id);
+      this.dialogService.Info("Imported Volume", "Successfully UnEncrypted Volume " + value.volume_id);
 
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
+      this.dialogService.errorReport("Error UnEncrypted volume", res.message, res.stack);
     });
   }
 

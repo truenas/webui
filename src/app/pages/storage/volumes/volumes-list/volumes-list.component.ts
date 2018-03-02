@@ -89,6 +89,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getAddActions() {
     const actions = [];
+    
     actions.push({
       label: "Import Volumes",
       icon: "vertical_align_bottom",
@@ -97,6 +98,17 @@ export class VolumesListTableConfig implements InputTableConf {
           ["storage", "volumes", "import_list"]));
       }
     });
+
+    actions.push({
+      label: "UnEncrypt Non Imported Volumes",
+      icon: "lock_open",
+      onClick: () => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "unencryptimport_list"]));
+      }
+    });
+
+    
     return actions;
   }
 
