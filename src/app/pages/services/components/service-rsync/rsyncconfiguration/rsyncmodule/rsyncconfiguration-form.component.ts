@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { FormGroup, Validators } from '@angular/forms';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService } from '../../../../../../services';
+import { WebSocketService, RestService } from '../../../../../../services';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -12,8 +12,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 
 export class RYSNCConfigurationFormComponent {
     protected resource_name = 'services/rsyncmod/';
-    protected addCall = 'rsyncmod.create';
-    protected queryCall = 'rsyncmod.query';
     protected route_success: string[] = [ 'services','rsync','rsync-module' ];
     protected isEntity = true;
     public formGroup: FormGroup;
@@ -21,14 +19,14 @@ export class RYSNCConfigurationFormComponent {
     public fieldConfig: FieldConfig[] = [
     {
         type: 'input',
-        name: 'name',
+        name: 'rsyncmod_name',
         placeholder: 'Name',
         tooltip: '',
         validation: Validators.required
     },
     {
         type: 'input',
-        name: 'comment',
+        name: 'rsyncmod_comment',
         placeholder: 'Comment',
         tooltip: ''
     },
@@ -37,13 +35,13 @@ export class RYSNCConfigurationFormComponent {
         initial: '/mnt',
         explorerType: 'directory',
         placeholder: 'Path',
-        name: 'path',
+        name: 'rsyncmod_path',
         tooltip: '',
         validation: Validators.required
     },
     {
         type: 'select',
-        name: 'mode',
+        name: 'rsyncmod_mode',
         placeholder: 'Access Mode',
         options: [
             { label: 'Read Only', value:'ro' },
@@ -54,102 +52,76 @@ export class RYSNCConfigurationFormComponent {
     },
     {
         type: 'input',
-        name: 'maxconn',
+        name: 'rsyncmod_maxconn',
         placeholder: 'Maximum connections',
-        inputType: 'number'
+        inputType: 'number',
+        value: 0,
+        validation: Validators.min(0),
+        tooltip: '',
     },
     {
         type: 'select',
-        name: 'user',
+        name: 'rsyncmod_user',
         placeholder: 'User',
         tooltip: '',
         options: []
     },
     {
         type: 'select',
-        name: 'group',
+        name: 'rsyncmod_group',
         placeholder: 'Group',
         tooltip: '',
         options: []
     },
     {
         type: 'textarea',
-        name: 'hostsallow',
+        name: 'rsyncmod_hostsallow',
         placeholder: 'Hosts Allow',
         tooltip: '',
         value: '',
       },
       {
         type: 'textarea',
-        name: 'hostsdeny',
+        name: 'rsyncmod_hostsdeny',
         placeholder: 'Hosts Deny',
         tooltip: '',
         value: '',
       },
       {
         type: 'textarea',
-        name: 'auxiliary',
+        name: 'rsyncmod_auxiliary',
         placeholder: 'Auxiliary parameters',
         tooltip: '',
         value: '',
       },
 
     ];
-    private group: any;
-    private user: any;
-    private hostsallow: any;
-    private hostsdeny: any;
+    private rsyncmod_group: any;
+    private rsyncmod_user: any;
     protected entityForm: any;
     protected customFilter: any;
-    constructor( protected ws: WebSocketService, protected router: Router, 
-        protected route: ActivatedRoute) {
+    constructor( protected ws: WebSocketService, protected router: Router,
+        protected rest: RestService, protected route: ActivatedRoute) {
 
     }
     preInit(entityForm: any) {
         this.route.params.subscribe(params => {
           this.pk = params['pk'];
-          this.customFilter = [[["id","=",this.pk]]]
         });
         this.entityForm = entityForm;
       }
     afterInit(entityForm: any) {
-        this.user = _.find(this.fieldConfig, {name : "user"});
+        this.rsyncmod_user = _.find(this.fieldConfig, {name : "rsyncmod_user"});
         entityForm.ws.call('user.query').subscribe((users) => {
             users.forEach((user) => {
-                this.user.options.push({label : user.username, value : user.username})
+                this.rsyncmod_user.options.push({label : user.username, value : user.username})
                 });
             });
-        this.group = _.find(this.fieldConfig, {name : "group"});
+        this.rsyncmod_group = _.find(this.fieldConfig, {name : "rsyncmod_group"});
         entityForm.ws.call('group.query').subscribe((groups) => {
             groups.forEach((group) => {
-                this.group.options.push({label : group.group, value : group.group})
+                this.rsyncmod_group.options.push({label : group.group, value : group.group})
                 });
             });
-        if (!entityForm.isNew) {
-            this.hostsallow = _.find(this.fieldConfig, {name : "hostsallow"});
-            entityForm.submitFunction = this.submitFunction;
-
-        }
-    }
-    beforeSubmit(entityForm: any){
-        if (entityForm.hostsallow.length === 0){
-            entityForm.hostsallow = []
-        }
-        else {
-            entityForm.hostsallow = entityForm.hostsallow.split(',');
-        }
-        if (entityForm.hostsdeny.length === 0){
-            entityForm.hostsdeny = []
-        }
-        else {
-            entityForm.hostsdeny =  entityForm.hostsdeny.split(',');
-        }
-        
-    }
-    submitFunction(){
-        const payload = _.cloneDeep(this.formGroup.value);
-        return this.ws.call('rsyncmod.update', [this.pk, payload]);
-    }
-    
-
+}
 }

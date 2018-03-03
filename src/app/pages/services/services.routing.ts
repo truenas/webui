@@ -59,6 +59,10 @@ export const routes: Routes = [
     component : ServiceRSYNCComponent,
     children: [
       {
+        path: '',
+        redirectTo: 'configure',
+      },
+      {
         path: 'configure',
         component: CconfigureRYSNCComponent,
         data: { title: 'configure', breadcrumb: 'Configure' },
