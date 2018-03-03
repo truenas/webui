@@ -86,11 +86,11 @@
                 </div>
               </div>
 
-              <div fxFlex="100" class="disk-detail-temp-label" style="margin-top:16px;">
-                <span class="label">Temperature:</span><span class="value">50 &deg;C</span>
+              <div fxFlex="100" class="disk-detail-temp-label" style="margin-top:16px;"[ngClass]="{hot: diskDetails[selectedDisk].temp >= 55}">
+                <span class="label">Temperature:</span><span class="value">{{diskDetails[selectedDisk].temp}} &deg;C</span>
               </div>
               <div fxFlex="100" class="disk-detail-temp" fxLayout="row" fxLayoutWrap>
-                <mat-progress-bar fxFlex="100" class="disk-detail-temps-bar" mode="determinate" value="50"></mat-progress-bar>
+                <mat-progress-bar fxFlex="100" class="disk-detail-temps-bar" mode="determinate" [value]="diskDetails[selectedDisk].temp" [color]="diskDetails[selectedDisk].temp >= 55 ? 'warn' : 'primary'"></mat-progress-bar>
                 <div fxFlex="50" style="text-align:left;">0</div>
                 <div fxFlex="50" style="text-align:right;">100</div>
               </div>

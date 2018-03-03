@@ -39,6 +39,15 @@ export class ApiService {
         responseEvent: "PoolDisks"
       }
     },
+    NetInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"network.general.summary",
+        args: [],
+        responseEvent: "NetInfo"
+      }
+    },
     UpdateCheck:{
       apiCall:{
         protocol:"websocket",
@@ -111,7 +120,7 @@ export class ApiService {
         responseEvent:"SysInfo"
       }
     },
-    NetInfoRequest:{
+    /*NetInfoRequest:{
       apiCall:{
         protocol:"websocket",
         version:"1",
@@ -119,7 +128,7 @@ export class ApiService {
         args:[],
         responseEvent:"NetInfo"
       }
-    },
+    },*/
     StatsRequest:{
       apiCall:{
         protocol:"websocket",
@@ -179,6 +188,7 @@ export class ApiService {
       preProcessor(def:ApiCall){
         let redef = Object.assign({}, def);
         //Do some stuff here
+
         let dataList = [];
         let oldDataList = redef.args[0];
         let options = redef.args[1];
@@ -190,7 +200,7 @@ export class ApiService {
             dataset:"value"
           });
         }
-        
+
         redef.args = [dataList,options];
         redef.responseEvent = 'StatsMemoryData';
         return redef;
@@ -198,12 +208,53 @@ export class ApiService {
       postProcessor(res){
         console.log("******** MEM STAT RESPONSE ********");
         console.log(res);
-        
+
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
         let l = [];
         for(let i in legend){
           let spl = legend[i].split("memory/memory-");
+          l.push(spl[1]);
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
+      }
+    },
+    StatsDiskTempRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        //Clone the object
+        let redef = Object.assign({}, def);
+        let dataList = [];
+        let oldDataList = redef.args[0];
+
+        for(let i in oldDataList){
+          dataList.push({
+            source:"disktemp-" + oldDataList,// disk name
+            type:"temperature",
+            dataset:"value"
+          });
+        }
+
+        redef.args = [dataList];
+        redef.responseEvent = 'StatsDiskTemp';
+        return redef;
+      },
+      postProcessor(res){
+        //console.log("******** DISK TEMP RESPONSE ********");
+        //console.log(res);
+
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          let spl = legend[i];
           l.push(spl[1]);
         }
         cloneRes.meta.legend = l;
@@ -232,7 +283,7 @@ export class ApiService {
             dataset:"value"
           });
         }
-        
+
         redef.args = [dataList,options];
         redef.responseEvent = 'StatsLoadAvgData';
         return redef;
@@ -241,7 +292,7 @@ export class ApiService {
         console.log("******** LOAD STAT RESPONSE ********");
         console.log(res);
         //return res;
-        
+
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
         let l = [];

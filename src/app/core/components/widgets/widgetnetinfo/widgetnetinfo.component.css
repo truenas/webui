@@ -1,0 +1,45 @@
+.card-bg-wrapper{
+  width:40%;
+  height:100%;
+  position:relative;
+  text-align:center;
+}
+.card-bg{
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:50%;
+  /*background-color:rgba(0,0,0,0.15);*/
+  background-repeat:no-repeat;
+}
+
+.mat-list .bold{
+  font-weight:bold;
+  margin-right:12px;
+}
+
+.mat-list-item{
+  border-bottom:solid 1px rgba(0,0,0,0.05);
+}
+.mat-list-item.subheader h5{
+  font-size:0.85rem;
+  font-weight:400;
+}
+span.label{
+  font-weight:bold;
+  margin-right:16px;
+}
+span.nic-ipv4{}
+
+span.avatar{
+  width:40px;
+  padding-right:16px;
+}
+
+span.avatar .mat-icon{
+  background-color:rgba(48,48,48,0.85);
+  color:#dedede;
+  border-radius:50%;
+  padding:4px;
+}
+

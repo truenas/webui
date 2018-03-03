@@ -11,15 +11,16 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import filesize from 'filesize';
 
 export interface Disk {
-  name:string;
-  smart_enabled:boolean;
-  size:number;
-  description?:string;
+  name: string;
+  smart_enabled: boolean;
+  size: number;
+  description?: string;
   enclosure_slot?: any;
   expiretime?: any;
   hddstandby?: string;
-  serial?:string;
-  smartoptions?:string
+  serial?: string;
+  smartoptions?: string;
+  temp?: number;
 }
 
 export interface VolumeData {
@@ -83,10 +84,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         //console.log("**** WidgetVolumeComponent DISKS ****");
         //console.log(evt.data);
         // Simulate massive array
-        for(let i = 0; i < 256; i++){
-          this.disks.push("ada" + i);
+        for(let i = 0; i < 1; i++){
+          //this.disks.push("ada" + i);
         }
-        //this.disks = evt.data;
+        this.disks = evt.data;
 
         if(this.disks.length > 16){
           this.gridCols = 8;
@@ -119,6 +120,20 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       }
     });
 
+    this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      let temp: number;
+      for(let i = evt.data.data.length-1; i >= 0; i--){
+        if(evt.data.data[i][0]){
+          temp = evt.data.data[i][0];
+          break;
+        }
+      }
+      // Test hot temps
+      //temp = 64;
+      this.diskDetails[evt.sender[1]].temp = temp;
+    });
+
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       this.setDisksData(evt);
@@ -145,9 +160,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         expiretime: evt.data[i].expiretime,
         hddstandby: evt.data[i].hddstandby,
         serial: evt.data[i].serial,
-        smartoptions: evt.data[i].smartoptions
+        smartoptions: evt.data[i].smartoptions,
+        temp:0
       }
-
+    
       this.diskDetails.push(disk);
     }
   }
@@ -211,11 +227,13 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       for(let i = 0; i < this.diskDetails.length; i++){
         if(this.diskDetails[i].name == this.disks[index]){
           this.selectedDisk = i;
+          this.core.emit({name:"StatsDiskTempRequest", data:[this.diskDetails[i].name, i] });
         }
       }
     } else {
       this.selectedDisk = -1;
     }
+
   }
 
   setCurrentDiskSet(num:number){

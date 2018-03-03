@@ -19,6 +19,7 @@ import { ViewChartLineComponent } from './viewchartline/viewchartline.component'
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
+import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
 import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
 import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
 import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
@@ -62,6 +63,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewChartLineComponent,
     WidgetComponent,
     WidgetSysInfoComponent,
+    WidgetNetInfoComponent,
     WidgetCpuHistoryComponent,
     WidgetLoadHistoryComponent,
     WidgetMemoryHistoryComponent,
@@ -91,6 +93,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     CardComponent,
     WidgetComponent,
     WidgetSysInfoComponent,
+    WidgetNetInfoComponent,
     WidgetCpuHistoryComponent,
     WidgetLoadHistoryComponent,
     WidgetMemoryHistoryComponent,
@@ -114,6 +117,7 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     CardComponent,
     WidgetComponent,
     WidgetSysInfoComponent,
+    WidgetNetInfoComponent,
     WidgetCpuHistoryComponent,
     WidgetLoadHistoryComponent,
     WidgetMemoryHistoryComponent,

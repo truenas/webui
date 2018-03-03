@@ -41,7 +41,8 @@
   width:100%;
 }
 
-.high-density{
+.high-density,
+.diskset .mat-grid-list{
   background-color:rgba(0,0,0,0.8);
 }
 
@@ -123,6 +124,32 @@ span.disk-detail-subtitle {
 }
 .disk-detail-item > div{
   display:table-cell;
+}
+
+.disk-detail-temps-bar{
+  padding-bottom: 5px;
+  border-bottom: solid 4px;
+  border-image: linear-gradient(to right,lightseagreen,yellow 45%,red 55%)15;
+}
+
+.disk-detail-temps-bar .mat-progress-bar-buffer{
+  opacity:0 !important;
+}
+
+.disk-detail-temp-label{
+  text-align:right;
+}
+
+.disk-detail-temp-label span.value{
+  font-size: 2.75em;
+  line-height: 1em;
+  margin-left: 12px;
+}
+.disk-detail-temp-label.hot span.value{
+  color:#c00;
+}
+.disk-detail-temp-label.hot .mat-progress-bar-element{
+  border:solid 7px #c00;
 }
 
 /* Disk Sets */
