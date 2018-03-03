@@ -55,7 +55,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
 
     // Translator init
-    language.getBrowserLanguage();
+    language.getMiddlewareLanguage();
   }
 
   ngOnInit() {
