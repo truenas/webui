@@ -12,8 +12,8 @@
             </div>
           </ng-container>
           <div>
-            <button mat-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">{{"Back" | translate}}</button>
-            <button mat-button matStepperNext type="button">{{"Next" | translate}}</button>
+            <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">{{"Back" | translate}}</button>
+            <button mat-raised-button matStepperNext type="button">{{"Next" | translate}}</button>
           </div>
         </mat-step>
       </div>
@@ -27,8 +27,8 @@
         </div>
         {{"WIZARD_CONFIRM_MESSAGE" | translate}}
         <div>
-          <button mat-button matStepperPrevious type="button">{{"Back" | translate}}</button>
-          <button type="Submit" mat-button>{{"Submit" | translate}}</button>
+          <button mat-raised-button matStepperPrevious type="button">{{"Back" | translate}}</button>
+          <button mat-raised-button type="Submit">{{"Submit" | translate}}</button>
         </div>
       </mat-step>
     </mat-horizontal-stepper>
