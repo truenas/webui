@@ -62,13 +62,14 @@ import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservic
 import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
 import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
+import { TranslateModule } from 'ng2-translate/ng2-translate';
 import { EmailComponent } from './email';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(),
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule
   ],
   declarations: [
     GeneralComponent,
