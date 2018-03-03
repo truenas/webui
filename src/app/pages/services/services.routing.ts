@@ -72,7 +72,11 @@ export const routes: Routes = [
         path: 'rsync-module/add',
         component: RYSNCConfigurationFormComponent,
         data: { title: 'add', breadcrumb: 'add' },
-      }
+      },
+      {
+        path : 'rsync-module/edit/:pk', component : RYSNCConfigurationFormComponent,
+        data: {title: 'Edit', breadcrumb:'Edit' }
+      },
     ]
   },
   {

@@ -22,6 +22,7 @@ import { EntityJobComponent } from '../../../../../common/entity/entity-job/enti
     public wsDelete = 'rsyncmod.delete'
     protected route_add: string[] = ['services', 'rsync','rsync-module','add' ];
     protected route_edit: string[] = ['services', 'rsync','rsync-module','edit' ];
+    protected route_delete: string[] = ['services', 'rsync','rsync-module','delete' ];
 
     public columns: Array<any> = [
         { name: 'Name', prop: 'name' },
@@ -39,5 +40,5 @@ import { EntityJobComponent } from '../../../../../common/entity/entity-job/enti
     paging : true,
     sorting : { columns : this.columns },
     };
-
+  
   }
