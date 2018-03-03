@@ -34,6 +34,10 @@ export class EntityJobComponent implements OnInit {
     if (this.data.title) {
       this.title = this.data.title;
     }
+
+    if (this.dialogRef.disableClose) {
+      this.showCloseButton = false;
+    }
   }
 
   setCall(method: string, args ? : any[]) {
