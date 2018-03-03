@@ -19,7 +19,7 @@ export const routes: Routes = [{
   }, {
     path: 'activedirectory',
     component: ActiveDirectoryComponent,
-    data: { title: 'Actived Directory', breadcrumb: 'Actived Directory' }
+    data: { title: 'Active Directory', breadcrumb: 'Active Directory' }
   }, {
     path: 'nis',
     component: NISComponent,
