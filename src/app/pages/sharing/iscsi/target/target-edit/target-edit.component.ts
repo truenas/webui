@@ -14,6 +14,7 @@ import { EntityFormService } from '../../../../common/entity/entity-form/service
 @Component({
   selector : 'app-iscsi-target-edit',
   templateUrl : './target-edit.component.html',
+  styleUrls: ['./target-edit.component.css'],
   providers : [ IscsiService, EntityFormService ],
 })
 export class TargetEditComponent implements OnInit {
