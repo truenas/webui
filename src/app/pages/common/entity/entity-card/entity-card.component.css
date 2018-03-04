@@ -99,6 +99,10 @@ i {
   -webkit-transition: 0.5s;
 }
 
+.raised.flip{
+  z-index:2;
+}
+
 .flip .card-container.flipped {
   transform: rotatey(-180deg);
 }
@@ -121,5 +125,5 @@ i {
   z-index: 2;
   margin:0;
   padding:0 !important;
-  overflow:hidden;
+  /*overflow:hidden;*/
 }
