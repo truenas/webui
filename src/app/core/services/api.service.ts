@@ -304,6 +304,15 @@ export class ApiService {
         return cloneRes;
       }
     },
+    StatsVmemoryUsageRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"vm.get_vmemory_in_use",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "StatsVmemoryUsage"
+      }
+    },
     DisksInfoRequest:{
       apiCall:{
         protocol:"websocket",
