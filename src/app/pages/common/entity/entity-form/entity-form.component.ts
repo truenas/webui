@@ -58,6 +58,7 @@ export interface Formconfiguration {
   custom_edit_query?;
   custom_add_query?
   custActions?: any[];
+  customFilter?:any[];
   
   beforeSubmit?;
   customSubmit?;
@@ -182,12 +183,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       if (this.conf.queryCall) {
         if(this.pk) {
-          const filter = []
+          let filter = []
           if (this.conf.pk) {
            filter.push(this.conf.pk);
           }
           if (this.conf.queryCallOption) {
             filter.push(this.conf.queryCallOption);
+          }
+          if (this.conf.customFilter){
+            filter = this.conf.customFilter
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
