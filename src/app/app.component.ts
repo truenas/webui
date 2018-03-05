@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MatSnackBar } from '@angular/material';

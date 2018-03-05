@@ -44,7 +44,7 @@ export class CoreService {
     this.coreEvents.subscribe(
       (evt:CoreEvent) => {
 	// Do Stuff
-	console.log("*** CoreEvent: " + evt.name);
+	//DEBUG: console.log("*** CoreEvent: " + evt.name);
       },
       (err) =>{
 	console.log(err);
@@ -56,8 +56,8 @@ export class CoreService {
   public register(reg:Registration){
     reg.observable = new Subject();
     this.dispatchTable.push(reg);
-    console.log("CORESERVICE: New Registration");
-    console.log(reg);
+    //DEBUG: console.log("CORESERVICE: New Registration");
+    //DEBUG: console.log(reg);
     return reg.observable;
   }
 
@@ -80,7 +80,7 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
-    //console.log("CORESERVICE: Emit() ");
+    //DEBUG: console.log("CORESERVICE: Emit() ");
 
     //avoid matching null values
     if(!evt.name){
@@ -93,16 +93,16 @@ export class CoreService {
     for(var i=0; i < this.dispatchTable.length; i++){
       let reg = this.dispatchTable[i]; // subscription
       if(reg.eventName == evt.name && reg.sender == evt.sender){
-	//console.log("Matched name and sender");
+	//DEBUG: console.log("Matched name and sender");
 	reg.observable.next(evt);
       } else if(evt.name && reg.eventName == evt.name){
-	//console.log("Matched name only");
+	//DEBUG: console.log("Matched name only");
 	reg.observable.next(evt);
       } else if(evt.sender && reg.sender == evt.sender){
-	//console.log("Matched sender only");
+	//DEBUG: console.log("Matched sender only");
 	reg.observable.next(evt);
       } else {
-	//console.log("No match found");
+	//DEBUG: console.log("No match found");
       }
     }
     return this;
