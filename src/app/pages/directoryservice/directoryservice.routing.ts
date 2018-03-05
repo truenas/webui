@@ -8,6 +8,7 @@ import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
+import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
 
 export const routes: Routes = [{
   path: '',
@@ -48,6 +49,14 @@ export const routes: Routes = [{
     path: 'kerberossettings',
     data : { title: 'Kerberos Settings', breadcrumb: 'Kerberos Settings'},
     component: KerberosSettingsComponent,
+  }, {
+    path: 'kerberoskeytabs',
+    data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab' },
+    children: [{
+      path: '',
+      component: KerberosKeytabsListComponent,
+      data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab' }
+    }]
   }]
 }];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
