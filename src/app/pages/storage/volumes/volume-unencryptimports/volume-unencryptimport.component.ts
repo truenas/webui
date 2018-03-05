@@ -18,6 +18,13 @@ import { Formconfiguration } from '../../../common/entity/entity-form/entity-for
   templateUrl: './volume-unencryptimport.component.html'
 })
 
+/** 
+ * Note this class has a missing apip for the post.. Which in the old UI is
+ * 
+ * RL:http://192.168.1.3/legacy/storage/auto-import/?X-Progress-ID=6013ea8d-2871-4b9d-8098-60b192beb23f
+ * 
+ * 
+ */
 export class VolumeUnencryptImportListComponent implements Formconfiguration {
   public resource_name: string = 'storage/volume_unencrypt';
   public route_success: string[] = ['storage', 'volumes'];
@@ -39,6 +46,12 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         name: 'encryption_key_file',
         placeholder: 'Encryption Key File',
         tooltip: 'Encryption key used to un encryptd volumes before showing import.',
+      },
+      {
+        type: 'input',
+        name: 'passphrase',
+        placeholder: 'passphrase',
+        tooltip: 'Geli Passphrase'
       }
     ];
 
@@ -68,7 +81,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
   customSubmit(value) {
     this.loader.open();
     console.log("VALUE", value);
-    return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted}) }).subscribe((restPostResp) => {
+    return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted }) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
       this.dialogService.Info("Imported Volume", "Successfully UnEncrypted Volume " + value.volume_id);
