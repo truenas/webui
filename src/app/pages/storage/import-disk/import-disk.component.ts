@@ -15,12 +15,13 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
+import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
 
 @Component({
   selector : 'app-import-disk',
   templateUrl : './import-disk.component.html'
 })
-export class ImportDiskComponent {
+export class ImportDiskComponent implements Formconfiguration {
   public initialized = true;
 
   public fieldConfig: FieldConfig[] = [
@@ -75,11 +76,11 @@ export class ImportDiskComponent {
   afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
     
-    this.rest.get("storage/disk", { limit: 0 }).subscribe((res)=>{
-      let data = new EntityUtils().flattenData(res.data);
+    this.ws.call("disk.get_unused", [true]).subscribe((res)=>{
+      let data = res;
       
       for (let i = 0; i < data.length; i++) {
-        this.volume.options.push({label : data[i].disk_name, value : data[i].disk_name});
+        this.volume.options.push({label : data[i].name, value : data[i].name});
       }
       this.initialized = true;
 
@@ -103,6 +104,7 @@ export class ImportDiskComponent {
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
     });
+    
   }
 
 }

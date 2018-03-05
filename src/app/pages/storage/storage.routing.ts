@@ -32,6 +32,7 @@ export const routes: Routes = [
   {
     path: '',
     data: { title: 'Storage' },
+    redirectTo: "volumes",
     children: [
       {
         path: 'volumes',
