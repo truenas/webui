@@ -1,4 +1,4 @@
-<div class="widget widget-{{widgetSize}}">
+<div class="widget widget-{{widgetSize}}" ngClass.xs="double-height">
   <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch" fxFlex="100" class="mat-card-toolbar">
@@ -14,14 +14,14 @@
           <mat-icon>settings</mat-icon>
           </button></ng-template>
       </mat-toolbar-row>
-      <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="space-around center" fxFlex="100">
+      <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-around center" fxFlex="100">
         <!-- CHART -->
-        <div fxFlex="35" style="position:relative;">
+        <div fxFlex="100" fxFlex.gt-xs="35" style="position:relative;">
           <viewchartdonut #zvol [width]="chartSize" [height]="chartSize" [style.display]="isFlipped ? 'none': 'block'" fxFlex="100"></viewchartdonut>
         </div>
 
         <!-- DISKS -->
-        <div fxFlex="50" class="disk-array-ui">
+        <div fxFlex="100" fxFlex.gt-xs="50" class="disk-array-ui" ngClass.xs="column">
           <!--<ng-template *ngIf="disks.length > 0">-->
             <!-- Header and Pagination Controls -->
             <mat-grid-list [cols]="gridCols" rowHeight="24px" role="list" *ngIf="disks.length > 0" [ngClass]="{'high-density': gridCols == 8}">

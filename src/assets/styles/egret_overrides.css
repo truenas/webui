@@ -207,6 +207,13 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   height:240px;
 }
 
+
+.xs .widget.double-height .mat-card,
+.xs .widget.double-height, 
+.xs .widget.double-height .card-container{
+  height:840px;
+}
+
 .widget .mat-card{
   position:absolute;
   left:0;

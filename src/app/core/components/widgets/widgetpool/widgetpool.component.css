@@ -167,3 +167,17 @@ span.disk-detail-subtitle {
   float:left;
   width:100%;
 }
+
+/* Mobile */
+.disk-array-ui.column{
+  width:100%;
+}
+.disk-array-ui.column .disk-name{
+  font-size:14px;
+}
+.disk-array-ui.column .disk-icon{
+  font-size:16px;
+}
+.disk-array-ui.column .disk-details{
+  height:calc(100% - 48px);
+}
