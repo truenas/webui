@@ -9,7 +9,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { RestService, UserService, WebSocketService } from '../../../services/';
+import { RestService, UserService, WebSocketService, LanguageService } from '../../../services/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -103,8 +103,8 @@ export class GeneralComponent {
     {
       type: 'select',
       name: 'stg_language',
-      placeholder: 'Language (Require UI reload)',
-      tooltip: 'Select a localization and reload the browser.\
+      placeholder: 'Language',
+      tooltip: 'Select a localization.\
  Localization progress is viewable on\
  <a href="https://weblate.trueos.org/projects/freenas/#languages"\
  target="_blank">Weblate</a>.',
@@ -157,7 +157,7 @@ export class GeneralComponent {
   private stg_sysloglevel: any;
   private stg_syslogserver: any;
 
-  constructor(protected rest: RestService, protected router: Router) {}
+  constructor(protected rest: RestService, protected router: Router, protected language: LanguageService) {}
 
   afterInit(entityEdit: any) {
     entityEdit.ws.call('certificate.query', [
@@ -225,6 +225,10 @@ export class GeneralComponent {
           this.stg_sysloglevel.options.push({ label: item[1], value: item[0] });
         });
       });
+  }
+
+  beforeSubmit(value) {
+    this.language.setLang(value.stg_language);
   }
 
   gotoSaveConfig() {
