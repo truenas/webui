@@ -48,6 +48,7 @@ export class ThemeService {
       name: 'egret-dark-purple',
       label: 'Dark Purple',
       baseColor: '#9c27b0',
+      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
       isActive: false,
       hasDarkLogo: false
     },
@@ -55,6 +56,7 @@ export class ThemeService {
       name: 'egret-indigo',
       label: 'Indigo',
       baseColor: '#3f51b5',
+      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
       isActive: false,
       hasDarkLogo: false
     }, 
@@ -62,30 +64,10 @@ export class ThemeService {
       name: 'freenas-sharks',
       label: 'Sharks',
       baseColor: '#088696',
+      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
       isActive: false,
       hasDarkLogo: false
     }
-    /*{
-      name: 'egret-dark-pink',
-      label: 'Dark Pink',
-      baseColor: '#e91e63',
-      isActive: false,
-      hasDarkLogo: false
-    },*/ 
-    /*{
-      name: 'egret-blue',
-      label: 'Blue',
-      baseColor: '#2196f3',
-      isActive: false,
-      hasDarkLogo: true
-    }, */
-    /*{
-      name: 'freenas-warriors',
-      label: 'Warriors',
-      baseColor: '#fdb927',
-      isActive: false,
-      hasDarkLogo: true
-    }, */
   ];
 
   savedUserTheme = "";

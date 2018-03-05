@@ -1,6 +1,8 @@
 import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -16,37 +18,22 @@ import filesize from 'filesize';
 export class WidgetComponent implements AfterViewInit {
 
   protected core:CoreService;
+  protected themeService: ThemeService;
   @Input() widgetSize: string;
-  @ViewChild('chartDonut') chartDonut: ViewChartDonutComponent;// | ViewChartPieComponent;
-  @ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
-  public title:string = "CPU History";
+  @Input() configurable:boolean = false;
+  public title:string = "Widget Base Class";
   public chartSize:number;
+  //public configurable: boolean = true;
   public flipAnimation = "stop";
   public flipDirection = "vertical";
   public isFlipped: boolean = false;
 
   constructor(){
     this.core = CoreServiceInjector.get(CoreService);
+    this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
-      this.setPoolData(evt);
-      //this.animation = "stop";
-      });
-
-    this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
-      this.setCPUData(evt);
-    });
-
-    this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe(() => {
-      this.chartCpu.refresh();
-    });
-
-    this.core.emit({name:"PoolDataRequest"});
-    this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
   }
 
   toggleConfig(){
@@ -65,63 +52,9 @@ export class WidgetComponent implements AfterViewInit {
     this.isFlipped = !this.isFlipped;
   }
 
-  setPoolData(evt:CoreEvent){
-    let usedObj = filesize(evt.data[0].used, {output: "object", exponent:3});
-    let used: ChartData = {
-      legend: 'Used', 
-      data: [usedObj.value]
-    };
-
-    let  availableObj = filesize(evt.data[0].avail, {output: "object", exponent:3});
-    let available: ChartData = {
-      legend:'Available', 
-      data: [availableObj.value]
-    };
-
-    this.chartDonut.units = 'GB';
-    this.chartDonut.title = 'Zpool';
-    this.chartDonut.data = [used,available];
-    console.log(this.chartDonut.data);
-    this.chartDonut.width = this.chartSize;
-    this.chartDonut.height = this.chartSize;
+  setPreferences(form:NgForm){
+    console.log("******** FORM SUBMITTED!! ********");
+    console.log(form);
   }
-
-  setCPUData(evt:CoreEvent){
-    console.log("SET CPU DATA");
-    console.log(evt.data);
-    let cpuUserObj = evt.data;
-
-    let parsedData = [];
-    let dataTypes = evt.data.meta.legend;
-
-    for(let index in dataTypes){
-      let chartData:ChartData = {
-        legend: dataTypes[index],
-        data:[]
-      }
-      for(let i in evt.data.data){
-        chartData.data.push(evt.data.data[i][index])
-      }
-      parsedData.push(chartData);
-    }
-
-
-    /*
-     *  let cpuUser: ChartData = {
-     *    legend: 'CPU',
-     *    data: evt.data.data
-     *  }
-     **/
-
-     this.chartCpu.chartType = 'line';
-     this.chartCpu.units = '%';
-     this.chartCpu.timeSeries = true;
-     this.chartCpu.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
-     this.chartCpu.timeData = evt.data.meta;
-     this.chartCpu.data = parsedData;//[cpuUser];
-     this.chartCpu.width = this.chartSize;
-     this.chartCpu.height = this.chartSize;
-  }
-
 
 }

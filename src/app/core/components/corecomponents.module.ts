@@ -10,6 +10,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { Display,DisplayContainer } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule }   from '@angular/forms';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -17,6 +18,16 @@ import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.compone
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
+import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
+import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
+import { WidgetLoadHistoryComponent } from 'app/core/components/widgets/widgetloadhistory/widgetloadhistory.component';
+import { WidgetMemoryHistoryComponent } from 'app/core/components/widgets/widgetmemoryhistory/widgetmemoryhistory.component';
+import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
+import { WidgetStorageCollectionComponent } from 'app/core/components/widgets/widgetstoragecollection/widgetstoragecollection.component';
+import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
+import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
+import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 
@@ -32,7 +43,8 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
   imports: [
     CommonModule,
     MaterialModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    FormsModule
   ],
   declarations: [
     AnimationDirective,
@@ -49,7 +61,17 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewChartPieComponent,
     ViewChartGaugeComponent,
     ViewChartLineComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetSysInfoComponent,
+    WidgetNetInfoComponent,
+    WidgetCpuHistoryComponent,
+    WidgetLoadHistoryComponent,
+    WidgetMemoryHistoryComponent,
+    WidgetStorageComponent,
+    WidgetStorageCollectionComponent,
+    WidgetNoteComponent,
+    WidgetNotesCollectionComponent,
+    WidgetPoolComponent
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -69,7 +91,17 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewButtonComponent,
     ViewControllerComponent,
     CardComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetSysInfoComponent,
+    WidgetNetInfoComponent,
+    WidgetCpuHistoryComponent,
+    WidgetLoadHistoryComponent,
+    WidgetMemoryHistoryComponent,
+    WidgetStorageComponent,
+    WidgetStorageCollectionComponent,
+    WidgetNoteComponent,
+    WidgetNotesCollectionComponent,
+    WidgetPoolComponent
   ],
   entryComponents:[
     DisplayContainer,
@@ -83,7 +115,17 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     ViewButtonComponent,
     ViewControllerComponent,
     CardComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetSysInfoComponent,
+    WidgetNetInfoComponent,
+    WidgetCpuHistoryComponent,
+    WidgetLoadHistoryComponent,
+    WidgetMemoryHistoryComponent,
+    WidgetStorageComponent,
+    WidgetStorageCollectionComponent,
+    WidgetNoteComponent,
+    WidgetNotesCollectionComponent,
+    WidgetPoolComponent
   ]
 })
 export class CoreComponents {}

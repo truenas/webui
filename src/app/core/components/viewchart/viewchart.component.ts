@@ -1,9 +1,10 @@
-import { Component, AfterViewInit, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, AfterViewInit, OnInit, OnChanges, Input, HostListener } from '@angular/core';
 import { LayoutChild } from 'app/core/classes/layouts';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
-import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
+//import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
+import { ChartConfiguration, LegendOptions, TooltipOptions } from './viewchart.component.types';
 
 export interface ChartData {
   legend: string;
@@ -52,6 +53,11 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public units: string;
   @Input() width: number;
   @Input() height: number;
+  @HostListener('window:resize', ['$event'])
+  onResize(event){
+       //console.log("Width: " + event.target.innerWidth);
+       this.refresh();
+  }
 
   public chart: any;
   public chartLoaded: boolean = false;
@@ -136,7 +142,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
           legendHtmlItem.value = d[i].data[0];
           this.showLegendValues = true;
         }
-        this.legend.push(legendHtmlItem)
+        this.legend.push(legendHtmlItem);
       }
       this._data = result;
 

@@ -16,9 +16,11 @@ export class VmSummaryComponent implements AfterViewInit {
 
   @ViewChild('cpu') cpuChart:ViewChartLineComponent;
   @ViewChild('zpool') zpoolChart:ViewChartDonutComponent;
-  @ViewChild('net') netChart:ViewChartGaugeComponent;
+  @ViewChild('mem') memChart:ViewChartDonutComponent;
   @Input() virtualMachines;
   public chartSize:number = 260;
+  public totalVmem:number;
+  public physmem:number;
 
   constructor(private core:CoreService) {
   }
@@ -33,43 +35,74 @@ export class VmSummaryComponent implements AfterViewInit {
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       this.setCPUData(evt);
-      this.setNetData(evt);
+      //this.setNetData(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"StatsVmemoryUsage"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      this.setMemData(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      this.setMemTotal(evt);
     });
 
     this.core.register({observerClass:this,eventName:"ThemeChanged"}).subscribe((evt:CoreEvent) => {
       this.cpuChart.refresh();
       this.zpoolChart.refresh();
-      this.netChart.refresh();
+      this.memChart.refresh();
     });
 
     // Pool Stats
     this.core.emit({name:"PoolDataRequest"});
+
+    // VM Memory Usage Stats
+    this.core.emit({name:"StatsVmemoryUsageRequest"});
+    this.core.emit({name:"SysInfoRequest"});
+
     // CPU Stats (dataList eg. {source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"})
-    //let dataList = [{source: "aggregation-cpu-sum", type: "cpu-user", dataset: "value"}];
-    //this.core.emit({name:"StatsRequest", data:[dataList,{step:'10', start:'now-10m'}]});
     this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
-
-    /*this.cpuChart.data = [
-     {legend: 'CPU Load', data:[10,50,60,95,15,30,45,55,35,79,95,60,80,15,250,125,1024,670,220,450,75]},
-    ];
-    this.cpuChart.width = this.chartSize;
-    this.cpuChart.height = this.chartSize;
-    */
-
-
 
    }
 
-  setNetData(evt:CoreEvent){
-    this.netChart.data = [
-      //{legend: 'C', data:[10]},
-      {legend: 'D', data:[90]}
+  setMemData(evt:CoreEvent){
+    this.memChart.title = "vMemory in Use";
+    this.memChart.units="GB";
+
+    // Convert to GB
+    let RNP = (<any>window).filesize(evt.data.RNP, {output: "object", exponent:3});
+    let PRD = (<any>window).filesize(evt.data.PRD, {output: "object", exponent:3});
+    let RPRD = (<any>window).filesize(evt.data.RPRD, {output: "object", exponent:3});
+
+    let memData = [
+      {legend: 'RNP', data:[RNP.value]},
+      {legend: 'PRD', data:[PRD.value]},
+      {legend: 'RPRD', data:[RPRD.value]}
     ];
-    this.netChart.width = this.chartSize;
-    this.netChart.height = this.chartSize;
+    this.totalVmem = evt.data.RNP + evt.data.PRD + evt.data.RPRD;
+    if(this.physmem){
+      console.warn({physmem:this.physmem, totalVmem: this.totalVmem});
+      let avail = (<any>window).filesize(this.physmem - this.totalVmem, {output: "object", exponent:3});
+      memData.push({legend:"Free", data:[avail.value]});
+    }
+    this.memChart.data = memData;
+
+    this.memChart.width = this.chartSize;
+    this.memChart.height = this.chartSize;
+    //this.memChart.refresh();
+  }
+  setMemTotal(evt:CoreEvent){
+    let totalMem = (<any>window).filesize(evt.data.physmem, {output: "object", exponent:3});
+
+    if(this.totalVmem){
+      this.memChart.data.push({legend:"Free",data:[ totalMem.value - this.totalVmem]});
+      //this.memChart.refresh();
+    } else {
+      this.physmem = evt.data.physmem;
+    }
   }
 
-  // rest.get('storage/volume/', {}).subscribe((res) => {});
   setPoolData(evt:CoreEvent){
     let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
     let used: ChartData = {
@@ -89,7 +122,7 @@ export class VmSummaryComponent implements AfterViewInit {
     console.log(this.zpoolChart.data);
     this.zpoolChart.width = this.chartSize;
     this.zpoolChart.height = this.chartSize;
-  };
+  }
 
   setCPUData(evt:CoreEvent){
     console.log("SET CPU DATA");
@@ -109,14 +142,6 @@ export class VmSummaryComponent implements AfterViewInit {
       }
       parsedData.push(chartData);
     }
-
-
-    /*
-     let cpuUser: ChartData = {
-       legend: 'CPU',
-       data: evt.data.data
-     }
-     */
 
     this.cpuChart.chartType = 'area-spline';
     this.cpuChart.units = '%';
