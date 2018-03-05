@@ -20,7 +20,7 @@ export class LanguageService {
     code: 'es',
   }, {
     name: '中文',
-    code: 'zh',
+    code: 'zh-hans',
   }];
   system_resource = 'system/settings';
 
