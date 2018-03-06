@@ -105,6 +105,14 @@ class conf_sysadvance_test(unittest.TestCase):
         driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[2]/button[1]").click()
         print (newusernameuncheck + " deleted")
 
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        filename = str(__file__)
+        filename = filename[:-3]
+        final_file = filename.replace(text_path + "/", '')
+        print ("Taking screenshot for " + final_file + " Test no:" count)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

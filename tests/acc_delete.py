@@ -190,6 +190,20 @@ class delete_test(unittest.TestCase):
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
 
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+
+
+
     @classmethod
     def tearDownClass(inst):
         pass
