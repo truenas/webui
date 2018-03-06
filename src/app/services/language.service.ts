@@ -12,15 +12,20 @@ import { RestService } from './rest.service'
 export class LanguageService {
 
   currentLang = '';
+  // the editor doesn't 100% sync with all of the languages the middleware 
+  // uses so we must map some languages like zh_hans
   availableLangs = [{
     name: 'English',
     code: 'en',
+    map: '',
   }, {
     name: 'Español',
     code: 'es',
+    map: '',
   }, {
     name: '中文',
-    code: 'zh-hans',
+    code: 'zh',
+    map: 'zh-hans'
   }];
   system_resource = 'system/settings';
 
@@ -45,6 +50,10 @@ export class LanguageService {
   }
 
   setMiddlewareLanguage(lang: any) {
+    let l = _.find(this.availableLangs, {"code": lang});
+    if (l.map !== '') {
+      lang = l.map;
+    }
     this.rest.put(this.system_resource, 
       {body: JSON.stringify({stg_language: lang})}).subscribe(
     (res) => {
@@ -56,6 +65,10 @@ export class LanguageService {
   }
 
   setLang(lang: any) {
+    let l = _.find(this.availableLangs, {"map": lang});
+    if (l) {
+      lang = l.code;
+    }
     if (_.find(this.availableLangs, {"code": lang})) {
       this.currentLang = lang;
     } else {
