@@ -81,7 +81,7 @@ class conf_system_email_test(unittest.TestCase):
         filename = str(__file__)
         filename = filename[:-3]
         final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + " Test no:" count)
+        print ("Taking screenshot for " + final_file + " Test no" + count)
         driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
