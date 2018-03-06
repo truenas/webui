@@ -1,6 +1,10 @@
 pipeline {
   agent none
 
+  triggers {
+    cron('*/12 * * * *')
+  }
+
   environment {
     GH_ORG = 'freenas'
     GH_REPO = 'webui'
