@@ -15,7 +15,7 @@ import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add/';
 import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
-import { VolumeImportListComponent } from './volumes/import-list/';
+import { VolumeImportListComponent } from './volumes/volume-import/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
@@ -26,6 +26,7 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
+import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
 
 export const routes: Routes = [
   {
@@ -81,12 +82,16 @@ export const routes: Routes = [
             data: { title: 'Import Volume', breadcrumb: 'Import Volume' }
           },
           {
+            path: 'unencryptimport_list', component: VolumeUnencryptImportListComponent,
+            data: { title: 'UnEncrypt Volumes', breadcrumb: 'UnEncrypt Volumes' }
+          },
+          {
             path: 'status/:pk', component: StatusComponent,
             data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
           },
           {
-            path: 'delete/:pk', component: VolumeDeleteComponent,
-            data: { title: 'Delete Volume', breadcrumb: 'Delete Volume' }
+            path: 'detachvolume/:pk', component: VolumeDeleteComponent,
+            data: { title: 'Detach Volume', breadcrumb: 'Detach Volume' }
           },
           {
             path: 'unlock/:pk', component: VolumeUnlockFormComponent,
@@ -171,7 +176,8 @@ export const routes: Routes = [
       {
         path: 'import-disk', component: ImportDiskComponent,
         data: { title: 'Import Disk', breadcrumb: 'Import Disk' }
-      },
+      }
+      
     ]
   }
 ];

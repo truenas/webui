@@ -208,7 +208,7 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
         background: transparent !important;
     }
     .sidebar-panel.mat-sidenav {
-        background: url('../../images/sidebar-bg-dark.jpg') no-repeat;
+        background: url('/assets/images/sidebar-bg-dark.jpg') no-repeat;
     }
     .app-user .app-user-name,
     .sidebar-panel.mat-sidenav .sidebar-list-item mat-icon:not(.menu-caret),
