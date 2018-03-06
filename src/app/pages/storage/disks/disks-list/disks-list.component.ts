@@ -4,7 +4,7 @@ import { RestService } from '../../../../services/';
 import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -13,7 +13,7 @@ import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/v
 import { ErdService } from 'app/services/erd.service';
 import { TranslateService } from 'ng2-translate/ng2-translate';
 
-export class DisksListConfig {
+export class DisksListConfig implements InputTableConf {
     public flattenedVolData: any;
     public resource_name = 'storage/disk/';
     public hideTopActions = true;

@@ -13,15 +13,17 @@ import {
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/services/dialog.service';
+import { EntityUtils } from '../../common/entity/utils';
+import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
 
 @Component({
   selector : 'app-import-disk',
-  template : `
-  <entity-form [conf]="this"></entity-form>
-  `,
-  providers : [ ],
+  templateUrl : './import-disk.component.html'
 })
-export class ImportDiskComponent {
+export class ImportDiskComponent implements Formconfiguration {
+  public initialized = true;
+
   public fieldConfig: FieldConfig[] = [
     {
       type : 'select',
@@ -63,7 +65,7 @@ export class ImportDiskComponent {
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected dialog: MatDialog,
-              protected _injector: Injector, protected _appRef: ApplicationRef
+              protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService
               ) {}
 
   preInit(entityForm: any) {
@@ -73,15 +75,20 @@ export class ImportDiskComponent {
   
   afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
-    this.ws.call('disk.get_unused', [true]).subscribe((res)=>{
-      res.forEach((item) => {
-        let partitions = item['partitions'];
-        for (let i = 0; i < partitions.length; i++) {
-          let name = partitions[i].path.replace(/^\/dev\//, '');
-          this.volume.options.push({label : name, value : partitions[i].path});
-        }
-      });
+    
+    this.ws.call("disk.get_unused", [true]).subscribe((res)=>{
+      let data = res;
+      
+      for (let i = 0; i < data.length; i++) {
+        this.volume.options.push({label : data[i].name, value : data[i].name});
+      }
+      this.initialized = true;
+
+    }, (res) => {
+      this.dialogService.errorReport("Error getting disk data", res.message, res.stack);
+      this.initialized = true;
     });
+
   }
 
   customSubmit(payload){
@@ -97,6 +104,7 @@ export class ImportDiskComponent {
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
     });
+    
   }
 
 }
