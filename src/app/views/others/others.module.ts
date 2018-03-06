@@ -16,7 +16,7 @@ import { AppBlankComponent } from './app-blank/app-blank.component';
 import { OthersRoutes } from "./others.routing";
 import { RebootComponent } from "./reboot/reboot.component";
 import { ShutdownComponent } from "./shutdown/shutdown.component";
-import { TranslateModule } from 'ng2-translate/ng2-translate';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [

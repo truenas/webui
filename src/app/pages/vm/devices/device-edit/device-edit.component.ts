@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
