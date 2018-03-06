@@ -291,6 +291,9 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
         this.nic_attach.options[0].value
       )
+      this.ws.call('vm.random_mac').subscribe((mac_res)=>{
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
+      });
 
     });
     this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
@@ -318,6 +321,7 @@ export class VMWizardComponent {
 }
 
 async customSubmit(value) {
+
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const payload = {}
     const vm_payload = {}
