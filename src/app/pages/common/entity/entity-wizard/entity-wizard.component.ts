@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
 import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../entity/entity-form/services/entity-form.service';

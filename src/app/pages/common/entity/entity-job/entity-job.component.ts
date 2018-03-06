@@ -2,7 +2,7 @@ import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'entity-job',

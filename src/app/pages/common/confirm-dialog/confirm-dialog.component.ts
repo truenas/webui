@@ -1,6 +1,6 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'confirm-dialog',

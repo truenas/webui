@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 //local libs
 import { RestService } from '../../../../services/rest.service';
