@@ -56,7 +56,6 @@ class create_user_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_acc_user(self):
-        self.error_check()
         # Click  Account menu
         print (" navigating to the user submenu")
         a = driver.find_element_by_xpath(xpaths['navAccount'])
@@ -227,12 +226,12 @@ class create_user_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "CLOSE")]'):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
             if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
-            driver.find_element_by_xpath('//*[contains(text(), "CLOSE")]').click()
+            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
 
     def selectlist(self, element):
