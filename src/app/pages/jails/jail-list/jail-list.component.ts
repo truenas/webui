@@ -122,6 +122,8 @@ export class JailListComponent implements OnInit {
       return false;
     } else if (actionId === 'stop' && row.state === "down") {
       return false;
+    } else if (actionId === 'shell' && row.state === "down") {
+      return false;
     }
     return true;
   }
@@ -206,6 +208,14 @@ export class JailListComponent implements OnInit {
                 this.loader.close();
                 new EntityUtils().handleError(this, res);
               });
+        }
+      },
+      {
+        id: "shell",
+        label: "Shell",
+        onClick: (row) => {
+          this.router.navigate(
+            new Array('').concat(["jails", "shell", row.host_hostuuid]));
         }
       },
       {
