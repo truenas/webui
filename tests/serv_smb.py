@@ -57,23 +57,30 @@ class conf_smb_test(unittest.TestCase):
         self.status_change("2", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_smb_on (self):
         print (" check if smb turned on")
         time.sleep(2)
         self.status_check("2")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_smb (self):
         print (" turning off the smb service")
         time.sleep(2)
         self.status_change("2", "stop")
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_smb_off (self):
         print (" check if smb turned off")
         time.sleep(2)
         self.status_check("2")
         time.sleep(10)
-
+        # Taking screenshot
+        self.screenshot("04")
 
     #method to test if an element is present
     def is_element_present(self, how, what):

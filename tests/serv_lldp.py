@@ -56,11 +56,15 @@ class conf_lldp_test(unittest.TestCase):
         # scroll down
         driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
         self.status_change("7", "start")
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_lldp_on (self):
         print (" check if lldp turned on")
         time.sleep(2)
         self.status_check("7")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_lldp (self):
         print (" turning off the lldp service")
@@ -68,12 +72,16 @@ class conf_lldp_test(unittest.TestCase):
         self.status_change("7", "stop")
         #lldp takes almost 7 sec to turn off
         time.sleep(7)
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_lldp_off (self):
         print (" check if ftp turned off")
         time.sleep(2)
         self.status_check("7")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present

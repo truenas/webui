@@ -59,6 +59,8 @@ class edit_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("User" in page_data)
+        # Taking screenshot
+        self.screenshot("01_00")
 
     def test_01_01_edit_userNAS_email(self):
         print ("Check if the email has been registered ")
@@ -72,6 +74,8 @@ class edit_test(unittest.TestCase):
         print ("the email for user " + newusername + " is " + email_data)
         # assert response
         self.assertTrue(newuseremail in email_data)
+        # Taking screenshot
+        self.screenshot("01_01")
 
     def test_01_02_edit_userNAS_sudo(self):
         print ("Changing permission to sudo user ")
@@ -79,6 +83,8 @@ class edit_test(unittest.TestCase):
         ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(15)
+        # Taking screenshot
+        self.screenshot("01_02")
 
     def test_02_00_nav_acc_group(self):
         # Click  Account menu
@@ -92,6 +98,8 @@ class edit_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Group" in page_data)
+        # Taking screenshot
+        self.screenshot("02_00")
 
     def test_02_01_edit_groupNAS_sudo(self):
         print ("change permission of groupNAS to sudo")
@@ -100,6 +108,8 @@ class edit_test(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(20)
+        # Taking screenshot
+        self.screenshot("02_01")
 
     # Next step-- To check if the new user is present in the list via automation
 

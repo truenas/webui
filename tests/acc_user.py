@@ -72,6 +72,7 @@ class create_user_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("User" in page_data)
+        self.screenshot("01")
 
     def test_02_create_newuser(self):
         print (" creating a new user with create new primary group")
@@ -102,6 +103,7 @@ class create_user_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['saveButton']).click()
         # check if there is a generic error when making a duplicate user, and print the error
         time.sleep(1)
+        self.screenshot("02")
         self.error_check()
 
     def test_03_create_newuser_primarygroup_uncheck(self):
@@ -140,6 +142,8 @@ class create_user_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
         # Click on create new User button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
+        # Taking screenshot
+        self.screenshot("03")
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
 
@@ -170,6 +174,8 @@ class create_user_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['permitSudocheckbox']).click()
         # Click on create new User button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
+        # Taking screenshot
+        self.screenshot("04")
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
         # check if the the user list is loaded after addding a new user
@@ -202,6 +208,8 @@ class create_user_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
         # Click on create new User button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
+        # Taking screenshot
+        self.screenshot("05")
         # check if there is a generic error when making a duplicate user, and print the error
         self.error_check()
 
