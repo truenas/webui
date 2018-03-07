@@ -62,13 +62,16 @@ class conf_webdav_test(unittest.TestCase):
         driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("17", "start")
+        # Taking screenshot
+        self.screenshot("01")
 
 
     def test_02_checkif_webdav_on (self):
         print (" check if webdav turned on")
         time.sleep(2)
         self.status_check("17")
-
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_configure_webdav(self):
         print (" configuring webdav service")
@@ -88,6 +91,8 @@ class conf_webdav_test(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         #wait till saving is finished
         time.sleep(5)
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_turnoff_webdav (self):
         print (" turning off the webdav service")
@@ -97,12 +102,16 @@ class conf_webdav_test(unittest.TestCase):
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("17", "stop")
+        # Taking screenshot
+        self.screenshot("04")
 
     def test_05_checkif_wedbdav_off (self):
         print (" check if webdave turned off")
         time.sleep(2)
         self.status_check("17")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("05")
 
 
     # method to test if an element is present

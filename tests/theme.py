@@ -51,27 +51,43 @@ class change_theme_test(unittest.TestCase):
 
     def test_01_theme1(self):
         self.theme_change(theme_name['theme1'])
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_theme2(self):
         self.theme_change(theme_name['theme2'])
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_theme3(self):
         self.theme_change(theme_name['theme3'])
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_theme4(self):
         self.theme_change(theme_name['theme4'])
+        # Taking screenshot
+        self.screenshot("04")
 
     def test_05_theme5(self):
         self.theme_change(theme_name['theme5'])
+        # Taking screenshot
+        self.screenshot("05")
 
     def test_06_theme6(self):
         self.theme_change(theme_name['theme6'])
+        # Taking screenshot
+        self.screenshot("06")
 
     def test_07_theme7(self):
         self.theme_change(theme_name['theme7'])
+        # Taking screenshot
+        self.screenshot("07")
 
     def test_08_theme8(self):
         self.theme_change(theme_name['theme8'])
+        # Taking screenshot
+        self.screenshot("08")
 
 
     # method to test if an element is present

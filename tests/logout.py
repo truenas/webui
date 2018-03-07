@@ -57,6 +57,9 @@ class logout_test(unittest.TestCase):
         # Click on OK when re-confirm logout
         driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
         time.sleep(2)
+        # Taking screenshot
+        self.screenshot("01")
+
 
     #method to test if an element is present
     def is_element_present(self, how, what):

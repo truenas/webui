@@ -62,6 +62,8 @@ class conf_network_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Configuration" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_update_nameserver(self):
         # Fill up the form
@@ -73,12 +75,16 @@ class conf_network_test(unittest.TestCase):
         print ("clear the nameserver 2 field")
         driver.find_element_by_xpath(xpaths['nameserver2']).send_keys("10.20.21.2")
         driver.find_element_by_xpath(xpaths['buttonSave']).click()
+        # Taking screenshot
+        self.screenshot("02")
         time.sleep(10)
 
     def test_03_close_network_tab(self):
         # Close the System Tab
         driver.find_element_by_xpath(xpaths['navNetwork']).click()
         time.sleep(2)
+        # Taking screenshot
+        self.screenshot("03")
 
 
     # method to test if an element is present
