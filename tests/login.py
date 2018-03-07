@@ -95,7 +95,7 @@ class login_test(unittest.TestCase):
                 error_element=ui_element.text
                 print (error_element)
             driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
-            print ("Duplicate user cannot be created")
+            print ("rdd error closed")
 
 
     @classmethod
