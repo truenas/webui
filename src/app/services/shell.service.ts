@@ -19,6 +19,7 @@ export class ShellService {
   @LocalStorage() password;
   redirectUrl: string = '';
   public token: string;
+  public jailId: string;
 
   //input and output and eventEmmitter
   private shellCmdOutput: any;
@@ -43,7 +44,11 @@ export class ShellService {
 
   onopen(event) {
     this.onOpenSubject.next(true);
-    this.send(JSON.stringify({ "token": this.token }));
+    if (this.jailId) {
+      this.send(JSON.stringify({ "token": this.token, "jail": this.jailId }));
+    } else {
+      this.send(JSON.stringify({ "token": this.token }));
+    }
   }
 
   onconnect() {
