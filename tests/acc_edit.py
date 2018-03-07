@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -154,6 +159,19 @@ class edit_test(unittest.TestCase):
         time.sleep(1)
         # click on edit option
         driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
+
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+
 
     @classmethod
     def tearDownClass(inst):

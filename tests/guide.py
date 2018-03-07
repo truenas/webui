@@ -15,6 +15,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -76,6 +81,14 @@ class view_guide_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        filename = str(__file__)
+        filename = filename[:-3]
+        final_file = filename.replace(text_path + "/", '')
+        print ("Taking screenshot for " + final_file + " Test no:" + count)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -130,6 +135,17 @@ class conf_ssh_test(unittest.TestCase):
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
 
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
 

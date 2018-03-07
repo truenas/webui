@@ -14,6 +14,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
+
 import time
 import unittest
 import xmlrunner
@@ -129,6 +135,16 @@ class conf_lldp_test(unittest.TestCase):
                 driver.find_element_by_tag_name('body').send_keys(Keys.PAGE_DOWN)
                 print ("searching for service" + which + " Attempt:" + str(i))
 
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

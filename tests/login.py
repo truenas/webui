@@ -16,6 +16,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -48,6 +53,7 @@ class login_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['submitButton']).click()
         # check if the dashboard opens
         time.sleep(1)
+        self.error_check()
         # get the ui element
         ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
         # get the weather data
@@ -70,6 +76,27 @@ class login_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+
+    def error_check(self):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+                ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
+                error_element=ui_element.text
+                print (error_element)
+            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
+            print ("rdd error closed")
+
 
     @classmethod
     def tearDownClass(inst):
