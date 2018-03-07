@@ -55,6 +55,8 @@ class conf_system_email_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("email" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_configure_email(self):
         # Close the System Tab
@@ -63,6 +65,8 @@ class conf_system_email_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(5)
+        # Taking screenshot
+        self.screenshot("02")
 
     # method to test if an element is present
     def is_element_present(self, how, what):

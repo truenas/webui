@@ -62,7 +62,8 @@ class create_group_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Group" in page_data)
-
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_create_newgroup(self):
         print (" creating a new group without root access")
@@ -81,6 +82,8 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
         # Click on save new Group button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
+        # Taking screenshot
+        self.screenshot("02")
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
 
@@ -103,6 +106,8 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
         # Click on save new Group button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
+        # Taking screenshot
+        self.screenshot("03")
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
 
@@ -125,6 +130,8 @@ class create_group_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
         # Click on save new Group button
         driver.find_element_by_xpath(xpaths['saveButton']).click()
+        # Taking screenshot
+        self.screenshot("04")
         # check if there is a generic error when making a duplicate group, and print the error
         self.error_check()
 
@@ -132,7 +139,8 @@ class create_group_test(unittest.TestCase):
         print (" closing account menu")
         driver.find_element_by_xpath(xpaths['navAccount']).click()
         time.sleep(20)
-
+        # Taking screenshot
+        self.screenshot("05")
 
 
     # Next step-- To check if the new user is present in the list via automation

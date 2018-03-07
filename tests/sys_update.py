@@ -61,6 +61,8 @@ class check_update_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Update" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_check_update_now(self):
         # Click on the checknow button
@@ -91,6 +93,8 @@ class check_update_test(unittest.TestCase):
         else:
             print ("There is an unexpected issue")
             self.error_check_sys()
+        # Taking screenshot
+        self.screenshot("02")
 
         # Close the System Tab
 #        driver.find_element_by_xpath(xpaths['navSystem']).click()

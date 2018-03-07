@@ -54,6 +54,8 @@ class view_guide_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Guide" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_check_version(self):
         # cancelling the tour
@@ -68,6 +70,8 @@ class view_guide_test(unittest.TestCase):
         # assert response to check version of freenas guide
 #        self.assertTrue("FreeNAS" in page_data)
 #        time.sleep(10)
+        # Taking screenshot
+        self.screenshot("02")
 
 
     # method to test if an element is present

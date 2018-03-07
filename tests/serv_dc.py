@@ -55,11 +55,15 @@ class conf_dc_test(unittest.TestCase):
         self.status_change("3", "start")
         # dc test takes almost takes 18 seconds to turn on
         time.sleep(18)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_dc_on (self):
         print (" check if dc turned on")
         time.sleep(2)
         self.status_check("3")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_dc (self):
         print (" turning off the dc service")
@@ -67,12 +71,16 @@ class conf_dc_test(unittest.TestCase):
         self.status_change("3", "stop")
         # dc takes almost 22 sec to turn off
         time.sleep(22)
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_dc_off (self):
         print (" check if dc turned off")
         time.sleep(2)
         self.status_check("3")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present

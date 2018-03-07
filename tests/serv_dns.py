@@ -55,22 +55,30 @@ class conf_dns_test(unittest.TestCase):
         self.status_change("4", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_dns_on (self):
         print (" check if dns turned on")
         time.sleep(2)
         self.status_check("4")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_dns (self):
         print (" turning off the dns service")
         time.sleep(2)
         self.status_change("4", "stop")
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_dns_off (self):
         print (" check if dns turned off")
         time.sleep(2)
         self.status_check("4")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present

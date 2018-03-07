@@ -53,11 +53,15 @@ class conf_ssh_test(unittest.TestCase):
         driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "start")
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_ssh_on (self):
         print (" check if ssh turned on")
         time.sleep(2)
         self.status_check("14")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_configure_ssh(self):
         print (" configuring ssh service with root access")
@@ -69,6 +73,8 @@ class conf_ssh_test(unittest.TestCase):
         # click on save button
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(5)
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_turnoff_ssh(self):
         # click Service Menu
@@ -80,12 +86,16 @@ class conf_ssh_test(unittest.TestCase):
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "stop")
+        # Taking screenshot
+        self.screenshot("04")
 
     def test_05_checkif_ssh_off (self):
         print (" check if ssh turned on")
         time.sleep(2)
         self.status_check("14")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("05")
 
         # Next step-- To check if the new user is present in the list via automation
 

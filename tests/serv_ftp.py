@@ -53,24 +53,32 @@ class conf_ftp_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         self.status_change("5", "start")
-        #smb test takes almost 6 min to turn on and display
+        #ftp test takes almost 6 min to turn on and display
         time.sleep(7)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_ftp_on (self):
         print (" check if ftp turned on")
         time.sleep(2)
         self.status_check("5")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_ftp (self):
         print (" turning off the ftp service")
         time.sleep(2)
         self.status_change("5", "stop")
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_ftp_off (self):
         print (" check if ftp turned off")
         time.sleep(2)
         self.status_check("5")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present
