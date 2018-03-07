@@ -55,13 +55,15 @@ class conf_sysadvance_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Advanced" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_close_system_tab(self):
         # Close the System Tab
         driver.find_element_by_xpath(xpaths['navSystem']).click()
         time.sleep(5)
-
-
+        # Taking screenshot
+        self.screenshot("02")
 
 
     # method to test if an element is present
