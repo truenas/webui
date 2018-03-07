@@ -1,0 +1,41 @@
+.card-bg-wrapper{
+  width:40%;
+  height:100%;
+  position:relative;
+  text-align:center;
+}
+
+.card-bg{
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:50%;
+  /*background-color:rgba(0,0,0,0.15);*/
+  background-repeat:no-repeat;
+}
+
+.logo-bg{
+  padding: 24px;
+  border: solid #dedede 8px;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.55);
+  border-radius: 50%;
+  top: 28%;
+  left: 21%;
+  display: table;
+  position: absolute;
+  background-color: #999;
+}
+
+.logo-bg .os-logo{
+  padding: 10px 10px 4px 14px;
+  width: 100px;
+  height: 100px;
+}
+
+.xs .card-bg-wrapper{
+  width:100%
+}
+
+.xs .card-bg{
+  background-size:contain;
+}

@@ -1,4 +1,4 @@
-<div id="entity-card.component" class="flip" style="width:inherit; height:inherit;">
+<div id="entity-card.component" class="flip" style="width:inherit; height:inherit;" [ngClass]="{'raised':conf.isFlipped}">
   <div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
     <mat-card class="card front face animated slideInUp">
       <ng-template [ngTemplateOutlet]="front" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
@@ -8,7 +8,7 @@
         </div>
       </mat-card-footer>
     </mat-card>
-    <mat-card class="card back face" style="overflow-y:auto;">
+    <mat-card class="card back face">
       <ng-template *ngIf="lazyLoaded" [ngTemplateOutlet]="back" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
     </mat-card>
   </div>

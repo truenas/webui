@@ -3,6 +3,7 @@ import { Component, AfterViewChecked, OnInit, ViewChild, ElementRef } from '@ang
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from "rxjs/Subscription";
 import { MediaChange, ObservableMedia } from "@angular/flex-layout";
+import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatSidenav, MatDialog, MatDialogRef } from '@angular/material';
 import * as Ps from 'perfect-scrollbar';
 import * as domHelper from '../../../../helpers/dom.helper';
@@ -55,7 +56,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
 
     // Translator init
-    language.getBrowserLanguage();
+    language.getMiddlewareLanguage();
   }
 
   ngOnInit() {

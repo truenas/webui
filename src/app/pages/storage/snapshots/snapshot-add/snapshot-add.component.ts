@@ -16,20 +16,21 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
+import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 
 @Component({
   selector: 'app-snapshot-add',
   templateUrl: './snapshot-add.component.html'
 })
 
-export class SnapshotAddComponent implements AfterViewInit {
+export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
 
 
-  protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = ['storage', 'snapshots'];
-  protected isEntity = true;
-  protected isNew = true;
-  protected fieldConfig: FieldConfig[] = [];
+  public resource_name: string = 'storage/snapshot';
+  public route_success: string[] = ['storage', 'snapshots'];
+  public isEntity = true;
+  public isNew = true;
+  public fieldConfig: FieldConfig[] = [];
   public initialized = true;
 
   constructor(protected router: Router, protected route: ActivatedRoute,

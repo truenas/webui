@@ -4,7 +4,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
-import { TranslateModule } from 'ng2-translate/ng2-translate';
+import { TranslateModule } from '@ngx-translate/core';
 
 //import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';

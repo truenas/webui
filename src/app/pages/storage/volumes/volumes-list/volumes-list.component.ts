@@ -11,7 +11,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 
 import { Injectable } from '@angular/core';
@@ -89,6 +89,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getAddActions() {
     const actions = [];
+    
     actions.push({
       label: "Import Volumes",
       icon: "vertical_align_bottom",
@@ -97,15 +98,26 @@ export class VolumesListTableConfig implements InputTableConf {
           ["storage", "volumes", "import_list"]));
       }
     });
+
+    actions.push({
+      label: "UnEncrypt Non Imported Volumes",
+      icon: "lock_open",
+      onClick: () => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "unencryptimport_list"]));
+      }
+    });
+
+    
     return actions;
   }
 
   getEncryptedActions(rowData: any) {
     const actions = [];
 
-    if( rowData.vol_encrypt === 2 ) {
-      
-      if( rowData.status !== "LOCKED") {
+    if (rowData.vol_encrypt === 2) {
+
+      if (rowData.status !== "LOCKED") {
         actions.push({
           label: "Lock",
           onClick: (row1) => {
@@ -115,7 +127,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   console.log("restPostResp", restPostResp);
                   this.loader.close();
-                  
+
                   this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
                     this.parentVolumesListComponent.repaintMe();
                   });
@@ -127,10 +139,10 @@ export class VolumesListTableConfig implements InputTableConf {
             });
           }
         });
-      
+
       }
-      
-      if( rowData.status === "LOCKED") {
+
+      if (rowData.status === "LOCKED") {
         actions.push({
           label: "Un-Lock",
           onClick: (row1) => {
@@ -139,12 +151,12 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
       }
-      
-   }
+
+    }
 
 
-   
-    
+
+
     actions.push({
       label: "Create Recovery Key",
       onClick: (row1) => {
@@ -167,11 +179,11 @@ export class VolumesListTableConfig implements InputTableConf {
         this.dialogService.confirm("Delete Recovery Key", "Delete recovery key for volume: " + row1.name).subscribe((confirmResult) => {
           if (confirmResult === true) {
             this.loader.open();
-            
+
             this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
               console.log("restPostResp", restPostResp);
               this.loader.close();
-              
+
               this.dialogService.Info("Deleted Recovery Key", "Successfully deleted recovery key for volume " + row1.name).subscribe((infoResult) => {
                 this.parentVolumesListComponent.repaintMe();
               });
@@ -198,7 +210,7 @@ export class VolumesListTableConfig implements InputTableConf {
       onClick: (row1) => {
         const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
         dialogRef.componentInstance.volumeId = row1.id;
-                
+
       }
     });
 
@@ -211,17 +223,17 @@ export class VolumesListTableConfig implements InputTableConf {
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
       actions.push({
+        label: "Detach Volume",
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "volumes", "detachvolume", row1.id]));
+        }
+      });
+      actions.push({
         label: "Extend",
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "volumes", "manager", row1.id]));
-        }
-      });
-      actions.push({
-        label: "Delete",
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "delete", row1.id]));
         }
       });
       actions.push({
@@ -232,6 +244,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
 
+    
     }
 
     if (rowData.type === "dataset") {
@@ -282,6 +295,25 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
       }
+
+      actions.push({
+        label: "Promote Dataset",
+        onClick: (row1) => {
+          this.loader.open();
+
+          this.rest.post("storage/" + this._classId + "/promote_zfs", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+            console.log("restPostResp", restPostResp);
+            this.loader.close();
+
+            this.dialogService.Info("Cloned", "Successfully Promoted " + row1.path).subscribe((infoResult) => {
+              this.parentVolumesListComponent.repaintMe();
+            });
+          }, (res) => {
+            this.loader.close();
+            this.dialogService.errorReport("Error Promoted dataset " + row1.path, res.message, res.stack);
+          });
+        }
+      });
     }
     if (rowData.type === "zvol") {
       actions.push({
@@ -317,12 +349,12 @@ export class VolumesListTableConfig implements InputTableConf {
     for (let i = 0; i < data.length; i++) {
       const dataObj = data[i];
 
-      dataObj.nodePath =  dataObj.mountpoint;
+      dataObj.nodePath = dataObj.mountpoint;
 
-      if( typeof(dataObj.nodePath) === "undefined" && typeof(dataObj.path) !== "undefined" ) {
+      if (typeof (dataObj.nodePath) === "undefined" && typeof (dataObj.path) !== "undefined") {
         dataObj.nodePath = "/mnt/" + dataObj.path;
       }
-      
+
       if (dataObj.status !== '-') {
         // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
         continue;
@@ -332,7 +364,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
 
-      if ("/mnt" === dataObj.parentPath ) {
+      if ("/mnt" === dataObj.parentPath) {
         dataObj.parentPath = "0";
       }
 

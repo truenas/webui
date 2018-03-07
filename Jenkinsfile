@@ -16,4 +16,10 @@ node('FreeNAS-webui') {
       echo 'npm run build:prod:aot'
       sh 'npm run build:prod:aot'
     }
+    stage('Building UI archive') {
+      sh 'rm -rf ${WORKSPACE}/artifacts'
+      sh 'mkdir -p ${WORKSPACE}/artifacts'
+      sh 'tar cvJf ${WORKSPACE}/artifacts/webui.txz --exclude ./artifacts .'
+      archiveArtifacts artifacts: 'artifacts/**', fingerprint: true
+    }
 }

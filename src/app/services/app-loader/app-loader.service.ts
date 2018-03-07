@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Observable } from 'rxjs/Rx';
 import { AppLoaderComponent } from './app-loader.component';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class AppLoaderService {

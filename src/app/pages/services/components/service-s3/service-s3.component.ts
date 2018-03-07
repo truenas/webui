@@ -93,6 +93,7 @@ export class ServiceS3Component implements OnInit {
       placeholder : 'Enable Browser',
       tooltip: 'Enable the web user interface for the S3 service.',
     },
+/*  This is to be enabled when the mode feature is finished and fully implemented for S3
     {
       type : 'select',
       name : 'mode',
@@ -101,6 +102,7 @@ export class ServiceS3Component implements OnInit {
         {label : 'local'}
       ]
     },
+*/
     {
       type : 'select',
       name : 'certificate',

@@ -3,8 +3,10 @@ import 'rxjs/add/operator/map';
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+
+import { RestService } from './rest.service'
 
 @Injectable()
 export class LanguageService {
@@ -18,10 +20,11 @@ export class LanguageService {
     code: 'es',
   }, {
     name: '中文',
-    code: 'zh',
-  }]
+    code: 'zh-hans',
+  }];
+  system_resource = 'system/settings';
 
-  constructor(protected translate: TranslateService) {
+  constructor(protected translate: TranslateService, protected rest: RestService) {
   }
 
   getBrowserLanguage() {
@@ -29,6 +32,27 @@ export class LanguageService {
       const browserLang = this.translate.getBrowserLang();
       this.setLang(browserLang);
     }
+  }
+
+  getMiddlewareLanguage() {
+    this.rest.get(this.system_resource, {}).subscribe((res) => {
+      if (res.data && res.data.stg_language) {
+        this.setLang(res.data.stg_language);
+      } else {
+        this.getBrowserLanguage();
+      }
+    });
+  }
+
+  setMiddlewareLanguage(lang: any) {
+    this.rest.put(this.system_resource, 
+      {body: JSON.stringify({stg_language: lang})}).subscribe(
+    (res) => {
+    },
+    (err) => {
+      console.log(err);
+    });
+    this.setLang(lang);
   }
 
   setLang(lang: any) {

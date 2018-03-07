@@ -82,8 +82,7 @@ vm-cards mat-card.front {
   width: 40%;
   text-align: center;
   background-color: #111;
-  /*background-image:url('https://www.globaletraining.ca/wp-content/uploads/2015/05/3d-abstract-black-dark-geometry-2501884-2560x1600.png');*/
-  background-image:url('../../../../assets/images/vm-card-bg.jpg');
+  background-image:url('/assets/images/vm-card-bg.jpg');
   background-size:cover;
   background-position:50%;
   position: absolute;

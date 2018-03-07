@@ -1,6 +1,6 @@
 import {Component, ViewContainerRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import {EntityFormService} from '../../services/entity-form.service';
 import {FieldConfig} from '../../models/field-config.interface';

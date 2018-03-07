@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Observable, Observer, Subscription } from 'rxjs';
 import { HttpClient, HttpParams, HttpRequest, HttpEvent, HttpHeaders } from '@angular/common/http';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';

@@ -7,7 +7,7 @@ import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewc
   template:ViewChartMetadata.template
   //templateUrl: './viewchartpie.component.html',
   //styleUrls: ['./viewchartdonut.component.css']
-})
+  })
 export class ViewChartDonutComponent extends ViewChartComponent implements OnInit {
 
   public title:string = '';
@@ -29,7 +29,11 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
         type: this.chartType
       },
       donut:{
-        title: this.title
+        title: this.title,
+        width:15,
+        label: {
+          show: false
+        }
       },
       size:{
         width: this.width,

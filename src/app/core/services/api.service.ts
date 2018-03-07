@@ -30,6 +30,33 @@ export class ApiService {
         responseEvent: "PoolData"
       }
     },
+    PoolDisksRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"pool.get_disks",
+        args: [],
+        responseEvent: "PoolDisks"
+      }
+    },
+    NetInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"network.general.summary",
+        args: [],
+        responseEvent: "NetInfo"
+      }
+    },
+    UpdateCheck:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"update.check_available",
+        args: [],
+        responseEvent: "UpdateChecked"
+      }
+    },
     VmProfilesRequest:{
       apiCall:{
         protocol:"websocket",
@@ -39,15 +66,6 @@ export class ApiService {
         responseEvent: "VmProfiles"
       }
     },
-    /*VmProfilesRequest:{
-     apiCall:{
-       protocol:"rest",
-       version:"1.0",// Middleware returns status but no device info
-       operation: "get",
-       namespace: "vm/vm",
-       responseEvent: "VmProfiles"
-     }
-    },*/
     VmProfileRequest:{
       apiCall:{
         protocol:"websocket",
@@ -93,6 +111,24 @@ export class ApiService {
         responseEvent:"VmDeleted"
       }
     },
+    SysInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"system.info",
+        args:[],
+        responseEvent:"SysInfo"
+      }
+    },
+    /*NetInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_sources",
+        args:[],
+        responseEvent:"NetInfo"
+      }
+    },*/
     StatsRequest:{
       apiCall:{
         protocol:"websocket",
@@ -140,7 +176,152 @@ export class ApiService {
         cloneRes.meta.legend = l;
         return cloneRes;
       }
-    }
+    },
+    StatsMemoryRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        //Do some stuff here
+
+        let dataList = [];
+        let oldDataList = redef.args[0];
+        let options = redef.args[1];
+
+        for(let i in oldDataList){
+          dataList.push({
+            source:"memory",
+            type:"memory-" + oldDataList[i],
+            dataset:"value"
+          });
+        }
+
+        redef.args = [dataList,options];
+        redef.responseEvent = 'StatsMemoryData';
+        return redef;
+      },
+      postProcessor(res){
+        console.log("******** MEM STAT RESPONSE ********");
+        console.log(res);
+
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          let spl = legend[i].split("memory/memory-");
+          l.push(spl[1]);
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
+      }
+    },
+    StatsDiskTempRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        //Clone the object
+        let redef = Object.assign({}, def);
+        let dataList = [];
+        let oldDataList = redef.args[0];
+
+        for(let i in oldDataList){
+          dataList.push({
+            source:"disktemp-" + oldDataList,// disk name
+            type:"temperature",
+            dataset:"value"
+          });
+        }
+
+        redef.args = [dataList];
+        redef.responseEvent = 'StatsDiskTemp';
+        return redef;
+      },
+      postProcessor(res){
+        //console.log("******** DISK TEMP RESPONSE ********");
+        //console.log(res);
+
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          let spl = legend[i];
+          l.push(spl[1]);
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
+      }
+    },
+    StatsLoadAvgRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_data",
+        args:[],
+        responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        //Do some stuff here
+        let dataList = [];
+        let oldDataList = redef.args[0];
+        let options = redef.args[1];
+
+        for(let i in oldDataList){
+          dataList.push({
+            source:"processes",
+            type:"ps_" + oldDataList[i],
+            dataset:"value"
+          });
+        }
+
+        redef.args = [dataList,options];
+        redef.responseEvent = 'StatsLoadAvgData';
+        return redef;
+      },
+      postProcessor(res){
+        console.log("******** LOAD STAT RESPONSE ********");
+        console.log(res);
+        //return res;
+
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          let spl = legend[i].split("processes/ps_state-");
+          l.push(spl[1]);
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
+      }
+    },
+    StatsVmemoryUsageRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"vm.get_vmemory_in_use",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "StatsVmemoryUsage"
+      }
+    },
+    DisksInfoRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"disk.query",
+        args: [],
+        responseEvent: "DisksInfo"
+      }
+    },
   } 
 
   constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {

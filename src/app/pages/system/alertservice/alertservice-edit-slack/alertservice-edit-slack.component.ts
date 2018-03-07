@@ -29,8 +29,8 @@ export class AlertServiceEditSlackComponent {
   protected route_success: string[] = [ 'system', 'alertservice'];
   protected isNew = false;
   protected isEntity = true;
-  
-  
+
+
   protected fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -46,29 +46,29 @@ export class AlertServiceEditSlackComponent {
       type : 'input',
       name : 'cluster_name',
       placeholder: 'cluster_name',
-      tooltip: 'Enter the name of the cluster. Note this field is\
- optional and can be left blank.',
+      tooltip: 'Enter the name of the cluster. This is optional and can\
+ be left blank.',
     },{
       type : 'input',
       name : 'url',
       placeholder: 'url',
-      tooltip: 'Paste the incoming webhook URL asssociated with\
- this service. Refer to the\
- <a href="https://api.slack.com/incoming-webhooks" target="_blank"> Slack API documentation</a>\
- for more information about setting up incoming webhooks.'
+      tooltip: 'Paste the incoming webhook URL associated with this\
+ service. Refer to the <a href="https://api.slack.com/incoming-webhooks"\
+ target="_blank">Slack API documentation</a> for more information about\
+ setting up incoming webhooks.',
     },{
       type : 'input',
       name : 'channel',
       placeholder: 'channel',
-      tooltip: 'Select the Slack channel the Incoming\
- WebHook will post messages to.',
+      tooltip: 'Enter a Slack channel for the Incoming WebHook to post\
+ messages to it.',
     },{
       type : 'input',
       name : 'icon_url',
       placeholder: 'icon_url',
-      tooltip: 'URL of a custom image for notification icons.\
- This overrides the default if set in the Incoming Webhook settings.\
- Note this field is optional and can be left blank.',
+      tooltip: 'URL of a custom image for notification icons. This\
+ overrides the default if set in the Incoming Webhook settings. This\
+ field is optional and can be left blank.',
     },{
       type : 'checkbox',
       name : 'detailed',
@@ -84,7 +84,7 @@ export class AlertServiceEditSlackComponent {
   ];
 
   resourceTransformIncomingRestData(data:any): any {
-    
+
     data.username = data.attributes.username;
     data.cluster_name = data.attributes.cluster_name;
     data.url = data.attributes.url;
@@ -94,7 +94,6 @@ export class AlertServiceEditSlackComponent {
 
     return data;
   };
-
 
   constructor(
       protected router: Router,

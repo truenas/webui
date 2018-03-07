@@ -1,9 +1,10 @@
-import { Component, AfterViewInit, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, AfterViewInit, OnInit, OnChanges, Input, HostListener } from '@angular/core';
 import { LayoutChild } from 'app/core/classes/layouts';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
 import * as c3 from 'c3';
-import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
+//import { ChartConfiguration, LegendOptions, TooltipOptions } from 'c3';
+import { ChartConfiguration, LegendOptions, TooltipOptions } from './viewchart.component.types';
 
 export interface ChartData {
   legend: string;
@@ -52,6 +53,13 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public units: string;
   @Input() width: number;
   @Input() height: number;
+  /*
+  @HostListener('window:resize', ['$event'])
+  onResize(event){
+       //DEBUG: console.log("Width: " + event.target.innerWidth);
+       this.refresh();
+  }
+  */
 
   public chart: any;
   public chartLoaded: boolean = false;
@@ -76,7 +84,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
         for(let i = 0; i < raw.length; i++){
           if(this.legend[index].name == raw[i].name){
             this.legend[index].value = raw[i].value;
-            //console.log(this.legend);
+            //DEBUG: console.log(this.legend);
           }
         }
         this.legend[index].x = time;
@@ -95,12 +103,12 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log("******** CHART DIMENSIONS - Width:" + this.width + "/ Height: " + this.height);
+    //DEBUG: console.log("******** CHART DIMENSIONS - Width:" + this.width + "/ Height: " + this.height);
     this.render();
   }
 
   ngOnChanges(changes) {
-    console.log("OnChanges");
+    //DEBUG: console.log("OnChanges");
     if(changes.data){
       this.render();
     }
@@ -131,18 +139,18 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
         let legendHtmlItem: Legend = {swatch:'',name:item.legend, value: "empty", x:"empty", visible:true};
         if(this.chartType == "donut" || this.chartType == "pie"){
-          console.log("******** DONUT/PIE LEGEND VALUE ********");
-          console.log(legendHtmlItem);
+          //DEBUG: console.log("******** DONUT/PIE LEGEND VALUE ********");
+          //DEBUG: console.log(legendHtmlItem);
           legendHtmlItem.value = d[i].data[0];
           this.showLegendValues = true;
         }
-        this.legend.push(legendHtmlItem)
+        this.legend.push(legendHtmlItem);
       }
       this._data = result;
 
-      console.log("DEBUG: set data() ********");
-      console.log(d);
-      //console.log(this.chartConfig);
+      //DEBUG: console.log("DEBUG: set data() ********");
+      //DEBUG: console.log(d);
+      //DEBUG: console.log(this.chartConfig);
 
       //this.chartConfig.data.columns = result;
       this.render();
@@ -187,13 +195,13 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
      tooltip:{
        show:false,
        /*contents: (raw, defaultTitleFormat, defaultValueFormat, color) =>{
-         console.log(raw[0]);
+         //DEBUG: console.log(raw[0]);
            //return ... // formatted html as you want
        }*/
        format: {
          value: (value, ratio, id, index) => {
            if(this.units){
-             console.log("Units = " + this.units)
+             //DEBUG: console.log("Units = " + this.units)
              return value + this.units; 
            } else {
              return value;
@@ -220,13 +228,13 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   render(){
     if(this.data.length == 0){
-      console.log("NO DATA FOUND");
+      //DEBUG: console.log("NO DATA FOUND");
       return -1;
     }
 
     let conf = this.makeConfig();
     let colors = this.colorsFromTheme();
-    console.log(colors);
+    //DEBUG: console.log(colors);
     if(colors){
       let color = {
         pattern: colors
@@ -238,7 +246,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     conf.legend = this.legendOptions;
     conf.tooltip = this.tooltipOptions;
     if(this.legend.length > 0 && colors){
-      console.log(conf);
+      //DEBUG: console.log(conf);
       for(let i in this.legend){
         this.legend[i].swatch = conf.color.pattern[i];
       }
@@ -249,7 +257,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       }
     }
 
-    console.log("GENERATING DATA FROM ...");
+    //DEBUG: console.log("GENERATING DATA FROM ...");
     this.chart = c3.generate(conf);
     this.chartLoaded = true;
     return this.chart

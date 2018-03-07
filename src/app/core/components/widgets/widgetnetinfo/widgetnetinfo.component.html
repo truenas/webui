@@ -1,0 +1,60 @@
+<div class="widget widget-{{widgetSize}}">
+  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-evenly start">
+      <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar" >
+        <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
+        <!--<button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+          </button>-->
+      </mat-toolbar-row>
+      <!--<mat-menu #menu="matMenu" color="warn">
+        <button mat-menu-item (click)="toggleConfig()">
+        <mat-icon>settings</mat-icon>
+        <span>Configure</span>
+        </button>
+        </mat-menu>-->
+        <mat-card-content fxLayout="column" fxLayoutAlign="space-between stretch" fxFlex="100">
+          <div fxFlex="100" fxAlign="center" *ngIf="!data">
+            <h3 style="margin:0 auto;">Retrieving Network Info</h3>
+          </div>
+          <div fxFlex="100" *ngIf="data">
+            <mat-list class="network-info">
+              <mat-list-item class="subheader">
+                <h5>Interfaces</h5>
+              </mat-list-item>
+              <mat-list-item class="nic" *ngFor="let nic of nics;let i = index; ">
+                  <span class="avatar"><mat-icon class="mat-raised-botton mat-primary">settings_ethernet</mat-icon></span>
+                  <span class="nic-name label">{{nics[i].name}}:</span>
+                  <span class="nic.primary ">{{nics[i].primary}}</span>
+                  <span class="nic-aliases">{{nics[i].aliases}}</span>
+              </mat-list-item>
+            </mat-list>
+          </div>
+          <div fxFlex="100" *ngIf="data">
+            <mat-list class="network-info">
+              <mat-list-item class="subheader">
+                <h5>Configuration</h5>
+              </mat-list-item>
+              <mat-list-item>
+                  <span class="avatar"><mat-icon>router</mat-icon></span>
+                  <span class="label">Default Routes:</span>
+                  <span class="">{{defaultRoutes}}</span>
+              </mat-list-item>
+              <mat-list-item>
+                  <span class="avatar"><mat-icon>dns</mat-icon></span>
+                  <span class="label">Name Servers:</span>
+                  <span class="" >{{nameServers}}</span>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </mat-card-content>
+        <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
+    </mat-card>
+    <mat-card class="back">
+      <mat-card-content>
+        <h3>Form goes here</h3>
+      </mat-card-content>
+      <div class="widget-footer"><button mat-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>
+    </mat-card>
+  </div>
+</div>

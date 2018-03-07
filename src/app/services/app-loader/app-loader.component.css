@@ -4,4 +4,5 @@ mat-spinner {
 
 .spinner-container {
     height: 120px;
+    overflow:hidden;
 }

@@ -1,0 +1,121 @@
+<div class="widget widget-{{widgetSize}}" ngClass.xs="double-height">
+  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch" fxFlex="100" class="mat-card-toolbar">
+        <span class="mat-card-title-text">
+          <div class="card-title-text">
+            <div class="card-title-items">
+              <div><span class="volume-name">{{title}}: {{volumeData.vol_name}}</span> </div>
+              <div><span class="pool-status">{{volumeData.status}}</span></div>
+            </div>
+          </div>
+        </span>
+        <ng-template *ngIf="configurable"><button mat-icon-button (click)="toggleConfig()">
+          <mat-icon>settings</mat-icon>
+          </button></ng-template>
+      </mat-toolbar-row>
+      <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-around center" fxFlex="100">
+        <!-- CHART -->
+        <div fxFlex="100" fxFlex.gt-xs="35" style="position:relative;">
+          <viewchartdonut #zvol [width]="chartSize" [height]="chartSize" [style.display]="isFlipped ? 'none': 'block'" fxFlex="100"></viewchartdonut>
+        </div>
+
+        <!-- DISKS -->
+        <div fxFlex="100" fxFlex.gt-xs="50" class="disk-array-ui" ngClass.xs="column">
+          <!--<ng-template *ngIf="disks.length > 0">-->
+            <!-- Header and Pagination Controls -->
+            <mat-grid-list [cols]="gridCols" rowHeight="24px" role="list" *ngIf="disks.length > 0" [ngClass]="{'high-density': gridCols == 8}">
+              <mat-grid-tile [colspan]="gridCols" >
+                <span class="disk-grid-header">Disks in Use</span>
+                <ng-container *ngIf="diskSets.length > 1">
+                  <div class="disk-grid-controls">
+                    <span *ngFor="let set of diskSets; let i = index;" class="disk-grid-control" (click)="setCurrentDiskSet(i)">{{i+1}}</span>
+                  </div>
+                </ng-container>
+              </mat-grid-tile>
+            </mat-grid-list>
+  
+            <!-- Sets of Disks -->
+            <div class="diskset-wrapper-mask">
+              <div class="diskset-wrapper" [ngStyle]="{width: diskSets.length*100+'%', 'margin-left':currentDiskSet*-100+'%'}">
+                <div *ngFor="let set of diskSets; let s = index;" [ngStyle]="{width: 100/diskSets.length+'%'}" class="diskset">
+                  <mat-grid-list  [cols]="gridCols" rowHeight="24px" role="list" [ngClass]="{'high-density': gridCols == 8}">
+                    <mat-grid-tile *ngFor="let disk of diskSets[s]; let i=index" class="disk-tile" (click)="setSelectedDisk(i)" >
+                        <mat-icon class="disk-icon" role="img">local_laundry_service</mat-icon>
+                        <span class="disk-name">{{diskSets[s][i]}}</span>
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                </div>
+              </div>
+            </div>
+            <!--</ng-template>-->
+
+          <div class="disk-details">
+            <div class="disk-detail disk-detail-header" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch" *ngIf="selectedDisk > -1">
+              <!--<span fxFlex="100" class="disk-detail-title">{{diskDetails[selectedDisk].name}}</span>-->
+              <div fxFlex="100">
+                <span class="disk-detail-title">Disk {{diskDetails[selectedDisk].name}}</span>
+              </div>
+              <div fxFlex="100" class="disk-detail-subtitle">
+                <span class="value">{{(diskDetails[selectedDisk].size/1073741824).toFixed(2)}} GB</span>
+              </div>
+            </div>
+
+            <div class="disk-detail disk-detail-body" fxLayout="column" fxLayoutWrap fxLayout="space-between stretch"  *ngIf="selectedDisk > -1">
+              <div class="disk-detail-section">
+                <div class="disk-detail-item"><div><span class="label">Serial: </span><span class="value">{{diskDetails[selectedDisk].serial}}</span></div></div>
+                <div class="disk-detail-item">
+                  <div>
+                    <span class="label">S.M.A.R.T. Status: </span>
+                    <span class="value" *ngIf="diskDetails[selectedDisk].smart_enabled">Enabled</span>
+                    <span class="value" *ngIf="!diskDetails[selectedDisk].smart_enabled">Disabled</span>
+                  </div>
+                </div>
+                <div class="disk-detail-item">
+                  <div><span class="label">S.M.A.R.T Options: </span>
+                      <span class="value" *ngIf="!diskDetails[selectedDisk].smartoptions || diskDetails[selectedDisk].smartoptions.length == ''">
+                        None
+                      </span>
+                      {{diskDetails[selectedDisk].smartoptions}}
+                    </div>
+                  </div>
+                  <div class="disk-detail-item"><div><span class="label">Description: </span>
+                    <span class="value" *ngIf="!diskDetails[selectedDisk].description">N/A</span>
+                    <span class="value">{{diskDetails[selectedDisk].description}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div fxFlex="100" class="disk-detail-temp-label" style="margin-top:16px;"[ngClass]="{hot: diskDetails[selectedDisk].temp >= 55}">
+                <span class="label">Temperature:</span><span class="value">{{diskDetails[selectedDisk].temp}} &deg;C</span>
+              </div>
+              <div fxFlex="100" class="disk-detail-temp" fxLayout="row" fxLayoutWrap>
+                <mat-progress-bar fxFlex="100" class="disk-detail-temps-bar" mode="determinate" [value]="diskDetails[selectedDisk].temp" [color]="diskDetails[selectedDisk].temp >= 55 ? 'warn' : 'primary'"></mat-progress-bar>
+                <div fxFlex="50" style="text-align:left;">0</div>
+                <div fxFlex="50" style="text-align:right;">100</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
+    </mat-card>
+
+    <!-- Back Face -->
+    <mat-card class="back">
+      <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
+        <form (ngSubmit)="setPreferences(f)" #f="ngForm" id="preferences" *ngIf="chartZvol.legend.length > 0">
+          <ng-container *ngFor="let legend of chartZvol.legend; let i=index">
+            <mat-checkbox ngModel name="Something">
+             Something
+            </mat-checkbox><br>
+          </ng-container>
+        </form>
+      </mat-card-content>
+      <div class="widget-footer">
+        <button mat-raised-button color="accent" (click)="toggleConfig()">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">Save</button>
+      </div>
+    </mat-card>
+  </div>
+</div>

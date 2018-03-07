@@ -3,8 +3,10 @@ import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Http, HttpModule } from '@angular/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateModule, TranslateLoader, TranslateStaticLoader } from 'ng2-translate/ng2-translate';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
 import { NgIdleModule } from '@ng-idle/core';
 import { rootRouterConfig } from './app.routes';
@@ -37,8 +39,8 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { ErdService } from 'app/services/erd.service';
 import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
-export function createTranslateLoader(http: Http) {
-  return new TranslateStaticLoader(http, './assets/i18n', '/translations.json');
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '/translations.json');
 }
 
 @NgModule({
@@ -48,11 +50,14 @@ export function createTranslateLoader(http: Http) {
     FlexLayoutModule,
     AppLoaderModule,
     HttpModule,
+    HttpClientModule,
     AppCommonModule,
     TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: (createTranslateLoader),
-      deps: [Http]
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient]
+      }
     }),
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),

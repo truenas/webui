@@ -16,7 +16,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Rx';
 import { MatSnackBar } from '@angular/material';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
@@ -58,6 +58,7 @@ export interface Formconfiguration {
   custom_edit_query?;
   custom_add_query?
   custActions?: any[];
+  customFilter?:any[];
   
   beforeSubmit?;
   customSubmit?;
@@ -182,12 +183,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       if (this.conf.queryCall) {
         if(this.pk) {
-          const filter = []
+          let filter = []
           if (this.conf.pk) {
            filter.push(this.conf.pk);
           }
           if (this.conf.queryCallOption) {
             filter.push(this.conf.queryCallOption);
+          }
+          if (this.conf.customFilter){
+            filter = this.conf.customFilter
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
@@ -478,9 +482,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  ngOnDestroy() {
-    if(this.sub){
-      this.sub.unsubscribe();
+  ngOnDestroy() { 
+    
+    if( typeof(this.sub) !== "undefined" && typeof(this.sub.unsubscribe) !== "undefined" ) {
+      this.sub.unsubscribe(); 
     }
   }
 }
