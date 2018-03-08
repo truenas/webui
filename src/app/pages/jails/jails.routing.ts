@@ -10,6 +10,7 @@ import { TemplateFormComponent } from './templates/template-form/';
 import { JailAddComponent } from './jail-add/';
 import { JailEditComponent } from './jail-edit/';
 import { JailWizardComponent } from './jail-wizard/';
+import { JailShellComponent } from './jail-shell/';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,10 @@ export const routes: Routes = [
       path: 'edit/:pk',
       component: JailEditComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' },
+    }, {
+      path: 'shell/:pk',
+      component: JailShellComponent,
+      data: { title: 'Shell', breadcrumb: 'Shell' },
     }, {
       path: 'storage/:jail',
       component: StorageListComponent,
