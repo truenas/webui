@@ -82,11 +82,7 @@ vm-cards mat-card.front {
   width: 40%;
   text-align: center;
   background-color: #111;
-<<<<<<< HEAD
-  background-image:url('/webui/src/assets/images/vm-card-bg.jpg');
-=======
   background-image:url('/assets/images/vm-card-bg.jpg');
->>>>>>> origin/master
   background-size:cover;
   background-position:50%;
   position: absolute;
