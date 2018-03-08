@@ -129,7 +129,7 @@ export class PluginsInstalledListComponent {
       },
       {
         id: "management",
-        label: "Managment",
+        label: "Management",
         onClick: (row) => {
           window.open(row[9]);
         }

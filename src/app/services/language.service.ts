@@ -3,7 +3,7 @@ import 'rxjs/add/operator/map';
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
 import { RestService } from './rest.service'

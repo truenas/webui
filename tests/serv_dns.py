@@ -14,6 +14,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
+
 import time
 import unittest
 import xmlrunner
@@ -49,22 +55,30 @@ class conf_dns_test(unittest.TestCase):
         self.status_change("4", "start")
         #smb test takes almost 6 min to turn on and display
         time.sleep(7)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_dns_on (self):
         print (" check if dns turned on")
         time.sleep(2)
         self.status_check("4")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_dns (self):
         print (" turning off the dns service")
         time.sleep(2)
         self.status_change("4", "stop")
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_dns_off (self):
         print (" check if dns turned off")
         time.sleep(2)
         self.status_check("4")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present
@@ -113,6 +127,16 @@ class conf_dns_test(unittest.TestCase):
         print ("current status is: " + status_data)
 
 
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

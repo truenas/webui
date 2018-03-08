@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -57,6 +62,8 @@ class conf_network_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Configuration" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_update_nameserver(self):
         # Fill up the form
@@ -68,12 +75,16 @@ class conf_network_test(unittest.TestCase):
         print ("clear the nameserver 2 field")
         driver.find_element_by_xpath(xpaths['nameserver2']).send_keys("10.20.21.2")
         driver.find_element_by_xpath(xpaths['buttonSave']).click()
+        # Taking screenshot
+        self.screenshot("02")
         time.sleep(10)
 
     def test_03_close_network_tab(self):
         # Close the System Tab
         driver.find_element_by_xpath(xpaths['navNetwork']).click()
         time.sleep(2)
+        # Taking screenshot
+        self.screenshot("03")
 
 
     # method to test if an element is present
@@ -90,6 +101,18 @@ class conf_network_test(unittest.TestCase):
     def error_check_sys(self):
         if (self.is_element_present(By.XPATH, "/html/body/div[5]/div[4]/div/mat-dialog-container/error-dialog/h1")):
             driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
+
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
 
