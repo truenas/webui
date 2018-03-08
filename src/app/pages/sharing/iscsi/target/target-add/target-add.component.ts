@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -37,6 +37,8 @@ export class TargetAddComponent implements OnInit {
       placeholder : 'Target Name',
       tooltip: 'Required value. Base name will be appended\
  automatically if it does not start with <i>iqn</i>.',
+      required: true,
+      validation: [Validators.required],
     },
     {
       type: 'input',
@@ -57,6 +59,8 @@ export class TargetAddComponent implements OnInit {
  to use.',
             value : '',
             options: [],
+            required: true,
+            validation: [Validators.required],
           },
           {
             type: 'select',
