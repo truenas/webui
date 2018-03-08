@@ -41,6 +41,7 @@ export class DeviceAddComponent implements OnInit {
   protected route_success: string[];
   public hasCon = true;
   public success = false;
+  public custActions: Array < any >
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -74,9 +75,7 @@ export class DeviceAddComponent implements OnInit {
     return true;
   }
 
-  onSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
+  customSubmit(event: Event) {
     this.ws.call('vm.query', [[[ "name", "=", this.conf.vm ]]]).subscribe((res) => {
       const formvalue = _.cloneDeep(this.formGroup.value);
       this.route_success = [ 'vm', this.vmid, 'devices', this.conf.vm ];

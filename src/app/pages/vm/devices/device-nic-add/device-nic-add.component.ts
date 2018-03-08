@@ -63,6 +63,7 @@ export class DeviceNicAddComponent {
     },
   ];
   private nic_attach: any;
+  public NIC_mac: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -71,6 +72,18 @@ export class DeviceNicAddComponent {
               ) {}
 
   afterInit(entityAdd: any) {
+    entityAdd.custActions = [{
+      id: 'generate_mac_address',
+      name: 'Generate MAC ADDRESS',
+      function: () => {   
+        entityAdd.ws.call('vm.random_mac').subscribe((random_mac)=>{
+              this.NIC_mac = _.find(this.fieldConfig, {'name' : 'NIC_mac'});
+              entityAdd.formGroup.controls['NIC_mac'].setValue(random_mac);
+              this.NIC_mac.value = random_mac;
+            })
+          }
+      }
+    ] 
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
       this.vm = params['name'];
@@ -88,6 +101,5 @@ export class DeviceNicAddComponent {
           res.forEach((item) => {
             this.nicType.options.push({label : item[1], value : item[0]});
           });
-        });
-  }
-}
+        });}
+      }
