@@ -15,8 +15,8 @@
               <mat-input-container class="full-width">
                 <input matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
-                  <span *ngIf="!failed">{{"SIGNIN.PLEASE_ENTER_USERNAME" | translate}}</span>
-                  <span *ngIf="failed">{{"SIGNIN.PLEASE_ENTER_USERNAME_AGAIN" | translate}}</span>
+                  <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
+                  <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>
                 </mat-error>
               </mat-input-container>
             </div>
@@ -24,19 +24,19 @@
               <mat-input-container class="full-width">
                 <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
                 <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
-                    <span *ngIf="!failed">{{"SIGNIN.PLEASE_ENTER_PASSWORD" | translate}}</span>
-                    <span *ngIf="failed">{{"SIGNIN.PLEASE_ENTER_PASSWORD_AGAIN" | translate}}</span>
+                    <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
+                    <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
                 </mat-error>
               </mat-input-container>
             </div>
-            <button mat-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"SIGNIN.SIGN_IN" | translate}}</button>
+            <button mat-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
           </form>
         </div>
         <ng-template #notconnected>
-          {{"SIGNIN.SYSTEM_NOT_AVAILABLE" | translate}}
+          {{"System is not yet available, please wait" | translate}}
         </ng-template>
         <div>
-          <a mat-button color="primary" href="/legacy/">{{"SIGNIN.BACK_TO_OLD_UI" | translate}}</a>
+          <a mat-button color="primary" href="/legacy/">{{"Back to the Old UI" | translate}}</a>
         </div>
         <div>
           <span fxFlex class="copyright-txt">FreeNAS® © 2018 - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
