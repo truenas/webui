@@ -4,9 +4,9 @@
     </ng-container>
     <mat-card-actions class="buttons">
       <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent">Cancel</button>
+      <button *ngIf="route_success" type="button" (click)="goBack()" mat-raised-button color="accent">Cancel</button>
       <span *ngFor="let custBtn of custActions">
-      <button mat-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" (click)="custBtn['function']()">{{custBtn.name}}</button>
+      <button mat-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
     </span>
     </mat-card-actions>
   </form>

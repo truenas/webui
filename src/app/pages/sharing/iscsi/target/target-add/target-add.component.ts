@@ -10,6 +10,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { DynamicFieldDirective } from '../../../../common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector : 'app-iscsi-target-add',
@@ -132,7 +133,8 @@ export class TargetAddComponent implements OnInit {
   constructor(protected router: Router,
               protected rest: RestService,
               protected iscsiService: IscsiService,
-              protected entityFormService: EntityFormService) {}
+              protected entityFormService: EntityFormService,
+              protected loader: AppLoaderService) {}
 
   ngOnInit() {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
@@ -207,6 +209,7 @@ export class TargetAddComponent implements OnInit {
     target_value.iscsi_target_name = this.formGroup.value['iscsi_target_name'];
     target_value.iscsi_target_alias = this.formGroup.value['iscsi_target_alias'];
 
+    this.loader.open();
     this.busy = this.rest
         .post(this.target_resource_name + '/', {
           body : JSON.stringify(target_value),
@@ -237,10 +240,11 @@ export class TargetAddComponent implements OnInit {
                      new EntityUtils().handleError(this, res);
                     });
             }
-
+            this.loader.close();
             this.router.navigate(new Array('').concat(this.route_success));
           },
           (res) => {
+            this.loader.close();
             new EntityUtils().handleError(this, res);
           }
         );
