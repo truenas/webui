@@ -31,7 +31,7 @@ import {EntityTemplateDirective} from '../../../common/entity/entity-template.di
 export class DeviceAddComponent implements OnInit {
 
   @Input('conf') conf: any;
-
+  protected resource_name = 'vm/device';
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
   public error: string;
@@ -39,8 +39,8 @@ export class DeviceAddComponent implements OnInit {
   public vmid: any;
   protected route_cancel: string[];
   protected route_success: string[];
-  public hasConf: boolean = true;
-  public success: boolean = false;
+  public hasCon = true;
+  public success = false;
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)

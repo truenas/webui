@@ -22,13 +22,11 @@ import {regexValidator} from '../../../common/entity/entity-form/validators/rege
 })
 export class DeviceNicAddComponent {
 
-  protected resource_name: string = 'vm/device';
   protected pk: any;
   protected route_success: string[];
   public vm: string;
   private nicType:  any;
-
-  protected dtype: string = 'NIC';
+  protected dtype = 'NIC';
 
   public fieldConfig: FieldConfig[]  = [
     {
