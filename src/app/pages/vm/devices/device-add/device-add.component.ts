@@ -18,7 +18,7 @@ import {
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';

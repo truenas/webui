@@ -14,6 +14,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
+
 import time
 import unittest
 import xmlrunner
@@ -46,6 +52,8 @@ class conf_afp_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Services" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_turnon_afp (self):
         print (" turning on the afp service")
@@ -53,23 +61,30 @@ class conf_afp_test(unittest.TestCase):
         driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
         time.sleep(2)
         self.status_change("1", "start")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_checkif_afp_on (self):
         print (" check if afp turned on")
         time.sleep(2)
         self.status_check("1")
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_turnoff_afp (self):
         print (" turning off the afp service")
         time.sleep(2)
         self.status_change("1", "stop")
+        # Taking screenshot
+        self.screenshot("04")
 
     def test_05_checkif_afp_off (self):
         print (" check if afp turned off")
         time.sleep(2)
         self.status_check("1")
         time.sleep(10)
-
+        # Taking screenshot
+        self.screenshot("05")
 
     #method to test if an element is present
     def is_element_present(self, how, what):
@@ -114,6 +129,18 @@ class conf_afp_test(unittest.TestCase):
         # get the status data
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
+
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
     @classmethod

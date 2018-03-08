@@ -15,6 +15,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -49,6 +54,8 @@ class view_guide_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("Guide" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_check_version(self):
         # cancelling the tour
@@ -63,6 +70,8 @@ class view_guide_test(unittest.TestCase):
         # assert response to check version of freenas guide
 #        self.assertTrue("FreeNAS" in page_data)
 #        time.sleep(10)
+        # Taking screenshot
+        self.screenshot("02")
 
 
     # method to test if an element is present
@@ -76,6 +85,14 @@ class view_guide_test(unittest.TestCase):
         except NoSuchElementException: return False
         return True
 
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        filename = str(__file__)
+        filename = filename[:-3]
+        final_file = filename.replace(text_path + "/", '')
+        print ("Taking screenshot for " + final_file + " Test no:" + count)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

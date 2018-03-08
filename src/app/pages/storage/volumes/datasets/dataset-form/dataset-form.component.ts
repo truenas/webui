@@ -48,6 +48,18 @@ export class DatasetFormComponent implements OnInit{
       placeholder: 'Comments',
       tooltip: 'Enter comments or notes about this dataset here.',
     },
+    {
+      type: 'select',
+      name: 'sync',
+      placeholder: 'sync',
+      tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">Deduplication</a>\
+ before making a change to this setting.',
+      options: [
+        { label: 'STANDARD', value: 'STANDARD' },
+        { label: 'ALWAYS', value: 'ALWAYS' },
+        { label: 'DISABLED', value: 'DISABLED' }
+      ],
+    },
     {  
       type: 'select',
       name: 'compression',
@@ -194,7 +206,8 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: 'INSENSITIVE', value: 'INSENSITIVE' },
         { label: 'MIXED', value: 'MIXED' }
       ],
-    },
+    }
+   
   ];
 
   protected advanced_field: Array<any> = [

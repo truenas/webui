@@ -4,6 +4,7 @@
   position:relative;
   text-align:center;
 }
+
 .card-bg{
   width:100%;
   height:100%;
@@ -31,12 +32,10 @@
   height: 100px;
 }
 
-.mat-list .bold{
-  font-weight:bold;
-  margin-right:12px;
+.xs .card-bg-wrapper{
+  width:100%
 }
-/*
-.update-btn{
-  margin:24px;
+
+.xs .card-bg{
+  background-size:contain;
 }
-*/

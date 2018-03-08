@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -48,11 +53,15 @@ class conf_ssh_test(unittest.TestCase):
         driver.find_element_by_tag_name('body').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "start")
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_ssh_on (self):
         print (" check if ssh turned on")
         time.sleep(2)
         self.status_check("14")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_configure_ssh(self):
         print (" configuring ssh service with root access")
@@ -64,6 +73,8 @@ class conf_ssh_test(unittest.TestCase):
         # click on save button
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(5)
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_turnoff_ssh(self):
         # click Service Menu
@@ -75,12 +86,16 @@ class conf_ssh_test(unittest.TestCase):
         driver.find_element_by_tag_name('html').send_keys(Keys.END)
         time.sleep(2)
         self.status_change("14", "stop")
+        # Taking screenshot
+        self.screenshot("04")
 
     def test_05_checkif_ssh_off (self):
         print (" check if ssh turned on")
         time.sleep(2)
         self.status_check("14")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("05")
 
         # Next step-- To check if the new user is present in the list via automation
 
@@ -130,6 +145,17 @@ class conf_ssh_test(unittest.TestCase):
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
 
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
 

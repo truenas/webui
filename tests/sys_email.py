@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -50,6 +55,8 @@ class conf_system_email_test(unittest.TestCase):
         print ("the Page now is: " + page_data)
         # assert response
         self.assertTrue("email" in page_data)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_configure_email(self):
         # Close the System Tab
@@ -58,6 +65,8 @@ class conf_system_email_test(unittest.TestCase):
         driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
         driver.find_element_by_xpath('//*[@id="save_button"]').click()
         time.sleep(5)
+        # Taking screenshot
+        self.screenshot("02")
 
     # method to test if an element is present
     def is_element_present(self, how, what):
@@ -69,6 +78,15 @@ class conf_system_email_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        filename = str(__file__)
+        filename = filename[:-3]
+        final_file = filename.replace(text_path + "/", '')
+        print ("Taking screenshot for " + final_file + " Test no" + count)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
     @classmethod
