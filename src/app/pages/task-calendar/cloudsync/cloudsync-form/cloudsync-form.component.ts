@@ -540,8 +540,7 @@ export class CloudsyncFormComponent implements OnInit {
     attributes['bucket'] = value.bucket;
     attributes['folder'] = value.folder;
     payload['attributes'] = attributes;
-
-    console.log(payload);
+    
     if (!this.pk) {
       auxPayLoad.push(payload)
       this.ws.call('backup.create', auxPayLoad).subscribe(res=>{});
