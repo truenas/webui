@@ -10,8 +10,9 @@ import {DeviceNicAddComponent} from './devices/device-nic-add/';
 import {DeviceVncAddComponent} from './devices/device-vnc-add/';
 import {VmFormComponent} from './vm-form/';
 import {VmListComponent} from './vm-list/';
-import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/'
-import {VMWizardComponent} from './vm-wizard/'
+import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/';
+import {VMWizardComponent} from './vm-wizard/';
+import { DockerVMWizardComponent } from './dockervm-wizard/';
 
 // export const routes: Routes = [
 //   --{path : 'add', component : VmFormComponent},
@@ -48,6 +49,11 @@ export const routes: Routes = [
       path: 'wizard',
       component: VMWizardComponent,
       data: { title: 'Wizard', breadcrumb: 'Wizard'},
+    },
+    {
+      path: 'dockerwizard',
+      component: DockerVMWizardComponent,
+      data: { title: 'Docker VM Wizard', breadcrumb: 'Docker VM Wizard'},
     },
     {
       path : ':pk/devices/:name',
