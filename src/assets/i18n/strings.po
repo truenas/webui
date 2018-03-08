@@ -10,12 +10,24 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
+msgid "Active Directory"
+msgstr ""
+
 msgid ""
 "Add this user to more groups. Choose one or more groups from the dropdown "
 "list."
 msgstr ""
 
+msgid "Advanced"
+msgstr ""
+
+msgid "Alert Services"
+msgstr ""
+
 msgid "An update has already been applied. Please reboot."
+msgstr ""
+
+msgid "Apple (AFP) Shares"
 msgstr ""
 
 msgid "Are you sure you wish to reboot the system?"
@@ -39,6 +51,12 @@ msgstr ""
 msgid "Back to the Old UI"
 msgstr ""
 
+msgid "Block (iSCSI)"
+msgstr ""
+
+msgid "Boot"
+msgstr ""
+
 msgid "Browse"
 msgstr ""
 
@@ -57,7 +75,13 @@ msgid ""
 "Uncheck this box to select a different primary group name."
 msgstr ""
 
+msgid "CAs"
+msgstr ""
+
 msgid "Cancel"
+msgstr ""
+
+msgid "Certificates"
 msgstr ""
 
 msgid "Change Password"
@@ -91,6 +115,9 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+msgid "Cloud Credentials"
+msgstr ""
+
 msgid "Confirm Password"
 msgstr ""
 
@@ -100,7 +127,16 @@ msgstr ""
 msgid "Create a new Primary Group for the user."
 msgstr ""
 
+msgid "Cron Jobs"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
 msgid "Delete"
+msgstr ""
+
+msgid "Directory Service"
 msgstr ""
 
 msgid "Disable password login"
@@ -110,6 +146,12 @@ msgid ""
 "Disables password logins and authentication to SMB shares. Checking this "
 "grays out <b>Lock user</b> and <b>Permit Sudo</b>, which are mutually "
 "exclusive."
+msgstr ""
+
+msgid "Disks"
+msgstr ""
+
+msgid "Display System Processes"
 msgstr ""
 
 msgid "Email"
@@ -129,13 +171,52 @@ msgstr ""
 msgid "Full Name"
 msgstr ""
 
+msgid "General"
+msgstr ""
+
+msgid "Global Configuration"
+msgstr ""
+
+msgid "Groups"
+msgstr ""
+
+msgid "Guide"
+msgstr ""
+
 msgid "Home Directory"
 msgstr ""
 
 msgid "Home Directory Mode"
 msgstr ""
 
+msgid "IPMI"
+msgstr ""
+
+msgid "Import Disk"
+msgstr ""
+
+msgid "Init/Shutdown Scripts"
+msgstr ""
+
+msgid "Interfaces"
+msgstr ""
+
+msgid "Jails"
+msgstr ""
+
+msgid "Kerberos Realms"
+msgstr ""
+
+msgid "Kerberos Settings"
+msgstr ""
+
+msgid "LDAP"
+msgstr ""
+
 msgid "Legacy UI"
+msgstr ""
+
+msgid "Link Aggregations"
 msgstr ""
 
 msgid "Lock user"
@@ -157,7 +238,16 @@ msgstr ""
 msgid "Microsoft Account"
 msgstr ""
 
+msgid "NIS"
+msgstr ""
+
+msgid "NTP Servers"
+msgstr ""
+
 msgid "Name"
+msgstr ""
+
+msgid "Network"
 msgstr ""
 
 msgid "Next"
@@ -183,6 +273,9 @@ msgid ""
 "authentication. <b>Do not paste the private key!</b>"
 msgstr ""
 
+msgid "Periodic Snapshot Tasks"
+msgstr ""
+
 msgid "Permit Sudo"
 msgstr ""
 
@@ -198,10 +291,25 @@ msgstr ""
 msgid "Please enter your username again"
 msgstr ""
 
+msgid "Please wait"
+msgstr ""
+
+msgid "Plugins"
+msgstr ""
+
 msgid "Primary Group"
 msgstr ""
 
 msgid "Release Notes"
+msgstr ""
+
+msgid "Replication Tasks"
+msgstr ""
+
+msgid "Reporting"
+msgstr ""
+
+msgid "Reports"
 msgstr ""
 
 msgid ""
@@ -212,13 +320,22 @@ msgstr ""
 msgid "Restart"
 msgstr ""
 
+msgid "Rsync Tasks"
+msgstr ""
+
+msgid "S.M.A.R.T Tests"
+msgstr ""
+
 msgid "SSH Public Key"
 msgstr ""
 
-msgid "START_JOB"
+msgid "Scrub Tasks"
 msgstr ""
 
 msgid "Select the shell to use for local and SSH logins."
+msgstr ""
+
+msgid "Services"
 msgstr ""
 
 msgid ""
@@ -227,6 +344,9 @@ msgid ""
 msgstr ""
 
 msgid "Settings"
+msgstr ""
+
+msgid "Sharing"
 msgstr ""
 
 msgid "Shell"
@@ -238,7 +358,31 @@ msgstr ""
 msgid "Sign in"
 msgstr ""
 
+msgid "Snapshots"
+msgstr ""
+
+msgid "Starting job..."
+msgstr ""
+
+msgid "Static Routes"
+msgstr ""
+
+msgid "Storage"
+msgstr ""
+
 msgid "Submit"
+msgstr ""
+
+msgid "Support"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "System Dataset"
+msgstr ""
+
+msgid "System Processes"
 msgstr ""
 
 msgid "System is not yet available, please wait"
@@ -250,7 +394,19 @@ msgstr ""
 msgid "System is shutting down..."
 msgstr ""
 
+msgid "Tasks"
+msgstr ""
+
 msgid "Train"
+msgstr ""
+
+msgid "Tunables"
+msgstr ""
+
+msgid "Unix (NFS) Shares"
+msgstr ""
+
+msgid "Update"
 msgstr ""
 
 msgid "Update and Reboot"
@@ -260,4 +416,28 @@ msgid "User ID"
 msgstr ""
 
 msgid "Username"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "VLANs"
+msgstr ""
+
+msgid "VMs"
+msgstr ""
+
+msgid "VMware-Snapshots"
+msgstr ""
+
+msgid "Virtualization"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+msgid "WebDAV Shares"
+msgstr ""
+
+msgid "Windows (SMB) Shares"
 msgstr ""
