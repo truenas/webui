@@ -1,13 +1,8 @@
-#
-# (null) <>, 2018.
-#
 msgid ""
 msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-03-08 15:28-0800\n"
-"X-Generator: Gtranslator 2.91.7\n"
 
 msgid "About"
 msgstr ""
@@ -107,14 +102,14 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Check this to give members of the group permission to use <a href=\"https://"
-"www.sudo.ws/\" target=\"_blank\">sudo</a>."
+"Check this to give members of the group permission to use <a "
+"href=\"https://www.sudo.ws/\" target=\"_blank\">sudo</a>."
 msgstr ""
 
 msgid ""
-"Check this to prevent the user from logging in until the account is unlocked "
-"(this box is unchecked). Checking this box grays out <b>Disable password "
-"login</b> which is mutually exclusive."
+"Check this to prevent the user from logging in until the account is "
+"unlocked (this box is unchecked). Checking this box grays out <b>Disable "
+"password login</b> which is mutually exclusive."
 msgstr ""
 
 msgid "Close"
@@ -234,10 +229,10 @@ msgid "Log out of the WebUI?"
 msgstr ""
 
 msgid ""
-"Maximum length is 16 characters, although using 8 or less is recommended for "
-"interoperability. Usernames cannot begin with a hyphen or contain a space, "
-"tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</"
-"b> can only be used as the last character."
+"Maximum length is 16 characters, although using 8 or less is recommended "
+"for interoperability. Usernames cannot begin with a hyphen or contain a "
+"space, tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . "
+"A <b>$</b> can only be used as the last character."
 msgstr ""
 
 msgid "Microsoft Account"
