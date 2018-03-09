@@ -13,7 +13,7 @@
 		<span *ngIf="description">{{ description | translate }}</span>
     </div>
     <div>
-		<span *ngIf="!description">{{ "START_JOB" | translate }}</span>
+		<span *ngIf="!description">{{ "Starting job..." | translate }}</span>
     </div>
 </div>
 <div mat-dialog-actions *ngIf="showCloseButton || (job && job.state == 'FAILED')">

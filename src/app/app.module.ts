@@ -6,7 +6,7 @@ import { Http, HttpModule } from '@angular/http';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
 import { NgIdleModule } from '@ng-idle/core';
 import { rootRouterConfig } from './app.routes';
@@ -40,7 +40,7 @@ import { ErdService } from 'app/services/erd.service';
 import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
 export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '/translations.json');
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({

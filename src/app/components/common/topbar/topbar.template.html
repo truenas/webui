@@ -62,15 +62,15 @@
       </button>
       <button mat-menu-item [routerLink]="['/account/users/edit/1']">
         <mat-icon>account_box</mat-icon>
-        <span>Account</span>
+        <span>{{'Account' | translate}}</span>
       </button>
       <button mat-menu-item [routerLink]="['/account/users/change-password']">
         <mat-icon>dialpad</mat-icon>
-        <span>Change Password</span>
+        <span>{{'Change Password' | translate}}</span>
       </button>
       <button mat-menu-item [routerLink]="['/system/general']">
         <mat-icon>settings</mat-icon>
-        <span>Settings</span>
+        <span>{{'Settings' | translate}}</span>
       </button>
       <!-- button mat-menu-item>
       <mat-icon>notifications_off</mat-icon>
@@ -78,23 +78,23 @@
     </button -->
       <button mat-menu-item (click)="signOut()">
         <mat-icon>exit_to_app</mat-icon>
-        <span>Logout</span>
+        <span>{{'Log out' | translate}}</span>
       </button>
       <button mat-menu-item (click)="onReboot()">
         <mat-icon>replay</mat-icon>
-        <span>Reboot</span>
+        <span>{{'Restart' | translate}}</span>
       </button>
       <button mat-menu-item (click)="onShutdown()">
         <mat-icon>power_settings_new</mat-icon>
-        <span>Shutdown</span>
+        <span>{{'Shut down' | translate}}</span>
       </button>
       <button mat-menu-item (click)="onShowAbout()">
         <mat-icon>info_outline</mat-icon>
-        <span>About</span>
+        <span>{{'About' | translate}}</span>
       </button>
       <a mat-menu-item href="/legacy/">
         <mat-icon>keyboard_return</mat-icon>
-        <span>Legacy UI</span>
+        <span>{{'Legacy UI' | translate}}</span>
       </a>
     </mat-menu>
     <mat-menu #languageMenu="matMenu" [overlapTrigger]="false" xPosition="after">
