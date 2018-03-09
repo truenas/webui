@@ -13,6 +13,7 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { EntityUtils } from '../../../pages/common/entity/utils';
 
 
 interface VmProfile {
@@ -360,7 +361,18 @@ export class VmCardsComponent implements OnInit {
       new Array('').concat([ "vm", this.cards[index].id, "devices", this.cards[index].name ])
     );
   }
-
+  cloneVM(index){
+    this.loader.open();
+    this.loaderOpen = true;
+    this.ws.call('vm.clone', [this.cards[index].id]).subscribe((res)=>{
+      this.loader.close();
+      this.getVmList();
+    },
+  (eres)=>{
+    new EntityUtils().handleError(this, eres); 
+    this.loader.close();
+    });
+  }
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
     //console.log(flipState);
