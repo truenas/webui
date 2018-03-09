@@ -13,6 +13,7 @@ export class KerberosKeytabsListComponent {
   protected route_add: string[] = ['directoryservice', 'kerberoskeytabs', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Keytab";
   protected route_edit: string[] = ['directoryservice', 'kerberoskeytabs', 'edit'];
+  protected entityList: any;
 
   public columns: Array < any > = [
     { name: 'Name', prop: 'keytab_name' },
@@ -22,5 +23,19 @@ export class KerberosKeytabsListComponent {
     sorting: { columns: this.columns },
   };
 
-  constructor(protected rest: RestService, private router: Router){}
+  constructor(protected rest: RestService, private router: Router) {}
+
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+  }
+
+  getActions(parentRow) {
+    return [{
+      id: "delete",
+      label: "Delete",
+      onClick: (row) => {
+        this.entityList.doDelete(row.id);
+      }
+    }]
+  }
 }
