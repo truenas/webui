@@ -84,7 +84,7 @@ export class JailAddComponent implements OnInit {
       type: 'checkbox',
       name: 'vnet',
       placeholder: 'Vnet',
-      tooltip: 'Controls whether the jail is started with a VNET or\
+      tooltip: 'Check to start the jail with a VNET or\
  shared IP configuration. Check this if a fully virtualized per-jail\
  network stack is required.',
     }
