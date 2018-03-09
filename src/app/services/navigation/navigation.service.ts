@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { T } from '../../translate-marker';
 
 interface IMenuItem {
   type: string, // Possible values: link/dropDown/icon/separator/extLink
@@ -21,133 +22,133 @@ export class NavigationService {
   
 
   defaultMenu: IMenuItem[] = [{
-      name: 'Dashboard',
+      name: T('Dashboard'),
       type: 'link',
-      tooltip: 'Dashboard',
+      tooltip: T('Dashboard'),
       icon: 'dashboard',
       state: 'dashboard',
     },
     {
-      name: 'Account',
+      name: T('Account'),
       type: 'dropDown',
-      tooltip: 'Account',
+      tooltip: T('Account'),
       icon: 'people',
       state: 'account',
       sub: [
-        { name: 'Groups', state: 'groups' },
-        { name: 'Users', state: 'users' },
+        { name: T('Groups'), state: 'groups' },
+        { name: T('Users'), state: 'users' },
       ]
     },
     {
-      name: 'System',
+      name: T('System'),
       type: 'dropDown',
-      tooltip: 'System',
+      tooltip: T('System'),
       icon: 'computer',
       state: 'system',
       sub: [
         //{name: 'Information', state: 'information'},
-        { name: 'General', state: 'general' },
-        { name: 'NTP Servers', state: 'ntpservers' },
-        { name: 'Boot', state: 'bootenv' },
-        { name: 'Advanced', state: 'advanced' },
-        {name: 'Email', state: 'email'},
-        {name: 'System Dataset', state: 'dataset'},
-        { name: 'Alert Services', state: 'alertservice' },
-        { name: 'Cloud Credentials', state: 'cloudcredentials' },
-        { name: 'Tunables', state: 'tunable' },
-        { name: 'Update', state: 'update' },
-        { name: 'CAs', state: 'ca' },
-        { name: 'Certificates', state: 'certificates' },
-        { name: 'Support', state: 'support' },
+        { name: T('General'), state: 'general' },
+        { name: T('NTP Servers'), state: 'ntpservers' },
+        { name: T('Boot'), state: 'bootenv' },
+        { name: T('Advanced'), state: 'advanced' },
+        { name: T('Email'), state: 'email'},
+        { name: T('System Dataset'), state: 'dataset'},
+        { name: T('Alert Services'), state: 'alertservice' },
+        { name: T('Cloud Credentials'), state: 'cloudcredentials' },
+        { name: T('Tunables'), state: 'tunable' },
+        { name: T('Update'), state: 'update' },
+        { name: T('CAs'), state: 'ca' },
+        { name: T('Certificates'), state: 'certificates' },
+        { name: T('Support'), state: 'support' },
       ]
     },
     {
-      name: 'Tasks',
+      name: T('Tasks'),
       type: 'dropDown',
-      tooltip: 'Tasks',
+      tooltip: T('Tasks'),
       icon: 'date_range',
       state: 'tasks',
       sub: [
         // { name: 'Calendar', state: 'calendar' },
-        { name: 'Cron Jobs', state: 'cron' },
-        { name: 'Init/Shutdown Scripts', state: 'initshutdown' },
-        { name: 'Rsync Tasks', state: 'rsync' },
-        { name: 'S.M.A.R.T Tests', state: 'smart' },
-        { name: 'Periodic Snapshot Tasks', state: 'snapshot' },
-        { name: 'Replication Tasks', state: 'replication' },
-        { name: 'Scrub Tasks', state: 'scrub' },
+        { name: T('Cron Jobs'), state: 'cron' },
+        { name: T('Init/Shutdown Scripts'), state: 'initshutdown' },
+        { name: T('Rsync Tasks'), state: 'rsync' },
+        { name: T('S.M.A.R.T Tests'), state: 'smart' },
+        { name: T('Periodic Snapshot Tasks'), state: 'snapshot' },
+        { name: T('Replication Tasks'), state: 'replication' },
+        { name: T('Scrub Tasks'), state: 'scrub' },
       ]
     },
     {
-      name: 'Network',
+      name: T('Network'),
       type: 'dropDown',
-      tooltip: 'Network',
+      tooltip: T('Network'),
       icon: 'device_hub',
       state: 'network',
       sub: [
-        { name: 'Global Configuration', state: 'configuration' },
-        { name: 'Interfaces', state: 'interfaces' },
-        { name: 'IPMI', state: 'ipmi', disabled: false },
-        { name: 'Link Aggregations', state: 'laggs' },
+        { name: T('Global Configuration'), state: 'configuration' },
+        { name: T('Interfaces'), state: 'interfaces' },
+        { name: T('IPMI'), state: 'ipmi', disabled: false },
+        { name: T('Link Aggregations'), state: 'laggs' },
         //        {name: 'Network Summary', state: 'networksummary'},
-        { name: 'Static Routes', state: 'staticroutes' },
-        { name: 'VLANs', state: 'vlans' },
+        { name: T('Static Routes'), state: 'staticroutes' },
+        { name: T('VLANs'), state: 'vlans' },
       ]
     },
     {
-      name: 'Storage',
+      name: T('Storage'),
       type: 'dropDown',
-      tooltip: 'Storage',
+      tooltip: T('Storage'),
       icon: 'storage',
       state: 'storage',
       sub: [
-        { name: 'Volumes', state: 'volumes' },
-        { name: 'Snapshots', state: 'snapshots' },
-        { name: 'VMware-Snapshots', state: 'vmware-Snapshots' },
-        { name: 'Disks', state: 'disks' },
-        { name: 'Import Disk', state: 'import-disk'},
+        { name: T('Volumes'), state: 'volumes' },
+        { name: T('Snapshots'), state: 'snapshots' },
+        { name: T('VMware-Snapshots'), state: 'vmware-Snapshots' },
+        { name: T('Disks'), state: 'disks' },
+        { name: T('Import Disk'), state: 'import-disk'},
       ]
     },
     {
-      name: 'Directory Service',
+      name: T('Directory Service'),
       type: 'dropDown',
-      tooltip: 'Directory Service',
+      tooltip: T('Directory Service'),
       icon: 'group_work',
       state: 'directoryservice',
       sub: [
-        { name: 'Active Directory', state: 'activedirectory' },
-        { name: 'LDAP', state: 'ldap' },
-        { name: 'NIS', state: 'nis' },
-        { name: 'Kerberos Realms', state: 'kerberosrealms' },
-        { name: 'Kerberos Keytabs', state: 'kerberoskeytabs' },
-        { name: 'Kerberos Settings', state: 'kerberossettings' },
+        { name: T('Active Directory'), state: 'activedirectory' },
+        { name: T('LDAP'), state: 'ldap' },
+        { name: T('NIS'), state: 'nis' },
+        { name: T('Kerberos Realms'), state: 'kerberosrealms' },
+        { name: T('Kerberos Keytabs'), state: 'kerberoskeytabs' },
+        { name: T('Kerberos Settings'), state: 'kerberossettings' },
       ]
     },
     {
-      name: 'Sharing',
+      name: T('Sharing'),
       type: 'dropDown',
-      tooltip: 'Sharing',
+      tooltip: T('Sharing'),
       icon: 'folder_shared',
       state: 'sharing',
       sub: [
-        { name: 'Apple (AFP) Shares', state: 'afp' },
-        { name: 'Unix (NFS) Shares', state: 'nfs' },
-        { name: 'WebDAV Shares', state: 'webdav' },
-        { name: 'Windows (SMB) Shares', state: 'smb' },
-        { name: 'Block (iSCSI)', state: 'iscsi' },
+        { name: T('Apple (AFP) Shares'), state: 'afp' },
+        { name: T('Unix (NFS) Shares'), state: 'nfs' },
+        { name: T('WebDAV Shares'), state: 'webdav' },
+        { name: T('Windows (SMB) Shares'), state: 'smb' },
+        { name: T('Block (iSCSI)'), state: 'iscsi' },
       ]
     },
     {
-      name: 'Services',
+      name: T('Services'),
       type: 'link',
-      tooltip: 'Services',
+      tooltip: T('Services'),
       icon: 'tune',
       state: 'services'
     },
     {
-      name: 'Plugins',
+      name: T('Plugins'),
       type: 'dropDown',
-      tooltip: 'Plugins',
+      tooltip: T('Plugins'),
       icon: 'extension',
       state: 'plugins',
       sub: [
@@ -156,9 +157,9 @@ export class NavigationService {
       ]
     },
     {
-      name: 'Jails',
+      name: T('Jails'),
       type: 'link',
-      tooltip: 'Jails',
+      tooltip: T('Jails'),
       icon: 'apps',
       state: 'jails',
       // sub: [
@@ -169,16 +170,16 @@ export class NavigationService {
       // ]
     },
     {
-      name: 'Reporting',
+      name: T('Reporting'),
       type: 'link',
-      tooltip: 'Reports',
+      tooltip: T('Reports'),
       icon: 'insert_chart',
       state: 'reportsdashboard',
     },
     {
-      name: 'VMs',
+      name: T('VMs'),
       type: 'link',
-      tooltip: 'Virtualization',
+      tooltip: T('Virtualization'),
       icon: 'laptop_windows',
       state: 'vm'
     },
@@ -197,23 +198,23 @@ export class NavigationService {
     //    state: 'wizard'
     //  }
     {
-      name: 'Display System Processes',
+      name: T('Display System Processes'),
       type: 'link',
-      tooltip: 'System Processes',
+      tooltip: T('System Processes'),
       icon: 'perm_data_setting',
       state: 'systemprocesses'
     },
     {
-      name: 'Shell',
+      name: T('Shell'),
       type: 'link',
-      tooltip: 'Shell',
+      tooltip: T('Shell'),
       icon: 'code',
       state: 'shell'
     },
     {
-      name: 'Guide',
+      name: T('Guide'),
       type: 'link',
-      tooltip: 'Guide',
+      tooltip: T('Guide'),
       icon: 'info',
       state: 'guide',
     }

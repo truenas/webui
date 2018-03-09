@@ -1,0 +1,446 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "About"
+msgstr ""
+
+msgid "Account"
+msgstr "Cuenta"
+
+msgid "Active Directory"
+msgstr ""
+
+msgid ""
+"Add this user to more groups. Choose one or more groups from the dropdown "
+"list."
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Alert Services"
+msgstr ""
+
+msgid "An update has already been applied. Please reboot."
+msgstr ""
+
+msgid "Apple (AFP) Shares"
+msgstr ""
+
+msgid "Are you sure you wish to reboot the system?"
+msgstr ""
+
+msgid "Are you sure you wish to shut down the system?"
+msgstr ""
+
+msgid "Associate an email address with the account"
+msgstr ""
+
+msgid "Automatically check for new updates"
+msgstr ""
+
+msgid "Auxiliary Groups"
+msgstr ""
+
+msgid "Back"
+msgstr "Espalda"
+
+msgid "Back to the Old UI"
+msgstr "Volver a la interfaz de usuario anterior"
+
+msgid "Block (iSCSI)"
+msgstr ""
+
+msgid "Boot"
+msgstr ""
+
+msgid "Browse"
+msgstr "Vistazo"
+
+msgid ""
+"Browse to the name of an <b>existing</b> volume or      dataset that the "
+"user will be assigned permission to access."
+msgstr ""
+
+msgid ""
+"By convention, user accounts have an ID greater than  1000 and system "
+"accounts have an ID equal to the default port number  used by the service."
+msgstr ""
+"Por convención, las cuentas de usuario tienen una ID mayor que 1000 y las "
+"cuentas del sistema tienen una ID igual al número de puerto predeterminado "
+"usado por el servicio."
+
+msgid ""
+"By default, a primary group with the same name as the user is created. "
+"Uncheck this box to select a different primary group name."
+msgstr ""
+
+msgid "CAs"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Certificates"
+msgstr ""
+
+msgid "Change Password"
+msgstr ""
+
+msgid "Change log"
+msgstr ""
+
+msgid "Check Now"
+msgstr ""
+
+msgid "Check Release Notes"
+msgstr ""
+
+msgid ""
+"Check this if the user will be connecting from a      Windows 8 or higher "
+"system."
+msgstr ""
+
+msgid ""
+"Check this to give members of the group permission to use <a "
+"href=\"https://www.sudo.ws/\" target=\"_blank\">sudo</a>."
+msgstr ""
+
+msgid ""
+"Check this to prevent the user from logging in until the account is "
+"unlocked (this box is unchecked). Checking this box grays out <b>Disable "
+"password login</b> which is mutually exclusive."
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Cloud Credentials"
+msgstr ""
+
+msgid "Confirm Password"
+msgstr ""
+
+msgid "Confirm your information"
+msgstr ""
+
+msgid "Create a new Primary Group for the user."
+msgstr ""
+
+msgid "Cron Jobs"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Directory Service"
+msgstr ""
+
+msgid "Disable password login"
+msgstr ""
+
+msgid ""
+"Disables password logins and authentication to SMB shares. Checking this "
+"grays out <b>Lock user</b> and <b>Permit Sudo</b>, which are mutually "
+"exclusive."
+msgstr ""
+
+msgid "Disks"
+msgstr ""
+
+msgid "Display System Processes"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Entering a name is required. Spaces are allowed."
+msgstr ""
+
+msgid "Everything seems correct."
+msgstr ""
+
+msgid ""
+"For security reasons, FreeBSD will not give a user <b>su</b> permissions if "
+"<i>wheel</i> is their primary group."
+msgstr ""
+
+msgid "Full Name"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Global Configuration"
+msgstr ""
+
+msgid "Groups"
+msgstr ""
+
+msgid "Guide"
+msgstr ""
+
+msgid "Home Directory"
+msgstr ""
+
+msgid "Home Directory Mode"
+msgstr ""
+
+msgid "IPMI"
+msgstr ""
+
+msgid "Import Disk"
+msgstr ""
+
+msgid "Init/Shutdown Scripts"
+msgstr ""
+
+msgid "Interfaces"
+msgstr ""
+
+msgid "Jails"
+msgstr ""
+
+msgid "Kerberos Realms"
+msgstr ""
+
+msgid "Kerberos Settings"
+msgstr ""
+
+msgid "LDAP"
+msgstr ""
+
+msgid "Legacy UI"
+msgstr ""
+
+msgid "Link Aggregations"
+msgstr ""
+
+msgid "Lock user"
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Log out of the WebUI?"
+msgstr ""
+
+msgid ""
+"Maximum length is 16 characters, although using 8 or less is recommended "
+"for interoperability. Usernames cannot begin with a hyphen or contain a "
+"space, tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . "
+"A <b>$</b> can only be used as the last character."
+msgstr ""
+
+msgid "Microsoft Account"
+msgstr ""
+
+msgid "NIS"
+msgstr ""
+
+msgid "NTP Servers"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "No update has been found"
+msgstr ""
+
+msgid "No updates available"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Operation"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid ""
+"Paste the <b>public</b> SSH key of the user for any      key-based "
+"authentication. <b>Do not paste the private key!</b>"
+msgstr ""
+
+msgid "Periodic Snapshot Tasks"
+msgstr ""
+
+msgid "Permit Sudo"
+msgstr ""
+
+msgid "Please enter your password"
+msgstr ""
+
+msgid "Please enter your password again"
+msgstr ""
+
+msgid "Please enter your username"
+msgstr ""
+
+msgid "Please enter your username again"
+msgstr ""
+
+msgid "Please wait"
+msgstr "Por favor espera"
+
+msgid "Plugins"
+msgstr ""
+
+msgid "Primary Group"
+msgstr ""
+
+msgid "Release Notes"
+msgstr ""
+
+msgid "Replication Tasks"
+msgstr ""
+
+msgid "Reporting"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid ""
+"Required unless <b>Disable password login</b> is checked. Passwords cannot "
+"contain a <b>?</b>."
+msgstr ""
+
+msgid "Restart"
+msgstr ""
+
+msgid "Rsync Tasks"
+msgstr ""
+
+msgid "S.M.A.R.T Tests"
+msgstr ""
+
+msgid "SSH Public Key"
+msgstr ""
+
+msgid "Scrub Tasks"
+msgstr ""
+
+msgid "Select the shell to use for local and SSH logins."
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid ""
+"Sets default Unix permissions of the user home directory. Read-only for "
+"built-in users."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Sharing"
+msgstr ""
+
+msgid "Shell"
+msgstr ""
+
+msgid "Shut down"
+msgstr ""
+
+msgid "Sign in"
+msgstr ""
+
+msgid "Snapshots"
+msgstr ""
+
+msgid "Starting job..."
+msgstr "Comenzando trabajo..."
+
+msgid "Static Routes"
+msgstr ""
+
+msgid "Storage"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Support"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "System Dataset"
+msgstr ""
+
+msgid "System Processes"
+msgstr ""
+
+msgid "System is not yet available, please wait"
+msgstr ""
+
+msgid "System is rebooting..."
+msgstr ""
+
+msgid "System is shutting down..."
+msgstr ""
+
+msgid "Tasks"
+msgstr ""
+
+msgid "Train"
+msgstr ""
+
+msgid "Tunables"
+msgstr ""
+
+msgid "Unix (NFS) Shares"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Update and Reboot"
+msgstr ""
+
+msgid "User ID"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Users"
+msgstr ""
+
+msgid "VLANs"
+msgstr ""
+
+msgid "VMs"
+msgstr ""
+
+msgid "VMware-Snapshots"
+msgstr ""
+
+msgid "Virtualization"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+msgid "WebDAV Shares"
+msgstr ""
+
+msgid "Windows (SMB) Shares"
+msgstr ""

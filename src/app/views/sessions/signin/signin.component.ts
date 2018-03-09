@@ -88,9 +88,9 @@ export class SigninComponent implements OnInit {
     this.signinData.username = 'root';
     let message = '';
     if (this.ws.token === null) {
-      message = 'SIGNIN.USER_OR_PASSWORD_INCORRECT';
+      message = 'Username or Password is incorrect';
     } else {
-      message = 'SIGNIN.TOKEN_EXPIRED';
+      message = 'Token expired, please log back in';
       this.ws.token = null;
     }
     this.translate.get('Ok').subscribe((ok: string) => {
