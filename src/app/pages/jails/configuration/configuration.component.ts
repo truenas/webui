@@ -29,7 +29,7 @@ export class JailsConfigurationComponent {
       name : 'jc_ipv4_dhcp',
       placeholder : 'IPv4 DHCP',
       tooltip : 'Check this box if the network has a DHCP server. When\
- enabled, use DHCP to obtain IPv4 address as well as default router.',
+ enabled, use DHCP to obtain the IPv4 address as well as default router.',
     },
     {
       type : 'input',
