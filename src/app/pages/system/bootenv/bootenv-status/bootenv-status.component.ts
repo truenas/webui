@@ -85,16 +85,16 @@ export class BootStatusListComponent {
               [ "system", "bootenv", "replace", row.name ]));
         }
       });
-      
-      actions.push({
-        label : "detach",
-        id: "attach",
-        onClick : (row) => {
-          [this.detach(row.name)];
-        }
-      });
+      if (row.type !== 'stripe'){
+        actions.push({
+          label : "detach",
+          id: "detach",
+          onClick : (row) => {
+            [this.detach(row.name)];
+          }
+        });
+      }
     }
-
     return actions;
   }
   
