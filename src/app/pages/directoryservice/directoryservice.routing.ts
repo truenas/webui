@@ -9,6 +9,7 @@ import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-lis
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
 import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
+import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
 
 export const routes: Routes = [{
   path: '',
@@ -56,6 +57,14 @@ export const routes: Routes = [{
       path: '',
       component: KerberosKeytabsListComponent,
       data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab' }
+    }, {
+      path: 'add',
+      component: KerberosKeytabsFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add'},
+    }, {
+      path: 'edit/:pk',
+      component: KerberosKeytabsFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit'},
     }]
   }]
 }];
