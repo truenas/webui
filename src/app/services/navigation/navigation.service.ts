@@ -120,6 +120,7 @@ export class NavigationService {
         { name: T('LDAP'), state: 'ldap' },
         { name: T('NIS'), state: 'nis' },
         { name: T('Kerberos Realms'), state: 'kerberosrealms' },
+        { name: T('Kerberos Keytabs'), state: 'kerberoskeytabs' },
         { name: T('Kerberos Settings'), state: 'kerberossettings' },
       ]
     },

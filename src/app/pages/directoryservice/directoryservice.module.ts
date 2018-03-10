@@ -15,6 +15,8 @@ import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
+import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
+import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
 
 @NgModule({
   imports: [
@@ -29,6 +31,8 @@ import { KerberosSettingsComponent } from './kerberossettings';
     KerberosRealmsListComponent,
     KerberosRealmsFormComponent,
     KerberosSettingsComponent,
+    KerberosKeytabsListComponent,
+    KerberosKeytabsFormComponent,
   ],
   providers: [SystemGeneralService]
 }) export class DirectoryServiceModule {}
