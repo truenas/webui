@@ -59,9 +59,12 @@ export class DeviceAddComponent implements OnInit {
 
   ngOnInit() {
     this.fieldConfig = this.conf.fieldConfig;
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    this.conf.afterInit(this);
+    this.conf.preInit(this);
+  }
 
+  afterInit(entityEdit: any) {
+    this.formGroup = entityEdit.formGroup;
+    this.conf.afterInit(entityEdit);
   }
 
   goBack() { this.location.back(); }
