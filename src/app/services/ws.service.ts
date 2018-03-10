@@ -250,9 +250,11 @@ export class WebSocketService {
   }
 
   logout() {
-    this.clearCredentials();
-    this.socket.close();
-    this._router.navigate(['/sessions/signin']);
-    (<any>window).location.reload();
+    this.call('auth.logout').subscribe((res) => {
+      this.clearCredentials();
+      this.socket.close();
+      this._router.navigate(['/sessions/signin']);
+      (<any>window).location.reload();
+    });
   }
 }
