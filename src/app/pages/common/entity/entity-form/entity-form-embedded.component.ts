@@ -44,15 +44,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   @Input()  args: string;
   @Input() target: Subject<CoreEvent>;
 
-  protected pk: any;
   public formGroup: FormGroup;
   public fieldSetDisplay: string;
   public fieldSets: FieldSet[]
   public fieldConfig: FieldConfig[];
-  protected resourceName: string;
-  public getFunction;
-  public submitFunction = this.editSubmit;
-  private isNew = false;
   public hasConf = true;
   public saveSubmitText = "Save";
 
@@ -107,20 +102,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   init(params){
-    //Setup Submission API Calls
-    this.resourceName = this.conf.resource_name;
-    if (this.resourceName && !this.resourceName.endsWith('/')) {
-      this.resourceName = this.resourceName + '/';
-    }
-    if (this.conf.isEntity) {
-      this.pk = params;
-      if (this.pk && !this.conf.isNew) {
-	this.submitFunction = this.editCall; // WS eg. vm.update
-      } else {
-	this.submitFunction = this.addCall; // WS eg. vm.create
-	this.isNew = true;
-      }
-    }
 
     // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
@@ -135,9 +116,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
         }
       }
 
-    if (!this.isNew) {
-    // Fill in form default values.
-
+    if (this.conf.values) {
       // We are no longer responsible for API calls.
       // this.data is now provided by parent component.
         this.data = this.conf.values;
@@ -183,38 +162,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   goBack() {
-    this.conf.goBack();
-  }
-
-  addCall(body: any) {
-    const payload = []
-    const call = this.conf.addCall;
-    payload.push(body)
-    return this.ws.call(call, payload);
-  }
-
-  editSubmit(body: any) { 
-    let resource = this.resourceName;
-    if (this.conf.custom_edit_query) {
-      resource = this.conf.custom_edit_query;
-    }
-
-    return this.rest.put(resource, {body}, this.conf.route_usebaseUrl);
-  }
-
-  editCall(body: any) {
-    const call = this.conf.editCall;
-    console.log(body)
-    return this.ws.call(call, body);
-  }
-
-  addSubmit(body: any) {
-    let resource = this.resourceName;
-    if (this.conf.custom_add_query) {
-      resource = this.conf.custom_add_query;
-    }
-
-    return this.rest.post(resource, {body}, this.conf.route_usebaseUrl); 
+    this.conf.target.next({name:"FormCancelled", sender:this.conf});
   }
 
   onSubmit(event: Event) {
@@ -246,22 +194,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     //this.loader.open();
     console.log(value);
     this.conf.target.next({name:"FormSubmitted",data:value, sender:this.conf});
-    /*this.busy = this.conf.target.subscribe(
-	(res) => {
-	  this.loader.close();
-	  if (this.conf.route_success) {
-	    //this.router.navigate(new Array('/').concat(
-	    //this.conf.route_success));
-	  } else {
-	    this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
-	    this.success = true;
-	    this.conf.onSuccess(res);
-	  }
-	},
-	(res) => {
-	  this.loader.close();
-	  new EntityUtils().handleError(this, res); 
-        });*/
   }
 
   clearErrors() {

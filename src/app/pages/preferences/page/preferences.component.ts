@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import {RestService, WebSocketService} from '../../../services/';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'ui-preferences',
@@ -20,12 +22,9 @@ import {RestService, WebSocketService} from '../../../services/';
 })
 export class PreferencesPage implements OnInit {
 
-  //@Input() machineId: string = '';
-  @Output() saved: EventEmitter<any> = new EventEmitter<any>();
+  public target: Subject<CoreEvent> = new Subject();
   @Input() isNew: boolean = false; //change this back to false
-  //@Input() values: any;
-
-  //protected resource_name: string = 'account/users/';
+  
   protected queryCall = 'user.query';
   public args = [["username","=","root"]];
   protected addCall = 'user.update';
@@ -214,18 +213,21 @@ export class PreferencesPage implements OnInit {
     ) {}
 
     ngOnInit(){
+      this.target.subscribe((evt:CoreEvent) => {
+        switch(evt.name){
+          case "FormSubmitted":
+            console.log("Form Submitted");
+            console.log(evt.data);
+          break;
+          case "FormCancelled":
+            console.log("Form Cancelled");
+          break;
+        }
+      });
       this.generateFieldConfig();
     }
 
     afterInit(entityForm: any) {
-      /*entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-       this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-       for (let item of res){
-         this.bootloader.options.push({label : item[1], value : item[0]})
-       }
-      });*/
-
-      //console.warn(entityForm.formGroup.controls);
     }
 
     generateFieldConfig(){
@@ -236,25 +238,4 @@ export class PreferencesPage implements OnInit {
       }
     }
 
-    goBack(){
-      //let result: {flipState: boolean;} = {flipState: false}
-      //this.cancel.emit(result); // <-- bool = isFlipped State
-      }
-
-    onSuccess(message?:any){
-      alert("This is a test: Theme submitted");
-      /*
-       let result: {flipState:boolean;id?:any} = {flipState:false,id:message};
-       if(message.data){
-         //console.log(message);
-         result.id = message.data.id;
-       } else {
-         result.id = message;
-       }
-       if(result.id){
-         this.saved.emit(result);
-       }
-       */
-      //console.log(message);
-      }
 }

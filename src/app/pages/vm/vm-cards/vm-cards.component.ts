@@ -69,13 +69,16 @@ export class VmCardsComponent implements OnInit {
       let index = this.getCardIndex("id",evt.sender.machineId);
       switch(evt.name){
         case "FormSubmitted":
+          //evt.data.autostart = evt.data.autostart.toString();
           if(evt.sender.isNew){
+            console.log("Card New");
             console.log(evt);
             let index = this.getCardIndex('isNew',true);
             this.cards[index].name = evt.data.name;
             this.cards[index].state = "Loading...";
             this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
           } else {
+            console.log("Card Edit");
             console.warn(evt);
             let formValue = this.parseResponse(evt.data,true);
             this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
@@ -211,7 +214,6 @@ export class VmCardsComponent implements OnInit {
       description:data.description,
       info:data.info,
       bootloader:data.bootloader,
-      //state:data.state.toLowerCase(),
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
