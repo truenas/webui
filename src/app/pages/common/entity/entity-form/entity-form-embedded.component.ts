@@ -29,6 +29,8 @@ import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Formconfiguration } from './entity-form.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'entity-form-embedded',
@@ -40,6 +42,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   @Input('conf') conf: Formconfiguration;
   @Input()  args: string;
+  @Input() target: Subject<CoreEvent>;
 
   protected pk: any;
   public formGroup: FormGroup;
@@ -104,6 +107,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   init(params){
+    //Setup Submission API Calls
     this.resourceName = this.conf.resource_name;
     if (this.resourceName && !this.resourceName.endsWith('/')) {
       this.resourceName = this.resourceName + '/';
@@ -111,22 +115,25 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if (this.conf.isEntity) {
       this.pk = params;
       if (this.pk && !this.conf.isNew) {
-	if (this.conf.editCall) {
-	  this.submitFunction = this.editCall;
+	this.submitFunction = this.editCall; // WS eg. vm.update
+	/*if (this.conf.editCall) {
+	  this.submitFunction = this.editCall; // WS
 	} else {
-	  this.submitFunction = this.editSubmit;
+	  this.submitFunction = this.editSubmit;//REST
 	  this.resourceName = this.resourceName + this.pk + '/';
-	}      
+	} */     
       } else {
-	if (this.conf.addCall) {
+	this.submitFunction = this.addCall; // WS eg. vm.create
+	/*if (this.conf.addCall) {
 	  this.submitFunction = this.addCall;
 	} else {
 	  this.submitFunction = this.addSubmit;
-	}
+	}*/
 	this.isNew = true;
       }
     }
 
+    // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
     this.fieldSets = this.conf.fieldSets;
@@ -139,25 +146,33 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
         }
       }
 
-    if (this.conf.queryCall) {
+    // We are no longer responsible for API calls.
+    // Setup current values if not new
+    /*if (this.conf.queryCall) {
+      //WebSocket Queries
       if(this.pk) {
 	      this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
       } else {
 	      this.getFunction = this.ws.call(this.conf.queryCall, []);
       }
     } else {
+      //REST Queries
       let getQuery = this.resourceName;
       if (this.conf.custom_get_query) {
 	getQuery = this.conf.custom_get_query;
       }
       this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
-    }
+    }*/
 
     if (!this.isNew) {
-      this.getFunction.subscribe((res) => {
-	this.data = res.data;
+    // Fill in form default values.
+
+      // We are no longer responsible for API calls.
+      // this.data is now provided by parent component.
+        this.data = this.conf.values;
+        console.warn(this.data);
 	if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
-	  this.data = this.conf.resourceTransformIncomingRestData(this.data);
+	  //this.data = this.conf.resourceTransformIncomingRestData(this.data);
 	}
 	for (const i in this.data) {
 	  const fg = this.formGroup.controls[i];
@@ -173,12 +188,12 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	if (this.conf.initial) {
 	  this.conf.initial.bind(this.conf)(this);
 	}
-      });
     }
   }
 
   ngOnChanges() {
     if (this.formGroup) {
+      console.warn(this.formGroup.controls);
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
 
@@ -191,6 +206,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	    this.fieldConfig.find((control) => control.name === name);
 	  this.formGroup.addControl(name, this.createControl(config));
 	});
+
+      console.warn(this.formGroup.controls);
     }
   }
 
@@ -216,7 +233,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   editCall(body: any) {
     const call = this.conf.editCall;
-
+    console.log(body)
     return this.ws.call(call, body);
   }
 
@@ -255,9 +272,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       this.conf.beforeSubmit(value);
     }
 
-    this.loader.open();
-    this.busy = this.submitFunction(value)
-      .subscribe(
+    //this.loader.open();
+    console.log(value);
+    this.conf.target.next({name:"FormSubmitted",data:value, sender:this.conf});
+    /*this.busy = this.conf.target.subscribe(
 	(res) => {
 	  this.loader.close();
 	  if (this.conf.route_success) {
@@ -271,7 +289,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	},
 	(res) => {
 	  this.loader.close();
-	  new EntityUtils().handleError(this, res); });
+	  new EntityUtils().handleError(this, res); 
+        });*/
   }
 
   clearErrors() {
@@ -299,6 +318,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   createControl(config: FieldConfig) {
+    console.log("******** CREATING CONTROL!! ********")
     const {disabled, validation, value} = config;
     return this.fb.control({disabled, value}, validation);
   }

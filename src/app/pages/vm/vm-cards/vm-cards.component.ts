@@ -30,7 +30,7 @@ interface VmProfile {
   devices?:any,
   template?:string; // for back face of card
   cardActions?:Array<any>;
-  isNew:boolean;
+  isNew?:boolean;
 }
 
 @Component({
@@ -47,7 +47,7 @@ export class VmCardsComponent implements OnInit {
   @ViewChild('viewMode') viewMode:MatButtonToggleGroup;
   focusedVM:string;
 
-
+  public controlEvents:Subject<CoreEvent> = new Subject();
   public tpl = "edit";
   //private pwrBtnLabel: string;
   private pwrBtnOptions = {
@@ -60,7 +60,42 @@ export class VmCardsComponent implements OnInit {
 
   ngOnInit() {
     this.viewMode.value = "cards";
+    /*
+     * Communication Downwards:
+     * Listen for events from UI controls
+     * */
+    
+    this.controlEvents.subscribe((evt:CoreEvent) => {
+      let index = this.getCardIndex("id",evt.sender.machineId);
+      switch(evt.name){
+        case "FormSubmitted":
+          if(evt.sender.isNew){
+            console.log(evt);
+            let index = this.getCardIndex('isNew',true);
+            this.cards[index].name = evt.data.name;
+            this.cards[index].state = "Loading...";
+            this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
+          } else {
+            console.warn(evt);
+            let formValue = this.parseResponse(evt.data,true);
+            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
+            this.toggleForm(false,this.cards[index],'none');
+            //this.refreshVM(index,evt.sender.machineId);
+          }
+        break;
+        case "FormCancelled":
+          console.warn(evt);
+          console.warn(index);
+          this.cancel(index);
+        break;
+      default:
+        console.warn("Unknown Event:" + evt.name);
+      break;
+      }
+    });
+
     /* 
+     * Communication Upwards:
      * Register the component with the EventBus 
      * and subscribe to the observable it returns
      */
@@ -113,6 +148,14 @@ export class VmCardsComponent implements OnInit {
       this.cache[cacheIndex].state = 'stopped';
     });
 
+    this.core.register({observerClass:this,eventName:"VmCreated"}).subscribe((evt:CoreEvent) => {
+      console.log("VmCreated! *********");
+      console.log(evt);
+      let index = this.getCardIndex('isNew', true);
+      this.toggleForm(false,this.cards[index],'none');
+      this.core.emit({name:"VmProfilesRequest"});
+    });
+
     this.core.register({observerClass:this,eventName:"VmDeleted"}).subscribe((evt:CoreEvent) => {
       console.log("VmDeleted! *********");
       console.log(evt);
@@ -160,29 +203,36 @@ export class VmCardsComponent implements OnInit {
     }
   }
 
-  parseResponse(data){
+  parseResponse(data:any, formatForUpdate?:boolean){
+    console.log("******** PARSING RESPONSE ********");
+    console.log(data);
     let card: VmProfile = { 
       name:data.name,
-      id:data.id,
       description:data.description,
       info:data.info,
       bootloader:data.bootloader,
-      state:"Checking...",
       //state:data.state.toLowerCase(),
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
-      lazyLoaded: false,
-      vnc:false, // Until we verify otherwise we assume false
-      devices:data.devices,
-      template:'none',
-      isNew:false,
-      cardActions:[]
+      devices:data.devices
     }   
+
+    // Leave out properties not used for update requests
+    if(formatForUpdate){
+      return card;
+    }
+    card.id = data.id;
+    card.state = "Loading...";
+    card.vnc = false; // Until we verify otherwise we assume false
+    card.lazyLoaded = false;
+    card.template = 'none';
+    card.isNew = false;
+    //cardActions:[]
     if(card.devices.length > 0){
-      console.log(card.devices);
+      //DEBUG: console.log(card.devices);
       card.vnc = this.checkVnc(card.devices);
-      console.log(card.vnc);
+      //DEBUG: console.log(card.vnc);
     }
     return card;
   }
@@ -304,20 +354,6 @@ export class VmCardsComponent implements OnInit {
         this.loaderOpen = true;
         let data = {};
         this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
-        /*this.rest.delete( 'vm/vm/' + this.cards[index].id, {}).subscribe(
-          (res) => {
-            console.log("deleteVM: REST response...");
-            console.log(res);
-            this.focusedVM = '';
-            this.cards.splice(index,1);
-            this.loader.close();
-            this.updateCache();
-          },
-          (res) => { 
-            new EntityUtils().handleError(this, res);
-            this.loader.close(); 
-          }
-        );*/
       }
     })
   }

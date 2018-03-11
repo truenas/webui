@@ -138,10 +138,12 @@
       <!-- Template for back face of card -->
       <vm-card-edit 
         *ngIf="cards[i].template == 'edit'" 
+        [values]="cards[i]"
         [isNew]="cards[i].isNew"
         [machineId]="cards[i].id"  
-        (cancel)="cancel(i)"
-        (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)">
+        [target]="controlEvents">
+        <!--(cancel)="cancel(i)"
+        (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"-->
       </vm-card-edit>
     </ng-template>
 

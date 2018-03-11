@@ -82,6 +82,7 @@
     "ng2-material-dropdown": "0.8.2",
     "ng2-translate": "5.0.0",
     "ng2-validation": "4.2.0",
+    "ngx-color-picker": "^5.3.3",
     "ngx-quill": "2.1.1",
     "ngx-uploader": "4.2.2",
     "ngx-webstorage": "2.0.1",

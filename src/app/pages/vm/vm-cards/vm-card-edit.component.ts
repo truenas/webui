@@ -1,24 +1,31 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import {RestService, WebSocketService} from '../../../services/';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'vm-card-edit',
-  template : `<entity-form-embedded [args]="machineId" [conf]="this"></entity-form-embedded>`
+  template : `<entity-form-embedded [args]="args" [conf]="this"></entity-form-embedded>`
 })
-export class VmCardEditComponent {
+export class VmCardEditComponent implements OnChanges {
 
   @Input() machineId: string = '';
+  @Input() values: any;
   @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
   @Output() saved: EventEmitter<any> = new EventEmitter<any>();
   @Input() isNew: boolean = false;
+  @Input() target: Subject<CoreEvent>;
 
-  protected resource_name: string = 'vm/vm/' + this.machineId;
+  //protected resource_name: string = 'vm/vm/' + this.machineId;
   protected isEntity: boolean = true;
+  protected queryCall = 'vm.query';
   protected addCall = 'vm.create';
+  protected editCall = 'vm.update';
+  public args: any[] = [];
   //protected route_add: string[] = [ 'vm', 'add' ];
 
   public fieldConfig:FieldConfig[] = [];
@@ -97,6 +104,12 @@ export class VmCardEditComponent {
     this.generateFieldConfig();
   }
 
+  ngOnChanges(changes){
+    if(changes.machineId){
+      this.prepArgs();
+    }
+  }
+
   afterInit(entityForm: any) {
     entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
       this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
@@ -104,6 +117,10 @@ export class VmCardEditComponent {
         this.bootloader.options.push({label : item[1], value : item[0]})
       }
     });
+  }
+
+  prepArgs(){
+    this.args = [["id", "=", this.machineId]];
   }
 
   generateFieldConfig(){
@@ -116,7 +133,8 @@ export class VmCardEditComponent {
 
   goBack(){
     let result: {flipState: boolean;} = {flipState: false}
-      this.cancel.emit(result); // <-- bool = isFlipped State
+    //this.cancel.emit(result); // <-- bool = isFlipped State
+    this.target.next({name:"FormCancelled",sender:this});
   }
 
   onSuccess(message?:any){
@@ -129,7 +147,8 @@ export class VmCardEditComponent {
       result.id = message;
     }
     if(result.id){
-      this.saved.emit(result);
+      //this.saved.emit(result);
+      this.target.next({name:"FormSubmitted",sender:this});
     }
 
     //console.log(message);

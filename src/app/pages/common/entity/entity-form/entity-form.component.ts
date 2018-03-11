@@ -19,6 +19,8 @@ import { MatSnackBar } from '@angular/material';
 import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import {RestService, WebSocketService} from '../../../../services/';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs/Subject';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
@@ -34,8 +36,10 @@ import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-
 export interface Formconfiguration {
   fieldSets?;
   fieldSetDisplay?;
+  values?;
   saveSubmitText?;
   preInit?;
+  target?: Subject<CoreEvent>;
   resource_name?;
   isEntity?;
   addCall?;
