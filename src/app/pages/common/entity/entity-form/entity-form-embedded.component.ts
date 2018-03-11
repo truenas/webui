@@ -116,19 +116,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       this.pk = params;
       if (this.pk && !this.conf.isNew) {
 	this.submitFunction = this.editCall; // WS eg. vm.update
-	/*if (this.conf.editCall) {
-	  this.submitFunction = this.editCall; // WS
-	} else {
-	  this.submitFunction = this.editSubmit;//REST
-	  this.resourceName = this.resourceName + this.pk + '/';
-	} */     
       } else {
 	this.submitFunction = this.addCall; // WS eg. vm.create
-	/*if (this.conf.addCall) {
-	  this.submitFunction = this.addCall;
-	} else {
-	  this.submitFunction = this.addSubmit;
-	}*/
 	this.isNew = true;
       }
     }
@@ -146,24 +135,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
         }
       }
 
-    // We are no longer responsible for API calls.
-    // Setup current values if not new
-    /*if (this.conf.queryCall) {
-      //WebSocket Queries
-      if(this.pk) {
-	      this.getFunction = this.ws.call(this.conf.queryCall, [this.pk]);
-      } else {
-	      this.getFunction = this.ws.call(this.conf.queryCall, []);
-      }
-    } else {
-      //REST Queries
-      let getQuery = this.resourceName;
-      if (this.conf.custom_get_query) {
-	getQuery = this.conf.custom_get_query;
-      }
-      this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
-    }*/
-
     if (!this.isNew) {
     // Fill in form default values.
 
@@ -174,8 +145,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
 	  //this.data = this.conf.resourceTransformIncomingRestData(this.data);
 	}
-	for (const i in this.data) {
-	  const fg = this.formGroup.controls[i];
+	for (let i in this.data) {
+	  let fg = this.formGroup.controls[i];
 	  if (fg) {
 	    const current_field = this.fieldConfig.find((control) => control.name === i);
 	    if (current_field.type === "array") {
@@ -188,7 +159,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	if (this.conf.initial) {
 	  this.conf.initial.bind(this.conf)(this);
 	}
-    }
+    } 
   }
 
   ngOnChanges() {

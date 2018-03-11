@@ -7,10 +7,11 @@
                         [formControlName]="config.name">
 		<!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>-->
-                </mat-input-container>
-                <input type="hidden" [(colorPicker)]="color" [style.background]="color" class="color-swatch"/>
+                <input [(colorPicker)]="config.value" placeholder="{{config.value}}" [style.background]="config.value" class="color-swatch"/>
                 <!--<br>-->
                 <!--<label for="{{config.name}}-swatch">{{config.placeholder}}</label>-->
+                </mat-input-container>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+        <span>{{config.value}}</span>
 	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

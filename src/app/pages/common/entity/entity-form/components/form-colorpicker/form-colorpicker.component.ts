@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component,AfterViewInit,OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -10,14 +10,18 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
   templateUrl : './form-colorpicker.component.html',
   styleUrls:['./form-colorpicker.component.css']
 })
-export class FormColorpickerComponent implements Field {
+export class FormColorpickerComponent implements Field,OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
   public picker:boolean = false;
 
-  constructor(){
+  constructor(){}
+
+  ngOnInit(){
+    this.config.value = this.group.value[this.config.name];
   }
+
   public togglePicker(){
     this.picker = !this.picker;
   }

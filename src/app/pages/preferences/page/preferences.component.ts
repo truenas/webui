@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, AfterViewInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -18,11 +18,12 @@ import {RestService, WebSocketService} from '../../../services/';
   </mat-card>
     `
 })
-export class PreferencesPage implements AfterViewInit{
+export class PreferencesPage implements OnInit {
 
   //@Input() machineId: string = '';
   @Output() saved: EventEmitter<any> = new EventEmitter<any>();
   @Input() isNew: boolean = false; //change this back to false
+  //@Input() values: any;
 
   //protected resource_name: string = 'account/users/';
   protected queryCall = 'user.query';
@@ -31,9 +32,27 @@ export class PreferencesPage implements AfterViewInit{
   protected isEntity: boolean = true; // was true
 
   // CONTROLS
-  private name:string;
-  private description:string;
-  private favorite:boolean;
+  public values:any = {
+    name:'Custom',
+    description:'Custom User Theme',
+    favorite:false,
+    bg1:'#333333',
+    bg2:'#555555',
+    fg1:'#666666',
+    fg2:'#888888',
+    'alt-bg1':'#666666',
+    'alt-bg2':'#999999',
+    'alt-fg1':'#333333',
+    'alt-fg2':'#555555',
+    yellow:'#b58900',
+    orange:'#cb4b16',
+    red:'#dc322f',
+    magenta:'#d33682',
+    violet:'#6c71c4',
+    blue:'#268bd2',
+    cyan:'#2aa198',
+    green:'#859900'
+  }
 
   public fieldConfig:FieldConfig[] = [];
 
@@ -67,11 +86,10 @@ export class PreferencesPage implements AfterViewInit{
       name:'Background and Foreground Colors',
       class:'bg-fg-colors',
       config:[
-        /*{ 
+        { 
          type: 'colorpicker', 
          name: 'bg1', 
          placeholder: 'Background 1',
-         value:"#333333",
          tooltip: 'Pick a color, any color!',
          class:'inline'
         },
@@ -79,7 +97,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'bg2', 
           placeholder: 'Background 2',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -87,7 +104,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'fg1', 
           placeholder: 'Foreground 1',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -95,7 +111,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'fg2', 
           placeholder: 'Foreground 2',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -103,7 +118,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'alt-bg1', 
           placeholder: 'Alternate Background 1',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -111,7 +125,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'alt-bg2', 
           placeholder: 'Alternate Background 2',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -119,7 +132,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'alt-fg1', 
           placeholder: 'Alternate Foreground 1',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -127,7 +139,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'alt-fg2', 
           placeholder: 'Alternate Foreground 2',
-          value:'#666666',
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -141,7 +152,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'yellow', 
           placeholder: 'Yellow',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -149,7 +159,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'orange', 
           placeholder: 'Orange',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -157,7 +166,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'red', 
           placeholder: 'Red',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -165,7 +173,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'magenta', 
           placeholder: 'Magenta',
-          value: '#333333',
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -173,7 +180,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'violet', 
           placeholder: 'Violet',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -181,7 +187,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'blue', 
           placeholder: 'Blue',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -189,7 +194,6 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'cyan', 
           placeholder: 'Cyan',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -197,10 +201,9 @@ export class PreferencesPage implements AfterViewInit{
           type: 'colorpicker', 
           name: 'green', 
           placeholder: 'Green',
-          value:"#333333",
           tooltip: 'Pick a color, any color!',
           class:'inline'
-        },*/
+        },
       ]
     }
   ];
@@ -210,7 +213,7 @@ export class PreferencesPage implements AfterViewInit{
       protected _injector: Injector, protected _appRef: ApplicationRef,
     ) {}
 
-    ngAfterViewInit(){
+    ngOnInit(){
       this.generateFieldConfig();
     }
 
