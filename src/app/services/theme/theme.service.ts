@@ -45,6 +45,14 @@ export class ThemeService {
       hasDarkLogo: false
     }, 
     {
+      name: 'native',
+      label: 'Native',
+      baseColor: '#073642',
+      accentColors:['#d33682', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
+      isActive: false,
+      hasDarkLogo: false
+    }, 
+    {
       name: 'egret-dark-purple',
       label: 'Dark Purple',
       baseColor: '#9c27b0',

@@ -241,6 +241,15 @@ export class PreferencesPage implements OnInit {
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
+            let palette = Object.keys(evt.data);
+            palette.splice(0,3);
+              
+            palette.forEach(function(color){
+              let swatch = evt.data[color];
+              console.log("Setting " + color + " to " + evt.data[color]);
+              (<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
+            });
+
           break;
           case "FormCancelled":
             console.log("Form Cancelled");

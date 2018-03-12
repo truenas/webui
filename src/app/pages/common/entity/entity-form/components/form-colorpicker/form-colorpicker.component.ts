@@ -22,6 +22,29 @@ export class FormColorpickerComponent implements Field,OnInit {
     this.config.value = this.group.value[this.config.name];
   }
 
+  cpListener(evt:string, data: any): void {
+    console.log("Color Picker Changed");
+    console.log(evt);
+    console.log(data);
+    this.group.value[this.config.name] = data;
+  }
+
+  inputListener(evt:string, data:any): void {
+    console.log("Input Value Changed");
+    console.log(evt);
+    console.log(data);
+    this.group.value[this.config.name] = data;
+  }
+
+  public onChangeColor(color: string): any {
+    /*const hsva = this.cpService.stringToHsva(color);
+
+    const rgba = this.cpService.hsvaToRgba(hsva);
+
+    return this.cpService.rgbaToCmyk(rgba);*/
+    console.log(color);
+  }
+
   public togglePicker(){
     console.log(this.picker);
     this.picker = !this.picker;
