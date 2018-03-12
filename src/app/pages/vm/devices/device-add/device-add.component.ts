@@ -107,6 +107,7 @@ export class DeviceAddComponent implements OnInit {
         })
       }
       if (this.conf.dtype === 'DISK') {
+        formvalue.DISK_zvol = "/dev/zvol" + formvalue.DISK_zvol.substr(4)
         devices.push({
           "dtype" : 'DISK',
           "attributes" :
