@@ -23,6 +23,7 @@ export class FormColorpickerComponent implements Field,OnInit {
   }
 
   public togglePicker(){
+    console.log(this.picker);
     this.picker = !this.picker;
   }
 }

@@ -74,6 +74,10 @@ mat-card.card-filter .view-controls .add-vm{
   text-align:center;
 }
 
+:host ::ng-deep .fieldset-container.fieldset-display-default{
+  margin:0;
+}
+
 vm-cards mat-card.front {
   padding:0 !important;
 }

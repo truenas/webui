@@ -54,14 +54,6 @@ export class VmTableComponent implements OnChanges{
     {name: 'Actions', prop : 'cardActions'}
   ];
 
-  /*
-  public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
-    rows: this.data,
-  };
-   */
-
   @Input() data: any[];
   @Output() edit: EventEmitter<any> = new EventEmitter<any>();
   @Output() delete: EventEmitter<any> = new EventEmitter<any>();
@@ -77,7 +69,12 @@ export class VmTableComponent implements OnChanges{
     this.page.pageNumber = 0;
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes) {
+    if(changes.data){
+      console.log("VM Table: DATA CHANGED!");
+      let newData = Object.assign(this.data,{});
+      this.data = newData;
+    }
     console.log("******** VM-CARDS ********");
     this.datatable.limit = this.pageSize; // items per page
     this.datatable.pageSize = 8;//this.pageSize;
@@ -166,89 +163,4 @@ export class VmTableComponent implements OnChanges{
     this.power.emit(index);
   }
 
-  /*
-  getActions(row) {
-    let actions = [];
-    actions.push({
-      id : "start",
-      label : row.state == "RUNNING" ? "Stop" : "Start",
-      onClick : (row) => {
-	let rpc: string;
-	if (row.state != 'RUNNING') {
-	  rpc = 'vm.start';
-	} else {
-	  rpc = 'vm.stop';
-	}
-	this.ws.call(rpc, [ row.id ]).subscribe((res) => {});
-      }
-    });
-    actions.push({
-      label : "Edit",
-      onClick : (row) => {
-	this.router.navigate(
-	    new Array('').concat([ "vm", "edit", row.id ]));
-      }
-    });
-    actions.push({
-      label : "Delete",
-      onClick : (row) => {
-	this.entityTable.doDelete(row.id );
-      },
-    });
-    actions.push({
-      label : "Devices",
-      onClick : (row) => {
-	this.router.navigate(
-	    new Array('').concat([ "vm", row.id, "devices", row.name ]));
-      }
-    });
-    actions.push({
-      label : "Web VNC",
-      onClick : (row) => {
-	let rpc: string;
-	this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-	  for (let item in res){
-	    window.open(res[item])
-	  }
-	});
-      }
-    });
-    return actions;
-  }
-  getCardActions(row) {
-    let actions = [];
-    actions.push({
-      label : "Edit",
-      onClick : (row) => {
-	this.router.navigate(
-	    new Array('').concat([ "vm", "edit", row.id ]));
-      }
-    });
-    actions.push({
-      label : "Delete",
-      onClick : (row) => {
-	this.entityTable.doDelete(row.id );
-      },
-    });
-    actions.push({
-      label : "Devices",
-      onClick : (row) => {
-	this.router.navigate(
-	    new Array('').concat([ "vm", row.id, "devices", row.name ]));
-      }
-    });
-    actions.push({
-      label : "Web VNC",
-      onClick : (row) => {
-	let rpc: string;
-	this.ws.call('vm.get_vnc_web', [ row.id ]).subscribe((res) => {
-	  for (let item in res){
-	    window.open(res[item])
-	  }
-	});
-      }
-    });
-    return actions;
-  }
-  */
 }

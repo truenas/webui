@@ -41,7 +41,7 @@ import { Subject } from 'rxjs/Subject';
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
   @Input('conf') conf: Formconfiguration;
-  @Input()  args: string;
+  //@Input()  args: string;
   @Input() target: Subject<CoreEvent>;
 
   public formGroup: FormGroup;
@@ -95,13 +95,13 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    this.init(this.args);
+    this.init(/*this.args*/);
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
   }
 
-  init(params){
+  init(/*params*/){
 
     // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
@@ -192,7 +192,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
 
     //this.loader.open();
-    console.log(value);
+    //console.log(value);
     this.conf.target.next({name:"FormSubmitted",data:value, sender:this.conf});
   }
 

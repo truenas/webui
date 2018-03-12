@@ -1,28 +1,3 @@
-/* Copied from entity-form.component.scss*/
-.form-wrap {
-        display: flex;
-    flex-flow: row wrap;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    box-sizing: border-box;
-}
-
-.form-line {
-    flex: 1 1 100%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 100%;
-}
-
-.form-inline {
-    flex: 1 1 46%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 50%;
-    padding:1% 5% 1% 0%;
-}
-
-
 /* Embedded Form Styles */
 .mat-content {
   padding:0 ;
@@ -36,7 +11,7 @@
   text-align: center;
   /*background-color: #fff;*/
   margin: 5px 0px;
-  position: absolute;
+  /*position: absolute;*/
   bottom: 0; 
 }
 
@@ -52,7 +27,10 @@
   display:flex;
   flex-flow:row wrap;
   -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
+  -webkit-box-direction: normal; 
+}
+.fieldset-container .fieldset .tooltip .material-icons{
+  font-size:12px;
 }
 
 /* Default View */
@@ -61,6 +39,7 @@
 }
 .fieldset-container.fieldset-display-default .fieldset{
   width:100%;
+  margin:24px 0;
   /*height: 100%;
   float: left;*/
 }
@@ -73,4 +52,14 @@
 
 .fieldset-container.fieldset-display-carousel .fieldset{
   width: 50%;
+}
+
+div.form-line,
+div.form-inline{
+  margin:8px;
+}
+
+/* No Margins*/
+.fieldset-container.fieldset-display-default .fieldset{
+  margin:0;
 }

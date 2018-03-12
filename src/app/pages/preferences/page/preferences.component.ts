@@ -15,7 +15,7 @@ import { Subject } from 'rxjs/Subject';
       <h4>UI Preferences</h4>
     </mat-toolbar-row>
     <mat-card-content>
-      <entity-form-embedded [args]="args" [conf]="this"></entity-form-embedded>
+      <entity-form-embedded [conf]="this"></entity-form-embedded>
     </mat-card-content>
   </mat-card>
     `
@@ -53,28 +53,33 @@ export class PreferencesPage implements OnInit {
     green:'#859900'
   }
 
+  private colorWidth:string = "180px";
   public fieldConfig:FieldConfig[] = [];
 
-  public fieldSetDisplay:string = 'default';//default | carousel | stepper
+  public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
   public fieldSets: FieldSet[] = [
     {
       name:'General',
       class:'general',
+      width:'98',
       config:[
         { 
           type: 'input', 
           name: 'name', 
+          width:'300px',
           placeholder: 'Custom Theme Name',
           tooltip: 'Enter a name to identify your new theme.',
         },
         { type: 'input', 
           name : 'description', 
+          width:'calc(100% - 300px)',
           placeholder : 'Description',
           tooltip: 'Enter a short description of your theme.',
         },
         { 
           type: 'checkbox', 
           name: 'favorite', 
+          width:'300px',
           placeholder: 'Add to Favorites', 
           tooltip: 'When checked, this theme will be added to your favorites list. Favorites are always available on the top navigation bar.',
           class:'inline'
@@ -82,12 +87,14 @@ export class PreferencesPage implements OnInit {
       ]
     },
     {
-      name:'Background and Foreground Colors',
-      class:'bg-fg-colors',
+      name:'Theme Colors 1-8',
+      class:'color-palette',
+      width:'48',
       config:[
         { 
          type: 'colorpicker', 
          name: 'bg1', 
+         width: this.colorWidth,
          placeholder: 'Background 1',
          tooltip: 'Pick a color, any color!',
          class:'inline'
@@ -95,6 +102,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'bg2', 
+          width: this.colorWidth,
           placeholder: 'Background 2',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -102,6 +110,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'fg1', 
+          width: this.colorWidth,
           placeholder: 'Foreground 1',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -109,6 +118,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'fg2', 
+          width: this.colorWidth,
           placeholder: 'Foreground 2',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -116,28 +126,32 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'alt-bg1', 
-          placeholder: 'Alternate Background 1',
+          width: this.colorWidth,
+          placeholder: 'Alt Background 1',
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
         { 
           type: 'colorpicker', 
           name: 'alt-bg2', 
-          placeholder: 'Alternate Background 2',
+          width: this.colorWidth,
+          placeholder: 'Alt Background 2',
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
         { 
           type: 'colorpicker', 
           name: 'alt-fg1', 
-          placeholder: 'Alternate Foreground 1',
+          width: this.colorWidth,
+          placeholder: 'Alt Foreground 1',
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
         { 
           type: 'colorpicker', 
           name: 'alt-fg2', 
-          placeholder: 'Alternate Foreground 2',
+          width: this.colorWidth,
+          placeholder: 'Alt Foreground 2',
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -146,10 +160,12 @@ export class PreferencesPage implements OnInit {
     {
       name:'Theme Colors 9-16',
       class:'accent-colors',
+      width:'48',
       config:[
         { 
           type: 'colorpicker', 
           name: 'yellow', 
+          width: this.colorWidth,
           placeholder: 'Yellow',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -157,6 +173,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'orange', 
+          width: this.colorWidth,
           placeholder: 'Orange',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -164,6 +181,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'red', 
+          width: this.colorWidth,
           placeholder: 'Red',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -171,6 +189,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'magenta', 
+          width: this.colorWidth,
           placeholder: 'Magenta',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -178,6 +197,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'violet', 
+          width: this.colorWidth,
           placeholder: 'Violet',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -185,6 +205,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'blue', 
+          width: this.colorWidth,
           placeholder: 'Blue',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -192,6 +213,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'cyan', 
+          width: this.colorWidth,
           placeholder: 'Cyan',
           tooltip: 'Pick a color, any color!',
           class:'inline'
@@ -199,13 +221,14 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'colorpicker', 
           name: 'green', 
+          width: this.colorWidth,
           placeholder: 'Green',
           tooltip: 'Pick a color, any color!',
           class:'inline'
-        },
+        }
       ]
     }
-  ];
+  ]
 
     constructor(protected router: Router, protected rest: RestService,
       protected ws: WebSocketService,

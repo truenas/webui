@@ -1,17 +1,21 @@
 <div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+        <div (click)="togglePicker()" class="color-swatch" [style.background-color]="config.value"></div>
 	<mat-input-container class="full-width">
-                <span (click)="togglePicker" class="color-swatch"></span>
 		<input matInput 
 			[placeholder]="config.placeholder"
 			[value]="config.value"
+                        [(colorPicker)]="config.value"
+                        [cpToggle]="picker"
+                        [cpOutputFormat]="hex"
+                        [cpPosition]="left"
+                        [cpPositionRelativeToArrow]="true"
                         [formControlName]="config.name">
 		<!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>-->
-                <input [(colorPicker)]="config.value" placeholder="{{config.value}}" [style.background]="config.value" class="color-swatch"/>
                 <!--<br>-->
                 <!--<label for="{{config.name}}-swatch">{{config.placeholder}}</label>-->
                 </mat-input-container>
+                <!--<input [(colorPicker)]="config.value" placeholder="{{config.value}}" [style.background-color]="config.value" class="color-swatch-input"/>-->
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-        <span>{{config.value}}</span>
 	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

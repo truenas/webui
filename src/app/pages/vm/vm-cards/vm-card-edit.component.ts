@@ -31,11 +31,13 @@ export class VmCardEditComponent implements OnChanges {
         { 
           type: 'input', 
           name: 'name', 
+          width:'100%',
           placeholder: 'Name',
           tooltip: 'Enter a name to identify the VM.',
         },
         { type: 'input', 
           name : 'description', 
+          width:'100%',
           placeholder : 'Description',
           tooltip: 'Enter a short description of the VM or its purpose.',
         }
@@ -48,12 +50,14 @@ export class VmCardEditComponent implements OnChanges {
         { 
           type: 'checkbox', 
           name: 'autostart', 
+          width:'50%',
           placeholder: 'Start on Boot', 
           tooltip: 'When checked, start the VM automatically on boot.',
           class:'inline'},
         { 
           type: 'select', 
-          name: 'bootloader', 
+          name: 'bootloader',
+          width:'50%',
           placeholder: 'Boot Loader Type',
           tooltip: 'Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b>\
           (Compatibility Support Mode) for older operating systems that only\
@@ -68,6 +72,7 @@ export class VmCardEditComponent implements OnChanges {
         { 
           type: 'input', 
           name: 'vcpus',
+          width:'40%',
           placeholder : 'Virtual CPUs',
           tooltip: 'Select the number of virtual CPUs allocated to the VM.\
           The maximum is 16, although the host CPU might limit the maximum number.\
@@ -78,6 +83,7 @@ export class VmCardEditComponent implements OnChanges {
         { 
           type: 'input', 
           name: 'memory', 
+          width:'60%',
           placeholder: 'Memory Size (MiB)', 
           tooltip: 'Select the megabytes of RAM allocated to the VM.',
           class:'inline'}
