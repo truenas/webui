@@ -32,14 +32,15 @@ export class VMWizardComponent {
   summary_title = "VM Summary";
 
   protected wizardConfig: Wizard[] = [{
-      label: 'OS category',
+      label: 'Operating System',
       fieldConfig: [
         {
           type: 'select',
           name: 'os',
           required: true,
           placeholder: 'Guest Operating System.',
-          tooltip: 'What OS do you want to create? (Windows/Linux/FreeBSD)',
+          tooltip: 'Select an operating system for the new Virtual\
+ Machine.',
           options: [
             {label: 'windows', value: 'windows'},
             {label: 'linux', value: 'linux'},
@@ -48,74 +49,88 @@ export class VMWizardComponent {
         },
       { type: 'input',
         name : 'name',
-        placeholder : 'Name of the VM',
+        placeholder : 'VM Name',
+        tooltip : 'Type an alphanumeric name to identify the VM.',
         validation : [ Validators.required ]
       },
       { type: 'select',
         name : 'bootloader',
-        placeholder : 'Boot Loader Type',
+        placeholder : 'Boot Method',
+        tooltip : 'Select <i>UEFI</i> for newer operating systems or\
+ <i>UEFI-CSM</i> (Compatability Support Mode) for older operating\
+ systems that only understand BIOS booting.',
         options: []
       },
       { type: 'checkbox',
         name : 'autostart',
         placeholder : 'Start on Boot',
+        tooltip : 'Check to start this VM when the system boots.',
         value: true
       },
       { type: 'checkbox',
       name : 'enable_vnc',
-      placeholder : 'Enanble VNC',
+      placeholder : 'Enable VNC',
+      tooltip : 'Check to activate a Virtual Network Computing (VNC)\
+ remote connection for a VM set to <i>UEFI</i> booting.',
       value: true
     }
       ]
     },
     {
-      label: 'CPU and Memory configuration.',
+      label: 'CPU and Memory',
       fieldConfig: [{
           type: 'input',
           name: 'vcpus',
           placeholder: 'Virtual CPUs',
-          tooltip: '',
+          tooltip: 'Type the quantity of virtual CPUs allocated to the\
+ VM, up to 16. Although these are virtual and not strictly related to\
+ host processor cores, the CPU may limit the maximum number. The VM\
+ operating system may also have operational or licensing restrictions on\
+ the number of CPUs allowed.',
         },
         {
           type: 'input',
           name: 'memory',
           placeholder: 'Memory Size (MiB)',
-          tooltip: '',
+          tooltip: 'Type the number of megabytes of system RAM to\
+ allocate to the VM.',
         },
       ]
     },
     {
-      label: 'Hard Disk Drive',
+      label: 'Hard Disks',
       fieldConfig: [
         {
           type: 'radio',
           name: 'disk_radio',
           placeholder : 'Create New Disk',
-          tooltip: '',
-          options:[{label:"yes", value: true}, 
-                   {label:"no", value: false}],
+          tooltip: 'Select <i>Yes</i> to create a new Zvol on an\
+ existing datastore to be used as a virtual hard drive. Select <i>No</i>\
+ to use an existing disk for the VM.',
+          options:[{label:"Yes", value: true},
+                   {label:"No", value: false}],
           value: true,
         },
         {
           type: 'input',
           name: 'volsize',
-          placeholder : 'please specify size for zvol\'s (GB\'s)',
-          tooltip: '',
+          placeholder : 'Define the size (in GiB) for the Zvol.',
+          tooltip: 'Type a number of GiB to allocate to the new Zvol.',
           isHidden: false
         },
         {
           type: 'select',
           name: 'datastore',
-          placeholder : 'please select a datastore.',
-          tooltip: '',
+          placeholder : 'Select a datastore.',
+          tooltip: 'Choose an existing datastore for the new Zvol.',
           options: [],
           isHidden: false
         },
         {
           type: 'explorer',
           name: 'hdd_path',
-          placeholder: 'select an existing disk',
-          tooltip: '',
+          placeholder: 'Select an existing disk',
+          tooltip: 'Enter the path to a datastore on the existing disk.',
           explorerType: "zvol",
           initial: '/mnt',
           isHidden: true
@@ -165,25 +180,27 @@ export class VMWizardComponent {
         {
           type: 'explorer',
           name: 'iso_path',
-          placeholder : 'Please choose an installation media',
+          placeholder : 'Choose an installation media',
           initial: '/mnt',
-          tooltip: '',
+          tooltip: 'Click <b>Browse</b> to select the path to the\
+ installation media.',
           validation : [ Validators.required ],
           // isHidden: false
         },
         {
           type: 'checkbox',
           name: 'upload_iso_checkbox',
-          placeholder : 'Check to Upload an ISO.',
-          tooltip: '',
+          placeholder : 'Upload an ISO?',
+          tooltip: 'Check to display upload options.',
           value: false,
         },
         {
           type: 'explorer',
           name: 'upload_iso_path',
-          placeholder : 'select a Dataset for uploading your ISO',
+          placeholder : 'ISO save location',
           initial: '/mnt',
-          tooltip: '',
+          tooltip: 'Click <b>Browse</b> to select a location to store\
+ the uploaded ISO.',
           explorerType: 'directory',
           isHidden: true
         },
@@ -207,16 +224,16 @@ export class VMWizardComponent {
   private nicType:  any;
   private bootloader: any;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService, 
+  constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
-    protected loader: AppLoaderService, protected dialog: MatDialog, 
+    protected loader: AppLoaderService, protected dialog: MatDialog,
     private router: Router) {
 
   }
 
 
   afterInit(entityWizard: EntityWizardComponent) {
-    
+
     ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
       this.summary['guest operating system'] = res;
       ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
@@ -231,7 +248,7 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary['Installation Media'] = iso_path;
       });
-      if (res === 'windows') {  
+      if (res === 'windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
@@ -252,7 +269,7 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
       }
-      
+
     });
     ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
       if (res){
@@ -262,7 +279,7 @@ export class VMWizardComponent {
         _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
         _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
       }
-      
+
     });
     ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
       if (res){
@@ -377,15 +394,15 @@ async customSubmit(value) {
       vm_payload["devices"].push(
         {
           "dtype": "VNC", "attributes": {
-            "wait": true, 
-            "vnc_port": String(this.getRndInteger(5553,6553)), 
+            "wait": true,
+            "vnc_port": String(this.getRndInteger(5553,6553)),
             "vnc_resolution": "1024x768",
-            "vnc_bind": res[0], 
-            "vnc_password": "", 
-            "vnc_web": true 
+            "vnc_bind": res[0],
+            "vnc_password": "",
+            "vnc_web": true
           }
         }
     );
-    }); 
+    });
   }
 }

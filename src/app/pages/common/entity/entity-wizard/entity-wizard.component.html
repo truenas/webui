@@ -18,7 +18,7 @@
         </mat-step>
       </div>
       <mat-step>
-        <ng-template matStepLabel>{{"Everything seems correct." | translate}}</ng-template>
+        <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
           <div> {{ conf.summary_title }}</div>
             <div *ngFor="let key of conf.objectKeys(conf.summary)">
