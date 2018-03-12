@@ -12,7 +12,7 @@
 :root {
   /* 16 color palette */
   --bg1:#002b36;
-  --bg2:#002831;
+  --bg2:#073642;
   --fg1:#708284;
   --fg2:#657b83;
   --alt-bg1:#eee8d5;
@@ -184,7 +184,7 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
     body, .mat-sidenav-content{
       //background-color:$canvas;
       //color:$base01;
-      @include variable(background-color, --bg2, $canvas);
+      @include variable(background-color, --bg1, $canvas);
       @include variable(color, --fg1, $base01);
     }
 
@@ -192,7 +192,7 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
     .sidebar-panel.mat-sidenav .navigation-hold#scroll-area, .mat-card, .breadcrumb-bar#breadcrumb-bar{
       //background-color: $background !important;
       //color:$foreground;
-      @include variable(background-color, --bg1, $background, !important );
+      @include variable(background-color, --bg2, $background, !important );
       @include variable(color, --fg1, $foreground);
     }
 
