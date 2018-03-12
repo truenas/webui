@@ -31,7 +31,7 @@ import {EntityTemplateDirective} from '../../../common/entity/entity-template.di
 export class DeviceAddComponent implements OnInit {
 
   @Input('conf') conf: any;
-
+  protected resource_name = 'vm/device';
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
   public error: string;
@@ -39,8 +39,9 @@ export class DeviceAddComponent implements OnInit {
   public vmid: any;
   protected route_cancel: string[];
   protected route_success: string[];
-  public hasConf: boolean = true;
-  public success: boolean = false;
+  public hasCon = true;
+  public success = false;
+  public custActions: Array < any >
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -58,9 +59,12 @@ export class DeviceAddComponent implements OnInit {
 
   ngOnInit() {
     this.fieldConfig = this.conf.fieldConfig;
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    this.conf.afterInit(this);
+    this.conf.preInit(this);
+  }
 
+  afterInit(entityEdit: any) {
+    this.formGroup = entityEdit.formGroup;
+    this.conf.afterInit(entityEdit);
   }
 
   goBack() { this.location.back(); }
@@ -74,9 +78,7 @@ export class DeviceAddComponent implements OnInit {
     return true;
   }
 
-  onSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
+  customSubmit(event: Event) {
     this.ws.call('vm.query', [[[ "name", "=", this.conf.vm ]]]).subscribe((res) => {
       const formvalue = _.cloneDeep(this.formGroup.value);
       this.route_success = [ 'vm', this.vmid, 'devices', this.conf.vm ];
