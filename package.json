@@ -13,7 +13,7 @@
     "start:dev": "npm run po2json && ng serve --proxy-config proxy.config.json --aot=false",
     "start:prod": "npm run po2json && ng serve --prod",
     "start:prod:aot": "npm run po2json && ng serve --prod --aot",
-    "build": "npm run po2json; npm run clean:dist && ng build",
+    "build": "npm run po2json && npm run clean:dist && ng build",
     "build:prod": "npm run build -- --prod",
     "build:prod:aot": "npm run build:prod -- --aot --base-href /ui/",
     "test": "ng test",
