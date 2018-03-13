@@ -1,14 +1,14 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 
-<div mat-dialog-content class="overflow-hide" *ngIf="!hideCheckBox;else noCheckBox">
-  <mat-checkbox (change)="toggleSubmit($event)">{{ message | translate }}</mat-checkbox>
+<div mat-dialog-content>
+  {{ message | translate }}
 </div>
-<ng-template #noCheckBox>{{ message | translate }}</ng-template>
+
 
 <div mat-dialog-actions>
+  <mat-checkbox *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
+  <span fxFlex></span>
   <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">{{"Ok"| translate}}
   </button>
-  &nbsp;
-  <span fxFlex></span>
   <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Cancel" | translate}}</button>
 </div>
