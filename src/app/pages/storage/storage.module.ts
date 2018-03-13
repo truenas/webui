@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { DragulaModule } from 'ng2-dragula';
 import { MaterialModule } from '../../appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { UserService } from '../../services/user.service';
@@ -47,7 +48,7 @@ import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptim
   imports : [
     RouterModule, DragulaModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule,
-    NgxDatatableModule, DxTreeListModule
+    NgxDatatableModule, DxTreeListModule, TranslateModule
   ],
   declarations : [
     VolumesListComponent,

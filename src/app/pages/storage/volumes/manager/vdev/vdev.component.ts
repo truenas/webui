@@ -6,6 +6,8 @@ import {
   QueryList,
   ViewChild
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../../translate-marker';
 
 
 @Component({
@@ -26,12 +28,12 @@ export class VdevComponent implements OnInit {
   public id: number;
   public size;
 
-  public vdev_type_tooltip = 'Choose a <b>Stripe</b>, <b>Mirror</b>, or\
+  public vdev_type_tooltip = T('Choose a <b>Stripe</b>, <b>Mirror</b>, or\
  <b>Raid-Z</b> configuration for the chosen disk layout. See the\
  <b>Storage/Volumes</b> section of the <a href="guide">Guide</a> for\
- more details.';
+ more details.');
 
-  constructor(public elementRef: ElementRef) {}
+  constructor(public elementRef: ElementRef, public translate: TranslateService) {}
 
   ngOnInit() {
     this.estimateSize();
