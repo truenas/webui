@@ -45,20 +45,24 @@ class logout_test(unittest.TestCase):
         pass
 
     def test_01_logout(self):
-        print (" loging out of the ui, see ya")
-        # Click on root account
-        driver.find_element_by_xpath(xpaths['rootButton']).click()
-        # Click on logout
-        time.sleep(2)
-        driver.find_element_by_xpath(xpaths['logoutButton']).click()
-        time.sleep(2)
-        # check the logout confirmation checkbox
-        # driver.find_element_by_xpath(xpaths['logoutconfirmationCheckbox']).click()
-        # Click on OK when re-confirm logout
-        driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-        time.sleep(2)
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            print (" loging out of the ui, see ya")
+            # Click on root account
+            driver.find_element_by_xpath(xpaths['rootButton']).click()
+            # Click on logout
+            time.sleep(2)
+            driver.find_element_by_xpath(xpaths['logoutButton']).click()
+            time.sleep(2)
+            # Click on OK when re-confirm logout
+            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
+            time.sleep(2)
+            # Taking screenshot
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
     #method to test if an element is present
