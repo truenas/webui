@@ -4,6 +4,14 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid ""
+"<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
+"ZFS volumes. <b>WARNING: </b>Read the \"Encryption\" section (Section "
+"8.1.1.1) of the <a href=\"guide\">Guide</a> before activating this option."
+msgstr ""
+
 msgid "About"
 msgstr ""
 
@@ -11,6 +19,18 @@ msgid "Account"
 msgstr "Cuenta"
 
 msgid "Active Directory"
+msgstr ""
+
+msgid "Add Cache"
+msgstr ""
+
+msgid "Add Data"
+msgstr ""
+
+msgid "Add Log"
+msgstr ""
+
+msgid "Add Spare"
 msgstr ""
 
 msgid ""
@@ -22,6 +42,11 @@ msgid "Advanced"
 msgstr ""
 
 msgid "Alert Services"
+msgstr ""
+
+msgid ""
+"Always backup the key! If the key is lost, the                   data on "
+"the disks will also be lost with no hope of recovery."
 msgstr ""
 
 msgid "An update has already been applied. Please reboot."
@@ -36,6 +61,9 @@ msgstr ""
 msgid "Are you sure you wish to shut down the system?"
 msgstr ""
 
+msgid "Arranges available disks in a system recommended formation."
+msgstr ""
+
 msgid "Associate an email address with the account"
 msgstr ""
 
@@ -43,6 +71,9 @@ msgid "Automatically check for new updates"
 msgstr ""
 
 msgid "Auxiliary Groups"
+msgstr ""
+
+msgid "Available Disks"
 msgstr ""
 
 msgid "Back"
@@ -82,7 +113,7 @@ msgid "CAs"
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 msgid "Certificates"
 msgstr ""
@@ -115,11 +146,20 @@ msgid ""
 "password login</b> which is mutually exclusive."
 msgstr ""
 
-msgid "Close"
+msgid ""
+"Choose a <b>Stripe</b>, <b>Mirror</b>, or <b>Raid-Z</b> configuration for "
+"the chosen disk layout. See the <b>Storage/Volumes</b> section of the <a "
+"href=\"guide\">Guide</a> for more details."
 msgstr ""
+
+msgid "Close"
+msgstr "Cerca"
 
 msgid "Cloud Credentials"
 msgstr ""
+
+msgid "Confirm"
+msgstr "Confirmar"
 
 msgid "Confirm Password"
 msgstr ""
@@ -136,8 +176,11 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-msgid "Delete"
+msgid "Data VDevs"
 msgstr ""
+
+msgid "Delete"
+msgstr "Borrar"
 
 msgid "Directory Service"
 msgstr ""
@@ -160,10 +203,27 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
+msgid "Encryption"
+msgstr ""
+
 msgid "Entering a name is required. Spaces are allowed."
 msgstr ""
 
+msgid "Estimated raw capacity:"
+msgstr ""
+
 msgid "Everything seems correct."
+msgstr ""
+
+msgid "Extending an encrypted volume will reset the passphrase and recovery key!"
+msgstr ""
+
+msgid ""
+"Extending your pool will stripe additional         vdevs onto your pool "
+"resulting in a larger pool.  It is recommended that         you only stripe "
+"vdevs of the same size and type as the ones that are already         in the "
+"existing pool, this operation cannot be reversed.          Do you wish to "
+"continue?"
 msgstr ""
 
 msgid ""
@@ -181,7 +241,7 @@ msgid "Global Configuration"
 msgstr ""
 
 msgid "Groups"
-msgstr ""
+msgstr "Grupos"
 
 msgid "Guide"
 msgstr ""
@@ -204,7 +264,13 @@ msgstr ""
 msgid "Interfaces"
 msgstr ""
 
+msgid "Invalid regex filter"
+msgstr ""
+
 msgid "Jails"
+msgstr ""
+
+msgid "Kerberos Keytabs"
 msgstr ""
 
 msgid "Kerberos Realms"
@@ -241,6 +307,9 @@ msgstr ""
 msgid "Microsoft Account"
 msgstr ""
 
+msgid "Mirror"
+msgstr ""
+
 msgid "NIS"
 msgstr ""
 
@@ -248,7 +317,7 @@ msgid "NTP Servers"
 msgstr ""
 
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 msgid "Network"
 msgstr ""
@@ -263,7 +332,7 @@ msgid "No updates available"
 msgstr ""
 
 msgid "Ok"
-msgstr ""
+msgstr "Bueno"
 
 msgid "Operation"
 msgstr ""
@@ -303,6 +372,15 @@ msgstr ""
 msgid "Primary Group"
 msgstr ""
 
+msgid "Raid-z"
+msgstr ""
+
+msgid "Raid-z2"
+msgstr ""
+
+msgid "Raid-z3"
+msgstr ""
+
 msgid "Release Notes"
 msgstr ""
 
@@ -331,6 +409,9 @@ msgstr ""
 
 msgid "SSH Public Key"
 msgstr ""
+
+msgid "Save"
+msgstr "Salvo"
 
 msgid "Scrub Tasks"
 msgstr ""
@@ -373,14 +454,20 @@ msgstr ""
 msgid "Storage"
 msgstr ""
 
+msgid "Stripe"
+msgstr ""
+
 msgid "Submit"
+msgstr ""
+
+msgid "Suggest Layout"
 msgstr ""
 
 msgid "Support"
 msgstr ""
 
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 msgid "System Dataset"
 msgstr ""
@@ -398,6 +485,9 @@ msgid "System is shutting down..."
 msgstr ""
 
 msgid "Tasks"
+msgstr ""
+
+msgid "The existing contents of all the disks you have added will be erased."
 msgstr ""
 
 msgid "Train"
@@ -422,7 +512,7 @@ msgid "Username"
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Usuarios"
 
 msgid "VLANs"
 msgstr ""
@@ -439,8 +529,21 @@ msgstr ""
 msgid "Volumes"
 msgstr ""
 
+msgid "Warning"
+msgstr ""
+
 msgid "WebDAV Shares"
 msgstr ""
 
 msgid "Windows (SMB) Shares"
+msgstr ""
+
+msgid "ZFS Pool Manager"
+msgstr ""
+
+msgid ""
+"ZFS volumes must conform to strict naming <a "
+"href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
+"target=\"_blank\">conventions</a>. Choose a memorable name that will stick "
+"out in the logs."
 msgstr ""
