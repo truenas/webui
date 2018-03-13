@@ -96,7 +96,7 @@ class create_group_test(unittest.TestCase):
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
+            self.screenshot("02-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -127,7 +127,7 @@ class create_group_test(unittest.TestCase):
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
+            self.screenshot("03-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -158,7 +158,7 @@ class create_group_test(unittest.TestCase):
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
+            self.screenshot("04-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -172,7 +172,7 @@ class create_group_test(unittest.TestCase):
             self.screenshot("05")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
+            self.screenshot("05-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 

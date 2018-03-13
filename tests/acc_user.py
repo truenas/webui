@@ -76,7 +76,7 @@ class create_user_test(unittest.TestCase):
             self.screenshot("01")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("07-e")
+            self.screenshot("01-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -115,7 +115,7 @@ class create_user_test(unittest.TestCase):
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("07-e")
+            self.screenshot("02-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -158,7 +158,7 @@ class create_user_test(unittest.TestCase):
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("07-e")
+            self.screenshot("03-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -198,7 +198,7 @@ class create_user_test(unittest.TestCase):
             # check if the the user list is loaded after addding a new user
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("07-e")
+            self.screenshot("04-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -236,7 +236,7 @@ class create_user_test(unittest.TestCase):
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("07-e")
+            self.screenshot("05-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -247,7 +247,7 @@ class create_user_test(unittest.TestCase):
             time.sleep(20)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("07-e")
+            self.screenshot("06-e")
             print (exc_info_p)
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
