@@ -7,20 +7,18 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 
 @Component({
-  selector : 'app-dataset-form',
-  templateUrl : './dataset-form.component.html',
-  providers: [ EntityFormService ],
+  selector: 'app-dataset-form',
+  template: '<entity-form [conf]="this"></entity-form>'
 })
-export class DatasetFormComponent implements Formconfiguration, OnInit{
+export class DatasetFormComponent implements Formconfiguration, OnInit {
 
   public volid: string;
   public sub: Subscription;
-  public route_success: string[] = [ 'storage', 'volumes' ];
+  public route_success: string[] = ['storage', 'volumes'];
   public isBasicMode: boolean = true;
 
   public resourceName: string;
@@ -41,8 +39,8 @@ export class DatasetFormComponent implements Formconfiguration, OnInit{
       name: 'name',
       placeholder: 'Name',
       tooltip: 'Mandatory; enter a unique name for the dataset.',
-      validation : [ Validators.required ]
-    }, 
+      validation: [Validators.required]
+    },
     {
       type: 'input',
       name: 'comments',
@@ -61,7 +59,7 @@ export class DatasetFormComponent implements Formconfiguration, OnInit{
         { label: 'DISABLED', value: 'DISABLED' }
       ],
     },
-    {  
+    {
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level',
@@ -209,7 +207,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: 'MIXED', value: 'MIXED' }
       ],
     }
-   
+
   ];
 
   public advanced_field: Array<any> = [
@@ -225,51 +223,28 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   public custActions: Array<any> = [
     {
-      id : 'basic_mode',
-      name : 'Basic Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      id: 'basic_mode',
+      name: 'Basic Mode',
+      function: () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      id : 'advanced_mode',
-      name : 'Advanced Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      id: 'advanced_mode',
+      name: 'Advanced Mode',
+      function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
 
-  protected RecordSizeMap: any = {
-    '512': '512',
-    '1024': '1K',
-    '2048': '2K',
-    '4096': '4K',
-    '8192': '8K',
-    '16384': '16K',
-    '32768': '32K',
-    '65536': '64K',
-    '131072': '128K',
-    '262144': '256K',
-    '524288': '512K',
-    '1048576': '1024K',
-  };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService, 
-              protected entityFormService: EntityFormService,
-              protected loader: AppLoaderService) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected loader: AppLoaderService) { }
 
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
-      return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
-      return false;
-    }
-    return true;
-  }
 
   preInit() {
     this.sub = this.aroute.params.subscribe(params => {
       this.volid = params['volid'];
       // edit dataset
-      if(params['pk']) {
+      if (params['pk']) {
         this.resourceName = params['pk'];
         let pk_parent = params['pk'].split('/');
         this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
@@ -285,11 +260,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     });
   }
 
-  ngOnInit() {
-    this.preInit();
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    this.ws.call('pool.dataset.query', [ [['id', '=', this.resourceName]] ]).subscribe((res) => {
+  ngOnInit() {
+    
+    this.ws.call('pool.dataset.query', [[['id', '=', this.resourceName]]]).subscribe((res) => {
       this.data = res[0];
       this.parent_data = res[0];
 
@@ -299,19 +273,19 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         if (fg && !this.isNew) {
           let value = "";
 
-          if(i === "name") {
+          if (i === "name") {
             value = this.data[i];
           }
           else {
             value = this.data[i].value;
           }
 
-          if(
-            i == "compression" || 
-            i == "atime" || 
-            i == "dedup" || 
-            i == "readonly" || 
-            i == "snapdir" || 
+          if (
+            i == "compression" ||
+            i == "atime" ||
+            i == "dedup" ||
+            i == "readonly" ||
+            i == "snapdir" ||
             i == "casesensitivity") {
             value = value.toUpperCase();
           }
@@ -321,9 +295,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       }
 
       if (!this.isNew) {
-        this.setDisabled('name', true);
-
-        if(this.parent) {
+        if (this.parent) {
           this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
             this.parent_data = res[0];
           });
@@ -340,83 +312,4 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     return this.ws.call('pool.dataset.create', [body]);
   }
 
-  clearErrors() {
-    for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
-    }
-  }
-
-  isShow(id: any): any {
-    if (this.isBasicMode) {
-      if (this.advanced_field.indexOf(id) > -1) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  setDisabled(name: string, disable: boolean) {
-    if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      this.formGroup.controls[name][method]();
-      return;
-    }
-
-    this.fieldConfig = this.fieldConfig.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
-    });
-  }
-
-  goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
-  }
-
-  onSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.error = null;
-    this.success = false;
-    this.clearErrors();
-    let value = _.cloneDeep(this.formGroup.value);
-
-    if(this.isNew) {
-      value['name'] = this.resourceName + '/' + value['name'];
-    }    
-    if(value['quota'] == 0) {
-      value['quota'] = null;
-    }
-    if(value['refquota'] == 0) {
-      value['refquota'] = null;
-    }
-    if(value['reservation'] == 0) {
-      value['reservation'] = null;
-    }
-    if(value['refreservation'] == 0) {
-      value['refreservation'] = null;
-    }
-    if(value['copies'] > 0) {
-      value['copies'] = value['copies'].toString();
-    }
-    
-    this.loader.open();
-    this.busy = this.submitFunction(value)
-                    .subscribe(
-                        (res) => {
-                          this.loader.close();
-                          if (this.route_success) {
-                            this.router.navigate(new Array('').concat(
-                                this.route_success));
-                          } else {
-                            this.success = true;
-                          }
-                        },
-                        (res) => {
-                          this.loader.close();
-                          this.error = res.reason;
-                        });
-  }
 }
