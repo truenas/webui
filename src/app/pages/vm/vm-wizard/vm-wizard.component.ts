@@ -42,9 +42,9 @@ export class VMWizardComponent {
           tooltip: 'Select an operating system for the new Virtual\
  Machine.',
           options: [
-            {label: 'Windows', value: 'windows'},
-            {label: 'Linux', value: 'linux'},
-            {label: 'FreeBSD', value: 'freeBSD'},
+            {label: 'windows', value: 'windows'},
+            {label: 'linux', value: 'linux'},
+            {label: 'freeBSD', value: 'freeBSD'},
           ],
         },
       { type: 'input',
@@ -82,9 +82,6 @@ export class VMWizardComponent {
           type: 'input',
           name: 'vcpus',
           placeholder: 'Virtual CPUs',
-          inputType: 'number',
-          min: 1,
-          validation : [ Validators.required, Validators.min(1) ],
           tooltip: 'Type the quantity of virtual CPUs allocated to the\
  VM, up to 16. Although these are virtual and not strictly related to\
  host processor cores, the CPU may limit the maximum number. The VM\
@@ -95,9 +92,6 @@ export class VMWizardComponent {
           type: 'input',
           name: 'memory',
           placeholder: 'Memory Size (MiB)',
-          inputType: 'number',
-          min: 128,
-          validation : [ Validators.required, Validators.min(128)],
           tooltip: 'Type the number of megabytes of system RAM to\
  allocate to the VM.',
         },
@@ -191,6 +185,7 @@ export class VMWizardComponent {
           tooltip: 'Click <b>Browse</b> to select the path to the\
  installation media.',
           validation : [ Validators.required ],
+          // isHidden: false
         },
         {
           type: 'checkbox',
@@ -245,10 +240,10 @@ export class VMWizardComponent {
         this.summary['Number of CPU'] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary['Memory'] = memory + ' Mib';
+        this.summary['Memory'] = memory;
       });
       ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
-        this.summary['Hard Disk Size'] = volsize + ' Gib';
+        this.summary['Hard Disk Size'] = volsize;
       });
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary['Installation Media'] = iso_path;
