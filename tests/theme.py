@@ -50,44 +50,100 @@ class change_theme_test(unittest.TestCase):
         pass
 
     def test_01_theme1(self):
-        self.theme_change(theme_name['theme1'])
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            self.theme_change(theme_name['theme1'])
+            # Taking screenshot
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_theme2(self):
-        self.theme_change(theme_name['theme2'])
-        # Taking screenshot
-        self.screenshot("02")
+        try:
+            self.theme_change(theme_name['theme2'])
+            # Taking screenshot
+            self.screenshot("02")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_03_theme3(self):
-        self.theme_change(theme_name['theme3'])
-        # Taking screenshot
-        self.screenshot("03")
+        try:
+            self.theme_change(theme_name['theme3'])
+            # Taking screenshot
+            self.screenshot("03")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("03-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_04_theme4(self):
-        self.theme_change(theme_name['theme4'])
-        # Taking screenshot
-        self.screenshot("04")
+        try:
+            self.theme_change(theme_name['theme4'])
+            # Taking screenshot
+            self.screenshot("04")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("04-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_05_theme5(self):
-        self.theme_change(theme_name['theme5'])
-        # Taking screenshot
-        self.screenshot("05")
+        try:
+            self.theme_change(theme_name['theme5'])
+            # Taking screenshot
+            self.screenshot("05")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("05-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_06_theme6(self):
-        self.theme_change(theme_name['theme6'])
-        # Taking screenshot
-        self.screenshot("06")
+        try:
+            self.theme_change(theme_name['theme6'])
+            # Taking screenshot
+            self.screenshot("06")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("06-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_07_theme7(self):
-        self.theme_change(theme_name['theme7'])
-        # Taking screenshot
-        self.screenshot("07")
+        try:
+            self.theme_change(theme_name['theme7'])
+            # Taking screenshot
+            self.screenshot("07")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_08_theme8(self):
-        self.theme_change(theme_name['theme8'])
-        # Taking screenshot
-        self.screenshot("08")
+        try:
+            self.theme_change(theme_name['theme8'])
+            # Taking screenshot
+            self.screenshot("08")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("08-e")
+            print exc_info_p
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
 
     # method to test if an element is present
