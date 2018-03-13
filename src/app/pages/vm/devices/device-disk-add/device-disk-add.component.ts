@@ -34,10 +34,11 @@ export class DeviceDiskAddComponent {
       name : 'DISK_zvol',
       placeholder : 'ZVol',
       tooltip : 'After <a\
- href="http://doc.freenas.org/11/storage.html#create-zvol"\
- target="_blank">creating a zvol</a>, select it from the list.',
-      type: 'select',
-      options: []
+    href="http://doc.freenas.org/11/storage.html#create-zvol"\
+    target="_blank">creating a zvol</a>, select it from the list.',
+      type: 'explorer',
+      explorerType: "zvol",
+      initial: '/mnt',
     },
     {
       name : 'DISK_mode',
@@ -67,16 +68,6 @@ export class DeviceDiskAddComponent {
       this.pk = params['pk'];
       this.vm = params['name'];
       this.route_success = [ 'vm', this.pk, 'devices', this.vm ];
-    });
-    this.vmService.getStorageVolumes().subscribe((res) => {
-      const data = new EntityUtils().flattenData(res.data);
-      this.DISK_zvol = _.find(this.fieldConfig, {name:'DISK_zvol'});
-     
-      for (const dataset of data) {
-        if (dataset.type === 'zvol') {
-          this.DISK_zvol.options.push({label : dataset.name, value : '/dev/zvol/' + dataset.path});
-        };
-      };
     });
   }
 
