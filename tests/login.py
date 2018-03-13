@@ -43,29 +43,36 @@ class login_test(unittest.TestCase):
         driver.get(ui_url)
 
     def test_01_login(self):
-        print ("loging in FreeNAS new webui- woot woot")
-        # enter username in the username textbox
-        driver.find_element_by_xpath(xpaths['usernameTxtBox']).clear()
-        driver.find_element_by_xpath(xpaths['usernameTxtBox']).send_keys(username)
-        # enter password in the password textbox
-        driver.find_element_by_xpath(xpaths['passwordTxtBox']).send_keys(password)
-        # click
-        driver.find_element_by_xpath(xpaths['submitButton']).click()
-        # check if the dashboard opens
-        time.sleep(1)
-        self.error_check()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("The page now is: " + page_data)
-        # assert response
-        self.assertTrue("Dashboard" in page_data)
-        # cancelling the tour
-        if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
-            driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
-        driver.execute_script("document.body.style.zoom='50 %'")
-        self.screenshot("01")
+        try:
+            print ("loging in FreeNAS new webui- woot woot")
+            # enter username in the username textbox
+            driver.find_element_by_xpath(xpaths['usernameTxtBox']).clear()
+            driver.find_element_by_xpath(xpaths['usernameTxtBox']).send_keys(username)
+            # enter password in the password textbox
+            driver.find_element_by_xpath(xpaths['passwordTxtBox']).send_keys(password)
+            # click
+            driver.find_element_by_xpath(xpaths['submitButton']).click()
+            # check if the dashboard opens
+            time.sleep(1)
+            self.error_check()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("The page now is: " + page_data)
+            # assert response
+            self.assertTrue("Dashboard" in page_data)
+            # cancelling the tour
+            if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
+            driver.execute_script("document.body.style.zoom='50 %'")
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     # method to test if an element is present
     def is_element_present(self, how, what):
