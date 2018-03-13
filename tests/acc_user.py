@@ -56,168 +56,200 @@ class create_user_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_acc_user(self):
-        self.error_check()
-        # Click  Account menu
-        print (" navigating to the user submenu")
-        a = driver.find_element_by_xpath(xpaths['navAccount'])
-        a.click()
-        # allowing the button to load
-        time.sleep(1)
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("User" in page_data)
-        self.screenshot("01")
+        try:
+            self.error_check()
+            # Click  Account menu
+            print (" navigating to the user submenu")
+            a = driver.find_element_by_xpath(xpaths['navAccount'])
+            a.click()
+            # allowing the button to load
+            time.sleep(1)
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("User" in page_data)
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_create_newuser(self):
-        print (" creating a new user with create new primary group")
-        # cancelling the tour
-        if self.is_element_present(By.XPATH, '/html/body/div[6]/div[1]/button'):
-            driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
-        # scroll down to find hover tab
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new user option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Username
-        driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
-        # Enter User Full name
-        driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
-        # Enter User email id
-        driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
-        # Enter Password
-        driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
-        # Enter Password Conf
-        driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
-        # Click on create new User button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # check if there is a generic error when making a duplicate user, and print the error
-        time.sleep(1)
-        self.screenshot("02")
-        self.error_check()
+        try:
+            print (" creating a new user with create new primary group")
+            # cancelling the tour
+            if self.is_element_present(By.XPATH, '/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new user option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Username
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+            # Enter User email id
+            driver.find_element_by_xpath(xpaths['newUserEmail']).send_keys(newuseremail)
+            # Enter Password
+            driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
+            # Enter Password Conf
+            driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
+            # Click on create new User button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
+            self.screenshot("02")
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_create_newuser_primarygroup_uncheck(self):
-        time.sleep(2)
-        print (" creating a new user without creating a primary group")
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # scroll down to find hover tab
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new user option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Username
-        driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
-        # uncheck create primary group  Checkbox
-        driver.find_element_by_xpath(xpaths['primaryGroupcheckbox']).click()
-        # click on primary group dropdownlist
-        driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
-#        Select(d).select_by_visible_text("userNAS")
-        # select the element from the dropdown list by using selectlist function
-        time.sleep(2)
-        driver.find_element_by_xpath('//*[contains(text(), "userNAS")]').click()
-#        driver.find_element_by_xpath("//*[text()='userNAS']").click()
-#        self.selectlist(newusername)
-        # driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[3]").click()
-        # Enter User Full name
-        driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
-        # Enter Password
-        driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
-        # Enter Password Conf
-        driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
-        # Click on create new User button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # Taking screenshot
-        self.screenshot("03")
-        # check if there is a generic error when making a duplicate user, and print the error
-        self.error_check()
+        try:
+            time.sleep(2)
+            print (" creating a new user without creating a primary group")
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new user option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Username
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
+            # uncheck create primary group  Checkbox
+            driver.find_element_by_xpath(xpaths['primaryGroupcheckbox']).click()
+            # click on primary group dropdownlist
+            driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
+            # select the element from the dropdown list by using selectlist function
+            time.sleep(2)
+            driver.find_element_by_xpath('//*[contains(text(), "userNAS")]').click()
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
+            # Enter Password
+            driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
+            # Enter Password Conf
+            driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
+            # Click on create new User button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # Taking screenshot
+            self.screenshot("03")
+            # check if there is a generic error when making a duplicate user, and print the error
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_04_create_superuser(self):
-        print (" creating a super user with root access")
-        time.sleep(2)
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # scroll down to find hover tab
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new user option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Username
-        driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
-        # Enter User Full name
-        driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfname)
-        # Enter Password
-        driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(superuserpassword)
-        # Enter Password Conf
-        driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(superuserpassword)
-        # check Permit Sudo Checkbox
-        driver.find_element_by_xpath(xpaths['permitSudocheckbox']).click()
-        # Click on create new User button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # Taking screenshot
-        self.screenshot("04")
-        # check if there is a generic error when making a duplicate user, and print the error
-        self.error_check()
-        # check if the the user list is loaded after addding a new user
+        try:
+            print (" creating a super user with root access")
+            time.sleep(2)
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new user option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Username
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(superusername)
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newUserName']).send_keys(superuserfname)
+            # Enter Password
+            driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(superuserpassword)
+            # Enter Password Conf
+            driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(superuserpassword)
+            # check Permit Sudo Checkbox
+            driver.find_element_by_xpath(xpaths['permitSudocheckbox']).click()
+            # Click on create new User button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # Taking screenshot
+            self.screenshot("04")
+            # check if there is a generic error when making a duplicate user, and print the error
+            self.error_check()
+            # check if the the user list is loaded after addding a new user
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_05_create_duplicateuser(self):
-        print (" creating a duplicate user")
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # cancelling the tour
-        if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
-            driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
-
-        # scroll down to find hover tab
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new user option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Username
-        driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
-        # Enter User Full name
-        driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
-        # Enter Password
-        driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
-        # Enter Password Conf
-        driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
-        # Click on create new User button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # Taking screenshot
-        self.screenshot("05")
-        # check if there is a generic error when making a duplicate user, and print the error
-        self.error_check()
+        try:
+            print (" creating a duplicate user")
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
+            # cancelling the tour
+            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new user option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Username
+            driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusername)
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfname)
+            # Enter Password
+            driver.find_element_by_xpath(xpaths['newUserPass']).send_keys(newuserpassword)
+            # Enter Password Conf
+            driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
+            # Click on create new User button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # Taking screenshot
+            self.screenshot("05")
+            # check if there is a generic error when making a duplicate user, and print the error
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_06_close_navAccount(self):
-        print (" closing account menu")
-        driver.find_element_by_xpath(xpaths['navAccount']).click()
-        time.sleep(20)
-
+        try:
+            print (" closing account menu")
+            driver.find_element_by_xpath(xpaths['navAccount']).click()
+            time.sleep(20)
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("07-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
     # Next step-- To check if the new user is present in the list via automation
