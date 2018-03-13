@@ -9,26 +9,27 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 
 @Component({
   selector : 'app-dataset-form',
   templateUrl : './dataset-form.component.html',
   providers: [ EntityFormService ],
 })
-export class DatasetFormComponent implements OnInit{
+export class DatasetFormComponent implements Formconfiguration, OnInit{
 
-  protected volid: string;
+  public volid: string;
   public sub: Subscription;
   public route_success: string[] = [ 'storage', 'volumes' ];
-  protected isBasicMode: boolean = true;
+  public isBasicMode: boolean = true;
 
-  protected resourceName: string;
-  protected parent: string;
+  public resourceName: string;
+  public parent: string;
   public submitFunction = this.editSubmit;
-  private isNew: boolean = false;
+  public isNew: boolean = false;
   public formGroup: FormGroup;
-  protected data: any;
-  protected parent_data: any;
+  public data: any;
+  public parent_data: any;
 
   public error: string;
   public success: boolean = false;
@@ -95,7 +96,7 @@ export class DatasetFormComponent implements OnInit{
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space.',
+ size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.',
       value: 0,
     },
     {
@@ -104,7 +105,7 @@ export class DatasetFormComponent implements OnInit{
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets.',
+ value applies to both this dataset and any child datasets. 0 == Unlimited.',
       value: 0,
     },
     {
@@ -114,7 +115,7 @@ export class DatasetFormComponent implements OnInit{
       placeholder: 'Reserved space for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space',
+ which could take up all available free space.  0 == Unlimited.',
       value: 0,
     },
     {
@@ -123,13 +124,14 @@ export class DatasetFormComponent implements OnInit{
       name: 'reservation',
       placeholder: 'Reserved space for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets.',
+ value applies to both this dataset and any child datasets. 0 == Unlimited.',
       value: 0,
     },
     {
       type: 'select',
       name: 'deduplication',
-      placeholder: 'Deduplication',
+      label: 'ZFS deplication',
+      placeholder: 'ZFS Deduplication',
       tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.',
       options: [
@@ -210,7 +212,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
    
   ];
 
-  protected advanced_field: Array<any> = [
+  public advanced_field: Array<any> = [
     'refquota',
     'quota',
     'refreservation',
