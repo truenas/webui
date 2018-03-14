@@ -59,13 +59,14 @@ export class CloudsyncFormComponent implements OnInit {
     isHidden: true,
   }, {
     type: 'select',
-    name: 'amazon_encryp',
+    name: 'encryption',
+    placeholder: 'Server Side Encryption',
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
     ],
     isHidden: true,
-  },{
+  }, {
     type: 'explorer',
     initial: '/mnt',
     explorerType: 'directory',
@@ -83,20 +84,6 @@ export class CloudsyncFormComponent implements OnInit {
       { label: 'COPY', value: 'COPY' },
       { label: 'MOVE', value: 'MOVE' },
     ]
-  }, {
-    type: 'checkbox',
-    name: 'encryption',
-    placeholder: 'Remote Encryption',
-  }, {
-    type: 'input',
-    name: 'encryption_password',
-    placeholder: 'encryption_password',
-    inputType : 'password',
-  }, {
-    type: 'input',
-    name: 'encryption_salt',
-    placeholder: 'encryption_salt',
-    inputType : 'password',
   }, {
     type: 'select',
     name: 'repeat',
@@ -274,7 +261,9 @@ export class CloudsyncFormComponent implements OnInit {
     if (credential.provider == "AMAZON") {
       // code...goamazon
       this.getAmazonCredential(credential).subscribe(res => {
+        _.find(this.fieldConfig, {'name': 'encryption'}).isHidden = false;
         if (res) {
+          this.bucket_field.options = [];
           res.forEach((item) => {
             this.bucket_field.options.push({ label: item.name, value: item.name});
           });
@@ -283,6 +272,7 @@ export class CloudsyncFormComponent implements OnInit {
     }else if (credential.provider == "BACKBLAZE") {
       this.getB2Credential(credential).subscribe(res => {
         if (res) {
+          this.bucket_field.options = [];
           this.formGroup.controls['folder'].setValue('cloud');
           res.forEach((item) => {
             this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName});
@@ -292,6 +282,7 @@ export class CloudsyncFormComponent implements OnInit {
     }else if (credential.provider == "GCLOUD") {
       this.getGcloudCredential(credential).subscribe(res => {
         if (res) {
+          this.bucket_field.options = [];
           res.forEach((item) => {
             this.bucket_field.options.push({ label: item.name, value: item.name});
           });
@@ -300,6 +291,7 @@ export class CloudsyncFormComponent implements OnInit {
     }else if (credential.provider == "AZURE") {
       this.getAzureCredential(credential).subscribe(res => {
         if (res) {
+          this.bucket_field.options = [];
           res.forEach((item) => {
             this.bucket_field.options.push({ label: item, value: item});
           });
@@ -316,17 +308,11 @@ export class CloudsyncFormComponent implements OnInit {
     this.hour_field = _.find(this.fieldConfig, { 'name': 'hour' });
     this.mintue_field = _.find(this.fieldConfig, { 'name': 'minute' });
     this.credential = _.find(this.fieldConfig, { 'name': 'credential' });
-    this.encryption_password = _.find(this.fieldConfig, {'name': 'encryption_password'});
-    this.encryption_salt = _.find(this.fieldConfig, {'name': 'encryption_salt'});
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
     this.folder_field = _.find(this.fieldConfig, {'name': 'folder'});
 
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    this.formGroup.controls['encryption'].valueChanges.subscribe((res)=> {
-      this.encryption_password.isHidden = !res;
-      this.encryption_salt.isHidden = !res;
-    });
 
     this.formGroup.controls['credential'].valueChanges.subscribe((res)=>{
       console.log("credential value changed: ",res);
@@ -526,10 +512,7 @@ export class CloudsyncFormComponent implements OnInit {
     payload['path'] = value.path;
     payload['credential'] = parseInt(value.credential);
     if (value.encryption) {
-      payload['encryption'] = value.encryption;
-      payload['filename_encryption'] = value.filename_encryption;
-      payload['encryption_password'] = value.encryption_password;
-      payload['encryption_salt'] = value.encryption_salt;
+      console.log(value.encryption);
     }
     payload['minute'] = value.minute;
     payload['hour'] = value.hour;
