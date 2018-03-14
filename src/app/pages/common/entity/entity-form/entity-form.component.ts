@@ -227,6 +227,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           } else {
             this.queryResponse = res;
             this.wsResponse = res[0];
+
+            if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+              this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
+            }
+
             for (const i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
               this.wsResponseIdx = this.wsResponse[i];

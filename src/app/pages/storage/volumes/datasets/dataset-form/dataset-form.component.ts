@@ -12,6 +12,28 @@ import { Formconfiguration } from '../../../../common/entity/entity-form/entity-
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
 
+
+
+interface DatasetFormData {
+  id: string;
+  name: string;
+  comments: string;
+  sync: string;
+  compression: string;
+  atime: string;
+  refquota: string;
+  quota: string;
+  refreservation: string;
+  reservation: string;
+  deduplication: string;
+  readonly: string;
+  snapdir: string;
+  copies: string;
+  recordsize: string;
+  casesensitivity: string;
+};
+
+
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
@@ -26,9 +48,9 @@ export class DatasetFormComponent implements Formconfiguration {
 
   public customFilter: any[] = [];
 
-  public resource_name = "storage/volume";
+  //public resource_name = "storage/volume";
 
-  // public queryCall = "pool.dataset.query";
+  public queryCall = "pool.dataset.query";
   //public addCall = "pool.dataset.create";
   //public editCall = "pool.dataset.update";
   public isEntity: boolean = true;
@@ -39,6 +61,7 @@ export class DatasetFormComponent implements Formconfiguration {
   public data: any;
   public parent_data: any;
 
+  
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -62,7 +85,7 @@ export class DatasetFormComponent implements Formconfiguration {
       type: 'select',
       name: 'sync',
       placeholder: 'sync',
-      tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">Deduplication</a>\
+      tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.',
       options: [
         { label: 'STANDARD', value: 'STANDARD' },
@@ -100,7 +123,7 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'input',
-      name: 'refquota.value',
+      name: 'refquota',
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
@@ -264,8 +287,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
       this.fieldConfig.pop();
       this.customFilter = [[['id', '=', this.pk]]];
-      this.resource_name = "storage/volume/" + this.volid + "/datasets";
-
     }
     // add new dataset
     if (paramMap['parent'] || paramMap['pk'] === undefined) {
@@ -277,13 +298,37 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   }
 
-
-
-  resourceTransformIncomingRestData(data: any): AnimationKeyframesSequenceMetadata[] {
-    console.log("Log point 1");
-
-    data = new EntityUtils().flattenData(data);
-    return data;
+  getFieldValueOrRaw(field): any {
+    if( field.value === undefined && field.rawvalue === undefined) {
+      return field;
+    }
+    return (field.value !== undefined && field.value !== null) ? field.value : field.rawvalue;
   }
+
+  resourceTransformIncomingRestData(wsResponse): any {
+
+     console.log("dataset-form-component", wsResponse );
+     const returnValue: DatasetFormData = {
+        id: this.getFieldValueOrRaw(wsResponse.id),
+        name: this.getFieldValueOrRaw(wsResponse.name),
+        atime: this.getFieldValueOrRaw(wsResponse.atime),
+        casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
+        comments: this.getFieldValueOrRaw(wsResponse.comments),
+        compression: this.getFieldValueOrRaw(wsResponse.compression),
+        copies: this.getFieldValueOrRaw(wsResponse.copies),
+        deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
+        quota: this.getFieldValueOrRaw(wsResponse.quota),
+        readonly: this.getFieldValueOrRaw(wsResponse.readonly),
+        recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
+        refquota: this.getFieldValueOrRaw(wsResponse.refquota),
+        refreservation: this.getFieldValueOrRaw(wsResponse.refreservation),
+        reservation: this.getFieldValueOrRaw(wsResponse.reservation),
+        snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
+        sync: this.getFieldValueOrRaw(wsResponse.sync)
+     };
+
+     return returnValue;
+  }
+
 
 }
