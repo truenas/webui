@@ -12,6 +12,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../../translate-marker';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector : 'app-iscsi-target-edit',
@@ -153,7 +154,8 @@ export class TargetEditComponent implements OnInit {
               protected rest: RestService,
               protected iscsiService: IscsiService,
               protected entityFormService: EntityFormService,
-              protected loader: AppLoaderService) {}
+              protected loader: AppLoaderService,
+              public translate: TranslateService) {}
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
