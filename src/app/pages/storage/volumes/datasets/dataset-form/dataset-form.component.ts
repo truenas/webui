@@ -9,29 +9,32 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
 
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
 })
-export class DatasetFormComponent implements Formconfiguration, OnInit {
+export class DatasetFormComponent implements Formconfiguration {
 
   public volid: string;
   public sub: Subscription;
   public route_success: string[] = ['storage', 'volumes'];
   public isBasicMode: boolean = true;
+  public pk: any;
 
-  public resourceName: string;
-  public parent: string;
-  public submitFunction = this.editSubmit;
+  public customFilter: any[] = [];
+
+  public queryCall = "pool.dataset.query";
+  public addCall = "pool.dataset.create";
+  public editCall = "pool.dataset.update";
+  public isEntity: boolean = true;
   public isNew: boolean = false;
-  public formGroup: FormGroup;
+  public submitFunction = this.editSubmit;
+
+  public parent: string;
   public data: any;
   public parent_data: any;
-
-  public error: string;
-  public success: boolean = false;
-  public busy: Subscription;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -89,41 +92,37 @@ export class DatasetFormComponent implements Formconfiguration, OnInit {
     },
     {
       type: 'input',
-      inputType: 'number',
       name: 'refquota',
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
  size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.',
-      value: 0,
+      value: "0",
     },
     {
       type: 'input',
-      inputType: 'number',
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
  value applies to both this dataset and any child datasets. 0 == Unlimited.',
-      value: 0,
+      value: "0",
     },
     {
       type: 'input',
-      inputType: 'number',
       name: 'refreservation',
       placeholder: 'Reserved space for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
  which could take up all available free space.  0 == Unlimited.',
-      value: 0,
+      value: "0",
     },
     {
       type: 'input',
-      inputType: 'number',
       name: 'reservation',
       placeholder: 'Reserved space for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
  value applies to both this dataset and any child datasets. 0 == Unlimited.',
-      value: 0,
+      value: "0",
     },
     {
       type: 'select',
@@ -221,6 +220,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     'recordsize',
   ];
 
+
   public custActions: Array<any> = [
     {
       id: 'basic_mode',
@@ -234,78 +234,44 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     }
   ];
 
-
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected loader: AppLoaderService) { }
 
 
-  preInit() {
-    this.sub = this.aroute.params.subscribe(params => {
-      this.volid = params['volid'];
-      // edit dataset
-      if (params['pk']) {
-        this.resourceName = params['pk'];
-        let pk_parent = params['pk'].split('/');
-        this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
-        this.fieldConfig.pop();
-      }
-      // add new dataset
-      if (params['parent']) {
-        this.parent = params['parent'];
-        this.resourceName = this.parent;
-        this.submitFunction = this.addSubmit;
-        this.isNew = true;
-      }
-    });
+
+  afterInit(entityForm: EntityFormComponent) {
+
   }
 
+  preInit(entityForm: EntityFormComponent) {
+    let paramMap: any = (<any>this.aroute.params).getValue();
 
-  ngOnInit() {
+    this.volid = paramMap['volid'];
+
+    if (paramMap['pk'] !== undefined ) {
+      this.pk = paramMap['pk'];
+      
+      let pk_parent = paramMap['pk'].split('/');
+      this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
+      this.fieldConfig.pop();
+      this.customFilter = [['id', '=', this.pk]];
+
+    }
+    // add new dataset
+    if (paramMap['parent'] || paramMap['pk'] === undefined) {
+      this.parent = paramMap['parent'];
+      this.pk = this.parent;
+      this.submitFunction = this.addSubmit;
+      this.isNew = true;
+    }
+
     
-    this.ws.call('pool.dataset.query', [[['id', '=', this.resourceName]]]).subscribe((res) => {
-      this.data = res[0];
-      this.parent_data = res[0];
-
-      for (let i in this.data) {
-        let fg = this.formGroup.controls[i];
-
-        if (fg && !this.isNew) {
-          let value = "";
-
-          if (i === "name") {
-            value = this.data[i];
-          }
-          else {
-            value = this.data[i].value;
-          }
-
-          if (
-            i == "compression" ||
-            i == "atime" ||
-            i == "dedup" ||
-            i == "readonly" ||
-            i == "snapdir" ||
-            i == "casesensitivity") {
-            value = value.toUpperCase();
-          }
-
-          fg.setValue(value);
-        }
-      }
-
-      if (!this.isNew) {
-        if (this.parent) {
-          this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
-            this.parent_data = res[0];
-          });
-        }
-      }
-    });
   }
+
 
   editSubmit(body: any) {
-    return this.ws.call('pool.dataset.update', [this.resourceName, body]);
+    return this.ws.call('pool.dataset.update', [this.pk, body]);
   }
 
   addSubmit(body: any) {

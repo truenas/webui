@@ -87,13 +87,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   @Input('conf') conf: Formconfiguration;
 
-  protected pk: any;
+  public pk: any;
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
-  protected resourceName: string;
+  public resourceName: string;
   public getFunction;
   public submitFunction = this.editSubmit;
-  private isNew = false;
+  public isNew = false;
   public hasConf = true;
   public wsResponse;
   public wsfg;
@@ -191,7 +191,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             filter.push(this.conf.queryCallOption);
           }
           if (this.conf.customFilter){
-            filter = this.conf.customFilter
+            filter = this.conf.customFilter;
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
