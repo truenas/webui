@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core'
 
 import { WebSocketService, ShellService } from '../../../services/';
 import { TooltipComponent } from '../../common/entity/entity-form/components/tooltip/tooltip.component';
@@ -46,7 +47,10 @@ export class JailShellComponent implements OnInit, OnChanges {
   clearLine = "\u001b[2K\r"
   protected pk: string;
 
-  constructor(private ws: WebSocketService, public ss: ShellService, protected aroute: ActivatedRoute) {}
+  constructor(private ws: WebSocketService,
+              public ss: ShellService,
+              protected aroute: ActivatedRoute,
+              public translate: TranslateService) {}
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
