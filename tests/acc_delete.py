@@ -150,11 +150,12 @@ class delete_test(unittest.TestCase):
 
 
     def test_02_02_delete_group(self):
-        print (" deleting a group: " + superusername)
-        time.sleep(2)
-        self.delete("group", superusername)
-        # Taking screenshot
-        self.screenshot("02_02")
+        try:
+            print (" deleting a group: " + superusername)
+            time.sleep(2)
+            self.delete("group", superusername)
+            # Taking screenshot
+            self.screenshot("02_02")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("02_02-e")
