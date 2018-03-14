@@ -44,72 +44,112 @@ class edit_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_00_nav_acc_user(self):
-        # Click  Account menu
-        print (" navigating to the user submenu")
-        a = driver.find_element_by_xpath(xpaths['navAccount'])
-        a.click()
-        # allowing the button to load
-        time.sleep(1)
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("User" in page_data)
-        # Taking screenshot
-        self.screenshot("01_00")
+        try:
+            # Click  Account menu
+            print (" navigating to the user submenu")
+            a = driver.find_element_by_xpath(xpaths['navAccount'])
+            a.click()
+            # allowing the button to load
+            time.sleep(1)
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("User" in page_data)
+            # Taking screenshot
+            self.screenshot("01_00")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_00-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_01_01_edit_userNAS_email(self):
-        print ("Check if the email has been registered ")
-        time.sleep(2)
-        #call edit funtion on the userNAS
-        self.edit("user", newusername)
-        # get the ui element
-        ui_email=driver.find_element_by_xpath('//*[@id="email"]/mat-input-container/div/div[1]/div/input')
-        # get the weather data
-        email_data=ui_email.get_attribute('value')
-        print ("the email for user " + newusername + " is " + email_data)
-        # assert response
-        self.assertTrue(newuseremail in email_data)
-        # Taking screenshot
-        self.screenshot("01_01")
+        try:
+            print ("Check if the email has been registered ")
+            time.sleep(2)
+            #call edit funtion on the userNAS
+            self.edit("user", newusername)
+            # get the ui element
+            ui_email=driver.find_element_by_xpath('//*[@id="email"]/mat-input-container/div/div[1]/div/input')
+            # get the weather data
+            email_data=ui_email.get_attribute('value')
+            print ("the email for user " + newusername + " is " + email_data)
+            # assert response
+            self.assertTrue(newuseremail in email_data)
+            # Taking screenshot
+            self.screenshot("01_01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_01_02_edit_userNAS_sudo(self):
-        print ("Changing permission to sudo user ")
-        # Changing permission to sudo
-        ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
-        driver.find_element_by_xpath('//*[@id="save_button"]').click()
-        time.sleep(15)
-        # Taking screenshot
-        self.screenshot("01_02")
+        try:
+            print ("Changing permission to sudo user ")
+            # Changing permission to sudo
+            ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
+            driver.find_element_by_xpath('//*[@id="save_button"]').click()
+            time.sleep(15)
+            # Taking screenshot
+            self.screenshot("01_02")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_02-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_02_00_nav_acc_group(self):
-        # Click  Account menu
-        print (" navigating to the group submenu")
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Group" in page_data)
-        # Taking screenshot
-        self.screenshot("02_00")
+        try:
+            # Click  Account menu
+            print (" navigating to the group submenu")
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Group" in page_data)
+            # Taking screenshot
+            self.screenshot("02_00")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02_00-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_02_01_edit_groupNAS_sudo(self):
-        print ("change permission of groupNAS to sudo")
-        time.sleep(2)
-        self.edit("group", newgroupname)
-        driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
-        driver.find_element_by_xpath('//*[@id="save_button"]').click()
-        time.sleep(20)
-        # Taking screenshot
-        self.screenshot("02_01")
+        try:
+            print ("change permission of groupNAS to sudo")
+            time.sleep(2)
+            self.edit("group", newgroupname)
+            driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
+            driver.find_element_by_xpath('//*[@id="save_button"]').click()
+            time.sleep(20)
+            # Taking screenshot
+            self.screenshot("02_01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02_01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     # Next step-- To check if the new user is present in the list via automation
 

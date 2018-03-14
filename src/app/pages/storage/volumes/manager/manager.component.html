@@ -1,13 +1,13 @@
 <mat-card class="m-0 ml-1 mr-1 p-0">
   <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">ZFS Pool Manager</div>
+    <div class="mat-card-title-text">{{"ZFS Pool Manager" | translate}}</div>
   </div>
   <div class="mat-content p-1">
     <div class="manager">
       <div class="fields m-3">
         <div *ngIf="isNew;else extend">
           <mat-input-container>
-            <input matInput placeholder="Name" [(ngModel)]="name" required>
+            <input matInput placeholder="{{'Name' | translate}}" [(ngModel)]="name" required>
           </mat-input-container>
           <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
           <mat-checkbox
@@ -15,11 +15,11 @@
             class="form-control"
              placeholder="Encryption"
              (change)="isEncryptedChecked()" >
-             Encryption
+             {{"Encryption" | translate}}
           </mat-checkbox>
           <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
           <div>
-            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-raised-button class="btn btn-accent" (click)="suggestLayout()">Suggest Layout</button>
+            <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-raised-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
         </div>
@@ -27,12 +27,12 @@
           <mat-input-container>
             <input matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
-          <mat-error *ngIf="isEncrypted">Extending an encrypted volume will reset the passphrase and recovery key!</mat-error>
+          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted volume will reset the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
       </div>
       <div class="wrapper">
         <div class="disks">
-            <h4>Available Disks</h4>
+            <h4>{{"Available Disks" | translate }}</h4>
               <ngx-datatable
                 #table
                 class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
@@ -73,35 +73,35 @@
                     (keyup)='updateFilter($event)'
                   />
                 </mat-input-container>
-                <mat-error *ngIf="re_has_errors">{{re_errors}}</mat-error>
+                <mat-error *ngIf="re_has_errors">{{"Invalid regex filter" | translate}}</mat-error>
         </div>
         <div class="pool">
           <div>
-            <h4>Data VDevs</h4>
+            <h4>{{"Data VDevs" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
           </div>
           <div *ngIf="vdevs.cache.length > 0">
-            <h4>Cache VDev</h4>
+            <h4>"Cache VDev"</h4>
             <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
           </div>
           <div *ngIf="vdevs.log.length > 0">
-            <h4>Log VDev</h4>
+            <h4>"Log VDev"</h4>
             <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
           </div>
           <div *ngIf="vdevs.spare.length > 0">
-            <h4>Spare VDev</h4>
+            <h4>"Spare VDev"</h4>
             <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
           </div>
         </div>
       </div>
+      <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="buttons">
-        <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
-        <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">Save</button>
-        <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">Cancel</button>
-        <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">Add Data</button>
-        <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">Add Cache</button>
-        <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">Add Log</button>
-        <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">Add Spare</button>
+        <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary">{{"Save" | translate }}</button>
+        <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
+        <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
+        <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
+        <button [disabled]="vdevs.log.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('log')">{{"Add Log" | translate}}</button>
+        <button [disabled]="vdevs.spare.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('spare')">{{"Add Spare" | translate}}</button>
       </div>
     </div>
   </div>

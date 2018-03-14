@@ -3,8 +3,8 @@
     <mat-card>
     <form>
       <div class="form-wrap">
-        <label for="power">Select a Pool</label>
-        <mat-select class="form-control full-width" placeholder="Select a pool" required [(ngModel)]="selectedPool" name="Pool">
+        <label for="power">Activate Jail Manager:</label>
+        <mat-select class="form-control full-width" title="Choose an existing ZFS Pool to allow the iocage jail manager to create a /iocage dataset in the selected pool. The '/iocage' dataset may not be visible until after the first jail is created. iocage uses this dataset to store FreeBSD RELEASES and all other jail data. To create a new ZFS Pool, navigate Storage/Volumes and click 'Create ZFS Pool'." placeholder="Choose an existing ZFS Pool" required [(ngModel)]="selectedPool" name="Pool">
           <mat-option *ngFor="let pool of availablePools" [value]="pool">{{pool.name}}</mat-option>
         </mat-select>
       </div>

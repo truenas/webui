@@ -3,13 +3,14 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { Observable } from 'rxjs/Rx';
 import { AppLoaderComponent } from './app-loader.component';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../translate-marker';
 
 @Injectable()
 export class AppLoaderService {
   dialogRef: MatDialogRef<AppLoaderComponent>;
   constructor(private dialog: MatDialog, private translate: TranslateService) { }
 
-  public open(title: string = 'PLEASE_WAIT'): Observable<boolean> {
+  public open(title: string = T('Please wait')): Observable<boolean> {
     this.translate.get(title).subscribe(t => {
       this.dialogRef = this.dialog.open(AppLoaderComponent, {disableClose: true});
       this.dialogRef.updateSize('200px', '200px');

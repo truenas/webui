@@ -242,7 +242,7 @@ export class JailListComponent implements OnInit {
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
-      selected.push(selectedJails[i].host_hostuuid);
+      selected.push([selectedJails[i].host_hostuuid]);
     }
     return selected;
   }

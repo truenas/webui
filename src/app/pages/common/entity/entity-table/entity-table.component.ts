@@ -384,7 +384,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doMultiDelete(selected) {
-    this.dialogService.confirm("Delete", "Are you sure you want to delete selected itme(s)?").subscribe((res) => {
+    this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
