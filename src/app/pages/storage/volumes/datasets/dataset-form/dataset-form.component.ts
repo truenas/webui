@@ -39,6 +39,11 @@ export class DatasetFormComponent implements Formconfiguration {
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
+      name: 'id',
+      isHidden: true
+    },
+    {
+      type: 'input',
       name: 'name',
       placeholder: 'Name',
       tooltip: 'Mandatory; enter a unique name for the dataset.',
@@ -92,7 +97,7 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'input',
-      name: 'refquota',
+      name: 'refquota.value',
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
@@ -276,6 +281,12 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   addSubmit(body: any) {
     return this.ws.call('pool.dataset.create', [body]);
+  }
+
+  dataHandler(data) {
+    console.log("Checking out this value from dataHandler.  Pete don't forget to remove this:", data);
+
+    
   }
 
 }
