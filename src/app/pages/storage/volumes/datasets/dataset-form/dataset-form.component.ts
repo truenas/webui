@@ -10,6 +10,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
 
 @Component({
   selector: 'app-dataset-form',
@@ -25,12 +26,14 @@ export class DatasetFormComponent implements Formconfiguration {
 
   public customFilter: any[] = [];
 
-  public queryCall = "pool.dataset.query";
-  public addCall = "pool.dataset.create";
-  public editCall = "pool.dataset.update";
+  public resource_name = "storage/volume";
+
+  // public queryCall = "pool.dataset.query";
+  //public addCall = "pool.dataset.create";
+  //public editCall = "pool.dataset.update";
   public isEntity: boolean = true;
   public isNew: boolean = false;
-  public submitFunction = this.editSubmit;
+
 
   public parent: string;
   public data: any;
@@ -254,39 +257,33 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
     this.volid = paramMap['volid'];
 
-    if (paramMap['pk'] !== undefined ) {
+    if (paramMap['pk'] !== undefined) {
       this.pk = paramMap['pk'];
-      
+
       let pk_parent = paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
       this.fieldConfig.pop();
-      this.customFilter = [['id', '=', this.pk]];
+      this.customFilter = [[['id', '=', this.pk]]];
+      this.resource_name = "storage/volume/" + this.volid + "/datasets";
 
     }
     // add new dataset
     if (paramMap['parent'] || paramMap['pk'] === undefined) {
       this.parent = paramMap['parent'];
       this.pk = this.parent;
-      this.submitFunction = this.addSubmit;
       this.isNew = true;
     }
 
-    
+
   }
 
 
-  editSubmit(body: any) {
-    return this.ws.call('pool.dataset.update', [this.pk, body]);
-  }
 
-  addSubmit(body: any) {
-    return this.ws.call('pool.dataset.create', [body]);
-  }
+  resourceTransformIncomingRestData(data: any): AnimationKeyframesSequenceMetadata[] {
+    console.log("Log point 1");
 
-  dataHandler(data) {
-    console.log("Checking out this value from dataHandler.  Pete don't forget to remove this:", data);
-
-    
+    data = new EntityUtils().flattenData(data);
+    return data;
   }
 
 }
