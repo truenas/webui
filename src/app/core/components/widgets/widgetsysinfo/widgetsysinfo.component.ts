@@ -75,11 +75,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
 
   get themeAccentColors(){
     let theme = this.themeService.currentTheme();
-    if(theme.accentColors){
+    this._themeAccentColors = [];
+    for(let color in theme.accentColors){
+      this._themeAccentColors.push(theme[theme.accentColors[color]]);
+    }
+    /*if(theme.accentColors){
       this._themeAccentColors = theme.accentColors;
     } else {
       this._themeAccentColors = [];
-    }
+    }*/
 
     return this._themeAccentColors;
   }

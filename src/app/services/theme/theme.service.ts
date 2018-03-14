@@ -5,50 +5,130 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 export interface Theme {
   name: string;
+  description:string;
   label: string;
-  baseColor: string;
-  accentColors?: string[];
-  isActive: boolean;
-  hasDarkLogo: boolean
+  //baseColor: string;
+  accentColors: string[];
+  //isActive?: boolean;
+  favorite:boolean;
+  hasDarkLogo: boolean;
+  primary:string;
+  accent:string;
+  bg1:string
+  bg2:string
+  fg1:string
+  fg2:string
+  'alt-bg1':string
+  'alt-bg2':string
+  'alt-fg1':string
+  'alt-fg2':string
+  yellow:string
+  orange:string
+  red:string
+  magenta:string
+  violet:string
+  blue:string
+  cyan:string
+  green:string
 }
 
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
+  public activeTheme: string = 'ix-blue';
 
   public freenasThemes: Theme[] = [
+    /*{
+     name: 'ix-blue',
+     label: 'iX Blue',
+     baseColor: '#0095D5',
+     accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
+     isActive: true,
+     hasDarkLogo: false
+    }, */
     {
-      name: 'ix-blue',
-      label: 'iX Blue',
-      baseColor: '#0095D5',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: true,
-      hasDarkLogo: false
-    }, 
+      name:'ix-blue',
+      label: "iX Blue",
+      description:'iX System Colors',
+      hasDarkLogo:false,
+      favorite:false,
+      accentColors:['blue', 'violet', 'magenta', 'cyan', 'red', 'green', 'orange', 'yellow'],
+      primary:"var(--blue)",
+      accent:"var(--violet)",
+      bg1:'#dddddd',
+      bg2:'#ffffff',
+      fg1:'#222222',
+      fg2:'#333333',
+      'alt-bg1':'#f8f8f2',
+      'alt-bg2':'#fafaf5',
+      'alt-fg1':'#181a26',
+      'alt-fg2':'#282a36',
+      yellow:'#f1fa8c',
+      orange:'#ffb86c',
+      red:'#ff5555',
+      magenta:'#ff79c6',
+      violet:'#bd93f9',
+      blue:'#0095d5',
+      cyan:'#8be9fd',
+      green:'#50fa7b'
+    },
     {
-      name: 'solarized-dark',
-      label: 'Solarized Dark',
-      baseColor: '#073642',
-      accentColors:['#d33682', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
-      // Order is magenta, cyan, red, blue, green, orange, yellow, violet
-      /*
-       $yellow:    #b58900;
-       $orange:    #cb4b16;
-       $red:       #dc322f;
-       $magenta:   #d33682;
-       $violet:    #6c71c4;
-       $blue:      #268bd2;
-       $cyan:      #2aa198;
-       $green:     #859900;
-       * */
-      isActive: false,
-      hasDarkLogo: false
-    }, 
+      name:'dracula',
+      label: "Dracula",
+      description:'Dracula color theme',
+      hasDarkLogo:false,
+      favorite:false,
+      accentColors:['blue', 'violet', 'magenta', 'cyan', 'red', 'green', 'orange', 'yellow'],
+      primary:"var(--blue)",
+      accent:"var(--violet)",
+      bg1:'#181a26',
+      bg2:'#282a36',
+      fg1:'#f8f8f2',
+      fg2:'#fafaf5',
+      'alt-bg1':'#f8f8f2',
+      'alt-bg2':'#fafaf5',
+      'alt-fg1':'#181a26',
+      'alt-fg2':'#282a36',
+      yellow:'#f1fa8c',
+      orange:'#ffb86c',
+      red:'#ff5555',
+      magenta:'#ff79c6',
+      violet:'#bd93f9',
+      blue:'#6272a4',
+      cyan:'#8be9fd',
+      green:'#50fa7b'
+    },
     {
+      name:'solarized-dark',
+      label: "Solarized Dark",
+      description:'Solarized dark color scheme',
+      hasDarkLogo:false,
+      favorite:false,
+      accentColors:['red', 'blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow'],
+      primary:"var(--fg1)",
+      accent:"var(--blue)",
+      bg1:'#002b36',
+      bg2:'#073642',
+      fg1:'#586e75',
+      fg2:'#657b83',
+      'alt-bg1':'#eee8d5',
+      'alt-bg2':'#fdf6e3',
+      'alt-fg1':'#839496',
+      'alt-fg2':'#282a36',
+      yellow:'#b58900',
+      orange:'#cb4b16',
+      red:'#dc322f',
+      magenta:'#d33682',
+      violet:'#6c71c4',
+      blue:'#268bd2',
+      cyan:'#2aa198',
+      green:'#859900'
+    }
+    /*{
       name: 'native',
       label: 'Native',
       baseColor: '#073642',
-      accentColors:['#d33682', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
+      accentColors:['var(--magenta)', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
       isActive: false,
       hasDarkLogo: false
     }, 
@@ -75,10 +155,10 @@ export class ThemeService {
       accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
       isActive: false,
       hasDarkLogo: false
-    }
+    }*/
   ];
 
-  savedUserTheme = "";
+  savedUserTheme:string = "";
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService) {
 
@@ -91,35 +171,49 @@ export class ThemeService {
       // the default in the middleware. This is a workaround until that
       // default value can be changed
       if(this.savedUserTheme == "egret-blue"){
+        //this.savedUserTheme = "ix-blue";
         this.savedUserTheme = "ix-blue";
       }
 
-      this.freenasThemes.forEach((t) => {
-        t.isActive = (t.name === this.savedUserTheme);
-      });
+      /*this.freenasThemes.forEach((t) => {
+       t.isActive = (t.name === this.savedUserTheme);
+      });*/
+      this.activeTheme = this.savedUserTheme;
 
-      if( typeof(this.savedUserTheme) !== "undefined" && this.savedUserTheme !== "" ) {
-        domHelper.changeTheme(this.freenasThemes, this.savedUserTheme);
-      } else {{
+      /*if( typeof(this.savedUserTheme) !== "undefined" && this.savedUserTheme !== "" ) {
+       domHelper.changeTheme(this.freenasThemes, this.savedUserTheme);
+      } else {
         this.freenasThemes[this.freeThemeDefaultIndex].isActive = true;
-      }}
+      }*/
 
     });
   }
 
-  currentTheme(){
+  currentTheme():Theme{
+    /*for(let i in this.freenasThemes){
+      let t = this.freenasThemes[i];
+      if(t.name == this.activeTheme.name){ return t;}
+    }*/
+
+    return this.findTheme(this.activeTheme);
+  }
+
+  findTheme(name:string):Theme{
     for(let i in this.freenasThemes){
       let t = this.freenasThemes[i];
-      if(t.isActive){ return t;}
+      if(t.name == name){ return t;}
     }
   }
 
-  changeTheme(theme) {
-    domHelper.changeTheme(this.freenasThemes, theme.name);
-    this.freenasThemes.forEach((t) => {
-      t.isActive = (t.name === theme.name);
-    });
+  changeTheme(theme:string) {
+    console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
+    //domHelper.changeTheme(this.freenasThemes, this.activeTheme);
+    this.activeTheme = theme;
+    /*this.freenasThemes.forEach((t) => {
+     t.isActive = (t.name === theme.name);
+    });*/
     this.saveCurrentTheme();
+    this.setCssVars(this.findTheme(theme));
     this.core.emit({name:'ThemeChanged'});
   }
 
@@ -130,4 +224,18 @@ export class ThemeService {
       console.log("Saved usertheme:", res, theme.name);
     });
   }
-}
+
+    setCssVars(theme:Theme){
+      let palette = Object.keys(theme);
+      palette.splice(0,6);
+
+      palette.forEach(function(color){
+        let swatch = theme[color];
+        (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
+      });
+      (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
+      (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+    }
+
+  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

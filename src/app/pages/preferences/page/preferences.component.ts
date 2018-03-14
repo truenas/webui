@@ -23,18 +23,47 @@ import { Subject } from 'rxjs/Subject';
 export class PreferencesPage implements OnInit {
 
   public target: Subject<CoreEvent> = new Subject();
-  @Input() isNew: boolean = false; //change this back to false
+  //@Input() isNew: boolean = false; //change this back to false
   
-  protected queryCall = 'user.query';
-  public args = [["username","=","root"]];
-  protected addCall = 'user.update';
+  //protected queryCall = 'user.query';
+  //public args = [["username","=","root"]];
+  //protected addCall = 'user.update';
   protected isEntity: boolean = true; // was true
 
-  // CONTROLS
+  // EXAMPLE THEME
   public values:any = {
+    name:'dracula',
+    description:'Dracula color theme',
+    hasDarkLogo:true,
+    accentColors:['violet','blue','magenta', 'cyan', 'red','green', 'orange', 'yellow'],
+    favorite:false,
+    primary:"var(--blue)",
+    accent:"var(--violet)",
+    bg1:'#181a26',
+    bg2:'#282a36',
+    fg1:'#f8f8f2',
+    fg2:'#fafaf5',
+    'alt-bg1':'#f8f8f2',
+    'alt-bg2':'#fafaf5',
+    'alt-fg1':'#181a26',
+    'alt-fg2':'#282a36',
+    yellow:'#f1fa8c',
+    orange:'#ffb86c',
+    red:'#ff5555',
+    magenta:'#ff79c6',
+    violet:'#bd93f9',
+    blue:'#6272a4',
+    cyan:'#8be9fd',
+    green:'#50fa7b'
+  }
+
+  // CONTROLS
+  /*public values:any = {
     name:'Custom',
     description:'Custom User Theme',
     favorite:false,
+    primary:"var(--cyan)",
+    accent:"var(--violet)",
     bg1:'#333333',
     bg2:'#555555',
     fg1:'#666666',
@@ -51,8 +80,28 @@ export class PreferencesPage implements OnInit {
     blue:'#268bd2',
     cyan:'#2aa198',
     green:'#859900'
-  }
-
+  }*/
+  private colors: string[] = ['bg1','bg2','fg1','fg2','alt-bg1','alt-bg2','alt-fg1','alt-fg2','yellow','orange','red','magenta','violet','blue','cyan','green'];
+  // Had to hard code colorVars because concatenated strings get sanitized
+  private colorVars: string[] = [
+  'var(--bg1)',
+  'var(--bg2)',
+  'var(--fg1)',
+  'var(--fg2)',
+  'var(--alt-bg1)',
+  'var(--alt-bg2)',
+  'var(--alt-fg1)',
+  'var(--alt-fg2)',
+  'var(--yellow)',
+  'var(--orange)',
+  'var(--red)',
+  'var(--magenta)',
+  'var(--violet)',
+  'var(--blue)',
+  'var(--cyan)',
+  'var(--green)'
+  ];
+  private colorOptions: any[] = [];
   private colorWidth:string = "180px";
   public fieldConfig:FieldConfig[] = [];
 
@@ -70,9 +119,16 @@ export class PreferencesPage implements OnInit {
           placeholder: 'Custom Theme Name',
           tooltip: 'Enter a name to identify your new theme.',
         },
+        { 
+          type: 'input', 
+          name: 'label', 
+          width:'300px',
+          placeholder: 'Menu Label',
+          tooltip: 'Specify how the theme name should appear in the menu.',
+        },
         { type: 'input', 
           name : 'description', 
-          width:'calc(100% - 300px)',
+          width:'calc(100% - 600px)',
           placeholder : 'Description',
           tooltip: 'Enter a short description of your theme.',
         },
@@ -83,7 +139,37 @@ export class PreferencesPage implements OnInit {
           placeholder: 'Add to Favorites', 
           tooltip: 'When checked, this theme will be added to your favorites list. Favorites are always available on the top navigation bar.',
           class:'inline'
-        }
+        },
+        { 
+          type: 'checkbox', 
+          name: 'hasDarkLogo', 
+          width:'180px',
+          placeholder: 'Choose Logo Type', 
+          /*options:[
+            {label:"Dark", value: true},
+            {label:"Regular", value:false}
+          ],*/
+          tooltip: "Choose the logo type",
+          class:'inline'
+        },
+        { 
+          type: 'select', 
+          name: 'primary', 
+          width:'180px',
+          placeholder: 'Choose Primary', 
+          options:this.colorOptions,
+          tooltip: "Choose which color will be the theme's primary color",
+          class:'inline'
+        },
+        { 
+          type: 'select', 
+          name: 'accent', 
+          width:'180px',
+          placeholder: 'Choose Accent', 
+          options:this.colorOptions,
+          tooltip: "Choose which color will be the theme's accent color",
+          class:'inline'
+        },
       ]
     },
     {
@@ -236,19 +322,22 @@ export class PreferencesPage implements OnInit {
     ) {}
 
     ngOnInit(){
+      this.setupColorOptions(this.colors);
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
             let palette = Object.keys(evt.data);
-            palette.splice(0,3);
-              
+            palette.splice(0,6);
+
             palette.forEach(function(color){
               let swatch = evt.data[color];
               console.log("Setting " + color + " to " + evt.data[color]);
               (<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
             });
+              (<any>document).documentElement.style.setProperty("--primary",evt.data["primary"]);
+              (<any>document).documentElement.style.setProperty("--accent",evt.data["accent"]);
 
           break;
           case "FormCancelled":
@@ -260,6 +349,12 @@ export class PreferencesPage implements OnInit {
     }
 
     afterInit(entityForm: any) {
+    }
+    
+    setupColorOptions(palette){
+      for(let color in palette){
+        this.colorOptions.push({label:this.colors[color], value:this.colorVars[color]});
+      }
     }
 
     generateFieldConfig(){
