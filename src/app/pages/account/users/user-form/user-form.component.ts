@@ -25,10 +25,11 @@ import {Validators} from '@angular/forms';
 })
 export class UserFormComponent {
 
-  protected resource_name: string = 'account/users/';
+  protected resource_name = 'account/users/';
   protected addCall = 'user.create';
   protected route_success: string[] = ['account', 'users' ];
-  protected isEntity: boolean = true;
+  protected isEntity  = true;
+  protected isNew: boolean;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -197,6 +198,7 @@ export class UserFormComponent {
 
 
   afterInit(entityForm: any) {
+    this.isNew = entityForm.isNew;
     if (!entityForm.isNew) {
       _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
       entityForm.formGroup.controls['group_create'].setValue(false);
@@ -212,7 +214,7 @@ export class UserFormComponent {
 
     });
     /* list users */
-    let filter = [];
+    const filter = [];
     filter.push("id");
     filter.push("=");
     filter.push(entityForm.pk);
@@ -253,8 +255,8 @@ export class UserFormComponent {
 
         }
       } else {
-        this.ws.call('user.get_next_uid').subscribe((res)=>{
-          entityForm.formGroup.controls['uid'].setValue(res);
+        this.ws.call('user.get_next_uid').subscribe((next_uid)=>{
+          entityForm.formGroup.controls['uid'].setValue(next_uid);
         })
       }
     });
@@ -263,7 +265,7 @@ export class UserFormComponent {
         .subscribe((res) => {
           this.shell = _.find(this.fieldConfig, {name : "shell"});
           this.shells = res;
-          let bsduser_shell = this.shell
+          const bsduser_shell = this.shell
           res.forEach((item) => {
             this.shell.options.push({label : item[1], value : item[0]});
           });
@@ -283,6 +285,18 @@ export class UserFormComponent {
     return value;
   }
 
+  beforeSubmit(entityForm: any){
+    if (this.isNew){
+      const home_user = entityForm.home.substr(
+        entityForm.home.length - entityForm.username.length
+      );
+      if(entityForm.home !=='/nonexistent'){
+        if(entityForm.username !== home_user){
+          entityForm.home = entityForm.home+'/'+ entityForm.username;
+        }
+      }
+    }
+  }
   submitFunction(this: any, entityForm: any, ){
     delete entityForm['uid']
     delete entityForm['group_create']

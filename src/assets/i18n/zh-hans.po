@@ -12,6 +12,9 @@ msgid ""
 "8.1.1.1) of the <a href=\"guide\">Guide</a> before activating this option."
 msgstr ""
 
+msgid "ACL Type"
+msgstr ""
+
 msgid "About"
 msgstr ""
 
@@ -53,6 +56,23 @@ msgid "An update has already been applied. Please reboot."
 msgstr ""
 
 msgid "Apple (AFP) Shares"
+msgstr ""
+
+msgid "Apply Group"
+msgstr ""
+
+msgid "Apply Mode"
+msgstr ""
+
+msgid "Apply User"
+msgstr ""
+
+msgid "Apply permissions recursively"
+msgstr ""
+
+msgid ""
+"Apply permissions recursively to all directories  and files within the "
+"current dataset"
 msgstr ""
 
 msgid "Are you sure you wish to reboot the system?"
@@ -127,6 +147,15 @@ msgstr ""
 msgid "Check Release Notes"
 msgstr ""
 
+msgid "Check this box to apply changes to the group"
+msgstr ""
+
+msgid "Check this box to apply changes to the mode"
+msgstr ""
+
+msgid "Check this box to apply changes to the user"
+msgstr ""
+
 msgid ""
 "Check this if the user will be connecting from a      Windows 8 or higher "
 "system."
@@ -141,6 +170,11 @@ msgid ""
 "Check this to prevent the user from logging in until the account is "
 "unlocked (this box is unchecked). Checking this box grays out <b>Disable "
 "password login</b> which is mutually exclusive."
+msgstr ""
+
+msgid ""
+"Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the           "
+"     type that matches the type of client accessing the volume/dataset."
 msgstr ""
 
 msgid ""
@@ -237,6 +271,9 @@ msgstr ""
 msgid "Global Configuration"
 msgstr ""
 
+msgid "Group"
+msgstr ""
+
 msgid "Groups"
 msgstr ""
 
@@ -307,6 +344,9 @@ msgstr ""
 msgid "Mirror"
 msgstr ""
 
+msgid "Mode"
+msgstr ""
+
 msgid "NIS"
 msgstr ""
 
@@ -331,6 +371,11 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid ""
+"Only applies to Unix or Mac permission types. Note that the mode cannot be "
+"changed when Windows is selected."
+msgstr ""
+
 msgid "Operation"
 msgstr ""
 
@@ -340,6 +385,9 @@ msgstr ""
 msgid ""
 "Paste the <b>public</b> SSH key of the user for any      key-based "
 "authentication. <b>Do not paste the private key!</b>"
+msgstr ""
+
+msgid "Path"
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
@@ -413,7 +461,19 @@ msgstr ""
 msgid "Scrub Tasks"
 msgstr ""
 
+msgid ""
+"Select the group to control the volume/dataset. Note that groups manually "
+"created or imported from a directory service will appear in the drop-down "
+"menu."
+msgstr ""
+
 msgid "Select the shell to use for local and SSH logins."
+msgstr ""
+
+msgid ""
+"Select the user to control the volume/dataset. Note that users manually "
+"created or imported from a directory service will appear in the drop-down "
+"menu."
 msgstr ""
 
 msgid "Services"
@@ -500,6 +560,9 @@ msgid "Update"
 msgstr ""
 
 msgid "Update and Reboot"
+msgstr ""
+
+msgid "User"
 msgstr ""
 
 msgid "User ID"
