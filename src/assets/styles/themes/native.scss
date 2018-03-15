@@ -448,6 +448,11 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
       bottom:-24px;
     }
 
+    .mat-tab-label{
+        @include variable(background-color, --bg1, $background);
+        @include variable(color, --fg1, $foreground);
+    }
+
     .dx-treelist-borders > .dx-treelist-headers,
     .dx-treelist-borders > .dx-treelist-rowsview,
     .dx-treelist-borders > .dx-treelist-total-footer {
