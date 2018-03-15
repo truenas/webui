@@ -14,7 +14,7 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-
+import { T } from '../../../../translate-marker';
 import { RestService, WebSocketService } from '../../../../services/';
 import {
   FieldConfig
@@ -33,21 +33,21 @@ export class CAFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cert_name',
-      placeholder: 'Identifier',
-      tooltip: 'Enter a descriptive name for the certificate using only\
- alphanumeric, underscore (_), and dash (-) characters.'
+      placeholder: T('Identifier'),
+      tooltip: T('Enter a descriptive name for the certificate using only\
+       alphanumeric, underscore (_), and dash (-) characters.')
     },
     {
       type: 'input',
       name: 'cert_certificate',
-      placeholder: 'Certificate',
-      tooltip: 'Paste the contents of the certificate here.'
+      placeholder: T('Certificate'),
+      tooltip: T('Paste the contents of the certificate here.')
     },
     {
       type: 'input',
       name: 'cert_privatekey',
-      placeholder: 'Private Key',
-      tooltip: 'Paste the contents of the private key here.'
+      placeholder: T('Private Key'),
+      tooltip: T('Paste the contents of the private key here.')
     }
   ];
 
