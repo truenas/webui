@@ -19,5 +19,16 @@ div.color-swatch{
   border: solid 1px rgba(0,0,0,0.15);
   box-shadow: 0px 8px 7px rgba(0,0,0,0.25);
   border-radius: 2px;
-  /* color: #333; */
+  background-color:var(--bg2);
+  color:var(--fg1);
+}
+
+:host ::ng-deep .color-picker .selected-color{
+  border:0;
+}
+
+:host ::ng-deep .color-picker .selected-color-background{
+    width: 36px;
+    height: 36px;
+    margin: 1px 0 0px 1px;
 }

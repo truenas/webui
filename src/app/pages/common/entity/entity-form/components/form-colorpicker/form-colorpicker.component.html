@@ -6,8 +6,10 @@
 			[value]="config.value"
                         [(colorPicker)]="config.value"
                         [cpToggle]="picker"
-                        [cpOutputFormat]="hex"
-                        [cpPosition]="left"
+                        cpOutputFormat="hex"
+                        cpPosition="bottom"
+                        cpWidth="180px"
+                        [cpAlphaChannel]="disabled"
                         [cpPositionRelativeToArrow]="true"
                         [formControlName]="config.name">
                 </mat-input-container>

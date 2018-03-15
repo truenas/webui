@@ -110,32 +110,32 @@ export class PreferencesPage implements OnInit {
     {
       name:'General',
       class:'general',
-      width:'98',
+      width:'300px',
       config:[
         { 
           type: 'input', 
           name: 'name', 
-          width:'300px',
+          width:'100%',
           placeholder: 'Custom Theme Name',
           tooltip: 'Enter a name to identify your new theme.',
         },
         { 
           type: 'input', 
           name: 'label', 
-          width:'300px',
+          width:'100%',
           placeholder: 'Menu Label',
           tooltip: 'Specify how the theme name should appear in the menu.',
         },
         { type: 'input', 
           name : 'description', 
-          width:'calc(100% - 600px)',
+          width:'100%',
           placeholder : 'Description',
           tooltip: 'Enter a short description of your theme.',
         },
         { 
           type: 'checkbox', 
           name: 'favorite', 
-          width:'300px',
+          width:'100%',
           placeholder: 'Add to Favorites', 
           tooltip: 'When checked, this theme will be added to your favorites list. Favorites are always available on the top navigation bar.',
           class:'inline'
@@ -143,7 +143,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'checkbox', 
           name: 'hasDarkLogo', 
-          width:'180px',
+          width:'100%',
           placeholder: 'Choose Logo Type', 
           /*options:[
             {label:"Dark", value: true},
@@ -155,7 +155,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'select', 
           name: 'primary', 
-          width:'180px',
+          width:'100%',
           placeholder: 'Choose Primary', 
           options:this.colorOptions,
           tooltip: "Choose which color will be the theme's primary color",
@@ -164,7 +164,7 @@ export class PreferencesPage implements OnInit {
         { 
           type: 'select', 
           name: 'accent', 
-          width:'180px',
+          width:'100%',
           placeholder: 'Choose Accent', 
           options:this.colorOptions,
           tooltip: "Choose which color will be the theme's accent color",
@@ -173,9 +173,9 @@ export class PreferencesPage implements OnInit {
       ]
     },
     {
-      name:'Theme Colors 1-8',
+      name:'Theme Colors',
       class:'color-palette',
-      width:'48',
+      width:'calc(100% - 300px)',
       config:[
         { 
          type: 'colorpicker', 
@@ -241,13 +241,13 @@ export class PreferencesPage implements OnInit {
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
-      ]
+      /*]
     },
     {
       name:'Theme Colors 9-16',
       class:'accent-colors',
-      width:'48',
-      config:[
+      width:'calc(50% - 300px)',
+      config:[*/
         { 
           type: 'colorpicker', 
           name: 'yellow', 
