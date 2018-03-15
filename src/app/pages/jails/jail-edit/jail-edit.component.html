@@ -1,29 +1,24 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
   <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
-<!--     <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup">
-    </ng-container> -->
     <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Basic Properties
+          {{ "Basic Properties" | translate }}
         </mat-panel-title>
-        <!--         <mat-panel-description>
-          expand to show more props
-        </mat-panel-description> -->
       </mat-expansion-panel-header>
       <div>
         <ng-container *ngFor="let field of basicfieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Jail Properties
+          {{ "Jail Properties" | translate }}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -31,14 +26,14 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Network Properties
+          {{ "Network Properties" | translate }}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -46,14 +41,14 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Custom Properties
+          {{ "Custom Properties" | translate }}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -61,14 +56,14 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
-        <button mat-button color="primary" type="button" (click)="nextStep()">Next</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
+        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          RCTL Limits
+          {{ "RCTL Limits" | translate }}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div>
@@ -76,12 +71,12 @@
         </ng-container>
       </div>
       <mat-action-row>
-        <button mat-button color="warn" type="button" (click)="prevStep()">Previous</button>
+        <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
       </mat-action-row>
     </mat-expansion-panel>
     <mat-card-actions>
-      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent" type="button">Cancel</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">{{ "Save" | translate }}</button>
+      <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent" type="button">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
 </mat-card>
