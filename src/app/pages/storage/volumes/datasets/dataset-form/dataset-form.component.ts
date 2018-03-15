@@ -69,6 +69,7 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'name',
       placeholder: 'Name',
       tooltip: 'Mandatory; enter a unique name for the dataset.',
+      readonly: true,
       validation: [Validators.required]
     },
     {
@@ -247,7 +248,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
     if( this.pk !== undefined && this.pk !== null ) {
-        data.name = undefined;
+        delete data.name;
     }
 
     if( this.isBasicMode === true ) {
@@ -255,10 +256,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       data.quota = null;
       data.refreservation = null;
       data.reservation = null;
-      data.readonly = null;
-      data.snapdir = null;
       data.copies = "1";
-      data.recordsize = null;
     }
 
     return data;
@@ -306,6 +304,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.parent = paramMap['parent'];
       this.pk = this.parent;
       this.isNew = true;
+      this.fieldConfig[0].readonly = false;
     }
 
 
@@ -346,11 +345,14 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
+    console.log("editSubmit:body:", data);
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
   addSubmit(body: any) {
-    return this.ws.call('pool.dataset.create', [ this.sendAsBasicOrAdvanced(body)]);
+    const data: any = this.sendAsBasicOrAdvanced(body);
+    console.log("addSubmit:body:", data);
+    return this.ws.call('pool.dataset.create', [ data ]);
   }
 
   customSubmit(body) {
