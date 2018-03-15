@@ -46,10 +46,15 @@ export function toggleClass(el, className) {
   }
 }
 export function changeTheme(themes: any[], themeName: string) {
+  // Remove default
+  /*removeClass(document.body, 'ix-blue');
+  
   themes.forEach((theme) => {
     removeClass(document.body, theme.name);
+    //removeClass(document.body, 'native');
   });
   addClass(document.body, themeName);
+  //addClass(document.body, 'native');*/
 };
 export function ieChatjsFix() {
   if(window.hasOwnProperty('MSInputMethodContext') || document.hasOwnProperty('documentMode')) {

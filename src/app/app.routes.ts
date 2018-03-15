@@ -107,6 +107,11 @@ export const rootRouterConfig: Routes = [{
         path : 'guide',
         loadChildren : './pages/guide/guide.module#GuideModule',
         data: { title: 'Guide', breadcrumb: 'Guide'}
+      },
+      {
+        path : 'ui-preferences',
+        loadChildren : './pages/preferences/preferences.module#PreferencesModule',
+        data: { title: 'UI Preferences', breadcrumb: 'UI-Preferences'}
       }
     ]
   },
