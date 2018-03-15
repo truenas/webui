@@ -12,6 +12,7 @@
             </div>
           </ng-container>
           <div>
+            <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
             <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">{{"Back" | translate}}</button>
             <button mat-raised-button matStepperNext type="button">{{"Next" | translate}}</button>
           </div>

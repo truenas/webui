@@ -75,6 +75,14 @@ export class EntityWizardComponent implements OnInit {
     return true;
   }
 
+  goBack() {
+    let route = this.conf.route_cancel;
+    if (!route) {
+      route = this.conf.route_success;
+    }
+    this.router.navigate(new Array('/').concat(route));
+  }
+
   setRelation(config: FieldConfig, stepIndex: any) {
     let activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
