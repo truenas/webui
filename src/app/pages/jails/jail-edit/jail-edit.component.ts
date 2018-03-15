@@ -49,7 +49,35 @@ export class JailEditComponent implements OnInit {
       name: 'release',
       placeholder: T('Release'),
       options: [],
-      tooltip: T('Select the FreeBSD release for the jail.'),
+      tooltip: T('Select the FreeBSD release for the jail. Releases\
+ already downloaded display <b>(fetched)</b>.'),
+    },
+    {
+      type: 'checkbox',
+      name: 'dhcp',
+      placeholder: T('DHCP autoconfigure IPv4'),
+      tooltip: T('Check to start the jail with the Dynamic Host\
+ Configuration Protocol enabled. <b>VirtIO</b> and <b>Berkeley Packet\
+ Filter</b> must also be enabled.'),
+    },
+    {
+      type: 'checkbox',
+      name: 'vnet',
+      placeholder: T('VirtIO Virtual Networking'),
+      tooltip: T('Check to use VirtIO to emulate network devices for\
+ this jail.  Check this if a fully virtualized per-jail network stack is\
+ required. See <a\
+ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ target="_blank">VIRTIO(4)</a> for more details.'),
+    },
+    {
+      type: 'checkbox',
+      name: 'bpf',
+      placeholder: T('Berkeley Packet Filter'),
+      tooltip: T('Check this for the jail to use the Berkeley Packet\
+ Filter to data link layers in a protocol independent fashion. See <a\
+ href="https://www.freebsd.org/cgi/man.cgi?query=bpf&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ target="_blank">BPF(4)</a> for more details.'),
     },
     {
       type: 'input',
@@ -95,11 +123,10 @@ export class JailEditComponent implements OnInit {
     },
     {
       type: 'checkbox',
-      name: 'vnet',
-      placeholder: T('Use VNET for networking?'),
-      tooltip: T('Check to start the jail with a VNET or\
- shared IP configuration. Check this if a fully virtualized per-jail\
- network stack is required.'),
+      name: 'boot',
+      placeholder: T('Auto-start'),
+      tooltip: T('Check to auto-start this jail at system boot time. Jails\
+ are started and stopped based on the <b>priority</b> value.'),
     }];
   public jailfieldConfig: FieldConfig[] = [
     {
@@ -586,28 +613,6 @@ export class JailEditComponent implements OnInit {
       placeholder: T('depends'),
       tooltip: T('Specify any jails this jail depends on. When this jail\
  begins to be created, any jails it depends on must already exist.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'bpf',
-      placeholder: T('bpf'),
-      tooltip: T('Check to enable Berkely Packet Filter devices on jail\
- start.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'dhcp',
-      placeholder: T('dhcp'),
-      tooltip: T('Check to start the jail with the Dynamic Host\
- Configuration Protocol enabled. <b>vnet</b> and <b>bpf</b> must also be\
- enabled.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'boot',
-      placeholder: T('boot'),
-      tooltip: T('Check to auto-start this jail at system boot time. Jails\
- are started and stopped based on the <b>priority</b> value.'),
     },
     {
       type: 'checkbox',
