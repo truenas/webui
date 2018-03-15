@@ -175,16 +175,8 @@ export class ThemeService {
         this.savedUserTheme = "ix-blue";
       }
 
-      /*this.freenasThemes.forEach((t) => {
-       t.isActive = (t.name === this.savedUserTheme);
-      });*/
       this.activeTheme = this.savedUserTheme;
-
-      /*if( typeof(this.savedUserTheme) !== "undefined" && this.savedUserTheme !== "" ) {
-       domHelper.changeTheme(this.freenasThemes, this.savedUserTheme);
-      } else {
-        this.freenasThemes[this.freeThemeDefaultIndex].isActive = true;
-      }*/
+      this.setCssVars(this.findTheme(this.activeTheme));
 
     });
   }

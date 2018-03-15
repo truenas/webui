@@ -216,7 +216,6 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
     .mat-bg-primary,.mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
     .sidebar-panel.mat-sidenav .sidebar-list-item.open mat-icon:not(.menu-caret),
     .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
-    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
     .ngx-datatable.material .datatable-header,
     .fileupload-drop-zone.dz-file-over,
     .toolbar-avatar.online > .status-dot,
@@ -371,6 +370,7 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
     }
     .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent,
     .mat-bg-accent,
+    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
     div.hopscotch-bubble .hopscotch-bubble-number,
     div.hopscotch-bubble .hopscotch-nav-button.next:hover,
     div.hopscotch-bubble .hopscotch-nav-button.next {
