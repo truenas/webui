@@ -35,6 +35,7 @@ interface VmProfile {
   template?:string; // for back face of card
   cardActions?:Array<any>;
   isNew:boolean;
+  vm_type: string;
 }
 
 @Component({
@@ -167,7 +168,8 @@ export class VmCardsComponent implements OnInit {
       devices:data.devices,
       template:'none',
       isNew:false,
-      cardActions:[]
+      cardActions:[],
+      vm_type: data.vm_type
     }   
     if(card.devices.length > 0){
       card.vnc = this.checkVnc(card.devices);
@@ -292,21 +294,17 @@ export class VmCardsComponent implements OnInit {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
-        this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
-        /*this.rest.delete( 'vm/vm/' + this.cards[index].id, {}).subscribe(
-          (res) => {
-            console.log("deleteVM: REST response...");
-            console.log(res);
-            this.focusedVM = '';
-            this.cards.splice(index,1);
-            this.loader.close();
-            this.updateCache();
+        if (this.cards[index].vm_type === "Container Provider"){
+          this.ws.call('vm.rm_container_conf', [this.cards[index].id]).subscribe((container_del_res)=>{
           },
-          (res) => { 
-            new EntityUtils().handleError(this, res);
-            this.loader.close(); 
+          (container_del_error_res) => { 
+            new EntityUtils().handleError(this, container_del_error_res);
+            this.loader.close();
           }
-        );*/
+        );
+
+        }
+        this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
       }
     })
   }
