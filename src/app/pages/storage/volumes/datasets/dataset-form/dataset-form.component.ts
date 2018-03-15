@@ -372,7 +372,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         ["storage", "volumes"]));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
+      //Handled in global error websocketservice
+      // this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
+      console.log("Error Importing volume", res.message, res.stack);
     });
   }
 
