@@ -789,7 +789,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     width: 100%;
     max-width: 15rem;
     height: 64px;
-    line-height: 64px;
+    line-height: 10px;
     top: 0;
     left: 0;
     z-index: 9999;
