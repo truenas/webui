@@ -430,6 +430,23 @@ $primary-dark: darken( map-get($mat-primary, 700), 8% );
         opacity:0.5;
      }
 
+    .mat-toolbar{
+      position:relative;
+    }
+
+    .mat-card-primary-action{
+      position:absolute;
+    }
+
+    .mat-card-primary-action.mat-mini-fab{
+      right:32px;
+      bottom:-16px;
+    }
+
+    .mat-card-primary-action.mat-fab{
+      right:48px;
+      bottom:-24px;
+    }
 
     .dx-treelist-borders > .dx-treelist-headers,
     .dx-treelist-borders > .dx-treelist-rowsview,
