@@ -8,6 +8,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FileUploader } from 'ng2-file-upload';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector : 'app-support',

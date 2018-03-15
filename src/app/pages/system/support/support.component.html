@@ -25,7 +25,7 @@
         <br>
         <mat-select name="category" placeholder="Category" class="full-width" [(ngModel)]="category">
             <mat-option *ngFor="let category of categories" [value]="category.value">
-                {{ category.label }}
+                {{ category.label | translate }}
             </mat-option>
         </mat-select>
         <br>
