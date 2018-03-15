@@ -35,7 +35,7 @@ interface VmProfile {
   template?:string; // for back face of card
   cardActions?:Array<any>;
   isNew:boolean;
-  vm_type: string;
+  vm_type?: string;
   vm_comport?:string
 }
 
