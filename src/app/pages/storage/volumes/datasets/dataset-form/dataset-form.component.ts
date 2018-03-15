@@ -11,11 +11,11 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
+import { DialogService } from 'app/services/dialog.service';
 
 
 
 interface DatasetFormData {
-  id: string;
   name: string;
   comments: string;
   sync: string;
@@ -45,6 +45,7 @@ export class DatasetFormComponent implements Formconfiguration {
   public route_success: string[] = ['storage', 'volumes'];
   public isBasicMode: boolean = true;
   public pk: any;
+  
 
   public customFilter: any[] = [];
 
@@ -63,11 +64,6 @@ export class DatasetFormComponent implements Formconfiguration {
 
   
   public fieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'id',
-      isHidden: true
-    },
     {
       type: 'input',
       name: 'name',
@@ -127,16 +123,14 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.',
-      value: "0",
+ size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'
     },
     {
       type: 'input',
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.',
-      value: "0",
+ value applies to both this dataset and any child datasets. 0 == Unlimited.'
     },
     {
       type: 'input',
@@ -144,16 +138,14 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: 'Reserved space for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space.  0 == Unlimited.',
-      value: "0",
+ which could take up all available free space.  0 == Unlimited.'
     },
     {
       type: 'input',
       name: 'reservation',
       placeholder: 'Reserved space for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.',
-      value: "0",
+ value applies to both this dataset and any child datasets. 0 == Unlimited.'
     },
     {
       type: 'select',
@@ -201,6 +193,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '2', value: '2' },
         { label: '3', value: '3' }
       ],
+      value: 1
     },
     {
       type: 'select',
@@ -251,6 +244,22 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     'recordsize',
   ];
 
+  public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
+
+    if( this.isBasicMode === true ) {
+      data.refquota = null;
+      data.quota = null;
+      data.refreservation = null;
+      data.reservation = null;
+      data.readonly = null;
+      data.snapdir = null;
+      data.copies = "1";
+      data.recordsize = null;
+    }
+
+    return data;
+  }
+
 
   public custActions: Array<any> = [
     {
@@ -267,7 +276,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService) { }
+    protected loader: AppLoaderService, protected dialogService: DialogService ) { }
 
 
 
@@ -299,17 +308,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
   getFieldValueOrRaw(field): any {
-    if( field.value === undefined && field.rawvalue === undefined) {
+    if( field.value === undefined) {
       return field;
     }
-    return (field.value !== undefined && field.value !== null) ? field.value : field.rawvalue;
+    return field.value;
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
 
      console.log("dataset-form-component", wsResponse );
      const returnValue: DatasetFormData = {
-        id: this.getFieldValueOrRaw(wsResponse.id),
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
         casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
@@ -330,5 +338,29 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
      return returnValue;
   }
 
+  editSubmit(body: any) {
+    return this.ws.call('pool.dataset.update', [this.pk, this.sendAsBasicOrAdvanced(body)]);
+  }
+
+  addSubmit(body: any) {
+    return this.ws.call('pool.dataset.create', [ this.sendAsBasicOrAdvanced(body)]);
+  }
+
+  customSubmit(body) {
+    this.loader.open();
+    console.log("body", body);
+
+
+    return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
+      console.log("restPostResp", restPostResp);
+      this.loader.close();
+      this.dialogService.Info("Saved dataset", "Successfully saved dataset: " + body.name);
+      this.router.navigate(new Array('/').concat(
+        ["storage", "volumes"]));
+    }, (res) => {
+      this.loader.close();
+      this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
+    });
+  }
 
 }
