@@ -18,6 +18,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-cloudcredentials-gcs',
@@ -37,30 +38,30 @@ export class CloudCredentialsGCSComponent {
     {
       type : 'input',
       name : 'provider',
-      placeholder : 'google cloud service',
+      placeholder : T('google cloud service'),
       value: 'GCLOUD',
       isHidden: true
     },
     {
       type : 'input',
       name : 'name',
-      placeholder : 'Account Name',
-      tooltip : 'Enter the Google Cloud Service account name.',
+      placeholder : T('Account Name'),
+      tooltip : T('Enter the Google Cloud Service account name.'),
     },
     {
       type : 'textarea',
       name : 'preview',
-      placeholder : 'Preview JSON Service Account Key',
+      placeholder : T('Preview JSON Service Account Key'),
       disabled: true
     },
     {
       type : 'readfile',
       name : 'attributes',
-      placeholder : 'JSON Service Account Key',
-      tooltip : 'Browse to the location of the saved Google Cloud\
- Storage key and select it. Refer to <a\
- href="https://cloud.google.com/storage/docs/" target="_blank">\
- Gcloud documentation</a> for more information.',
+      placeholder : T('JSON Service Account Key'),
+      tooltip : T('Browse to the location of the saved Google Cloud\
+       Storage key and select it. Refer to <a\
+       href="https://cloud.google.com/storage/docs/" target="_blank">\
+       Gcloud documentation</a> for more information.'),
       validation : [ Validators.required ]
     },
   ];

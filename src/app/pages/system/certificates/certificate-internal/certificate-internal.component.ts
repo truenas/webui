@@ -23,6 +23,7 @@ import {
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'system-certificate-internal',
@@ -39,9 +40,9 @@ export class CertificateInternalComponent {
     {
       type : 'select',
       name : 'cert_signedby',
-      placeholder : 'Signing Certificate Authority',
-      tooltip: 'Select the CA which was previously imported\
- or created using <a href="https://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.',
+      placeholder : T('Signing Certificate Authority'),
+      tooltip: T('Select the CA which was previously imported\
+       or created using <a href="https://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.'),
       options : [
         {label: '---', value: null}
       ]
@@ -49,16 +50,16 @@ export class CertificateInternalComponent {
     {
       type : 'input',
       name : 'cert_name',
-      placeholder : 'Identifier',
-      tooltip: 'Enter a descriptive name for the certificate using\
- only alphanumeric, underscore (_), and dash (-) characters.',
+      placeholder : T('Identifier'),
+      tooltip: T('Enter a descriptive name for the certificate using\
+       only alphanumeric, underscore (_), and dash (-) characters.'),
     },
     {
       type : 'select',
       name : 'cert_key_length',
-      placeholder : 'Key Length',
-      tooltip: 'For security reasons, a minimum of\
- <i>2048</i> is recommended.',
+      placeholder : T('Key Length'),
+      tooltip: T('For security reasons, a minimum of\
+       <i>2048</i> is recommended.'),
       options : [
         {label : '1024', value : 1024},
         {label : '2048', value : 2048},
@@ -68,9 +69,9 @@ export class CertificateInternalComponent {
     {
       type : 'select',
       name : 'cert_digest_algorithm',
-      placeholder : 'Digest Algorithm',
-      tooltip: 'The default is acceptable unless the organization\
- requires a different algorithm.',
+      placeholder : T('Digest Algorithm'),
+      tooltip: T('The default is acceptable unless the organization\
+       requires a different algorithm.'),
       options : [
         {label : 'SHA1', value : 'SHA1'},
         {label : 'SHA224', value : 'SHA224'},
@@ -82,32 +83,32 @@ export class CertificateInternalComponent {
     {
       type : 'input',
       name : 'cert_lifetime',
-      placeholder : 'Lifetime',
-      tooltip: 'The lifetime of the certificate is\
- specified in days.',
+      placeholder : T('Lifetime'),
+      tooltip: T('The lifetime of the certificate is\
+       specified in days.'),
       inputType: 'number',
       validation: [Validators.required, Validators.min(0)]
     },
     {
       type : 'select',
       name : 'cert_country',
-      placeholder : 'Country',
-      tooltip: 'Select the country for the organization.',
+      placeholder : T('Country'),
+      tooltip: T('Select the country for the organization.'),
       options : [],
     },
     {
       type : 'input',
       name : 'cert_state',
-      placeholder : 'State',
-      tooltip: 'Enter the State or Province name\
- (for example, California).',
+      placeholder : T('State'),
+      tooltip: T('Enter the State or Province name\
+       (for example, California).'),
     },
     {
       type : 'input',
       name : 'cert_city',
-      placeholder : 'Locality',
-      tooltip: 'Enter the location of the organization\
- (for example, city or town).',
+      placeholder : T('Locality'),
+      tooltip: T('Enter the location of the organization\
+       (for example, city or town).'),
     },
     {
       type : 'input',
@@ -127,16 +128,16 @@ export class CertificateInternalComponent {
     {
       type : 'input',
       name : 'cert_common',
-      placeholder : 'Common Name',
-      tooltip: 'Enter the fully-qualified hostname (FQDN) of the\
- system. This name **must** be unique within a certificate\
- chain.',
+      placeholder : T('Common Name'),
+      tooltip: T('Enter the fully-qualified hostname (FQDN) of the\
+       system. This name **must** be unique within a certificate\
+       chain.'),
     },
     {
       type : 'textarea',
       name : 'cert_san',
-      placeholder: 'Subject Alternate Names',
-      tooltip: 'Multi-domain support. Enter additional space separated domains.'
+      placeholder: T('Subject Alternate Names'),
+      tooltip: T('Multi-domain support. Enter additional space separated domains.')
     }
   ];
   private cert_signedby: any;

@@ -18,6 +18,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-cloudcredentials-amazon',
@@ -43,22 +44,22 @@ export class CloudCredentialsAzureComponent {
   {
     type : 'input',
     name : 'name',
-    placeholder : 'Name',
-    tooltip : 'Enter a descriptive name for the cloud credential.',
+    placeholder : T('Name'),
+    tooltip : T('Enter a descriptive name for the cloud credential.'),
   },
   {
     type : 'input',
     name : 'account_name',
-    placeholder : 'Account Name',
-    tooltip : 'Enter the Azure Storage account name.',
+    placeholder : T('Account Name'),
+    tooltip : T('Enter the Azure Storage account name.'),
   },
   {
     type : 'textarea',
     name : 'account_key',
-    placeholder :  'Account Key',
-    tooltip : 'Paste the Azure Storage account key. Refer to the\
- <a href="https://docs.microsoft.com/en-us/azure/storage/"\
- target="_blank">Azure Storage Documentation</a> for more information.',
+    placeholder :  T('Account Key'),
+    tooltip : T('Paste the Azure Storage account key. Refer to the\
+     <a href="https://docs.microsoft.com/en-us/azure/storage/"\
+     target="_blank">Azure Storage Documentation</a> for more information.'),
   },
 ];
 

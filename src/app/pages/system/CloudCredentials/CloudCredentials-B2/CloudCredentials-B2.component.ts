@@ -18,6 +18,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-cloudcredentials-b2',
@@ -43,22 +44,22 @@ export class CloudCredentialsB2Component {
   {
     type : 'input',
     name : 'name',
-    placeholder : 'Account Name',
-    tooltip : 'Enter the Backblaze account name.',
+    placeholder : T('Account Name'),
+    tooltip : T('Enter the Backblaze account name.'),
   },
   {
     type : 'textarea',
     name : 'accesskey',
-    placeholder :  'Access Key',
-    tooltip : 'Paste the account access key. For more information refer\
- to the <a href="https://www.backblaze.com/help.html" target="_blank">\
- BACKBLAZE help</a> page.',
+    placeholder :  T('Access Key'),
+    tooltip : T('Paste the account access key. For more information refer\
+     to the <a href="https://www.backblaze.com/help.html" target="_blank">\
+     BACKBLAZE help</a> page.'),
   },
   {
     type : 'textarea',
     name : 'secretkey',
-    placeholder : 'Secret Key',
-    tooltip : 'Enter the secret key generated.',
+    placeholder : T('Secret Key'),
+    tooltip : T('Enter the secret key generated.'),
   },
 ];
 
