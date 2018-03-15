@@ -32,6 +32,7 @@ export class JailWizardComponent {
           placeholder: T('Jails Name'),
           tooltip: T('Mandatory. Can only contain alphanumeric characters,\
  dashes (-), or underscores (_).'),
+          validation: [ Validators.required ],
         },
         {
           type: 'select',
@@ -59,7 +60,7 @@ export class JailWizardComponent {
           placeholder: T('IPv4 Address'),
           tooltip: T('This and the other IPv4 settings are grayed out if\
  <b>IPv4 DHCP</b> is checked. Enter a unique IP address that is in the\
- local network and not already used by any other computer.',
+ local network and not already used by any other computer.'),
           validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
           relation: [{
             action: 'DISABLE',
@@ -88,7 +89,7 @@ export class JailWizardComponent {
           placeholder: T('IPv6 Address'),
           tooltip: T('This and other IPv6 settings are grayed out if\
  <b>IPv6 Autoconfigure</b> is checked; enter a unique IPv6 address that\
- is in the local network and not already used by any other computer',
+ is in the local network and not already used by any other computer'),
           validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
         },
         {
