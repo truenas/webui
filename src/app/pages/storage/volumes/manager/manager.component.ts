@@ -14,8 +14,10 @@ import { DiskComponent } from './disk/';
 import { VdevComponent } from './vdev/';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-manager',
@@ -50,7 +52,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public isNew = true;
   public vol_encrypt: number = 0;
   public isEncrypted: boolean = false;
-  public re_errors = "";
   public re_has_errors = false;
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
@@ -58,16 +59,19 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   public busy: Subscription;
 
-  public name_tooltip = 'ZFS volumes must conform to strict naming\
+  public name_tooltip = T('ZFS volumes must conform to strict naming\
  <a href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
  target="_blank">conventions</a>. Choose a memorable name that will\
- stick out in the logs.';
-  public encryption_tooltip = '<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ stick out in the logs.');
+  public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  target="_blank">GELI</a> encryption is available for ZFS volumes.\
- <b>WARNING:</b>Read the "Ecryption" section (Section 8.1.1.1) of the\
- <a href="guide">Guide</a> before activating this option.';
-  public suggested_layout_tooltip = 'Arranges available disks in a\
- system recommended formation.';
+ <b>WARNING: </b>Read the "Encryption" section (Section 8.1.1.1) of the\
+ <a href="guide">Guide</a> before activating this option.');
+  public suggested_layout_tooltip = T('Arranges available disks in a\
+ system recommended formation.');
+  
+  public encryption_message = T("Always backup the key! If the key is lost, the\
+                   data on the disks will also be lost with no hope of recovery.");
 
   constructor(
     private rest: RestService,
@@ -78,7 +82,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
-    public mdDialog: MatDialog ) {
+    public mdDialog: MatDialog,
+    public translate: TranslateService ) {
 
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
@@ -152,6 +157,17 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
       this.temp = [...this.disks];
     });
+    if (!this.isNew) {
+      this.dialog.confirm(T("Warning"), T("Extending your pool will stripe additional \
+        vdevs onto your pool resulting in a larger pool.  It is recommended that \
+        you only stripe vdevs of the same size and type as the ones that are already \
+        in the existing pool, this operation cannot be reversed.  \
+        Do you wish to continue?")).subscribe((res) => {
+        if (!res) {
+           this.goBack();
+        }
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -180,8 +196,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   doSubmit() {
-    this.dialog.confirm("Warning", "The existing contents of all the disks you have added will be erased.")
-    .subscribe((res) => {
+    this.dialog.confirm(T("Warning"), T("The existing contents of all the disks you have added will be erased.")).subscribe((res) => {
       if (res) {
         this.error = null;
 
@@ -215,11 +230,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
                 dialogRef.componentInstance.volumeId = res.data.id;
                 dialogRef.afterClosed().subscribe(result => {
-                  this.router.navigate(['/', 'storage', 'volumes']);
+                  this.goBack();
                 });
               }
               else {
-                this.router.navigate(['/', 'storage', 'volumes']);
+                this.goBack();
               }
             },
             (res) => {
@@ -232,7 +247,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
                 }
               }
             });
-      }
+          }
     });
   }
 
@@ -241,14 +256,14 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   openSnackBar() {
-    this.snackBar.open("Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.", "WARNING!", {
+    this.snackBar.open(this.encryption_message, T("Warning"), {
       duration: 5000,
     });
   }
 
   openDialog() {
     if(this.isEncrypted) {
-      this.dialog.confirm("Warning", "Always backup the key! If the key is lost, the data on the disks will also be lost with no hope of recovery.").subscribe((res) => {
+      this.dialog.confirm(T("Warning"), this.encryption_message).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1
@@ -292,7 +307,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
     try {
       re = new RegExp(val);
     } catch(e) {
-      this.re_errors = "Invalid regex filter";
       this.re_has_errors = true;
     }
 

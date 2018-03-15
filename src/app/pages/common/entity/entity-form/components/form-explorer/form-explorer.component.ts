@@ -2,7 +2,7 @@ import {Component, ViewContainerRef, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {EntityFormService} from '../../services/entity-form.service';
 import {TreeNode, TREE_ACTIONS, KEYS, IActionMapping} from 'angular-tree-component';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';

@@ -14,6 +14,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
+
 import time
 import unittest
 import xmlrunner
@@ -47,24 +53,32 @@ class conf_iscsi_test(unittest.TestCase):
         # assert response
         self.assertTrue("Services" in page_data)
         self.status_change("6", "start")
-        #smb test takes almost 6 min to turn on and display
+        #iscsi test takes almost 3 min to turn on and display
         time.sleep(3)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_iscsi_on (self):
         print (" check if iscsi turned on")
         time.sleep(2)
         self.status_check("6")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_iscsi (self):
         print (" turning off the iscsi service")
         time.sleep(2)
         self.status_change("6", "stop")
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_iscsi_off (self):
         print (" check if iscsi turned off")
         time.sleep(2)
         self.status_check("6")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present
@@ -112,7 +126,16 @@ class conf_iscsi_test(unittest.TestCase):
         status_data=ui_element_status.text
         print ("current status is: " + status_data)
 
-
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

@@ -144,6 +144,9 @@
         <!--(cancel)="cancel(i)"
         (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"-->
       </vm-card-edit>
+      <span matTooltip="Clone VM" matTooltipPosition="above">
+        <button class="indent" mat-raised-button color="primary" (click)="cloneVM(i)">Clone</button>
+      </span>
     </ng-template>
 
     <!-- Create your cards here -->

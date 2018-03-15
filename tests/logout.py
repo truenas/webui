@@ -15,6 +15,13 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
+
 import time
 import unittest
 import xmlrunner
@@ -26,7 +33,7 @@ except ImportError:
 
 xpaths = {
          'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]",
-         'logoutButton' : "//*[contains(text(), 'Logout')]",
+         'logoutButton' : "//*[contains(text(), 'Log out')]",
          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
          'logoutconfirmationButton' : "//*[contains(text(), 'Ok')]"
          }
@@ -38,18 +45,25 @@ class logout_test(unittest.TestCase):
         pass
 
     def test_01_logout(self):
-        print (" loging out of the ui, see ya")
-        # Click on root account
-        driver.find_element_by_xpath(xpaths['rootButton']).click()
-        # Click on logout
-        time.sleep(2)
-        driver.find_element_by_xpath(xpaths['logoutButton']).click()
-        time.sleep(2)
-        # check the logout confirmation checkbox
-        # driver.find_element_by_xpath(xpaths['logoutconfirmationCheckbox']).click()
-        # Click on OK when re-confirm logout
-        driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-        time.sleep(2)
+        try:
+            print (" loging out of the ui, see ya")
+            # Click on root account
+            driver.find_element_by_xpath(xpaths['rootButton']).click()
+            # Click on logout
+            time.sleep(2)
+            driver.find_element_by_xpath(xpaths['logoutButton']).click()
+            time.sleep(2)
+            # Click on OK when re-confirm logout
+            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
+            time.sleep(2)
+            # Taking screenshot
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     #method to test if an element is present
     def is_element_present(self, how, what):
@@ -61,6 +75,15 @@ class logout_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        filename = str(__file__)
+        filename = filename[:-3]
+        final_file = filename.replace(text_path + "/", '')
+        print ("Taking screenshot for " + final_file + " Test no:" + count)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

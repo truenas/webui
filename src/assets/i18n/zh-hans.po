@@ -1,0 +1,609 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid ""
+"<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
+"ZFS volumes. <b>WARNING: </b>Read the \"Encryption\" section (Section "
+"8.1.1.1) of the <a href=\"guide\">Guide</a> before activating this option."
+msgstr ""
+
+msgid "ACL Type"
+msgstr ""
+
+msgid "About"
+msgstr ""
+
+msgid "Account"
+msgstr "用户"
+
+msgid "Active Directory"
+msgstr ""
+
+msgid "Add Cache"
+msgstr ""
+
+msgid "Add Data"
+msgstr ""
+
+msgid "Add Log"
+msgstr ""
+
+msgid "Add Spare"
+msgstr ""
+
+msgid ""
+"Add this user to more groups. Choose one or more groups from the dropdown "
+"list."
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Alert Services"
+msgstr ""
+
+msgid ""
+"Always backup the key! If the key is lost, the                   data on "
+"the disks will also be lost with no hope of recovery."
+msgstr ""
+
+msgid "An update has already been applied. Please reboot."
+msgstr ""
+
+msgid "Apple (AFP) Shares"
+msgstr ""
+
+msgid "Apply Group"
+msgstr ""
+
+msgid "Apply Mode"
+msgstr ""
+
+msgid "Apply User"
+msgstr ""
+
+msgid "Apply permissions recursively"
+msgstr ""
+
+msgid ""
+"Apply permissions recursively to all directories  and files within the "
+"current dataset"
+msgstr ""
+
+msgid "Are you sure you wish to reboot the system?"
+msgstr ""
+
+msgid "Are you sure you wish to shut down the system?"
+msgstr ""
+
+msgid "Arranges available disks in a system recommended formation."
+msgstr ""
+
+msgid "Associate an email address with the account"
+msgstr ""
+
+msgid "Automatically check for new updates"
+msgstr ""
+
+msgid "Auxiliary Groups"
+msgstr ""
+
+msgid "Available Disks"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Back to the Old UI"
+msgstr ""
+
+msgid "Block (iSCSI)"
+msgstr ""
+
+msgid "Boot"
+msgstr ""
+
+msgid "Browse"
+msgstr ""
+
+msgid ""
+"Browse to the name of an <b>existing</b> volume or      dataset that the "
+"user will be assigned permission to access."
+msgstr ""
+
+msgid ""
+"By convention, user accounts have an ID greater than  1000 and system "
+"accounts have an ID equal to the default port number  used by the service."
+msgstr ""
+
+msgid ""
+"By default, a primary group with the same name as the user is created. "
+"Uncheck this box to select a different primary group name."
+msgstr ""
+
+msgid "CAs"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Certificates"
+msgstr ""
+
+msgid "Change Password"
+msgstr ""
+
+msgid "Change log"
+msgstr ""
+
+msgid "Check Now"
+msgstr ""
+
+msgid "Check Release Notes"
+msgstr ""
+
+msgid "Check this box to apply changes to the group"
+msgstr ""
+
+msgid "Check this box to apply changes to the mode"
+msgstr ""
+
+msgid "Check this box to apply changes to the user"
+msgstr ""
+
+msgid ""
+"Check this if the user will be connecting from a      Windows 8 or higher "
+"system."
+msgstr ""
+
+msgid ""
+"Check this to give members of the group permission to use <a "
+"href=\"https://www.sudo.ws/\" target=\"_blank\">sudo</a>."
+msgstr ""
+
+msgid ""
+"Check this to prevent the user from logging in until the account is "
+"unlocked (this box is unchecked). Checking this box grays out <b>Disable "
+"password login</b> which is mutually exclusive."
+msgstr ""
+
+msgid ""
+"Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the           "
+"     type that matches the type of client accessing the volume/dataset."
+msgstr ""
+
+msgid ""
+"Choose a <b>Stripe</b>, <b>Mirror</b>, or <b>Raid-Z</b> configuration for "
+"the chosen disk layout. See the <b>Storage/Volumes</b> section of the <a "
+"href=\"guide\">Guide</a> for more details."
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Cloud Credentials"
+msgstr ""
+
+msgid "Confirm"
+msgstr ""
+
+msgid "Confirm Password"
+msgstr ""
+
+msgid "Confirm your information"
+msgstr ""
+
+msgid "Create a new Primary Group for the user."
+msgstr ""
+
+msgid "Cron Jobs"
+msgstr ""
+
+msgid "Dashboard"
+msgstr "仪表"
+
+msgid "Data VDevs"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Directory Service"
+msgstr ""
+
+msgid "Disable password login"
+msgstr ""
+
+msgid ""
+"Disables password logins and authentication to SMB shares. Checking this "
+"grays out <b>Lock user</b> and <b>Permit Sudo</b>, which are mutually "
+"exclusive."
+msgstr ""
+
+msgid "Disks"
+msgstr ""
+
+msgid "Display System Processes"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Encryption"
+msgstr ""
+
+msgid "Entering a name is required. Spaces are allowed."
+msgstr ""
+
+msgid "Estimated raw capacity:"
+msgstr ""
+
+msgid "Everything seems correct."
+msgstr ""
+
+msgid "Extending an encrypted volume will reset the passphrase and recovery key!"
+msgstr ""
+
+msgid ""
+"Extending your pool will stripe additional         vdevs onto your pool "
+"resulting in a larger pool.  It is recommended that         you only stripe "
+"vdevs of the same size and type as the ones that are already         in the "
+"existing pool, this operation cannot be reversed.          Do you wish to "
+"continue?"
+msgstr ""
+
+msgid ""
+"For security reasons, FreeBSD will not give a user <b>su</b> permissions if "
+"<i>wheel</i> is their primary group."
+msgstr ""
+
+msgid "Full Name"
+msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Global Configuration"
+msgstr ""
+
+msgid "Group"
+msgstr ""
+
+msgid "Groups"
+msgstr ""
+
+msgid "Guide"
+msgstr ""
+
+msgid "Home Directory"
+msgstr ""
+
+msgid "Home Directory Mode"
+msgstr ""
+
+msgid "IPMI"
+msgstr ""
+
+msgid "Import Disk"
+msgstr ""
+
+msgid "Init/Shutdown Scripts"
+msgstr ""
+
+msgid "Interfaces"
+msgstr ""
+
+msgid "Invalid regex filter"
+msgstr ""
+
+msgid "Jails"
+msgstr ""
+
+msgid "Kerberos Keytabs"
+msgstr ""
+
+msgid "Kerberos Realms"
+msgstr ""
+
+msgid "Kerberos Settings"
+msgstr ""
+
+msgid "LDAP"
+msgstr ""
+
+msgid "Legacy UI"
+msgstr ""
+
+msgid "Link Aggregations"
+msgstr ""
+
+msgid "Lock user"
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Log out of the WebUI?"
+msgstr ""
+
+msgid ""
+"Maximum length is 16 characters, although using 8 or less is recommended "
+"for interoperability. Usernames cannot begin with a hyphen or contain a "
+"space, tab, or these characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . "
+"A <b>$</b> can only be used as the last character."
+msgstr ""
+
+msgid "Microsoft Account"
+msgstr ""
+
+msgid "Mirror"
+msgstr ""
+
+msgid "Mode"
+msgstr ""
+
+msgid "NIS"
+msgstr ""
+
+msgid "NTP Servers"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "No update has been found"
+msgstr ""
+
+msgid "No updates available"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid ""
+"Only applies to Unix or Mac permission types. Note that the mode cannot be "
+"changed when Windows is selected."
+msgstr ""
+
+msgid "Operation"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid ""
+"Paste the <b>public</b> SSH key of the user for any      key-based "
+"authentication. <b>Do not paste the private key!</b>"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Periodic Snapshot Tasks"
+msgstr ""
+
+msgid "Permit Sudo"
+msgstr ""
+
+msgid "Please enter your password"
+msgstr ""
+
+msgid "Please enter your password again"
+msgstr ""
+
+msgid "Please enter your username"
+msgstr ""
+
+msgid "Please enter your username again"
+msgstr ""
+
+msgid "Please wait"
+msgstr ""
+
+msgid "Plugins"
+msgstr ""
+
+msgid "Primary Group"
+msgstr ""
+
+msgid "Raid-z"
+msgstr ""
+
+msgid "Raid-z2"
+msgstr ""
+
+msgid "Raid-z3"
+msgstr ""
+
+msgid "Release Notes"
+msgstr ""
+
+msgid "Replication Tasks"
+msgstr ""
+
+msgid "Reporting"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid ""
+"Required unless <b>Disable password login</b> is checked. Passwords cannot "
+"contain a <b>?</b>."
+msgstr ""
+
+msgid "Restart"
+msgstr ""
+
+msgid "Rsync Tasks"
+msgstr ""
+
+msgid "S.M.A.R.T Tests"
+msgstr ""
+
+msgid "SSH Public Key"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Scrub Tasks"
+msgstr ""
+
+msgid ""
+"Select the group to control the volume/dataset. Note that groups manually "
+"created or imported from a directory service will appear in the drop-down "
+"menu."
+msgstr ""
+
+msgid "Select the shell to use for local and SSH logins."
+msgstr ""
+
+msgid ""
+"Select the user to control the volume/dataset. Note that users manually "
+"created or imported from a directory service will appear in the drop-down "
+"menu."
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid ""
+"Sets default Unix permissions of the user home directory. Read-only for "
+"built-in users."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Sharing"
+msgstr ""
+
+msgid "Shell"
+msgstr ""
+
+msgid "Shut down"
+msgstr ""
+
+msgid "Sign in"
+msgstr ""
+
+msgid "Snapshots"
+msgstr ""
+
+msgid "Starting job..."
+msgstr ""
+
+msgid "Static Routes"
+msgstr ""
+
+msgid "Storage"
+msgstr ""
+
+msgid "Stripe"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Suggest Layout"
+msgstr ""
+
+msgid "Support"
+msgstr ""
+
+msgid "System"
+msgstr "系统"
+
+msgid "System Dataset"
+msgstr ""
+
+msgid "System Processes"
+msgstr ""
+
+msgid "System is not yet available, please wait"
+msgstr ""
+
+msgid "System is rebooting..."
+msgstr ""
+
+msgid "System is shutting down..."
+msgstr ""
+
+msgid "Tasks"
+msgstr ""
+
+msgid "The existing contents of all the disks you have added will be erased."
+msgstr ""
+
+msgid "Train"
+msgstr ""
+
+msgid "Tunables"
+msgstr ""
+
+msgid "Unix (NFS) Shares"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Update and Reboot"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "User ID"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Users"
+msgstr "用户"
+
+msgid "VLANs"
+msgstr ""
+
+msgid "VMs"
+msgstr ""
+
+msgid "VMware-Snapshots"
+msgstr ""
+
+msgid "Virtualization"
+msgstr ""
+
+msgid "Volumes"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "WebDAV Shares"
+msgstr ""
+
+msgid "Windows (SMB) Shares"
+msgstr ""
+
+msgid "ZFS Pool Manager"
+msgstr ""
+
+msgid ""
+"ZFS volumes must conform to strict naming <a "
+"href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
+"target=\"_blank\">conventions</a>. Choose a memorable name that will stick "
+"out in the logs."
+msgstr ""

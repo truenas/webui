@@ -179,6 +179,9 @@ mat-chip.vm-state-on,
   font-size:18px;
   cursor:pointer;
 }
+.indent{
+  margin-left: 10px;
+}
 
 /* Slim Cards */
 

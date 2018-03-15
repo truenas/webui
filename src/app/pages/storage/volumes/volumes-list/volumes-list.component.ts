@@ -11,7 +11,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 
 import { Injectable } from '@angular/core';
@@ -243,7 +243,6 @@ export class VolumesListTableConfig implements InputTableConf {
             ["storage", "volumes", "status", row1.id]));
         }
       });
-
     
     }
 
@@ -355,15 +354,15 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.nodePath = "/mnt/" + dataObj.path;
       }
 
+      dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
+
       if (dataObj.status !== '-') {
         // THEN THIS A ZFS_POOL DON'T ADD    dataObj.type = 'zpool'
         continue;
       } else if (typeof (dataObj.nodePath) === "undefined" || dataObj.nodePath.indexOf("/") === -1) {
         continue;
       }
-
-      dataObj.parentPath = dataObj.nodePath.slice(0, dataObj.nodePath.lastIndexOf("/"));
-
+      
       if ("/mnt" === dataObj.parentPath) {
         dataObj.parentPath = "0";
       }
@@ -415,7 +414,7 @@ export class VolumesListTableConfig implements InputTableConf {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  title = "ZFS_POOLS";
+  title = "ZFS Pools";
   zfsPoolRows: ZfsPoolData[] = [];
   conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
 
@@ -457,6 +456,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       res.data.forEach((volume: ZfsPoolData) => {
         volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
         volume.type = 'zpool';
+
 
         try {
           volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });

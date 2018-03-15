@@ -3,6 +3,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
+import { T } from '../../../../translate-marker';
 import {
   NetworkService,
   RestService,
@@ -24,38 +25,41 @@ import {Validators} from '@angular/forms';
 })
 export class UserFormComponent {
 
-  protected resource_name: string = 'account/users/';
+  protected resource_name = 'account/users/';
   protected addCall = 'user.create';
   protected route_success: string[] = ['account', 'users' ];
-  protected isEntity: boolean = true;
+  protected isEntity  = true;
+  protected isNew: boolean;
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'uid',
-      placeholder : 'USERS_UID_PLACEHOLDER',
-      tooltip : 'USERS_UID_TOOLTIP',
+      placeholder : T('User ID'),
+      tooltip : T('By convention, user accounts have an ID greater than\
+  1000 and system accounts have an ID equal to the default port number\
+  used by the service.'),
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'username',
-      placeholder : 'Username',
-      tooltip : 'Maximum length is 16 characters, although using 8 or\
+      placeholder : T('Username'),
+      tooltip : T('Maximum length is 16 characters, although using 8 or\
  less is recommended for interoperability. Usernames cannot begin with\
  a hyphen or contain a space, tab, or these characters:\
  <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can only be used\
- as the last character.',
+ as the last character.'),
       validation : [ Validators.required ]
     },
 
     {
       type : 'checkbox',
       name : 'group_create',
-      placeholder : 'Create a new Primary Group for the user.',
-      tooltip : 'By default, a primary group with the same name as the\
+      placeholder : T('Create a new Primary Group for the user.'),
+      tooltip : T('By default, a primary group with the same name as the\
  user is created. Uncheck this box to select a different primary group\
- name.',
+ name.'),
       value : true,
       isHidden: false
     },
@@ -63,9 +67,9 @@ export class UserFormComponent {
     {
       type : 'select',
       name : 'group',
-      placeholder : 'Primary Group',
-      tooltip : 'For security reasons, FreeBSD will not give a user\
- <b>su</b> permissions if <i>wheel</i> is their primary group.',
+      placeholder : T('Primary Group'),
+      tooltip : T('For security reasons, FreeBSD will not give a user\
+ <b>su</b> permissions if <i>wheel</i> is their primary group.'),
       options : [],
       relation : [
         {
@@ -82,50 +86,50 @@ export class UserFormComponent {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'home',
-      placeholder: 'Home Directory',
+      placeholder: T('Home Directory'),
       value: '/nonexistent',
-      tooltip : 'Browse to the name of an <b>existing</b> volume or\
-      dataset that the user will be assigned permission to access.',
+      tooltip : T('Browse to the name of an <b>existing</b> volume or\
+      dataset that the user will be assigned permission to access.'),
     },
     {
       type : 'permissions',
       name : 'home_mode',
-      placeholder : 'Home Directory Mode',
-      tooltip : 'Sets default Unix permissions of the user home\
- directory. Read-only for built-in users.',
+      placeholder : T('Home Directory Mode'),
+      tooltip : T('Sets default Unix permissions of the user home\
+ directory. Read-only for built-in users.'),
     },
     {
       type : 'select',
       name : 'shell',
-      placeholder : 'Shell',
-      tooltip : 'Select the shell to use for local and SSH logins.',
+      placeholder : T('Shell'),
+      tooltip : T('Select the shell to use for local and SSH logins.'),
       options : [],
     },
     {
       type : 'input',
       name : 'full_name',
-      placeholder : 'Full Name',
-      tooltip : 'Entering a name is required. Spaces are allowed.',
+      placeholder : T('Full Name'),
+      tooltip : T('Entering a name is required. Spaces are allowed.'),
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'email',
-      placeholder : 'Email',
-      tooltip : 'Associate an email address with the account',
+      placeholder : T('Email'),
+      tooltip : T('Associate an email address with the account'),
     },
     {
       type : 'input',
       name : 'password',
-      placeholder : 'Password',
-      tooltip : 'Required unless <b>Disable password login</b> is\
- checked. Passwords cannot contain a <b>?</b>.',
+      placeholder : T('Password'),
+      tooltip : T('Required unless <b>Disable password login</b> is\
+ checked. Passwords cannot contain a <b>?</b>.'),
       inputType : 'password',
     },
     {
       type : 'input',
       name : 'password_conf',
-      placeholder : 'Confirm Password',
+      placeholder : T('Confirm Password'),
       inputType : 'password',
       validation : [ matchOtherValidator('password') ],
 
@@ -133,47 +137,47 @@ export class UserFormComponent {
     {
       type : 'checkbox',
       name : 'password_disabled',
-      placeholder : 'Disable password login',
-      tooltip : 'Disables password logins and authentication to SMB\
+      placeholder : T('Disable password login'),
+      tooltip : T('Disables password logins and authentication to SMB\
  shares. Checking this grays out <b>Lock user</b> and\
- <b>Permit Sudo</b>, which are mutually exclusive.',
+ <b>Permit Sudo</b>, which are mutually exclusive.'),
     },
     {
       type : 'checkbox',
       name : 'locked',
-      placeholder : 'Lock user',
-      tooltip : 'Check this to prevent the user from logging in until\
+      placeholder : T('Lock user'),
+      tooltip : T('Check this to prevent the user from logging in until\
  the account is unlocked (this box is unchecked). Checking this box\
- grays out <b>Disable password login</b> which is mutually exclusive.',
+ grays out <b>Disable password login</b> which is mutually exclusive.'),
     },
     {
       type : 'checkbox',
       name : 'sudo',
-      placeholder : 'Permit Sudo',
-      tooltip : 'Check this to give members of the group permission to\
- use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.',
+      placeholder : T('Permit Sudo'),
+      tooltip : T('Check this to give members of the group permission to\
+ use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
     },
 
     {
       type : 'checkbox',
       name : 'microsoft_account',
-      placeholder : 'Microsoft Account',
-      tooltip : 'Check this if the user will be connecting from a\
-      Windows 8 or higher system.',
+      placeholder : T('Microsoft Account'),
+      tooltip : T('Check this if the user will be connecting from a\
+      Windows 8 or higher system.'),
     },
 
     {
       type : 'textarea',
       name : 'sshpubkey',
-      placeholder : 'SSH Public Key',
-      tooltip : 'Paste the <b>public</b> SSH key of the user for any\
-      key-based authentication. <b>Do not paste the private key!</b>',
+      placeholder : T('SSH Public Key'),
+      tooltip : T('Paste the <b>public</b> SSH key of the user for any\
+      key-based authentication. <b>Do not paste the private key!</b>'),
     },
     {
       type : 'select',
       name : 'groups',
-      placeholder : 'Auxiliary Groups',
-      tooltip : 'Add this user to more groups. Choose one or more groups from the dropdown list.',
+      placeholder : T('Auxiliary Groups'),
+      tooltip : T('Add this user to more groups. Choose one or more groups from the dropdown list.'),
       options : [],
       multiple : true
     },
@@ -194,6 +198,7 @@ export class UserFormComponent {
 
 
   afterInit(entityForm: any) {
+    this.isNew = entityForm.isNew;
     if (!entityForm.isNew) {
       _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
       entityForm.formGroup.controls['group_create'].setValue(false);
@@ -209,7 +214,7 @@ export class UserFormComponent {
 
     });
     /* list users */
-    let filter = [];
+    const filter = [];
     filter.push("id");
     filter.push("=");
     filter.push(entityForm.pk);
@@ -250,8 +255,8 @@ export class UserFormComponent {
 
         }
       } else {
-        this.ws.call('user.get_next_uid').subscribe((res)=>{
-          entityForm.formGroup.controls['uid'].setValue(res);
+        this.ws.call('user.get_next_uid').subscribe((next_uid)=>{
+          entityForm.formGroup.controls['uid'].setValue(next_uid);
         })
       }
     });
@@ -260,7 +265,7 @@ export class UserFormComponent {
         .subscribe((res) => {
           this.shell = _.find(this.fieldConfig, {name : "shell"});
           this.shells = res;
-          let bsduser_shell = this.shell
+          const bsduser_shell = this.shell
           res.forEach((item) => {
             this.shell.options.push({label : item[1], value : item[0]});
           });
@@ -280,6 +285,18 @@ export class UserFormComponent {
     return value;
   }
 
+  beforeSubmit(entityForm: any){
+    if (this.isNew){
+      const home_user = entityForm.home.substr(
+        entityForm.home.length - entityForm.username.length
+      );
+      if(entityForm.home !=='/nonexistent'){
+        if(entityForm.username !== home_user){
+          entityForm.home = entityForm.home+'/'+ entityForm.username;
+        }
+      }
+    }
+  }
   submitFunction(this: any, entityForm: any, ){
     delete entityForm['uid']
     delete entityForm['group_create']

@@ -14,6 +14,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
+
 import time
 import unittest
 import xmlrunner
@@ -49,11 +55,15 @@ class conf_dc_test(unittest.TestCase):
         self.status_change("3", "start")
         # dc test takes almost takes 18 seconds to turn on
         time.sleep(18)
+        # Taking screenshot
+        self.screenshot("01")
 
     def test_02_checkif_dc_on (self):
         print (" check if dc turned on")
         time.sleep(2)
         self.status_check("3")
+        # Taking screenshot
+        self.screenshot("02")
 
     def test_03_turnoff_dc (self):
         print (" turning off the dc service")
@@ -61,12 +71,16 @@ class conf_dc_test(unittest.TestCase):
         self.status_change("3", "stop")
         # dc takes almost 22 sec to turn off
         time.sleep(22)
+        # Taking screenshot
+        self.screenshot("03")
 
     def test_04_checkif_dc_off (self):
         print (" check if dc turned off")
         time.sleep(2)
         self.status_check("3")
         time.sleep(10)
+        # Taking screenshot
+        self.screenshot("04")
 
 
     #method to test if an element is present
@@ -126,6 +140,18 @@ class conf_dc_test(unittest.TestCase):
             else:
                 driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
                 print ("searching for service" + which + " Attempt:" + str(i))
+
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
     @classmethod
     def tearDownClass(inst):

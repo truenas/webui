@@ -4,6 +4,9 @@ import {Subscription} from 'rxjs';
 
 
 import {RestService, WebSocketService} from '../../../../services/';
+import { DialogService } from 'app/services';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector : 'app-device-list',
@@ -20,9 +23,14 @@ export class DeviceListComponent {
   protected pk: any;
   public vm: string;
   public sub: Subscription;
+  private entityList: any;
+  public  wsDelete = 'datastore.delete';
+  public busy: Subscription;
+  protected loaderOpen = false;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService) {}
+              protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
+              public dialogService: DialogService) {}
 
   public columns: Array<any> = [
     {name : 'Type', prop : 'dtype'},
@@ -94,13 +102,35 @@ export class DeviceListComponent {
     actions.push({
       label : "Delete",
       onClick : (row) => {
-        this.router.navigate(new Array('').concat(
-            [ "vm", this.pk, "devices", this.vm, "delete", row.id ]));
+        this.deviceDelete(row.id);
       },
     });
     return actions;
   }
+  
+  deviceDelete(id){
+    this.dialogService.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.loaderOpen = true;
+        const data = {};
+        if (this.wsDelete) {
+          this.busy = this.ws.call(this.wsDelete, ['vm.device',id]).subscribe(
+            (resinner) => { 
+              this.entityList.getData();
+              this.loader.close();
+            },
+            (resinner) => {
+              new EntityUtils().handleError(this, resinner);
+              this.loader.close();
+            }
+          );
+        } 
+      }
+    })
+  }
   preInit(entityList: any) {
+    this.entityList = entityList;
     this.sub = this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
       this.vm = params['name'];

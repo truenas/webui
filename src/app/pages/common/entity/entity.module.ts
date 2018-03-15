@@ -14,7 +14,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
-import { TranslateModule } from 'ng2-translate/ng2-translate';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { EntityDeleteComponent } from './entity-delete/entity-delete.component';
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';

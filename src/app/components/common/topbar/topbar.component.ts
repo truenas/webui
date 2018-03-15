@@ -14,7 +14,7 @@ import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'topbar',
@@ -163,16 +163,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   signOut() {
     this.idle.ngOnDestroy();
-    this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {
-      if (res) {
-        this.ws.logout();
-      }
+    this.translate.get('Log out').subscribe((logout: string) => {
+      this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
+        this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {
+          if (res) {
+            this.ws.logout();
+          }
+        });
+      });
     });
   }
 
   onShutdown() {
-    this.translate.get('Shutdown').subscribe((shutdown: string) => {
-      this.translate.get('SHUTDOWN_PROMPT').subscribe((shutdown_prompt: string) => {
+    this.translate.get('Shut down').subscribe((shutdown: string) => {
+      this.translate.get('Are you sure you wish to shut down the system?').subscribe((shutdown_prompt: string) => {
         this.dialogService.confirm(shutdown, shutdown_prompt).subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/shutdown']);
@@ -183,8 +187,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onReboot() {
-    this.translate.get('Reboot').subscribe((reboot: string) => {
-      this.translate.get('REBOOT_PROMPT').subscribe((reboot_prompt: string) => {
+    this.translate.get('Restart').subscribe((reboot: string) => {
+      this.translate.get('Are you sure you wish to reboot the system?').subscribe((reboot_prompt: string) => {
         this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/reboot']);

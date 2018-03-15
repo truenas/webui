@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import {WebSocketService} from '../../../services/ws.service';
 
@@ -88,9 +88,9 @@ export class SigninComponent implements OnInit {
     this.signinData.username = 'root';
     let message = '';
     if (this.ws.token === null) {
-      message = 'SIGNIN.USER_OR_PASSWORD_INCORRECT';
+      message = 'Username or Password is incorrect';
     } else {
-      message = 'SIGNIN.TOKEN_EXPIRED';
+      message = 'Token expired, please log back in';
       this.ws.token = null;
     }
     this.translate.get('Ok').subscribe((ok: string) => {

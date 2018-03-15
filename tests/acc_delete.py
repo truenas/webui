@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -39,73 +44,167 @@ class delete_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_00_nav_acc_user(self):
-        # Click  Account menu
-        print (" navigating to the user submenu")
-        # allowing the button to load
-        time.sleep(1)
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("User" in page_data)
+        try:
+            # Click  Account menu
+            print (" navigating to the user submenu")
+            # allowing the button to load
+            time.sleep(1)
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuUser']).click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("User" in page_data)
+            # Taking screenshot
+            self.screenshot("01_00")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_00-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_01_01_delete_user(self):
-        print (" deleting a user: " + newusername)
-        time.sleep(2)
-        self.delete("user", newusername)
+        try:
+            print (" deleting a user: " + newusername)
+            time.sleep(2)
+            self.delete("user", newusername)
+            # Taking screenshot
+            self.screenshot("01_01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_01_02_delete_user(self):
-        print (" deleting a user: " + newusernameuncheck)
-        time.sleep(2)
-        self.delete("user", newusernameuncheck)
+        try:
+            print (" deleting a user: " + newusernameuncheck)
+            time.sleep(2)
+            self.delete("user", newusernameuncheck)
+            # Taking screenshot
+            self.screenshot("01_02")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_02-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_01_03_delete_user(self):
-        print (" deleting a user: " + superusername)
-        time.sleep(2)
-        self.delete("user", superusername)
-        time.sleep(2)
+        try:
+            print (" deleting a user: " + superusername)
+            time.sleep(2)
+            self.delete("user", superusername)
+            time.sleep(2)
+            # Taking screenshot
+            self.screenshot("01_03")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01_03-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_00_nav_acc_group(self):
-        # Click  Account menu
-        print (" navigating to the group submenu")
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Group" in page_data)
+        try:
+            # Click  Account menu
+            print (" navigating to the group submenu")
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Group" in page_data)
+            # Taking screenshot
+            self.screenshot("02_00")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02_00-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_01_delete_group(self):
-        print (" deleting a group: " + newusername)
-        time.sleep(2)
-        self.delete("group", newusername)
+        try:
+            print (" deleting a group: " + newusername)
+            time.sleep(2)
+            self.delete("group", newusername)
+            # Taking screenshot
+            self.screenshot("02_01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_02_delete_group(self):
-        print (" deleting a group: " + superusername)
-        time.sleep(2)
-        self.delete("group", superusername)
+        try:
+            print (" deleting a group: " + superusername)
+            time.sleep(2)
+            self.delete("group", superusername)
+            # Taking screenshot
+            self.screenshot("02_02")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02_02-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_03_delete_group(self):
-        print (" deleting a group: " + newgroupname)
-        time.sleep(2)
-        self.delete("group", newgroupname)
+        try:
+            print (" deleting a group: " + newgroupname)
+            time.sleep(2)
+            self.delete("group", newgroupname)
+            # Taking screenshot
+            self.screenshot("02_03")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_02_04_delete_group(self):
-        print (" deleting a group: " + supergroupname)
-        time.sleep(2)
-        self.delete("group", supergroupname)
+        try:
+            print (" deleting a group: " + supergroupname)
+            time.sleep(2)
+            self.delete("group", supergroupname)
+            # Taking screenshot
+            self.screenshot("02_03")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02_03-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_03_close_navAccount(self):
-        print (" closing account menu")
-        driver.find_element_by_xpath(xpaths['navAccount']).click()
-        time.sleep(20)
+        try:
+            print (" closing account menu")
+            driver.find_element_by_xpath(xpaths['navAccount']).click()
+            time.sleep(20)
+            # Taking screenshot
+            self.screenshot("03_00")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("03_00-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     # Next step-- To check if the new user is present in the list via automation
 
@@ -184,6 +283,20 @@ class delete_test(unittest.TestCase):
 
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
+
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+
+
 
     @classmethod
     def tearDownClass(inst):

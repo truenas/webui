@@ -1,7 +1,7 @@
 import {
   ApplicationRef,
   Component,
-  OnInit,
+  OnDestroy,
   ViewContainerRef
 } from '@angular/core';
 import {
@@ -17,17 +17,22 @@ import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
 } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../../translate-marker';
 
 @Component({
   selector : 'app-dataset-permissions',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class DatasetPermissionsComponent {
+export class DatasetPermissionsComponent implements OnDestroy {
 
   protected path: string;
   protected mp_path: any;
   protected mp_user: any;
   protected mp_group: any;
+  protected mp_mode: any;
+  protected mp_mode_en: any;
+  protected mp_acl: any;
+  protected mp_acl_subscription: any;
   public sub: Subscription;
   public formGroup: FormGroup;
   public data: Object = {};
@@ -41,44 +46,74 @@ export class DatasetPermissionsComponent {
     {
       type: 'input',
       name : 'mp_path',
-      placeholder : 'Path',
+      placeholder : T('Path'),
       readonly: true
     },
     {
-      type: 'select',
+      type: 'radio',
       name: 'mp_acl',
-      placeholder: 'ACL Type',
-      tooltip: 'Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
- type that matches the type of client accessing the volume/dataset.',
- options: [{label:'unix', value: 'unix'},
-                {label:'windows', value: 'windows'}],
-      value: 'unix'
+      placeholder: T('ACL Type'),
+      tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
+                type that matches the type of client accessing the volume/dataset.'),
+      options: [{label:'Unix', value: 'unix'},
+                {label:'Windows', value: 'windows'},
+                {label:'Mac', value: 'mac'}],
     },
     {
-      type: 'permissions',
-      name: 'mp_mode',
-      placeholder: 'Mode',
-      tooltip: 'Only applies to Unix or Mac permission types.\
- Note that the mode cannot be changed when Windows is selected.',
+      type: 'checkbox',
+      name: 'mp_user_en',
+      placeholder: T('Apply User'),
+      tooltip: T('Check this box to apply changes to the user'),
+      value: true
     },
     {
       type: 'select',
       name: 'mp_user',
-      placeholder: 'User',
-      tooltip: 'Select the user to control the volume/dataset.\
+      placeholder: T('User'),
+      tooltip: T('Select the user to control the volume/dataset.\
  Note that users manually created or imported from a directory service will\
- appear in the drop-down menu.',
+ appear in the drop-down menu.'),
       options: [],
+    },
+    {
+      type: 'checkbox',
+      name: 'mp_group_en',
+      placeholder: T('Apply Group'),
+      tooltip: T('Check this box to apply changes to the group'),
+      value: true
     },
     {
       type: 'select',
       name: 'mp_group',
-      placeholder: 'Group',
-      tooltip: 'Select the group to control the volume/dataset.\
+      placeholder: T('Group'),
+      tooltip: T('Select the group to control the volume/dataset.\
  Note that groups manually created or imported from a directory service will\
- appear in the drop-down menu.',
+ appear in the drop-down menu.'),
       options: [],
     },
+    {
+      type: 'checkbox',
+      name: 'mp_mode_en',
+      placeholder: T('Apply Mode'),
+      tooltip: T('Check this box to apply changes to the mode'),
+      value: true
+    },
+    {
+      type: 'permissions',
+      name: 'mp_mode',
+      placeholder: T('Mode'),
+      tooltip: T('Only applies to Unix or Mac permission types.\
+ Note that the mode cannot be changed when Windows is selected.'),
+      isHidden: false
+    },
+    {
+      type: 'checkbox',
+      name: 'mp_recursive',
+      placeholder: T('Apply permissions recursively'),
+      tooltip: T('Apply permissions recursively to all directories\
+  and files within the current dataset'),
+      value: false
+    }
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -93,8 +128,6 @@ export class DatasetPermissionsComponent {
       this.mp_path = _.find(this.fieldConfig, {name:'mp_path'});
       this.mp_path.value = this.path;
     });
-
-
 
     this.userService.listUsers().subscribe(res => {
       let users = [];
@@ -112,7 +145,9 @@ export class DatasetPermissionsComponent {
       }
       this.mp_group = _.find(this.fieldConfig, {'name' : 'mp_group'});
         this.mp_group.options = groups;
-    }); 
+    });
+    this.mp_mode = _.find(this.fieldConfig, {'name' : "mp_mode"});
+    this.mp_mode_en = _.find(this.fieldConfig, {'name': 'mp_mode_en'});
   }
 
   afterInit(entityEdit: any) {
@@ -120,6 +155,32 @@ export class DatasetPermissionsComponent {
       entityEdit.formGroup.controls['mp_mode'].setValue(res.mode.toString(8).substring(2,5));
       entityEdit.formGroup.controls['mp_user'].setValue(res.uid);
       entityEdit.formGroup.controls['mp_group'].setValue(res.gid);
+      this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
+      this.mp_acl.setValue(res.acl);
+      if (res.acl === 'windows') {
+        this.mp_mode.isHidden = true;
+        this.mp_mode_en.isHidden = true;
+      }
+      this.mp_acl_subscription = this.mp_acl.valueChanges.subscribe((acl) => {
+        if (acl === 'windows') {
+          this.mp_mode.isHidden = true;
+          this.mp_mode_en.isHidden = true;
+        } else {
+          this.mp_mode.isHidden = false;
+          this.mp_mode_en.isHidden = false;
+        }
+      });
     });
+  }
+
+  ngOnDestroy() {
+    this.mp_acl_subscription.unsubscribe();
+  }
+
+  beforeSubmit(data) {
+    if (data.mp_acl === "windows") {
+      delete data['mp_mode'];
+      delete data['mp_mode_en'];
+    }
   }
 }

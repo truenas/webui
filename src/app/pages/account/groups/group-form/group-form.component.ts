@@ -20,10 +20,11 @@ export class GroupFormComponent {
       type: 'input',
       name: 'bsdgrp_gid',
       placeholder: 'GID',
-      tooltip: 'String value for the Group ID. The UNIX convention is to\
- number user account groups higher than 1000 and the ID of a group\
- required by a service is equal to the default port number used by that\
- service (the sshd group ID is 22).',
+      tooltip: 'The Group ID (GID) is a unique number used to identify\
+ a Unix group. By convention, groups with user accounts\
+ have IDs above 1000, and groups used by a service have\
+ an ID number that matches the default port number used by the service.\
+ For example, the sshd group has an ID of 22.',
     },
     {
       type: 'input',

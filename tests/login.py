@@ -16,6 +16,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -38,27 +43,36 @@ class login_test(unittest.TestCase):
         driver.get(ui_url)
 
     def test_01_login(self):
-        print ("loging in FreeNAS new webui- woot woot")
-        # enter username in the username textbox
-        driver.find_element_by_xpath(xpaths['usernameTxtBox']).clear()
-        driver.find_element_by_xpath(xpaths['usernameTxtBox']).send_keys(username)
-        # enter password in the password textbox
-        driver.find_element_by_xpath(xpaths['passwordTxtBox']).send_keys(password)
-        # click
-        driver.find_element_by_xpath(xpaths['submitButton']).click()
-        # check if the dashboard opens
-        time.sleep(1)
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("The page now is: " + page_data)
-        # assert response
-        self.assertTrue("Dashboard" in page_data)
-        # cancelling the tour
-        if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
-            driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
-        driver.execute_script("document.body.style.zoom='50 %'")
+        try:
+            print ("loging in FreeNAS new webui- woot woot")
+            # enter username in the username textbox
+            driver.find_element_by_xpath(xpaths['usernameTxtBox']).clear()
+            driver.find_element_by_xpath(xpaths['usernameTxtBox']).send_keys(username)
+            # enter password in the password textbox
+            driver.find_element_by_xpath(xpaths['passwordTxtBox']).send_keys(password)
+            # click
+            driver.find_element_by_xpath(xpaths['submitButton']).click()
+            # check if the dashboard opens
+            time.sleep(1)
+            self.error_check()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("The page now is: " + page_data)
+            # assert response
+            self.assertTrue("Dashboard" in page_data)
+            # cancelling the tour
+            if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
+            driver.execute_script("document.body.style.zoom='50 %'")
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     # method to test if an element is present
     def is_element_present(self, how, what):
@@ -70,6 +84,25 @@ class login_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        filename = str(__file__)
+        filename = filename[:-3]
+        final_file = filename.replace(text_path + "/", '')
+        print ("Taking screenshot for " + final_file + " Test no:" + count)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+
+    def error_check(self):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+                ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
+                error_element=ui_element.text
+                print (error_element)
+            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
+            print ("rdd error closed")
+
 
     @classmethod
     def tearDownClass(inst):

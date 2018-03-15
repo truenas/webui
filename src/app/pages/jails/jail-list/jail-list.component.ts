@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-jail-list',
@@ -122,6 +123,8 @@ export class JailListComponent implements OnInit {
       return false;
     } else if (actionId === 'stop' && row.state === "down") {
       return false;
+    } else if (actionId === 'shell' && row.state === "down") {
+      return false;
     }
     return true;
   }
@@ -209,6 +212,14 @@ export class JailListComponent implements OnInit {
         }
       },
       {
+        id: "shell",
+        label: "Shell",
+        onClick: (row) => {
+          this.router.navigate(
+            new Array('').concat(["jails", "shell", row.host_hostuuid]));
+        }
+      },
+      {
         id: "delete",
         label: "Delete",
         onClick: (row) => {
@@ -232,7 +243,7 @@ export class JailListComponent implements OnInit {
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
-      selected.push(selectedJails[i].host_hostuuid);
+      selected.push([selectedJails[i].host_hostuuid]);
     }
     return selected;
   }

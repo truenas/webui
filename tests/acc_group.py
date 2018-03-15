@@ -14,6 +14,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
+#error handling/screenshotsave
+import sys
+import traceback
+import os
+cwd = str(os.getcwd())
 
 import time
 import unittest
@@ -43,90 +48,133 @@ class create_group_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_acc_group(self):
-        # Click  Account menu
-        print (" navigating to the group submenu")
-        driver.find_element_by_xpath(xpaths['navAccount']).click()
-        time.sleep(1)
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-        time.sleep(2)
-        # get the ui element
-        ui_element1=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element1.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Group" in page_data)
+        try:
+            # Click  Account menu
+            print (" navigating to the group submenu")
+            driver.find_element_by_xpath(xpaths['navAccount']).click()
+            time.sleep(1)
+            # Click User submenu
+            driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+            time.sleep(2)
+            # get the ui element
+            ui_element1=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element1.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Group" in page_data)
+            # Taking screenshot
+            self.screenshot("01")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("01-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
     def test_02_create_newgroup(self):
-        print (" creating a new group without root access")
-        # scroll down to find hover tab
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new group option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Groupname
-        time.sleep(1)
-        driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
-        # Click on save new Group button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # check if there is a generic error when making a duplicate group, and print the error
-        self.error_check()
+        try:
+            print (" creating a new group without root access")
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new group option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Groupname
+            time.sleep(1)
+            driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
+            # Click on save new Group button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # Taking screenshot
+            self.screenshot("02")
+            # check if there is a generic error when making a duplicate group, and print the error
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("02-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_03_create_supergroup(self):
-        print (" creating a new Super group with root access")
-        time.sleep(1)
-        # Click Group submenu
-        driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new group option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Groupname
-        time.sleep(1)
-        driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroupname)
-        # Check Permit Sudo  checkbox
-        driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
-        # Click on save new Group button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # check if there is a generic error when making a duplicate group, and print the error
-        self.error_check()
+        try:
+            print (" creating a new Super group with root access")
+            time.sleep(1)
+            # Click Group submenu
+            driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new group option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Groupname
+            time.sleep(1)
+            driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(supergroupname)
+            # Check Permit Sudo  checkbox
+            driver.find_element_by_xpath(xpaths['permitsudoCheckbox']).click()
+            # Click on save new Group button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # Taking screenshot
+            self.screenshot("03")
+            # check if there is a generic error when making a duplicate group, and print the error
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("03-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_04_create_duplicategroup(self):
-        print (" creating a duplicate group")
-        # Click Group submenu
-        driver.find_element_by_xpath(xpaths['submenuGroup']).click()
-        # scroll down to find hover tab
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        # Perform hover to show menu
-        hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
-        hover = ActionChains(driver).move_to_element(hover_element)
-        hover.perform()
-        time.sleep(1)
-        # Click create new group option
-        driver.find_element_by_xpath(xpaths['fabAction']).click()
-        # Enter New Groupname
-        time.sleep(1)
-        driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
-        # Click on save new Group button
-        driver.find_element_by_xpath(xpaths['saveButton']).click()
-        # check if there is a generic error when making a duplicate group, and print the error
-        self.error_check()
+        try:
+            print (" creating a duplicate group")
+            # Click Group submenu
+            driver.find_element_by_xpath(xpaths['submenuGroup']).click()
+            # scroll down to find hover tab
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            # Perform hover to show menu
+            hover_element = driver.find_element_by_xpath(xpaths['fabTrigger'])
+            hover = ActionChains(driver).move_to_element(hover_element)
+            hover.perform()
+            time.sleep(1)
+            # Click create new group option
+            driver.find_element_by_xpath(xpaths['fabAction']).click()
+            # Enter New Groupname
+            time.sleep(1)
+            driver.find_element_by_xpath(xpaths['newGroupName']).send_keys(newgroupname)
+            # Click on save new Group button
+            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            # Taking screenshot
+            self.screenshot("04")
+            # check if there is a generic error when making a duplicate group, and print the error
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("04-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_05_close_navAccount(self):
-        print (" closing account menu")
-        driver.find_element_by_xpath(xpaths['navAccount']).click()
-        time.sleep(20)
+        try:
+            print (" closing account menu")
+            driver.find_element_by_xpath(xpaths['navAccount']).click()
+            time.sleep(20)
+            # Taking screenshot
+            self.screenshot("05")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("05-e")
+            print (exc_info_p)
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
 
@@ -145,13 +193,26 @@ class create_group_test(unittest.TestCase):
         return True
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "CLOSE")]'):
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
             if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
-            driver.find_element_by_xpath('//*[contains(text(), "CLOSE")]').click()
+            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
+
+
+    def screenshot(self, count):
+        time.sleep(1)
+        text_path = os.path.dirname(os.path.realpath(__file__))
+        print (text_path)
+        filename = str(__file__)
+        filename = filename[:-3]
+        print (filename)
+        final_file = filename.replace(text_path + "/", '')
+        print (final_file)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+
 
     @classmethod
     def tearDownClass(inst):

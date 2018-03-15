@@ -4,7 +4,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, PageEvent } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { TranslateService } from 'ng2-translate/ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
@@ -384,7 +384,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doMultiDelete(selected) {
-    this.dialogService.confirm("Delete", "Are you sure you want to delete selected itme(s)?").subscribe((res) => {
+    this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
