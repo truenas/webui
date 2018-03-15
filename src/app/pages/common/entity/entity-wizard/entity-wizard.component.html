@@ -11,25 +11,25 @@
               </div>
             </div>
           </ng-container>
-          <div>
-            <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true">{{"Back" | translate}}</button>
-            <button mat-raised-button matStepperNext [disabled]="!entityForm.form.valid">{{"Next" | translate}}</button>
-          </div>
+          <mat-card-actions class="wizard-action">
+            <button mat-raised-button matStepperPrevious color="accent" *ngIf="i == 0 ? false : true">{{"Back" | translate}}</button>
+            <button mat-raised-button matStepperNext color="primary" [disabled]="!entityForm.form.valid">{{"Next" | translate}}</button>
+          </mat-card-actions>
         </mat-step>
       </div>
       <mat-step>
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
           <div> {{ conf.summary_title }}</div>
-            <div *ngFor="let key of conf.objectKeys(conf.summary)">
-                <div>{{key + ' : ' + conf.summary[key]}}</div>
-            </div>
+          <div *ngFor="let key of conf.objectKeys(conf.summary)">
+            <div>{{key + ' : ' + conf.summary[key]}}</div>
+          </div>
         </div>
         {{"Confirm your information" | translate}}
-        <div>
-          <button mat-raised-button matStepperPrevious>{{"Back" | translate}}</button>
-          <button mat-raised-button (ngClick)="onSubmit()">{{"Submit" | translate}}</button>
-        </div>
+        <mat-card-actions class="wizard-action">
+          <button mat-raised-button matStepperPrevious color="accent">{{"Back" | translate}}</button>
+          <button mat-raised-button color="primary" (ngClick)="onSubmit()">{{"Submit" | translate}}</button>
+        </mat-card-actions>
       </mat-step>
     </mat-horizontal-stepper>
   </form>
