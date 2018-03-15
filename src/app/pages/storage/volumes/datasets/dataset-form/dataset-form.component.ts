@@ -247,8 +247,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
-    if( this.pk !== undefined && this.pk !== null ) {
+    if( this.isNew === false ) {
         delete data.name;
+    } else {
+      data.name = this.parent + "/" + data.name;
     }
 
     if( this.isBasicMode === true ) {
@@ -256,8 +258,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       data.quota = null;
       data.refreservation = null;
       data.reservation = null;
-      data.copies = "1";
-    }
+      data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
+
+      
+    } 
 
     return data;
   }
