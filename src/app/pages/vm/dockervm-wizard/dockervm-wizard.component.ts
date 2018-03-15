@@ -184,6 +184,10 @@ export class DockerVMWizardComponent {
           this.nicType.options[0].value
         )
         });
+        
+      this.ws.call('vm.random_mac').subscribe((mac_res)=>{
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['NIC_mac'].setValue(mac_res);
+      });
   
   }
   getRndInteger(min, max) {
