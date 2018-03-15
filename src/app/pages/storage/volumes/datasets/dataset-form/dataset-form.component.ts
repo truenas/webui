@@ -246,6 +246,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
+    if( this.pk !== undefined && this.pk !== null ) {
+        data.name = undefined;
+    }
+
     if( this.isBasicMode === true ) {
       data.refquota = null;
       data.quota = null;
@@ -335,11 +339,14 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
 
+    
+
      return returnValue;
   }
 
   editSubmit(body: any) {
-    return this.ws.call('pool.dataset.update', [this.pk, this.sendAsBasicOrAdvanced(body)]);
+    const data: any = this.sendAsBasicOrAdvanced(body);
+    return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
   addSubmit(body: any) {
