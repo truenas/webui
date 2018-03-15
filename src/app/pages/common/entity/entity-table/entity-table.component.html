@@ -1,93 +1,93 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
-	<div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
-		<div class="mat-card-title-text">{{ title | translate }}</div>
-		<app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
-	</div>
-	<div>
-		<br/>
-	</div>
-	<div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
-		<div fxFlex="40" fxLayout="row">
-			<div *ngIf="selected.length > 0 ? true : false" >
-				<div *ngIf="conf.multiActions; else defaultMultiActions">
-					<span *ngFor="let maction of conf.multiActions">
-						<button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-							<span>{{ maction?.label | translate }}</span>
-					    </button>
-				    </span>
-				</div>
-				<ng-template #defaultMultiActions>
-					<button mat-raised-button (click)="doMultiDelete(this.selected);">
-						<span>{{ "Delete" | translate }}</span>
-				    </button>
-				</ng-template>
-			</div>
-		</div>
+  <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
+    <div class="mat-card-title-text">{{ title | translate }}</div>
+    <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
+  </div>
+  <div>
+    <br/>
+  </div>
+  <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
+    <div fxFlex="40" fxLayout="row">
+      <div *ngIf="selected.length > 0 ? true : false" >
+        <div *ngIf="conf.multiActions; else defaultMultiActions">
+          <span *ngFor="let maction of conf.multiActions">
+            <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+              <span>{{ maction?.label | translate }}</span>
+            </button>
+          </span>
+        </div>
+        <ng-template #defaultMultiActions>
+          <button mat-raised-button (click)="doMultiDelete(this.selected);">
+            <span>{{ "Delete" | translate }}</span>
+          </button>
+        </ng-template>
+      </div>
+    </div>
 
-		<mat-paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
-		</mat-paginator>
-	</div>
-	<div class="padding_all">
-		<mat-input-container floatPlaceholder="never">
-			<input matInput #filter placeholder="Filter {{title}}">
-		</mat-input-container>
-	</div>
+    <mat-paginator fxFlex="50" fxLayout="row" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
+    </mat-paginator>
+  </div>
+  <div class="padding_all">
+    <mat-input-container floatPlaceholder="never">
+      <input matInput #filter placeholder="Filter {{title}}">
+    </mat-input-container>
+  </div>
 
-	<div>
-		<ngx-datatable class='material' 
-					   [rows]='seenRows' 
-					   [columns]="conf.columns" 
-					   [columnMode]="'force'" 
-					   [columnWidth]="'auto'"
-					   [headerHeight]="50" 
-					   [footerHeight]="50" 
-					   [rowHeight]="50" 
-					   [reorderable]="true"
-					   [limit]="paginationPageSize" 
-					   [externalPaging]="true"
-					   [count]="currentRows.length"
-					   [offset]="paginationPageIndex"
-					   (page)='paginationUpdate($event)'
-					   (sort)='reorderEvent($event)'
-					   [selectionType]="'checkbox'"
-					   [selected]='selected'
-					   (select)='onSelect($event)'>
+  <div>
+    <ngx-datatable class='material' 
+      [rows]='seenRows' 
+      [columns]="conf.columns" 
+      [columnMode]="'force'" 
+      [columnWidth]="'auto'"
+      [headerHeight]="50" 
+      [footerHeight]="50" 
+      [rowHeight]="50" 
+      [reorderable]="true"
+      [limit]="paginationPageSize" 
+      [externalPaging]="true"
+      [count]="currentRows.length"
+      [offset]="paginationPageIndex"
+      (page)='paginationUpdate($event)'
+      (sort)='reorderEvent($event)'
+      [selectionType]="'checkbox'"
+      [selected]='selected'
+      (select)='onSelect($event)'>
 
-			<ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-				<ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-					<div class="headerCheckboxCell">
-						<mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
-					</div>
-				</ng-template>
+      <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+        <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+          <div class="headerCheckboxCell">
+            <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+          </div>
+        </ng-template>
 
-				<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-					<div class="checkboxCell">
-						<mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
-					</div>
-				</ng-template>
-			</ngx-datatable-column>
+        <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+          <div class="checkboxCell">
+            <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
 
-		  <ngx-datatable-column
-				*ngFor="let col of conf.columns"
-				prop="{{col.prop}}"
-				name="{{col.name}}">
-				 <ng-template let-row="row" ngx-datatable-cell-template>
-					<div id="{{col.prop}}_{{row[col.prop]}}" 
-					     title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
-						<img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-						{{row[col.prop]}}
-					  </div>
-					</ng-template>
-			</ngx-datatable-column>
+      <ngx-datatable-column
+               *ngFor="let col of conf.columns"
+               prop="{{col.prop}}"
+               name="{{col.name}}">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div id="{{col.prop}}_{{row[col.prop]}}" 
+               title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
+            <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
+            {{row[col.prop]}}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
 
-			<ngx-datatable-column>
-				<ng-template let-row="row" ngx-datatable-cell-template>
-						<app-entity-table-actions [entity]="this" [row]="row">
-						</app-entity-table-actions>
-				</ng-template>
-			</ngx-datatable-column>
-		
-		</ngx-datatable>
-	</div>
+      <ngx-datatable-column>
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <app-entity-table-actions [entity]="this" [row]="row">
+          </app-entity-table-actions>
+        </ng-template>
+      </ngx-datatable-column>
+
+    </ngx-datatable>
+  </div>
 
 </div>
