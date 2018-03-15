@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { JailService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { T } from '../../../translate-marker'
 
 @Component({
   selector: 'jail-wizard',
@@ -28,18 +29,17 @@ export class JailWizardComponent {
           type: 'input',
           name: 'uuid',
           required: true,
-          placeholder: 'Jail Name',
-          tooltip: 'Mandatory. Can only contain alphanumeric characters,\
- dashes (-), or underscores (_).',
-          validation: [ Validators.required ],
+          placeholder: T('Jails Name'),
+          tooltip: T('Mandatory. Can only contain alphanumeric characters,\
+ dashes (-), or underscores (_).'),
         },
         {
           type: 'select',
           name: 'release',
           required: true,
-          placeholder: 'Release',
-          tooltip: 'Select the FreeBSD release to use as the jail\
- operating system.',
+          placeholder: T('Release'),
+          tooltip: T('Select the FreeBSD release to use as the jail\
+ operating system.'),
           options: [],
         },
       ]
@@ -49,15 +49,15 @@ export class JailWizardComponent {
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
-          placeholder: 'IPv4 DHCP',
-          tooltip: 'Check this to automatically configure IPv4 settings\
- for the jail.',
+          placeholder: T('IPv4 DHCP'),
+          tooltip: T('Check this to automatically configure IPv4 settings\
+ for the jail.'),
         },
         {
           type: 'input',
           name: 'ip4_addr',
-          placeholder: 'IPv4 Address',
-          tooltip: 'This and the other IPv4 settings are grayed out if\
+          placeholder: T('IPv4 Address'),
+          tooltip: T('This and the other IPv4 settings are grayed out if\
  <b>IPv4 DHCP</b> is checked. Enter a unique IP address that is in the\
  local network and not already used by any other computer.',
           validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
@@ -72,8 +72,8 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'defaultrouter',
-          placeholder: 'Default Router For IPv4',
-          tooltip: 'Enter the IPv4 route for the jail to use.',
+          placeholder: T('Default Router For IPv4'),
+          tooltip: T('Enter the IPv4 route for the jail to use.'),
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -85,8 +85,8 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'ip6_addr',
-          placeholder: 'IPv6 Address',
-          tooltip: 'This and other IPv6 settings are grayed out if\
+          placeholder: T('IPv6 Address'),
+          tooltip: T('This and other IPv6 settings are grayed out if\
  <b>IPv6 Autoconfigure</b> is checked; enter a unique IPv6 address that\
  is in the local network and not already used by any other computer',
           validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
@@ -94,18 +94,18 @@ export class JailWizardComponent {
         {
           type: 'input',
           name: 'defaultrouter6',
-          placeholder: 'Default Router For IPv6',
-          tooltip: 'Enter the IPv6 route for the jail to use.',
+          placeholder: T('Default Router For IPv6'),
+          tooltip: T('Enter the IPv6 route for the jail to use.'),
         },
         {
           type: 'checkbox',
           name: 'vnet',
-          placeholder: 'Vnet',
-          tooltip: 'Use virtual networking (VIRTIO).\
+          placeholder: T('Vnet'),
+          tooltip: T('Check to have this jail use virtual networking.\
  <b>Warning:</b> Jails with virtual networking enabled can experience\
  instability. See the <a\
  href="http://iocage.readthedocs.io/en/latest/known-issues.html#vnet-vimage-issues"\
- target=_blank>iocage documentation</a> for more details.',
+ target=_blank>iocage documentation</a> for more details.'),
           required: false,
           hasErrors: false,
           errors: '',

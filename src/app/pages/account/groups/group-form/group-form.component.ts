@@ -21,9 +21,9 @@ export class GroupFormComponent {
       name: 'bsdgrp_gid',
       placeholder: 'GID',
       tooltip: 'The Group ID (GID) is a unique number used to identify\
- a Unix group. Conventionally, Unix groups containing user accounts\
- have an ID greater than 1000 and groups required by a service have\
- an ID equal to the default port number used by the service.\
+ a Unix group. By convention, groups with user accounts\
+ have IDs above 1000, and groups used by a service have\
+ an ID number that matches the default port number used by the service.\
  For example, the sshd group has an ID of 22.',
     },
     {
