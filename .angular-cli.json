@@ -42,6 +42,7 @@
             "assets/styles/themes/egret-indigo.scss",
             "assets/styles/themes/ix-blue.scss",
             "assets/styles/themes/solarized-dark.scss",
+            "assets/styles/themes/native.scss",
             "assets/styles/themes/freenas-warriors.scss",
             "assets/styles/themes/freenas-sharks.scss",
             "assets/styles/fn-styles.css",

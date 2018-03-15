@@ -25,6 +25,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMsg: String = "";
   consoleMSgList: any[] = [];
   public is_freenas: Boolean = false;
+  public currentTheme: string = "";
   // we will just have to add to this list as more languages are added
 
   @ViewChild(MatSidenav) private sideNave: MatSidenav;
@@ -61,6 +62,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.freenasThemes = this.themeService.freenasThemes;
+    this.currentTheme = this.themeService.currentTheme().name;
     // Initialize Perfect scrollbar for sidenav
     let navigationHold = document.getElementById('scroll-area');
     Ps.initialize(navigationHold, {

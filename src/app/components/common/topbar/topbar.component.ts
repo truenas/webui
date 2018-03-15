@@ -38,6 +38,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilvering = false;
   replicationDetails;
   resilveringDetails;
+  currentTheme:string = "ix-blue";
 
   constructor(
     public themeService: ThemeService,
@@ -70,6 +71,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    let theme = this.themeService.currentTheme();
+    this.currentTheme = theme.name;
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
 

@@ -23,9 +23,6 @@
         <mat-button-toggle value="slim" >Slim</mat-button-toggle>
         <mat-button-toggle value="table" >Table</mat-button-toggle>
       </mat-button-toggle-group>
-      <!-- <button mat-mini-fab class="add-vm" (click)="addVM()">
-        <mat-icon>add</mat-icon>
-      </button> -->
       <button mat-mini-fab class="add-vm" (click)="addVMWizard()">
         <mat-icon>add</mat-icon>
       </button>
@@ -44,21 +41,23 @@
       <div class="dynamic-content" fxFlex="100">
         <!-- Template for back face of card -->
         <vm-card-edit [ngClass]="vm-card-edit" 
-                                   *ngIf="focusedVM && cards[focusedVM].template == 'edit' && cards[focusedVM].isFlipped" 
-                                   [isNew]="cards[focusedVM].isNew"
-                                   [machineId]="cards[focusedVM].id"  
-                                   (cancel)="cancel(focusedVM)"
-                                   (saved)="toggleForm($event.flipState,cards[focusedVM],'none');refreshVM(focusedVM,$event.id)">
+        *ngIf="focusedVM && cards[focusedVM].template == 'edit' && cards[focusedVM].isFlipped" 
+        [isNew]="cards[focusedVM].isNew"
+        [values]="cards[focusedVM]"
+        [target]="controlEvents"
+        [machineId]="cards[focusedVM].id">  
+        <!--(cancel)="cancel(focusedVM)"
+        (saved)="toggleForm($event.flipState,cards[focusedVM],'none');refreshVM(focusedVM,$event.id)"-->
         </vm-card-edit>
         <vm-summary [virtualMachines]="cache" *ngIf="!focusedVM || !cards[focusedVM].isFlipped"></vm-summary>
       </div>
 
       <!-- Table data -->
       <vm-table [data]="cards" fxFlex="100" fxLayout="column"
-                                            (edit)="focusVM($event);toggleForm(true,cards[focusedVM],'edit');"
-                                            (delete)="deleteVM($event)"
-                                            (power)="toggleVmState($event)"
-                                            ></vm-table>
+        (edit)="focusVM($event);toggleForm(true,cards[focusedVM],'edit');"
+        (delete)="deleteVM($event)"
+        (power)="toggleVmState($event)"
+        ></vm-table>
 
     </div>
   </mat-card-content>
@@ -138,10 +137,12 @@
       <!-- Template for back face of card -->
       <vm-card-edit 
         *ngIf="cards[i].template == 'edit'" 
+        [values]="cards[i]"
         [isNew]="cards[i].isNew"
         [machineId]="cards[i].id"  
-        (cancel)="cancel(i)"
-        (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)">
+        [target]="controlEvents">
+        <!--(cancel)="cancel(i)"
+        (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"-->
       </vm-card-edit>
       <span matTooltip="Clone VM" matTooltipPosition="above">
         <button class="indent" mat-raised-button color="primary" (click)="cloneVM(i)">Clone</button>

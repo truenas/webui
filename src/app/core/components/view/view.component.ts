@@ -41,12 +41,17 @@ export class ViewComponent extends View {
 
   colorsFromTheme(){
     let theme = this.themeService.currentTheme();
-    console.log(theme.accentColors);
-    if(theme.accentColors){
+    let accentColors: string[] = []; //[theme.magenta, theme.cyan, theme.red, theme.blue, theme.green, theme.orange, theme.yellow, theme.violet]
+    for(let color in theme.accentColors){
+      accentColors.push(theme[theme.accentColors[color]]);
+    }
+    return accentColors;
+    //return accentColors;
+    /*if(theme.accentColors){
       return theme.accentColors;
     } else {
       let defaultThemeIndex = this.themeService.freeThemeDefaultIndex; 
       return this.themeService.freenasThemes[defaultThemeIndex].accentColors
-    }
+    }*/
   }
 }
