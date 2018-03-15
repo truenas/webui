@@ -16,6 +16,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 import {RestService, WebSocketService} from '../../../../services/';
+import { T } from '../../../../translate-marker';
 import {EntityUtils} from '../../../common/entity/utils';
 import { debounce } from 'rxjs/operator/debounce';
 import { debug } from 'util';
@@ -40,16 +41,16 @@ export class BootEnvAttachFormComponent {
     {
       type: 'select',
       name: 'dev',
-      placeholder: 'Member Disk',
-      tooltip : 'Select the device to attach.',
+      placeholder: T('Member Disk'),
+      tooltip : T('Select the device to attach.'),
       options :[]
     },
     {
       type: 'checkbox',
       name: 'expand',
-      placeholder: 'Use all disk space',
-      tooltip : 'Gives control of how much of the new device is made\
- available to ZFS. When checked, the entire capacity of the new device is used.',
+      placeholder: T('Use all disk space'),
+      tooltip : T('Gives control of how much of the new device is made\
+       available to ZFS. When checked, the entire capacity of the new device is used.'),
     },
 
   ]
