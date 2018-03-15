@@ -14,6 +14,7 @@ import {
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
+import { T } from '../../../../translate-marker';
 import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
@@ -37,29 +38,29 @@ export class CertificateAuthorityImportComponent {
     {
       type : 'input',
       name : 'cert_name',
-      placeholder : 'Identifier',
-      tooltip : 'Mandatory. Enter a descriptive name for the CA using\
- only alphanumeric, underscore (_), and dash(-) characters.',
+      placeholder : T('Identifier'),
+      tooltip : T('Mandatory. Enter a descriptive name for the CA using\
+       only alphanumeric, underscore (_), and dash(-) characters.'),
     },
     {
       type : 'textarea',
       name : 'cert_certificate',
-      placeholder : 'Certificate',
-      tooltip : 'Mandatory. Paste in the certificate for the CA.',
+      placeholder : T('Certificate'),
+      tooltip : T('Mandatory. Paste in the certificate for the CA.'),
     },
     {
       type : 'textarea',
       name : 'cert_privatekey',
-      placeholder : 'Private Key',
-      tooltip : 'If there is a private key associated with the\
- <b>Certificate</b>, paste it here.',
+      placeholder : T('Private Key'),
+      tooltip : T('If there is a private key associated with the\
+       <b>Certificate</b>, paste it here.'),
     },
     {
       type : 'input',
       name : 'Passphrase',
-      placeholder : 'Passphrase',
-      tooltip : 'If the <b>Private Key</b> is protected by a passphrase,\
- enter it here and repeat it in the "Confirm Passphrase" field.',
+      placeholder : T('Passphrase'),
+      tooltip : T('If the <b>Private Key</b> is protected by a passphrase,\
+       enter it here and repeat it in the "Confirm Passphrase" field.'),
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ]
     },
@@ -67,14 +68,14 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'Passphrase2',
       inputType : 'password',
-      placeholder : 'Confirm Passphrase',
+      placeholder : T('Confirm Passphrase'),
     },
     {
       type : 'input',
       name : 'cert_serial',
-      placeholder : 'Serial',
-      tooltip : 'Mandatory. Enter the serial number for the\
- certificate.',
+      placeholder : T('Serial'),
+      tooltip : T('Mandatory. Enter the serial number for the\
+       certificate.'),
     },
   ];
 
