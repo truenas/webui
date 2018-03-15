@@ -15,8 +15,8 @@
 }
 
 
-.panel_container {
-
+:host ::ng-deep .global_volume_based_action_menu .panel_container {
+  text-align:right;
 }
 
 

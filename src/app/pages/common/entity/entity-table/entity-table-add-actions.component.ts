@@ -10,7 +10,7 @@ import {EntityTableComponent} from './entity-table.component';
 @Component({
   selector : 'app-entity-table-add-actions',
   template : `
-	<div *ngIf="this.entity.conf.route_add || this.actions.length == 1">
+	<div *ngIf="this.entity.conf.route_add && this.actions.length < 2">
 	  <button class="mat-card-primary-action" id="add_action_button" *ngIf="this.entity.conf.route_add" mat-mini-fab (click)="this.entity.doAdd()" matTooltip="{{this.entity.conf.route_add_tooltip | translate}}">
 	    <mat-icon>add</mat-icon>
           </button>
