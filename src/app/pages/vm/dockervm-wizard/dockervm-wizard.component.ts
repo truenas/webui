@@ -34,38 +34,16 @@ export class DockerVMWizardComponent {
   protected wizardConfig: Wizard[] = [{
       label: 'Docker VM Details',
       fieldConfig: [
-        // {
-        //   type: 'select',
-        //   name: 'os',
-        //   required: true,
-        //   placeholder: 'Guest Operating System.',
-        //   tooltip: 'What OS do you want to create? (Windows/Linux/FreeBSD)',
-        //   options: [
-        //     {label: 'windows', value: 'windows'},
-        //     {label: 'linux', value: 'linux'},
-        //     {label: 'freeBSD', value: 'freeBSD'},
-        //   ],
-        // },
       { type: 'input',
         name : 'name',
         placeholder : 'Name of the VM',
         validation : [ Validators.required ]
       },
-      // { type: 'select',
-      //   name : 'bootloader',
-      //   placeholder : 'Boot Loader Type',
-      //   options: []
-      // },
       { type: 'checkbox',
         name : 'autostart',
         placeholder : 'Start on Boot',
         value: true
       },
-      { type: 'checkbox',
-      name : 'enable_vnc',
-      placeholder : 'Enanble VNC',
-      value: true
-    }
       ]
     },
     {
@@ -74,56 +52,21 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'vcpus',
           placeholder: 'Virtual CPUs',
-          value: '1',
-          tooltip: '',
+          value: 1,
+          inputType: 'number',
+          min: 1
         },
         {
           type: 'input',
           name: 'memory',
           placeholder: 'Memory Size (MiB)',
           tooltip: '',
-          value: '1024'
+          value: 2048,
+          inputType: 'number',
+          min: 2048
         },
       ]
     },
-    // {
-    //   label: 'Raw Disk Drive',
-    //   fieldConfig: [
-    //     {
-    //       type: 'radio',
-    //       name: 'disk_radio',
-    //       placeholder : 'Create New Disk',
-    //       tooltip: '',
-    //       options:[{label:"yes", value: true}, 
-    //                {label:"no", value: false}],
-    //       value: true,
-    //     },
-    //     {
-    //       type: 'input',
-    //       name: 'volsize',
-    //       placeholder : 'please specify size for zvol\'s (GB\'s)',
-    //       tooltip: '',
-    //       isHidden: false
-    //     },
-    //     {
-    //       type: 'select',
-    //       name: 'datastore',
-    //       placeholder : 'please select a datastore.',
-    //       tooltip: '',
-    //       options: [],
-    //       isHidden: false
-    //     },
-    //     {
-    //       type: 'explorer',
-    //       name: 'hdd_path',
-    //       placeholder: 'select an existing disk',
-    //       tooltip: '',
-    //       explorerType: "zvol",
-    //       initial: '/mnt',
-    //       isHidden: true
-    //     },
-    //   ]
-    // },
     {
       label: 'Network Interface',
       fieldConfig: [
@@ -161,50 +104,53 @@ export class DockerVMWizardComponent {
         },
       ]
     },
-    // {
-    //   label: 'Installation Media',
-    //   fieldConfig: [
-    //     {
-    //       type: 'explorer',
-    //       name: 'iso_path',
-    //       placeholder : 'Please choose an installation media',
-    //       initial: '/mnt',
-    //       tooltip: '',
-    //       validation : [ Validators.required ],
-    //       // isHidden: false
-    //     },
-    //     {
-    //       type: 'checkbox',
-    //       name: 'upload_iso_checkbox',
-    //       placeholder : 'Check to Upload an ISO.',
-    //       tooltip: '',
-    //       value: false,
-    //     },
-    //     {
-    //       type: 'explorer',
-    //       name: 'upload_iso_path',
-    //       placeholder : 'select a Dataset for uploading your ISO',
-    //       initial: '/mnt',
-    //       tooltip: '',
-    //       explorerType: 'directory',
-    //       isHidden: true
-    //     },
-    //     {
-    //       type: 'upload',
-    //       name: 'upload_iso',
-    //       placeholder : '',
-    //       tooltip: '',
-    //       isHidden: true,
-    //       acceptedFiles: ',.iso',
-    //       fileLocation: '',
-    //     },
-    //   ]
-    // },
+    {
+      label: 'Storage Files',
+      fieldConfig: [
+        {
+          type: 'input',
+          name: 'raw_filename',
+          placeholder : 'filename',
+          tooltip: 'Provide a filename, this file will be created at user specific location ',
+          validation : [ Validators.required ]
+        },
+        {
+          type: 'input',
+          name: 'size',
+          placeholder : 'Define the size (in GiB) for the raw file.',
+          tooltip: 'Type a number of GiB to allocate to the new RAW file.',
+          value: 10,
+          inputType: 'number',
+          min: 10,
+          validation : [ Validators.required ]
+        },
+        {
+          type: 'explorer',
+          name: 'raw_file_directory',
+          placeholder: 'Select a directory',
+          tooltip: 'please select a path for existing directory',
+          explorerType: "directory",
+          initial: '/mnt',
+          validation : [ Validators.required ]
+        },
+        {
+          type: 'input',
+          name: 'sectorsize',
+          placeholder : 'sectorsize',
+          tooltip: '.',
+          value: 0,
+          inputType: 'number',
+          min: 0
+        },
+      ]
+    },
   ]
 
   protected releaseField: any;
   protected currentServerVersion: any;
-  private datastore: any;
+  private raw_filename: any;
+  private raw_file_directory: any;
+  private raw_file: any;
   private nic_attach: any;
   private nicType:  any;
   private bootloader: any;
@@ -218,72 +164,6 @@ export class DockerVMWizardComponent {
 
 
   afterInit(entityWizard: EntityWizardComponent) {
-    
-    // ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
-    //   this.summary['guest operating system'] = res;
-    //   ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
-    //     this.summary['Number of CPU'] = vcpus;
-    //   });
-    //   ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
-    //     this.summary['Memory'] = memory;
-    //   });
-    //   ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
-    //     this.summary['Hard Disk Size'] = volsize;
-    //   });
-    //   ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
-    //     this.summary['Installation Media'] = iso_path;
-    //   });
-      // if (res === 'windows') {  
-      //   ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
-      //   ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
-      //   ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
-      // }
-      // else {
-      //   ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
-      //   ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
-      //   ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
-      // }
-    // });
-    // ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
-    //   if (res){
-    //     _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
-    //     _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = false;
-    //     _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = true;
-    //   } else {
-    //     _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
-    //     _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
-    //     _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
-    //   }
-      
-    // });
-    // ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
-    //   if (res){
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
-    //   } else {
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
-    //   }
-      
-    // });
-    // ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
-    //   if (res){
-    //     _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
-    //   }
-
-    // });
-    // this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
-    //   this.datastore = _.find(this.wizardConfig[2].fieldConfig, { name : 'datastore' });
-    //   for (const idx in filesystem_res) {
-    //     if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
-    //       this.datastore.options.push(
-    //         {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
-    //     }
-    //   };
-    // ( < FormGroup > entityWizard.formArray.get([2])).controls['datastore'].setValue(
-    //   this.datastore.options[0].value
-    // )
-    // });
 
     this.networkService.getAllNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.wizardConfig[2].fieldConfig, {'name' : 'nic_attach'});
@@ -304,97 +184,52 @@ export class DockerVMWizardComponent {
           this.nicType.options[0].value
         )
         });
-
-      // this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-      //   this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
-      //   res.forEach((item) => {
-      //     this.bootloader.options.push({label : item[1], value : item[0]})
-      //   });
-      // ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
-      //   this.bootloader.options[0].value
-      // )
-      // });
+  
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
 async customSubmit(value) {
-    // const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
-    const size = 10 * 1024 * 1000 * 1000;
+  const path = value.raw_file_directory+ '/' + value.raw_filename+ '_'+ value.name;
+  console.log(path);
     const payload = {}
     const vm_payload = {}
-    // payload["name"] = hdd
-    // payload["type"] = "VOLUME";
-    // payload["volsize"] = value.volsize * 1024 * 1000 * 1000;
-    // payload["volblocksize"] = "512";
     vm_payload["vm_type"]= "Container Provider";
-    vm_payload["memory"]= value.memory;
+    vm_payload["memory"]= String(value.memory);
     vm_payload["name"] = value.name;
-    vm_payload["vcpus"] = value.vcpus;
-    vm_payload["memory"] = value.memory;
+    vm_payload["vcpus"] = String(value.vcpus);
     vm_payload["bootloader"] = 'GRUB';
-    vm_payload["autoloader"] = value.autoloader;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
-      {"dtype": "RAW", "attributes": {"path": "", "type": "AHCI", "sectorsize": 0}},
+      {"dtype": "RAW", "attributes": {"path": path, "type": "AHCI", "rootpwd":"docker", "boot": true, "size": value.size, sectorsize: 0}},
     ]
-    if(value.enable_vnc){
-      await this.create_vnc_device(vm_payload);
-    };
     this.loader.open();
-    this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+    this.ws.call('vm.get_sharefs').subscribe((get_sharefs)=>{
+      if(!get_sharefs){
+        this.ws.call('vm.activate_sharefs').subscribe((sharefs)=>{
+          this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+            this.loader.close();
+            this.router.navigate(['/vm']);
+          },(error) => {
+            this.loader.close();
+          });
+        })
+
+      }
+      else {
+        this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+          this.loader.close();
+          this.router.navigate(['/vm']);
+        },(error) => {
+          this.loader.close();
+        });
+      }
+    },
+    (error_res) => { 
+      new EntityUtils().handleError(this, error_res);
       this.loader.close();
-      this.router.navigate(['/vm']);
-    },(error) => {
-      this.loader.close();
-    });
-
-    // if( value.hdd_path ){
-    //   for (const device of vm_payload["devices"]){
-    //     if (device.dtype === "DISK"){
-    //       device.attributes.path = '/dev/zvol/'+ value.hdd_path.substring(5);
-    //     };
-    //   };
-    //   this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-    //     this.loader.close();
-    //     this.router.navigate(['/vm']);
-    // },(error) => {
-    //   this.loader.close();
-    // });
-
-    // } else {
-    //   this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
-    //     for (const device of vm_payload["devices"]){
-    //       if (device.dtype === "DISK"){
-    //         const orig_hdd = device.attributes.path;
-    //         device.attributes.path = '/dev/zvol/' + orig_hdd
-    //       };
-    //     };
-    //     this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-    //       this.loader.close();
-    //       this.router.navigate(['/vm']);
-    //     });
-    //   },(error) => {
-    //     this.loader.close();
-    //   });
-    // }
-
+    })
   }
-  async create_vnc_device(vm_payload: any) {
-    await this.ws.call('interfaces.ipv4_in_use').toPromise().then( res=>{
-      vm_payload["devices"].push(
-        {
-          "dtype": "VNC", "attributes": {
-            "wait": true, 
-            "vnc_port": String(this.getRndInteger(5553,6553)), 
-            "vnc_resolution": "1024x768",
-            "vnc_bind": res[0], 
-            "vnc_password": "", 
-            "vnc_web": true 
-          }
-        }
-    );
-    }); 
-  }
+
 }

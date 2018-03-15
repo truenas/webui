@@ -36,6 +36,7 @@ interface VmProfile {
   cardActions?:Array<any>;
   isNew:boolean;
   vm_type: string;
+  vm_comport?:string
 }
 
 @Component({
@@ -52,6 +53,8 @@ export class VmCardsComponent implements OnInit {
   @ViewChild('viewMode') viewMode:MatButtonToggleGroup;
   focusedVM:string;
   protected dialogRef: any;
+  public raw_file_path: string;
+  public raw_file_path_size: string;
 
 
   public tpl = "edit";
@@ -169,7 +172,8 @@ export class VmCardsComponent implements OnInit {
       template:'none',
       isNew:false,
       cardActions:[],
-      vm_type: data.vm_type
+      vm_type: data.vm_type,
+      vm_comport:'/dev/nmdm' +String(data.id)+ 'B'
     }   
     if(card.devices.length > 0){
       card.vnc = this.checkVnc(card.devices);
@@ -371,12 +375,37 @@ export class VmCardsComponent implements OnInit {
     let eventName: string;
     if (vm.state !== 'running') {
       this.ws.call('vm.query', [[['id', '=', vm.id]]]).subscribe((res)=>{
+        for (const device of res[0].devices){
+          if(device.dtype === 'RAW' && device.attributes.boot){
+            this.raw_file_path = device.attributes.path;
+            this.raw_file_path_size = String(device.attributes.size);
+          }
+        }
           if (res[0].vm_type === "Container Provider"){
             this.dialogRef = this.matdialog.open(EntityJobComponent, { data: {title: 'Fetching RancherOS'}, disableClose: false});
             this.dialogRef.componentInstance.progressNumberType = "nopercent";
             this.dialogRef.componentInstance.setCall('vm.fetch_image', ['RancherOS']);
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.subscribe((sucess_res) => {
+              this.loader.open();
+              this.ws.call('vm.image_path', ['RancherOS']).subscribe((img_path)=>{
+                this.ws.call('vm.decompress_gzip',[img_path, this.raw_file_path]).subscribe((decompress_gzip)=>{
+                  this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe(
+                    (raw_resize)=>{
+                      this.loader.close();
+                    },
+                    (error_raw_resize)=>{
+                      this.loader.close();
+                      new EntityUtils().handleError(this, error_raw_resize);
+                    })
+                },(decompress_gzip)=>{
+                  this.loader.close();
+                  new EntityUtils().handleError(this, decompress_gzip);
+              });
+              },(img_path)=>{
+                this.loader.close();
+                new EntityUtils().handleError(this, img_path);
+              });
               this.dialogRef.close(false);
               this.dialogRef.componentInstance.setDescription("");
             });
@@ -384,9 +413,6 @@ export class VmCardsComponent implements OnInit {
               this.dialog.errorReport(failed_res.error, failed_res.failed_res, failed_res.exception);
             });
           }
-          // else {
-          //   eventName = "VmStart";
-          // }
         
       });
       eventName = "VmStart";

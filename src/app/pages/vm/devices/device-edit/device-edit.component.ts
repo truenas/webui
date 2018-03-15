@@ -54,6 +54,9 @@ export class DeviceEditComponent implements OnInit {
   private nic_attach: any;
   private nicType:  any;
   private vnc_bind: any;
+  private RAW_boot: any;
+  private RAW_rootpwd: any;
+  private RAW_size: any;
  
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -243,6 +246,29 @@ export class DeviceEditComponent implements OnInit {
             {label : 'VirtIO', value : 'VIRTIO'},
           ],
         },
+        {
+          type : 'checkbox',
+          name : 'RAW_boot',
+          placeholder : 'Boot',
+          tooltip : '',
+          isHidden: true
+        },
+        {
+          type : 'input',
+          name : 'RAW_rootpwd',
+          placeholder : 'password',
+          tooltip : '',
+          inputType : 'password',
+          isHidden: true
+        },
+        {
+          type : 'input',
+          name : 'RAW_size',
+          placeholder : 'RAW filesize',
+          tooltip : '',
+          inputType : 'number',
+          isHidden: true
+        },
       ];
     }
     this.afterInit();
@@ -275,7 +301,10 @@ export class DeviceEditComponent implements OnInit {
     const rawfile_lookup_table: Object = {
       'path' : 'RAW_path',
       'sectorsize': 'RAW_sectorsize',
-      'type':'RAW_mode'
+      'type':'RAW_mode',
+      'boot': 'RAW_boot',
+      'rootpwd': 'RAW_rootpwd',
+      'size': 'RAW_size'
     };
     this.ws.call('datastore.query', ['vm.device', [["id", "=", this.pk]]]).subscribe((device)=>{
       if (device[0].dtype === 'CDROM'){
@@ -315,6 +344,15 @@ export class DeviceEditComponent implements OnInit {
         this.setgetValues(device[0].attributes, disk_lookup_table);
       }
       else {
+        if (device[0].vm.vm_type==="Container Provider"){
+          this.RAW_boot = _.find(this.fieldConfig, {name:'RAW_boot'})
+          this.RAW_rootpwd = _.find(this.fieldConfig, {name:'RAW_rootpwd'})
+          this.RAW_size = _.find(this.fieldConfig, {name:'RAW_size'})
+          this.RAW_boot.isHidden = false
+          this.RAW_rootpwd.isHidden = false
+          this.RAW_size.isHidden = false
+        }
+        
         this.setgetValues(device[0].attributes, rawfile_lookup_table);
         }
       
@@ -397,8 +435,16 @@ export class DeviceEditComponent implements OnInit {
             payload['attributes'] = {
               'path' : formvalue.RAW_path,
               'sectorsize' : formvalue.RAW_sectorsize,
-              'mode': formvalue.RAW_mode 
+              'mode': formvalue.RAW_mode,
               }
+            if (formvalue.RAW_boot || formvalue.RAW_rootpwd || formvalue.RAW_size ){
+              Object.assign(
+                payload['attributes'],
+                { "boot": formvalue.RAW_boot}, 
+                {"rootpwd" :formvalue.RAW_rootpwd},
+                {"size":formvalue.RAW_size}
+               )
+            }
             }
           this.ws.call(
             'datastore.update', ['vm.device', this.pk, payload]).subscribe(

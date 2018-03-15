@@ -25,7 +25,7 @@
       </mat-button-toggle-group>
       <button mat-mini-fab class="add-vm" (click)="addDockerVMWizard()">
         <mat-icon>add</mat-icon>
-      </button> -->
+      </button>
       <button mat-mini-fab class="add-vm" (click)="addVMWizard()">
         <mat-icon>add</mat-icon>
       </button>
@@ -116,6 +116,7 @@
               <tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
               <tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
               <tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
+              <tr><td class="stat-label">Com Port:</td><td class="stat">{{ cards[i].vm_comport }}</td></tr>
             </tbody></table>
         </div>
 
