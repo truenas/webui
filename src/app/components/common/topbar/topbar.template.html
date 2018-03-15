@@ -32,10 +32,10 @@
     </button>
     <mat-menu #themeMenu="matMenu">
       <mat-grid-list class="theme-list" cols="1" rowHeight="24px">
-        <mat-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme)">
-          <div mat-menu-item [title]="theme.name">
-            <div [style.background]="theme.baseColor" class="egret-swatch"></div>
-            <mat-icon class="active-icon" *ngIf="theme.isActive">check</mat-icon>
+        <mat-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme.name)">
+          <div mat-menu-item [title]="theme.label">
+            <div [style.background]="theme.bg2" class="egret-swatch"></div>
+            <mat-icon class="active-icon" *ngIf="theme && theme.name == currentTheme">check</mat-icon>
           </div>
           <span style="cursor: pointer;"  class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
         </mat-grid-tile>
