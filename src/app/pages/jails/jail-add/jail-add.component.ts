@@ -50,31 +50,37 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'ip4_addr',
       placeholder: T('IPv4 Address'),
-      tooltip: T('This and the other IPv4 settings are grayed out if\
- <b>IPv4 DHCP</b> is checked. Enter a unique IP address that is in the\
- local network and not already used by any other computer.'),
+      tooltip: T('Configures network or internet access for the jail.\
+ Type the IPv4 address for VNET and shared IP jails. Single interface\
+ format: <b>interface|ip-address/netmask</b>. Multiple interface format:\
+ <b>interface|ip-address/netmask,interface|ip-address/netmask</b>.\
+ Example: <b>vnet0|192.168.0.10/24</b>'),
     },
     {
       type: 'input',
       name: 'defaultrouter',
       placeholder: T('Default IPv4 Router'),
-      tooltip: T('Setting this property to anything other than <i>none</i>\
- configures a default route inside a <b>VNET</b> jail.'),
+      tooltip: T('Type <i>none</i> or a valid IP address. Setting this\
+ property to anything other than <i>none</i> configures a default route\
+ inside a <b>VNET</b> jail.'),
     },
     {
       type: 'input',
       name: 'ip6_addr',
       placeholder: T('IPv6 Address'),
-      tooltip: T('This and other IPv6 settings are grayed out if\
- <b>IPv6 Autoconfigure</b> is checked; enter a unique IPv6 address that\
- is in the local network and not already used by any other computer'),
+      tooltip: T('Configures network or internet access for the jail.\
+ Type the IPv6 address for VNET and shared IP jails. Single interface\
+ format: <i>interface|ip-address/netmask</i>. Multiple interface format:\
+ <i>interface|ip-address/netmask,interface|ip-address/netmask</i>.\
+ Example: <b>re0|2001:0db8:85a3:0000:0000:8a2e:0370:7334/24</b>'),
     },
     {
       type: 'input',
       name: 'defaultrouter6',
       placeholder: T('Default IPv6 Router'),
-      tooltip: T('Setting this property to anything other than <i>none</i>\
- configures a default IPv6 route inside a <b>VNET</b> jail.'),
+      tooltip: T('Type <i>none</i> or a valid IP address. Setting this\
+ property to anything other than <i>none</i> configures a default route\
+ inside a <b>VNET</b> jail.'),
     },
     {
       type: 'input',
@@ -85,7 +91,7 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'vnet',
-      placeholder: T('Vnet'),
+      placeholder: T('VNET'),
       tooltip: T('Check to start the jail with a VNET or\
  shared IP configuration. Check this if a fully virtualized per-jail\
  network stack is required.'),
