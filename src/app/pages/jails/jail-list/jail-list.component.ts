@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-jail-list',

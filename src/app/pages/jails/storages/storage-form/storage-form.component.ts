@@ -10,6 +10,7 @@ import { DialogService } from '../../../../services/';
 
 import { JailService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker'
 
 interface MountPoint {
   action: string,
@@ -54,7 +55,7 @@ export class StorageFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'jail',
-      placeholder: 'Jail',
+      placeholder: T('Jail'),
       options: [],
     },
     {
@@ -62,26 +63,26 @@ export class StorageFormComponent {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'source',
-      placeholder: 'Source',
-      tooltip: 'Directory or dataset on the FreeNAS system which will\
+      placeholder: T('Source'),
+      tooltip: T('Directory or dataset on the FreeNAS system which will\
  be accessed by the jail. This directory <b>must</b> reside outside of\
- the volume or dataset being used by the jail.',
+ the volume or dataset being used by the jail.'),
     },
     {
       type: 'explorer',
       initial: '/mnt/iocage/jails',
       explorerType: 'directory',
       name: 'destination',
-      placeholder: 'Destination',
-      tooltip: 'Select an existing, empty directory within the\
+      placeholder: T('Destination'),
+      tooltip: T('Select an existing, empty directory within the\
  jail to link to the <b>Source</b> storage area. If that directory does\
  not exist yet, enter the desired directory name and check the\
- <b>Create directory</b> box.',
+ <b>Create directory</b> box.'),
     },
     {
       type: 'checkbox',
       name: 'readonly',
-      placeholder: 'Read-Only',
+      placeholder: T('Read-Only'),
     },
   ];
 
