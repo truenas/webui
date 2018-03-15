@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../../translate-marker';
 
 @Component({
   selector : 'app-iscsi-initiator-form',
@@ -17,26 +18,26 @@ export class InitiatorFormComponent {
     {
       type : 'input',
       name : 'iscsi_target_initiator_initiators',
-      placeholder : 'Initiators',
-      tooltip: 'Use <i>ALL</i> keyword or a list of initiator hostnames\
- separated by spaces.',
+      placeholder : T('Initiators'),
+      tooltip: T('Use <i>ALL</i> keyword or a list of initiator hostnames\
+ separated by spaces.'),
       value : 'ALL',
       inputType : 'textarea',
     },
     {
       type : 'input',
       name : 'iscsi_target_initiator_auth_network',
-      placeholder : 'Authorized Network',
-      tooltip: 'Use <i>ALL</i> keyword or a network address with CIDR\
- mask such as <i>192.168.2.0/24</i>.',
+      placeholder : T('Authorized Network'),
+      tooltip: T('Use <i>ALL</i> keyword or a network address with CIDR\
+ mask such as <i>192.168.2.0/24</i>.'),
       value : 'ALL',
       inputType : 'textarea',
     },
     {
       type : 'input',
       name : 'iscsi_target_initiator_comment',
-      placeholder : 'Comment',
-      tooltip: 'Optional description.',
+      placeholder : T('Comment'),
+      tooltip: T('Optional description.'),
     },
   ];
 

@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { IscsiService } from '../../../../../services/';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
+import { T } from '../../../../../translate-marker';
 
 @Component({
   selector : 'app-iscsi-portal-edit',
@@ -28,18 +29,18 @@ export class PortalEditComponent {
     {
       type : 'input',
       name : 'iscsi_target_portal_comment',
-      placeholder : 'Comment',
-      tooltip: 'Optional description. Portals are automatically assigned\
- a numeric group ID.',
+      placeholder : T('Comment'),
+      tooltip: T('Optional description. Portals are automatically assigned\
+ a numeric group ID.'),
     },
     {
       type : 'select',
       name : 'iscsi_target_portal_discoveryauthmethod',
-      placeholder : 'Discovery Auth Method',
-      tooltip: 'Configures the authentication level required by the\
+      placeholder : T('Discovery Auth Method'),
+      tooltip: T('Configures the authentication level required by the\
  target for discovery of valid devices, where <i>None</i> will allow\
  anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require\
- authentication.',
+ authentication.'),
       options : [
         {
           label : 'NONE',
@@ -58,10 +59,10 @@ export class PortalEditComponent {
     {
       type : 'select',
       name : 'iscsi_target_portal_discoveryauthgroup',
-      placeholder : 'Discovery Auth Group',
-      tooltip: 'Select a user created in <b>Authorized Access</b> if\
+      placeholder : T('Discovery Auth Group'),
+      tooltip: T('Select a user created in <b>Authorized Access</b> if\
  the <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
- <i>Mutual CHAP</i>.',
+ <i>Mutual CHAP</i>.'),
       options : [ {
         label : 'NONE',
         value : '',
@@ -75,24 +76,24 @@ export class PortalEditComponent {
         {
           type : 'select',
           name : "ip",
-          placeholder : "IP Address",
-          tooltip: 'Select the IP address associated with an interface\
- or the wildcard address of <i>0.0.0.0</i> (any interface).',
+          placeholder : T('IP Address'),
+          tooltip: T('Select the IP address associated with an interface\
+ or the wildcard address of <i>0.0.0.0</i> (any interface).'),
           value : '0.0.0.0',
           options : [],
         },
         {
           type : 'input',
           name : "port",
-          placeholder : "Port",
-          tooltip: 'TCP port used to access the iSCSI target. Default\
- is <i>3260</i>.',
+          placeholder : T('Port'),
+          tooltip: T('TCP port used to access the iSCSI target. Default\
+ is <i>3260</i>.'),
           value : '3260',
         },
         {
           type: 'checkbox',
           name: 'delete',
-          placeholder: 'Delete',
+          placeholder: T('Delete'),
         }
       ]
     }

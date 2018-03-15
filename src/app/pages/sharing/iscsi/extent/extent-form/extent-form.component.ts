@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { IscsiService } from '../../../../../services/';
+import { T } from '../../../../../translate-marker';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
@@ -27,15 +28,15 @@ export class ExtentFormComponent {
     {
       type : 'input',
       name : 'iscsi_target_extent_name',
-      placeholder : 'Extent name',
-      tooltip: 'Name of Extent. If the <b>Extent size</b> is not\
- <i>0</i>, it cannot be an existing file within the voulme/dataset.',
+      placeholder : T('Extent name'),
+      tooltip: T('Name of Extent. If the <b>Extent size</b> is not\
+ <i>0</i>, it cannot be an existing file within the voulme/dataset.'),
     },
     {
       type: 'select',
       name: 'iscsi_target_extent_type',
-      placeholder: 'Extent type',
-      tooltip: 'Select from <i>File</i> or <i>Device</i>.',
+      placeholder: T('Extent type'),
+      tooltip: T('Select from <i>File</i> or <i>Device</i>.'),
       options: [
         {
           label: 'Device',
@@ -50,46 +51,46 @@ export class ExtentFormComponent {
     {
       type: 'select',
       name: 'iscsi_target_extent_disk',
-      placeholder: 'Device',
-      tooltip: 'Only appears if <i>Device</i> is selected. Select the\
- unformatted disk, controller, zvol snapshot, or HAST device.',
+      placeholder: T('Device'),
+      tooltip: T('Only appears if <i>Device</i> is selected. Select the\
+ unformatted disk, controller, zvol snapshot, or HAST device.'),
       options: [],
       isHidden: false,
     },
     {
       type : 'input',
       name : 'iscsi_target_extent_serial',
-      placeholder : 'Serial',
-      tooltip: 'Unique LUN ID. The default is generated from the MAC\
- address of the system.',
+      placeholder : T('Serial'),
+      tooltip: T('Unique LUN ID. The default is generated from the MAC\
+ address of the system.'),
     },
     {
       type : 'explorer',
       initial: '/mnt',
       name: 'iscsi_target_extent_path',
-      placeholder: 'Path to the extent',
-      tooltip: 'Browse to an existing file and use <i>0</i> as the\
+      placeholder: T('Path to the extent'),
+      tooltip: T('Browse to an existing file and use <i>0</i> as the\
  <b>Extent size</b>, or browse to the volume or dataset, click\
  <b>Close</b>, append the\ <b>Extent Name</b> to the path, and specify\
  a value in <b>Extent Size</b>. Extents cannot be created inside the\
- jail root directory.',
+ jail root directory.'),
       isHidden: false,
     },
     {
       type: 'input',
       name: 'iscsi_target_extent_filesize',
-      placeholder: 'Extent size',
-      tooltip: 'If the size is specified as <i>0</i>, the file must\
+      placeholder: T('Extent size'),
+      tooltip: T('If the size is specified as <i>0</i>, the file must\
  already exist and the actual file size will be used. Otherwise,\
- specify the size of the file to create.',
+ specify the size of the file to create.'),
       isHidden: false,
     },
     {
       type: 'select',
       name: 'iscsi_target_extent_blocksize',
-      placeholder: 'Logical block size',
-      tooltip: 'Only override the defualt if the initiator requires a\
-different block size.',
+      placeholder: T('Logical block size'),
+      tooltip: T('Only override the defualt if the initiator requires a\
+different block size.'),
       options: [
         {
           label: '512',
@@ -113,57 +114,57 @@ different block size.',
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_pblocksize',
-      placeholder: 'Disable physical block size reporting',
-      tooltip: 'If the initiator does not support physical block size\
- values over 4K (MS SQL), check this box.',
+      placeholder: T('Disable physical block size reporting'),
+      tooltip: T('If the initiator does not support physical block size\
+ values over 4K (MS SQL), check this box.'),
     },
     {
       type: 'input',
       name: 'iscsi_target_extent_avail_threshold',
-      placeholder: 'Available space threshold (%)',
-      tooltip: 'Only appears if <i>File</i> or a zvol is selected. When\
+      placeholder: T('Available space threshold (%)'),
+      tooltip: T('Only appears if <i>File</i> or a zvol is selected. When\
  the specified percentage of free space is reached, the system issues\
  an alert. See <a href="http://doc.freenas.org/11/vaai.html#vaai"\
- target="_blank">VAAI</a> Threshold Warning.',
+ target="_blank">VAAI</a> Threshold Warning.'),
     },
     {
       type : 'input',
       name : 'iscsi_target_extent_comment',
-      placeholder : 'Comment',
-      tooltip: 'Optional.',
+      placeholder : T('Comment'),
+      tooltip: T('Optional.'),
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_insecure_tpc',
-      placeholder: 'Enable TPC',
-      tooltip: 'If checked, an initiator can bypass normal access\
+      placeholder: T('Enable TPC'),
+      tooltip: T('If checked, an initiator can bypass normal access\
  control and access any scannable target. This allows <b>xcopy</b>\
- operations which are otherwise blocked by access control.',
+ operations which are otherwise blocked by access control.'),
       value: true,
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_xen',
-      placeholder: 'Xen initiator compat mode',
-      tooltip: 'Check this box when using Xen as the iSCSI initiator.',
+      placeholder: T('Xen initiator compat mode'),
+      tooltip: T('Check this box when using Xen as the iSCSI initiator.'),
     },
     {
       type: 'select',
       name: 'iscsi_target_extent_rpm',
-      placeholder: 'LUN RPM',
-      tooltip: 'Do <b>NOT</b> change this setting when using Windows\
+      placeholder: T('LUN RPM'),
+      tooltip: T('Do <b>NOT</b> change this setting when using Windows\
  as the initiator. Only needs to be changed in large environments\
  where the number of systems using a specific RPM is needed for\
- accurate reporting statistics.',
+ accurate reporting statistics.'),
       options: [],
       value: 'SSD',
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_ro',
-      placeholder: 'Read-only',
-      tooltip: 'Check this box to prevent the initiator from\
- initializing this LUN.',
+      placeholder: T('Read-only'),
+      tooltip: T('Check this box to prevent the initiator from\
+ initializing this LUN.'),
     },
   ];
 
