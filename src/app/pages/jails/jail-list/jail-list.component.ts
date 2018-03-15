@@ -27,6 +27,7 @@ export class JailListComponent implements OnInit {
   public columns: Array < any > = [
     { name: 'Jail', prop: 'host_hostuuid' },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
+    { name: 'IPv6 Address', prop: 'ip6_addr' },
     { name: 'Status', prop: 'state' },
     { name: 'Type', prop: 'type' },
     { name: 'Release', prop: 'release' },
