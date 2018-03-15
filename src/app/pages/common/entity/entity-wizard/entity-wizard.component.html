@@ -1,6 +1,6 @@
 <!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
 <mat-card>
-  <form [formGroup]="formGroup" (ngSubmit)="onSubmit($event)">
+  <form [formGroup]="formGroup" #entityForm="ngForm">
     <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray">
       <div *ngFor="let step of conf.wizardConfig; let i = index">
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
@@ -12,8 +12,8 @@
             </div>
           </ng-container>
           <div>
-            <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true" type="button">{{"Back" | translate}}</button>
-            <button mat-raised-button matStepperNext type="button">{{"Next" | translate}}</button>
+            <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true">{{"Back" | translate}}</button>
+            <button mat-raised-button matStepperNext [disabled]="!entityForm.form.valid">{{"Next" | translate}}</button>
           </div>
         </mat-step>
       </div>
@@ -27,8 +27,8 @@
         </div>
         {{"Confirm your information" | translate}}
         <div>
-          <button mat-raised-button matStepperPrevious type="button">{{"Back" | translate}}</button>
-          <button mat-raised-button type="Submit">{{"Submit" | translate}}</button>
+          <button mat-raised-button matStepperPrevious>{{"Back" | translate}}</button>
+          <button mat-raised-button (ngClick)="onSubmit()">{{"Submit" | translate}}</button>
         </div>
       </mat-step>
     </mat-horizontal-stepper>

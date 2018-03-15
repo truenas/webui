@@ -112,7 +112,7 @@ export class EntityWizardComponent implements OnInit {
     this.setDisabled(config.name, tobeDisabled, stepIndex);
   }
 
-  onSubmit(event: Event) {
+  onSubmit() {
     let value = {};
     for (let i in this.formGroup.value.formArray) {
       value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
