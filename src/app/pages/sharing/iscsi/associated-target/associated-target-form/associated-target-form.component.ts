@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { IscsiService } from '../../../../../services/';
+import { T } from '../../../../../translate-marker';
 
 @Component({
   selector: 'app-iscsi-associated-target-form',
@@ -22,8 +23,8 @@ export class AssociatedTargetFormComponent {
     {
       type: 'select',
       name: 'iscsi_target',
-      placeholder: 'Target',
-      tooltip: 'Select the pre-created target.',
+      placeholder: T('Target'),
+      tooltip: T('Select the pre-created target.'),
       options: [],
       value: '',
     },
@@ -31,10 +32,10 @@ export class AssociatedTargetFormComponent {
       type: 'input',
       inputType: 'number',
       name: 'iscsi_lunid',
-      placeholder: 'LUN ID',
-      tooltip: 'Select the value to use or type in a value between\
+      placeholder: T('LUN ID'),
+      tooltip: T('Select the value to use or type in a value between\
  <i>1</i> and <i>1023</i>. Note that some initiators expect a value\
- below <i>256</i>.',
+ below <i>256</i>.'),
       min: 1,
       max: 1023,
       value: 1,
@@ -43,8 +44,8 @@ export class AssociatedTargetFormComponent {
     {
       type: 'select',
       name: 'iscsi_extent',
-      placeholder: 'Extent',
-      tooltip: 'Select the pre-created extent.',
+      placeholder: T('Extent'),
+      tooltip: T('Select the pre-created extent.'),
       options: [],
       value: '',
     },

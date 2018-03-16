@@ -3,7 +3,7 @@
   <mat-sidenav #sidenav [opened]="isSidenavOpen" mode="over" class="sidebar-panel">
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div *ngFor="let theme of freenasThemes">
-        <div *ngIf="theme.isActive">
+        <div *ngIf="theme.name == currentTheme">
           <div *ngIf="theme.hasDarkLogo; else lightLogo">
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasDark">
               <img src="assets/images/logo.svg" alt="FreeNAS Shark logo" class="app-logo">

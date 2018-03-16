@@ -7,12 +7,15 @@ mat-card.card-filter.mat-card{
   padding:0;
 }
 
+/*
 mat-card.card-filter.mat-card .mat-card-content{
   padding:8px 0;
 }
+*/
 
-mat-card.card-filter.mat-card .mat-card-header > div{
+mat-card.card-filter.mat-card .mat-card-header div.filter-field{
   /*display:inline-block;*/
+  margin-bottom: 16px;
 }
 
 
@@ -72,6 +75,10 @@ mat-card.card-filter .view-controls .add-vm{
 
 .entity-cards-container{
   text-align:center;
+}
+
+:host ::ng-deep .fieldset-container.fieldset-display-default{
+  margin:0;
 }
 
 vm-cards mat-card.front {

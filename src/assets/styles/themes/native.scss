@@ -1,0 +1,599 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+// Use CSS custom properties for palette colors
+// via this mixin.
+@mixin variable($property, $variable, $fallback, $important:null) {
+  #{$property}: $fallback $important;
+  #{$property}: var($variable) $important;
+}
+
+/* Define CSS custom properties (vars) at the top level of the cascade */
+:root {
+  /* 16 color palette */
+  --bg1:#002b36;
+  --bg2:#073642;
+  --fg1:#708284;
+  --fg2:#657b83;
+  --alt-bg1:#eee8d5;
+  --alt-bg2:#fdf6e3;
+  --alt-fg1:#eee8d5;
+  --alt-fg2:#fdf6e3;
+  --yellow:#b58900;
+  --orange:#a57706;
+  --red:#d11c24;
+  --magenta:#d33682;
+  --violet:#c61c6f;
+  --blue:#2176c7;
+  --cyan:#259286;
+  --green:#738a05;
+
+  /* material palette */
+  --primary:var(--fg1);
+  --accent:var(--cyan);
+  --warn:var(--red);
+}
+//xfce config palette order: bg2,red,green,orange,blue,violet,cyan,alt-bg1,bg1,red again wtf?
+
+// Solarized Color Palette - don't forget to add accents to theme.service!
+$base03:    #002b36; // Dark BG tone
+$base02:    #073642; // Dark BG tone
+$base01:    #586e75; // Dark Content tone
+$base00:    #657b83; // Dark Content tone
+$base0:     #839496; // Light Content tone
+$base1:     #93a1a1; // Light Content tone
+$base2:     #eee8d5; // Light BG tone
+$base3:     #fdf6e3; // Light BG tone
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
+$primary:$base01;
+$secondary: $base03;
+$accent:$cyan;
+
+$canvas: $base03;
+$canvas-text:$base01;
+$background:$base02;
+$foreground:$base00;
+$canvas-alt:$base2;
+$background-alt: $base3;
+$foreground-alt: $base1;
+
+$mat-primary: (
+    50 : lighten($primary, 45%),
+    100 : lighten($primary, 40%),
+    200 : lighten($primary, 30%),
+    300 : lighten($primary, 20%),
+    400 : lighten($primary,10%),
+    500 : $primary,
+    600 : darken($primary, 10%),
+    700 : darken($primary, 20%), // links in sidenav
+    800 : darken($primary, 30%),
+    900 : darken($primary, 40%),
+    A100 : lighten($secondary, 40%),// secondary?
+    A200 : lighten($secondary, 30%),
+    A400 : lighten($secondary, 10%),
+    A700 : darken($secondary, 20%),
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #ffffff,
+    )
+);
+
+$mat-accent: (
+    50 : $accent,
+    100 : $accent,
+    200 : $accent,
+    300 : $accent,
+    400 : $accent,
+    500 : $accent,
+    600 : $accent,
+    700 : $accent,
+    800 : $accent,
+    900 : $accent,
+    A100 : $accent,
+    A200 : $accent,
+    A400 : $accent,
+    A700 : $accent,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$mat-warn: (
+    50 : $red,
+    100 : $red,
+    200 : $red,
+    300 : $red,
+    400 : $red,
+    500 : $red,
+    600 : $red,
+    700 : $red,
+    800 : $red,
+    900 : $red,
+    A100 : $red,
+    A200 : $red,
+    A400 : $red,
+    A700 : $red,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+// mandatory stuff for theming
+$freenas-primary: mat-palette($mat-primary);
+$freenas-accent:  mat-palette($mat-accent);
+$freenas-warn: mat-palette($mat-warn);
+
+
+// include the custom theme components into a theme object
+$freenas-theme: mat-dark-theme($freenas-primary, $freenas-accent, $freenas-warn);
+
+$primary-dark: darken( map-get($mat-primary, 700), 8% );
+
+
+// include the custom theme object into the angular material theme
+.native {
+    @include angular-material-theme($freenas-theme);
+    
+    // Background
+    body, .mat-sidenav-content{
+      //background-color:$canvas;
+      //color:$base01;
+      @include variable(background-color, --bg1, $canvas);
+      @include variable(color, --fg1, $base01);
+    }
+
+    //Background Elevated
+    .sidebar-panel.mat-sidenav .navigation-hold#scroll-area, .mat-card, .breadcrumb-bar#breadcrumb-bar{
+      //background-color: $background !important;
+      //color:$foreground;
+      @include variable(background-color, --bg2, $background, !important );
+      @include variable(color, --fg1, $foreground);
+    }
+
+    //Light Elements
+    .datatable-row-wrapper{
+      @include variable(background-color, --alt-bg1, $canvas-alt, !important);
+      @include variable(color, --alt-fg1, $foreground-alt, !important);
+    }
+
+    // Semi-Light Elements
+    .datatable-header,.datatable-footer{
+      @include variable(background, --primary, $primary);
+      @include variable(color,--alt-bg1, $canvas-alt);
+    }
+
+.app-loader {
+    //background: map-get($mat-primary, 500) !important;
+    @include variable(background, --primary,  map-get($mat-primary, 500),!important);
+}
+    .topbar,
+    .mat-bg-primary,.mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open mat-icon:not(.menu-caret),
+    .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+    .ngx-datatable.material .datatable-header,
+    .fileupload-drop-zone.dz-file-over,
+    .toolbar-avatar.online > .status-dot,
+    .cal-open-day-events,
+    div.hopscotch-bubble {
+        //background: map-get($mat-primary, 500) !important;
+        @include variable(background, --primary, map-get($mat-primary, 500),!important);
+        color: #ffffff !important;
+    }
+    .mat-color-primary, .tree,
+    .mat-list .mat-list-item, .mat-nav-list .mat-list-item, .mat-selection-list .mat-list-item,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        //color: map-get($mat-primary, 700) !important;
+        @include variable(color, --fg2, map-get($mat-primary, 700),!important);
+    }
+    .node-content-wrapper-active, 
+    .node-content-wrapper.node-content-wrapper-active:hover,
+    .node-content-wrapper-active.node-content-wrapper-focused {
+        //background: map-get($mat-primary, 400) !important;
+        //color: #000000;
+        @include variable(background, --primary, map-get($mat-primary, 400),!important);
+        @include variable(color, --fg2, map-get($mat-primary, 500),!important);
+    }
+
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+        font-weight: 500;
+        //@include variable(color, --fg2 !important, map-get($mat-primary, 500)!important);
+        @include variable(color, --primary, map-get($mat-primary, 500),!important);
+    }
+    .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+        //border-left: 2px solid map-get($mat-primary, 500);
+        @include variable(border-left, --primary , map-get($mat-primary, 500));
+    }
+    .messages-wrap .inbox-hold {
+        background: transparent !important;
+    }
+    .sidebar-panel.mat-sidenav {
+        background: url('/assets/images/sidebar-bg-dark.jpg') no-repeat;
+    }
+    .app-user .app-user-name,
+    .sidebar-panel.mat-sidenav .sidebar-list-item mat-icon:not(.menu-caret),
+    .ql-snow .ql-picker,
+    .mat-option,
+    .mat-dialog-container {
+        //color: white !important;
+        @include variable(color, --fg1, #dedede, !important);
+    }
+    
+    .mat-form-field-label,.mat-input-underline{
+        @include variable(color, --fg2, #dedede);
+    }
+    .text-muted {
+        color: rgba(255, 255, 255, .54) !important;
+    }
+
+    .ql-snow .ql-stroke  {
+        stroke: #ffffff;
+    }
+    .ql-snow .ql-fill {
+        fill: #ffffff;
+    }
+    .ql-toolbar.ql-snow,
+    .ql-toolbar.ql-snow + .ql-container.ql-snow {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .sidebar-panel.mat-sidenav .navigation-hold,
+    .mat-tab-header,
+    .message-item.open .message-head,
+    //.ngx-datatable.material .datatable-header,
+    .bg-white,
+    .cal-month-view .cal-cell-row:hover,
+    .chats-wrap .conversations-hold .single-conversation.sender .conversation-msg,
+    .cal-day-view .cal-hour:nth-child(odd),
+    &.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu,
+    .breadcrumb-bar {
+        //background: rgb(66, 66, 66) !important;
+        @include variable(background, --bg2, rgb(66,66,66), !important);
+    }
+    .cal-month-view .cal-cell-row .cal-cell:hover, 
+    .cal-month-view .cal-cell.cal-has-events.cal-open,
+    .cal-week-view .cal-day-headers .cal-header:hover, 
+    .cal-week-view .cal-day-headers .cal-drag-over,
+    .cal-day-view .cal-hour-segment:hover, 
+    .cal-day-view .cal-drag-over .cal-hour-segment {
+        background: #333 !important;
+    }
+    .cal-month-view .cal-day-cell:not(:last-child),
+    .cal-month-view .cal-days,
+    .cal-week-view .cal-day-headers .cal-header:not(:last-child),
+    .cal-week-view .cal-day-headers,
+    .cal-month-view .cal-days .cal-cell-row,
+    .cal-day-view .cal-hour:not(:last-child) .cal-hour-segment, 
+    .cal-day-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
+        border-color: #000 !important;
+    }
+    .ngx-datatable.material .datatable-header {
+        //background-color: map-get($mat-primary, 500) !important;
+        @include variable(background-color, --primary, $primary, !important);
+        color: #ffffff !important;
+
+    }
+    /* Hopscotch Tour */ 
+    div.hopscotch-bubble {
+        border-color: $primary-dark;
+    }
+    /* up arrow  */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
+        border-bottom: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
+        border-bottom: 17px solid map-get($mat-primary, 500);
+        top: -16px;
+    }
+    /* right arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
+        border-left: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
+        border-left: 17px solid map-get($mat-primary, 500);
+        left: -1px;
+    }
+    /* bottom arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
+        border-top: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
+        border-top: 17px solid map-get($mat-primary, 500);
+        top: -18px;
+    }
+    /* Left Arrow */
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
+        border-right: 17px solid $primary-dark;
+    }
+    div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
+        left: 1px;
+        border-right: 17px solid map-get($mat-primary, 500);
+    }
+    
+    .mat-button-toggle {
+        @include variable(background-color, --bg2, $background);
+        @include variable(color, --fg1, $foreground);
+    }
+
+    .mat-checkbox-frame,.mat-input-flex.mat-form-field-flex{
+        @include variable(border-color, --fg2, $foreground);
+    }
+    .mat-input-flex.mat-form-field-flex{
+      border-bottom:solid 1px;
+    }
+    .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent,
+    .mat-bg-accent,
+    .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+    div.hopscotch-bubble .hopscotch-bubble-number,
+    div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+    div.hopscotch-bubble .hopscotch-nav-button.next {
+        //background-color: map-get($mat-accent, 500);
+        //color: black;
+        @include variable(background-color, --accent, $accent);
+        @include variable(color, --alt-fg1, #dedede);
+    }
+    .mat-button {
+        //background-color: map-get($mat-primary, 500);
+        //color: black;   
+        @include variable(background-color, --primary, $primary);
+        @include variable(color, --alt-fg1, #dedede);
+    }
+    .mat-bg-warn {
+        //background-color: $red;
+        //color: $base2;
+        @include variable(background-color, --red, $red);
+        //@include variable(color, --alt-fg1, #dedede);
+        color:white;
+    }
+    .mat-color-accent {
+        //color: map-get($mat-accent, 500);
+        @include variable(color, --accent, $accent);
+    }
+    .mat-color-warn {
+        //color: $red;
+        @include variable(color, --red, $red);
+    }
+
+    .vm-power-btn-off{ 
+      //background: $red;
+      @include variable(background, --red, $red);
+    } 
+    .vm-power-btn-on{
+      //background:$green;
+      @include variable(background, --green, $green);
+    }
+
+    .broken_build {
+      //color: red;
+      @include variable(background, --red, $red);
+    }
+
+     .mat-raised-button.mat-primary[disabled], 
+     .mat-raised-button.mat-accent[disabled], 
+     .mat-raised-button.mat-warn[disabled], 
+     .mat-raised-button[disabled][disabled], 
+     .mat-fab.mat-primary[disabled], 
+     .mat-fab.mat-accent[disabled], 
+     .mat-fab.mat-warn[disabled], 
+     .mat-fab[disabled][disabled], 
+     .mat-mini-fab.mat-primary[disabled], 
+     .mat-mini-fab.mat-accent[disabled], 
+     .mat-mini-fab.mat-warn[disabled], 
+     .mat-mini-fab[disabled][disabled]{
+        opacity:0.5;
+     }
+
+    .mat-toolbar{
+      position:relative;
+    }
+
+    .mat-card-primary-action{
+      position:absolute;
+    }
+
+    .mat-card-primary-action.mat-mini-fab{
+      right:32px;
+      bottom:-16px;
+    }
+
+    .mat-card-primary-action.mat-fab{
+      right:48px;
+      bottom:-24px;
+    }
+
+    .mat-tab-label{
+        @include variable(background-color, --bg1, $background);
+        @include variable(color, --fg1, $foreground);
+    }
+
+    .dx-treelist-borders > .dx-treelist-headers,
+    .dx-treelist-borders > .dx-treelist-rowsview,
+    .dx-treelist-borders > .dx-treelist-total-footer {
+    border-left: 1px solid #4d4d4d;
+    border-right: 1px solid #4d4d4d;
+    }
+    .dx-treelist-borders > .dx-treelist-rowsview,
+    .dx-treelist-borders > .dx-treelist-total-footer {
+    border-bottom: 1px solid #4d4d4d;
+    }
+    .dx-treelist-borders > .dx-treelist-pager,
+    .dx-treelist-borders > .dx-treelist-headers {
+    border-top: 1px solid #4d4d4d;
+    }
+    .dx-treelist-container {
+    color: #dedede;
+    background-color: #2a2a2a;
+    }
+    .dx-treelist-container .dx-header-filter {
+    position: relative;
+    color: #7c7c7c;
+    font: 14px/1 DXIcons;
+    }
+    .dx-treelist-container .dx-header-filter-empty {
+    color: rgba(124, 124, 124, 0.5);
+    }
+    .dx-treelist-container .dx-treelist-content-fixed .dx-treelist-table .dx-col-fixed {
+    background-color: #2a2a2a;
+    }
+    .dx-treelist-container .dx-treelist-rowsview .dx-data-row td.dx-pointer-events-none,
+    .dx-treelist-container .dx-treelist-rowsview .dx-freespace-row td.dx-pointer-events-none,
+    .dx-treelist-container .dx-treelist-headers .dx-row td.dx-pointer-events-none {
+    border-left: 2px solid #4d4d4d;
+    border-right: 2px solid #4d4d4d;
+    }
+    .dx-treelist-container .dx-treelist-rowsview .dx-treelist-edit-form {
+    background-color: #2a2a2a;
+    }
+    .dx-treelist-container .dx-treelist-filter-row .dx-filter-range-content {
+    color: #dedede;
+    }
+    .dx-treelist-container .dx-error-row td {
+    color: #2a2a2a;
+    padding: 0;
+    }
+    .dx-treelist-container .dx-error-row .dx-error-message {
+    background-color: #934340;
+    white-space: normal;
+    word-wrap: break-word;
+    }
+    .dx-treelist-column-chooser {
+    color: #dedede;
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
+    line-height: 1.35715;
+    }
+    .dx-treelist-edit-popup .dx-error-message {
+    background-color: #934340;
+    white-space: normal;
+    word-wrap: break-word;
+    color: #2a2a2a;
+    margin-bottom: 20px;
+    }
+    .dx-rtl .dx-treelist-container .dx-treelist-rowsview .dx-data-row td.dx-pointer-events-none,
+    .dx-rtl .dx-treelist-container .dx-treelist-rowsview .dx-freespace-row td.dx-pointer-events-none,
+    .dx-rtl .dx-treelist-container .dx-treelist-headers .dx-row td.dx-pointer-events-none {
+    border-left: 2px solid #4d4d4d;
+    }
+
+
+    .mat-dialog-title {
+        .warning-icon {
+          color: #ffc107;
+          position: relative;
+          top: 8px;
+          font-size: 35px;
+          margin-right: 10px;
+        }
+      }
+      
+      .mat-dialog-content {
+        max-width: 600px;
+      
+      
+        .info-panel {
+          max-height: 100px;
+          padding: 0px;
+          border: 0px;
+          overflow: hidden;
+          -webkit-transition: max-height 0.3s linear;
+          -moz-transition: max-height 0.3s linear;
+          -o-transition: max-height 0.3s linear;
+          -ms-transition: max-height 0.3s linear;
+          transition: max-height 0.5s linear;
+      
+          &.open {
+            max-height: calc( 100px + 2rem + 4px );
+            padding: 2px;
+          }
+      
+          textarea {
+            overflow: auto;
+            color: white;
+            background: black;
+            border: 1px solid #ddd;
+            min-height: 100px;
+            padding: 1rem;
+            width: calc( 100% - 2rem );
+          }
+        }
+    
+        .backtrace-panel {
+            max-height: 0;
+            padding: 0px;
+            border: 0px;
+            overflow: hidden;
+            -webkit-transition: max-height 0.3s linear;
+            -moz-transition: max-height 0.3s linear;
+            -o-transition: max-height 0.3s linear;
+            -ms-transition: max-height 0.3s linear;
+            transition: max-height 0.5s linear;
+        
+            &.open {
+              max-height: calc( 100px + 2rem + 4px );
+              padding: 2px;
+            }
+        
+            textarea {
+              overflow: auto;
+              background: black;
+              color: white;
+              border: 1px solid #ddd;
+              min-height: 100px;
+              padding: 1rem;
+              width: calc( 100% - 2rem );
+            }
+        }
+      }
+
+}
+
+
+  

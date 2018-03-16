@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {RestService, WebSocketService} from '../../../../services/';
-
+import { T } from '../../../../translate-marker';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -32,14 +32,14 @@ export class BootEnvironmentCloneComponent {
         {
           type: 'input',
           name: 'name',
-          placeholder: 'Name',
-          tooltip: 'Enter a name for the clone of this boot environment.', 
+          placeholder: T('Name'),
+          tooltip: T('Enter a name for the clone of this boot environment.'), 
         },
         {
           type: 'input',
           name: 'source',
-          placeholder : 'Source',
-          tooltip: 'This is the boot environment that will be cloned.',
+          placeholder : T('Source'),
+          tooltip: T('This is the boot environment that will be cloned.'),
           value: this.pk,
           readonly: true
         },

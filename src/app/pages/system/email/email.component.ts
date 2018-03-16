@@ -18,6 +18,7 @@ import {
 } from '../../common/entity/entity-form/validators/password-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector : 'app-email',
@@ -36,30 +37,30 @@ export class EmailComponent {
     {
       type : 'input',
       name : 'em_fromemail',
-      placeholder : 'From E-mail',
-      tooltip : 'The envelope <b>From</b> address shown in the email.\
- This can be set to assist with filtering mail on the receiving system.',
+      placeholder : T('From E-mail'),
+      tooltip : T('The envelope <b>From</b> address shown in the email.\
+       This can be set to assist with filtering mail on the receiving system.'),
     },
     {
       type : 'input',
       name : 'em_outgoingserver',
-      placeholder : 'Outgoing Mail Server',
-      tooltip : 'Hostname or IP address of SMTP server to use for\
- sending this email.',
+      placeholder : T('Outgoing Mail Server'),
+      tooltip : T('Hostname or IP address of SMTP server to use for\
+       sending this email.',)
     },
     {
       type : 'input',
       name : 'em_port',
-      placeholder : 'Mail Server Port',
-      tooltip : 'SMTP port number. Typically <i>25,465</i>\
- (secure SMTP), or <i>587</i> (submission).',
+      placeholder : T('Mail Server Port'),
+      tooltip : T('SMTP port number. Typically <i>25,465</i>\
+       (secure SMTP), or <i>587</i> (submission).'),
     },
     {
       type : 'select',
       name : 'em_security',
-      placeholder : 'Security',
-      tooltip : 'Encryption type. Choices are <i>Plain, SSL</i>, or\
- <i>TLS</i>.',
+      placeholder : T('Security'),
+      tooltip : T('Encryption type. Choices are <i>Plain, SSL</i>, or\
+       <i>TLS</i>.'),
       options : [
         {label : 'Plain', value : 'plain'},
         {label : 'SSL', value : 'ssl'},
@@ -69,18 +70,18 @@ export class EmailComponent {
     {
       type : 'checkbox',
       name : 'em_smtp',
-      placeholder : 'SMTP Authentication',
-      tooltip : 'Enable/disable\
- <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
- target="_blank">SMTP AUTH</a> using PLAIN SASL. If checked, enter the\
- required <b>Username</b> and <b>Password</b>.',
+      placeholder : T('SMTP Authentication'),
+      tooltip : T('Enable/disable\
+       <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
+       target="_blank">SMTP AUTH</a> using PLAIN SASL. If checked, enter the\
+       required <b>Username</b> and <b>Password</b>.'),
     },
     {
       type : 'input',
       name : 'em_user',
-      placeholder : 'Username',
-      tooltip : 'Enter the username if the SMTP server requires\
- authentication.',
+      placeholder : T('Username'),
+      tooltip : T('Enter the username if the SMTP server requires\
+       authentication.'),
       relation : [
         {
           action : 'DISABLE',
@@ -94,9 +95,9 @@ export class EmailComponent {
     {
       type : 'input',
       name : 'em_pass1',
-      placeholder : 'Password',
-      tooltip : 'Enter the password if the SMTP server requires\
- authentication.',
+      placeholder : T('Password'),
+      tooltip : T('Enter the password if the SMTP server requires\
+       authentication.'),
       inputType : 'password',
       relation : [
         {
@@ -112,8 +113,8 @@ export class EmailComponent {
     {
       type : 'input',
       name : 'em_pass2',
-      placeholder : 'Confirm Password',
-      tooltip : 'Confirm previous password.',
+      placeholder : T('Confirm Password'),
+      tooltip : T('Confirm previous password.'),
       inputType : 'password',
       relation : [
         {
