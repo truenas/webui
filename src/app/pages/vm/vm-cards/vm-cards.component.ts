@@ -298,16 +298,6 @@ export class VmCardsComponent implements OnInit {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
-        if (this.cards[index].vm_type === "Container Provider"){
-          this.ws.call('vm.rm_container_conf', [this.cards[index].id]).subscribe((container_del_res)=>{
-          },
-          (container_del_error_res) => { 
-            new EntityUtils().handleError(this, container_del_error_res);
-            this.loader.close();
-          }
-        );
-
-        }
         this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
       }
     })
@@ -390,9 +380,10 @@ export class VmCardsComponent implements OnInit {
               this.loader.open();
               this.ws.call('vm.image_path', ['RancherOS']).subscribe((img_path)=>{
                 this.ws.call('vm.decompress_gzip',[img_path, this.raw_file_path]).subscribe((decompress_gzip)=>{
-                  this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe(
-                    (raw_resize)=>{
-                      this.loader.close();
+                  this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe((raw_resize)=>{
+                    this.ws.call('vm.start',[this.cards[index].id]).subscribe((vm_start)=>{
+                        this.loader.close();
+                      });
                     },
                     (error_raw_resize)=>{
                       this.loader.close();
@@ -413,7 +404,6 @@ export class VmCardsComponent implements OnInit {
               this.dialog.errorReport(failed_res.error, failed_res.failed_res, failed_res.exception);
             });
           }
-        
       });
       eventName = "VmStart";
     }

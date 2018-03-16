@@ -184,7 +184,7 @@ export class DockerVMWizardComponent {
           this.nicType.options[0].value
         )
         });
-        
+
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
         ( < FormGroup > entityWizard.formArray.get([2])).controls['NIC_mac'].setValue(mac_res);
       });
@@ -196,7 +196,6 @@ export class DockerVMWizardComponent {
 
 async customSubmit(value) {
   const path = value.raw_file_directory+ '/' + value.raw_filename+ '_'+ value.name;
-  console.log(path);
     const payload = {}
     const vm_payload = {}
     vm_payload["vm_type"]= "Container Provider";
