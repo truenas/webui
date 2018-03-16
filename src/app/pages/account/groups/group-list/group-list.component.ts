@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-group-list',
@@ -40,7 +41,7 @@ export class GroupListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-      label : "Members",
+      label : T("Members"),
       id: "members",
       onClick : (row) => {
         this._router.navigate(new Array('/').concat(
@@ -49,7 +50,7 @@ export class GroupListComponent {
     });
     if (row.bsdgrp_builtin === !true){
       actions.push({
-        label : "Edit",
+        label : T("Edit"),
         id: "edit",
         onClick : (row) => {
           this._router.navigate(new Array('/').concat(
@@ -57,7 +58,7 @@ export class GroupListComponent {
         }
       })
       actions.push({
-        label : "Delete",
+        label : T("Delete"),
         onClick : (row) => {
           this.entityList.doDelete(row.id );
         },
