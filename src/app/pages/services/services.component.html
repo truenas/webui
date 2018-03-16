@@ -27,7 +27,7 @@
     <ng-template #cardfront let-name="name">
       <!-- Template for front face of card -->
       <div class="service-card">
-        <div *ngIf="viewMode.value == 'cards'" class="service-bg"></div>
+        <div *ngIf="viewMode.value == 'cards'" class="service-bg" [ngStyle]="{'background-image': 'url(/assets/images/services/' + card.title + '.png)'}"></div>
         <div class="side-content section">
           <div class="side-content-header">
             <button mat-fab class="service-power-btn" [ngClass]="{'service-power-btn-off':card.state == 'STOPPED','service-power-btn-on':card.state == 'RUNNING','service-power-btn-crash':card.state == 'CRASHED'}" (click)="toggle(card)" matTooltip="{{ card.state }}" matTooltipPosition="right">
