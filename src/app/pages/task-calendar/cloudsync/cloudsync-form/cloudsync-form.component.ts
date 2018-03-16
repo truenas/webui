@@ -9,6 +9,8 @@ import { TaskService, UserService, RestService, WebSocketService } from '../../.
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../translate-marker';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'cloudsync-add',
@@ -27,12 +29,12 @@ export class CloudsyncFormComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
     type: 'input',
     name: 'description',
-    placeholder: 'Description',
-    tooltip: 'Optional.',
+    placeholder: T('Description'),
+    tooltip: T('Optional.'),
   }, {
     type: 'select',
     name: 'direction',
-    placeholder: 'Direction',
+    placeholder: T('Direction'),
     options: [
       { label: 'PULL', value: 'PULL' },
       { label: 'PUSH', value: 'PUSH' },
@@ -40,14 +42,14 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'select',
     name: 'credential',
-    placeholder: 'Credential',
+    placeholder: T('Credential'),
     options: [{
       label: '---', value: null
     }]
   }, {
     type: 'select',
     name: 'bucket',
-    placeholder: 'Bucket',
+    placeholder: T('Bucket'),
     options: [{
       label: '---', value: null
     }],
@@ -55,12 +57,12 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'input',
     name: 'folder',
-    placeholder: 'Folder',
+    placeholder: T('Folder'),
     isHidden: true,
   }, {
     type: 'select',
     name: 'encryption',
-    placeholder: 'Server Side Encryption',
+    placeholder: T('Server Side Encryption'),
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
@@ -71,14 +73,14 @@ export class CloudsyncFormComponent implements OnInit {
     initial: '/mnt',
     explorerType: 'directory',
     name: 'path',
-    placeholder: 'Home Directory',
+    placeholder: T('Home Directory'),
     value: '/mnt',
-    tooltip: 'Browse to the name of an <b>existing</b> volume or\
-      dataset that the user will be assigned permission to access.',
+    tooltip: T('Browse to the name of an <b>existing</b> volume or\
+          dataset that the user will be assigned permission to access.'),
   }, {
     type: 'select',
     name: 'transfer_mode',
-    placeholder: 'Transfer Mode',
+    placeholder: T('Transfer Mode'),
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
@@ -87,9 +89,9 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'select',
     name: 'repeat',
-    placeholder: 'Quick Schedule',
-    tooltip: 'Select a time frame for the job. Otherwise, do not select\
- a time frame to customize the schedule.',
+    placeholder: T('Quick Schedule'),
+    tooltip: T('Select a time frame for the job. Otherwise, do not select\
+     a time frame to customize the schedule.'),
     options: [
       { label: '----------', value: 'none' },
       { label: 'Hourly', value: 'hourly' },
@@ -101,29 +103,29 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'input',
     name: 'minute',
-    placeholder: 'Minute',
-    tooltip: 'The job occurs at the specified minutes.',
+    placeholder: T('Minute'),
+    tooltip: T('The job occurs at the specified minutes.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'hour',
-    placeholder: 'Hour',
-    tooltip: 'The job occurs at the specified hours.',
+    placeholder: T('Hour'),
+    tooltip: T('The job occurs at the specified hours.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'daymonth',
-    placeholder: 'Day of month',
-    tooltip: 'The job occurs on the specified days each month.',
+    placeholder: T('Day of month'),
+    tooltip: T('The job occurs on the specified days each month.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'select',
     name: 'month',
-    placeholder: 'Month',
-    tooltip: 'The job occurs at the specified months.',
+    placeholder: T('Month'),
+    tooltip: T('The job occurs at the specified months.'),
     multiple: true,
     options: [{
       label: 'January',
@@ -167,8 +169,8 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'select',
     name: 'dayweek',
-    placeholder: 'Day of week',
-    tooltip: 'The job occurs on the specified days.',
+    placeholder: T('Day of week'),
+    tooltip: T('The job occurs on the specified days.'),
     multiple: true,
     options: [{
       label: 'Monday',
@@ -197,8 +199,8 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'checkbox',
     name: 'enabled',
-    placeholder: 'Enable',
-    tooltip: 'Uncheck to disable the job without deleting it.',
+    placeholder: T('Enable'),
+    tooltip: T('Uncheck to disable the job without deleting it.'),
     value: true,
   }];
 

@@ -4,8 +4,8 @@
     <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
     </ng-container>
     <mat-card-actions class="buttons">
-      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">Save</button>
-      <button *ngIf="route_success" (click)="goBack()" type="button" mat-raised-button color="accent">Cancel</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">{{ "Save" | translate }}</button>
+      <button *ngIf="route_success" (click)="goBack()" type="button" mat-raised-button color="accent">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
 </mat-card>
