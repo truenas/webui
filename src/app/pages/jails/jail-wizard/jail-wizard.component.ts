@@ -50,31 +50,17 @@ export class JailWizardComponent {
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
-          placeholder: T('DHCP autoconfigure IPv4'),
+          placeholder: T('IPv4 DHCP'),
           tooltip: T('Check this to automatically configure IPv4 settings\
- for the jail. <b>VirtIO</b> must also be enabled.'),
-        },
-        {
-          type: 'checkbox',
-          name: 'vnet',
-          placeholder: T('VirtIO Virtual Networking'),
-          tooltip: T('Check to use VirtIO to emulate network devices for\
- this jail. See <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">VIRTIO(4)</a> for more details.'),
-          required: false,
-          hasErrors: false,
-          errors: '',
+ for the jail.'),
         },
         {
           type: 'input',
           name: 'ip4_addr',
           placeholder: T('IPv4 Address'),
-          tooltip: T('Type the IPv4 address for VNET and shared IP jails.\
- Single interface format: <b>interface|ip-address/netmask</b>. Multiple\
- interface format:\
- <b>interface|ip-address/netmask,interface|ip-address/netmask</b>.\
- Example: <b>vnet0|192.168.0.10/24</b>'),
+          tooltip: T('This and the other IPv4 settings are grayed out if\
+ <b>IPv4 DHCP</b> is checked. Enter a unique IP address that is in the\
+ local network and not already used by any other computer.'),
           validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
           relation: [{
             action: 'DISABLE',
@@ -88,9 +74,7 @@ export class JailWizardComponent {
           type: 'input',
           name: 'defaultrouter',
           placeholder: T('Default Router For IPv4'),
-          tooltip: T('Type <i>none</i> or a valid IP address. Setting\
- this property to anything other than <i>none</i> configures a default\
- route inside a <b>VNET</b> jail.'),
+          tooltip: T('Enter the IPv4 route for the jail to use.'),
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -103,21 +87,30 @@ export class JailWizardComponent {
           type: 'input',
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
-          tooltip: T('Type the IPv6 address for VNET and shared IP jails.\
- Single interface format: <i>interface|ip-address/netmask</i>. Multiple\
- interface format:\
- <i>interface|ip-address/netmask,interface|ip-address/netmask</i>.\
- Example: <b>re0|2001:0db8:85a3:0000:0000:8a2e:0370:7334/24</b>'),
+          tooltip: T('This and other IPv6 settings are grayed out if\
+ <b>IPv6 Autoconfigure</b> is checked; enter a unique IPv6 address that\
+ is in the local network and not already used by any other computer'),
           validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
         },
         {
           type: 'input',
           name: 'defaultrouter6',
           placeholder: T('Default Router For IPv6'),
-      tooltip: T('Type <i>none</i> or a valid IP address. Setting this\
- property to anything other than <i>none</i> configures a default route\
- inside a <b>VNET</b> jail.'),
+          tooltip: T('Enter the IPv6 route for the jail to use.'),
         },
+        {
+          type: 'checkbox',
+          name: 'vnet',
+          placeholder: T('Vnet'),
+          tooltip: T('Check to have this jail use virtual networking.\
+ <b>Warning:</b> Jails with virtual networking enabled can experience\
+ instability. See the <a\
+ href="http://iocage.readthedocs.io/en/latest/known-issues.html#vnet-vimage-issues"\
+ target=_blank>iocage documentation</a> for more details.'),
+          required: false,
+          hasErrors: false,
+          errors: '',
+        }
       ]
     },
   ]

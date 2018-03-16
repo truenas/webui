@@ -6,31 +6,23 @@
         <div *ngIf="theme.name == currentTheme">
           <div *ngIf="theme.hasDarkLogo; else lightLogo">
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasDark">
-              <a href="http://www.freenas.org/">
-                <img src="assets/images/logo.svg" alt="FreeNAS Shark logo" class="app-logo">
-                <img src="assets/images/logo-text.svg" alt="FreeNAS" class="app-logo-text">
-              </a>
+              <img src="assets/images/logo.svg" alt="FreeNAS Shark logo" class="app-logo">
+              <img src="assets/images/logo-text.svg" alt="FreeNAS" class="app-logo-text">
             </div>
             <ng-template #isTruenasDark>
               <div class="branding mat-bg-primary">
-                <a href="https://www.ixsystems.com/truenas/">
-                  <img src="assets/images/truenas-logo-ondark.svg" alt="TrueNAS logo">
-                </a>
+                <img src="assets/images/truenas-logo-ondark.svg" alt="TrueNAS logo">
               </div>
             </ng-template>
           </div>
           <ng-template #lightLogo>
             <div class="branding mat-bg-primary" *ngIf="is_freenas; else isTruenasLight">
-              <a href="http://www.freenas.org/">
-                <img src="assets/images/light-logo.svg" alt="FreeNAS icon" class="app-logo">
-                <img src="assets/images/light-logo-text.svg" alt="FreeNAS" class="app-logo-text">
-              </a>
+              <img src="assets/images/light-logo.svg" alt="FreeNAS icon" class="app-logo">
+              <img src="assets/images/light-logo-text.svg" alt="FreeNAS" class="app-logo-text">
             </div>
             <ng-template #isTruenasLight>
               <div class="branding mat-bg-primary">
-                <a href="https://www.ixsystems.com/truenas/">
-                  <img src="assets/images/truenas-logo.svg" alt="TrueNAS logo">
-                </a>
+                <img src="assets/images/truenas-logo.svg" alt="TrueNAS logo">
               </div>
             </ng-template>
           </ng-template>
@@ -38,9 +30,7 @@
       </div>
       <div class="app-user">
         <div class="app-user-photo">
-          <a href="https://www.ixsystems.com/">
-            <img src="assets/images/ix.svg" alt="iXsystems logo">
-          </a>
+          <img src="assets/images/ix.svg" alt="iXsystems logo">
         </div>
         <span class="app-user-name">
           <mat-icon class="icon-xs text-muted">lock</mat-icon>
