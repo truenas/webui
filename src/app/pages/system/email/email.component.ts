@@ -181,7 +181,7 @@ afterInit(entityEdit: any) {
       });
     }
     else{
-      this.dialogservice.Info("email", "please setup root user email address");
+      this.dialogservice.Info("email", "Please configure an email address for the <b>root</b> user.");
     }
   }
   public custActions: Array < any > = [{
@@ -222,7 +222,7 @@ afterInit(entityEdit: any) {
         });
       }
       else{
-        this.dialogservice.Info("email", "please setup root user email address");
+        this.dialogservice.Info("email", "Please configure an email address for the root user.");
       }       
     }
   }
