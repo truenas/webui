@@ -404,13 +404,16 @@ export class VmCardsComponent implements OnInit {
               this.dialog.errorReport(failed_res.error, failed_res.failed_res, failed_res.exception);
             });
           }
+          else {
+            eventName = "VmStart";
+            this.core.emit({name: eventName, data:[vm.id]});
+          }
       });
-      eventName = "VmStart";
     }
      else {
       eventName = "VmStop";
+      this.core.emit({name: eventName, data:[vm.id]});
     }
-    this.core.emit({name: eventName, data:[vm.id]});
   }
 
   powerBtnLabel(state){
