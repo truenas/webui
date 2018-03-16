@@ -12,7 +12,6 @@
             </div>
           </ng-container>
           <mat-card-actions class="wizard-action">
-            <button id="goback_button" *ngIf="i == 0 ? true : false" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
             <button mat-raised-button matStepperPrevious color="accent" *ngIf="i == 0 ? false : true">{{"Back" | translate}}</button>
             <button mat-raised-button matStepperNext color="primary" [disabled]="!entityForm.form.valid">{{"Next" | translate}}</button>
           </mat-card-actions>
