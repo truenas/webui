@@ -53,8 +53,8 @@ export function changeTheme(themes: any[], themeName: string) {
     removeClass(document.body, theme.name);
     //removeClass(document.body, 'native');
   });
-  addClass(document.body, themeName);
-  //addClass(document.body, 'native');*/
+  addClass(document.body, themeName);*/
+  addClass(document.body, 'ix-blue');
 };
 export function ieChatjsFix() {
   if(window.hasOwnProperty('MSInputMethodContext') || document.hasOwnProperty('documentMode')) {

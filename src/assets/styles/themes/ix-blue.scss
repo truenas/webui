@@ -1,6 +1,35 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
+// Use CSS custom properties for palette colors
+// via this mixin.
+@mixin variable($property, $variable, $fallback, $important:null) {
+  #{$property}: $fallback $important;
+  #{$property}: var($variable) $important;
+}
+
+// Solarized Color Palette - don't forget to add accents to theme.service!
+$bg1:    #dddddd; // Dark BG tone
+$bg2:    #ffffff; // Dark BG tone
+$fg1:    #222222; // Dark Content tone
+$fg2:    #333333; // Dark Content tone
+$alt-bg1:     #f8f8f2; // Light Content tone
+$alt-bg2:     #fafaf5; // Light Content tone
+$alt-fg1:     #181a26; // Light BG tone
+$alt-fg2:     #282a36; // Light BG tone
+$yellow:'#f0cb00';
+$orange:'#eec302';
+$red:'#ff0013';
+$magenta:'#d238ff';
+$violet:'#c17ecc';
+$blue:'#00a2ff';
+$cyan:'#00d0d6';
+$green:'#59d600';
+
+$primary: $blue;
+$accent: $yellow;
+$warn: $red;
+
 $md-primary: (
     50 : #e0f2fa,
     100 : #b3dff2,
@@ -101,13 +130,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         color: rgba(0, 0, 0, 0.94)
     }
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
-        border-left: 2px solid map-get($md-primary, 500);
+        //border-left: 2px solid map-get($md-primary, 500);
+        @include variable(border-left, --primary, $primary, !important);
     }
     .sidebar-panel.mat-sidenav {
         background: url('/assets/images/sidebar-bg.jpg') no-repeat;
     }
     .breadcrumb-bar {
-        background: #ffffff !important;
+        //background: #ffffff !important;
+        @include variable(background, --bg2, $bg2, !important);
+        @include variable(color, --fg1, $fg1, !important);
     }
     /* Hopscotch Tour */ 
     div.hopscotch-bubble {
@@ -161,18 +193,55 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         color: black;
     }
     .mat-bg-warn {
-        background-color: #f44336;
+        //background-color: #f44336;
+        @include variable(background-color, --red, $red);
         color: white;
     }
     .mat-color-accent {
-        color: map-get($md-accent, 500);
+        //color: map-get($md-accent, 500);
+        @include variable(color, --accent, $accent);
     }
     .mat-color-warn {
-        color: #f44336;
+        //color: #f44336;
+        @include variable(color, --warn, $warn);
     }
     .mat-sidenav-container{
-      background-color:#ddd;
+      //background-color:#ddd;
+      @include variable(background, --bg1, $bg1);
     }
+
+/////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+.mat-bg-primary,
+.topbar, 
+.sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret), 
+.chats-wrap .conversations-hold .single-conversation.me .conversation-msg, 
+.ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a, 
+.fileupload-drop-zone.dz-file-over, 
+.toolbar-avatar.online > .status-dot, 
+.cal-open-day-events, 
+div.hopscotch-bubble{
+      @include variable(background, --primary, $primary, !important);
+      @include variable(color, #fff, #fff, !important);
+}
+
+.mat-drawer,
+.mat-card,
+.mat-expansion-panel,
+.dx-treelist-container{
+  @include variable(background, --bg2, $bg2);
+  @include variable(color, --fg1, $fg1);
+}
+
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description, 
+.mat-expansion-indicator,
+.mat-list .mat-list-item, 
+.mat-nav-list .mat-list-item, 
+.mat-selection-list .mat-list-item{
+  @include variable(color, --fg1, $fg1);
+}
+
+/////////////////// END SpecSelectors
 
     
 .mat-dialog-title {
