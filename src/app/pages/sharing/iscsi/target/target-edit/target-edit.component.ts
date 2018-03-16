@@ -11,6 +11,8 @@ import { DynamicFieldDirective } from '../../../../common/entity/entity-form/com
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../../translate-marker';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector : 'app-iscsi-target-edit',
@@ -41,17 +43,17 @@ export class TargetEditComponent implements OnInit {
     {
       type: 'input',
       name : 'iscsi_target_name',
-      placeholder : 'Target Name',
-      tooltip: 'Required value. Base name will be appended\
- automatically if it does not start with <i>iqn</i>.',
+      placeholder : T('Target Name'),
+      tooltip: T('Required value. Base name will be appended\
+ automatically if it does not start with <i>iqn</i>.'),
       required: true,
       validation: [Validators.required],
     },
     {
       type: 'input',
       name : 'iscsi_target_alias',
-      placeholder : 'Target Alias',
-      tooltip: 'Optional user-friendly name.',
+      placeholder : T('Target Alias'),
+      tooltip: T('Optional user-friendly name.'),
     },
     {
       type: 'array',
@@ -61,9 +63,9 @@ export class TargetEditComponent implements OnInit {
         {
           type: 'select',
           name : 'iscsi_target_portalgroup',
-          placeholder : 'Portal Group ID',
-          tooltip: 'Leave empty or select number of existing portal\
- to use.',
+          placeholder : T('Portal Group ID'),
+          tooltip: T('Leave empty or select number of existing portal\
+ to use.'),
           value : '',
           options: [],
           required: true,
@@ -72,18 +74,18 @@ export class TargetEditComponent implements OnInit {
         {
           type: 'select',
           name : 'iscsi_target_initiatorgroup',
-          placeholder : 'Initiator Group ID',
-          tooltip: 'Select which existing initiator group has access\
- to the target.',
+          placeholder : T('Initiator Group ID'),
+          tooltip: T('Select which existing initiator group has access\
+ to the target.'),
           value : '',
           options: [],
         },
         {
           type: 'select',
           name : 'iscsi_target_authtype',
-          placeholder : 'Auth Method',
-          tooltip: 'Choices are <i>None, Auto, CHAP,</i> or\
- <i>Mutual CHAP</i>.',
+          placeholder : T('Auth Method'),
+          tooltip: T('Choices are <i>None, Auto, CHAP,</i> or\
+ <i>Mutual CHAP</i>.'),
           value : 'None',
           options : [
             {
@@ -103,22 +105,22 @@ export class TargetEditComponent implements OnInit {
         {
           type: 'select',
           name : 'iscsi_target_authgroup',
-          placeholder : 'Authentication Group number',
-          tooltip: '<i>None</i> or integer representing number of\
- existing authorized access.',
+          placeholder : T('Authentication Group number'),
+          tooltip: T('<i>None</i> or integer representing number of\
+ existing authorized access.'),
           value : '',
           options: [],
         },
         {
           type: 'input',
           name: 'id',
-          placeholder: 'Group ID',
+          placeholder: T('Group ID'),
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'delete',
-          placeholder: 'Delete',
+          placeholder: T('Delete'),
         },
       ]
     }
@@ -152,7 +154,8 @@ export class TargetEditComponent implements OnInit {
               protected rest: RestService,
               protected iscsiService: IscsiService,
               protected entityFormService: EntityFormService,
-              protected loader: AppLoaderService) {}
+              protected loader: AppLoaderService,
+              public translate: TranslateService) {}
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {

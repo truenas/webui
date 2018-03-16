@@ -1,0 +1,1 @@
+export { CloudsyncDeleteComponent } from './cloudsync-delete.component';

@@ -7,6 +7,7 @@ import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-
 import * as _ from 'lodash';
 import { JailService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
+import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
 
 @Component({
@@ -28,9 +29,10 @@ export class JailWizardComponent {
           type: 'input',
           name: 'uuid',
           required: true,
-          placeholder: T('Jails Name'),
+          placeholder: T('Jail Name'),
           tooltip: T('Mandatory. Can only contain alphanumeric characters,\
  dashes (-), or underscores (_).'),
+          validation: [ Validators.required ],
         },
         {
           type: 'select',
@@ -59,6 +61,7 @@ export class JailWizardComponent {
           tooltip: T('This and the other IPv4 settings are grayed out if\
  <b>IPv4 DHCP</b> is checked. Enter a unique IP address that is in the\
  local network and not already used by any other computer.'),
+          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -87,6 +90,7 @@ export class JailWizardComponent {
           tooltip: T('This and other IPv6 settings are grayed out if\
  <b>IPv6 Autoconfigure</b> is checked; enter a unique IPv6 address that\
  is in the local network and not already used by any other computer'),
+          validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
         },
         {
           type: 'input',

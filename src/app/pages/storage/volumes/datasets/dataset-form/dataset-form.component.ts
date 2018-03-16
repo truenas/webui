@@ -120,6 +120,7 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'input',
+      inputType: 'number',
       name: 'refquota',
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
@@ -128,6 +129,7 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'input',
+      inputType: 'number',
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
@@ -135,6 +137,7 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'input',
+      inputType: 'number',
       name: 'refreservation',
       placeholder: 'Reserved space for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
@@ -143,6 +146,7 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'input',
+      inputType: 'number',
       name: 'reservation',
       placeholder: 'Reserved space for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\

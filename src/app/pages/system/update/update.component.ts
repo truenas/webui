@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-update',

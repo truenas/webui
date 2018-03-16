@@ -13,7 +13,9 @@
     margin: auto;
     padding: 10px 15px;
     border-radius: 6px;
+    border: 1px solid #fff;
     color: #fff;
+    font-size: 110%;
     text-align: center;
     z-index: 1;
     visibility: hidden;
