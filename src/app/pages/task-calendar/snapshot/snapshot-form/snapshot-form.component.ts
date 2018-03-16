@@ -9,6 +9,7 @@ import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup, Validators } from '@angular/forms';
 import { EntityUtils } from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -25,22 +26,22 @@ export class SnapshotFormComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'task_filesystem',
-    placeholder: 'Volume/Dataset',
-    tooltip: 'Select an existing ZFS volume, dataset, or zvol.',
+    placeholder: T('Volume/Dataset'),
+    tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
     options: [],
   }, {
     type: 'checkbox',
     name: 'task_recursive',
-    placeholder: 'Recursive',
-    tooltip: 'Checking this enables taking separate snapshots of the\
- volume/dataset and each of its child datasets. Leave unchecked to take\
- a single snapshot of the specified volume/dataset and <b>not</b> any\
- child datasets.',
+    placeholder: T('Recursive'),
+    tooltip: T('Checking this enables taking separate snapshots of the\
+     volume/dataset and each of its child datasets. Leave unchecked to take\
+     a single snapshot of the specified volume/dataset and <b>not</b> any\
+     child datasets.'),
   }, {
-    placeholder: 'Snapshot Lifetime',
-    tooltip: 'Define a length of time to retain the snapshot on this\
- system. If the snapshot is replicated, it is not removed from the\
- receiving system when the lifetime expires.',
+    placeholder: T('Snapshot Lifetime'),
+    tooltip: T('Define a length of time to retain the snapshot on this\
+     system. If the snapshot is replicated, it is not removed from the\
+     receiving system when the lifetime expires.'),
     type: 'input',
     name: 'task_ret_count',
     inputType: 'number',
@@ -71,37 +72,37 @@ export class SnapshotFormComponent {
   }, {
     type: 'select',
     name: 'task_begin',
-    placeholder: 'Begin',
-    tooltip: 'Choose when the system can begin taking snapshots.',
+    placeholder: T('Begin'),
+    tooltip: T('Choose when the system can begin taking snapshots.'),
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'task_end',
-    placeholder: 'End',
-    tooltip: 'Choose when the system must stop taking snapshots.',
+    placeholder: T('End'),
+    tooltip: T('Choose when the system must stop taking snapshots.'),
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'task_interval',
-    placeholder: 'Interval',
-    tooltip: 'Define how often the system takes snapshots between the\
- <b>Begin</b> and <b>End</b> times.',
+    placeholder: T('Interval'),
+    tooltip: T('Define how often the system takes snapshots between the\
+     <b>Begin</b> and <b>End</b> times.'),
     options: [],
     value: '',
   }, {
     type: 'togglebutton',
     name: 'task_byweekday',
-    placeholder: 'Weekday',
-    tooltip: 'Choose the days of the week to take snapshots.',
+    placeholder: T('Weekday'),
+    tooltip: T('Choose the days of the week to take snapshots.'),
     multiple: true,
     options: []
   }, {
     type: 'checkbox',
     name: 'task_enabled',
-    placeholder: 'Enabled',
-    tooltip: 'Uncheck to disable this task without deleting it.',
+    placeholder: T('Enabled'),
+    tooltip: T('Uncheck to disable this task without deleting it.'),
     value: true,
   }];
 
