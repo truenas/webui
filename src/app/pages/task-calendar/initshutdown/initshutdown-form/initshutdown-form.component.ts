@@ -8,6 +8,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'cron-initshutdown-add',
@@ -24,9 +25,9 @@ export class InitshutdownFormComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'ini_type',
-    placeholder: 'Type',
-    tooltip: 'Select <i>Command</i> (for an executable) or\
- <i>Script</i> (for an executable script)',
+    placeholder: T('Type'),
+    tooltip: T('Select <i>Command</i> (for an executable) or\
+     <i>Script</i> (for an executable script)'),
     options: [{
       label: 'Command',
       value: 'command',
@@ -38,23 +39,23 @@ export class InitshutdownFormComponent {
   }, {
     type: 'input',
     name: 'ini_command',
-    placeholder: 'Command',
-    tooltip: 'Enter the command plus any desired options.',
+    placeholder: T('Command'),
+    tooltip: T('Enter the command plus any desired options.'),
   }, {
     type : 'explorer',
     initial: '/mnt',
     name: 'ini_script',
-    placeholder: 'Script',
+    placeholder: T('Script'),
     explorerType: 'file',
-    tooltip: 'Enter the location of the script.',
+    tooltip: T('Enter the location of the script.'),
   }, {
     type: 'select',
     name: 'ini_when',
-    placeholder: 'When',
-    tooltip: 'Select when the command/script runs. Choices are\
- <i>Pre Init</i> (very early in boot process before filesystems are\
- mounted), <i>Post Init</i> (towards end of boot process before FreeNAS\
- services are started), or <i>Shutdown</i>.',
+    placeholder: T('When'),
+    tooltip: T('Select when the command/script runs. Choices are\
+     <i>Pre Init</i> (very early in boot process before filesystems are\
+     mounted), <i>Post Init</i> (towards end of boot process before FreeNAS\
+     services are started), or <i>Shutdown</i>.'),
     options: [{
       label: '---------',
       value: '',
@@ -72,8 +73,8 @@ export class InitshutdownFormComponent {
   }, {
     type: 'checkbox',
     name: 'ini_enabled',
-    placeholder: 'Enable',
-    tooltip: 'Uncheck to diable the task.',
+    placeholder: T('Enable'),
+    tooltip: T('Uncheck to diable the task.'),
     value: true,
   }];
 

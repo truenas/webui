@@ -8,6 +8,7 @@ import { CalendarModule } from 'angular-calendar';
 import { TaskCalendarComponent } from './calendar/calendar.component';
 import { TaskCalendarRoutes } from "./task-calendar.routing";
 import { EntityModule } from '../common/entity/entity.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { CronFormComponent } from './cron/cron-form/cron-form.component';
 import { CronListComponent } from './cron/cron-list/cron-list.component';
@@ -25,7 +26,7 @@ import { ReplicationService } from 'app/pages/task-calendar/replication/replicat
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
-import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component'; 
+import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync-delete.component';
 
 
@@ -39,6 +40,7 @@ import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync
     EntityModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule
   ],
   declarations: [
     TaskCalendarComponent,
