@@ -371,7 +371,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Saved dataset", "Successfully saved dataset: " + this.pk;
+      this.dialogService.Info("Saved dataset", "Successfully saved dataset: " + this.pk);
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
