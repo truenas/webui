@@ -5,11 +5,56 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid ""
+"<a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\"       "
+"target=\"_blank\"> rsync(1)</a> options not covered by the GUI. If the      "
+" * character is used, it must be escaped with a backslash (\\*.txt) or      "
+" used inside single quotes('*.txt')"
+msgstr ""
+
+msgid ""
 "<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
 "ZFS volumes. <b>WARNING: </b>Read the \"Encryption\" section (Section "
 "8.1.1.1) of the <a href=\"guide\">Guide</a> before activating this option."
+msgstr ""
+
+msgid ""
+"<a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1"
+"-RELEASE+and+Ports\" target=\"_blank\">powerd(8)</a> monitors the system "
+"state and sets the CPU frequency accordingly."
+msgstr ""
+
+msgid "<b>Do not</b> check this box if the <b>serial port</b> is disabled."
+msgstr ""
+
+msgid ""
+"<b>jail_zfs</b> must be checked for this option to work. Define the dataset "
+"to be jailed and fully handed over to a jail. Takes the ZFS filesystem name "
+"without pool name."
+msgstr ""
+
+msgid "<i>None</i> or integer representing number of existing authorized access."
+msgstr ""
+
+msgid ""
+"<i>Standard</i> provides the best security.         <i>Fast</i> is less "
+"secure, but gives better transfer rates for         devices with limited "
+"cryptographic speed. Choose <i>Disabled</i> for         networks where the "
+"entire path between sources and destination         computers is trusted."
+msgstr ""
+
+msgid ""
+"A scrub occurs on the selected days. The default is       Sunday to least "
+"impact users. Note that this field and the       <b>Day of Month</b> field "
+"are <b>OR</b>ed together. For example       setting <b>Day of Month</b> to "
+"<i>01,15</i> and <b>Day of week</b> to       <i>Thursday</i> will cause "
+"scrubs to run on the 1st and 15th days of       the month, but also on any "
+"Thursday,"
+msgstr ""
+
+msgid "A scrub occurs on the selected months."
 msgstr ""
 
 msgid "ACL Type"
@@ -18,7 +63,22 @@ msgstr ""
 msgid "About"
 msgstr ""
 
+msgid "Access Key"
+msgstr ""
+
 msgid "Account"
+msgstr ""
+
+msgid "Account Key"
+msgstr ""
+
+msgid "Account Name"
+msgstr ""
+
+msgid "Activate"
+msgstr ""
+
+msgid "Activate Jail Manager"
 msgstr ""
 
 msgid "Active Directory"
@@ -37,14 +97,79 @@ msgid "Add Spare"
 msgstr ""
 
 msgid ""
+"Add lines to the jail <ins>resolv.conf</ins> file. <b>Example:</b> "
+"<i>nameserver IP;search domain.local</i>. Fields must be delimited with a "
+"semicolon (;), which are translated as new lines in <ins>resolv.conf</ins>. "
+"Enter <i>none</i> to inherit the <ins>resolv.conf</ins> file from the host."
+msgstr ""
+
+msgid ""
 "Add this user to more groups. Choose one or more groups from the dropdown "
 "list."
+msgstr ""
+
+msgid "Address"
 msgstr ""
 
 msgid "Advanced"
 msgstr ""
 
+msgid ""
+"After pasting the Access Key value to the FreeNAS Cloud       Credential "
+"Access Key field, enter the <b>Secret Key</b> value saved       when the "
+"pair was created. If the Secret Key value is not known, a new       key "
+"pair can be created on the same Amazon screen."
+msgstr ""
+
 msgid "Alert Services"
+msgstr ""
+
+msgid ""
+"Allow a user account other than <i>root</i> to be         used for "
+"replication."
+msgstr ""
+
+msgid ""
+"Allow access to SYSV IPC message primitives. When set to <i>inherit</i>, "
+"all IPC objects on the system are visible to this jail. When set to "
+"<i>new</i>, the jail has its own key namespace and can only see the objects "
+"it has created. The system or parent jail has access to the jail objects, "
+"but not its keys.  When set to <i>disable</i>, the jail cannot perform any "
+"<b>sysvmsg</b> related system calls."
+msgstr ""
+
+msgid ""
+"Allow access to SYSV IPC semaphore primitives in the same manner as "
+"<b>sysvmsg</b>."
+msgstr ""
+
+msgid ""
+"Allow access to SYSV IPC shared memory primitives in the same manner as "
+"<b>sysvmsg</b>."
+msgstr ""
+
+msgid ""
+"Allow configuring a non-standard port to access the GUI over <i>HTTP</i>. "
+"Changing this setting may require changing a <a "
+"href=\"https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_"
+"is_Restricted\" target=\"_blank\">Firefox configuration setting</a>."
+msgstr ""
+
+msgid "Allow configuring a non-standard port to access the GUI over <i>HTTPS</i>."
+msgstr ""
+
+msgid ""
+"Allow the jail hostname to be changed with <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11"
+".1-RELEASE+and+Ports\" target=\"_blank\">hostname(1)</a> or <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sethostname&manpath="
+"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">sethostname(3)</a>."
+msgstr ""
+
+msgid ""
+"Allows different groups to be configured with different authentication "
+"profiles. For instance, all users with a group ID of <i>1</i> will inherit "
+"the authentication profile associated with Group <i>1</i>."
 msgstr ""
 
 msgid ""
@@ -75,6 +200,9 @@ msgid ""
 "current dataset"
 msgstr ""
 
+msgid "Archive"
+msgstr ""
+
 msgid "Are you sure you wish to reboot the system?"
 msgstr ""
 
@@ -87,6 +215,15 @@ msgstr ""
 msgid "Associate an email address with the account"
 msgstr ""
 
+msgid "Auth Method"
+msgstr ""
+
+msgid "Authentication Group number"
+msgstr ""
+
+msgid "Authorized Network"
+msgstr ""
+
 msgid "Automatically check for new updates"
 msgstr ""
 
@@ -96,10 +233,25 @@ msgstr ""
 msgid "Available Disks"
 msgstr ""
 
+msgid "Available space threshold (%)"
+msgstr ""
+
 msgid "Back"
 msgstr ""
 
 msgid "Back to the Old UI"
+msgstr ""
+
+msgid "Base Name"
+msgstr ""
+
+msgid "Basic Properties"
+msgstr ""
+
+msgid "Begin"
+msgstr ""
+
+msgid "Begin Time"
 msgstr ""
 
 msgid "Block (iSCSI)"
@@ -108,12 +260,48 @@ msgstr ""
 msgid "Boot"
 msgstr ""
 
+msgid ""
+"Both systems must support       <a "
+"href=\"https://en.wikipedia.org/wiki/Extended_file_attributes\"       "
+"target=\"_blank\"> extended attributes</a>."
+msgstr ""
+
 msgid "Browse"
+msgstr ""
+
+msgid ""
+"Browse to an existing file and use <i>0</i> as the <b>Extent size</b>, or "
+"browse to the volume or dataset, click <b>Close</b>, append the <b>Extent "
+"Name</b> to the path, and specify a value in <b>Extent Size</b>. Extents "
+"cannot be created inside the jail root directory."
+msgstr ""
+
+msgid ""
+"Browse to the location of the saved Google Cloud       Storage key and "
+"select it. Refer to <a       "
+"href=\"https://cloud.google.com/storage/docs/\" target=\"_blank\">       "
+"Gcloud documentation</a> for more information."
+msgstr ""
+
+msgid ""
+"Browse to the name of an <b>existing</b> volume or          dataset that "
+"the user will be assigned permission to access."
 msgstr ""
 
 msgid ""
 "Browse to the name of an <b>existing</b> volume or      dataset that the "
 "user will be assigned permission to access."
+msgstr ""
+
+msgid ""
+"Browse to the path to be copied; note that a path       length greater than "
+"255 characters will fail."
+msgstr ""
+
+msgid "Bucket"
+msgstr ""
+
+msgid "Burst"
 msgstr ""
 
 msgid ""
@@ -126,10 +314,22 @@ msgid ""
 "Uncheck this box to select a different primary group name."
 msgstr ""
 
+msgid ""
+"By default, all data disks are created with this amount of swap. This "
+"setting does not affect log or cache devices as they are created without "
+"swap."
+msgstr ""
+
 msgid "CAs"
 msgstr ""
 
 msgid "Cancel"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Certificate"
 msgstr ""
 
 msgid "Certificates"
@@ -156,9 +356,18 @@ msgstr ""
 msgid "Check this box to apply changes to the user"
 msgstr ""
 
+msgid "Check this box to prevent the initiator from initializing this LUN."
+msgstr ""
+
+msgid "Check this box when using Xen as the iSCSI initiator."
+msgstr ""
+
 msgid ""
 "Check this if the user will be connecting from a      Windows 8 or higher "
 "system."
+msgstr ""
+
+msgid "Check this to automatically configure IPv4 settings for the jail."
 msgstr ""
 
 msgid ""
@@ -173,8 +382,149 @@ msgid ""
 msgstr ""
 
 msgid ""
+"Check this to redirect <i>HTTP</i> connections to <i>HTTPS</i>. "
+"<i>HTTPS</i> must be selected in <b>Protocol</b>."
+msgstr ""
+
+msgid ""
+"Check this to treat jail users as privileged and allowed to manipulate "
+"system file flags subject to the usual constraints on "
+"<b>kern.securelevel</b>."
+msgstr ""
+
+msgid ""
+"Check to allow access to other protocol stacks beyond IPv4, IPv6, local "
+"(UNIX), and route. <b>Warning:</b> jail functionality may not exist for "
+"other protocal stacks."
+msgstr ""
+
+msgid ""
+"Check to allow privileged users inside the jail to mount and unmount "
+"filesystem types marked as jail-friendly."
+msgstr ""
+
+msgid ""
+"Check to allow privileged users inside the jail to mount and unmount the "
+"ZFS file system. This permission is effective only together with "
+"<b>allow_mount</b> and if <b>enforce_statfs</b> is set to a value lower "
+"than <i>2</i>."
+msgstr ""
+
+msgid ""
+"Check to allow privileged users inside the jail to mount and unmount the "
+"devfs file system. This permission is effective only together with "
+"<b>allow_mount</b> and if <b>enforce_statfs</b> is set to a value lower "
+"than <i>2</i>."
+msgstr ""
+
+msgid ""
+"Check to allow privileged users inside the jail to mount and unmount the "
+"nullfs file system. This permission is effective only together with "
+"<b>allow_mount</b> and if <b>enforce_statfs</b> is set to a value lower "
+"than <i>2</i>."
+msgstr ""
+
+msgid ""
+"Check to allow privileged users inside the jail to mount and unmount the "
+"procfs file system. This permission is effective only together with "
+"<b>allow_mount</b> and if <b>enforce_statfs</b> is set to a value lower "
+"than <i>2</i>."
+msgstr ""
+
+msgid ""
+"Check to allow privileged users inside the jail to mount and unmount the "
+"tmpfs file system. This permission is effective only together with "
+"<b>allow_mount</b> and if <b>enforce_statfs</b> is set to a value lower "
+"than <i>2</i>."
+msgstr ""
+
+msgid ""
+"Check to allow the jail root to administer quotas on the jail filesystems. "
+"This includes filesystems the jail may share with other jails or with "
+"non-jailed parts of the system."
+msgstr ""
+
+msgid ""
+"Check to auto-start this jail at system boot time. Jails are started and "
+"stopped based on the <b>priority</b> value."
+msgstr ""
+
+msgid ""
+"Check to disables IPv6 source address selection for the prison in favor of "
+"the primary IPv6 address of the jail."
+msgstr ""
+
+msgid "Check to display CPU usage as percentages in <b>Reporting</b>."
+msgstr ""
+
+msgid "Check to enable Berkely Packet Filter devices on jail start."
+msgstr ""
+
+msgid ""
+"Check to enable automatic ZFS jailing inside the jail. The assigned ZFS "
+"dataset is fully controlled by the jail."
+msgstr ""
+
+msgid ""
+"Check to have this jail use virtual networking. <b>Warning:</b> Jails with "
+"virtual networking enabled can experience instability. See the <a "
+"href=\"http://iocage.readthedocs.io/en/latest/known-issues.html#vnet-vimage-"
+"issues\" target=_blank>iocage documentation</a> for more details."
+msgstr ""
+
+msgid ""
+"Check to include the Fully-Qualified Domain Name (FQDN) in logs to "
+"precisely identify systems with similar hostnames."
+msgstr ""
+
+msgid ""
+"Check to mount a <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=linprocfs&manpath=FreeBSD+1"
+"1.1-RELEASE+and+Ports\" target=\"_blank\">linprocfs(5)</a> filesystem in "
+"the jail."
+msgstr ""
+
+msgid ""
+"Check to mount a <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=procfs&manpath=FreeBSD+11.1"
+"-RELEASE+and+Ports\" target=\"_blank\">procfs(5)</a> filesystems in the "
+"jail <ins>/dev/proc</ins> directory."
+msgstr ""
+
+msgid "Check to set this jail as a template."
+msgstr ""
+
+msgid ""
+"Check to start the jail with a VNET or shared IP configuration. Check this "
+"if a fully virtualized per-jail network stack is required."
+msgstr ""
+
+msgid ""
+"Check to start the jail with the Dynamic Host Configuration Protocol "
+"enabled. <b>vnet</b> and <b>bpf</b> must also be enabled."
+msgstr ""
+
+msgid ""
+"Checking this enables taking separate snapshots of the     volume/dataset "
+"and each of its child datasets. Leave unchecked to take     a single "
+"snapshot of the specified volume/dataset and <b>not</b> any     child "
+"datasets."
+msgstr ""
+
+msgid ""
 "Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the           "
 "     type that matches the type of client accessing the volume/dataset."
+msgstr ""
+
+msgid "Choices are <i>None, Auto, CHAP,</i> or <i>Mutual CHAP</i>."
+msgstr ""
+
+msgid ""
+"Choices are <i>Push</i> or <i>Pull</i>. Default is to       push to a "
+"remote host."
+msgstr ""
+
+msgid "Choices are <i>Rsync module</i> or <i>Rsync over SSH</i>"
 msgstr ""
 
 msgid ""
@@ -183,25 +533,121 @@ msgid ""
 "href=\"guide\">Guide</a> for more details."
 msgstr ""
 
+msgid ""
+"Choose a recent IP address to limit the usage when accessing the "
+"administrative GUI. The built-in HTTP server binds to the wildcard address "
+"of <i>0.0.0.0</i> (any address) and issues an alert if the specified "
+"address becomes unavailable."
+msgstr ""
+
+msgid ""
+"Choose a recent IPv6 address to limit the usage when accessing the "
+"administrative GUI. The built-in HTTP server binds to the wildcard address "
+"of <i>0.0.0.0</i> (any address) and issues an alert if the specified "
+"address becomes unavailable."
+msgstr ""
+
+msgid ""
+"Choose a user to receive security output emails. This output runs nightly, "
+"but only sends an email when the system reboots or encounters an error."
+msgstr ""
+
+msgid ""
+"Choose an existing ZFS volume or dataset on the source         computer "
+"containing the snapshots to replicate."
+msgstr ""
+
+msgid ""
+"Choose the configuration mode for the remote.         <i>Semi-automatic</i> "
+"only works with remote version 9.10.2 or later."
+msgstr ""
+
+msgid "Choose the days of the week to take snapshots."
+msgstr ""
+
+msgid "Choose the speed in <i>bps</i> used by the serial port."
+msgstr ""
+
+msgid "Choose when the system can begin taking snapshots."
+msgstr ""
+
+msgid "Choose when the system must stop taking snapshots."
+msgstr ""
+
 msgid "Close"
 msgstr ""
 
 msgid "Cloud Credentials"
 msgstr ""
 
+msgid "Cloud Sync"
+msgstr ""
+
+msgid "Command"
+msgstr ""
+
+msgid ""
+"Commands to run in the prison environment before a jail is removed and "
+"after any <b>exec_prestop</b> commands have completed. Example: <i>sh "
+"/etc/rc.shutdown</i>."
+msgstr ""
+
+msgid ""
+"Commands to run in the prison environment when a jail is created. Example: "
+"<b>sh /etc/rc</b>. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=jail&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">jail(8)</a> for more details."
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Common Name"
+msgstr ""
+
+msgid "Compress"
+msgstr ""
+
+msgid ""
+"Configures the authentication level required by the target for discovery of "
+"valid devices, where <i>None</i> will allow anonymous discovery while "
+"<i>CHAP</i> and <i>Mutual CHAP</i> require authentication."
+msgstr ""
+
 msgid "Confirm"
+msgstr ""
+
+msgid "Confirm Options"
+msgstr ""
+
+msgid "Confirm Passphrase"
 msgstr ""
 
 msgid "Confirm Password"
 msgstr ""
 
+msgid "Confirm previous password."
+msgstr ""
+
 msgid "Confirm your information"
+msgstr ""
+
+msgid "Console Keyboard Map"
+msgstr ""
+
+msgid "Country"
 msgstr ""
 
 msgid "Create a new Primary Group for the user."
 msgstr ""
 
+msgid "Credential"
+msgstr ""
+
 msgid "Cron Jobs"
+msgstr ""
+
+msgid "Custom Properties"
 msgstr ""
 
 msgid "Dashboard"
@@ -210,13 +656,200 @@ msgstr ""
 msgid "Data VDevs"
 msgstr ""
 
+msgid "Day of month"
+msgstr ""
+
+msgid "Day of week"
+msgstr ""
+
+msgid "Dedicated User"
+msgstr ""
+
+msgid "Dedicated User Enabled"
+msgstr ""
+
+msgid "Default IPv4 Router"
+msgstr ""
+
+msgid "Default IPv6 Router"
+msgstr ""
+
+msgid "Default Router"
+msgstr ""
+
+msgid "Default Router For IPv4"
+msgstr ""
+
+msgid "Default Router For IPv6"
+msgstr ""
+
+msgid ""
+"Define a length of time to retain the snapshot on this     system. If the "
+"snapshot is replicated, it is not removed from the     receiving system "
+"when the lifetime expires."
+msgstr ""
+
+msgid ""
+"Define an <i>IP address_or_hostname:optional_port_number</i> to send logs. "
+"When set, log entries write to both the console and remote server."
+msgstr ""
+
+msgid ""
+"Define either <i>root</i> or an existing <i>username</i>. Commands are run "
+"as this user in the system environment."
+msgstr ""
+
+msgid ""
+"Define how often the system takes snapshots between the     <b>Begin</b> "
+"and <b>End</b> times."
+msgstr ""
+
+msgid "Define in bytes the address space limit for the jail."
+msgstr ""
+
+msgid "Define in bytes the amount of locked memory for the jail."
+msgstr ""
+
+msgid "Define in bytes the maximum SysV message queue size for the jail."
+msgstr ""
+
+msgid "Define in bytes the number of SysV shared memory segments."
+msgstr ""
+
+msgid "Define in seconds the wallclock time."
+msgstr ""
+
+msgid ""
+"Define the jail CPU affinity. Options are <i>off</i> or a combination of "
+"<i>1-4</i>, separated by commas (,). <b>Example:</b> <i>1,2,3,4</i>"
+msgstr ""
+
+msgid "Define the jail core dump size in bytes."
+msgstr ""
+
+msgid "Define the jail data size in bytes."
+msgstr ""
+
+msgid "Define the jail stack size in bytes."
+msgstr ""
+
+msgid ""
+"Define the maximium amount of CPU time a jail process may consume. The "
+"kernel will terminate processes exceeding the defined limit."
+msgstr ""
+
+msgid ""
+"Define the maximum amount of time in seconds to wait for a command to "
+"complete. If a command is still running after the allotted time, the jail "
+"will be terminated."
+msgstr ""
+
+msgid ""
+"Define the maximum amount of time in seconds to wait for the jail processes "
+"to exit after sending a SIGTERM signal. This happens after any "
+"<b>exec_stop</b> commands are complete. After the defined time, the jail is "
+"removed, killing any remaining processes. If this is set to <i>0</i>, no "
+"SIGTERM is sent and the jail is immediately removed."
+msgstr ""
+
+msgid "Define the maximum number of SysV message queues."
+msgstr ""
+
+msgid ""
+"Define the number of SysV semaphores modified in a single <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=semop&sektion=2&manpath="
+"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">semop(2)</a> call."
+msgstr ""
+
+msgid "Define the number of queued SysV messages allowed for the jail."
+msgstr ""
+
+msgid ""
+"Define the resident set size in bytes. See <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">RCTL(8)</a> for more details."
+msgstr ""
+
+msgid ""
+"Define the web protocol to use when connecting to the       administrative "
+"GUI from a browser. To change the default <i>HTTP</i> to       <i>HTTPS</i> "
+"or <i>HTTP+HTTPS</i>, a <b>Certificate</b> must also be       chosen."
+msgstr ""
+
+msgid "Delay Updates"
+msgstr ""
+
 msgid "Delete"
+msgstr ""
+
+msgid "Delete Stale Snapshots on Remote System"
+msgstr ""
+
+msgid ""
+"Delete files in destination directory that do not exist       in sending "
+"directory."
+msgstr ""
+
+msgid ""
+"Deletes previous snapshots from the remote or         destination computer "
+"which are no longer present on the source         computer."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Designate a time to begin replication."
+msgstr ""
+
+msgid "Destination"
+msgstr ""
+
+msgid ""
+"Determine which information processes in a jail are able to obtain about "
+"mount points.  The behavior of multiple syscalls is affected. <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1"
+"-RELEASE+and+Ports\" target=\"_blank\">statfs(2)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1"
+"-RELEASE+and+Ports\" target=\"_blank\">fstatfs(2)</a>, <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=getfsstat&manpath=FreeBSD+1"
+"1.1-RELEASE+and+Ports\" target=\"_blank\">getfsstat(2)</a>, and <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=fhstatfs&manpath=FreeBSD+11"
+".1-RELEASE+and+Ports\" target=\"_blank\">fhstatfs(2)</a> and other similar "
+"compatibility syscalls. <br>When set to <i>0</i>, all mount points are "
+"available without any restrictions.  When set to <i>1</i>, only mount "
+"points below the jail chroot directory are visible. When set to <i>2</i>, "
+"the syscalls above can operate only on a mountpoint where the jail chroot "
+"directory is located."
+msgstr ""
+
+msgid "Device"
+msgstr ""
+
+msgid "Digest Algorithm"
+msgstr ""
+
+msgid "Direction"
 msgstr ""
 
 msgid "Directory Service"
 msgstr ""
 
+msgid ""
+"Directory or dataset on the FreeNAS system which will be accessed by the "
+"jail. This directory <b>must</b> reside outside of the volume or dataset "
+"being used by the jail."
+msgstr ""
+
 msgid "Disable password login"
+msgstr ""
+
+msgid "Disable physical block size reporting"
+msgstr ""
+
+msgid "Disables emailing errors to the <i>root</i> user account."
+msgstr ""
+
+msgid "Disables emailing standard output to the <i>root</i> user     account."
 msgstr ""
 
 msgid ""
@@ -225,25 +858,301 @@ msgid ""
 "exclusive."
 msgstr ""
 
+msgid "Discovery Auth Group"
+msgstr ""
+
+msgid "Discovery Auth Method"
+msgstr ""
+
 msgid "Disks"
 msgstr ""
 
 msgid "Display System Processes"
 msgstr ""
 
+msgid ""
+"Display console messages in real time at the bottom of the browser. Click "
+"the <b>Console</b> to bring up a scrollable screen. Check the <b>Stop</b> "
+"refresh box in the scrollable screen to pause updating and uncheck the box "
+"to continue to watch the messages as they occur."
+msgstr ""
+
+msgid ""
+"Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
+"needs to be changed in large environments where the number of systems using "
+"a specific RPM is needed for accurate reporting statistics."
+msgstr ""
+
 msgid "Email"
+msgstr ""
+
+msgid "Enable"
+msgstr ""
+
+msgid "Enable Console Menu"
+msgstr ""
+
+msgid "Enable Console Screensaver"
+msgstr ""
+
+msgid "Enable Debug Kernel"
+msgstr ""
+
+msgid "Enable Power Saving Daemon"
+msgstr ""
+
+msgid "Enable Serial Console"
+msgstr ""
+
+msgid "Enable TPC"
+msgstr ""
+
+msgid "Enable automatic upload of kernel crash dumps and daily telemetry"
+msgstr ""
+
+msgid "Enable autotune"
+msgstr ""
+
+msgid "Enable or disable the console screensaver."
+msgstr ""
+
+msgid "Enable or disable this replication task without         deleting it."
+msgstr ""
+
+msgid ""
+"Enable/disable       <a "
+"href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\"       "
+"target=\"_blank\">SMTP AUTH</a> using PLAIN SASL. If checked, enter the     "
+"  required <b>Username</b> and <b>Password</b>."
+msgstr ""
+
+msgid "Enable/disable secure connections"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid ""
+"Enables the <b>autotune</b> script which attempts to optimize the system "
+"depending on the installed hardware. <b>Warning:</b> Autotuning should only "
+"be used as a temporary measure and is not a permanent fix for system "
+"hardware issues. See <b>Chapter 5.4.1: Autotune</b> in the <a "
+"href=\"ui/guide\">Guide</a> for more information."
 msgstr ""
 
 msgid "Encryption"
 msgstr ""
 
+msgid "Encryption Cipher"
+msgstr ""
+
+msgid "Encryption type. Choices are <i>Plain, SSL</i>, or       <i>TLS</i>."
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+msgid "End Time"
+msgstr ""
+
+msgid ""
+"Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
+"target=\"_blank\">NIS Domain name</a> for the jail."
+msgstr ""
+
+msgid ""
+"Enter a descriptive name for the       certificate using only alphanumeric, "
+"underscore       (_), and dash (-) characters."
+msgstr ""
+
+msgid ""
+"Enter a descriptive name for the CA using       only alphanumeric, "
+"underscore (_), and dash (-) characters."
+msgstr ""
+
+msgid ""
+"Enter a descriptive name for the certificate using        only "
+"alphanumeric, underscore (_), and dash (-) characters."
+msgstr ""
+
+msgid ""
+"Enter a descriptive name for the certificate using       only alphanumeric, "
+"underscore (_), and dash (-) characters."
+msgstr ""
+
+msgid ""
+"Enter a descriptive name for the certificate using only       alphanumeric, "
+"underscore (_), and dash (-) characters."
+msgstr ""
+
+msgid "Enter a descriptive name for the cloud credential."
+msgstr ""
+
+msgid "Enter a hostname for the jail. By default, the system uses the jail UUID."
+msgstr ""
+
+msgid "Enter a name for the clone of this boot environment."
+msgstr ""
+
+msgid ""
+"Enter a new a jail hostid, if necessary. <b>Example hostid:</b> "
+"<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
+msgstr ""
+
+msgid "Enter a number to define the maximum number of processes for the jail."
+msgstr ""
+
+msgid ""
+"Enter a number to define the routing table (FIB) to set when running "
+"commands inside the jail."
+msgstr ""
+
+msgid ""
+"Enter a numeric start priority for the jail at boot time. <b>Smaller</b> "
+"values mean a <b>higher</b> priority. At system shutdown, the priority is "
+"reversed. <b>Example:</b> <i>99</i>"
+msgstr ""
+
+msgid "Enter a numeric value for the number of PTYs available to the jail."
+msgstr ""
+
+msgid "Enter a numeric value for the number of threads the jail can use."
+msgstr ""
+
+msgid "Enter a numeric value to define the file descriptor table size."
+msgstr ""
+
+msgid "Enter a numeric value to define the maximum swap use for the jail."
+msgstr ""
+
+msgid ""
+"Enter either <i>root</i> or a valid <i>username</i>. In the jail "
+"environment, commands run as this defined user."
+msgstr ""
+
+msgid "Enter the Amazon Web Service account name."
+msgstr ""
+
+msgid "Enter the Azure Storage account name."
+msgstr ""
+
+msgid "Enter the Backblaze account name."
+msgstr ""
+
+msgid "Enter the Google Cloud Service account name."
+msgstr ""
+
+msgid "Enter the IP address or hostname of a remote server running Graphite."
+msgstr ""
+
+msgid "Enter the IPv4 route for the jail to use."
+msgstr ""
+
+msgid "Enter the IPv6 route for the jail to use."
+msgstr ""
+
+msgid "Enter the State or Province name       (for example, California)."
+msgstr ""
+
+msgid ""
+"Enter the ZFS volume on the remote or destination         computer which "
+"will store the snapshots. If the destination dataset is         not "
+"present, it will be created. <b>/mnt/</b> is assumed, do not         "
+"include it in the path."
+msgstr ""
+
+msgid "Enter the command plus any desired options."
+msgstr ""
+
+msgid "Enter the email address for the person       responsible for the CA."
+msgstr ""
+
+msgid "Enter the email address of       the person responsible for the CA."
+msgstr ""
+
+msgid ""
+"Enter the fully-qualified hostname (FQDN) of the       system. This name "
+"**must** be unique within a certificate       chain."
+msgstr ""
+
+msgid "Enter the hostname or IP address of the <b>NTP</b> server."
+msgstr ""
+
+msgid "Enter the location of the organization       (for example, city or town)."
+msgstr ""
+
+msgid "Enter the location of the organization."
+msgstr ""
+
+msgid "Enter the location of the script."
+msgstr ""
+
+msgid ""
+"Enter the mountpoint for the <b>jail_zfs_dataset</b>. <b>Example:</b> "
+"<i>/data example-dataset-name</i>"
+msgstr ""
+
+msgid ""
+"Enter the name of the boot entry as it will appear           in the boot "
+"menu."
+msgstr ""
+
+msgid "Enter the name of the company or       organization."
+msgstr ""
+
+msgid "Enter the name of the organization       (for example, company name)."
+msgstr ""
+
+msgid "Enter the number of SysV shared memory segments."
+msgstr ""
+
+msgid ""
+"Enter the number of child jails allowed to be created by this jail (or by "
+"other jails under this jail). This limit is <i>0</i> by default, indicating "
+"the jail is not allowed to create child jails."
+msgstr ""
+
+msgid ""
+"Enter the number of the <b>devfs</b> ruleset that is enforced for mounting "
+"<b>devfs</b> in this jail. A value of <i>0</i> (default) means no ruleset "
+"is enforced. Mounting <b>devfs</b> inside a jail is possible only if the "
+"<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are effective "
+"and <b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid "Enter the password if the SMTP server requires       authentication."
+msgstr ""
+
+msgid ""
+"Enter the percentage of free space that should remain in the pool. When "
+"this percentage is reached, the system issues an alert, but only if zvols "
+"are used. See <a href=\"http://doc.freenas.org/11/vaai.html#vaai\" "
+"target=\"_blank\"> VAAI Threshold Warning."
+msgstr ""
+
+msgid "Enter the secret key generated."
+msgstr ""
+
+msgid "Enter the state or province of the       organization."
+msgstr ""
+
+msgid "Enter the system host time to synchronize the time between jail and host."
+msgstr ""
+
+msgid "Enter the username if the SMTP server requires       authentication."
+msgstr ""
+
 msgid "Entering a name is required. Spaces are allowed."
 msgstr ""
 
-msgid "Estimated raw capacity:"
+msgid ""
+"Equivalent to <b>-rlptgoD</b> (recursive, copy symlinks       as symlinks, "
+"preserve permissions, preserve modification times,       preserve group, "
+"preserve owner(super-user only), and preserve device       files(super-user "
+"only) and special files)."
 msgstr ""
 
-msgid "Everything seems correct."
+msgid "Estimated raw capacity:"
 msgstr ""
 
 msgid "Extending an encrypted volume will reset the passphrase and recovery key!"
@@ -257,15 +1166,67 @@ msgid ""
 "continue?"
 msgstr ""
 
+msgid "Extent"
+msgstr ""
+
+msgid "Extent name"
+msgstr ""
+
+msgid "Extent size"
+msgstr ""
+
+msgid "Extent type"
+msgstr ""
+
+msgid "Extra options"
+msgstr ""
+
+msgid "Failed"
+msgstr ""
+
+msgid "Folder"
+msgstr ""
+
 msgid ""
 "For security reasons, FreeBSD will not give a user <b>su</b> permissions if "
 "<i>wheel</i> is their primary group."
 msgstr ""
 
+msgid "For security reasons, a minimum of       <i>2048</i> is recommended."
+msgstr ""
+
+msgid "For security reasons, a minimum of 2048       is recommended."
+msgstr ""
+
+msgid "For security reasons, a minimum of <i>2048</i>       is recommended."
+msgstr ""
+
+msgid "Force"
+msgstr ""
+
+msgid ""
+"Forces the addition of the <b>NTP</b> server,       even if it is currently "
+"unreachable."
+msgstr ""
+
+msgid "From E-mail"
+msgstr ""
+
 msgid "Full Name"
 msgstr ""
 
+msgid "GUI SSL Certificate"
+msgstr ""
+
 msgid "General"
+msgstr ""
+
+msgid "Generating Debug File"
+msgstr ""
+
+msgid ""
+"Gives control of how much of the new device is made       available to ZFS. "
+"When checked, the entire capacity of the new device is used."
 msgstr ""
 
 msgid "Global Configuration"
@@ -274,10 +1235,16 @@ msgstr ""
 msgid "Group"
 msgstr ""
 
+msgid "Group ID"
+msgstr ""
+
 msgid "Groups"
 msgstr ""
 
 msgid "Guide"
+msgstr ""
+
+msgid "Highlight disks to monitor."
 msgstr ""
 
 msgid "Home Directory"
@@ -286,22 +1253,153 @@ msgstr ""
 msgid "Home Directory Mode"
 msgstr ""
 
+msgid "Hostname or IP address of SMTP server to use for       sending this email."
+msgstr ""
+
+msgid "Hour"
+msgstr ""
+
+msgid "IBurst"
+msgstr ""
+
+msgid "IP Address"
+msgstr ""
+
+msgid ""
+"IP address or hostname of the remote system that will       store the copy. "
+"Use the format <i>username@remote_host</i> if the       username differs on "
+"the remote host."
+msgstr ""
+
 msgid "IPMI"
+msgstr ""
+
+msgid "IPv4 Address"
+msgstr ""
+
+msgid "IPv4 DHCP"
+msgstr ""
+
+msgid "IPv6 Address"
+msgstr ""
+
+msgid "ISNS Servers"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid ""
+"If <b>WebGUI HTTP -> HTTPS Redirect</b> is enabled in         <b>System -> "
+"General</b> on the destination computer, set this field         to the "
+"HTTPS port (usually 443). <b>Remote HTTPS</b> must also be         enabled "
+"when creating the replication on the source computer."
+msgstr ""
+
+msgid ""
+"If checked, an initiator can bypass normal access control and access any "
+"scannable target. This allows <b>xcopy</b> operations which are otherwise "
+"blocked by access control."
+msgstr ""
+
+msgid "If checked, copy includes all subdirectories of the       specified volume."
+msgstr ""
+
+msgid ""
+"If the <b>Private Key</b> is protected by a passphrase,       enter it here "
+"and repeat it in the \"Confirm Passphrase\" field."
+msgstr ""
+
+msgid ""
+"If the initiator does not support physical block size values over 4K (MS "
+"SQL), check this box."
+msgstr ""
+
+msgid ""
+"If the size is specified as <i>0</i>, the file must already exist and the "
+"actual file size will be used. Otherwise, specify the size of the file to "
+"create."
+msgstr ""
+
+msgid ""
+"If the slider is used, a scrub occurs every N days. If       specific days "
+"of the month are chosen, a scrub runs only on the       selected days of "
+"the selected months."
+msgstr ""
+
+msgid ""
+"If the slider is used, a scrub occurs every N hours.       If specific "
+"hours are chosen, a scrub runs only at the selected hour       values"
+msgstr ""
+
+msgid ""
+"If the slider is used, a scrub occurs every N minutes.       If specific "
+"minutes are chosen, a scrub runs only at the selected       minute values"
+msgstr ""
+
+msgid ""
+"If there is a private key associated with the       <b>Certificate</b>, "
+"paste it here."
 msgstr ""
 
 msgid "Import Disk"
 msgstr ""
 
+msgid ""
+"In FreeBSD 11.0 and later, this setting is deprecated. Use <b>sysvmsg</b>, "
+"<b>sysvsem</b>, and <b>sysvshm</b> instead. Choose if a process in the jail "
+"has access to System V IPC primitives."
+msgstr ""
+
+msgid ""
+"Includes snapshots of datasets that are children of         the main "
+"dataset."
+msgstr ""
+
 msgid "Init/Shutdown Scripts"
+msgstr ""
+
+msgid "Initiator Group ID"
+msgstr ""
+
+msgid "Initiators"
+msgstr ""
+
+msgid ""
+"Input the port used by the SSH server on the remote         or destination "
+"computer."
 msgstr ""
 
 msgid "Interfaces"
 msgstr ""
 
+msgid ""
+"Internal identifier of the certificate.       Only alphanumeric, underscore "
+"(_),       and dash (-) characters are allowed."
+msgstr ""
+
+msgid "Interval"
+msgstr ""
+
 msgid "Invalid regex filter"
 msgstr ""
 
+msgid "JSON Service Account Key"
+msgstr ""
+
+msgid "Jail"
+msgstr ""
+
+msgid "Jail Name"
+msgstr ""
+
+msgid "Jail Properties"
+msgstr ""
+
 msgid "Jails"
+msgstr ""
+
+msgid "Jails Name"
 msgstr ""
 
 msgid "Kerberos Keytabs"
@@ -313,13 +1411,70 @@ msgstr ""
 msgid "Kerberos Settings"
 msgstr ""
 
+msgid "Key Length"
+msgstr ""
+
 msgid "LDAP"
+msgstr ""
+
+msgid "LUN ID"
+msgstr ""
+
+msgid "LUN RPM"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Leave empty or select number of existing portal to use."
 msgstr ""
 
 msgid "Legacy UI"
 msgstr ""
 
+msgid "Lifetime"
+msgstr ""
+
+msgid "Limit (KB/s)"
+msgstr ""
+
+msgid ""
+"Limit replication speed to the specified value in         kilobytes/second. "
+"The default <i>0</i> is unlimited."
+msgstr ""
+
 msgid "Link Aggregations"
+msgstr ""
+
+msgid ""
+"List any commands to run in the system environment after a jail is started "
+"and after any <b>exec_start</b> commands are finished."
+msgstr ""
+
+msgid "List any commands to run in the system environment after a jail is stopped."
+msgstr ""
+
+msgid "List any commands to run in the system environment before a jail is started."
+msgstr ""
+
+msgid "List any commands to run in the system environment before a jail is stopped."
+msgstr ""
+
+msgid ""
+"List any flags to be passed to <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_\">login(1)</a> when logging in to jails with "
+"the <b>console</b> function."
+msgstr ""
+
+msgid ""
+"List up to four interface configurations in the format "
+"<i>interface:bridge</i>, separated by a comma (,). The left value is the "
+"virtual VNET interface name and the right value is the bridge name where "
+"the virtual interface should be attached."
+msgstr ""
+
+msgid "Locality"
 msgstr ""
 
 msgid "Lock user"
@@ -331,6 +1486,49 @@ msgstr ""
 msgid "Log out of the WebUI?"
 msgstr ""
 
+msgid "Logical block size"
+msgstr ""
+
+msgid "MOTD Banner"
+msgstr ""
+
+msgid "Mail Server Port"
+msgstr ""
+
+msgid ""
+"Make sure the selected user has permission to run the     specified command "
+"or script."
+msgstr ""
+
+msgid ""
+"Mandatory. Can only contain alphanumeric characters, dashes (-), or "
+"underscores (_)."
+msgstr ""
+
+msgid ""
+"Mandatory. Can only contain letters, numbers, dashes, or the underscore "
+"character."
+msgstr ""
+
+msgid ""
+"Mandatory. Enter a descriptive name for the CA using       only "
+"alphanumeric, underscore (_), and dash(-) characters."
+msgstr ""
+
+msgid "Mandatory. Enter the serial number for the       certificate."
+msgstr ""
+
+msgid "Mandatory. Paste in the certificate for the CA."
+msgstr ""
+
+msgid ""
+"Many GUI menus provide an <b>Advanced Mode</b> button to access additional "
+"features. Enabling this shows these features by default."
+msgstr ""
+
+msgid "Max. Poll"
+msgstr ""
+
 msgid ""
 "Maximum length is 16 characters, although using 8 or less is recommended "
 "for interoperability. Usernames cannot begin with a hyphen or contain a "
@@ -338,13 +1536,44 @@ msgid ""
 "A <b>$</b> can only be used as the last character."
 msgstr ""
 
+msgid "Member Disk"
+msgstr ""
+
 msgid "Microsoft Account"
+msgstr ""
+
+msgid "Min. Poll"
+msgstr ""
+
+msgid "Minute"
 msgstr ""
 
 msgid "Mirror"
 msgstr ""
 
 msgid "Mode"
+msgstr ""
+
+msgid "Month"
+msgstr ""
+
+msgid ""
+"Mount a <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=devfs&sektion=5&manpath="
+"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">devfs(5)</a> filesystem "
+"on the chrooted <ins>/dev</ins> directory and apply the ruleset in the "
+"<b>devfs_ruleset</b> parameter to restrict the devices visible inside the "
+"jail."
+msgstr ""
+
+msgid ""
+"Mount an <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=fdescfs&sektion=5&manpath="
+"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">fdescfs(5)</a> "
+"filesystem in the jail <ins>/dev/fd</ins> directory."
+msgstr ""
+
+msgid "Multi-domain support. Enter additional space separated domains."
 msgstr ""
 
 msgid "NIS"
@@ -356,7 +1585,21 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
+msgid ""
+"Name of Extent. If the <b>Extent size</b> is not <i>0</i>, it cannot be an "
+"existing file within the voulme/dataset."
+msgstr ""
+
+msgid ""
+"Name of user account to create for CHAP authentication with the user on the "
+"remote system. Many initiators default to using the initiator name as the "
+"user."
+msgstr ""
+
 msgid "Network"
+msgstr ""
+
+msgid "Network Properties"
 msgstr ""
 
 msgid "Next"
@@ -368,7 +1611,30 @@ msgstr ""
 msgid "No updates available"
 msgstr ""
 
+msgid "Note"
+msgstr ""
+
 msgid "Ok"
+msgstr ""
+
+msgid ""
+"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
+"controller, zvol snapshot, or HAST device."
+msgstr ""
+
+msgid ""
+"Only appears if <i>File</i> or a zvol is selected. When the specified "
+"percentage of free space is reached, the system issues an alert. See <a "
+"href=\"http://doc.freenas.org/11/vaai.html#vaai\" "
+"target=\"_blank\">VAAI</a> Threshold Warning."
+msgstr ""
+
+msgid ""
+"Only appears when using <i>Rsync module</i> mode.       At least one module "
+"must be defined in       <a "
+"href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
+"target=\"_blank\">       rsyncd.conf(5)</a> of rsync server or in the "
+"<b>Rsync Modules</b> of       another system."
 msgstr ""
 
 msgid ""
@@ -376,10 +1642,72 @@ msgid ""
 "changed when Windows is selected."
 msgstr ""
 
+msgid ""
+"Only input when configuring mutual CHAP. In most cases it will need to be "
+"the same value as <b>User</b>."
+msgstr ""
+
+msgid "Only override the defualt if the initiator requires adifferent block size."
+msgstr ""
+
 msgid "Operation"
 msgstr ""
 
+msgid "Optional description."
+msgstr ""
+
+msgid "Optional description. Portals are automatically assigned a numeric group ID."
+msgstr ""
+
+msgid "Optional text description of scrub."
+msgstr ""
+
+msgid "Optional user-friendly name."
+msgstr ""
+
+msgid ""
+"Optional, but a useful reminder for the reason       behind adding this "
+"tunable."
+msgstr ""
+
+msgid "Optional."
+msgstr ""
+
+msgid "Optional. Add any notes about the jail here."
+msgstr ""
+
+msgid "Optional. Enter a valid MAC address for this VNET interface."
+msgstr ""
+
+msgid ""
+"Optional. Enter a valid MAC address vendor prefix. <b>Example:</b> "
+"<i>E4F4C6</i>"
+msgstr ""
+
+msgid ""
+"Options are <i>3</i>, <i>2</i>, <i>1</i>, <i>0</i>, and <i>-1</i>. Enter a "
+"value for the <b>kernsecurelevel</b> sysctl of the jail. A jail is only "
+"allowed to have a higher securelevel than the default system."
+msgstr ""
+
+msgid "Organization"
+msgstr ""
+
+msgid "Outgoing Mail Server"
+msgstr ""
+
+msgid "Passphrase"
+msgstr ""
+
+msgid "Passphrase for encrypted private keys."
+msgstr ""
+
 msgid "Password"
+msgstr ""
+
+msgid ""
+"Password to be associated with <b>User</b>. The iSCSI standard requires "
+"that this be between 12 and 16 characters."
 msgstr ""
 
 msgid ""
@@ -387,13 +1715,62 @@ msgid ""
 "authentication. <b>Do not paste the private key!</b>"
 msgstr ""
 
+msgid ""
+"Paste the Amazon account access key. This can be found       on the <a "
+"href=\"https://aws.amazon.com/\" target=\"_blank\">       Amazon AWS</a> "
+"website by clicking on <b>My account</b>, then       <b>Security "
+"Credentials</b> and       <b>Access Keys (Access Key ID and Secret Access "
+"Key)</b>."
+msgstr ""
+
+msgid ""
+"Paste the Azure Storage account key. Refer to the     <a "
+"href=\"https://docs.microsoft.com/en-us/azure/storage/\"     "
+"target=\"_blank\">Azure Storage Documentation</a> for more information."
+msgstr ""
+
+msgid ""
+"Paste the account access key. For more information refer     to the <a "
+"href=\"https://www.backblaze.com/help.html\" target=\"_blank\">     "
+"BACKBLAZE help</a> page."
+msgstr ""
+
+msgid "Paste the contents of the certificate here."
+msgstr ""
+
+msgid "Paste the contents of the private key here."
+msgstr ""
+
+msgid ""
+"Paste the temporary token from the computer         with the <b>Remote ZFS "
+"Volume/Dataset</b> here."
+msgstr ""
+
 msgid "Path"
+msgstr ""
+
+msgid "Path to the extent"
+msgstr ""
+
+msgid "Peer Secret"
+msgstr ""
+
+msgid "Peer Secret (Confirm)"
+msgstr ""
+
+msgid "Peer User"
+msgstr ""
+
+msgid "Periodic Notification User"
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
 msgstr ""
 
 msgid "Permit Sudo"
+msgstr ""
+
+msgid "Please check the network connection"
 msgstr ""
 
 msgid "Please enter your password"
@@ -414,7 +1791,67 @@ msgstr ""
 msgid "Plugins"
 msgstr ""
 
+msgid "Pool Available Space Threshold (%)"
+msgstr ""
+
+msgid "Port"
+msgstr ""
+
+msgid "Portal Group ID"
+msgstr ""
+
+msgid ""
+"Power of 2 in seconds; cannot be higher than 17 or       lower than <i>Min. "
+"Poll</i>."
+msgstr ""
+
+msgid ""
+"Power of 2 in seconds; cannot be lower than 4 or       higher than <i>Max. "
+"Poll</i> which is 17."
+msgstr ""
+
+msgid "Prefer"
+msgstr ""
+
+msgid "Preserve extended attributes"
+msgstr ""
+
+msgid "Preserve modification times of files."
+msgstr ""
+
+msgid "Preserve permissions"
+msgstr ""
+
+msgid ""
+"Preserves original file permissions; useful if user is       set to "
+"<i>root</i>."
+msgstr ""
+
+msgid "Preview JSON Service Account Key"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
 msgid "Primary Group"
+msgstr ""
+
+msgid "Private Key"
+msgstr ""
+
+msgid "Protocol"
+msgstr ""
+
+msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
+msgstr ""
+
+msgid "Quick Schedule"
+msgstr ""
+
+msgid "Quiet"
+msgstr ""
+
+msgid "RCTL Limits"
 msgstr ""
 
 msgid "Raid-z"
@@ -426,10 +1863,100 @@ msgstr ""
 msgid "Raid-z3"
 msgstr ""
 
+msgid "Re-enter the <i>Passphrase</i> to confirm."
+msgstr ""
+
+msgid "Read-Only"
+msgstr ""
+
+msgid "Read-only"
+msgstr ""
+
+msgid ""
+"Recommended on slow connections as it reduces size of       data to be "
+"transmitted."
+msgstr ""
+
+msgid ""
+"Recommended when <i>Max. Poll</i> is greater       than 10; only use on "
+"your own servers i.e. do not use with       a public NTP server."
+msgstr ""
+
+msgid "Recursive"
+msgstr ""
+
+msgid "Recursively Replicate Child Dataset Snapshots"
+msgstr ""
+
+msgid "Redirecr Stderr"
+msgstr ""
+
+msgid "Redirect Stdout"
+msgstr ""
+
+msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
+msgstr ""
+
+msgid "Release"
+msgstr ""
+
 msgid "Release Notes"
 msgstr ""
 
+msgid "Remote Auth Token"
+msgstr ""
+
+msgid "Remote Graphite Server Hostname"
+msgstr ""
+
+msgid "Remote HTTP/HTTPS Port"
+msgstr ""
+
+msgid "Remote HTTPS"
+msgstr ""
+
+msgid "Remote Host"
+msgstr ""
+
+msgid "Remote Hostkey"
+msgstr ""
+
+msgid "Remote Hostname"
+msgstr ""
+
+msgid "Remote Module Name"
+msgstr ""
+
+msgid "Remote Path"
+msgstr ""
+
+msgid "Remote Port"
+msgstr ""
+
+msgid "Remote SSH Port"
+msgstr ""
+
+msgid "Remote ZFS Volume/Dataset"
+msgstr ""
+
+msgid "Rename the existing boot environment."
+msgstr ""
+
+msgid "Replication Stream Compression"
+msgstr ""
+
 msgid "Replication Tasks"
+msgstr ""
+
+msgid ""
+"Replication must start by this time. After starting,         replication "
+"continues until it is finished."
+msgstr ""
+
+msgid "Report CPU usage in percentage"
+msgstr ""
+
+msgid "Report kernel crash dumps and daily performance measurements to iXsystems."
 msgstr ""
 
 msgid "Reporting"
@@ -439,17 +1966,82 @@ msgid "Reports"
 msgstr ""
 
 msgid ""
+"Required for <i>HTTPS</i>. Browse to the location of the certificate to use "
+"for encrypted connections. If there are no certificates, create a <a "
+"href=\"http://doc.freenas.org/11/system.html#cas\" "
+"target=\"_blank\">Certificate Authority (CA)</a> then the <a "
+"href=\"http://doc.freenas.org/11/system.html#certificates\" "
+"target=\"_blank\">Certificate</a>."
+msgstr ""
+
+msgid ""
 "Required unless <b>Disable password login</b> is checked. Passwords cannot "
 "contain a <b>?</b>."
+msgstr ""
+
+msgid ""
+"Required value. Base name will be appended automatically if it does not "
+"start with <i>iqn</i>."
+msgstr ""
+
+msgid ""
+"Required; enter the email address for the person       responsible for the "
+"CA."
+msgstr ""
+
+msgid "Required; enter the location of the organization."
+msgstr ""
+
+msgid "Required; enter the name of the       company or organization."
+msgstr ""
+
+msgid "Required; enter the state or province of       the organization."
+msgstr ""
+
+msgid ""
+"Required; select the CA which was previously imported       or created "
+"using <a href=\"http://doc.freenas.org/11/system.html#cas\" "
+"target=\"_blank\">CAs</a>."
 msgstr ""
 
 msgid "Restart"
 msgstr ""
 
+msgid "Restore default"
+msgstr ""
+
 msgid "Rsync Tasks"
 msgstr ""
 
+msgid "Rsync mode"
+msgstr ""
+
+msgid "Run As User"
+msgstr ""
+
+msgid ""
+"Run commands in a clean environment. The current environment is discarded "
+"except for HOME, SHELL, TERM and USER. HOME and SHELL are set to the target "
+"login default values. USER is set to the target login. TERM is imported "
+"from the current environment. The environment variables from the login "
+"class capability database for the target login are also set."
+msgstr ""
+
+msgid "Run this in the background?"
+msgstr ""
+
 msgid "S.M.A.R.T Tests"
+msgstr ""
+
+msgid "SMTP Authentication"
+msgstr ""
+
+msgid ""
+"SMTP port number. Typically <i>25,465</i>       (secure SMTP), or "
+"<i>587</i> (submission)."
+msgstr ""
+
+msgid "SSH Port"
 msgstr ""
 
 msgid "SSH Public Key"
@@ -458,7 +2050,90 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+msgid "Script"
+msgstr ""
+
 msgid "Scrub Tasks"
+msgstr ""
+
+msgid "Secret"
+msgstr ""
+
+msgid "Secret (Confirm)"
+msgstr ""
+
+msgid "Secret Key"
+msgstr ""
+
+msgid "Security"
+msgstr ""
+
+msgid ""
+"See the \"Constructing iSCSI names using the iqn.format\" section of <a "
+"href=\"https://tools.ietf.org/html/rfc3721.html\" "
+"target=\"_blank\">RFC3721</a> if unfamiliar with this format."
+msgstr ""
+
+msgid ""
+"Select <i>Command</i> (for an executable) or     <i>Script</i> (for an "
+"executable script)"
+msgstr ""
+
+msgid "Select a keyboard layout."
+msgstr ""
+
+msgid ""
+"Select a localization. Localization progress is viewable on <a "
+"href=\"https://weblate.trueos.org/projects/freenas/#languages\" "
+"target=\"_blank\">Weblate</a>."
+msgstr ""
+
+msgid ""
+"Select a time frame for the job. Otherwise, do not select     a time frame "
+"to customize the schedule."
+msgstr ""
+
+msgid "Select a time zone."
+msgstr ""
+
+msgid ""
+"Select a user created in <b>Authorized Access</b> if the <b>Discovery Auth "
+"Method</b> is set to <i>CHAP</i> or <i>Mutual CHAP</i>."
+msgstr ""
+
+msgid "Select an existing ZFS volume, dataset, or zvol."
+msgstr ""
+
+msgid ""
+"Select an existing, empty directory within the jail to link to the "
+"<b>Source</b> storage area. If that directory does not exist yet, enter the "
+"desired directory name and check the <b>Create directory</b> box."
+msgstr ""
+
+msgid "Select from <i>File</i> or <i>Device</i>."
+msgstr ""
+
+msgid ""
+"Select the CA which was previously imported       or created using <a "
+"href=\"https://doc.freenas.org/11/system.html#cas\" "
+"target=\"_blank\">CAs</a>."
+msgstr ""
+
+msgid "Select the FreeBSD release for the jail."
+msgstr ""
+
+msgid "Select the FreeBSD release to use as the jail operating system."
+msgstr ""
+
+msgid ""
+"Select the IP address associated with an interface or the wildcard address "
+"of <i>0.0.0.0</i> (any interface)."
+msgstr ""
+
+msgid "Select the country for the organization."
+msgstr ""
+
+msgid "Select the device to attach."
 msgstr ""
 
 msgid ""
@@ -467,7 +2142,19 @@ msgid ""
 "menu."
 msgstr ""
 
+msgid "Select the pre-created extent."
+msgstr ""
+
+msgid "Select the pre-created target."
+msgstr ""
+
+msgid "Select the serial port address in hex."
+msgstr ""
+
 msgid "Select the shell to use for local and SSH logins."
+msgstr ""
+
+msgid "Select the user account to use for replication."
 msgstr ""
 
 msgid ""
@@ -476,7 +2163,75 @@ msgid ""
 "menu."
 msgstr ""
 
+msgid ""
+"Select the value to use or type in a value between <i>1</i> and "
+"<i>1023</i>. Note that some initiators expect a value below <i>256</i>."
+msgstr ""
+
+msgid ""
+"Select this to allow utilities like <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">ping(8)</a> and <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=traceroute&manpath=FreeBSD+"
+"11.1-RELEASE+and+Ports\" target=\"_blank\">traceroute(8)</a> to operate "
+"inside the jail. When checked, the source IP addresses are enforced to "
+"comply with the IP address bound to the jail, ignoring the the IP_HDRINCL "
+"flag on the socket."
+msgstr ""
+
+msgid ""
+"Select type of test to run. See       <a       "
+"href=\"https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8."
+"in\"       target=\"_blank\">smartctl(8)</a> for a description of each type "
+"of test       (note that some test types will degrade performace or take "
+"disks       offline. Do not schedule S.M.A.R.T. tests at the same time as a "
+"scrub       or during a resilver operation)."
+msgstr ""
+
+msgid ""
+"Select when the command/script runs. Choices are     <i>Pre Init</i> (very "
+"early in boot process before filesystems are     mounted), <i>Post Init</i> "
+"(towards end of boot process before FreeNAS     services are started), or "
+"<i>Shutdown</i>."
+msgstr ""
+
+msgid "Select which existing initiator group has access to the target."
+msgstr ""
+
+msgid ""
+"Selecting a compression algorithm can reduce the size         of the data "
+"being replicated."
+msgstr ""
+
+msgid "Serial"
+msgstr ""
+
+msgid "Serial Port"
+msgstr ""
+
+msgid "Serial Speed"
+msgstr ""
+
+msgid "Server Side Encryption"
+msgstr ""
+
 msgid "Services"
+msgstr ""
+
+msgid ""
+"Set a <b>value</b> for the variable. Choose value       carefully. Refer to "
+"the man page for the specific driver or the       <a "
+"href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/\" "
+"target=\"_blank\">FreeBSD Handbook</a>       for suggested values."
+msgstr ""
+
+msgid "Set font size"
+msgstr ""
+
+msgid ""
+"Set resource limitations of the jail using the <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit&manpath=FreeBSD+1"
+"1.1-RELEASE+and+Ports\" target=\"_blank\">getrlimit(2)</a> utility."
 msgstr ""
 
 msgid ""
@@ -484,7 +2239,20 @@ msgid ""
 "built-in users."
 msgstr ""
 
+msgid ""
+"Setting this property to anything other than <i>none</i> configures a "
+"default IPv6 route inside a <b>VNET</b> jail."
+msgstr ""
+
+msgid ""
+"Setting this property to anything other than <i>none</i> configures a "
+"default route inside a <b>VNET</b> jail."
+msgstr ""
+
 msgid "Settings"
+msgstr ""
+
+msgid "Setup Mode"
 msgstr ""
 
 msgid "Sharing"
@@ -493,16 +2261,67 @@ msgstr ""
 msgid "Shell"
 msgstr ""
 
+msgid "Short Description"
+msgstr ""
+
+msgid "Short description"
+msgstr ""
+
+msgid ""
+"Should only be used for <b>NTP</b> servers known to       be highly "
+"accurate, such as those with time monitoring hardware."
+msgstr ""
+
+msgid "Show advanced fields by default"
+msgstr ""
+
+msgid "Show console messages"
+msgstr ""
+
+msgid "Show tracebacks in case of fatal error"
+msgstr ""
+
 msgid "Shut down"
 msgstr ""
 
 msgid "Sign in"
 msgstr ""
 
+msgid "Signing Certificate Authority"
+msgstr ""
+
+msgid "Snapshot Lifetime"
+msgstr ""
+
 msgid "Snapshots"
 msgstr ""
 
+msgid "Source"
+msgstr ""
+
+msgid ""
+"Space delimited list of hostnames or IP addresses of ISNS servers with "
+"which to register the iSCSI targets of the system and portals."
+msgstr ""
+
+msgid ""
+"Specified user must have permission to write to the       specified "
+"directory on the remote system. The user name cannot       contain spaces "
+"or exceed 17 characters."
+msgstr ""
+
+msgid ""
+"Specify any jails this jail depends on. When this jail begins to be "
+"created, any jails it depends on must already exist."
+msgstr ""
+
+msgid "Speeds the initial synchronization       (seconds instead of minutes)."
+msgstr ""
+
 msgid "Starting job..."
+msgstr ""
+
+msgid "State"
 msgstr ""
 
 msgid "Static Routes"
@@ -514,13 +2333,36 @@ msgstr ""
 msgid "Stripe"
 msgstr ""
 
+msgid "Subject"
+msgstr ""
+
+msgid "Subject Alternate Names"
+msgstr ""
+
 msgid "Submit"
+msgstr ""
+
+msgid "Success"
 msgstr ""
 
 msgid "Suggest Layout"
 msgstr ""
 
 msgid "Support"
+msgstr ""
+
+msgid "Suppresses informational messages from the remote       server."
+msgstr ""
+
+msgid ""
+"Swap size on each drive in GiB, affects new disks only. Setting this to 0 "
+"disables swap creation completely (STRONGLY DISCOURAGED)."
+msgstr ""
+
+msgid "Syslog level"
+msgstr ""
+
+msgid "Syslog server"
 msgstr ""
 
 msgid "System"
@@ -541,16 +2383,208 @@ msgstr ""
 msgid "System is shutting down..."
 msgstr ""
 
+msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
+msgstr ""
+
+msgid "Target"
+msgstr ""
+
+msgid "Target Alias"
+msgstr ""
+
+msgid "Target Name"
+msgstr ""
+
+msgid "Task occurs on the selected months."
+msgstr ""
+
 msgid "Tasks"
+msgstr ""
+
+msgid ""
+"The <b>full path</b> to the command or script to be run.     If it is a "
+"script, test it at the command line to ensure it works."
+msgstr ""
+
+msgid "The cron job occurs at the specified hours."
+msgstr ""
+
+msgid "The cron job occurs at the specified minutes."
+msgstr ""
+
+msgid "The cron job occurs at the specified months."
+msgstr ""
+
+msgid "The cron job occurs on the specified days each month."
+msgstr ""
+
+msgid "The cron job occurs on the specified days."
+msgstr ""
+
+msgid ""
+"The default is acceptable unless the organization        requires a "
+"different algorithm."
+msgstr ""
+
+msgid ""
+"The default is acceptable unless the organization       requires a "
+"different algorithm."
+msgstr ""
+
+msgid ""
+"The default is acceptable unless your organization       requires a "
+"different algorithm."
+msgstr ""
+
+msgid ""
+"The envelope <b>From</b> address shown in the email.       This can be set "
+"to assist with filtering mail on the receiving system."
 msgstr ""
 
 msgid "The existing contents of all the disks you have added will be erased."
 msgstr ""
 
+msgid "The job occurs at the specified hours."
+msgstr ""
+
+msgid "The job occurs at the specified minutes."
+msgstr ""
+
+msgid "The job occurs at the specified months."
+msgstr ""
+
+msgid "The job occurs on the specified days each month."
+msgstr ""
+
+msgid "The job occurs on the specified days."
+msgstr ""
+
+msgid "The lifetime of the CA is specified in days."
+msgstr ""
+
+msgid "The lifetime of the certificate is       specified in days."
+msgstr ""
+
+msgid ""
+"The mutual secret password which <b>must be different than the "
+"<i>Secret</i></b>. Required if <b>Peer User</b> is set."
+msgstr ""
+
+msgid ""
+"This and other IPv6 settings are grayed out if <b>IPv6 Autoconfigure</b> is "
+"checked; enter a unique IPv6 address that is in the local network and not "
+"already used by any other computer"
+msgstr ""
+
+msgid ""
+"This and the other IPv4 settings are grayed out if <b>IPv4 DHCP</b> is "
+"checked. Enter a unique IP address that is in the local network and not "
+"already used by any other computer."
+msgstr ""
+
+msgid ""
+"This boolean option looks for the <b>exec_jail_user</b> in the system <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=passwd&sektion=5&manpath="
+"FreeBSD+11.1-RELEASE+and+Ports\" target=\"_blank\">passwd(5)</a> file "
+"instead of the file from the jail."
+msgstr ""
+
+msgid ""
+"This field displays the numeric <i>UUID</i> or custom <i>name</i> of the "
+"jail."
+msgstr ""
+
+msgid ""
+"This is only availabled when the jail is not configured to use VNET. "
+"Disables IPv4 source address selection for the prison in favor of the "
+"primary IPv4 address of the jail."
+msgstr ""
+
+msgid "This is the boot environment that will be cloned."
+msgstr ""
+
+msgid ""
+"This setting controls the availability of IPv4 addresses. Possible values "
+"are <i>inherit</i> to allow unrestricted access to all system addresses, "
+"<i>new</i> to restrict addresses with <b>ip4_addr</b>, and <i>disable</i> "
+"to stop the jail from using IPv4 entirely."
+msgstr ""
+
+msgid ""
+"This setting controls the availability of IPv6 addresses. Possible values "
+"are <i>inherit</i> to allow unrestricted access to all system addresses, "
+"<i>new</i> to restrict addresses with <b>ip4_addr</b>, and <i>disable</i> "
+"to stop the jail from using IPv6 entirely."
+msgstr ""
+
+msgid "Times"
+msgstr ""
+
+msgid "Timezone"
+msgstr ""
+
 msgid "Train"
 msgstr ""
 
+msgid "Transfer Mode"
+msgstr ""
+
 msgid "Tunables"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Type any comments about the jail."
+msgstr ""
+
+msgid ""
+"Type the IP address or DNS name of the remote         computer to receive "
+"the replication data."
+msgstr ""
+
+msgid "Type the owner of the jail. Can be any string."
+msgstr ""
+
+msgid ""
+"Typically the name of the sysctl or driver to load,       as indicated by "
+"its man page."
+msgstr ""
+
+msgid "UUID"
+msgstr ""
+
+msgid ""
+"Uncheck this to add a login prompt to the system before the console menu is "
+"shown."
+msgstr ""
+
+msgid "Uncheck to diable the task."
+msgstr ""
+
+msgid "Uncheck to disable the cron job without deleting it."
+msgstr ""
+
+msgid "Uncheck to disable the job without deleting it."
+msgstr ""
+
+msgid ""
+"Uncheck to disable the rsync task without deleteing it.       Note that "
+"when the <a href=\"http://doc.freenas.org/11/services.html#rsync\"       "
+"target=\"_blank\">Rsync</a> service is OFF, the rsync task continues to     "
+"  look for the server unless this checkbox is unchecked."
+msgstr ""
+
+msgid "Uncheck to disable the scheduled scrub without       deleting it."
+msgstr ""
+
+msgid "Uncheck to disable the tunable without deleting it."
+msgstr ""
+
+msgid "Uncheck to disable this task without deleting it."
+msgstr ""
+
+msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 
 msgid "Unix (NFS) Shares"
@@ -560,6 +2594,26 @@ msgid "Update"
 msgstr ""
 
 msgid "Update and Reboot"
+msgstr ""
+
+msgid ""
+"Use <b>Scan SSH Key</b> to retrieve the public host         key of the "
+"remote or destination computer and populate this field with         that "
+"key."
+msgstr ""
+
+msgid "Use <i>ALL</i> keyword or a list of initiator hostnames separated by spaces."
+msgstr ""
+
+msgid ""
+"Use <i>ALL</i> keyword or a network address with CIDR mask such as "
+"<i>192.168.2.0/24</i>."
+msgstr ""
+
+msgid "Use FQDN for logging"
+msgstr ""
+
+msgid "Use all disk space"
 msgstr ""
 
 msgid "User"
@@ -583,7 +2637,25 @@ msgstr ""
 msgid "VMware-Snapshots"
 msgstr ""
 
+msgid "Value"
+msgstr ""
+
+msgid "Variable"
+msgstr ""
+
 msgid "Virtualization"
+msgstr ""
+
+msgid "Vnet"
+msgstr ""
+
+msgid "Volume"
+msgstr ""
+
+msgid "Volume to be scrubbed."
+msgstr ""
+
+msgid "Volume/Dataset"
 msgstr ""
 
 msgid "Volumes"
@@ -595,7 +2667,60 @@ msgstr ""
 msgid "WebDAV Shares"
 msgstr ""
 
+msgid "WebGUI HTTP -> HTTPS Redirect"
+msgstr ""
+
+msgid "WebGUI HTTP Port"
+msgstr ""
+
+msgid "WebGUI HTTPS Port"
+msgstr ""
+
+msgid "WebGUI IPv4 Address"
+msgstr ""
+
+msgid "WebGUI IPv6 Address"
+msgstr ""
+
+msgid "Weekday"
+msgstr ""
+
+msgid "When"
+msgstr ""
+
+msgid ""
+"When <b>Syslog server</b> is defined, only logs matching this level are "
+"sent."
+msgstr ""
+
+msgid ""
+"When a <b>Sysctl</b> is added or edited, the       running kernel changes "
+"the variable to the value specified.       Note a reboot is required when a "
+"<b>Loader</b> or <b>rc.conf</b>       value is changed. Regardless of the "
+"type of tunable, changes       persist at each boot and across upgrades "
+"unless the tunable       is deleted or its <b>Enabled</b> checkbox is "
+"unchecked."
+msgstr ""
+
+msgid "When checked, the next system boot uses a debug version of the kernel."
+msgstr ""
+
+msgid ""
+"When checked, the temporary file from each updated file       is saved to a "
+"holding directory until the end of the transfer, when all       transferred "
+"files are renamed into place."
+msgstr ""
+
 msgid "Windows (SMB) Shares"
+msgstr ""
+
+msgid "Write a message to be shown when a user logs in with SSH."
+msgstr ""
+
+msgid "Write a percentage limit of a single CPU core."
+msgstr ""
+
+msgid "Xen initiator compat mode"
 msgstr ""
 
 msgid "ZFS Pool Manager"
@@ -606,4 +2731,262 @@ msgid ""
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">conventions</a>. Choose a memorable name that will stick "
 "out in the logs."
+msgstr ""
+
+msgid "allow_chflags"
+msgstr ""
+
+msgid "allow_mount"
+msgstr ""
+
+msgid "allow_mount_devfs"
+msgstr ""
+
+msgid "allow_mount_nullfs"
+msgstr ""
+
+msgid "allow_mount_procfs"
+msgstr ""
+
+msgid "allow_mount_tmpfs"
+msgstr ""
+
+msgid "allow_mount_zfs"
+msgstr ""
+
+msgid "allow_quotas"
+msgstr ""
+
+msgid "allow_raw_sockets"
+msgstr ""
+
+msgid "allow_set_hostname"
+msgstr ""
+
+msgid "allow_socket_af"
+msgstr ""
+
+msgid "allow_sysvipc"
+msgstr ""
+
+msgid "boot"
+msgstr ""
+
+msgid "bpf"
+msgstr ""
+
+msgid "children_max"
+msgstr ""
+
+msgid "comment"
+msgstr ""
+
+msgid "coredumpsize"
+msgstr ""
+
+msgid "cpuset"
+msgstr ""
+
+msgid "cputime"
+msgstr ""
+
+msgid "datasize"
+msgstr ""
+
+msgid "depends"
+msgstr ""
+
+msgid "devfs_ruleset"
+msgstr ""
+
+msgid "dhcp"
+msgstr ""
+
+msgid "enforce_statfs"
+msgstr ""
+
+msgid "exec_clean"
+msgstr ""
+
+msgid "exec_fib"
+msgstr ""
+
+msgid "exec_jail_user"
+msgstr ""
+
+msgid "exec_poststart"
+msgstr ""
+
+msgid "exec_poststop"
+msgstr ""
+
+msgid "exec_prestart"
+msgstr ""
+
+msgid "exec_prestop"
+msgstr ""
+
+msgid "exec_start"
+msgstr ""
+
+msgid "exec_stop"
+msgstr ""
+
+msgid "exec_system_jail_user"
+msgstr ""
+
+msgid "exec_system_user"
+msgstr ""
+
+msgid "exec_timeout"
+msgstr ""
+
+msgid "google cloud service"
+msgstr ""
+
+msgid "host_domainname"
+msgstr ""
+
+msgid "host_hostname"
+msgstr ""
+
+msgid "host_time"
+msgstr ""
+
+msgid "hostid"
+msgstr ""
+
+msgid "interfaces"
+msgstr ""
+
+msgid "ip4"
+msgstr ""
+
+msgid "ip4_saddrsel"
+msgstr ""
+
+msgid "ip6"
+msgstr ""
+
+msgid "ip6_saddrsel"
+msgstr ""
+
+msgid "jail_zfs"
+msgstr ""
+
+msgid "jail_zfs_dataset"
+msgstr ""
+
+msgid "jail_zfs_mountpoint"
+msgstr ""
+
+msgid "login_flags"
+msgstr ""
+
+msgid "mac_prefix"
+msgstr ""
+
+msgid "maxproc"
+msgstr ""
+
+msgid "memorylocked"
+msgstr ""
+
+msgid "memoryuse"
+msgstr ""
+
+msgid "mount_devfs"
+msgstr ""
+
+msgid "mount_fdescfs"
+msgstr ""
+
+msgid "mount_linprocfs"
+msgstr ""
+
+msgid "mount_procfs"
+msgstr ""
+
+msgid "msgqqueued"
+msgstr ""
+
+msgid "msgqsize"
+msgstr ""
+
+msgid "nmsgq"
+msgstr ""
+
+msgid "nsemop"
+msgstr ""
+
+msgid "nshm"
+msgstr ""
+
+msgid "nthr"
+msgstr ""
+
+msgid "openfiles"
+msgstr ""
+
+msgid "owner"
+msgstr ""
+
+msgid "pcpu"
+msgstr ""
+
+msgid "priority"
+msgstr ""
+
+msgid "pseudoterminals"
+msgstr ""
+
+msgid "resolver"
+msgstr ""
+
+msgid "rlimits"
+msgstr ""
+
+msgid "securelevel"
+msgstr ""
+
+msgid "shmsize"
+msgstr ""
+
+msgid "stacksize"
+msgstr ""
+
+msgid "stop_timeout"
+msgstr ""
+
+msgid "swapuse"
+msgstr ""
+
+msgid "sysvmsg"
+msgstr ""
+
+msgid "sysvsem"
+msgstr ""
+
+msgid "sysvshm"
+msgstr ""
+
+msgid "template"
+msgstr ""
+
+msgid "vmemoryuse"
+msgstr ""
+
+msgid "vnet0_mac"
+msgstr ""
+
+msgid "vnet1_mac"
+msgstr ""
+
+msgid "vnet2_mac"
+msgstr ""
+
+msgid "vnet3_mac"
+msgstr ""
+
+msgid "wallclock"
 msgstr ""
