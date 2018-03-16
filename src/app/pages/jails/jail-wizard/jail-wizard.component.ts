@@ -29,7 +29,7 @@ export class JailWizardComponent {
           type: 'input',
           name: 'uuid',
           required: true,
-          placeholder: T('Jails Name'),
+          placeholder: T('Jail Name'),
           tooltip: T('Mandatory. Can only contain alphanumeric characters,\
  dashes (-), or underscores (_).'),
           validation: [ Validators.required ],
