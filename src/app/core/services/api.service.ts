@@ -75,6 +75,21 @@ export class ApiService {
         responseEvent: "VmProfile"
       }
     },
+    VmProfileUpdate:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"vm.update",
+        args: [],// eg. [25, {"name": "Fedora", "description": "Linux", "vcpus": 1, "memory": 2048, "bootloader": "UEFI", "autostart": true}]
+        responseEvent: "VmProfileRequest"
+      },
+      postProcessor(res){
+        console.log(res);
+        let cloneRes = Object.assign({},res);
+        cloneRes = [[["id","=",res]]];// eg. [["id", "=", "foo"]]
+        return cloneRes;
+      }
+    },
     VmStatusRequest:{
       apiCall:{
         protocol:"websocket",
@@ -100,6 +115,15 @@ export class ApiService {
         namespace:"vm.stop",
         args:[],
         responseEvent:"VmStopped"
+      }
+    },
+    VmCreate:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"vm.create",
+        args:[],
+        responseEvent:"VmCreated"
       }
     },
     VmDelete:{
@@ -419,7 +443,8 @@ export class ApiService {
         if(def.postProcessor){
           res = def.postProcessor(res);
         }
-
+        console.log(call.responseEvent);
+        console.log(res);
         this.core.emit({name:call.responseEvent, data:res, sender: evt.data});
       });
     } else {

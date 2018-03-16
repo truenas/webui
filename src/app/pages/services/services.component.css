@@ -71,7 +71,7 @@ service-cards mat-card.front {
   width: 25%;
   text-align: center;
   background-color: #d0d0d0;
-  /*background-image:url('../../../../assets/images/card-bg_tech-swoosh.jpg');*/
+/*  background-image:url('/assets/images/services/services-bg-2.jpg');*/
   background-size: cover;
   background-position: 50%;
   position: absolute;

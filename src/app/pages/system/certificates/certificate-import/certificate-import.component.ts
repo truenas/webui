@@ -20,6 +20,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'system-certificate-import',
@@ -34,28 +35,28 @@ export class CertificateImportComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cert_name',
-      placeholder: 'Identifier',
-      tooltip: 'Internal identifier of the certificate.\
- Only alphanumeric, underscore (_),\
- and dash (-) characters are allowed.',
+      placeholder: T('Identifier'),
+      tooltip: T('Internal identifier of the certificate.\
+       Only alphanumeric, underscore (_),\
+       and dash (-) characters are allowed.'),
     },
     {
       type: 'textarea',
       name: 'cert_certificate',
-      placeholder: 'Certificate',
-      tooltip: 'Paste the contents of the certificate here.',
+      placeholder: T('Certificate'),
+      tooltip: T('Paste the contents of the certificate here.'),
     },
     {
       type: 'textarea',
       name: 'cert_privatekey',
-      placeholder: 'Private Key',
-      tooltip: 'Paste the contents of the private key here.',
+      placeholder: T('Private Key'),
+      tooltip: T('Paste the contents of the private key here.'),
     },
     {
       type: 'input',
       name: 'Passphrase',
-      placeholder: 'Passphrase',
-      tooltip: 'Passphrase for encrypted private keys.',
+      placeholder: T('Passphrase'),
+      tooltip: T('Passphrase for encrypted private keys.'),
       inputType: 'password',
       validation: [matchOtherValidator('Passphrase2')]
     },
@@ -63,8 +64,8 @@ export class CertificateImportComponent {
       type: 'input',
       name: 'Passphrase2',
       inputType: 'password',
-      placeholder: 'Confirm Passphrase',
-      tooltip: 'Re-enter the <i>Passphrase</i> to confirm.',
+      placeholder: T('Confirm Passphrase'),
+      tooltip: T('Re-enter the <i>Passphrase</i> to confirm.'),
     },
   ];
 

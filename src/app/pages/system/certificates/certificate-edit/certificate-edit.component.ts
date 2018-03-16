@@ -19,6 +19,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-certificate-edit',
@@ -33,21 +34,21 @@ export class CertificateEditComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cert_name',
-      placeholder: 'Identifier',
-       tooltip: 'Enter a descriptive name for the certificate using\
- only alphanumeric, underscore (_), and dash (-) characters.',
+      placeholder: T('Identifier'),
+       tooltip: T('Enter a descriptive name for the certificate using\
+        only alphanumeric, underscore (_), and dash (-) characters.'),
     },
     {
       type: 'input',
       name: 'cert_certificate',
-      placeholder: 'Certificate',
-      tooltip: 'Paste the contents of the certificate here.',
+      placeholder: T('Certificate'),
+      tooltip: T('Paste the contents of the certificate here.'),
     },
     {
       type: 'input',
       name: 'cert_privatekey',
-      placeholder: 'Private Key',
-      tooltip:'Paste the contents of the private key here.',
+      placeholder: T('Private Key'),
+      tooltip: T('Paste the contents of the private key here.'),
     }
   ];
 

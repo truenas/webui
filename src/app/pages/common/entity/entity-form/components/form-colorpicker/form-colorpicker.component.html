@@ -1,0 +1,32 @@
+<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+        <div (click)="togglePicker()" class="color-swatch" [style.background-color]="config.value"></div>
+	<mat-input-container class="full-width">
+		<input matInput (cpInputChange)="inputListener('cpInputChange', $event)" (colorPickerChange)="cpListener('cpInputChange' , $event)"
+			[placeholder]="config.placeholder"
+			[value]="config.value"
+                        [(colorPicker)]="config.value"
+                        [cpToggle]="picker"
+                        cpOutputFormat="hex"
+                        cpPosition="bottom"
+                        cpWidth="180px"
+                        [cpAlphaChannel]="disabled"
+                        [cpPositionRelativeToArrow]="true"
+                        [formControlName]="config.name">
+                </mat-input-container>
+
+                <!--<br>-->
+                <!--<label for="{{config.name}}-swatch">{{config.placeholder}}</label>-->
+                <!--<input [(colorPicker)]="config.value" placeholder="{{config.value}}" [style.background-color]="config.value" class="color-swatch-input"/>-->
+		<!--<input (cpInputChange)="inputListener('cpInputChange', $event)" (colorPickerChange)="cpListener('cpInputChange' , $event)"
+                  class="mat-input"
+		  [placeholder]="config.placeholder"
+		  [value]="config.value"
+                  [(colorPicker)]="config.value"
+                  [cpToggle]="picker"
+                  [cpOutputFormat]="hex"
+                  [cpPosition]="left"
+                  [cpPositionRelativeToArrow]="true"
+                  [formControlName]="config.name">-->
+	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+	<mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+</div>

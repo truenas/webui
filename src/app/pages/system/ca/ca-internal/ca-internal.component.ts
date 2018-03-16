@@ -23,6 +23,7 @@ import {
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'system-ca-internal',
@@ -39,16 +40,16 @@ export class CertificateAuthorityInternalComponent {
     {
       type : 'input',
       name : 'cert_name',
-      placeholder : 'Identifier',
-      tooltip: 'Enter a descriptive name for the CA using\
- only alphanumeric, underscore (_), and dash (-) characters.',
+      placeholder : T('Identifier'),
+      tooltip: T('Enter a descriptive name for the CA using\
+       only alphanumeric, underscore (_), and dash (-) characters.'),
     },
     {
       type : 'select',
       name : 'cert_key_length',
-      placeholder : 'Key Length',
-      tooltip:'For security reasons, a minimum of <i>2048</i>\
- is recommended.',
+      placeholder : T('Key Length'),
+      tooltip:T('For security reasons, a minimum of <i>2048</i>\
+       is recommended.'),
       options : [
         {label : '1024', value : 1024},
         {label : '2048', value : 2048},
@@ -58,9 +59,9 @@ export class CertificateAuthorityInternalComponent {
     {
       type : 'select',
       name : 'cert_digest_algorithm',
-      placeholder : 'Digest Algorithm',
-      tooltip: 'The default is acceptable unless your organization\
- requires a different algorithm.',
+      placeholder : T('Digest Algorithm'),
+      tooltip: T('The default is acceptable unless your organization\
+       requires a different algorithm.'),
       options : [
         {label : 'SHA1', value : 'SHA1'},
         {label : 'SHA224', value : 'SHA224'},
@@ -72,60 +73,60 @@ export class CertificateAuthorityInternalComponent {
     {
       type : 'input',
       name : 'cert_lifetime',
-      placeholder : 'Lifetime',
-      tooltip: 'The lifetime of the CA is specified in days.',
+      placeholder : T('Lifetime'),
+      tooltip: T('The lifetime of the CA is specified in days.'),
       inputType: 'number',
       validation: [Validators.required, Validators.min(0)]
     },
     {
       type : 'select',
       name : 'cert_country',
-      placeholder : 'Country',
-      tooltip: 'Select the country for the organization.',
+      placeholder : T('Country'),
+      tooltip: T('Select the country for the organization.'),
       options : [
       ],
     },
     {
       type : 'input',
       name : 'cert_state',
-      placeholder : 'State',
-      tooltip: 'Enter the state or province of the\
- organization.',
+      placeholder : T('State'),
+      tooltip: T('Enter the state or province of the\
+       organization.'),
     },
     {
       type : 'input',
       name : 'cert_city',
-      placeholder : 'Locality',
-      tooltip: 'Enter the location of the organization.',
+      placeholder : T('Locality'),
+      tooltip: T('Enter the location of the organization.'),
     },
     {
       type : 'input',
       name : 'cert_organization',
-      placeholder : 'Organization',
-      tooltip: 'Enter the name of the company or\
- organization.',
+      placeholder : T('Organization'),
+      tooltip: T('Enter the name of the company or\
+       organization.'),
     },
     {
       type : 'input',
       name : 'cert_email',
-      placeholder : 'Email',
-      tooltip: 'Enter the email address for the person\
- responsible for the CA.',
+      placeholder : T('Email'),
+      tooltip: T('Enter the email address for the person\
+       responsible for the CA.'),
       validation : [ Validators.email ]
     },
     {
       type : 'input',
       name : 'cert_common',
-      placeholder : 'Common Name',
-      tooltip: 'Enter the fully-qualified hostname (FQDN) of the\
- system. This name **must** be unique within a certificate\
- chain.',
+      placeholder : T('Common Name'),
+      tooltip: T('Enter the fully-qualified hostname (FQDN) of the\
+       system. This name **must** be unique within a certificate\
+       chain.'),
     },
     {
       type : 'textarea',
       name : 'cert_san',
-      placeholder: 'Subject Alternate Names',
-      tooltip: 'Multi-domain support. Enter additional space separated domains.'
+      placeholder: T('Subject Alternate Names'),
+      tooltip: T('Multi-domain support. Enter additional space separated domains.')
     }
   ];
 

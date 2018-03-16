@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {RestService, WebSocketService} from '../../../../services/';
-
+import { T } from '../../../../translate-marker';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -33,9 +33,9 @@ export class BootEnvironmentCreateComponent {
         {
           type: 'input',
           name: 'name',
-          placeholder: 'Name',
-          tooltip: 'Enter the name of the boot entry as it will appear\
- in the boot menu.',
+          placeholder: T('Name'),
+          tooltip: T('Enter the name of the boot entry as it will appear\
+           in the boot menu.'),
         },
       ];
     });

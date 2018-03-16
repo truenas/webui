@@ -15,7 +15,9 @@ import { ReplicationListComponent } from 'app/pages/task-calendar/replication/re
 import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/replication-form';
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
-
+import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component'; 
+import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync-delete.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -26,6 +28,27 @@ export const TaskCalendarRoutes: Routes = [{
   //   component: TaskCalendarComponent,
   //   data: { title: 'Calendar', breadcrumb: 'Calendar' }
   // }, 
+  {
+    path: 'cloudsync',
+    data: {title: 'Cloud Sync', breadcrumb: 'Cloud Sync'},
+    children: [{
+      path: '',
+      component: CloudsyncListComponent,
+      data: { title: 'Cloud Sync', breadcrumb: 'Cloud Sync'} 
+    }, {
+      path: 'add',
+      component: CloudsyncFormComponent,
+      data: { title: 'Add', breadcrumb: 'Add'}
+    }, {
+      path: 'edit/:pk',
+      component: CloudsyncFormComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
+    }, {
+      path: 'delete/:pk',
+      component: CloudsyncDeleteComponent,
+      data: { title: 'Edit', breadcrumb: 'Edit' }
+    }]
+  },
   {
     path: 'cron',
     data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },

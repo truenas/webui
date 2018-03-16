@@ -551,8 +551,10 @@ body .mat-select-trigger {
     transition-timing-function: linear;
 }
 .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell {
-    padding: .9rem .6rem;
-    line-height: 0rem;
+    /*padding: .9rem .6rem;
+    line-height: 0rem;*/
+    padding:0 16px;
+    line-height: 2.2rem;
     border-bottom: 1px solid rgba(0,0,0, 0.08);
     overflow: hidden;
 }

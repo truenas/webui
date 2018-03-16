@@ -7,6 +7,7 @@ import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-
 import * as _ from 'lodash';
 import { JailService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
+import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
 
 @Component({
@@ -28,9 +29,10 @@ export class JailWizardComponent {
           type: 'input',
           name: 'uuid',
           required: true,
-          placeholder: T('Jails Name'),
+          placeholder: T('Jail Name'),
           tooltip: T('Mandatory. Can only contain alphanumeric characters,\
  dashes (-), or underscores (_).'),
+          validation: [ Validators.required ],
         },
         {
           type: 'select',
@@ -73,6 +75,7 @@ export class JailWizardComponent {
  interface format:\
  <b>interface|ip-address/netmask,interface|ip-address/netmask</b>.\
  Example: <b>vnet0|192.168.0.10/24</b>'),
+          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -105,6 +108,7 @@ export class JailWizardComponent {
  interface format:\
  <i>interface|ip-address/netmask,interface|ip-address/netmask</i>.\
  Example: <b>re0|2001:0db8:85a3:0000:0000:8a2e:0370:7334/24</b>'),
+          validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
         },
         {
           type: 'input',

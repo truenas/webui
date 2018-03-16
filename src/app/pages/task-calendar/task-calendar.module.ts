@@ -24,6 +24,9 @@ import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/re
 import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
+import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component'; 
+import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync-delete.component';
 
 
 @NgModule({
@@ -52,7 +55,10 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
     ReplicationListComponent,
     ReplicationFormComponent,
     ScrubListComponent,
-    ScrubFormComponent
+    ScrubFormComponent,
+    CloudsyncListComponent,
+    CloudsyncFormComponent,
+    CloudsyncDeleteComponent
   ],
   providers: [ ReplicationService ]
 })
