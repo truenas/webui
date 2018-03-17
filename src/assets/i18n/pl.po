@@ -158,6 +158,9 @@ msgstr ""
 msgid "Allow configuring a non-standard port to access the GUI over <i>HTTPS</i>."
 msgstr ""
 
+msgid "Allow repeated GIDs"
+msgstr ""
+
 msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname&manpath=FreeBSD+11"
@@ -170,6 +173,16 @@ msgid ""
 "Allows different groups to be configured with different authentication "
 "profiles. For instance, all users with a group ID of <i>1</i> will inherit "
 "the authentication profile associated with Group <i>1</i>."
+msgstr ""
+
+msgid ""
+"Allows group members to use <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-"
+"RELEASE+and+Ports\" target=\"_blank\">sudo</a>. While using <b>sudo</b>, a "
+"user is prompted for their own password."
+msgstr ""
+
+msgid "Allows multiple groups to share the same group ID."
 msgstr ""
 
 msgid ""
@@ -883,6 +896,9 @@ msgid ""
 "a specific RPM is needed for accurate reporting statistics."
 msgstr ""
 
+msgid "Edit"
+msgstr ""
+
 msgid "Email"
 msgstr ""
 
@@ -1142,6 +1158,9 @@ msgstr ""
 msgid "Enter the username if the SMTP server requires       authentication."
 msgstr ""
 
+msgid "Entering a name is required"
+msgstr ""
+
 msgid "Entering a name is required. Spaces are allowed."
 msgstr ""
 
@@ -1213,6 +1232,9 @@ msgid "From E-mail"
 msgstr ""
 
 msgid "Full Name"
+msgstr ""
+
+msgid "GID"
 msgstr ""
 
 msgid "GUI SSL Certificate"
@@ -1537,6 +1559,9 @@ msgid ""
 msgstr ""
 
 msgid "Member Disk"
+msgstr ""
+
+msgid "Members"
 msgstr ""
 
 msgid "Microsoft Account"
@@ -2404,6 +2429,13 @@ msgstr ""
 msgid ""
 "The <b>full path</b> to the command or script to be run.     If it is a "
 "script, test it at the command line to ensure it works."
+msgstr ""
+
+msgid ""
+"The Group ID (GID) is a unique number used to identify a Unix group. By "
+"convention, groups with user accounts have IDs above 1000, and groups used "
+"by a service have an ID number that matches the default port number used by "
+"the service. For example, the sshd group has an ID of 22."
 msgstr ""
 
 msgid "The cron job occurs at the specified hours."

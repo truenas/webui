@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -19,32 +20,32 @@ export class GroupFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'bsdgrp_gid',
-      placeholder: 'GID',
-      tooltip: 'The Group ID (GID) is a unique number used to identify\
+      placeholder: T('GID'),
+      tooltip: T('The Group ID (GID) is a unique number used to identify\
  a Unix group. By convention, groups with user accounts\
  have IDs above 1000, and groups used by a service have\
  an ID number that matches the default port number used by the service.\
- For example, the sshd group has an ID of 22.',
+ For example, the sshd group has an ID of 22.'),
     },
     {
       type: 'input',
       name: 'bsdgrp_group',
-      placeholder: 'Name',
-      tooltip: 'Entering a name is required',
+      placeholder: T('Name'),
+      tooltip: T('Entering a name is required'),
     },
     {
       type: 'checkbox',
       name: 'bsdgrp_sudo',
-      placeholder: 'Permit Sudo',
-      tooltip: 'Allows group members to use\
+      placeholder: T('Permit Sudo'),
+      tooltip: T('Allows group members to use\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank">sudo</a>.\
- While using <b>sudo</b>, a user is prompted for their own password.',
+ While using <b>sudo</b>, a user is prompted for their own password.'),
     },
     {
       type: 'checkbox',
       name: 'allow',
-      placeholder: 'Allow repeated GIDs',
-      tooltip: 'Allows multiple groups to share the same group ID.',
+      placeholder: T('Allow repeated GIDs'),
+      tooltip: T('Allows multiple groups to share the same group ID.'),
       disabled: false
     },
   ];
