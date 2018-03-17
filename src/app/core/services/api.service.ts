@@ -21,6 +21,15 @@ interface ApiDefinition {
 export class ApiService {
 
   private apiDefinitions = {
+    UserDataRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"user.query",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "UserData"
+      }
+    },
     PoolDataRequest:{
       apiCall:{
         protocol:"rest",
@@ -349,6 +358,9 @@ export class ApiService {
   } 
 
   constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
+    this.ws.authStatus.subscribe((evt:any) =>{
+      this.core.emit({name:"Authenticated",data:evt});
+    });
     console.log("*** New Instance of API Service ***");
     this.registerDefinitions();
   }

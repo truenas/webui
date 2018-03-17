@@ -164,33 +164,42 @@ export class ThemeService {
   ];
 
   savedUserTheme:string = "";
+  private loggedIn:boolean;
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService) {
     console.log("*** New Instance of Theme Service ***");
-    if(this.ws.loggedIn){
-      this.rest.get("account/users/1", {}).subscribe((res) => {
-        console.log(res.data.bsdusr_attributes.usertheme);
-        this.savedUserTheme = res.data.bsdusr_attributes.usertheme;
+    this.core.register({observerClass:this,eventName:"Authenticated"}).subscribe((evt:CoreEvent) => {
+      this.loggedIn = evt.data;
+      if(this.loggedIn == true){
+        this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });
+      } else {
+        console.warn("SETTING DEFAULT THEME");
+        this.setDefaultTheme();
+      }
+    });
 
-        // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
-        // the default in the middleware. This is a workaround until that
-        // default value can be changed
-        if(this.savedUserTheme == "egret-blue"){
-          //this.savedUserTheme = "ix-blue";
-          this.activeTheme = "ix-blue";
-        } else {
-          this.activeTheme = this.savedUserTheme;
-        }
-        //this.setCssVars(this.findTheme(this.activeTheme));
+    this.core.register({observerClass:this,eventName:"UserData"}).subscribe((evt:CoreEvent) => {
+      console.warn("SETTING USER THEME");
+      console.log(evt);
+      this.savedUserTheme = evt.data[0].attributes.usertheme;
 
-        },
-      (err) => {
-        //this.changeTheme(this.activeTheme);
-        console.log(err);
-      });
-    } 
+      // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
+      // the default in the middleware. This is a workaround until that
+      // default value can be changed
+      if(this.savedUserTheme == "egret-blue"){
+        //this.savedUserTheme = "ix-blue";
+        this.activeTheme = "ix-blue";
+      } else {
+        this.activeTheme = this.savedUserTheme;
+      }
+      console.log(this.activeTheme);
+      this.setCssVars(this.findTheme(this.activeTheme));
+    });
+  }
+
+  setDefaultTheme(){
+    this.activeTheme = "ix-blue";
     this.changeTheme(this.activeTheme);
-
   }
 
   currentTheme():Theme{
@@ -228,19 +237,19 @@ export class ThemeService {
     this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
       console.log("Saved usertheme:", res, theme.name);
     });
-    }
-
-    setCssVars(theme:Theme){
-      let palette = Object.keys(theme);
-      palette.splice(0,7);
-
-      palette.forEach(function(color){
-        let swatch = theme[color];
-        (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
-      });
-      (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
-      (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
-    }
-
   }
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  setCssVars(theme:Theme){
+    let palette = Object.keys(theme);
+    palette.splice(0,7);
+
+    palette.forEach(function(color){
+      let swatch = theme[color];
+      (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
+    });
+    (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
+    (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+  }
+
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
