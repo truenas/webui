@@ -34,10 +34,10 @@
       <mat-grid-list class="theme-list" cols="1" rowHeight="24px">
         <mat-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme.name)">
           <div mat-menu-item [title]="theme.label">
-            <div [style.background]="theme.bg2" class="egret-swatch"></div>
-            <mat-icon class="active-icon" *ngIf="theme && theme.name == currentTheme">check</mat-icon>
+            <div [style.background]="theme[theme.labelSwatch]" class="egret-swatch"></div>
+            <mat-icon class="active-icon" *ngIf="theme.name == themeService.activeTheme">check</mat-icon>
           </div>
-          <span style="cursor: pointer;"  class="mat-color-accent text-muted text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
+          <span style="cursor: pointer;"  class="text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
         </mat-grid-tile>
       </mat-grid-list>
     </mat-menu>
