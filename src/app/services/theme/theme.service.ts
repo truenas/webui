@@ -7,6 +7,7 @@ export interface Theme {
   name: string;
   description:string;
   label: string;
+  labelSwatch?: string;
   //baseColor: string;
   accentColors: string[];
   //isActive?: boolean;
@@ -36,6 +37,7 @@ export interface Theme {
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
   public activeTheme: string = 'ix-blue';
+  public activeThemeSwatch: string[];
 
   public freenasThemes: Theme[] = [
     /*{
@@ -49,6 +51,7 @@ export class ThemeService {
     {
       name:'ix-blue',
       label: "iX Blue",
+      labelSwatch:"blue",
       description:'iX System Colors',
       hasDarkLogo:false,
       favorite:false,
@@ -75,6 +78,7 @@ export class ThemeService {
     {
       name:'dracula',
       label: "Dracula",
+      labelSwatch:"blue",
       description:'Dracula color theme',
       hasDarkLogo:false,
       favorite:false,
@@ -101,12 +105,13 @@ export class ThemeService {
     {
       name:'solarized-dark',
       label: "Solarized Dark",
+      labelSwatch:"bg2",
       description:'Solarized dark color scheme',
       hasDarkLogo:false,
       favorite:false,
       accentColors:['red', 'blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow'],
       primary:"var(--fg1)",
-      accent:"var(--blue)",
+      accent:"var(--cyan)",
       bg1:'#002b36',
       bg2:'#073642',
       fg1:'#586e75',

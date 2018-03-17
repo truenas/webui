@@ -9,14 +9,14 @@
 }
 
 // Solarized Color Palette - don't forget to add accents to theme.service!
-$bg1:    #dddddd; // Dark BG tone
-$bg2:    #ffffff; // Dark BG tone
-$fg1:    #222222; // Dark Content tone
-$fg2:    #333333; // Dark Content tone
-$alt-bg1:     #f8f8f2; // Light Content tone
-$alt-bg2:     #fafaf5; // Light Content tone
-$alt-fg1:     #181a26; // Light BG tone
-$alt-fg2:     #282a36; // Light BG tone
+$bg1:    #dddddd; // Canvas like behind the cards
+$bg2:    #ffffff; // Main elements like cards
+$fg1:    #222222; // brighter fonts
+$fg2:    #333333; // normal fonts
+$alt-bg1:     #f8f8f2; // Tables
+$alt-bg2:     #fafaf5; // Menus
+$alt-fg1:     #181a26; // Tables
+$alt-fg2:     #282a36; // Menus
 $yellow:'#f0cb00';
 $orange:'#eec302';
 $red:'#ff0013';
@@ -260,17 +260,21 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-drawer,
 .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
 .mat-card,.mat-paginator,
+.mat-button-toggle,
 .mat-select-content, 
 .mat-select-panel-done-animating,
 .mat-expansion-panel,
 .mat-stepper-horizontal, .mat-stepper-vertical,
 .dx-treelist-container{
   @include variable(background, --bg2, $bg2);
-  @include variable(color, --fg1, $fg1);
+  @include variable(color, --fg2, $fg2);
 }
-
+.mat-button-toggle-checked{
+  background-color:rgba(0,0,0,0.1);
+  @include variable(color, --fg2, $fg2); 
+}
 .ngx-datatable .datatable-body .datatable-row-wrapper{
-  @include variable(background, --alt-bg2, $alt-bg2);
+  @include variable(background, --alt-bg1, $alt-bg1);
   @include variable(color, --alt-fg1, $alt-fg1);
 }
 
@@ -279,7 +283,10 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-expansion-panel-header-title,
 .mat-expansion-panel-header-description, 
 .mat-expansion-indicator,
-.mat-list .mat-list-item, 
+.mat-list .mat-list-item,
+.mat-menu-panel button,
+.mat-paginator-navigation-next, .mat-paginator-navigation-previous,
+.mat-expansion-panel span.mat-expansion-indicator,
 .mat-nav-list .mat-list-item, 
 .mat-form-field-label,
 .mat-selection-list .mat-list-item,.mat-option,
@@ -287,8 +294,11 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(color, --fg2, $fg2);
 }
 
-.mat-option.mat-active{
-  @include variable(color, --fg1, $fg1);
+.mat-menu-panel,
+.mat-option.mat-active,
+.mat-nav-list a{
+  @include variable(background, --bg2, $bg2);
+  @include variable(color, --fg2, $fg2, !important);
 }
 
 .mat-form-field-underline{
@@ -300,17 +310,58 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
 .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
 .mat-focused .mat-form-field-label{
-  @include variable(color, --primary, $primary);
+  @include variable(color, --primary, $primary, !important);
 }
 
 .mat-form-field-ripple{
   @include variable(background-color, --primary, $primary);
 }
 
-.ix-blue .mat-input-element:disabled{
+.mat-input-element:disabled{
   opacity:0.38;
   @include variable(color, --fg2, $fg2);
 }
+
+.egret-swatch,
+.mat-checkbox-frame{ 
+  @include variable(border-color, --fg2, $fg2);
+}
+
+
+// Treelists in storage/volumes
+.global_volume_based_action_menu{
+  position:absolute;
+  top:16px;
+  right:16px;
+}
+.mat-expansion-panel-header{
+  background-color:rgba(0,0,0,0.1);
+}
+.mat-expansion-panel-body{
+  //background-color:rgba(0,0,0,0.15);
+  position:relative;
+}
+.dx-treelist-container{
+  background:transparent;
+}
+.dx-treelist-headers{
+  border-bottom:none;
+}
+
+.dx-treelist-rowsview{
+  border:0;
+}
+
+.dx-treelist .dx-column-lines> td{
+  border-left:solid 1px rgba(128,128,128,0.1);
+  border-right:none;
+}
+
+.dx-treelist .dx-row-lines > td{
+  border-color: rgba(128,128,128,0.1);
+}
+
+
 /////////////////// END SpecSelectors
 
     
