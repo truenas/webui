@@ -379,10 +379,21 @@ export class VmCardsComponent implements OnInit {
             this.dialogRef.componentInstance.success.subscribe((sucess_res) => {
               this.loader.open();
               this.ws.call('vm.image_path', ['RancherOS']).subscribe((img_path)=>{
+                if(!img_path){
+                  this.dialog.Info('CHECKSUM MISMATCH', 'system checks failed to verify ISO, please try rebooting Virtual Machine');
+                  this.loader.close();
+                  return;
+                };
                 this.ws.call('vm.decompress_gzip',[img_path, this.raw_file_path]).subscribe((decompress_gzip)=>{
                   this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe((raw_resize)=>{
                     this.ws.call('vm.start',[this.cards[index].id]).subscribe((vm_start)=>{
                         this.loader.close();
+                        if(!vm_start){
+                          this.dialog.Info('ERROR', 'vm failed to start, please check system log.');
+                          return;
+                        }
+                        this.refreshVM(index, this.cards[index].id);
+
                       });
                     },
                     (error_raw_resize)=>{
@@ -393,16 +404,14 @@ export class VmCardsComponent implements OnInit {
                   this.loader.close();
                   new EntityUtils().handleError(this, decompress_gzip);
               });
-              },(img_path)=>{
+              },(error_img_path)=>{
                 this.loader.close();
-                new EntityUtils().handleError(this, img_path);
+                new EntityUtils().handleError(this, error_img_path);
               });
               this.dialogRef.close(false);
               this.dialogRef.componentInstance.setDescription("");
             });
-            this.dialogRef.componentInstance.failure.subscribe((failed_res) => {
-              this.dialog.errorReport(failed_res.error, failed_res.failed_res, failed_res.exception);
-            });
+            this.dialogRef.componentInstance.failure.subscribe((failed_res) => {});
           }
           else {
             eventName = "VmStart";
