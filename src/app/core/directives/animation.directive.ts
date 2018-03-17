@@ -34,7 +34,7 @@ export class AnimationDirective implements OnChanges{
 
   ngOnChanges(changes){
     this.parent = this.elRef.nativeElement;
-    this.elStyler = styler(this.parent); // fixme: passing empty props for now to fix the build
+    this.elStyler = styler(this.parent, {}); // fixme: passing empty props for now to fix the build
 
     if(changes.animation){
       this.animate();
