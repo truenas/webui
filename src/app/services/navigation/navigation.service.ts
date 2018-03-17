@@ -77,6 +77,7 @@ export class NavigationService {
         { name: T('Periodic Snapshot Tasks'), state: 'snapshot' },
         { name: T('Replication Tasks'), state: 'replication' },
         { name: T('Scrub Tasks'), state: 'scrub' },
+        { name: T('Cloud Sync'), state: 'cloudsync'},
       ]
     },
     {

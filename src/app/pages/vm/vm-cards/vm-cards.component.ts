@@ -34,9 +34,9 @@ interface VmProfile {
   devices?:any,
   template?:string; // for back face of card
   cardActions?:Array<any>;
-  isNew:boolean;
   vm_type?: string;
   vm_comport?:string
+  isNew?:boolean;
 }
 
 @Component({
@@ -56,7 +56,7 @@ export class VmCardsComponent implements OnInit {
   public raw_file_path: string;
   public raw_file_path_size: string;
 
-
+  public controlEvents:Subject<CoreEvent> = new Subject();
   public tpl = "edit";
   //private pwrBtnLabel: string;
   private pwrBtnOptions = {
@@ -71,7 +71,39 @@ export class VmCardsComponent implements OnInit {
     
   ngOnInit() {
     this.viewMode.value = "cards";
+    /*
+     * Communication Downwards:
+     * Listen for events from UI controls
+     * */
+    
+    this.controlEvents.subscribe((evt:CoreEvent) => {
+      const index = this.getCardIndex("id",evt.sender.machineId);
+      switch(evt.name){
+        case "FormSubmitted":
+          //evt.data.autostart = evt.data.autostart.toString();
+          if(evt.sender.isNew){
+            const i = this.getCardIndex('isNew',true);
+            this.cards[i].name = evt.data.name;
+            this.cards[i].state = "Loading...";
+            this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
+          } else {
+            const formValue = this.parseResponse(evt.data,true);
+            this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
+            this.toggleForm(false,this.cards[index],'none');
+            //this.refreshVM(index,evt.sender.machineId);
+          }
+        break;
+        case "FormCancelled":
+
+          this.cancel(index);
+        break;
+      default:
+      break;
+      }
+    });
+
     /* 
+     * Communication Upwards:
      * Register the component with the EventBus 
      * and subscribe to the observable it returns
      */
@@ -114,6 +146,12 @@ export class VmCardsComponent implements OnInit {
       this.cache[cacheIndex].state = 'stopped';
     });
 
+    this.core.register({observerClass:this,eventName:"VmCreated"}).subscribe((evt:CoreEvent) => {
+      const index = this.getCardIndex('isNew', true);
+      this.toggleForm(false,this.cards[index],'none');
+      this.core.emit({name:"VmProfilesRequest"});
+    });
+
     this.core.register({observerClass:this,eventName:"VmDeleted"}).subscribe((evt:CoreEvent) => {
       this.removeVM(evt); // Workaround: sender returns the request params
     });
@@ -154,15 +192,12 @@ export class VmCardsComponent implements OnInit {
     }
   }
 
-  parseResponse(data){
+  parseResponse(data:any, formatForUpdate?:boolean){
     const card: VmProfile = { 
       name:data.name,
-      id:data.id,
       description:data.description,
       info:data.info,
       bootloader:data.bootloader,
-      state:"Checking...",
-      //state:data.state.toLowerCase(),
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
@@ -175,6 +210,18 @@ export class VmCardsComponent implements OnInit {
       vm_type: data.vm_type,
       vm_comport:'/dev/nmdm' +String(data.id)+ 'B'
     }   
+
+    // Leave out properties not used for update requests
+    if(formatForUpdate){
+      return card;
+    }
+    card.id = data.id;
+    card.state = "Loading...";
+    card.vnc = false; // Until we verify otherwise we assume false
+    card.lazyLoaded = false;
+    card.template = 'none';
+    card.isNew = false;
+    //cardActions:[]
     if(card.devices.length > 0){
       card.vnc = this.checkVnc(card.devices);
     }

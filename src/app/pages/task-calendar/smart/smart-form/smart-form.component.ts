@@ -8,6 +8,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { TaskService, StorageService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'smart-test-add',
@@ -24,32 +25,32 @@ export class SmartFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'smarttest_disks',
-      placeholder: 'Disks',
-      tooltip : 'Highlight disks to monitor.',
+      placeholder: T('Disks'),
+      tooltip : T('Highlight disks to monitor.'),
       options: [],
       multiple: true,
     }, {
       type: 'select',
       name: 'smarttest_type',
-      placeholder: 'Type',
-      tooltip : 'Select type of test to run. See\
- <a\
- href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
- target="_blank">smartctl(8)</a> for a description of each type of test\
- (note that some test types will degrade performace or take disks\
- offline. Do not schedule S.M.A.R.T. tests at the same time as a scrub\
- or during a resilver operation).',
+      placeholder: T('Type'),
+      tooltip : T('Select type of test to run. See\
+       <a\
+       href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
+       target="_blank">smartctl(8)</a> for a description of each type of test\
+       (note that some test types will degrade performace or take disks\
+       offline. Do not schedule S.M.A.R.T. tests at the same time as a scrub\
+       or during a resilver operation).'),
       options: [],
     }, {
       type: 'input',
       name: 'smarttest_desc',
-      placeholder: 'Short description',
-      tooltip : 'Optional.',
+      placeholder: T('Short description'),
+      tooltip : T('Optional.'),
     },
     {
       type: 'task',
       name: 'smarttest_hour',
-      placeholder: 'Hour',
+      placeholder: T('Hour'),
       tabs: [{
         type: 'slider',
         name: 'smarttest_hour_slider',
@@ -66,7 +67,7 @@ export class SmartFormComponent {
     {
       type: 'task',
       name: 'smarttest_daymonth',
-      placeholder: 'Day of month',
+      placeholder: T('Day of month'),
       tabs: [{
         type: 'slider',
         name: 'smarttest_daymonth_slider',
@@ -83,14 +84,14 @@ export class SmartFormComponent {
     {
       type: 'togglebutton',
       name: 'smarttest_month',
-      placeholder: 'Month',
+      placeholder: T('Month'),
       multiple: true,
       options: []
     },
     {
       type: 'togglebutton',
       name: 'smarttest_dayweek',
-      placeholder: 'Day of week',
+      placeholder: T('Day of week'),
       multiple: true,
       options: []
     }

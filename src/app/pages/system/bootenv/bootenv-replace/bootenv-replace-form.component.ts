@@ -12,7 +12,7 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Rx';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-
+import { T } from '../../../../translate-marker';
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 import { debounce } from 'rxjs/operator/debounce';
@@ -38,7 +38,7 @@ export class BootEnvReplaceFormComponent {
     {
       type: 'select', 
       name: 'dev', 
-      placeholder: 'Member Disk',
+      placeholder: T('Member Disk'),
       options :[]
     },
 

@@ -19,6 +19,8 @@ import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService} from '../../../../services/';
+import { CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs/Subject';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
@@ -34,8 +36,10 @@ import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-
 export interface Formconfiguration {
   fieldSets?;
   fieldSetDisplay?;
+  values?;
   saveSubmitText?;
   preInit?;
+  target?: Subject<CoreEvent>;
   resource_name?;
   isEntity?;
   addCall?;
@@ -87,13 +91,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   @Input('conf') conf: Formconfiguration;
 
-  protected pk: any;
+  public pk: any;
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
-  protected resourceName: string;
+  public resourceName: string;
   public getFunction;
   public submitFunction = this.editSubmit;
-  private isNew = false;
+  public isNew = false;
   public hasConf = true;
   public wsResponse;
   public wsfg;
@@ -156,7 +160,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.pk = params['pk'];
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
-            this.submitFunction = this.editCall;
+            this.submitFunction = this.editCall;  // this is strange so iM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+                                                  // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
             this.submitFunction = this.editSubmit;
             this.resourceName = this.resourceName + this.pk + '/';
@@ -191,7 +196,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             filter.push(this.conf.queryCallOption);
           }
           if (this.conf.customFilter){
-            filter = this.conf.customFilter
+            filter = this.conf.customFilter;
           }
           this.getFunction = this.ws.call(this.conf.queryCall, filter);
         } else {
@@ -226,6 +231,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           } else {
             this.queryResponse = res;
             this.wsResponse = res[0];
+
+            if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
+              this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
+            }
+
             for (const i in this.wsResponse){
               this.wsfg = this.formGroup.controls[i];
               this.wsResponseIdx = this.wsResponse[i];

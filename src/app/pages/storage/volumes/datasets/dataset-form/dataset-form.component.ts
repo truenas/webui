@@ -7,41 +7,71 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
+import { DialogService } from 'app/services/dialog.service';
+
+
+
+interface DatasetFormData {
+  name: string;
+  comments: string;
+  sync: string;
+  compression: string;
+  atime: string;
+  refquota: string;
+  quota: string;
+  refreservation: string;
+  reservation: string;
+  deduplication: string;
+  readonly: string;
+  snapdir: string;
+  copies: string;
+  recordsize: string;
+  casesensitivity: string;
+};
+
 
 @Component({
-  selector : 'app-dataset-form',
-  templateUrl : './dataset-form.component.html',
-  providers: [ EntityFormService ],
+  selector: 'app-dataset-form',
+  template: '<entity-form [conf]="this"></entity-form>'
 })
-export class DatasetFormComponent implements OnInit{
+export class DatasetFormComponent implements Formconfiguration {
 
-  protected volid: string;
+  public volid: string;
   public sub: Subscription;
-  public route_success: string[] = [ 'storage', 'volumes' ];
-  protected isBasicMode: boolean = true;
+  public route_success: string[] = ['storage', 'volumes'];
+  public isBasicMode: boolean = true;
+  public pk: any;
+  
 
-  protected resourceName: string;
-  protected parent: string;
-  public submitFunction = this.editSubmit;
-  private isNew: boolean = false;
-  public formGroup: FormGroup;
-  protected data: any;
-  protected parent_data: any;
+  public customFilter: any[] = [];
 
-  public error: string;
-  public success: boolean = false;
-  public busy: Subscription;
+  //public resource_name = "storage/volume";
 
+  public queryCall = "pool.dataset.query";
+  //public addCall = "pool.dataset.create";
+  //public editCall = "pool.dataset.update";
+  public isEntity: boolean = true;
+  public isNew: boolean = false;
+
+
+  public parent: string;
+  public data: any;
+  public parent_data: any;
+
+  
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
       placeholder: 'Name',
       tooltip: 'Mandatory; enter a unique name for the dataset.',
-      validation : [ Validators.required ]
-    }, 
+      readonly: true,
+      validation: [Validators.required]
+    },
     {
       type: 'input',
       name: 'comments',
@@ -52,7 +82,7 @@ export class DatasetFormComponent implements OnInit{
       type: 'select',
       name: 'sync',
       placeholder: 'sync',
-      tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">Deduplication</a>\
+      tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.',
       options: [
         { label: 'STANDARD', value: 'STANDARD' },
@@ -60,7 +90,7 @@ export class DatasetFormComponent implements OnInit{
         { label: 'DISABLED', value: 'DISABLED' }
       ],
     },
-    {  
+    {
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level',
@@ -95,8 +125,7 @@ export class DatasetFormComponent implements OnInit{
       placeholder: 'Quota for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space.',
-      value: 0,
+ size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'
     },
     {
       type: 'input',
@@ -104,8 +133,7 @@ export class DatasetFormComponent implements OnInit{
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets.',
-      value: 0,
+ value applies to both this dataset and any child datasets. 0 == Unlimited.'
     },
     {
       type: 'input',
@@ -114,8 +142,7 @@ export class DatasetFormComponent implements OnInit{
       placeholder: 'Reserved space for this dataset',
       tooltip: 'Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space',
-      value: 0,
+ which could take up all available free space.  0 == Unlimited.'
     },
     {
       type: 'input',
@@ -123,13 +150,13 @@ export class DatasetFormComponent implements OnInit{
       name: 'reservation',
       placeholder: 'Reserved space for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets.',
-      value: 0,
+ value applies to both this dataset and any child datasets. 0 == Unlimited.'
     },
     {
       type: 'select',
       name: 'deduplication',
-      placeholder: 'Deduplication',
+      label: 'ZFS deplication',
+      placeholder: 'ZFS Deduplication',
       tooltip: 'Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.',
       options: [
@@ -171,6 +198,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '2', value: '2' },
         { label: '3', value: '3' }
       ],
+      value: 1
     },
     {
       type: 'select',
@@ -207,10 +235,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: 'MIXED', value: 'MIXED' }
       ],
     }
-   
+
   ];
 
-  protected advanced_field: Array<any> = [
+  public advanced_field: Array<any> = [
     'refquota',
     'quota',
     'refreservation',
@@ -221,200 +249,137 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     'recordsize',
   ];
 
+  public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
+
+    if( this.isNew === false ) {
+        delete data.name;
+    } else {
+      data.name = this.parent + "/" + data.name;
+    }
+
+    if( this.isBasicMode === true ) {
+      data.refquota = null;
+      data.quota = null;
+      data.refreservation = null;
+      data.reservation = null;
+      data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
+
+      
+    } 
+
+    return data;
+  }
+
+
   public custActions: Array<any> = [
     {
-      id : 'basic_mode',
-      name : 'Basic Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      id: 'basic_mode',
+      name: 'Basic Mode',
+      function: () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
-      id : 'advanced_mode',
-      name : 'Advanced Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
+      id: 'advanced_mode',
+      name: 'Advanced Mode',
+      function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
 
-  protected RecordSizeMap: any = {
-    '512': '512',
-    '1024': '1K',
-    '2048': '2K',
-    '4096': '4K',
-    '8192': '8K',
-    '16384': '16K',
-    '32768': '32K',
-    '65536': '64K',
-    '131072': '128K',
-    '262144': '256K',
-    '524288': '512K',
-    '1048576': '1024K',
-  };
-
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService, 
-              protected entityFormService: EntityFormService,
-              protected loader: AppLoaderService) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected loader: AppLoaderService, protected dialogService: DialogService ) { }
 
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
-      return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
-      return false;
+
+
+  afterInit(entityForm: EntityFormComponent) {
+
+  }
+
+  preInit(entityForm: EntityFormComponent) {
+    let paramMap: any = (<any>this.aroute.params).getValue();
+
+    this.volid = paramMap['volid'];
+
+    if (paramMap['pk'] !== undefined) {
+      this.pk = paramMap['pk'];
+
+      let pk_parent = paramMap['pk'].split('/');
+      this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
+      this.fieldConfig.pop();
+      this.customFilter = [[['id', '=', this.pk]]];
     }
-    return true;
+    // add new dataset
+    if (paramMap['parent'] || paramMap['pk'] === undefined) {
+      this.parent = paramMap['parent'];
+      this.pk = this.parent;
+      this.isNew = true;
+      this.fieldConfig[0].readonly = false;
+    }
+
+
   }
 
-  preInit() {
-    this.sub = this.aroute.params.subscribe(params => {
-      this.volid = params['volid'];
-      // edit dataset
-      if(params['pk']) {
-        this.resourceName = params['pk'];
-        let pk_parent = params['pk'].split('/');
-        this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
-        this.fieldConfig.pop();
-      }
-      // add new dataset
-      if (params['parent']) {
-        this.parent = params['parent'];
-        this.resourceName = this.parent;
-        this.submitFunction = this.addSubmit;
-        this.isNew = true;
-      }
-    });
+  getFieldValueOrRaw(field): any {
+    if( field.value === undefined) {
+      return field;
+    }
+    return field.value;
   }
 
-  ngOnInit() {
-    this.preInit();
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+  resourceTransformIncomingRestData(wsResponse): any {
 
-    this.ws.call('pool.dataset.query', [ [['id', '=', this.resourceName]] ]).subscribe((res) => {
-      this.data = res[0];
-      this.parent_data = res[0];
+     console.log("dataset-form-component", wsResponse );
+     const returnValue: DatasetFormData = {
+        name: this.getFieldValueOrRaw(wsResponse.name),
+        atime: this.getFieldValueOrRaw(wsResponse.atime),
+        casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
+        comments: this.getFieldValueOrRaw(wsResponse.comments),
+        compression: this.getFieldValueOrRaw(wsResponse.compression),
+        copies: this.getFieldValueOrRaw(wsResponse.copies),
+        deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
+        quota: this.getFieldValueOrRaw(wsResponse.quota),
+        readonly: this.getFieldValueOrRaw(wsResponse.readonly),
+        recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
+        refquota: this.getFieldValueOrRaw(wsResponse.refquota),
+        refreservation: this.getFieldValueOrRaw(wsResponse.refreservation),
+        reservation: this.getFieldValueOrRaw(wsResponse.reservation),
+        snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
+        sync: this.getFieldValueOrRaw(wsResponse.sync)
+     };
 
-      for (let i in this.data) {
-        let fg = this.formGroup.controls[i];
+    
 
-        if (fg && !this.isNew) {
-          let value = "";
-
-          if(i === "name") {
-            value = this.data[i];
-          }
-          else {
-            value = this.data[i].value;
-          }
-
-          if(
-            i == "compression" || 
-            i == "atime" || 
-            i == "dedup" || 
-            i == "readonly" || 
-            i == "snapdir" || 
-            i == "casesensitivity") {
-            value = value.toUpperCase();
-          }
-
-          fg.setValue(value);
-        }
-      }
-
-      if (!this.isNew) {
-        this.setDisabled('name', true);
-
-        if(this.parent) {
-          this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
-            this.parent_data = res[0];
-          });
-        }
-      }
-    });
+     return returnValue;
   }
 
   editSubmit(body: any) {
-    return this.ws.call('pool.dataset.update', [this.resourceName, body]);
+    const data: any = this.sendAsBasicOrAdvanced(body);
+    console.log("editSubmit:body:", data);
+    return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
   addSubmit(body: any) {
-    return this.ws.call('pool.dataset.create', [body]);
+    const data: any = this.sendAsBasicOrAdvanced(body);
+    console.log("addSubmit:body:", data);
+    return this.ws.call('pool.dataset.create', [ data ]);
   }
 
-  clearErrors() {
-    for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f].errors = '';
-      this.fieldConfig[f].hasErrors = false;
-    }
-  }
+  customSubmit(body) {
+    this.loader.open();
+    console.log("body", body);
 
-  isShow(id: any): any {
-    if (this.isBasicMode) {
-      if (this.advanced_field.indexOf(id) > -1) {
-        return false;
-      }
-    }
-    return true;
-  }
 
-  setDisabled(name: string, disable: boolean) {
-    if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      this.formGroup.controls[name][method]();
-      return;
-    }
-
-    this.fieldConfig = this.fieldConfig.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
+    return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
+      console.log("restPostResp", restPostResp);
+      this.loader.close();
+      this.dialogService.Info("Saved dataset", "Successfully saved dataset: " + this.pk);
+      this.router.navigate(new Array('/').concat(
+        ["storage", "volumes"]));
+    }, (res) => {
+      this.loader.close();
+      //Handled in global error websocketservice
+      // this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
+      console.log("Error Importing volume", res.message, res.stack);
     });
   }
 
-  goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
-  }
-
-  onSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.error = null;
-    this.success = false;
-    this.clearErrors();
-    let value = _.cloneDeep(this.formGroup.value);
-
-    if(this.isNew) {
-      value['name'] = this.resourceName + '/' + value['name'];
-    }    
-    if(value['quota'] == 0) {
-      value['quota'] = null;
-    }
-    if(value['refquota'] == 0) {
-      value['refquota'] = null;
-    }
-    if(value['reservation'] == 0) {
-      value['reservation'] = null;
-    }
-    if(value['refreservation'] == 0) {
-      value['refreservation'] = null;
-    }
-    if(value['copies'] > 0) {
-      value['copies'] = value['copies'].toString();
-    }
-    
-    this.loader.open();
-    this.busy = this.submitFunction(value)
-                    .subscribe(
-                        (res) => {
-                          this.loader.close();
-                          if (this.route_success) {
-                            this.router.navigate(new Array('').concat(
-                                this.route_success));
-                          } else {
-                            this.success = true;
-                          }
-                        },
-                        (res) => {
-                          this.loader.close();
-                          this.error = res.reason;
-                        });
-  }
 }

@@ -15,17 +15,15 @@
 }
 
 
-.panel_container {
-
+:host ::ng-deep .global_volume_based_action_menu .panel_container {
+  text-align:right;
 }
-
 
 .panel_status_enc {
     padding-right: 20px;
     width: 30px;
 }
 
-
-.global_volume_based_action_menu {
+/*.global_volume_based_action_menu {
     padding-right: 20px;
-}
+}*/
