@@ -4,21 +4,13 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import {RestService, WebSocketService} from '../../../services/';
+import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'ui-preferences',
-  template : `
-  <mat-card>
-    <mat-toolbar-row>
-      <h4>UI Preferences</h4>
-    </mat-toolbar-row>
-    <mat-card-content>
-      <entity-form-embedded [conf]="this"></entity-form-embedded>
-    </mat-card-content>
-  </mat-card>
-    `
+  templateUrl : './preferences.component.html'
 })
 export class PreferencesPage implements OnInit {
 
@@ -31,30 +23,32 @@ export class PreferencesPage implements OnInit {
   protected isEntity: boolean = true; // was true
 
   // EXAMPLE THEME
-  public values:any = {
-    name:'dracula',
-    description:'Dracula color theme',
+  public values:Theme = {
+    name:'',
+    description:'',
+    label:'',
+    labelSwatch:'',
     hasDarkLogo:true,
     accentColors:['violet','blue','magenta', 'cyan', 'red','green', 'orange', 'yellow'],
     favorite:false,
-    primary:"var(--blue)",
-    accent:"var(--violet)",
-    bg1:'#181a26',
-    bg2:'#282a36',
-    fg1:'#f8f8f2',
-    fg2:'#fafaf5',
-    'alt-bg1':'#f8f8f2',
-    'alt-bg2':'#fafaf5',
-    'alt-fg1':'#181a26',
-    'alt-fg2':'#282a36',
-    yellow:'#f1fa8c',
-    orange:'#ffb86c',
-    red:'#ff5555',
-    magenta:'#ff79c6',
-    violet:'#bd93f9',
-    blue:'#6272a4',
-    cyan:'#8be9fd',
-    green:'#50fa7b'
+    primary:"",
+    accent:"",
+    bg1:'',
+    bg2:'',
+    fg1:'',
+    fg2:'',
+    'alt-bg1':'',
+    'alt-bg2':'',
+    'alt-fg1':'',
+    'alt-fg2':'',
+    yellow:'',
+    orange:'',
+    red:'',
+    magenta:'',
+    violet:'',
+    blue:'',
+    cyan:'',
+    green:''
   }
 
   // CONTROLS
@@ -126,6 +120,15 @@ export class PreferencesPage implements OnInit {
           placeholder: 'Menu Label',
           tooltip: 'Specify how the theme name should appear in the menu.',
         },
+        { 
+          type: 'select', 
+          name: 'labelSwatch', 
+          width:'100%',
+          placeholder: 'Menu Swatch', 
+          options:this.colorOptions,
+          tooltip: "Choose which color from the palette will be used for the label swatch that appears left of the label in the menu.",
+          class:'inline'
+        },
         { type: 'input', 
           name : 'description', 
           width:'100%',
@@ -158,7 +161,7 @@ export class PreferencesPage implements OnInit {
           width:'100%',
           placeholder: 'Choose Primary', 
           options:this.colorOptions,
-          tooltip: "Choose which color will be the theme's primary color",
+          tooltip: "Choose which color from the palette will be the theme's primary color",
           class:'inline'
         },
         { 
@@ -167,7 +170,7 @@ export class PreferencesPage implements OnInit {
           width:'100%',
           placeholder: 'Choose Accent', 
           options:this.colorOptions,
-          tooltip: "Choose which color will be the theme's accent color",
+          tooltip: "Choose which color from the palette will be the theme's accent color",
           class:'inline'
         },
       ]
@@ -316,28 +319,39 @@ export class PreferencesPage implements OnInit {
     }
   ]
 
-    constructor(protected router: Router, protected rest: RestService,
+    constructor(
+      protected router: Router, 
+      protected rest: RestService,
       protected ws: WebSocketService,
-      protected _injector: Injector, protected _appRef: ApplicationRef,
+      protected _injector: Injector, 
+      protected _appRef: ApplicationRef,
+      public themeservice:ThemeService
     ) {}
 
     ngOnInit(){
+      this.init();
+    }
+
+    init(){
+      console.log(this.themeservice)
       this.setupColorOptions(this.colors);
+      this.loadValues();
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
             let palette = Object.keys(evt.data);
-            palette.splice(0,6);
+            palette.splice(0,7);
 
             palette.forEach(function(color){
               let swatch = evt.data[color];
               console.log("Setting " + color + " to " + evt.data[color]);
-              (<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
+              //(<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
+              (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, evt.data[color]);
             });
-              (<any>document).documentElement.style.setProperty("--primary",evt.data["primary"]);
-              (<any>document).documentElement.style.setProperty("--accent",evt.data["accent"]);
+              /*(<any>document).documentElement.style.setProperty("--primary",evt.data["primary"]);
+              (<any>document).documentElement.style.setProperty("--accent",evt.data["accent"]);*/
 
           break;
           case "FormCancelled":
@@ -355,6 +369,24 @@ export class PreferencesPage implements OnInit {
       for(let color in palette){
         this.colorOptions.push({label:this.colors[color], value:this.colorVars[color]});
       }
+    }
+
+    loadValues(themeName?:string){
+      let values = this.values;
+      let theme:Theme;
+      if(!themeName){
+        theme = this.themeservice.currentTheme();
+      } else {
+        theme = this.themeservice.findTheme(themeName);
+      }
+      let ct = Object.assign({},theme);
+      let palette = Object.keys(ct);
+      palette.splice(0,7);
+
+      palette.forEach(function(color){
+        values[color] = ct[color];
+      });
+      
     }
 
     generateFieldConfig(){

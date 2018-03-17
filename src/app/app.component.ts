@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MatSnackBar } from '@angular/material';
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
     private ws: WebSocketService,
     private rest: RestService,
     private api: ApiService,
+    public themeservice: ThemeService,
     private tour: TourService) {
 
     if (this.detectBrowser("Safari")) {

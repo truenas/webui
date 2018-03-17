@@ -130,12 +130,12 @@ export class ThemeService {
       green:'#859900'
     }
     /*{
-      name: 'native',
-      label: 'Native',
-      baseColor: '#073642',
-      accentColors:['var(--magenta)', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
-      isActive: false,
-      hasDarkLogo: false
+     name: 'native',
+     label: 'Native',
+     baseColor: '#073642',
+     accentColors:['var(--magenta)', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
+     isActive: false,
+     hasDarkLogo: false
     }, 
     {
       name: 'egret-dark-purple',
@@ -166,30 +166,37 @@ export class ThemeService {
   savedUserTheme:string = "";
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService) {
+    console.log("*** New Instance of Theme Service ***");
+    if(this.ws.loggedIn){
+      this.rest.get("account/users/1", {}).subscribe((res) => {
+        console.log(res.data.bsdusr_attributes.usertheme);
+        this.savedUserTheme = res.data.bsdusr_attributes.usertheme;
 
-    this.rest.get("account/users/1", {}).subscribe((res) => {
-      console.log("******** THEME SERVICE CONTRUCTOR ********");
-      console.log(res.data);
-      this.savedUserTheme = res.data.bsdusr_attributes.usertheme;
+        // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
+        // the default in the middleware. This is a workaround until that
+        // default value can be changed
+        if(this.savedUserTheme == "egret-blue"){
+          //this.savedUserTheme = "ix-blue";
+          this.activeTheme = "ix-blue";
+        } else {
+          this.activeTheme = this.savedUserTheme;
+        }
+        //this.setCssVars(this.findTheme(this.activeTheme));
 
-      // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
-      // the default in the middleware. This is a workaround until that
-      // default value can be changed
-      if(this.savedUserTheme == "egret-blue"){
-        //this.savedUserTheme = "ix-blue";
-        this.savedUserTheme = "ix-blue";
-      }
+        },
+      (err) => {
+        //this.changeTheme(this.activeTheme);
+        console.log(err);
+      });
+    } 
+    this.changeTheme(this.activeTheme);
 
-      this.activeTheme = this.savedUserTheme;
-      this.setCssVars(this.findTheme(this.activeTheme));
-
-    });
   }
 
   currentTheme():Theme{
     /*for(let i in this.freenasThemes){
-      let t = this.freenasThemes[i];
-      if(t.name == this.activeTheme.name){ return t;}
+     let t = this.freenasThemes[i];
+     if(t.name == this.activeTheme.name){ return t;}
     }*/
 
     return this.findTheme(this.activeTheme);
@@ -209,22 +216,23 @@ export class ThemeService {
     /*this.freenasThemes.forEach((t) => {
      t.isActive = (t.name === theme.name);
     });*/
-    this.saveCurrentTheme();
+    if(this.ws.loggedIn){
+      this.saveCurrentTheme();
+    }
     this.setCssVars(this.findTheme(theme));
     this.core.emit({name:'ThemeChanged'});
   }
 
   saveCurrentTheme(){
     let theme = this.currentTheme();
-    //this.rest.put("account/users/1", {bsdusr_attributes:{usertheme:theme.name}}).subscribe((res) => {
     this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
       console.log("Saved usertheme:", res, theme.name);
     });
-  }
+    }
 
     setCssVars(theme:Theme){
       let palette = Object.keys(theme);
-      palette.splice(0,6);
+      palette.splice(0,7);
 
       palette.forEach(function(color){
         let swatch = theme[color];
