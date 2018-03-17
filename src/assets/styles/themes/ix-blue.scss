@@ -1,6 +1,35 @@
 @import '~@angular/material/theming';
 @include mat-core();
 
+// Use CSS custom properties for palette colors
+// via this mixin.
+@mixin variable($property, $variable, $fallback, $important:null) {
+  #{$property}: $fallback $important;
+  #{$property}: var($variable) $important;
+}
+
+// Solarized Color Palette - don't forget to add accents to theme.service!
+$bg1:    #dddddd; // Canvas like behind the cards
+$bg2:    #ffffff; // Main elements like cards
+$fg1:    #222222; // brighter fonts
+$fg2:    #333333; // normal fonts
+$alt-bg1:     #f8f8f2; // Tables
+$alt-bg2:     #fafaf5; // Menus
+$alt-fg1:     #181a26; // Tables
+$alt-fg2:     #282a36; // Menus
+$yellow:'#f0cb00';
+$orange:'#eec302';
+$red:'#ff0013';
+$magenta:'#d238ff';
+$violet:'#c17ecc';
+$blue:'#00a2ff';
+$cyan:'#00d0d6';
+$green:'#59d600';
+
+$primary: $blue;
+$accent: $yellow;
+$warn: $red;
+
 $md-primary: (
     50 : #e0f2fa,
     100 : #b3dff2,
@@ -101,52 +130,65 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         color: rgba(0, 0, 0, 0.94)
     }
     .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
-        border-left: 2px solid map-get($md-primary, 500);
+        //border-left: 2px solid map-get($md-primary, 500);
+        @include variable(border-left, --primary, $primary, !important);
     }
     .sidebar-panel.mat-sidenav {
         background: url('/assets/images/sidebar-bg.jpg') no-repeat;
     }
     .breadcrumb-bar {
-        background: #ffffff !important;
+        //background: #ffffff !important;
+        @include variable(background, --bg2, $bg2, !important);
+        @include variable(color, --fg1, $fg1, !important);
     }
     /* Hopscotch Tour */ 
     div.hopscotch-bubble {
         border-color: $primary-dark;
+        @include variable(border-color, --primary, $primary);
     }
     /* up arrow  */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
         border-bottom: 17px solid $primary-dark;
+        @include variable(border-bottom-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
         border-bottom: 17px solid map-get($md-primary, 500);
+        @include variable(border-bottom-color, --primary, $primary);
         top: -16px;
     }
     /* right arrow */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
         border-left: 17px solid $primary-dark;
+        @include variable(border-left-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
         border-left: 17px solid map-get($md-primary, 500);
+        @include variable(border-left-color, --primary, $primary);
         left: -1px;
     }
     /* bottom arrow */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
         border-top: 17px solid $primary-dark;
+        @include variable(border-top-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
         border-top: 17px solid map-get($md-primary, 500);
+        @include variable(border-top-color, --primary, $primary);
         top: -18px;
     }
     /* Left Arrow */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
         border-right: 17px solid $primary-dark;
+        @include variable(border-right-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
         left: 1px;
         border-right: 17px solid map-get($md-primary, 500);
+        @include variable(border-right-color, --primary, $primary);
     }
     .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-        background-color: map-get($md-accent, 400);
+      background-color: map-get($md-accent, 400);
+      @include variable(background, --accent, $accent, !important);
 
     }
     .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
@@ -161,18 +203,166 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         color: black;
     }
     .mat-bg-warn {
-        background-color: #f44336;
+        //background-color: #f44336;
+        @include variable(background-color, --red, $red);
         color: white;
     }
     .mat-color-accent {
-        color: map-get($md-accent, 500);
+        //color: map-get($md-accent, 500);
+        @include variable(color, --accent, $accent);
     }
     .mat-color-warn {
-        color: #f44336;
+        //color: #f44336;
+        @include variable(color, --warn, $warn);
     }
     .mat-sidenav-container{
-      background-color:#ddd;
+      //background-color:#ddd;
+      @include variable(background, --bg1, $bg1);
     }
+
+/////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+.mat-toolbar,
+.mat-raised-button{
+  background-color:rgba(0,0,0,0.1);
+  @include variable(color, --fg1, $fg1);
+}
+.mat-bg-primary,
+.mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
+.topbar, 
+.sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret), 
+.chats-wrap .conversations-hold .single-conversation.me .conversation-msg, 
+.ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a, 
+.fileupload-drop-zone.dz-file-over, 
+.toolbar-avatar.online > .status-dot, 
+.cal-open-day-events, 
+.datatable-header,.datatable-footer,
+.mat-step-header .mat-step-icon,
+div.hopscotch-bubble{
+      @include variable(background, --primary, $primary, !important);
+      @include variable(color, #fff, #fff, !important);
+}
+
+.mat-bg-accent,
+.mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent,
+div.hopscotch-bubble .hopscotch-bubble-number,
+div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+div.hopscotch-bubble .hopscotch-nav-button.next,
+.ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, 
+.mat-checkbox-checked.mat-accent .mat-checkbox-background{
+    background-color: map-get($md-accent, 500);
+    color: black;
+    @include variable(background, --accent, $accent, !important);
+    @include variable(color, #000, #000, !important);
+}
+
+
+.mat-drawer,
+.sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
+.mat-card,.mat-paginator,
+.mat-button-toggle,
+.mat-select-content, 
+.mat-select-panel-done-animating,
+.mat-expansion-panel,
+.mat-stepper-horizontal, .mat-stepper-vertical,
+.dx-treelist-container{
+  @include variable(background, --bg2, $bg2);
+  @include variable(color, --fg2, $fg2);
+}
+.mat-button-toggle-checked{
+  background-color:rgba(0,0,0,0.1);
+  @include variable(color, --fg2, $fg2); 
+}
+.ngx-datatable .datatable-body .datatable-row-wrapper{
+  @include variable(background, --alt-bg1, $alt-bg1);
+  @include variable(color, --alt-fg1, $alt-fg1);
+}
+
+.sidebar-panel .mat-nav-list .mat-list-item,
+.app-user .app-user-name, .text-muted,
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description, 
+.mat-expansion-indicator,
+.mat-list .mat-list-item,
+.mat-menu-panel button,
+.mat-paginator-navigation-next, .mat-paginator-navigation-previous,
+.mat-expansion-panel span.mat-expansion-indicator,
+.mat-nav-list .mat-list-item, 
+.mat-form-field-label,
+.mat-selection-list .mat-list-item,.mat-option,
+.mat-select-arrow, .mat-select-value{
+  @include variable(color, --fg2, $fg2);
+}
+
+.mat-menu-panel,
+.mat-option.mat-active,
+.mat-nav-list a{
+  @include variable(background, --bg2, $bg2);
+  @include variable(color, --fg2, $fg2, !important);
+}
+
+.mat-form-field-underline{
+  @include variable(background-color, --fg2, $fg2);
+}
+
+.mat-color-primary, 
+.sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
+.sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
+.mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+.mat-focused .mat-form-field-label{
+  @include variable(color, --primary, $primary, !important);
+}
+
+.mat-form-field-ripple{
+  @include variable(background-color, --primary, $primary);
+}
+
+.mat-input-element:disabled{
+  opacity:0.38;
+  @include variable(color, --fg2, $fg2);
+}
+
+.egret-swatch,
+.mat-checkbox-frame{ 
+  @include variable(border-color, --fg2, $fg2);
+}
+
+
+// Treelists in storage/volumes
+.global_volume_based_action_menu{
+  position:absolute;
+  top:16px;
+  right:16px;
+}
+.mat-expansion-panel-header{
+  background-color:rgba(0,0,0,0.1);
+}
+.mat-expansion-panel-body{
+  //background-color:rgba(0,0,0,0.15);
+  position:relative;
+}
+.dx-treelist-container{
+  background:transparent;
+}
+.dx-treelist-headers{
+  border-bottom:none;
+}
+
+.dx-treelist-rowsview{
+  border:0;
+}
+
+.dx-treelist .dx-column-lines> td{
+  border-left:solid 1px rgba(128,128,128,0.1);
+  border-right:none;
+}
+
+.dx-treelist .dx-row-lines > td{
+  border-color: rgba(128,128,128,0.1);
+}
+
+
+/////////////////// END SpecSelectors
 
     
 .mat-dialog-title {
