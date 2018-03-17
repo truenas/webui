@@ -144,41 +144,51 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     /* Hopscotch Tour */ 
     div.hopscotch-bubble {
         border-color: $primary-dark;
+        @include variable(border-color, --primary, $primary);
     }
     /* up arrow  */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
         border-bottom: 17px solid $primary-dark;
+        @include variable(border-bottom-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
         border-bottom: 17px solid map-get($md-primary, 500);
+        @include variable(border-bottom-color, --primary, $primary);
         top: -16px;
     }
     /* right arrow */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
         border-left: 17px solid $primary-dark;
+        @include variable(border-left-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
         border-left: 17px solid map-get($md-primary, 500);
+        @include variable(border-left-color, --primary, $primary);
         left: -1px;
     }
     /* bottom arrow */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
         border-top: 17px solid $primary-dark;
+        @include variable(border-top-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
         border-top: 17px solid map-get($md-primary, 500);
+        @include variable(border-top-color, --primary, $primary);
         top: -18px;
     }
     /* Left Arrow */
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
         border-right: 17px solid $primary-dark;
+        @include variable(border-right-color, --primary, $primary);
     }
     div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
         left: 1px;
         border-right: 17px solid map-get($md-primary, 500);
+        @include variable(border-right-color, --primary, $primary);
     }
     .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-        background-color: map-get($md-accent, 400);
+      background-color: map-get($md-accent, 400);
+      @include variable(background, --accent, $accent, !important);
 
     }
     .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
@@ -211,7 +221,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
 
 /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+.mat-toolbar,
+.mat-raised-button{
+  background-color:rgba(0,0,0,0.1);
+  @include variable(color, --fg1, $fg1);
+}
 .mat-bg-primary,
+.mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
 .topbar, 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret), 
 .chats-wrap .conversations-hold .single-conversation.me .conversation-msg, 
@@ -219,28 +235,82 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 .fileupload-drop-zone.dz-file-over, 
 .toolbar-avatar.online > .status-dot, 
 .cal-open-day-events, 
+.datatable-header,.datatable-footer,
+.mat-step-header .mat-step-icon,
 div.hopscotch-bubble{
       @include variable(background, --primary, $primary, !important);
       @include variable(color, #fff, #fff, !important);
 }
 
+.mat-bg-accent,
+.mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent,
+div.hopscotch-bubble .hopscotch-bubble-number,
+div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+div.hopscotch-bubble .hopscotch-nav-button.next,
+.ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, 
+.mat-checkbox-checked.mat-accent .mat-checkbox-background{
+    background-color: map-get($md-accent, 500);
+    color: black;
+    @include variable(background, --accent, $accent, !important);
+    @include variable(color, #000, #000, !important);
+}
+
+
 .mat-drawer,
-.mat-card,
+.sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
+.mat-card,.mat-paginator,
+.mat-select-content, 
+.mat-select-panel-done-animating,
 .mat-expansion-panel,
+.mat-stepper-horizontal, .mat-stepper-vertical,
 .dx-treelist-container{
   @include variable(background, --bg2, $bg2);
   @include variable(color, --fg1, $fg1);
 }
 
+.ngx-datatable .datatable-body .datatable-row-wrapper{
+  @include variable(background, --alt-bg2, $alt-bg2);
+  @include variable(color, --alt-fg1, $alt-fg1);
+}
+
+.sidebar-panel .mat-nav-list .mat-list-item,
+.app-user .app-user-name, .text-muted,
 .mat-expansion-panel-header-title,
 .mat-expansion-panel-header-description, 
 .mat-expansion-indicator,
 .mat-list .mat-list-item, 
 .mat-nav-list .mat-list-item, 
-.mat-selection-list .mat-list-item{
+.mat-form-field-label,
+.mat-selection-list .mat-list-item,.mat-option,
+.mat-select-arrow, .mat-select-value{
+  @include variable(color, --fg2, $fg2);
+}
+
+.mat-option.mat-active{
   @include variable(color, --fg1, $fg1);
 }
 
+.mat-form-field-underline{
+  @include variable(background-color, --fg2, $fg2);
+}
+
+.mat-color-primary, 
+.sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
+.sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
+.mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+.mat-focused .mat-form-field-label{
+  @include variable(color, --primary, $primary);
+}
+
+.mat-form-field-ripple{
+  @include variable(background-color, --primary, $primary);
+}
+
+.ix-blue .mat-input-element:disabled{
+  opacity:0.38;
+  @include variable(color, --fg2, $fg2);
+}
 /////////////////// END SpecSelectors
 
     
