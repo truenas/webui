@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -12,13 +12,14 @@ import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'ui-preferences',
-  templateUrl : './preferences.component.html'
+  templateUrl : './preferences.component.html',
+  styleUrls: ['./preferences.component.css'],
 })
-export class PreferencesPage implements OnInit {
+export class PreferencesPage implements OnInit, OnChanges {
 
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
-  public baseTheme:any = this.themeService.activeTheme;
+  private _baseTheme:any; //= this.themeService.activeTheme;
   public baseThemes: Theme[];
   //@Input() isNew: boolean = false; //change this back to false
   
@@ -326,6 +327,17 @@ export class PreferencesPage implements OnInit {
     }
   ]
 
+    get baseTheme(){
+      return this._baseTheme;
+    }
+
+    set baseTheme(name:string){
+      this._baseTheme = name;
+      this.loadValues(name);
+      let theme = this.themeService.findTheme(name);
+      this.updatePreview(theme);
+    }
+
     constructor(
       protected router: Router, 
       protected rest: RestService,
@@ -339,7 +351,14 @@ export class PreferencesPage implements OnInit {
       this.init();
     }
 
+    ngOnChanges(changes){
+      if(changes.baseTheme){
+        alert("baseTheme Changed!")
+      }
+    }
+
     init(){
+      this.baseTheme = this.themeService.activeTheme;
       this.baseThemes = this.themeService.freenasThemes;
       this.setupColorOptions(this.colors);
       this.loadValues();
@@ -348,18 +367,7 @@ export class PreferencesPage implements OnInit {
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
-            let palette = Object.keys(evt.data);
-            palette.splice(0,7);
-
-            palette.forEach(function(color){
-              let swatch = evt.data[color];
-              console.log("Setting " + color + " to " + evt.data[color]);
-              //(<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
-              (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, evt.data[color]);
-            });
-              /*(<any>document).documentElement.style.setProperty("--primary",evt.data["primary"]);
-              (<any>document).documentElement.style.setProperty("--accent",evt.data["accent"]);*/
-
+            this.updatePreview(evt.data);
           break;
           case "FormCancelled":
             console.log("Form Cancelled");
@@ -400,6 +408,20 @@ export class PreferencesPage implements OnInit {
       this.values = values;
       console.log(this.values);
       
+    }
+
+    updatePreview(theme:Theme){
+            let palette = Object.keys(theme);
+            palette.splice(0,7);
+
+            palette.forEach(function(color){
+              let swatch = theme[color];
+              console.log("Setting " + color + " to " + theme[color]);
+              //(<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
+              (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
+            });
+              /*(<any>document).documentElement.style.setProperty("--primary",evt.data["primary"]);
+              (<any>document).documentElement.style.setProperty("--accent",evt.data["accent"]);*/
     }
 
     generateFieldConfig(){

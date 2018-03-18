@@ -1,23 +1,24 @@
 <mat-card>
-  <mat-toolbar-row>
+  <mat-toolbar-row style="margin-bottom:16px;">
     <h4>UI Preferences</h4>
+    <span class="spacer"></span>
     <div>
-      Load colors from theme: <!--<input [(ngModel)]="baseTheme" #ctrl="ngModel" required>-->
       <mat-form-field>
-        <mat-select placeholder="Base Theme"  [(value)]="baseTheme">
+        <mat-select placeholder="Load Colors from Theme"  [(value)]="baseTheme">
           <mat-option *ngFor="let theme of baseThemes" value="{{theme.name}}">
             {{ theme.name }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button mat-button (click)="loadValues(baseTheme)">Load</button>
+      <!--<button mat-button (click)="loadValues(baseTheme)">Load</button>-->
 
     </div>
   </mat-toolbar-row>
-  <mat-card-content>
-    <entity-form-embedded [data]="values" [target]="customThemeForm" [conf]="this"></entity-form-embedded>
+  <mat-divider></mat-divider>
+  <mat-card-content style="margin-top:64px;" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
+    <entity-form-embedded [data]="values" [target]="customThemeForm" [conf]="this" fxFlex="100" fxFlex.gt-md="50"></entity-form-embedded>
     <!--<ng-template>-->
-    <div id="theme-preview">
+    <div id="theme-preview" fxFlex="100" fxFlex.gt-md="50">
       <mat-card>
 
         <mat-toolbar-row color="primary">

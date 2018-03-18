@@ -327,6 +327,9 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(border-color, --fg2, $fg2);
 }
 
+.spacer{
+  flex: 1 1 auto;
+}
 
 // Treelists in storage/volumes
 .global_volume_based_action_menu{

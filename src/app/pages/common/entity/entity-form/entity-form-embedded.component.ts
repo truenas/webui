@@ -171,7 +171,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       // We are no longer responsible for API calls.
       // this.data is now provided by parent component.
         //this.data = this.conf.values;
-        console.warn(this.data);
+        //console.warn(this.data);
 	if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
 	  //this.data = this.conf.resourceTransformIncomingRestData(this.data);
 	}
@@ -194,6 +194,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   ngOnChanges(changes) {
     if (changes.formGroup) {
+      this.onFormGroupChanged();
+    }
+
+    if(changes.data){
+      //console.log("ENTITY FORM EMBEDDED: values changed!!!");
+      //this.ngOnInit();
+      this.init();
+      this.onFormGroupChanged();
+    }
+  }
+
+  onFormGroupChanged(){
       console.warn(this.formGroup.controls);
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
@@ -209,12 +221,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	});
 
       console.warn(this.formGroup.controls);
-    }
-
-    if(changes.data){
-      console.log("values changed!!!");
-      this.ngOnInit();
-    }
+      // Data must be replaced instead of mutated
+      // or changedetection won't fire on control components
+      let fg = Object.assign({}, this.formGroup);
+      //this.formGroup = fg;
   }
 
   goBack() {
