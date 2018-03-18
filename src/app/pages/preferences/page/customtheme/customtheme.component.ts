@@ -5,18 +5,17 @@ import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import {RestService, WebSocketService} from '../../../services/';
+import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
-  selector : 'ui-preferences',
-  template:``
-  //templateUrl : './preferences.component.html',
-  //styleUrls: ['./preferences.component.css'],
+  selector : 'custom-theme',
+  templateUrl : './customtheme.component.html',
+  styleUrls: ['./customtheme.component.css'],
 })
-export class PreferencesPage implements OnInit, OnChanges {
+export class CustomThemeComponent implements OnInit, OnChanges {
 
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target

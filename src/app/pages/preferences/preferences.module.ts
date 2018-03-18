@@ -7,6 +7,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { PreferencesPage } from './page/preferences.component';
+import { CustomThemeComponent } from './page/customtheme/customtheme.component';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { PreferencesPage } from './page/preferences.component';
     routing
   ],
   declarations: [
-    PreferencesPage
+    PreferencesPage,
+    CustomThemeComponent
   ],
   providers:[EntityFormService],
   entryComponents:[
