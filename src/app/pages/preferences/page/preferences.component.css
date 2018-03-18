@@ -10,3 +10,7 @@
     height: 100%;
     z-index: 10000;
 }
+
+:host ::ng-deep #theme-preview div.mat-tab-body-content{
+  padding:16px 16px 64px;
+}

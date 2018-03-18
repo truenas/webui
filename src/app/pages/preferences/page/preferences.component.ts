@@ -399,7 +399,7 @@ export class PreferencesPage implements OnInit, OnChanges {
       console.log(theme);
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
-      palette.splice(0,7);
+      palette.splice(0,6);
 
       palette.forEach(function(color){
         values[color] = ct[color];
@@ -412,7 +412,7 @@ export class PreferencesPage implements OnInit, OnChanges {
 
     updatePreview(theme:Theme){
             let palette = Object.keys(theme);
-            palette.splice(0,7);
+            palette.splice(0,6);
 
             palette.forEach(function(color){
               let swatch = theme[color];
