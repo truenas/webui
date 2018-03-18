@@ -32,6 +32,56 @@ import { Formconfiguration } from './entity-form.component';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
+export interface FormConfig {
+  fieldSets?;
+  fieldSetDisplay?;
+  values?;
+  saveSubmitText?;
+  preInit?;
+  target?: Subject<CoreEvent>;
+  resource_name?;
+  isEntity?;
+  addCall?;
+  editCall?;
+  queryCall?;
+  queryCallOption?;
+  isNew?;
+  pk?;
+  custom_get_query?;
+  fieldConfig?: FieldConfig[];
+  resourceTransformIncomingRestData?;
+  route_usebaseUrl?;
+  afterInit?;
+  initial?;
+  dataHandler?;
+  dataAttributeHandler?;
+  route_cancel?;
+  route_success?;
+  route_delete?;
+  custom_edit_query?;
+  custom_add_query?
+  custActions?: any[];
+  customFilter?:any[];
+  
+  beforeSubmit?;
+  customSubmit?;
+  clean?;
+  errorReport?;
+  hide_fileds?;
+  isBasicMode?
+  advanced_field?
+  basic_field?;
+  route_conf?;
+  preHandler?;
+  initialCount?
+  initialCount_default?;
+
+  goBack?();
+  onSuccess?(res);
+}
+
+
+
 @Component({
   selector : 'entity-form-embedded',
   templateUrl : './entity-form-embedded.component.html',
@@ -40,7 +90,8 @@ import { Subject } from 'rxjs/Subject';
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
-  @Input('conf') conf: Formconfiguration;
+  @Input('conf') conf: FormConfig;
+  @Input() data:any;
   //@Input()  args: string;
   @Input() target: Subject<CoreEvent>;
 
@@ -69,7 +120,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public sub: any;
   public error: string;
   public success = false;
-  public data: Object = {};
+  //public data: Object = {};
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -119,7 +170,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if (this.conf.values) {
       // We are no longer responsible for API calls.
       // this.data is now provided by parent component.
-        this.data = this.conf.values;
+        //this.data = this.conf.values;
         console.warn(this.data);
 	if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
 	  //this.data = this.conf.resourceTransformIncomingRestData(this.data);
@@ -141,8 +192,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     } 
   }
 
-  ngOnChanges() {
-    if (this.formGroup) {
+  ngOnChanges(changes) {
+    if (changes.formGroup) {
       console.warn(this.formGroup.controls);
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
@@ -159,10 +210,15 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
       console.warn(this.formGroup.controls);
     }
+
+    if(changes.data){
+      console.log("values changed!!!");
+      this.ngOnInit();
+    }
   }
 
   goBack() {
-    this.conf.target.next({name:"FormCancelled", sender:this.conf});
+    this.target.next({name:"FormCancelled", sender:this.conf});
   }
 
   onSubmit(event: Event) {
@@ -193,7 +249,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
     //this.loader.open();
     //console.log(value);
-    this.conf.target.next({name:"FormSubmitted",data:value, sender:this.conf});
+    this.target.next({name:"FormSubmitted",data:value, sender:this.conf});
   }
 
   clearErrors() {

@@ -40,14 +40,6 @@ export class ThemeService {
   public activeThemeSwatch: string[];
 
   public freenasThemes: Theme[] = [
-    /*{
-     name: 'ix-blue',
-     label: 'iX Blue',
-     baseColor: '#0095D5',
-     accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-     isActive: true,
-     hasDarkLogo: false
-    }, */
     {
       name:'ix-blue',
       label: "iX Blue",
@@ -129,38 +121,6 @@ export class ThemeService {
       cyan:'#2aa198',
       green:'#859900'
     }
-    /*{
-     name: 'native',
-     label: 'Native',
-     baseColor: '#073642',
-     accentColors:['var(--magenta)', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
-     isActive: false,
-     hasDarkLogo: false
-    }, 
-    {
-      name: 'egret-dark-purple',
-      label: 'Dark Purple',
-      baseColor: '#9c27b0',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: false,
-      hasDarkLogo: false
-    },
-    {
-      name: 'egret-indigo',
-      label: 'Indigo',
-      baseColor: '#3f51b5',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: false,
-      hasDarkLogo: false
-    }, 
-    {
-      name: 'freenas-sharks',
-      label: 'Sharks',
-      baseColor: '#088696',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: false,
-      hasDarkLogo: false
-    }*/
   ];
 
   savedUserTheme:string = "";

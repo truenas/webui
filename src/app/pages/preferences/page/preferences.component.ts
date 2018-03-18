@@ -1,8 +1,10 @@
 import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import {RestService, WebSocketService} from '../../../services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreEvent } from 'app/core/services/core.service';
@@ -14,12 +16,17 @@ import { Subject } from 'rxjs/Subject';
 })
 export class PreferencesPage implements OnInit {
 
-  public target: Subject<CoreEvent> = new Subject();
+  public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
+  public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
+  public baseTheme:any = this.themeService.activeTheme;
+  public baseThemes: Theme[];
   //@Input() isNew: boolean = false; //change this back to false
   
   //protected queryCall = 'user.query';
   //public args = [["username","=","root"]];
   //protected addCall = 'user.update';
+
+  customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
   protected isEntity: boolean = true; // was true
 
   // EXAMPLE THEME
@@ -325,7 +332,7 @@ export class PreferencesPage implements OnInit {
       protected ws: WebSocketService,
       protected _injector: Injector, 
       protected _appRef: ApplicationRef,
-      public themeservice:ThemeService
+      public themeService:ThemeService
     ) {}
 
     ngOnInit(){
@@ -333,10 +340,10 @@ export class PreferencesPage implements OnInit {
     }
 
     init(){
-      console.log(this.themeservice)
+      this.baseThemes = this.themeService.freenasThemes;
       this.setupColorOptions(this.colors);
       this.loadValues();
-      this.target.subscribe((evt:CoreEvent) => {
+      this.customThemeForm.subscribe((evt:CoreEvent) => {
         switch(evt.name){
           case "FormSubmitted":
             console.log("Form Submitted");
@@ -372,13 +379,16 @@ export class PreferencesPage implements OnInit {
     }
 
     loadValues(themeName?:string){
-      let values = this.values;
+      console.log(themeName);
+      console.log(this.baseTheme);
+      let values = Object.assign({},this.values);
       let theme:Theme;
       if(!themeName){
-        theme = this.themeservice.currentTheme();
+        theme = this.themeService.currentTheme();
       } else {
-        theme = this.themeservice.findTheme(themeName);
+        theme = this.themeService.findTheme(themeName);
       }
+      console.log(theme);
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
       palette.splice(0,7);
@@ -386,6 +396,9 @@ export class PreferencesPage implements OnInit {
       palette.forEach(function(color){
         values[color] = ct[color];
       });
+
+      this.values = values;
+      console.log(this.values);
       
     }
 
