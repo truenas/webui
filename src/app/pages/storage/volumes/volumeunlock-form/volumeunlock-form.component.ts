@@ -21,6 +21,7 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-volumeunlock-form',
@@ -47,12 +48,12 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     },{
       type : 'input',
       name : 'name',
-      placeholder: 'passphrase',
+      placeholder: T('passphrase'),
       isHidden: true
     },{
       type : 'input',
       name : 'passphrase',
-      placeholder: 'passphrase',
+      placeholder: T('passphrase'),
       tooltip: 'Geli Passphrase'
     }
   ];
