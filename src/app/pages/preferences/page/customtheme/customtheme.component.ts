@@ -111,6 +111,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
   public fieldSets: FieldSet[] = [
     {
       name:'General',
+      label: true,
       class:'general',
       width:'300px',
       config:[
@@ -184,8 +185,9 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       ]
     },
     {
-      name:'Theme Colors',
+      name:'Colors',
       class:'color-palette',
+      label: true,
       width:'calc(100% - 300px)',
       config:[
         { 

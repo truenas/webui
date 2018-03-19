@@ -43,6 +43,7 @@ export class PreferencesPage implements OnInit, OnChanges {
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
+  public saveSubmitText = "Save Changes";
   protected isEntity: boolean = true; // was true
   private colorOptions: any[] = []; 
   private themeOptions: any[] = [];

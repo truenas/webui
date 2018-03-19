@@ -105,6 +105,10 @@ export class VmCardEditComponent implements OnChanges {
   ngOnChanges(changes){
   }
 
+  goBack(){
+    this.target.next({name:"FormCancelled"});
+  }
+
   afterInit(entityForm: any) {
     entityForm.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
       this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
