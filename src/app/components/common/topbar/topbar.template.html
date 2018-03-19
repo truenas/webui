@@ -68,6 +68,10 @@
         <mat-icon>dialpad</mat-icon>
         <span>{{'Change Password' | translate}}</span>
       </button>
+      <button mat-menu-item [routerLink]="['/ui-preferences']">
+        <mat-icon>settings_applications</mat-icon>
+        <span>{{'Preferences' | translate}}</span>
+      </button>
       <button mat-menu-item [routerLink]="['/system/general']">
         <mat-icon>settings</mat-icon>
         <span>{{'Settings' | translate}}</span>
