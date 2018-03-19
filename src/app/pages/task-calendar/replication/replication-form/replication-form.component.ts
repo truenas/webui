@@ -417,15 +417,17 @@ export class ReplicationFormComponent implements AfterViewInit {
     const hostName: string = this.entityForm.value.repl_remote_hostname;
     const port: number = Number(this.entityForm.value.repl_remote_port);
     this.loader.open();
-    this.replicationService.getSSHKeyscan( hostName, port).subscribe((sshKeyData)=>{
+
+    this.ws.call('replication.public_key').subscribe((res)=> {
       this.loader.close();
-      textAreaSSH.nativeElement.value = sshKeyData;
-      this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(sshKeyData);
-    },
-    (sshError) => {
+      textAreaSSH.nativeElement.value = res;
+      this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(res);
+    
+    }, (error)=>{
       this.loader.close();
-      this.dialog.errorReport(sshError.error, sshError.reason, sshError.trace.formatted);
     });
+  
+    
   }
 
   ngOnDestroy() {
