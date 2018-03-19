@@ -33,6 +33,7 @@ import {routing} from './vm.routing';
 import { VmSummaryComponent } from './vm-cards/vm-summary.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
+import { DockerVMWizardComponent } from './dockervm-wizard/';
 
 @NgModule({
   imports : [
@@ -57,7 +58,8 @@ import { VMWizardComponent } from './vm-wizard/';
     DeviceEditComponent,
     DeviceRawFileAddComponent,
     VmSummaryComponent,
-    VMWizardComponent
+    VMWizardComponent,
+    DockerVMWizardComponent
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
 })
