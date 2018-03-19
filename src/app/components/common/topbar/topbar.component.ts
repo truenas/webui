@@ -28,7 +28,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   @Input() notificPanel;
 
   notifications: NotificationAlert[] = [];
-
   @Output() onLangChange = new EventEmitter<any>();
 
   interval: any;
@@ -39,6 +38,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   replicationDetails;
   resilveringDetails;
   currentTheme:string = "ix-blue";
+  public createThemeLabel = "Create Theme";
 
   constructor(
     public themeService: ThemeService,
@@ -136,6 +136,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   changeTheme(theme) {
     this.themeService.changeTheme(theme);
+  }
+
+  createTheme(){
+    this.router.navigate(['/ui-preferences/create-theme']);
   }
 
   toggleNotific() {

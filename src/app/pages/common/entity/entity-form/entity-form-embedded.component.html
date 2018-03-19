@@ -28,7 +28,8 @@
         <!-- </div> -->
         <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
         <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name}}</button>
+          <button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name}}</button>
+          <!--<button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="custBtn.type" (click)="custBtn['function']($event)">{{custBtn.name}}</button>-->
         </span>
         <button id="delete_button" mat-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">Delete</button>
         <!-- </div> -->

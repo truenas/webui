@@ -231,7 +231,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.target.next({name:"FormCancelled", sender:this.conf});
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event, eventName?:string) {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
@@ -259,7 +259,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
     //this.loader.open();
     //console.log(value);
-    this.target.next({name:"FormSubmitted",data:value, sender:this.conf});
+    if(!eventName){
+      this.target.next({name:"FormSubmitted", data:value, sender:this.conf});
+    } else {
+      this.target.next({name:eventName, data:value, sender:this.conf});
+    }
   }
 
   clearErrors() {

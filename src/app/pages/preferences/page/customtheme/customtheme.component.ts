@@ -340,6 +340,14 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       this.updatePreview(theme);
     }
 
+    custActions: any[] = [
+      {
+        id:'update-preview',
+        name:'Update Preview',
+        eventName: "UpdatePreview"
+      }
+    ]
+
     constructor(
       protected router: Router, 
       protected rest: RestService,
@@ -369,10 +377,14 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
-            this.updatePreview(evt.data);
           break;
           case "FormCancelled":
             console.log("Form Cancelled");
+          break;
+          case "UpdatePreview":
+            console.log("Update Preview");
+            console.log(evt.data);
+            this.updatePreview(evt.data);
           break;
         }
       });

@@ -120,6 +120,13 @@ export class PreferencesPage implements OnInit, OnChanges {
     }*/
   ]
 
+  custActions: any[] = [
+    {
+      id: 'create-theme-link',
+      name: 'Create Theme',
+      eventName:"CreateTheme"
+    }
+  ]
 
     constructor(
       protected router: Router, 
@@ -151,8 +158,8 @@ export class PreferencesPage implements OnInit, OnChanges {
             console.log(evt.data);
             
           break;
-          case "FormCancelled":
-            console.log("Form Cancelled");
+          case "CreateTheme":
+            this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
           break;
         }
       });
