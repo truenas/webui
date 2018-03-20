@@ -122,19 +122,19 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            this.dialogService.confirm("Lock", "Proceed with locking the volume: " + row1.name).subscribe((confirmResult) => {
+            this.dialogService.confirm(T("Lock"), T("Proceed with locking the volume: ") + row1.name).subscribe((confirmResult) => {
               if (confirmResult === true) {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   console.log("restPostResp", restPostResp);
                   this.loader.close();
 
-                  this.dialogService.Info("Lock", "Locked " + row1.name).subscribe((infoResult) => {
+                  this.dialogService.Info(T("Lock"), T("Locked ") + row1.name).subscribe((infoResult) => {
                     this.parentVolumesListComponent.repaintMe();
                   });
                 }, (res) => {
                   this.loader.close();
-                  this.dialogService.errorReport("Error locking volume", res.message, res.stack);
+                  this.dialogService.errorReport(T("Error locking volume"), res.message, res.stack);
                 });
               }
             });
@@ -198,7 +198,7 @@ export class VolumesListTableConfig implements InputTableConf {
     });
 
     actions.push({
-      label: "Encryption Rekey",
+      label: T("Encryption Rekey"),
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
           ["storage", "volumes", "rekey", row1.id]));
@@ -238,7 +238,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
       actions.push({
-        label: "Status",
+        label: T("Status"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "volumes", "status", row1.id]));
@@ -297,7 +297,7 @@ export class VolumesListTableConfig implements InputTableConf {
       }
 
       actions.push({
-        label: "Promote Dataset",
+        label: T("Promote Dataset"),
         onClick: (row1) => {
           this.loader.open();
 
@@ -415,7 +415,7 @@ export class VolumesListTableConfig implements InputTableConf {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  title = "ZFS Pools";
+  title = T("ZFS Pools");
   zfsPoolRows: ZfsPoolData[] = [];
   conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
 
