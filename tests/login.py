@@ -70,7 +70,8 @@ class login_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("01-e")
-            print (exc_info_p)
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
