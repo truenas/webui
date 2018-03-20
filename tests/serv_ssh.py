@@ -149,12 +149,10 @@ class conf_ssh_test(unittest.TestCase):
     def screenshot(self, count):
         time.sleep(1)
         text_path = os.path.dirname(os.path.realpath(__file__))
-        print (text_path)
         filename = str(__file__)
         filename = filename[:-3]
-        print (filename)
         final_file = filename.replace(text_path + "/", '')
-        print (final_file)
+        print ("Taking screenshot for " + final_file + " Test no:" + count)
         driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
 
 
