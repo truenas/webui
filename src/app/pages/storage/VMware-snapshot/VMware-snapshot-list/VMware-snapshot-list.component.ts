@@ -2,6 +2,7 @@ import {Component, ElementRef} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {RestService} from '../../../../services/rest.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'vmware-snapshot-list',
@@ -35,7 +36,7 @@ export class VMwareSnapshotListComponent {
   getAddActions() {
     let actions = [];
     actions.push({
-      label: "Add",
+      label: T("Add"),
       icon: "card_membership",
       onClick: () => {
         this._router.navigate(
@@ -48,13 +49,13 @@ export class VMwareSnapshotListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-      label : "Delete",
+      label : T("Delete"),
       onClick : (row) => {
         this.entityList.doDelete(row.id);
       }
     });
       actions.push({
-        label : "Edit",
+        label : T("Edit"),
         onClick : (row) => {
           this._router.navigate(new Array('/').concat(
               [ "storage", "vmware-Snapshots", "edit", row.id ]));

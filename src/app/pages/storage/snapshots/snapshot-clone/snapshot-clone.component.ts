@@ -17,6 +17,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 
 import * as _ from 'lodash';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'snapshot-clone',
@@ -53,7 +54,7 @@ export class SnapshotCloneComponent {
             type: 'input',
             name: 'name',
             placeholder: 'Name',
-            tooltip: 'Enter a name for the cloned snapshot.',
+            tooltip: T('Enter a name for the cloned snapshot.'),
             value: this.pk.replace("@", "/") + "-clone"
           }
         ];
