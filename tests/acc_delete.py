@@ -59,11 +59,12 @@ class delete_test(unittest.TestCase):
             # assert response
             self.assertTrue("User" in page_data)
             # Taking screenshot
-            self.screenshot("01_00")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01_00-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -74,11 +75,12 @@ class delete_test(unittest.TestCase):
             time.sleep(2)
             self.delete("user", newusername)
             # Taking screenshot
-            self.screenshot("01_01")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01_01-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -89,11 +91,12 @@ class delete_test(unittest.TestCase):
             time.sleep(2)
             self.delete("user", newusernameuncheck)
             # Taking screenshot
-            self.screenshot("01_02")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01_02-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -105,11 +108,12 @@ class delete_test(unittest.TestCase):
             self.delete("user", superusername)
             time.sleep(2)
             # Taking screenshot
-            self.screenshot("01_03")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01_03-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -127,11 +131,12 @@ class delete_test(unittest.TestCase):
             # assert response
             self.assertTrue("Group" in page_data)
             # Taking screenshot
-            self.screenshot("02_00")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("02_00-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -141,11 +146,12 @@ class delete_test(unittest.TestCase):
             time.sleep(2)
             self.delete("group", newusername)
             # Taking screenshot
-            self.screenshot("02_01")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
