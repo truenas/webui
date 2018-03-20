@@ -90,7 +90,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getAddActions() {
     const actions = [];
-    
+
     actions.push({
       label: T("Import Volumes"),
       icon: "vertical_align_bottom",
@@ -109,7 +109,7 @@ export class VolumesListTableConfig implements InputTableConf {
       }
     });
 
-    
+
     return actions;
   }
 
@@ -244,7 +244,28 @@ export class VolumesListTableConfig implements InputTableConf {
             ["storage", "volumes", "status", row1.id]));
         }
       });
-    
+
+      if (rowData.is_upgraded === false) {
+
+        actions.push({
+          label: T("Upgrade Volume"),
+          onClick: (row1) => {
+            this.loader.open();
+
+            this.rest.post("storage/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+              console.log("restPostResp", restPostResp);
+              this.loader.close();
+
+              this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport(T("Error Upgrading Volume ") + row1.name,  res.message, res.stack);
+            });
+          }
+        });
+      }
     }
 
     if (rowData.type === "dataset") {
@@ -334,6 +355,8 @@ export class VolumesListTableConfig implements InputTableConf {
           ]));
         }
       });
+
+      
     }
     return actions;
   }
@@ -363,7 +386,7 @@ export class VolumesListTableConfig implements InputTableConf {
       } else if (typeof (dataObj.nodePath) === "undefined" || dataObj.nodePath.indexOf("/") === -1) {
         continue;
       }
-      
+
       if ("/mnt" === dataObj.parentPath) {
         dataObj.parentPath = "0";
       }
