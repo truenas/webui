@@ -42,31 +42,45 @@ class conf_system_email_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_system_email(self):
-#        driver.find_element_by_xpath(xpaths['navSystem']).click()
-        time.sleep(1)
-        driver.find_element_by_xpath(xpaths['submenuEmail']).click()
-        # cancelling the tour
-        if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
-            driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("email" in page_data)
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+    #        driver.find_element_by_xpath(xpaths['navSystem']).click()
+            time.sleep(1)
+            driver.find_element_by_xpath(xpaths['submenuEmail']).click()
+            # cancelling the tour
+            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li[2]/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("email" in page_data)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_configure_email(self):
-        # Close the System Tab
-        driver.find_element_by_xpath(xpaths['outgoingMail']).clear()
-        print ("configuring outgoing server to test@ixsystems.com")
-        driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
-        driver.find_element_by_xpath('//*[@id="save_button"]').click()
-        time.sleep(5)
-        # Taking screenshot
-        self.screenshot("02")
+        try:
+            # Close the System Tab
+            driver.find_element_by_xpath(xpaths['outgoingMail']).clear()
+            print ("configuring outgoing server to test@ixsystems.com")
+            driver.find_element_by_xpath(xpaths['outgoingMail']).send_keys("test@ixsystems.com")
+            driver.find_element_by_xpath('//*[@id="save_button"]').click()
+            time.sleep(5)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     # method to test if an element is present
     def is_element_present(self, how, what):
