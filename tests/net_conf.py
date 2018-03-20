@@ -102,16 +102,15 @@ class conf_network_test(unittest.TestCase):
         if (self.is_element_present(By.XPATH, "/html/body/div[5]/div[4]/div/mat-dialog-container/error-dialog/h1")):
             driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
 
-
     def screenshot(self, count):
+        test_method_name = self._testMethodName
         time.sleep(1)
         text_path = os.path.dirname(os.path.realpath(__file__))
         filename = str(__file__)
         filename = filename[:-3]
         final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + " Test no:" + count)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
-
+        print ("Taking screenshot for " + final_file + "-" + test_method_name)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
 
     @classmethod
