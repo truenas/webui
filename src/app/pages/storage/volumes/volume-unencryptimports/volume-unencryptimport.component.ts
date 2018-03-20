@@ -51,8 +51,8 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
       {
         type: 'input',
         name: 'passphrase',
-        label: T('passphrase'),
-        placeholder: T('passphrase'),
+        label: T('Passphrase'),
+        placeholder: T('Passphrase'),
         tooltip: T('Geli Passphrase')
       }
     ];

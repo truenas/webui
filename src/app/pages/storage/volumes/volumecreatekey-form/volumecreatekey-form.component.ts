@@ -50,13 +50,13 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'passphrase',
       label: T("passphrase"),
-      placeholder: T('passphrase'),
+      placeholder: T('Passphrase'),
       tooltip: T('Geli Passphrase')
     },{
       type : 'input',
       name : 'passphrase2',
-      label : T('passphrase2'),
-      placeholder: T('passphrase2 must match above'),
+      label : T('Passphrase2'),
+      placeholder: T('Passphrase2 must match above'),
       tooltip: T('Geli Passphrase must match above')
     }
   ];
