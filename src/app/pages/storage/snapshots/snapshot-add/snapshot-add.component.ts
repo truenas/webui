@@ -17,6 +17,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { RestService, WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-snapshot-add',
@@ -41,22 +42,22 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
       {
         type: 'select',
         name: 'dataset',
-        placeholder: 'Volume/Dataset',
-        tooltip: 'Select an existing ZFS volume, dataset, or zvol.',
+        placeholder: T('Volume/Dataset'),
+        tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
         options: []
       },
       {
         type: 'input',
         name: 'name',
         placeholder: 'Name',
-        tooltip: 'Add a name for the new snapshot',
+        tooltip: T('Add a name for the new snapshot'),
         options: []
       },
       {
         type: 'checkbox',
         name: 'recursive',
         placeholder: 'Recursive',
-        tooltip: 'Check this to include child datasets of the chosen dataset.',
+        tooltip: T('Check this to include child datasets of the chosen dataset.'),
       }
     ];
 
