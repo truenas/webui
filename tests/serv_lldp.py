@@ -40,49 +40,76 @@ class conf_lldp_test(unittest.TestCase):
         pass
 
     def test_01_turnon_lldp (self):
-        print (" turning on the lldp service")
-        # Click Service Menu
-        driver.find_element_by_xpath(xpaths['navService']).click()
-        # check if the Service page is opens
-        time.sleep(1)
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Services" in page_data)
-#        self.service_search("LLDP")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
-        self.status_change("7", "start")
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            print (" turning on the lldp service")
+            # Click Service Menu
+            driver.find_element_by_xpath(xpaths['navService']).click()
+            # check if the Service page is opens
+            time.sleep(1)
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Services" in page_data)
+#           self.service_search("LLDP")
+            # scroll down
+            driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
+            self.status_change("7", "start")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_checkif_lldp_on (self):
-        print (" check if lldp turned on")
-        time.sleep(2)
-        self.status_check("7")
-        # Taking screenshot
-        self.screenshot("02")
+        try:
+            print (" check if lldp turned on")
+            time.sleep(2)
+            self.status_check("7")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_turnoff_lldp (self):
-        print (" turning off the lldp service")
-        time.sleep(2)
-        self.status_change("7", "stop")
-        #lldp takes almost 7 sec to turn off
-        time.sleep(7)
-        # Taking screenshot
-        self.screenshot("03")
+        try:
+            print (" turning off the lldp service")
+            time.sleep(2)
+            self.status_change("7", "stop")
+            #lldp takes almost 7 sec to turn off
+            time.sleep(7)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_checkif_lldp_off (self):
-        print (" check if ftp turned off")
-        time.sleep(2)
-        self.status_check("7")
-        time.sleep(10)
-        # Taking screenshot
-        self.screenshot("04")
-
+        try:
+            print (" check if ftp turned off")
+            time.sleep(2)
+            self.status_check("7")
+            time.sleep(10)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     #method to test if an element is present
     def is_element_present(self, how, what):
