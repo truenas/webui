@@ -16,6 +16,7 @@ import {
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'dynamicdns-edit',
@@ -30,10 +31,10 @@ export class ServiceDDNSComponent {
     {
       type : 'select',
       name : 'ddns_provider',
-      placeholder : 'Provider',
-      tooltip: 'Several providers are supported. If your provider is\
- not listed, select <i>Custom Provider</i> and enter the information in\
- the <i>Custom Server</i> and <i>Custom Path</i> fields.',
+      placeholder : T('Provider'),
+      tooltip: T('Several providers are supported. If your provider is\
+       not listed, select <i>Custom Provider</i> and enter the information in\
+       the <i>Custom Server</i> and <i>Custom Path</i> fields.'),
       options : [
         {label : 'dyndns.org', value : 'dyndns@dyndns.org'},
         {label : 'freedns.afraid.org', value : 'default@freedns.afraid.org'},
@@ -54,30 +55,30 @@ export class ServiceDDNSComponent {
     {
       type : 'input',
       name : 'ddns_ipserver',
-      placeholder : 'IP Server',
-      tooltip: 'Enter the name and port of the server that reports the\
- external IP address in the format <i>server.name.org:port</i>.',
+      placeholder : T('IP Server'),
+      tooltip: T('Enter the name and port of the server that reports the\
+       external IP address in the format <i>server.name.org:port</i>.'),
     },
     {
       type : 'input',
       name : 'ddns_domain',
-      placeholder : 'Domain name',
-      tooltip: 'Fully qualified domain name (e.g.\
- <i>yourname.dyndns.org</i>).',
+      placeholder : T('Domain name'),
+      tooltip: T('Fully qualified domain name (e.g.\
+       <i>yourname.dyndns.org</i>).'),
     },
     {
       type : 'input',
       name : 'ddns_username',
-      placeholder : 'User name',
-      tooltip: 'Username used to logon to the provider and update the\
- record.',
+      placeholder : T('User name'),
+      tooltip: T('Username used to logon to the provider and update the\
+       record.'),
     },
     {
       type : 'input',
       name : 'ddns_password',
-      placeholder : 'Password',
-      tooltip: 'Password used to logon to the provider and update the\
- record.',
+      placeholder : T('Password'),
+      tooltip: T('Password used to logon to the provider and update the\
+       record.'),
       inputType : 'password',
       validation :
           [ Validators.minLength(8), matchOtherValidator('ddns_password2') ]
@@ -85,28 +86,28 @@ export class ServiceDDNSComponent {
     {
       type : 'input',
       name : 'ddns_password2',
-      placeholder : 'Confirm Password',
+      placeholder : T('Confirm Password'),
       inputType : 'password',
     },
     {
       type : 'input',
       name : 'ddns_updateperiod',
-      placeholder : 'Update Period',
-      tooltip: 'How often the IP is checked in seconds.',
+      placeholder : T('Update Period'),
+      tooltip: T('How often the IP is checked in seconds.'),
     },
     {
       type : 'input',
       name : 'ddns_fupdateperiod',
-      placeholder : 'Forced Update Period',
-      tooltip : 'Not recommended. Enter an interval in seconds for the\
- system to force IP updates.',
+      placeholder : T('Forced Update Period'),
+      tooltip : T('Not recommended. Enter an interval in seconds for the\
+       system to force IP updates.'),
     },
     {
       type : 'input',
       name : 'lldp_location',
-      placeholder : 'Auxiliary Parameters',
-      tooltip : 'Enter any additional parameters to pass to the provider\
- during a record update.',
+      placeholder : T('Auxiliary Parameters'),
+      tooltip : T('Enter any additional parameters to pass to the provider\
+       during a record update.'),
     },
   ];
 
