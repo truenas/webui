@@ -36,13 +36,13 @@ export class ShellComponent implements OnInit, OnChanges {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
- <b>Command + C/V</b>.<br>\
- Many utilities are built-in, including:<br>\
- <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
- <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
- and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
- chapter for more information.';
+  public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
+   <b>Command + C/V</b>.<br>\
+   Many utilities are built-in, including:<br>\
+   <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
+   <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
+   and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
+   chapter for more information.');
 
   clearLine = "\u001b[2K\r"
 
