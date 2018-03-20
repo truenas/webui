@@ -430,7 +430,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
             palette.forEach(function(color){
               let swatch = theme[color];
-              console.log("Setting " + color + " to " + theme[color]);
+              //console.log("Setting " + color + " to " + theme[color]);
               //(<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
               (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
             });

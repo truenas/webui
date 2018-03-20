@@ -23,6 +23,11 @@ div.color-swatch{
   color:var(--fg1);
 }
 
+:host ::ng-deep .color-picker .hsla-text,
+:host ::ng-deep .color-picker .rgba-text,
+:host ::ng-deep .color-picker .hex-text{
+  display:none !important;
+}
 :host ::ng-deep .color-picker .selected-color{
   border:0;
   box-shadow: 0 1px 3px rgba(0,0,0,0.3)

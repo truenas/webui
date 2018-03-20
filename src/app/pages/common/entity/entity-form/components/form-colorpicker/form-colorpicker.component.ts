@@ -17,6 +17,29 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   //private _group: FormGroup;
   fieldShow: string;
   public picker:boolean = false;
+  private _textInput:string = '';
+
+  get textInput(){
+    return this._textInput;
+  }
+
+  set textInput(val:string){
+    this._textInput = val;
+    console.log("TEXT INPUT CHANGED!!");
+    console.log(val)
+  }
+
+  get colorProxy(){
+    //return this.config.value;
+    return this.group.value[this.config.name];
+  }
+
+  set colorProxy(val:string){
+    //this._colorProxy = val; 
+    this.group.value[this.config.name] = val;
+    console.log("COLOR CHANGED!!");
+    console.log(val)
+  }
 
   constructor(){}
   
