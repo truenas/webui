@@ -12,6 +12,7 @@ import { ZfsPoolData } from '../volumes-list/volumes-list.component';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'volume-unencryptimport',
@@ -32,7 +33,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
   public isNew = true;
   public fieldConfig: FieldConfig[] = [];
   public initialized = true;
-  public saveSubmitText = "UnEncrypt Volumes";
+  public saveSubmitText = T("UnEncrypt Volumes");
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -44,14 +45,15 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
       {
         type: 'upload',
         name: 'encryption_key_file',
-        placeholder: 'Encryption Key File',
-        tooltip: 'Encryption key used to un encryptd volumes before showing import.',
+        placeholder: T('Encryption Key File'),
+        tooltip: T('Encryption key used to un encryptd volumes before showing import.'),
       },
       {
         type: 'input',
         name: 'passphrase',
-        placeholder: 'passphrase',
-        tooltip: 'Geli Passphrase'
+        label: T('passphrase'),
+        placeholder: T('passphrase'),
+        tooltip: T('Geli Passphrase')
       }
     ];
 
@@ -70,7 +72,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         this.initialized = true;
 
       }, (res) => {
-        this.dialogService.errorReport("Error getting volume data", res.message, res.stack);
+        this.dialogService.errorReport(T("Error getting volume data"), res.message, res.stack);
         this.initialized = true;
       });
 
@@ -84,13 +86,13 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
     return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted }) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Imported Volume", "Successfully UnEncrypted Volume " + value.volume_id);
+      this.dialogService.Info(T("Imported Volume"), T("Successfully UnEncrypted Volume ") + value.volume_id);
 
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error UnEncrypted volume", res.message, res.stack);
+      this.dialogService.errorReport(T("Error UnEncrypted volume"), res.message, res.stack);
     });
   }
 

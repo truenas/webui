@@ -21,6 +21,7 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-volumeunlock-form',
@@ -28,7 +29,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 })
 export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
-  saveSubmitText = "Create";
+  saveSubmitText = T("Create");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -48,13 +49,15 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     },{
       type : 'input',
       name : 'passphrase',
-      placeholder: 'passphrase',
-      tooltip: 'Geli Passphrase'
+      label: T("passphrase"),
+      placeholder: T('passphrase'),
+      tooltip: T('Geli Passphrase')
     },{
       type : 'input',
       name : 'passphrase2',
-      placeholder: 'passphrase2 must match above',
-      tooltip: 'Geli Passphrase must match above'
+      label : T('passphrase2'),
+      placeholder: T('passphrase2 must match above'),
+      tooltip: T('Geli Passphrase must match above')
     }
   ];
 
@@ -86,13 +89,13 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Created Volume Key", "Successfully Created Key to volume " + value.name);
+      this.dialogService.Info(T("Created Volume Key"), T("Successfully Created Key to volume ") + value.name);
 
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error Creating key to volume", res.message, res.stack);
+      this.dialogService.errorReport(T("Error Creating key to volume"), res.message, res.stack);
     });
   }
   

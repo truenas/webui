@@ -21,6 +21,7 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-volumeunlock-form',
@@ -28,7 +29,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 })
 export class VolumeAddkeyFormComponent implements Formconfiguration {
 
-  saveSubmitText = "Add Key";
+  saveSubmitText = T("Add Key");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -43,12 +44,14 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     {
       type : 'input',
       name : 'name',
+      label : T('name'),
       isHidden: true
     },{
       type : 'input',
       name : 'passphrase',
-      placeholder: 'passphrase',
-      tooltip: 'Geli Passphrase'
+      label : T('passphrase'),
+      placeholder: T('passphrase'),
+      tooltip: T('Geli Passphrase')
     }
   ];
 
@@ -80,12 +83,12 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Rekeyed Volume", "Successfully Added Key to volume " + value.name);
+      this.dialogService.Info(T("Rekeyed Volume"), T("Successfully Added Key to volume ") + value.name);
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error adding key to volume", res.message, res.stack);
+      this.dialogService.errorReport(T("Error adding key to volume"), res.message, res.stack);
     });
   }
   
