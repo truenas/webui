@@ -13,7 +13,7 @@
           </ng-container>
           <mat-card-actions class="wizard-action">
             <button mat-raised-button matStepperPrevious color="accent" *ngIf="i == 0 ? false : true">{{"Back" | translate}}</button>
-            <button mat-raised-button matStepperNext color="primary" [disabled]="!entityForm.form.valid">{{"Next" | translate}}</button>
+            <button mat-raised-button matStepperNext color="primary" >{{"Next" | translate}}</button>
           </mat-card-actions>
         </mat-step>
       </div>

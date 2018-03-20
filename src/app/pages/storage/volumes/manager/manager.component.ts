@@ -245,6 +245,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
                   res.error[i].forEach(
                     (error) => { this.error += error + '<br />'; });
                 }
+              } else {
+                this.dialog.errorReport(res.code, res.error.error_message, res.error.error_message)
               }
             });
           }

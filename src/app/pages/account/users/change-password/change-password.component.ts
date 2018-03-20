@@ -5,6 +5,7 @@ import {AppLoaderService} from "../../../../services/app-loader/app-loader.servi
 import {MatSnackBar} from "@angular/material";
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+import { T } from '../../../../translate-marker';
 
 @Component({
   template: `<entity-form [conf]="this"></entity-form>`,
@@ -19,27 +20,27 @@ export class ChangePasswordComponent {
     {
       type : 'input',
       name : 'bsdusr_username',
-      placeholder : 'Username',
+      placeholder : T('Username'),
     },
     {
       type : 'input',
       name : 'bsdusr_passwd_currnt',
-      placeholder : 'Current Password',
+      placeholder : T('Current Password'),
       inputType : 'password',
     },
     {
       type : 'input',
       name : 'bsdusr_password',
-      placeholder : 'New Password',
+      placeholder : T('New Password'),
       inputType : 'password',
-      tooltip : 'Passwords cannot contain a <b>?</b>. Passwords are\
- recommended to be 8 characters or longer and contain a mix of lower and\
- upper case, numbers, and special characters.'
+      tooltip : T('Passwords cannot contain a <b>?</b>. Passwords are\
+       recommended to be 8 characters or longer and contain a mix of lower and\
+       upper case, numbers, and special characters.')
     },
     {
       type : 'input',
       name : 'bsdusr_password_conf',
-      placeholder : 'Confirm Password',
+      placeholder : T('Confirm Password'),
       inputType : 'password',
       validation : [ matchOtherValidator('bsdusr_password') ]
     },
