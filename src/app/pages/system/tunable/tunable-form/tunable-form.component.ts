@@ -86,5 +86,6 @@ export class TunableFormComponent {
 
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['tun_enabled'].setValue(true);
+    entityForm.formGroup.controls['tun_type'].setValue('loader');
   }
 }
