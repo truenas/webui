@@ -73,11 +73,12 @@ class create_user_test(unittest.TestCase):
             print ("the Page now is: " + page_data)
             # assert response
             self.assertTrue("User" in page_data)
-            self.screenshot("01")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
-            print (exc_info_p)
+            self.screenshot("e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -111,12 +112,13 @@ class create_user_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['saveButton']).click()
             # check if there is a generic error when making a duplicate user, and print the error
             time.sleep(1)
-            self.screenshot("02")
+            self.screenshot("_")
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("02-e")
-            print (exc_info_p)
+            self.screenshot("e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_create_newuser_primarygroup_uncheck(self):
@@ -153,13 +155,14 @@ class create_user_test(unittest.TestCase):
             # Click on create new User button
             driver.find_element_by_xpath(xpaths['saveButton']).click()
             # Taking screenshot
-            self.screenshot("03")
+            self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("03-e")
-            print (exc_info_p)
+            self.screenshot("e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
@@ -192,14 +195,15 @@ class create_user_test(unittest.TestCase):
             # Click on create new User button
             driver.find_element_by_xpath(xpaths['saveButton']).click()
             # Taking screenshot
-            self.screenshot("04")
+            self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
             self.error_check()
             # check if the the user list is loaded after addding a new user
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("04-e")
-            print (exc_info_p)
+            self.screenshot("e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_05_create_duplicateuser(self):
@@ -231,24 +235,27 @@ class create_user_test(unittest.TestCase):
             # Click on create new User button
             driver.find_element_by_xpath(xpaths['saveButton']).click()
             # Taking screenshot
-            self.screenshot("05")
+            self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("05-e")
-            print (exc_info_p)
+            self.screenshot("e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_06_close_navAccount(self):
         try:
             print (" closing account menu")
             driver.find_element_by_xpath(xpaths['navAccount']).click()
+            self.screenshot("_")
             time.sleep(20)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("06-e")
-            print (exc_info_p)
+            self.screenshot("e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
