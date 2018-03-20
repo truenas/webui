@@ -3,6 +3,7 @@ import {RestService} from "../../../../services/rest.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {WebSocketService} from "../../../../services/ws.service";
 import {AppLoaderService} from "../../../../services/app-loader/app-loader.service";
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-members',
@@ -23,7 +24,8 @@ export class MembersComponent implements OnInit {
   constructor(private loading: AppLoaderService,
               private ws: WebSocketService,
               private activatedRoute: ActivatedRoute,
-              private router: Router) {
+              private router: Router,
+              public translate: TranslateService) {
   }
 
   ngOnInit() {
