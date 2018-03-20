@@ -319,7 +319,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
   getFieldValueOrRaw(field): any {
-    if( field.value === undefined) {
+    if( field === undefined || field.value === undefined) {
       return field;
     }
     return field.value;
