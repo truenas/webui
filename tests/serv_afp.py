@@ -40,51 +40,86 @@ class conf_afp_test(unittest.TestCase):
         pass
 
     def test_01_nav_services(self):
-        # Click  Service menu
-        print ("navigating to service menu")
-        driver.find_element_by_xpath(xpaths['navService']).click()
-        # allowing the button to load
-        time.sleep(1)
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Services" in page_data)
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            # Click  Service menu
+            print ("navigating to service menu")
+            driver.find_element_by_xpath(xpaths['navService']).click()
+            # allowing the button to load
+            time.sleep(1)
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Services" in page_data)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_turnon_afp (self):
-        print (" turning on the afp service")
-        # scroll down
-        driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
-        time.sleep(2)
-        self.status_change("1", "start")
-        # Taking screenshot
-        self.screenshot("02")
+        try:
+            print (" turning on the afp service")
+            # scroll down
+            driver.find_element_by_tag_name('body').send_keys(Keys.HOME)
+            time.sleep(2)
+            self.status_change("1", "start")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_03_checkif_afp_on (self):
-        print (" check if afp turned on")
-        time.sleep(2)
-        self.status_check("1")
-        # Taking screenshot
-        self.screenshot("03")
+        try:
+            print (" check if afp turned on")
+            time.sleep(2)
+            self.status_check("1")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_turnoff_afp (self):
-        print (" turning off the afp service")
-        time.sleep(2)
-        self.status_change("1", "stop")
-        # Taking screenshot
-        self.screenshot("04")
+        try:
+            print (" turning off the afp service")
+            time.sleep(2)
+            self.status_change("1", "stop")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_05_checkif_afp_off (self):
-        print (" check if afp turned off")
-        time.sleep(2)
-        self.status_check("1")
-        time.sleep(10)
-        # Taking screenshot
-        self.screenshot("05")
+        try:
+            print (" check if afp turned off")
+            time.sleep(2)
+            self.status_check("1")
+            time.sleep(10)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     #method to test if an element is present
     def is_element_present(self, how, what):
