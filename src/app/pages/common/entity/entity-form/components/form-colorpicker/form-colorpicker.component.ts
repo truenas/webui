@@ -35,8 +35,8 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   }
 
   set colorProxy(val:string){
-    //this._colorProxy = val; 
-    this.group.value[this.config.name] = val;
+    //this.group.value[this.config.name] = val;
+    this.group.controls[this.config.name].setValue(val);;
   }
 
   constructor(){}

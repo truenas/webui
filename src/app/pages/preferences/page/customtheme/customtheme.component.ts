@@ -403,6 +403,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           case "FormCancelled":
             console.log("Form Cancelled");
           break;
+          case "FormGroupValueChanged":
           case "UpdatePreview":
             console.log("Update Preview");
             console.log(evt.data);
@@ -412,7 +413,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
             this.updatePreview(evt.data);
           break;
           default:
-            console.log(evt);
+            //console.log(evt);
           break;
         }
       });
@@ -454,7 +455,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
     updatePreview(theme:Theme){
       let palette = Object.keys(theme);
-      palette.splice(0,6);
+      palette.splice(0,5);
       
       palette.forEach(function(color){
       let swatch = theme[color];
@@ -464,7 +465,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
     updateGlobal(theme:Theme){
       let palette = Object.keys(theme);
-      palette.splice(0,6);
+      palette.splice(0,5);
       
       palette.forEach(function(color){
         let swatch = theme[color];
