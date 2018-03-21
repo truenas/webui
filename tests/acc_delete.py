@@ -273,7 +273,7 @@ class delete_test(unittest.TestCase):
             time.sleep(1)
 
             # click on the 3 dots
-            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[4]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
             time.sleep(1)
             # click on delete option
 #            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
