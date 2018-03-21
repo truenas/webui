@@ -338,6 +338,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-expansion-panel-body{
   //background-color:rgba(0,0,0,0.15);
   position:relative;
+  //padding:0;// ask pete
 }
 .dx-treelist-container{
   background:transparent;
@@ -358,6 +359,12 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .dx-treelist .dx-row-lines > td{
   border-color: rgba(128,128,128,0.1);
 }
+
+tr.dx-row:nth-child(odd){
+  background-color:rgba(0,0,0,0.05)
+}
+
+// END Treelist styles
 
 .fieldset-label{
   min-width:100%;

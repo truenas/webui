@@ -120,6 +120,34 @@ export class ThemeService {
       blue:'#268bd2',
       cyan:'#2aa198',
       green:'#859900'
+    },
+    {
+      name:'solarized-light',
+      label: "Solarized Light",
+      labelSwatch:"bg2",
+      description:'Based on Solarized light color scheme',
+      hasDarkLogo:false,
+      favorite:false,
+      accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
+      primary:"var(--alt-bg2)",
+      accent:"var(--yellow)",
+      //'bg1':'#eee8d5',
+      'bg1':'#dfdac8',
+      'bg2':'#fdf6e3',
+      'fg1':'#839496',
+      'fg2':'#282a36',
+      'alt-bg1':'#002b36',
+      'alt-bg2':'#073642',
+      'alt-fg1':'#586e75',
+      'alt-fg2':'#657b83',
+      yellow:'#b58900',
+      orange:'#cb4b16',
+      red:'#dc322f',
+      magenta:'#d33682',
+      violet:'#6c71c4',
+      blue:'#268bd2',
+      cyan:'#2aa198',
+      green:'#859900'
     }
   ];
 

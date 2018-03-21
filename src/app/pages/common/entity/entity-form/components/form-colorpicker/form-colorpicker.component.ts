@@ -37,8 +37,6 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   set colorProxy(val:string){
     //this._colorProxy = val; 
     this.group.value[this.config.name] = val;
-    console.log("COLOR CHANGED!!");
-    console.log(val)
   }
 
   constructor(){}
@@ -58,8 +56,6 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   ngOnChanges(changes){
     if(changes.group){
       //this.ngOnInit();
-      console.warn("COLORPICKER VALUE CHANGED!!");
-      console.log(this.config);
     }
 
     /*if(changes.config){
@@ -70,20 +66,18 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   ngOnInit(){
     this.config.value = this.group.value[this.config.name];
     //this._config.value = this.group.value[this._config.name];
+    console.warn(this);
   }
 
   cpListener(evt:string, data: any): void {
-    console.log("Color Picker Changed");
-    console.log(evt);
-    console.log(data);
     this.group.value[this.config.name] = data;
   }
 
   inputListener(evt:string, data:any): void {
-    console.log("Input Value Changed");
     console.log(evt);
-    console.log(data);
     this.group.value[this.config.name] = data;
+    console.warn(this.group.controls[this.config.name].valueChanges)//.next(data);
+
   }
 
   public onChangeColor(color: string): any {
@@ -96,7 +90,6 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   }
 
   public togglePicker(){
-    console.log(this.picker);
     this.picker = !this.picker;
   }
 }

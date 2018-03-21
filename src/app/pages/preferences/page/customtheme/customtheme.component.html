@@ -23,6 +23,8 @@
 
         <mat-toolbar-row color="primary">
           <h4>Theme Preview</h4>
+          <span class="spacer"></span>
+          <mat-slide-toggle [checked]="" [(ngModel)]="globalPreview">Global Preview</mat-slide-toggle>
         </mat-toolbar-row>
 
         <mat-tab-group dynamicHeight="true">

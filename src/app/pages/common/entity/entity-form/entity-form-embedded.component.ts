@@ -159,6 +159,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
     this.fieldSets = this.conf.fieldSets;
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+    this.setControlChangeDetection();
 
       for (const i in this.fieldConfig) {
         const config = this.fieldConfig[i];
@@ -203,6 +204,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       this.init();
       this.onFormGroupChanged();
     }
+  }
+
+  setControlChangeDetection(){ 
+    console.log(this.formGroup);
+    let fg = Object.keys(this.formGroup.controls);
+    fg.forEach((control) => {
+      console.log(control);
+      this.formGroup.controls[control].valueChanges.subscribe((evt) => { 
+        console.log("******** ControlValueChanged ********");
+        this.target.next({name:"ControlValueChanged",data:evt,sender:control});
+      });
+    });
   }
 
   onFormGroupChanged(){

@@ -20,6 +20,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
   private _baseTheme:any; //= this.themeService.activeTheme;
+  private _globalPreview:boolean = false;
   public baseThemes: Theme[];
   //@Input() isNew: boolean = false; //change this back to false
   
@@ -338,6 +339,27 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       this.loadValues(name);
       let theme = this.themeService.findTheme(name);
       this.updatePreview(theme);
+      if(this.globalPreview){
+        this.updateGlobal(theme);
+      }
+    }
+
+    get globalPreview(){
+      return this._globalPreview;
+    }
+
+    set globalPreview(state:boolean){
+      let theme:Theme; 
+      if(state){
+        //theme = this.themeService.findTheme(this.values);
+        theme = this.values;
+      } else {
+        theme = this.themeService.currentTheme();
+      }
+      console.log(state);
+      this._globalPreview = state;
+      this.updateGlobal(theme);
+      this.updatePreview(this.values);
     }
 
     custActions: any[] = [
@@ -384,7 +406,13 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           case "UpdatePreview":
             console.log("Update Preview");
             console.log(evt.data);
+            if(this.globalPreview){
+              this.updateGlobal(evt.data);
+            }
             this.updatePreview(evt.data);
+          break;
+          default:
+            console.log(evt);
           break;
         }
       });
@@ -425,17 +453,26 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     }
 
     updatePreview(theme:Theme){
-            let palette = Object.keys(theme);
-            palette.splice(0,6);
+      let palette = Object.keys(theme);
+      palette.splice(0,6);
+      
+      palette.forEach(function(color){
+      let swatch = theme[color];
+      (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
+      });
+    }
 
-            palette.forEach(function(color){
-              let swatch = theme[color];
-              //console.log("Setting " + color + " to " + theme[color]);
-              //(<any>document).documentElement.style.setProperty("--" + color, evt.data[color]);
-              (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
-            });
-              /*(<any>document).documentElement.style.setProperty("--primary",evt.data["primary"]);
-              (<any>document).documentElement.style.setProperty("--accent",evt.data["accent"]);*/
+    updateGlobal(theme:Theme){
+      let palette = Object.keys(theme);
+      palette.splice(0,6);
+      
+      palette.forEach(function(color){
+        let swatch = theme[color];
+      //console.log("Setting " + color + " to " + theme[color]);
+        (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
+      });
+        (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
+        (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
     }
 
     generateFieldConfig(){
