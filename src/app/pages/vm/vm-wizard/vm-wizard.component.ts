@@ -13,6 +13,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
 import { validateBasis } from '@angular/flex-layout';
+import { T } from '../../../translate-marker';
 
 
 @Component({
@@ -32,15 +33,15 @@ export class VMWizardComponent {
   summary_title = "VM Summary";
 
   protected wizardConfig: Wizard[] = [{
-      label: 'Operating System',
+      label: T('Operating System'),
       fieldConfig: [
         {
           type: 'select',
           name: 'os',
           required: true,
-          placeholder: 'Guest Operating System.',
-          tooltip: 'Select an operating system for the new Virtual\
- Machine.',
+          placeholder: T('Guest Operating System.'),
+          tooltip: T('Select an operating system for the new Virtual\
+ Machine.'),
           options: [
             {label: 'Windows', value: 'windows'},
             {label: 'Linux', value: 'linux'},
@@ -49,62 +50,62 @@ export class VMWizardComponent {
         },
       { type: 'input',
         name : 'name',
-        placeholder : 'VM Name',
-        tooltip : 'Type an alphanumeric name to identify the VM.',
+        placeholder : T('VM Name'),
+        tooltip : T('Type an alphanumeric name to identify the VM.'),
         validation : [ Validators.required ]
       },
       { type: 'select',
         name : 'bootloader',
-        placeholder : 'Boot Method',
-        tooltip : 'Select <i>UEFI</i> for newer operating systems or\
+        placeholder : T('Boot Method'),
+        tooltip : T('Select <i>UEFI</i> for newer operating systems or\
  <i>UEFI-CSM</i> (Compatability Support Mode) for older operating\
- systems that only understand BIOS booting.',
+ systems that only understand BIOS booting.'),
         options: []
       },
       { type: 'checkbox',
         name : 'autostart',
-        placeholder : 'Start on Boot',
-        tooltip : 'Check to start this VM when the system boots.',
+        placeholder : T('Start on Boot'),
+        tooltip : T('Check to start this VM when the system boots.'),
         value: true
       },
       { type: 'checkbox',
       name : 'enable_vnc',
-      placeholder : 'Enable VNC',
-      tooltip : 'Check to activate a Virtual Network Computing (VNC)\
- remote connection for a VM set to <i>UEFI</i> booting.',
+      placeholder : T('Enable VNC'),
+      tooltip : T('Check to activate a Virtual Network Computing (VNC)\
+ remote connection for a VM set to <i>UEFI</i> booting.'),
       value: true
     }
       ]
     },
     {
-      label: 'CPU and Memory',
+      label: T('CPU and Memory'),
       fieldConfig: [{
           type: 'input',
           name: 'vcpus',
-          placeholder: 'Virtual CPUs',
+          placeholder: T('Virtual CPUs'),
           inputType: 'number',
           min: 1,
           validation : [ Validators.required, Validators.min(1) ],
-          tooltip: 'Type the quantity of virtual CPUs allocated to the\
+          tooltip: T('Type the quantity of virtual CPUs allocated to the\
  VM, up to 16. Although these are virtual and not strictly related to\
  host processor cores, the CPU may limit the maximum number. The VM\
  operating system may also have operational or licensing restrictions on\
- the number of CPUs allowed.',
+ the number of CPUs allowed.'),
         },
         {
           type: 'input',
           name: 'memory',
-          placeholder: 'Memory Size (MiB)',
+          placeholder: T('Memory Size (MiB)'),
           inputType: 'number',
           min: 128,
           validation : [ Validators.required, Validators.min(128)],
-          tooltip: 'Type the number of megabytes of system RAM to\
- allocate to the VM.',
+          tooltip: T('Type the number of megabytes of system RAM to\
+ allocate to the VM.'),
         },
       ]
     },
     {
-      label: 'Hard Disks',
+      label: T('Hard Disks'),
       fieldConfig: [
         {
           type: 'radio',
@@ -112,30 +113,30 @@ export class VMWizardComponent {
 //           tooltip: 'Select <i>Yes</i> to create a new Zvol on an\
 //  existing datastore to be used as a virtual hard drive. Select <i>No</i>\
 //  to use an existing disk for the VM.',
-          options:[{label:"Create new disk image", value: true},
-                   {label:"Use existing disk image", value: false}],
+          options:[{label:T("Create new disk image"), value: true},
+                   {label:T("Use existing disk image"), value: false}],
           value: true,
         },
         {
           type: 'input',
           name: 'volsize',
-          placeholder : 'Define the size (in GiB) for the Zvol.',
-          tooltip: 'Type a number of GiB to allocate to the new Zvol.',
+          placeholder : T('Define the size (in GiB) for the Zvol.'),
+          tooltip: T('Type a number of GiB to allocate to the new Zvol.'),
           isHidden: false
         },
         {
           type: 'select',
           name: 'datastore',
-          placeholder : 'Select a datastore.',
-          tooltip: 'Choose an existing datastore for the new Zvol.',
+          placeholder : T('Select a datastore.'),
+          tooltip: T('Choose an existing datastore for the new Zvol.'),
           options: [],
           isHidden: false
         },
         {
           type: 'explorer',
           name: 'hdd_path',
-          placeholder: 'Select an existing disk',
-          tooltip: 'Enter the path to a datastore on the existing disk.',
+          placeholder: T('Select an existing disk'),
+          tooltip: T('Enter the path to a datastore on the existing disk.'),
           explorerType: "zvol",
           initial: '/mnt',
           isHidden: true
@@ -143,36 +144,36 @@ export class VMWizardComponent {
       ]
     },
     {
-      label: 'Network Interface',
+      label: T('Network Interface'),
       fieldConfig: [
         {
           name : 'NIC_type',
-          placeholder : 'Adapter Type:',
-          tooltip : 'The default emulates an Intel E1000 (82545) Ethernet\
+          placeholder : T('Adapter Type'),
+          tooltip : T('The default emulates an Intel E1000 (82545) Ethernet\
      card for compatibility with most operating systems. If the operating\
      system installed in the VM supports VirtIO paravirtualized network\
      drivers, this can be changed to <i>VirtIO</i> to provide better\
-     performace.',
+     performace.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ]
         },
         {
           name : 'NIC_mac',
-          placeholder : 'Mac Address',
-          tooltip : 'By default, the VM receives an auto-generated random\
+          placeholder : T('Mac Address'),
+          tooltip : T('By default, the VM receives an auto-generated random\
      MAC address. To override the default with a custom value, enter the\
-     desired address into the field.',
+     desired address into the field.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
         },
         {
           name : 'nic_attach',
-          placeholder : 'Nic to attach:',
-          tooltip : 'Can be used to specify which physical interface to\
+          placeholder : T('Nic to attach'),
+          tooltip : T('Can be used to specify which physical interface to\
      associate with the VM if the system has multiple physical network\
-     cards.',
+     cards.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ]
@@ -180,22 +181,22 @@ export class VMWizardComponent {
       ]
     },
     {
-      label: 'Installation Media',
+      label: T('Installation Media'),
       fieldConfig: [
         {
           type: 'explorer',
           name: 'iso_path',
-          placeholder : 'Choose an installation media',
+          placeholder : T('Choose an installation media'),
           initial: '/mnt',
-          tooltip: 'Click <b>Browse</b> to select the path to the\
- installation media.',
+          tooltip: T('Click <b>Browse</b> to select the path to the\
+ installation media.'),
           validation : [ Validators.required ],
         },
         {
           type: 'checkbox',
           name: 'upload_iso_checkbox',
-          placeholder : 'Upload an ISO?',
-          tooltip: 'Check to display upload options.',
+          placeholder : T('Upload an ISO?'),
+          tooltip: T('Check to display upload options.'),
           value: false,
         },
         {
@@ -203,8 +204,8 @@ export class VMWizardComponent {
           name: 'upload_iso_path',
           placeholder : 'ISO save location',
           initial: '/mnt',
-          tooltip: 'Click <b>Browse</b> to select a location to store\
- the uploaded ISO.',
+          tooltip: T('Click <b>Browse</b> to select a location to store\
+ the uploaded ISO.'),
           explorerType: 'directory',
           isHidden: true,
           validation : [],
@@ -241,18 +242,18 @@ export class VMWizardComponent {
   afterInit(entityWizard: EntityWizardComponent) {
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
-      this.summary['guest operating system'] = res;
+      this.summary[T('guest operating system')] = res;
       ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
-        this.summary['Number of CPU'] = vcpus;
+        this.summary[T('Number of CPU')] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary['Memory'] = memory + ' Mib';
+        this.summary[T('Memory')] = memory + ' Mib';
       });
       ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
-        this.summary['Hard Disk Size'] = volsize + ' Gib';
+        this.summary[T('Hard Disk Size')] = volsize + ' Gib';
       });
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
-        this.summary['Installation Media'] = iso_path;
+        this.summary[T('Installation Media')] = iso_path;
       });
       if (res === 'windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
