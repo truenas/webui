@@ -13,6 +13,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
 import { validateBasis } from '@angular/flex-layout';
+import { T } from '../../../translate-marker';
 
 
 @Component({
@@ -29,14 +30,14 @@ export class DockerVMWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = "VM Summary";
+  summary_title = "Docker Summary";
 
   protected wizardConfig: Wizard[] = [{
       label: 'Docker VM Details',
       fieldConfig: [
       { type: 'input',
         name : 'name',
-        placeholder : 'Name of the VM',
+        placeholder :  T ('Name of the VM'),
         validation : [ Validators.required ]
       },
       { type: 'checkbox',
@@ -47,11 +48,11 @@ export class DockerVMWizardComponent {
       ]
     },
     {
-      label: 'CPU and Memory configuration.',
+      label:  T ('CPU and Memory configuration.'),
       fieldConfig: [{
           type: 'input',
           name: 'vcpus',
-          placeholder: 'Virtual CPUs',
+          placeholder:  T('Virtual CPUs'),
           value: 1,
           inputType: 'number',
           min: 1
@@ -59,7 +60,7 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'memory',
-          placeholder: 'Memory Size (MiB)',
+          placeholder: T('Memory Size (MiB)'),
           tooltip: '',
           value: 2048,
           inputType: 'number',
@@ -72,32 +73,32 @@ export class DockerVMWizardComponent {
       fieldConfig: [
         {
           name : 'NIC_type',
-          placeholder : 'Adapter Type:',
-          tooltip : 'The default emulates an Intel E1000 (82545) Ethernet\
+          placeholder : T('Adapter Type'),
+          tooltip : T('The default emulates an Intel E1000 (82545) Ethernet\
      card for compatibility with most operating systems. If the operating\
      system installed in the VM supports VirtIO paravirtualized network\
      drivers, this can be changed to <i>VirtIO</i> to provide better\
-     performace.',
+     performace.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ]
         },
         {
           name : 'NIC_mac',
-          placeholder : 'Mac Address',
-          tooltip : 'By default, the VM receives an auto-generated random\
+          placeholder : T('Mac Address'),
+          tooltip : T('By default, the VM receives an auto-generated random\
      MAC address. To override the default with a custom value, enter the\
-     desired address into the field.',
+     desired address into the field.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
         },
         {
           name : 'nic_attach',
-          placeholder : 'Nic to attach:',
-          tooltip : 'Can be used to specify which physical interface to\
+          placeholder : T('Nic to attach'),
+          tooltip : T('Can be used to specify which physical interface to\
      associate with the VM if the system has multiple physical network\
-     cards.',
+     cards.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ]
@@ -110,15 +111,15 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'raw_filename',
-          placeholder : 'filename',
-          tooltip: 'Provide a filename, this file will be created at user specific location ',
+          placeholder : T('filename'),
+          tooltip: T('Provide a filename, this file will be created at user specific location'),
           validation : [ Validators.required ]
         },
         {
           type: 'input',
           name: 'size',
-          placeholder : 'Define the size (in GiB) for the raw file.',
-          tooltip: 'Type a number of GiB to allocate to the new RAW file.',
+          placeholder : T('Define the size (in GiB) for the raw file.'),
+          tooltip: T('Type a number of GiB to allocate to the new RAW file.'),
           value: 10,
           inputType: 'number',
           min: 10,
@@ -127,8 +128,8 @@ export class DockerVMWizardComponent {
         {
           type: 'explorer',
           name: 'raw_file_directory',
-          placeholder: 'Select a directory',
-          tooltip: 'please select a path for existing directory',
+          placeholder: T('Select a directory'),
+          tooltip: T('please select a path for existing directory'),
           explorerType: "directory",
           initial: '/mnt',
           validation : [ Validators.required ]
@@ -136,7 +137,7 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'sectorsize',
-          placeholder : 'sectorsize',
+          placeholder : T('sectorsize'),
           tooltip: '.',
           value: 0,
           inputType: 'number',
@@ -188,7 +189,25 @@ export class DockerVMWizardComponent {
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
         ( < FormGroup > entityWizard.formArray.get([2])).controls['NIC_mac'].setValue(mac_res);
       });
-  
+      
+    ( < FormGroup > entityWizard.formArray.get([0]).get('name')).valueChanges.subscribe((name) => {
+      this.summary[T('Name')] = name;
+      this.summary[T('Number of CPU')] = ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').value;
+
+      ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
+        this.summary[T('Number of CPU')] = vcpus;
+      });
+      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([1])).get('memory').value + ' Mib';
+      ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
+        this.summary[T('Memory')] = memory + ' Mib';
+      });
+      ( < FormGroup > entityWizard.formArray.get([3])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
+        ( < FormGroup > entityWizard.formArray.get([3])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
+          this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+        })
+      });
+      this.summary[T('RAW file size')] = ( < FormGroup > entityWizard.formArray.get([3])).get('size').value + ' Gib';
+    });
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -218,7 +237,6 @@ async customSubmit(value) {
             this.loader.close();
           });
         })
-
       }
       else {
         this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
@@ -232,7 +250,7 @@ async customSubmit(value) {
     (error_res) => { 
       new EntityUtils().handleError(this, error_res);
       this.loader.close();
-    })
+    })    
   }
 
 }

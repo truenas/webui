@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {RestService} from '../../../../services/rest.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-afp-list',
@@ -19,8 +20,8 @@ export class AFPListComponent {
   //constructor(_rest: RestService, _router: Router,) {}
 
   public columns: any[] = [
-    {name : 'Name', prop : 'afp_name'},
-    {name : 'Path', prop : 'afp_path'},
+    {name : T('Name'), prop : 'afp_name'},
+    {name : T('Path'), prop : 'afp_path'},
   ];
   public config: any = {
     paging : true,
