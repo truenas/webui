@@ -12,11 +12,9 @@ import {
 import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
-//import * as xterm from "xterm";
-//import * as Terminal from 'xterm/dist/xterm';
-//import 'xterm/dist/addons/fit/fit.js';
-//import 'xterm/dist/addons/attach/attach.js';
+import { TranslateService } from '@ngx-translate/core';
 import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
+import { T } from '../../translate-marker';
 
 @Component({
   selector: 'app-shell',
@@ -38,13 +36,13 @@ export class ShellComponent implements OnInit, OnChanges {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
- <b>Command + C/V</b>.<br>\
- Many utilities are built-in, including:<br>\
- <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
- <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
- and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
- chapter for more information.';
+  public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
+   <b>Command + C/V</b>.<br>\
+   Many utilities are built-in, including:<br>\
+   <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
+   <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
+   and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
+   chapter for more information.');
 
   clearLine = "\u001b[2K\r"
 
@@ -111,5 +109,5 @@ export class ShellComponent implements OnInit, OnChanges {
     return this.ws.call('auth.generate_token');
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService) {}
+  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {}
 }

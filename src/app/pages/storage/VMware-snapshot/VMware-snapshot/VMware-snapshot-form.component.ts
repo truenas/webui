@@ -15,6 +15,8 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 
 import {RestService, WebSocketService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
+import { DialogService } from 'app/services/dialog.service';
 
 @Component({
    selector : 'vmware-snapshot-form',
@@ -36,39 +38,39 @@ export class VMwareSnapshotFormComponent {
     {
       type: 'input',
       name: 'hostname',
-      placeholder: 'Hostname',
-      tooltip: 'IP address or hostname of VMware host; when clustering\
- this is the vCenter server for the cluster.',
+      placeholder: T('Hostname'),
+      tooltip: T('IP address or hostname of VMware host; when clustering\
+ this is the vCenter server for the cluster.'),
     },
     {
       type: 'input',
       name: 'username',
-      placeholder: 'Username',
-      tooltip: 'User on VMware host with permission to snapshot virtual\
- machines.',
+      placeholder: T('Username'),
+      tooltip: T('User on VMware host with permission to snapshot virtual\
+ machines.'),
     },
     {
       type: 'input',
       name: 'password',
-      placeholder: 'Password',
-      tooltip: 'Password associated with <b>Username</b>.',
+      placeholder: T('Password'),
+      tooltip: T('Password associated with <b>Username</b>.'),
       inputType: 'password'
     },
     {
       type: 'explorer',
       name: 'filesystem',
-      placeholder: 'ZFS Filesystem',
-      tooltip: 'The filesystem to snapshot.',
+      placeholder: T('ZFS Filesystem'),
+      tooltip: T('The filesystem to snapshot.'),
       explorerType: "zvol",
       initial: '/mnt'
     },
     {
       type: 'select',
       name: 'datastore',
-      placeholder: 'Datastore',
-      tooltip: 'After entering the <b>Hostname, Username</b>, and\
+      placeholder: T('Datastore'),
+      tooltip: T('After entering the <b>Hostname, Username</b>, and\
  <b>Password</b>, click <b>Fetch Datastores</b> to populate the menu and\
- select the datastore with which to synchornize.',
+ select the datastore with which to synchornize.'),
     },
 
   ]
@@ -85,7 +87,7 @@ export class VMwareSnapshotFormComponent {
           this.entityForm.formGroup.controls['hostname'].value === undefined ||
           this.entityForm.formGroup.controls['username'].value === undefined ||
           this.entityForm.formGroup.controls['password'].value === undefined
-        ) { alert("Please enter valid vmware ESXI/vsphere credentials to fetch datastores.")}
+        ) { this.dialogService.Info(T('VM Snapshot'), T("Please enter valid vmware ESXI/vsphere credentials to fetch datastores."))}
         else {
           const payload = {};
           payload['hostname'] = this.entityForm.formGroup.controls['hostname'].value;
@@ -113,7 +115,7 @@ export class VMwareSnapshotFormComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef) {}
+              protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService) {}
 
 
 
@@ -122,6 +124,8 @@ export class VMwareSnapshotFormComponent {
   }
 
   beforeSubmit(entityForm: any){
-    entityForm.filesystem = entityForm.filesystem.slice(5)
+    if( entityForm.filesystem !== undefined ) {
+      entityForm.filesystem = entityForm.filesystem.slice(5);
+    }
   }
 }

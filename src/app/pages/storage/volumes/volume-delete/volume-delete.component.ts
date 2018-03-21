@@ -13,6 +13,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-volume-delete',
@@ -20,7 +21,7 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class VolumeDeleteComponent implements Formconfiguration {
 
-    saveSubmitText = "Detach"; 
+    saveSubmitText = T("Detach"); 
   
     resource_name = 'storage/volume';
     route_success: string[] = [ 'storage', 'volumes'];
@@ -31,13 +32,15 @@ export class VolumeDeleteComponent implements Formconfiguration {
       {
         type : 'input',
         name : 'name',
+        label : T('name'),
         isHidden: true
       },{
         type : 'checkbox',
         name : 'destroy',
+        label : T('destroy'),
         value : false,
-        placeholder : "Destroy the Volumes data ?",
-        tooltip: "(unchecked means leave alone/intact)"
+        placeholder : T("Destroy the Volumes data ?"),
+        tooltip: T("(unchecked means leave alone/intact)")
         
       }
     ];
@@ -70,25 +73,25 @@ export class VolumeDeleteComponent implements Formconfiguration {
         return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({destroy: value.destroy}) }).subscribe((restPostResp) => {
           console.log("restPostResp", restPostResp);
           this.loader.close();
-          this.dialogService.Info("Detached/Deleted Volume", "Successfully Detached volume " + value.name);
+          this.dialogService.Info(T("Detached/Deleted Volume"), T("Successfully Detached volume ") + value.name);
     
           this.router.navigate(new Array('/').concat(
             ["storage", "volumes"]));
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport("Error Detaching volume", res.message, res.stack);
+          this.dialogService.errorReport(T("Error Detaching volume"), res.message, res.stack);
         });
       } else {
         return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
           console.log("restPostResp", restPostResp);
           this.loader.close();
-          this.dialogService.Info("Detached/Deleted Volume", "Successfully Detached volume " + value.name);
+          this.dialogService.Info(T("Detached/Deleted Volume"), T("Successfully Detached volume ") + value.name);
     
           this.router.navigate(new Array('/').concat(
             ["storage", "volumes"]));
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport("Error Detaching volume", res.message, res.stack);
+          this.dialogService.errorReport(T("Error Detaching volume"), res.message, res.stack);
         });
       }
 
