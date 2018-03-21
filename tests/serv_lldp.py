@@ -144,15 +144,15 @@ class conf_lldp_test(unittest.TestCase):
                 print ("searching for service" + which + " Attempt:" + str(i))
 
     def screenshot(self, count):
+        test_method_name = self._testMethodName
         time.sleep(1)
         text_path = os.path.dirname(os.path.realpath(__file__))
-        print (text_path)
         filename = str(__file__)
         filename = filename[:-3]
-        print (filename)
         final_file = filename.replace(text_path + "/", '')
-        print (final_file)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + count + ".png")
+        print ("Taking screenshot for " + final_file + "-" + test_method_name)
+        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
+
 
     @classmethod
     def tearDownClass(inst):

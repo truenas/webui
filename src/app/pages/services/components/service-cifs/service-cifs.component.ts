@@ -13,6 +13,7 @@ import {
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'cifs-edit',
@@ -32,27 +33,27 @@ export class ServiceCIFSComponent {
     {
       type : 'input',
       name : 'cifs_srv_netbiosname',
-      placeholder : 'NetBIOS Name:',
+      placeholder : T('NetBIOS Name:'),
     },
     {
       type : 'input', 
       name : 'cifs_srv_netbiosalias',
-      placeholder : 'NetBIOS Alias:'
+      placeholder : T('NetBIOS Alias:')
     },
     {
       type : 'input', 
       name : 'cifs_srv_workgroup',
-      placeholder : 'Workgroup'
+      placeholder : T('Workgroup')
     },
     {
       type : 'input', 
       name : 'cifs_srv_description',
-      placeholder : 'Description'
+      placeholder : T('Description')
     },
     {
       type : 'select',
       name : 'cifs_srv_doscharset',
-      placeholder : 'DOS Charset',
+      placeholder : T('DOS Charset'),
       options: [
         {label : 'CP437', value : 'CP437'},
         {label : 'CP850', value : 'CP850'},
@@ -69,7 +70,7 @@ export class ServiceCIFSComponent {
     {
       type : 'select',
       name : 'cifs_srv_unixcharset',
-      placeholder : 'UNIX Charset',
+      placeholder : T('UNIX Charset'),
       options: [
         {label : 'UTF-8', value : 'CP437'},
         {label : 'iso-8859-1', value : 'iso-8859-1'},
@@ -82,7 +83,7 @@ export class ServiceCIFSComponent {
     {
       type : 'select',
       name : 'cifs_srv_loglevel',
-      placeholder : 'Log Level',
+      placeholder : T('Log Level'),
       options : [
         {label : 'None', value : 0},
         {label : 'Minimum', value : 1},
@@ -94,92 +95,92 @@ export class ServiceCIFSComponent {
     {
       type : 'input', 
       name : 'cifs_srv_syslog',
-      placeholder : 'Use syslog only'
+      placeholder : T('Use syslog only')
     },
     {
       type : 'input', 
       name : 'cifs_srv_localmaster',
-      placeholder : 'Local Master'
+      placeholder : T('Local Master')
     },
     {
       type : 'input', 
       name : 'cifs_srv_domain_logons',
-      placeholder : 'Domain Logons'
+      placeholder : T('Domain Logons')
     },
     {
       type : 'input', 
       name : 'cifs_srv_timeserver',
-      placeholder : 'Time Server For Domain'
+      placeholder : T('Time Server For Domain')
     },
     {
       type : 'input', 
       name : 'cifs_srv_guest',
-      placeholder : 'Guest Account'
+      placeholder : T('Guest Account')
     },
     {
       type : 'input', 
       name : 'cifs_srv_filemask',
-      placeholder : 'File Mask'
+      placeholder : T('File Mask')
     },
     {
       type : 'input', 
       name : 'cifs_srv_dirmask',
-      placeholder : 'Directory Mask'
+      placeholder : T('Directory Mask')
     },
     {
       type : 'checkboc', 
       name : 'cifs_srv_nullpw',
-      placeholder : 'Allow Empty Password'
+      placeholder : T('Allow Empty Password')
     },
     {
       type : 'text', 
       name : 'cifs_srv_smb_options',
-      placeholder : 'Auxiliary Parameters'
+      placeholder : T('Auxiliary Parameters')
     },
     {
       type : 'checkbox',
       name : 'cifs_srv_unixext',
-      placeholder : 'Unix Extensions',
+      placeholder : T('Unix Extensions'),
     },
     { type: 'checkbox',
       name : 'cifs_srv_zeroconf',
-      placeholder : 'Zeroconf share discovery',
+      placeholder : T('Zeroconf share discovery'),
     },
   { type: 'checkbox',
     name : 'cifs_srv_hostlookup',
-    placeholder : 'Hostnames Lookups',
+    placeholder : T('Hostnames Lookups'),
   },
   {
     type : 'select',
     name : 'Server Minimum Protocol',
-    placeholder : 'cifs_srv_min_protocol',
+    placeholder : T('cifs_srv_min_protocol'),
     options : []
   },
   {
     type : 'select',
     name : 'Server Maximum Protocol',
-    placeholder : 'cifs_srv_max_protocol',
+    placeholder : T('cifs_srv_max_protocol'),
     options : []
   },
   { 
     type: 'checkbox',
     name : 'cifs_srv_allow_execute_always',
-    placeholder : 'Allow Execute Always',
+    placeholder : T('Allow Execute Always'),
 },
 { 
   type: 'checkbox',
   name : 'cifs_srv_obey_pam_restrictions',
-  placeholder : 'Obey Pam Restrictions',
+  placeholder : T('Obey Pam Restrictions'),
 },
 { 
   type: 'checkbox',
   name : 'cifs_srv_ntlmv1_auth',
-  placeholder : 'NTLMv1 Auth',
+  placeholder : T('NTLMv1 Auth'),
 },
 {
   type : 'input',
   name : 'bindips',
-  placeholder : 'Bind IP Addresses',
+  placeholder : T('Bind IP Addresses'),
   options : []
 },
 

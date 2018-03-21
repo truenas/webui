@@ -29,9 +29,10 @@ import {ServiceWebdavComponent} from './components/service-webdav';
 import {Services} from './services.component';
 import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule ],
+  imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule ],
   declarations : [
     Services, ServiceSSHComponent, ServiceAFPComponent,
     ServiceDCComponent, ServiceFTPComponent, ServiceLLDPComponent,
