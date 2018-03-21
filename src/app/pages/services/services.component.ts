@@ -8,6 +8,7 @@ import { AppConfirmService } from "../../services/app-confirm/app-confirm.servic
 import { MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 
 import { RestService, WebSocketService } from '../../services/';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'services',
@@ -48,7 +49,7 @@ export class Services implements OnInit {
   public cache = [];
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
-    private confirmService: AppConfirmService) {}
+    private confirmService: AppConfirmService, private dialog: DialogService) {}
 
   parseResponse(data) {
     const card = {
@@ -153,10 +154,16 @@ export class Services implements OnInit {
   editService(service: any) {
     if (service === 'iscsitarget') {
       // iscsi target global config route
-      let route = ['sharing', 'iscsi'];
+      const route = ['sharing', 'iscsi'];
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
-      window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
+      this.ws.call('service.started', [service]).subscribe((res)=>{
+        if(res){
+          window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
+        } else {
+          this.dialog.Info('Netdata Information', 'Configurable settings for Netdata are not yet exposed. \n Service has not been started yet. Start the service first.');
+        }
+      })
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
