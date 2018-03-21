@@ -13,6 +13,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'lldp-edit',
@@ -27,22 +28,22 @@ export class ServiceLLDPComponent {
     {
       type : 'checkbox',
       name : 'lldp_intdesc',
-      placeholder : 'Interface Description',
-      tooltip: 'When checked, receive mode is enabled and received peer\
- information is saved in interface descriptions.',
+      placeholder : T('Interface Description'),
+      tooltip: T('When checked, receive mode is enabled and received peer\
+       information is saved in interface descriptions.'),
     },
     {
       type : 'input',
       name : 'lldp_country',
-      placeholder : 'Country Code',
-      tooltip: 'Required for LLDP location support. Enter a two-letter\
- ISO 3166 country code.',
+      placeholder : T('Country Code'),
+      tooltip: T('Required for LLDP location support. Enter a two-letter\
+       ISO 3166 country code.'),
     },
     {
       type : 'input',
       name : 'lldp_location',
-      placeholder : 'Location',
-      tooltip: 'Optional. Specify the physical location of the host.',
+      placeholder : T('Location'),
+      tooltip: T('Optional. Specify the physical location of the host.'),
     },
   ];
 
