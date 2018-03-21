@@ -7,7 +7,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import {RestService, WebSocketService} from '../../../services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
@@ -15,7 +15,7 @@ import { Subject } from 'rxjs/Subject';
   template:`
   <mat-card>
   <mat-toolbar-row style="margin-bottom:16px;">
-  <h4>User Preferences</h4>
+  <h4>User Preferences</h4><button mat-button (click)="sendAuthMssg();">Send Auth Message</button>
   </mat-toolbar-row>
   <mat-divider></mat-divider>
   <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between start" style="margin-top:32px;">
@@ -120,7 +120,8 @@ export class PreferencesPage implements OnInit, OnChanges {
       protected ws: WebSocketService,
       protected _injector: Injector, 
       protected _appRef: ApplicationRef,
-      public themeService:ThemeService
+      public themeService:ThemeService,
+      private core:CoreService
     ) {}
 
     ngOnInit(){
@@ -192,5 +193,8 @@ export class PreferencesPage implements OnInit, OnChanges {
          }
        }
      }
-
+    
+     sendAuthMssg(){
+      this.core.emit({name:"Authenticated"});
+     }
 }

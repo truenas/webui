@@ -359,7 +359,7 @@ export class ApiService {
 
   constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
     this.ws.authStatus.subscribe((evt:any) =>{
-      this.core.emit({name:"Authenticated",data:evt});
+      this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
     console.log("*** New Instance of API Service ***");
     this.registerDefinitions();

@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { TourService } from './services/tour.service';
 import { WebSocketService } from './services/ws.service';
 
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
     private rest: RestService,
     private api: ApiService,
     public themeservice: ThemeService,
+    public preferencesService: PreferencesService,
     private tour: TourService) {
 
     if (this.detectBrowser("Safari")) {

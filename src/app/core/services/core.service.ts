@@ -93,16 +93,20 @@ export class CoreService {
     for(var i=0; i < this.dispatchTable.length; i++){
       let reg = this.dispatchTable[i]; // subscription
       if(reg.eventName == evt.name && reg.sender == evt.sender){
-	//DEBUG: console.log("Matched name and sender");
+	//DEBUG:
+        console.log("Matched name and sender");
 	reg.observable.next(evt);
       } else if(evt.name && reg.eventName == evt.name){
-	//DEBUG: console.log("Matched name only");
+	//DEBUG:
+        console.log("Matched name only");
 	reg.observable.next(evt);
       } else if(evt.sender && reg.sender == evt.sender){
-	//DEBUG: console.log("Matched sender only");
+	//DEBUG: 
+        console.log("Matched sender only");
 	reg.observable.next(evt);
       } else {
-	//DEBUG: console.log("No match found");
+	//DEBUG: 
+        console.log("No match found");
       }
     }
     return this;

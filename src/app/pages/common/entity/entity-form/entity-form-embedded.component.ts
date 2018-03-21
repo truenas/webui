@@ -207,17 +207,17 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   setControlChangeDetection(){ 
-    console.log(this.formGroup);
+    //console.log(this.formGroup);
     this.formGroup.valueChanges.subscribe((evt) => {
         //console.log("******** FormGroupValueChanged ********");
         this.target.next({name:"FormGroupValueChanged",data:evt,sender:this.formGroup});
     });
     let fg = Object.keys(this.formGroup.controls);
     fg.forEach((control) => {
-      console.log(control);
+      //console.log(control);
       this.formGroup.controls[control].valueChanges.subscribe((evt) => { 
         //console.log("******** ControlValueChanged ********");
-        this.target.next({name:"ControlValueChanged",data:evt,sender:control});
+        //this.target.next({name:"ControlValueChanged",data:evt,sender:control});
       });
     });
   }
