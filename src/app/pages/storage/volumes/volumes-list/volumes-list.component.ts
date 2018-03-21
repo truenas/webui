@@ -79,8 +79,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
         this.rowData = this.resourceTransformIncomingRestData(res.data);
       }, (res) => {
-        alert("error");
-        console.log("error", res);
+        this.dialogService.errorReport(T("Error getting volume/dataset data"), res.message, res.stack);
       });
     }
 
@@ -126,7 +125,6 @@ export class VolumesListTableConfig implements InputTableConf {
               if (confirmResult === true) {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  console.log("restPostResp", restPostResp);
                   this.loader.close();
 
                   this.dialogService.Info(T("Lock"), T("Locked ") + row1.name).subscribe((infoResult) => {
@@ -182,7 +180,6 @@ export class VolumesListTableConfig implements InputTableConf {
             this.loader.open();
 
             this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-              console.log("restPostResp", restPostResp);
               this.loader.close();
 
               this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for volume ") + row1.name).subscribe((infoResult) => {
@@ -250,19 +247,26 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Upgrade Volume"),
           onClick: (row1) => {
-            this.loader.open();
+            
+            this.dialogService.confirm(T("Upgrade Volume"), T("Proceed with upgrading the volume ? (Upgrading a pool is a \
+                                                        non-reversable operation that could make some features of \
+                                                        the pool incompatible with older versions of FreeNAS): ") + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+                this.loader.open();
 
-            this.rest.post("storage/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-              console.log("restPostResp", restPostResp);
-              this.loader.close();
-
-              this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
-                this.parentVolumesListComponent.repaintMe();
-              });
-            }, (res) => {
-              this.loader.close();
-              this.dialogService.errorReport(T("Error Upgrading Volume ") + row1.name,  res.message, res.stack);
+                this.rest.post("storage/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  this.loader.close();
+    
+                  this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
+                    this.parentVolumesListComponent.repaintMe();
+                  });
+                }, (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error Upgrading Volume ") + row1.name,  res.message, res.stack);
+                });
+              } 
             });
+            
           }
         });
       }
@@ -323,7 +327,6 @@ export class VolumesListTableConfig implements InputTableConf {
           this.loader.open();
 
           this.rest.post("storage/" + this._classId + "/promote_zfs", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-            console.log("restPostResp", restPostResp);
             this.loader.close();
 
             this.dialogService.Info(T("Cloned"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
@@ -363,8 +366,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
-    console.log("Log point 1");
-
+  
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
