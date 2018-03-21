@@ -39,7 +39,7 @@ interface Registration {
 export class CoreService {
   public coreEvents: Subject<CoreEvent>;
   constructor() {
-    console.log("*** New Instance of Core Service ***");
+    //DEBUG: console.log("*** New Instance of Core Service ***");
     this.coreEvents = new Subject();
     this.coreEvents.subscribe(
       (evt:CoreEvent) => {
@@ -92,21 +92,40 @@ export class CoreService {
 
     for(var i=0; i < this.dispatchTable.length; i++){
       let reg = this.dispatchTable[i]; // subscription
-      if(reg.eventName == evt.name && reg.sender == evt.sender){
+
+      let subscriptionType:string = "any";
+      if(reg.eventName && reg.sender){
+        subscriptionType = "NameSender";
+      } else if(reg.eventName){
+        subscriptionType = "Name";
+      } else if(reg.sender){
+        subscriptionType = "Sender";
+      }
+
+      if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
 	//DEBUG:
-        console.log("Matched name and sender");
+        //DEBUG: console.log("Matched name and sender");
+        //DEBUG: console.log(reg.observerClass);
+        //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-      } else if(evt.name && reg.eventName == evt.name){
+        return this;
+      } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
 	//DEBUG:
-        console.log("Matched name only");
+        //DEBUG: console.log("Matched name only");
+        //DEBUG: console.log(reg.observerClass);
+        //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-      } else if(evt.sender && reg.sender == evt.sender){
+        return this;
+      } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
 	//DEBUG: 
-        console.log("Matched sender only");
+        //DEBUG: console.log("Matched sender only");
+        //DEBUG: console.log(reg.observerClass);
+        //DEBUG: console.log(evt);
 	reg.observable.next(evt);
+        return this;
       } else {
 	//DEBUG: 
-        console.log("No match found");
+        //DEBUG: console.log("No match found");
       }
     }
     return this;

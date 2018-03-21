@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ApiService } from 'app/core/services/api.service';
 
 export interface Theme {
   name: string;
@@ -154,9 +155,9 @@ export class ThemeService {
   savedUserTheme:string = "";
   private loggedIn:boolean;
 
-  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService) {
+  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
     console.log("*** New Instance of Theme Service ***");
-    this.core.register({observerClass:this,eventName:"Authenticated"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });

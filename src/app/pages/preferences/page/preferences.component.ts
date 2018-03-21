@@ -15,7 +15,7 @@ import { Subject } from 'rxjs/Subject';
   template:`
   <mat-card>
   <mat-toolbar-row style="margin-bottom:16px;">
-  <h4>User Preferences</h4><button mat-button (click)="sendAuthMssg();">Send Auth Message</button>
+  <h4>User Preferences</h4>
   </mat-toolbar-row>
   <mat-divider></mat-divider>
   <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between start" style="margin-top:32px;">
@@ -192,9 +192,5 @@ export class PreferencesPage implements OnInit, OnChanges {
            this.fieldConfig.push(this.fieldSets[i].config[ii]);
          }
        }
-     }
-    
-     sendAuthMssg(){
-      this.core.emit({name:"Authenticated"});
      }
 }
