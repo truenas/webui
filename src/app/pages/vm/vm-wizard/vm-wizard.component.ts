@@ -109,12 +109,11 @@ export class VMWizardComponent {
         {
           type: 'radio',
           name: 'disk_radio',
-          placeholder : 'Create New Disk',
-          tooltip: 'Select <i>Yes</i> to create a new Zvol on an\
- existing datastore to be used as a virtual hard drive. Select <i>No</i>\
- to use an existing disk for the VM.',
-          options:[{label:"Yes", value: true},
-                   {label:"No", value: false}],
+//           tooltip: 'Select <i>Yes</i> to create a new Zvol on an\
+//  existing datastore to be used as a virtual hard drive. Select <i>No</i>\
+//  to use an existing disk for the VM.',
+          options:[{label:"Create new disk image", value: true},
+                   {label:"Use existing disk image", value: false}],
           value: true,
         },
         {
@@ -207,7 +206,8 @@ export class VMWizardComponent {
           tooltip: 'Click <b>Browse</b> to select a location to store\
  the uploaded ISO.',
           explorerType: 'directory',
-          isHidden: true
+          isHidden: true,
+          validation : [],
         },
         {
           type: 'upload',
@@ -217,6 +217,7 @@ export class VMWizardComponent {
           isHidden: true,
           acceptedFiles: ',.iso',
           fileLocation: '',
+          validation : [  ],
         },
       ]
     },
