@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { T } from '../../../../translate-marker';
  
 @Component({
   selector : 'app-smb-list',
@@ -15,8 +17,8 @@ export class SMBListComponent {
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
 
   public columns: any[] = [
-    {name: 'Name', prop: 'cifs_name'},
-    {name: 'Path', prop: 'cifs_path'},
+    {name: T('Name'), prop: 'cifs_name'},
+    {name: T('Path'), prop: 'cifs_path'},
   ];
   public config: any = {
     paging : true,

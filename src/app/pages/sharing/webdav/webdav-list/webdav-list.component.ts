@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
+import { T } from '../../../../translate-marker';
 import { RestService } from '../../../../services/rest.service';
 
 @Component({
@@ -23,11 +24,11 @@ export class WebdavListComponent {
     protected route_delete: string[] = [ 'sharing', 'webdav', 'delete'];
 
     public columns: Array<any> = [
-        {prop: 'webdav_name', name: 'Share Name'},
-        {prop: 'webdav_comment', name: 'Comment'},
-        {prop: 'webdav_path', name: 'Path'},
-        {prop: 'webdav_ro', name: 'Read Only'},
-        {prop: 'webdav_perm', name: 'Change User & Group Ownership'},
+        {prop: 'webdav_name', name: T('Share Name')},
+        {prop: 'webdav_comment', name: T('Comment')},
+        {prop: 'webdav_path', name: T('Path')},
+        {prop: 'webdav_ro', name: T('Read Only')},
+        {prop: 'webdav_perm', name: T('Change User & Group Ownership')},
     ];
 
     public config: any = {
