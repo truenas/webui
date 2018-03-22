@@ -17,7 +17,8 @@ export class VmCardEditComponent implements OnChanges {
   @Input() values: any;
   @Input() isNew: boolean = false;
   @Input() target: Subject<CoreEvent>;
-
+  @Input() conf: any;
+  
   protected isEntity: boolean = true;
 
   public fieldConfig:FieldConfig[] = [];
@@ -92,6 +93,15 @@ export class VmCardEditComponent implements OnChanges {
   ];
   private bootloader: any;
   public bootloader_type: any[];
+  public custActions: Array<any> = [
+    {
+      id: 'Clone',
+      name: 'Clone',
+      function: () =>{
+        this.cloneVM()
+      }
+    }
+  ]
 
   constructor(protected router: Router, protected rest: RestService,
     protected ws: WebSocketService,
@@ -120,6 +130,19 @@ export class VmCardEditComponent implements OnChanges {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
+  }
+  cloneVM(){
+    this.conf.loader.open();
+    this.conf.loaderOpen = true;
+    this.ws.call('vm.clone', [this.machineId]).subscribe((res)=>{
+      this.conf.loader.close();
+      this.conf.getVmList();
+    },
+  (eres)=>{
+    new this.conf.EntityUtils().handleError(this, eres); 
+    this.conf.loader.close();
+    });
+
   }
 
 }

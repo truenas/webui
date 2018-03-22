@@ -34,6 +34,7 @@ export class ShellComponent implements OnInit, OnChanges {
   font_size: number;
   public token: any;
   public xterm: any;
+  public resize_terminal: boolean = true;
   private shellSubscription: any;
 
   public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
@@ -64,6 +65,10 @@ export class ShellComponent implements OnInit, OnChanges {
     }
   };
 
+  onResize(event){
+    this.resizeTerm();
+  }
+
   resetDefault() {
     this.font_size = 14;
   }
@@ -83,6 +88,11 @@ export class ShellComponent implements OnInit, OnChanges {
 
   initializeTerminal() {
     let domHeight = document.body.offsetHeight;
+    let domWidth = document.body.offsetWidth;
+    let colNum = (domWidth * 0.75 - 104) / 10;
+    if (colNum < 80) {
+      colNum = 80;
+    }
     let rowNum = (domHeight * 0.75 - 104) / 21;
     if (rowNum < 10) {
       rowNum = 10;
@@ -91,13 +101,28 @@ export class ShellComponent implements OnInit, OnChanges {
     this.xterm = new (<any>window).Terminal({
       'cursorBlink': false,
       'tabStopWidth': 8,
-      'cols': 80,
+      'cols': parseInt(colNum.toFixed()),
       'rows': parseInt(rowNum.toFixed()),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
+  }
+
+  resizeTerm(){
+    let domHeight = document.body.offsetHeight;
+    let domWidth = document.body.offsetWidth;
+    let colNum = (domWidth * 0.75 - 104) / 10;
+    if (colNum < 80) {
+      colNum = 80;
+    }
+    let rowNum = (domHeight * 0.75 - 104) / 21;
+    if (rowNum < 10) {
+      rowNum = 10;
+    }
+    this.xterm.resize(colNum,rowNum);
+    return true;
   }
 
   initializeWebShell(res: string) {
