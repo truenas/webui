@@ -92,12 +92,34 @@ export class SnapshotFormComponent {
     options: [],
     value: '',
   }, {
-    type: 'togglebutton',
+    type: 'select',
     name: 'task_byweekday',
     placeholder: T('Weekday'),
     tooltip: T('Choose the days of the week to take snapshots.'),
     multiple: true,
-    options: []
+    options: [{
+      label: 'Monday',
+      value: '1',
+    }, {
+      label: 'Tuesday',
+      value: '2',
+    }, {
+      label: 'Wednesday',
+      value: '3',
+    }, {
+      label: 'Thursday',
+      value: '4',
+    }, {
+      label: 'Friday',
+      value: '5',
+    }, {
+      label: 'Saturday',
+      value: '6',
+    }, {
+      label: 'Sunday',
+      value: '7',
+    }],
+    value: ['1', '2', '3', '4', '5'],
   }, {
     type: 'checkbox',
     name: 'task_enabled',
@@ -121,13 +143,6 @@ export class SnapshotFormComponent {
           this.filesystem_field.options.push({ label: volume_list[i].path, value: volume_list[i].path });
         }
       })
-    });
-
-    this.byweekday_field = _.find(this.fieldConfig, { 'name': 'task_byweekday' });
-    this.taskService.getWeekdayChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.byweekday_field.options.push({ label: item[1], value: item[0] });
-      });
     });
 
     this.interval_field = _.find(this.fieldConfig, { 'name': 'task_interval' });
