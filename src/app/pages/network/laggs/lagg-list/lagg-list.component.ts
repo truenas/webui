@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import {RestService} from '../../../../services/rest.service';
 import {EntityUtils} from '../../../common/entity/utils';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-lagg-list',
@@ -21,8 +22,8 @@ export class LaggListComponent {
   constructor(protected rest: RestService, protected router: Router) {}
 
   public columns: Array<any> = [
-    {name : 'Lagg Interface', prop : 'lagg_interface'},
-    {name : 'Lagg Protocol', prop : 'lagg_protocol'},
+    {name : T('Lagg Interface'), prop : 'lagg_interface'},
+    {name : T('Lagg Protocol'), prop : 'lagg_protocol'},
   ];
   public config: any = {
     paging : true,
@@ -32,7 +33,7 @@ export class LaggListComponent {
   getActions(row) {
     let actions = [];
     actions.push({
-      label : "Edit Interface",
+      label : T("Edit Interface"),
       onClick : (row) => {
         this.router.navigate(new Array('').concat([
           "network", "interfaces", "edit", this.editIds[row.lagg_interface]
@@ -40,7 +41,7 @@ export class LaggListComponent {
       }
     });
     actions.push({
-      label : "Delete",
+      label : T("Delete"),
       onClick : (row) => {
         this.entityList.doDelete(row.id);;
       },

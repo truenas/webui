@@ -23,6 +23,7 @@ import {
 import {Tooltip} from '../../common/tooltip';
 import {TOOLTIPS} from '../../common/tooltips';
 import {EntityUtils} from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector : 'app-ipmi',
@@ -57,51 +58,51 @@ export class IPMIComponent {
       type : 'input',
       inputType: 'password',
       name : 'password',
-      placeholder : 'Password',
-      tooltip : 'Type the password used to connect to the IPMI\
- interface from a web browser.',
+      placeholder : T('Password'),
+      tooltip : T('Type the password used to connect to the IPMI\
+ interface from a web browser.'),
 
     },
     {
       type : 'input',
       name : 'conf_password',
       inputType: 'password',
-      placeholder : 'Password Confirmation',
+      placeholder : T('Password Confirmation'),
       validation : [ matchOtherValidator('password') ]
     },
     {
       type : 'checkbox',
       name : 'dhcp',
-      placeholder : 'DHCP',
-      tooltip : 'If this is unchecked, the <b>IPv4</b> fields must be\
- set.',
+      placeholder : T('DHCP'),
+      tooltip : T('If this is unchecked, the <b>IPv4</b> fields must be\
+ set.'),
     },
     {
       type : 'input',
       name : 'ipaddress',
-      placeholder : 'IPv4 Address',
-      tooltip : 'Enter the IP address used to connect to the IPMI web\
- interface',
+      placeholder : T('IPv4 Address'),
+      tooltip : T('Enter the IP address used to connect to the IPMI web\
+ interface'),
     },
     {
       type : 'input',
       name : 'netmask',
-      placeholder : 'IPv4 Netmask',
-      tooltip : 'Choose the subnet mask associated with the IP address.',
+      placeholder : T('IPv4 Netmask'),
+      tooltip : T('Choose the subnet mask associated with the IP address.'),
     },
     {
       type : 'input',
       name : 'gateway',
-      placeholder : 'IPv4 Default Gateway',
-      tooltip : 'Enter the default gateway associated with the IP\
- address.',
+      placeholder : T('IPv4 Default Gateway'),
+      tooltip : T('Enter the default gateway associated with the IP\
+ address.'),
     },
     {
       type : 'input',
       name : 'vlan',
-      placeholder : 'VLAN ID',
-      tooltip : 'Enter the VLAN identifier if the IPMI out-of-band\
- management interface is not on the same VLAN as management networking.',
+      placeholder : T('VLAN ID'),
+      tooltip : T('Enter the VLAN identifier if the IPMI out-of-band\
+ management interface is not on the same VLAN as management networking.'),
       inputType: 'number',
     },
   ];

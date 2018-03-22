@@ -427,7 +427,7 @@ export class VmCardsComponent implements OnInit {
               this.loader.open();
               this.ws.call('vm.image_path', ['RancherOS']).subscribe((img_path)=>{
                 if(!img_path){
-                  this.dialog.Info('CHECKSUM MISMATCH', 'system checks failed to verify ISO, please try rebooting Virtual Machine');
+                  this.dialog.Info('CHECKSUM MISMATCH', 'system checks failed to verify ISO, please try to start again');
                   this.loader.close();
                   return;
                 };

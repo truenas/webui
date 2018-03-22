@@ -5,6 +5,7 @@ import { EntityFormComponent } from '../../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
 import {WebSocketService} from "../../../../../../services/ws.service";
 import {RestService} from "../../../../../../services/rest.service";
+import { T } from '../../../../../../translate-marker';
 
 @Component({
   selector : 'app-configure-rsync',
@@ -19,17 +20,17 @@ export class CconfigureRYSNCComponent {
     {
       type : 'input',
       name : 'rsyncd_port',
-      placeholder : 'TCP Port',
-      tooltip: 'Port for <b>rsyncd</b> to listen on. Default is\
- <i>873</i>.',
+      placeholder :T( 'TCP Port'),
+      tooltip: T('Port for <b>rsyncd</b> to listen on. Default is\
+       <i>873</i>.'),
     },
     {
       type : 'textarea',
       name : 'rsyncd_auxiliary',
-      placeholder : 'Auxiliary parameters',
-      tooltip: 'Additional parameter from\
- <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
- target="_blank">rsyncd.conf(5)</a>.',
+      placeholder : T('Auxiliary parameters'),
+      tooltip: T('Additional parameter from\
+       <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
+       target="_blank">rsyncd.conf(5)</a>.'),
     },
   ]
 
