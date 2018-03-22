@@ -254,7 +254,7 @@ export class VolumesListTableConfig implements InputTableConf {
               if (confirmResult === true) {
                 this.loader.open();
 
-                this.rest.post("storage/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   this.loader.close();
     
                   this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
@@ -326,7 +326,7 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           this.loader.open();
 
-          this.rest.post("storage/" + this._classId + "/promote_zfs", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+          this.rest.post("storage/dataset/" + this._classId + "/promote", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
             this.loader.close();
 
             this.dialogService.Info(T("Cloned"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
