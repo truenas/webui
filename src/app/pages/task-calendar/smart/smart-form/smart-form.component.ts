@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
+import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, StorageService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
@@ -12,7 +13,7 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'smart-test-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: `<entity-task [conf]="this"></entity-task>`,
   providers: [TaskService, StorageService, EntityFormService]
 })
 export class SmartFormComponent {
@@ -22,6 +23,7 @@ export class SmartFormComponent {
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
 
+  protected preTaskName: string = 'smarttest';
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'smarttest_disks',
@@ -48,52 +50,107 @@ export class SmartFormComponent {
       tooltip : T('Optional.'),
     },
     {
-      type: 'task',
+      type: 'select',
+      name: 'smarttest_repeat',
+      placeholder: T('Quick Schedule'),
+      tooltip: T('Select a time frame for the job. Otherwise, do not select\
+       a time frame to customize the schedule.'),
+      options: [
+        { label: '----------', value: 'none' },
+        { label: 'Daily', value: 'daily' },
+        { label: 'Weekly', value: 'weekly' },
+        { label: 'Monthly', value: 'monthly' },
+      ],
+      value: 'once',
+    },
+    {
+      type: 'input',
       name: 'smarttest_hour',
       placeholder: T('Hour'),
-      tabs: [{
-        type: 'slider',
-        name: 'smarttest_hour_slider',
-        tabName: 'Every N hour',
-        min: 1,
-        max: 12,
-      }, {
-        type: 'togglebutton',
-        name: 'smarttest_hour_togglebutton',
-        tabName: 'Each selected hour',
-        options: []
-      }]
+      value: '*',
+      isHidden: false,
     },
     {
-      type: 'task',
+      type: 'input',
       name: 'smarttest_daymonth',
       placeholder: T('Day of month'),
-      tabs: [{
-        type: 'slider',
-        name: 'smarttest_daymonth_slider',
-        tabName: 'Every N day of month',
-        min: 1,
-        max: 15,
-      }, {
-        type: 'togglebutton',
-        name: 'smarttest_daymonth_togglebutton',
-        tabName: 'Each selected day of month',
-        options: []
-      }]
+      value: '*',
+      isHidden: false,
     },
     {
-      type: 'togglebutton',
+      type: 'select',
       name: 'smarttest_month',
       placeholder: T('Month'),
       multiple: true,
-      options: []
+      options: [{
+        label: 'January',
+        value: '1',
+      }, {
+        label: 'February',
+        value: '2',
+      }, {
+        label: 'March',
+        value: '3',
+      }, {
+        label: 'April',
+        value: '4',
+      }, {
+        label: 'May',
+        value: '5',
+      }, {
+        label: 'June',
+        value: '6',
+      }, {
+        label: 'July',
+        value: '7',
+      }, {
+        label: 'August',
+        value: '8',
+      }, {
+        label: 'September',
+        value: '9',
+      }, {
+        label: 'October',
+        value: '10',
+      }, {
+        label: 'November',
+        value: '11',
+      }, {
+        label: 'December',
+        value: '12',
+      }],
+      value: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+      isHidden: false,
     },
     {
-      type: 'togglebutton',
+      type: 'select',
       name: 'smarttest_dayweek',
       placeholder: T('Day of week'),
       multiple: true,
-      options: []
+      options: [{
+        label: 'Monday',
+        value: '1',
+      }, {
+        label: 'Tuesday',
+        value: '2',
+      }, {
+        label: 'Wednesday',
+        value: '3',
+      }, {
+        label: 'Thursday',
+        value: '4',
+      }, {
+        label: 'Friday',
+        value: '5',
+      }, {
+        label: 'Saturday',
+        value: '6',
+      }, {
+        label: 'Sunday',
+        value: '7',
+      }],
+      value: ['1', '2', '3', '4', '5', '6', '7'],
+      isHidden: false,
     }
   ];
 
@@ -118,32 +175,5 @@ export class SmartFormComponent {
         this.type_field.options.push({ label: item[1], value: item[0] });
       });
     });
-
-    this.month_field = _.find(this.fieldConfig, { 'name': 'smarttest_month' });
-    this.taskService.getMonthChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.month_field.options.push({ label: item[1], value: item[0] });
-      });
-    });
-
-    this.day_field = _.find(this.fieldConfig, { 'name': 'smarttest_dayweek' });
-    this.taskService.getWeekdayChoices().subscribe((res) => {
-      res.forEach((item) => {
-        this.day_field.options.push({ label: item[1], value: item[0] });
-      });
-    });
-
-    let smarttest_hour = _.find(this.fieldConfig, { 'name': 'smarttest_hour' });
-    this.hour_field = _.find(smarttest_hour.tabs, { 'name': 'smarttest_hour_togglebutton' });
-    for (let i = 0; i < 24; i++) {
-      this.hour_field.options.push({ label: i, value: i.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false }) });
-    }
-
-    let smarttest_daymonth = _.find(this.fieldConfig, { 'name': 'smarttest_daymonth' });
-    this.daymonth_field = _.find(smarttest_daymonth.tabs, { 'name': 'smarttest_daymonth_togglebutton' });
-    for (let i = 1; i < 32; i++) {
-      this.daymonth_field.options.push({ label: i, value: i.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false }) });
-    }
-
   }
 }
