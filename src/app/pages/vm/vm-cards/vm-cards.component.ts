@@ -72,14 +72,14 @@ export class VmCardsComponent implements OnInit {
         case "FormSubmitted":
           //evt.data.autostart = evt.data.autostart.toString();
           if(evt.sender.isNew){
-            console.log("Card New");
-            console.log(evt);
+            //DEBUG: console.log("Card New");
+            //DEBUG: console.log(evt);
             let index = this.getCardIndex('isNew',true);
             this.cards[index].name = evt.data.name;
             this.cards[index].state = "Loading...";
             this.core.emit({name:"VmCreate",data:[evt.data] ,sender:evt.sender.machineId});
           } else {
-            console.log("Card Edit");
+            //DEBUG: console.log("Card Edit");
             console.warn(evt);
             let formValue = this.parseResponse(evt.data,true);
             this.core.emit({name:"VmProfileUpdate",data:[evt.sender.machineId,formValue] ,sender:evt.sender.machineId});
@@ -104,14 +104,14 @@ export class VmCardsComponent implements OnInit {
      * and subscribe to the observable it returns
      */
     this.core.register({observerClass:this,eventName:"VmProfiles"}).subscribe((evt:CoreEvent) => {
-      console.log("VmProfiles! *********");
-      console.log(evt);
+      //DEBUG: console.log("VmProfiles! *********");
+      //DEBUG: console.log(evt);
       this.setVmList(evt,'init');
     });
 
     this.core.register({observerClass:this,eventName:"VmProfile"}).subscribe((evt:CoreEvent) => {
-      console.log("VmProfile! *********");
-      console.log(evt);
+      //DEBUG: console.log("VmProfile! *********");
+      //DEBUG: console.log(evt);
       this.setVm(evt);
     });
 
@@ -127,8 +127,8 @@ export class VmCardsComponent implements OnInit {
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      console.log("VmStarted! *********");
-      console.log(evt);
+      //DEBUG: console.log("VmStarted! *********");
+      //DEBUG: console.log(evt);
       //let index = this.getCardIndex('id',evt.sender[0]);
       //this.refreshVM(index,evt.sender[0]); // Can't use this because API doesn't return vm.id
 
@@ -140,8 +140,8 @@ export class VmCardsComponent implements OnInit {
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
-      console.log("VmStopped! *********");
-      //console.log(evt);
+      //DEBUG: console.log("VmStopped! *********");
+      //DEBUG: console.log(evt);
       //let index = this.getCardIndex('id',evt.sender[0]);
       //this.refreshVM(index,evt.sender[0]); // Workaround: sender returns the request params
 
@@ -153,16 +153,16 @@ export class VmCardsComponent implements OnInit {
     });
 
     this.core.register({observerClass:this,eventName:"VmCreated"}).subscribe((evt:CoreEvent) => {
-      console.log("VmCreated! *********");
-      console.log(evt);
+      //DEBUG: console.log("VmCreated! *********");
+      //DEBUG: console.log(evt);
       let index = this.getCardIndex('isNew', true);
       this.toggleForm(false,this.cards[index],'none');
       this.core.emit({name:"VmProfilesRequest"});
     });
 
     this.core.register({observerClass:this,eventName:"VmDeleted"}).subscribe((evt:CoreEvent) => {
-      console.log("VmDeleted! *********");
-      console.log(evt);
+      //DEBUG: console.log("VmDeleted! *********");
+      //DEBUG: console.log(evt);
       this.removeVM(evt); // Workaround: sender returns the request params
     });
 
@@ -190,20 +190,20 @@ export class VmCardsComponent implements OnInit {
   }
 
   displayFilter(key,query?){
-    console.log(key + '/' + query);
+    //DEBUG: console.log(key + '/' + query);
     if(query == '' || !query){
       this.displayAll();
     } else {
       this.cards = this.cache.filter((card) => {
-        console.log(card[key]);
+        //DEBUG: console.log(card[key]);
         var result = card[key].toLowerCase().indexOf(query.toLowerCase()) > -1;
         //if(result !== -1){ 
-        console.log(result)
+        //DEBUG: console.log(result)
         return result;
         //}
         });
-      console.log("**** this.display ****");
-      console.log(this.cards);
+      //DEBUG: console.log("**** this.display ****");
+      //DEBUG: console.log(this.cards);
     }
   }
 
@@ -262,7 +262,7 @@ export class VmCardsComponent implements OnInit {
 
   getVm(index,id?:any) {
     if(this.cards[index].isNew && id){
-      console.log(id);
+      //DEBUG: console.log(id);
       this.cards[index].isNew = false;
       this.cards[index].id = id;
     } 
@@ -274,7 +274,7 @@ export class VmCardsComponent implements OnInit {
 
   setVm(evt:CoreEvent){
     let res = evt.data[0];
-    console.log(res.id);
+    //DEBUG: console.log(res.id);
     let currentIndex = this.getCardIndex("id",res.id);
     let cacheIndex = this.getCardIndex("id",res.id);
 
@@ -362,8 +362,8 @@ export class VmCardsComponent implements OnInit {
   }
 
   removeVM(evt:CoreEvent){
-    console.log("removeVM ********");
-    console.log(evt);
+    //DEBUG: console.log("removeVM ********");
+    //DEBUG: console.log(evt);
     let index = this.getCardIndex("id", evt.sender);
     this.focusedVM = '';
     this.cards.splice(index,1);

@@ -67,6 +67,14 @@ export class ApiService {
         namespace:"pool.get_disks",
         args: [],
         responseEvent: "PoolDisks"
+      },
+      postProcessor(res,callArgs){
+        console.warn("POOLDISKS POSTPROCESSOR");
+        console.log(res);
+        console.log(callArgs);
+        let cloneRes = Object.assign({},res);
+        cloneRes = {callArgs:callArgs ,data: res}
+        return cloneRes;
       }
     },
     NetInfoRequest:{
@@ -113,7 +121,7 @@ export class ApiService {
         args: [],// eg. [25, {"name": "Fedora", "description": "Linux", "vcpus": 1, "memory": 2048, "bootloader": "UEFI", "autostart": true}]
         responseEvent: "VmProfileRequest"
       },
-      postProcessor(res){
+      postProcessor(res,callArgs){
         console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = [[["id","=",res]]];// eg. [["id", "=", "foo"]]
@@ -235,7 +243,7 @@ export class ApiService {
         redef.responseEvent = 'StatsCpuData';
         return redef;
       },
-      postProcessor(res,call){
+      postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
         let l = [];
@@ -275,7 +283,7 @@ export class ApiService {
         redef.responseEvent = 'StatsMemoryData';
         return redef;
       },
-      postProcessor(res,call){
+      postProcessor(res,callArgs){
         console.log("******** MEM STAT RESPONSE ********");
         console.log(res);
 
@@ -316,9 +324,10 @@ export class ApiService {
         redef.responseEvent = 'StatsDiskTemp';
         return redef;
       },
-      postProcessor(res,call){
-        //console.log("******** DISK TEMP RESPONSE ********");
-        //console.log(res);
+      postProcessor(res,callArgs){
+        console.log("******** DISK TEMP RESPONSE ********");
+        console.log(res);
+        console.log(callArgs);
 
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
@@ -328,7 +337,7 @@ export class ApiService {
           l.push(spl[1]);
         }
         cloneRes.meta.legend = l;
-        return cloneRes;
+        return {callArgs:callArgs, data:cloneRes};
       }
     },
     StatsLoadAvgRequest:{
@@ -444,7 +453,7 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res,call);
+          res = def.postProcessor(res,evt.data);
         }
 
         this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
@@ -463,7 +472,7 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res,call);
+          res = def.postProcessor(res,evt.data);
         }
 
         this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
