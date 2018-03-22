@@ -22,30 +22,41 @@ export interface UserPreferences {
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
   public preferences: UserPreferences = {
-    platform:"freenas",
-    timestamp:new Date(),
-    userTheme:"ix-blue", // Theme name
-    favoriteThemes: [], // Theme Names
-    showGuide:true,
-    showTooltips:true,
-    metaphor:"auto"
+    "platform":"freenas",
+    "timestamp":new Date(),
+    "userTheme":"ix-blue", // Theme name
+    "favoriteThemes": [], // Theme Names
+    "showGuide":true,
+    "showTooltips":true,
+    "metaphor":"auto"
   }
-  constructor(protected core: CoreService, protected theme: ThemeService,private api:ApiService) {
+  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService) {
     console.log("*** New Instance of Preferences Service ***");
-    this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      console.log("******** WTF!! ********")
-      console.log(evt);
-      if(evt.data[0].attributes.preferences){
-        this.updatePreferences(evt.data[0].attributes.preferences);
-      } else if(!evt.data[0].attributes.preferences){
-        this.savePreferences();
-      }
-    });
+
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       console.log(evt.data);
       if(evt.data){
         this.core.emit({name:"UserDataRequest", data: [[["id", "=", "1" ]]] });
       }
+    });
+
+    this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      if(evt.data[0].attributes.preferences){
+        this.updatePreferences(evt.data[0].attributes.preferences);
+      } else if(!evt.data[0].attributes.preferences){
+        this.savePreferences();
+        console.warn("No Preferences Found in Middleware");
+      }
+    });
+
+    this.core.register({observerClass:this, eventName:"ChangeThemePreference",sender:this.themeService}).subscribe((evt:CoreEvent) => {
+      console.log(evt.data);
+      
+        this.preferences.userTheme = evt.data;
+        console.log(this.preferences);
+        this.core.emit({name:"UserDataUpdate", data:this.preferences  });
+      
     });
   }
 
@@ -55,15 +66,16 @@ export class PreferencesService {
     this.preferences = data;
 
     //Notify Guided Tour & Theme Service
-    this.core.emit({name:"UserPreferencesChanges", data:this.preferences});
+    this.core.emit({name:"UserPreferencesChanged", data:this.preferences});
   }
 
   // Save to middleware
   savePreferences(data?:UserPreferences){
+    console.log(data);
     if(!data){
       data = this.preferences;
     }
-    //this.core.emit({name:"UserDataUpdate", data:data});
+    this.core.emit({name:"UserDataUpdate", data:data});
   }
 
 }

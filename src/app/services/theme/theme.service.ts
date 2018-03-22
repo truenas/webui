@@ -157,7 +157,7 @@ export class ThemeService {
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
     console.log("*** New Instance of Theme Service ***");
-    /*this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });
@@ -165,12 +165,13 @@ export class ThemeService {
         console.warn("SETTING DEFAULT THEME");
         this.setDefaultTheme();
       }
-    });*/
+    });
 
-    this.core.register({observerClass:this,eventName:"UserData",sender: this.api}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      
       console.warn("SETTING USER THEME");
-      //DEBUG: console.log(evt);
-      this.savedUserTheme = evt.data[0].attributes.usertheme;
+      console.log(evt);
+      /*this.savedUserTheme = evt.data[0].attributes.usertheme;
 
       // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
       // the default in the middleware. This is a workaround until that
@@ -181,7 +182,11 @@ export class ThemeService {
       } else {
         this.activeTheme = this.savedUserTheme;
       }
-      this.setCssVars(this.findTheme(this.activeTheme));
+      this.setCssVars(this.findTheme(this.activeTheme));*/
+      if(evt.data.userTheme !== this.activeTheme){
+        this.activeTheme = evt.data.userTheme;
+        this.setCssVars(this.findTheme(this.activeTheme));
+      }
     });
   }
 
@@ -209,22 +214,25 @@ export class ThemeService {
   changeTheme(theme:string) {
     console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     //domHelper.changeTheme(this.freenasThemes, this.activeTheme);
-    this.activeTheme = theme;
+    //this.activeTheme = theme;
     /*this.freenasThemes.forEach((t) => {
      t.isActive = (t.name === theme.name);
     });*/
-    if(this.ws.loggedIn){
+    /*if(this.ws.loggedIn){
       this.saveCurrentTheme();
-    }
-    this.setCssVars(this.findTheme(theme));
+    }*/
+    //this.setCssVars(this.findTheme(theme));
+    this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
     this.core.emit({name:'ThemeChanged'});
   }
 
   saveCurrentTheme(){
+    console.log("SAVING CURRENT THEME");
     let theme = this.currentTheme();
-    this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
+    /*this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
       console.log("Saved usertheme:", res, theme.name);
-    });
+    });*/
+    this.core.emit({name:"ChangeThemePreference", data:theme.name});
   }
 
   setCssVars(theme:Theme){

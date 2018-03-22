@@ -38,17 +38,31 @@ export class ApiService {
       apiCall:{
         protocol:"websocket",
         version:"2.0",
-        namespace:"user.update",
+        namespace:"user.set_attribute",
         args: [],// eg. [["id", "=", "foo"]]
-        responseEvent: "UserData"
+        //responseEvent: null
       },
       preProcessor(def:ApiCall){
         console.log("USER DATA PREPROCESSOR");
+        let uid:number = 1;
         let redef = Object.assign({}, def);
+        console.log(def.args)
         //Do some stuff here
         // [1,{attributes:{usertheme:theme.name}}]
-        redef.args = [ [ 1, {attributes: {preferences:def.args[0] }}] ];
+        redef.args =  [ uid, "preferences",def.args ] ;
+        console.log("DEBUG");
         return redef;
+      },
+      postProcessor(res,callArgs,core){
+        console.log("USER DATA POSTPROCESSOR");
+        console.log(res);
+        console.log(callArgs);
+        let cloneRes = Object.assign({},res);
+        //cloneRes = {callArgs:callArgs ,data: res}
+        if(res == 1){
+          core.emit({name:"UserDataRequest", data: [[[ "id", "=", "1" ]]] });
+        }
+        return cloneRes;
       }
     },
     PoolDataRequest:{
@@ -69,9 +83,9 @@ export class ApiService {
         responseEvent: "PoolDisks"
       },
       postProcessor(res,callArgs){
-        console.warn("POOLDISKS POSTPROCESSOR");
-        console.log(res);
-        console.log(callArgs);
+        //DEBUG: console.warn("POOLDISKS POSTPROCESSOR");
+        //DEBUG: console.log(res);
+        //DEBUG: console.log(callArgs);
         let cloneRes = Object.assign({},res);
         cloneRes = {callArgs:callArgs ,data: res}
         return cloneRes;
@@ -453,7 +467,7 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res,evt.data);
+          res = def.postProcessor(res,evt.data,this.core);
         }
 
         this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
@@ -472,7 +486,7 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res,evt.data);
+          res = def.postProcessor(res,evt.data,this.core);
         }
 
         this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
@@ -499,12 +513,14 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res,evt.data);
+          res = def.postProcessor(res,evt.data,this.core);
         }
         //DEBUG: console.log(call.responseEvent);
         //DEBUG: console.log(res);
         //this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
-        this.core.emit({name:call.responseEvent, data:res, sender: this});
+        if(call.responseEvent){
+          this.core.emit({name:call.responseEvent, data:res, sender: this});
+        }
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
@@ -519,11 +535,13 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res,evt.data);
+          res = def.postProcessor(res,evt.data,this.core);
         }
 
         //this.core.emit({name:call.responseEvent, data:res, sender:evt.data }); // OLD WAY
-        this.core.emit({name:call.responseEvent, data:res, sender:this });
+        if(call.responseEvent){
+          this.core.emit({name:call.responseEvent, data:res, sender:this });
+        }
       });
     }
   }
