@@ -9,6 +9,7 @@ import {
 import {
   regexValidator
 } from '../../../common/entity/entity-form/validators/regex-validation';
+import { T } from '../../../../translate-marker';
 
 
 @Component({
@@ -25,29 +26,29 @@ export class InterfacesFormComponent {
     {
       type : 'input',
       name : 'int_interface',
-      placeholder : 'NIC',
-      tooltip : 'The FreeBSD device name of the interface. This can not\
- be changed after creating the interface.',
+      placeholder : T('NIC'),
+      tooltip : T('The FreeBSD device name of the interface. This can not\
+ be changed after creating the interface.'),
     },
     {
       type : 'input',
       name : 'int_name',
-      placeholder : 'Interface Name',
-      tooltip : 'Description of interface.',
+      placeholder : T('Interface Name'),
+      tooltip : T('Description of interface.'),
     },
     {
       type : 'checkbox',
       name : 'int_dhcp',
-      placeholder : 'DHCP',
-      tooltip : 'Only one interface can be configured for <b>DHCP</b>.\
- Leave unchecked to create a static IPv4 or IPv6 configuration.'
+      placeholder : T('DHCP'),
+      tooltip : T('Only one interface can be configured for <b>DHCP</b>.\
+ Leave unchecked to create a static IPv4 or IPv6 configuration.')
     },
     {
       type : 'input',
       name : 'int_ipv4address',
-      placeholder : 'IPv4 Address',
-      tooltip : 'Enter a static IP address in the format\
- <i>###.###.###.###</i> if <b>DHCP</b> is unchecked.',
+      placeholder : T('IPv4 Address'),
+      tooltip : T('Enter a static IP address in the format\
+ <i>###.###.###.###</i> if <b>DHCP</b> is unchecked.'),
       validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -56,8 +57,8 @@ export class InterfacesFormComponent {
     {
       type : 'select',
       name : 'int_v4netmaskbit',
-      placeholder : 'IPv4 Netmask',
-      tooltip : 'Enter a netmask if <b>DHCP</b> is unchecked.',
+      placeholder : T('IPv4 Netmask'),
+      tooltip : T('Enter a netmask if <b>DHCP</b> is unchecked.'),
       options : [],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -66,18 +67,18 @@ export class InterfacesFormComponent {
     {
       type : 'checkbox',
       name : 'int_ipv6auto',
-      placeholder : 'Auto configure IPv6',
-      tooltip : 'Check this to automatically configure the IPv6 address\
+      placeholder : T('Auto configure IPv6'),
+      tooltip : T('Check this to automatically configure the IPv6 address\
  with <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  target="_blank">rtsol(8)</a>. Only <i>one</i> interface can be\
- configured this way.'
+ configured this way.')
     },
     {
       type : 'input',
       name : 'int_ipv6address',
-      placeholder : 'IPv6 Address',
-      tooltip : 'Enter a static IPv6 address if <b>DHCP</b> is unchecked.\
- Example address: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.',
+      placeholder : T('IPv6 Address'),
+      tooltip : T('Enter a static IPv6 address if <b>DHCP</b> is unchecked.\
+ Example address: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
       validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -86,8 +87,8 @@ export class InterfacesFormComponent {
     {
       type : 'select',
       name : 'int_v6netmaskbit',
-      placeholder : 'IPv6 Prefix Length',
-      tooltip : 'Match the prefix length used on the network.',
+      placeholder : T('IPv6 Prefix Length'),
+      tooltip : T('Match the prefix length used on the network.'),
       options : [],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -96,10 +97,10 @@ export class InterfacesFormComponent {
     {
       type : 'input',
       name : 'int_options',
-      placeholder : 'Options',
-      tooltip : 'Enter any additional parameters from <a\
+      placeholder : T('Options'),
+      tooltip : T('Enter any additional parameters from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">ifconfig(8)</a>. Separate multiple parameters with a space.',
+ target="_blank">ifconfig(8)</a>. Separate multiple parameters with a space.'),
     },
   ];
 
