@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import * as moment from 'moment';
 
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS
@@ -20,12 +21,49 @@ export interface UserPreferences {
 @Injectable()
 export class PreferencesService {
   //public coreEvents: Subject<CoreEvent>;
+  public preferences: UserPreferences = {
+    platform:"freenas",
+    timestamp:new Date(),
+    userTheme:"ix-blue", // Theme name
+    favoriteThemes: [], // Theme Names
+    showGuide:true,
+    showTooltips:true,
+    metaphor:"auto"
+  }
   constructor(protected core: CoreService, protected theme: ThemeService,private api:ApiService) {
     console.log("*** New Instance of Preferences Service ***");
-    this.core.register({observerClass:this, eventName:"UserAttributesChanged"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
+      console.log("******** WTF!! ********")
+      console.log(evt);
+      if(evt.data[0].attributes.preferences){
+        this.updatePreferences(evt.data[0].attributes.preferences);
+      } else if(!evt.data[0].attributes.preferences){
+        this.savePreferences();
+      }
     });
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
-      alert("Authenticated");
+      console.log(evt.data);
+      if(evt.data){
+        this.core.emit({name:"UserDataRequest", data: [[["id", "=", "1" ]]] });
+      }
     });
   }
+
+  // Update local cache
+  updatePreferences(data:UserPreferences){
+    console.log("UPDATING LOCAL PREFERENCES");
+    this.preferences = data;
+
+    //Notify Guided Tour & Theme Service
+    this.core.emit({name:"UserPreferencesChanges", data:this.preferences});
+  }
+
+  // Save to middleware
+  savePreferences(data?:UserPreferences){
+    if(!data){
+      data = this.preferences;
+    }
+    //this.core.emit({name:"UserDataUpdate", data:data});
+  }
+
 }

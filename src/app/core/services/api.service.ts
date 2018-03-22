@@ -14,7 +14,7 @@ interface ApiCall {
 interface ApiDefinition { 
   apiCall: ApiCall;
   preProcessor?: (def:ApiCall) => ApiCall;
-  postProcessor?: (def:ApiCall) => ApiCall;
+  postProcessor?: (res:ApiCall, callArgs:any) => ApiCall;
 }
 
 @Injectable()
@@ -28,6 +28,27 @@ export class ApiService {
         namespace:"user.query",
         args: [],// eg. [["id", "=", "foo"]]
         responseEvent: "UserData"
+      },
+      preProcessor(def:ApiCall){ 
+        console.log("API SERVICE: USER DATA REQUESTED");
+        return def
+      }
+    },
+    UserDataUpdate:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"user.update",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "UserData"
+      },
+      preProcessor(def:ApiCall){
+        console.log("USER DATA PREPROCESSOR");
+        let redef = Object.assign({}, def);
+        //Do some stuff here
+        // [1,{attributes:{usertheme:theme.name}}]
+        redef.args = [ [ 1, {attributes: {preferences:def.args[0] }}] ];
+        return redef;
       }
     },
     PoolDataRequest:{
@@ -106,6 +127,11 @@ export class ApiService {
         namespace:"vm.status",
         args: [],// eg. [["id", "=", "foo"]]
         responseEvent: "VmStatus"
+      },
+      postProcessor(res,callArgs){
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0] ,state: res.state}
+        return cloneRes;
       }
     },
     VmStart:{
@@ -115,6 +141,11 @@ export class ApiService {
         namespace:"vm.start",
         args:[],
         responseEvent:"VmStarted"
+      },
+      postProcessor(res,callArgs){
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0] ,state: res} // res:boolean
+        return cloneRes;
       }
     },
     VmStop:{
@@ -124,6 +155,12 @@ export class ApiService {
         namespace:"vm.stop",
         args:[],
         responseEvent:"VmStopped"
+      },
+      postProcessor(res,callArgs){
+        console.log(res);
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0]} // res:boolean
+        return cloneRes;
       }
     },
     VmCreate:{
@@ -198,7 +235,7 @@ export class ApiService {
         redef.responseEvent = 'StatsCpuData';
         return redef;
       },
-      postProcessor(res){
+      postProcessor(res,call){
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
         let l = [];
@@ -238,7 +275,7 @@ export class ApiService {
         redef.responseEvent = 'StatsMemoryData';
         return redef;
       },
-      postProcessor(res){
+      postProcessor(res,call){
         console.log("******** MEM STAT RESPONSE ********");
         console.log(res);
 
@@ -279,7 +316,7 @@ export class ApiService {
         redef.responseEvent = 'StatsDiskTemp';
         return redef;
       },
-      postProcessor(res){
+      postProcessor(res,call){
         //console.log("******** DISK TEMP RESPONSE ********");
         //console.log(res);
 
@@ -321,7 +358,7 @@ export class ApiService {
         redef.responseEvent = 'StatsLoadAvgData';
         return redef;
       },
-      postProcessor(res){
+      postProcessor(res,call){
         console.log("******** LOAD STAT RESPONSE ********");
         console.log(res);
         //return res;
@@ -407,7 +444,7 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res);
+          res = def.postProcessor(res,call);
         }
 
         this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
@@ -426,7 +463,7 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res);
+          res = def.postProcessor(res,call);
         }
 
         this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
@@ -453,11 +490,12 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res);
+          res = def.postProcessor(res,evt.data);
         }
-        console.log(call.responseEvent);
-        console.log(res);
-        this.core.emit({name:call.responseEvent, data:res, sender: evt.data});
+        //DEBUG: console.log(call.responseEvent);
+        //DEBUG: console.log(res);
+        //this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
+        this.core.emit({name:call.responseEvent, data:res, sender: this});
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
@@ -472,10 +510,11 @@ export class ApiService {
 
         // PostProcess
         if(def.postProcessor){
-          res = def.postProcessor(res);
+          res = def.postProcessor(res,evt.data);
         }
 
-        this.core.emit({name:call.responseEvent, data:res, sender:evt.data });
+        //this.core.emit({name:call.responseEvent, data:res, sender:evt.data }); // OLD WAY
+        this.core.emit({name:call.responseEvent, data:res, sender:this });
       });
     }
   }

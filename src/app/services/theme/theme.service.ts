@@ -157,7 +157,7 @@ export class ThemeService {
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
     console.log("*** New Instance of Theme Service ***");
-    this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
+    /*this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });
@@ -165,11 +165,11 @@ export class ThemeService {
         console.warn("SETTING DEFAULT THEME");
         this.setDefaultTheme();
       }
-    });
+    });*/
 
-    this.core.register({observerClass:this,eventName:"UserData"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"UserData",sender: this.api}).subscribe((evt:CoreEvent) => {
       console.warn("SETTING USER THEME");
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.savedUserTheme = evt.data[0].attributes.usertheme;
 
       // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
@@ -181,7 +181,6 @@ export class ThemeService {
       } else {
         this.activeTheme = this.savedUserTheme;
       }
-      console.log(this.activeTheme);
       this.setCssVars(this.findTheme(this.activeTheme));
     });
   }

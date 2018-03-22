@@ -80,7 +80,8 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
-    //DEBUG: console.log("CORESERVICE: Emit() ");
+    //console.log("CORESERVICE: Emitting " + evt.name);
+    //console.log(this.dispatchTable)
 
     //avoid matching null values
     if(!evt.name){
@@ -101,6 +102,7 @@ export class CoreService {
       } else if(reg.sender){
         subscriptionType = "Sender";
       }
+      //DEBUG: console.log(i + ":CoreService: Subscription type = " + subscriptionType);
 
       if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
 	//DEBUG:
@@ -108,21 +110,21 @@ export class CoreService {
         //DEBUG: console.log(reg.observerClass);
         //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-        return this;
+        //return this;
       } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
 	//DEBUG:
         //DEBUG: console.log("Matched name only");
         //DEBUG: console.log(reg.observerClass);
         //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-        return this;
+        //return this;
       } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
 	//DEBUG: 
         //DEBUG: console.log("Matched sender only");
         //DEBUG: console.log(reg.observerClass);
         //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-        return this;
+        //return this;
       } else {
 	//DEBUG: 
         //DEBUG: console.log("No match found");

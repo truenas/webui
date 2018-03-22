@@ -38,8 +38,8 @@ export class CoreServices {
       providers: [
 	CoreService,
 	ApiService,
-        ThemeService,
-        PreferencesService
+        PreferencesService,
+        ThemeService
       ]
     }
   }

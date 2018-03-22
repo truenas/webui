@@ -34,8 +34,8 @@ export class AppComponent implements OnInit {
     private ws: WebSocketService,
     private rest: RestService,
     private api: ApiService,
-    public themeservice: ThemeService,
     public preferencesService: PreferencesService,
+    public themeservice: ThemeService,
     private tour: TourService) {
 
     if (this.detectBrowser("Safari")) {
