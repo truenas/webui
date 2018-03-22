@@ -61,6 +61,8 @@ export class FormUploadComponent {
         
       }
     );
+  } else{
+    this.loader.close();
   };
 }
 }

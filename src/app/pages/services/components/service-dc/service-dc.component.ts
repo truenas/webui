@@ -21,6 +21,7 @@ import {
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'domaincontroller-edit',
@@ -36,25 +37,25 @@ export class ServiceDCComponent {
       type : 'input',
       name : 'dc_realm',
       label : 'Realm',
-      placeholder : 'Realm',
-      tooltip: 'Capitalized DNS realm name.',
+      placeholder : T('Realm'),
+      tooltip: T('Capitalized DNS realm name.'),
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'dc_domain',
       label : 'Domain',
-      placeholder : 'Domain',
-      tooltip: 'Capitalized domain name.',
+      placeholder : T('Domain'),
+      tooltip: T('Capitalized domain name.'),
       validation : [ Validators.required ]
     },
     {
       type : 'select',
       name : 'dc_role',
       label : 'Server Roll',
-      placeholder : 'Server Roll',
-      tooltip: 'At this time, the only supported role is as the domain\
- controller for a new domain.',
+      placeholder : T('Server Roll'),
+      tooltip: T('At this time, the only supported role is as the domain\
+       controller for a new domain.'),
       options : [
         {label : 'DC', value : 'dc'},
       ],
@@ -63,21 +64,21 @@ export class ServiceDCComponent {
       type : 'input',
       name : 'dc_dns_forwarder',
       label : 'DNS Forwarder',
-      placeholder : 'DNS Forwarder',
-      tooltip: 'IP address of DNS forwarder. Required for recursive\
- queries when <i>SAMBA_INTERNAL</i> is selected.',
+      placeholder : T('DNS Forwarder'),
+      tooltip: T('IP address of DNS forwarder. Required for recursive\
+       queries when <i>SAMBA_INTERNAL</i> is selected.'),
       validation : [ Validators.required ]
     },
     {
       type : 'select',
       name : 'dc_forest_level',
       label : 'Forest Level',
-      placeholder : 'Forest Level',
-      tooltip: 'Choices are <i>2000, 2003, 2008, 2008_R2, 2012,</i> or <i>2012_R2</i>.\
- Refer to <a\
- href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"\
- target="_blank">Understanding Active Directory Domain Services (AD DS)\
- Functional Levels</a> for details.',
+      placeholder : T('Forest Level'),
+      tooltip: T('Choices are <i>2000, 2003, 2008, 2008_R2, 2012,</i> or <i>2012_R2</i>.\
+       Refer to <a\
+       href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"\
+       target="_blank">Understanding Active Directory Domain Services (AD DS)\
+       Functional Levels</a> for details.'),
       options : [
         {label : '2000', value : '2000'},
         {label : '2003', value : '2003'},
@@ -91,26 +92,26 @@ export class ServiceDCComponent {
       type : 'input',
       name : 'dc_passwd',
       inputType : 'password',
-      placeholder : 'Administration Password',
-      tooltip: 'Password to be used for the\
- <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
- target="_blank">Active Directory</a> administrator account.',
+      placeholder : T('Administration Password'),
+      tooltip: T('Password to be used for the\
+       <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+       target="_blank">Active Directory</a> administrator account.'),
       validation :
           [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ]
     },
     {
       type : 'input',
       name : 'dc_passwd2',
-      inputType : 'password',
-      placeholder : 'Confirm password',
+      inputType : T('password'),
+      placeholder : T('Confirm password'),
     },
     {
       type : 'select',
       name : 'afp_srv_map_acls',
       label : 'Kerberos Realm:',
-      placeholder : 'Kerberos Realm',
-      tooltip : 'Auto-populates with information from the <b>Realm</b>\
- when the settings in this screen are saved.',
+      placeholder : T('Kerberos Realm'),
+      tooltip : T('Auto-populates with information from the <b>Realm</b>\
+       when the settings in this screen are saved.'),
       options : [
         {label : 'Rights', value : 'rights'},
         {label : 'None', value : 'none'},

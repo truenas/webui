@@ -7,9 +7,10 @@ import {EntityModule} from '../common/entity/entity.module';
 //Component Modules
 import { ShellComponent } from './shell.component';
 import { routing } from './shell.routing';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, EntityModule, routing, MaterialModule],
+  imports: [CommonModule, FormsModule, EntityModule, routing, MaterialModule, TranslateModule],
   declarations: [
     ShellComponent
   ],

@@ -10,6 +10,7 @@ import {
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-lagg-form',
@@ -25,26 +26,26 @@ export class LaggFormComponent {
     {
       type : 'input',
       name : 'lagg_interface',
-      placeholder : 'Lagg Interface',
-      tooltip : 'Enter a descriptive name for the new interface.',
+      placeholder : T('Lagg Interface'),
+      tooltip : T('Enter a descriptive name for the new interface.'),
     },
     {
       type : 'select',
       name : 'lagg_protocol',
-      placeholder : 'Lagg Protocol',
-      tooltip : 'Select the desired Protocol Type. <i>LACP</i> is\
+      placeholder : T('Lagg Protocol'),
+      tooltip : T('Select the desired Protocol Type. <i>LACP</i> is\
  preferred. If the network switch does not support LACP, choose\
  <i>Failover</i>. For <i>LACP</i>, verify the switch is configured for\
- <i>active LACP</i>; <i>passive LCAP</i> is not supported',
+ <i>active LACP</i>; <i>passive LCAP</i> is not supported'),
       options : []
     },
     {
       type : 'select',
       name : 'lagg_interfaces',
-      placeholder : 'Lagg Interfaces',
-      tooltip : 'Choose the network interfaces to use in the aggregation.\
+      placeholder : T('Lagg Interfaces'),
+      tooltip : T('Choose the network interfaces to use in the aggregation.\
  <b>Warning:</b> Lagg creation fails if any interfaces are manually\
- configured.',
+ configured.'),
       options : [],
       multiple : true
     },

@@ -10,7 +10,7 @@
 
     <div fxFlex="calc(100% - 400px)" class="padding_all">
       <mat-input-container floatPlaceholder="never">
-        <input matInput #filter placeholder="Filter {{title}}">
+        <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
       </mat-input-container>
     </div>
 
@@ -75,7 +75,7 @@
       <ngx-datatable-column
                *ngFor="let col of conf.columns"
                prop="{{col.prop}}"
-               name="{{col.name}}">
+               name="{{col.name | translate}}">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div id="{{col.prop}}_{{row[col.prop]}}" 
                title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">

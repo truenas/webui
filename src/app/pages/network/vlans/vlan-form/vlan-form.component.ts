@@ -11,6 +11,8 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector : 'app-vlan-form',
   template : `<entity-form [conf]="this"></entity-form>`

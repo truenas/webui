@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
-import {RestService, WebSocketService, StorageService} from '../../../../../services/';
+import {RestService, WebSocketService, StorageService, DialogService} from '../../../../../services/';
 import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig
@@ -33,6 +33,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected mp_mode_en: any;
   protected mp_acl: any;
   protected mp_acl_subscription: any;
+  protected mp_recursive: any;
+  protected mp_recursive_subscription: any;
   public sub: Subscription;
   public formGroup: FormGroup;
   public data: Object = {};
@@ -119,7 +121,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected aroute: ActivatedRoute, protected rest: RestService,
               protected ws: WebSocketService, protected userService: UserService,
-              protected storageService: StorageService) {}
+              protected storageService: StorageService, protected dialog: DialogService) {}
 
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
@@ -171,10 +173,22 @@ export class DatasetPermissionsComponent implements OnDestroy {
         }
       });
     });
+    this.mp_recursive = entityEdit.formGroup.controls['mp_recursive'];
+    this.mp_recursive_subscription = this.mp_recursive.valueChanges.subscribe((value) => {
+      if (value === true) {
+        this.dialog.confirm(T("Warning"), T("Seting permissions recursively will affect this directory and all those below it. This can result in data that is inaccessible."))
+        .subscribe((res) => {
+          if (!res) {
+            this.mp_recursive.setValue(false);
+          }
+        });
+      }
+    });
   }
 
   ngOnDestroy() {
     this.mp_acl_subscription.unsubscribe();
+    this.mp_recursive_subscription.unsubscribe();
   }
 
   beforeSubmit(data) {

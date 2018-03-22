@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {RestService} from '../../../../services/rest.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-interfaces-list',
@@ -18,12 +19,12 @@ export class InterfacesListComponent {
   constructor(_rest: RestService, _router: Router) {}
 
   public columns: Array<any> = [
-    {name : 'Interface', prop : 'int_interface'},
-    {name : 'Name', prop : 'int_name'},
-    {name : 'Media Status', prop : 'int_media_status'},
-    {name : 'DHCP', prop : 'int_dhcp'},
-    {name : 'IPv4 Addresses', prop : 'ipv4_addresses'},
-    {name : 'IPv6 Addresses', prop : 'ipv6_addresses'},
+    {name : T('Interface'), prop : 'int_interface'},
+    {name : T('Name'), prop : 'int_name'},
+    {name : T('Media Status'), prop : 'int_media_status'},
+    {name : T('DHCP'), prop : 'int_dhcp'},
+    {name : T('IPv4 Addresses'), prop : 'ipv4_addresses'},
+    {name : T('IPv6 Addresses'), prop : 'ipv6_addresses'},
   ];
   public config: any = {
     paging : true,

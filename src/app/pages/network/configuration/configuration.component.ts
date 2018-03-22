@@ -14,6 +14,7 @@ import {
 } from '../../common/entity/entity-form/models/field-config.interface';
 import {Tooltip} from '../../common/tooltip';
 import {TOOLTIPS} from '../../common/tooltips';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector : 'app-networkconfiguration',
@@ -29,84 +30,84 @@ export class ConfigurationComponent {
     {
       type : 'input',
       name : 'gc_hostname',
-      placeholder : 'Hostname',
-      tooltip : 'System host name.',
+      placeholder : T('Hostname'),
+      tooltip : T('System host name.'),
     },
     {
       type : 'input',
       name : 'gc_domain',
-      placeholder : 'Domain',
-      tooltip : 'System domain name.',
+      placeholder : T('Domain'),
+      tooltip : T('System domain name.'),
     },
     {
       type : 'input',
       name : 'gc_ipv4gateway',
-      placeholder : 'IPv4 Default Gateway',
-      tooltip : 'Adding an IPv4 address here overrides a default\
- gateway provided by DHCP.',
+      placeholder : T('IPv4 Default Gateway'),
+      tooltip : T('Adding an IPv4 address here overrides a default\
+ gateway provided by DHCP.'),
     },
     {
       type : 'input',
       name : 'gc_ipv6gateway',
-      placeholder : 'IPv6 Default Gateway',
-      tooltip : 'Adding an IPv6 address here overrides a default\
- gateway provided by DHCP.',
+      placeholder : T('IPv6 Default Gateway'),
+      tooltip : T('Adding an IPv6 address here overrides a default\
+ gateway provided by DHCP.'),
     },
     {
       type : 'input',
       name : 'gc_nameserver1',
-      placeholder : 'Nameserver 1',
-      tooltip : 'The primary DNS server, typically in Windows domain.',
+      placeholder : T('Nameserver 1'),
+      tooltip : T('The primary DNS server, typically in Windows domain.'),
     },
     {
       type : 'input',
       name : 'gc_nameserver2',
-      placeholder : 'Nameserver 2',
-      tooltip : 'Secondary DNS server.',
+      placeholder : T('Nameserver 2'),
+      tooltip : T('Secondary DNS server.'),
     },
     {
       type : 'input',
       name : 'gc_nameserver3',
-      placeholder : 'Nameserver 3',
-      tooltip : 'Tertiary DNS server',
+      placeholder : T('Nameserver 3'),
+      tooltip : T('Tertiary DNS server'),
     },
     {
       type : 'input',
       name : 'gc_httpproxy',
-      placeholder : 'HTTP Proxy',
-      tooltip : 'Enter the proxy information for the network in the\
+      placeholder : T('HTTP Proxy'),
+      tooltip : T('Enter the proxy information for the network in the\
  format <i>http://my.proxy.server:3128</i> or\
- <i>http://user:password@my.proxy.server:3128</i>',
+ <i>http://user:password@my.proxy.server:3128</i>'),
     },
     {
       type : 'checkbox',
       name : 'gc_netwait_enabled',
-      placeholder : 'Enable netwait feature',
-      tooltip : 'If enabled, delays the start of network-reliant\
+      placeholder : T('Enable netwait feature'),
+      tooltip : T('If enabled, delays the start of network-reliant\
  services until the interface is up and ICMP packets to a destination\
  defined in <i>netwait ip list</i> are flowing. Link state is examined\
  first, followed by "pinging" an IP address to verify network usability.\
  If no destination can be reached or timeouts are exceeded, network\
- services are started anyway with no guarantee the network is usable.'
+ services are started anyway with no guarantee the network is usable.')
     },
     {
       type : 'input',
       name : 'gc_netwait_ip',
-      placeholder : 'Netwait IP list',
-      tooltip : 'Space-delimited list of IP addresses to\
+      placeholder : T('Netwait IP list'),
+      tooltip : T('Space-delimited list of IP addresses to\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank"><ins>ping(8)</ins></a>.\
  If multiple IP addresses are specified, each is tried until one is\
  successful or the list is exhausted. If empty the default gateway is\
- used.'
+ used.')
     },
     {
       type : 'textarea',
       name : 'gc_hosts',
-      placeholder : 'Host name data base',
+      placeholder : T('Host name data base'),
       tooltip :
-          'This field is appended to <i>/etc/hosts</i> which contains\
+          T('This field is appended to <i>/etc/hosts</i> which contains\
  information regarding known hosts on the network. See\
- <a href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports" target="_blank"><ins>hosts(5)</ins></a>.'
+ <a href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports" target="_blank"><ins>hosts(5)</ins></a>.')
     },
   ];
   private entityEdit: EntityFormComponent;
