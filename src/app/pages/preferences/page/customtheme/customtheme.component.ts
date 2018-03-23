@@ -9,6 +9,9 @@ import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
+import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'custom-theme',
@@ -121,6 +124,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'name', 
           width:'100%',
           placeholder: 'Custom Theme Name',
+          required:true,
           tooltip: 'Enter a name to identify your new theme.',
         },
         { 
@@ -128,6 +132,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'label', 
           width:'100%',
           placeholder: 'Menu Label',
+          required:true,
           tooltip: 'Specify how the theme name should appear in the menu.',
         },
         { 
@@ -135,6 +140,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'labelSwatch', 
           width:'100%',
           placeholder: 'Menu Swatch', 
+          required:true,
           options:this.colorOptions,
           tooltip: "Choose which color from the palette will be used for the label swatch that appears left of the label in the menu.",
           class:'inline'
@@ -170,6 +176,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'primary', 
           width:'100%',
           placeholder: 'Choose Primary', 
+          required:true,
           options:this.colorOptions,
           tooltip: "Choose which color from the palette will be the theme's primary color",
           class:'inline'
@@ -179,6 +186,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'accent', 
           width:'100%',
           placeholder: 'Choose Accent', 
+          required:true,
           options:this.colorOptions,
           tooltip: "Choose which color from the palette will be the theme's accent color",
           class:'inline'
@@ -204,6 +212,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'bg2', 
           width: this.colorWidth,
           placeholder: 'Background 2',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -212,6 +221,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'fg1', 
           width: this.colorWidth,
           placeholder: 'Foreground 1',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -220,6 +230,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'fg2', 
           width: this.colorWidth,
           placeholder: 'Foreground 2',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -228,6 +239,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'alt-bg1', 
           width: this.colorWidth,
           placeholder: 'Alt Background 1',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -236,6 +248,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'alt-bg2', 
           width: this.colorWidth,
           placeholder: 'Alt Background 2',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -244,6 +257,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'alt-fg1', 
           width: this.colorWidth,
           placeholder: 'Alt Foreground 1',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -252,6 +266,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'alt-fg2', 
           width: this.colorWidth,
           placeholder: 'Alt Foreground 2',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -267,6 +282,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'yellow', 
           width: this.colorWidth,
           placeholder: 'Yellow',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -275,6 +291,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'orange', 
           width: this.colorWidth,
           placeholder: 'Orange',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -283,6 +300,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'red', 
           width: this.colorWidth,
           placeholder: 'Red',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -291,6 +309,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'magenta', 
           width: this.colorWidth,
           placeholder: 'Magenta',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -299,6 +318,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'violet', 
           width: this.colorWidth,
           placeholder: 'Violet',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -307,6 +327,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'blue', 
           width: this.colorWidth,
           placeholder: 'Blue',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -315,6 +336,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'cyan', 
           width: this.colorWidth,
           placeholder: 'Cyan',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
@@ -323,6 +345,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'green', 
           width: this.colorWidth,
           placeholder: 'Green',
+          required:true,
           tooltip: 'Pick a color, any color!',
           class:'inline'
         }
@@ -374,6 +397,8 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       protected router: Router, 
       protected rest: RestService,
       protected ws: WebSocketService,
+      private dialog: DialogService,
+      protected matdialog: MatDialog,
       protected _injector: Injector, 
       protected _appRef: ApplicationRef,
       public themeService:ThemeService
@@ -399,6 +424,8 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
+            let valid:boolean = this.validateForm(evt.data);
+            if(valid){alert("Save to preferences service")}
           break;
           case "FormCancelled":
             console.log("Form Cancelled");
@@ -482,6 +509,67 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           this.fieldConfig.push(this.fieldSets[i].config[ii]);
         }
       }
+    }
+
+    validateForm(data:any){
+      let messages: string[] = [];
+      Object.keys(this.fieldSets).forEach((set) => {
+        let fieldset = this.fieldSets[set];
+        for(let i = 0; i < fieldset.config.length; i++){
+          let field = fieldset.config[i];
+
+          //Check for required fields
+          if(field.required && !data[field.name]){
+            //console.warn(field.name + "*** Form Invalid ***");
+            messages.push(field.placeholder + " is a required field.");
+
+          } else if(field.required){
+            //console.warn(field.name);
+          } else {
+            //console.log(field.name);
+          }
+        }
+      });
+        // Check for duplicate theme names and labels
+        let dupeName = this.isDuplicateOf("name",data.name);
+        if(dupeName){
+          messages.push("This theme name is already taken. Please choose another name.")
+        }
+
+        let dupeLabel = this.isDuplicateOf("label",data.label);
+        if(dupeLabel){
+          messages.push("This theme label is already taken. Please choose another label.")
+        }
+      if(messages.length == 0){
+        return true;
+      }
+      
+      this.invalidDialog(messages);
+
+      return false;
+    }
+
+    isDuplicateOf(key:string, value:any):Theme{
+      for(let i = 0; i < this.baseThemes.length; i++){
+        if(this.baseThemes[i][key] == value){
+          return this.baseThemes[i];
+        }
+      }
+    }
+
+    invalidDialog(messages:string[]){
+      let message:string = "";
+
+      for(let i = 0; i < messages.length; i++){
+        let num = i + 1;
+        message += " " + messages[i];
+      }
+
+
+      //Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for volume ") + row1.name)
+      this.dialog.Info(T("Form Invalid"), T(message)).subscribe((res) => {
+        console.log(res);
+      })
     }
 
 }
