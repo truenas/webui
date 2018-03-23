@@ -20,11 +20,11 @@
                 <span *ngFor="let custBtn of conf.custActions">
                   <button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
                 </span>
-                <button mat-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" || translate}}</button>
+                <button mat-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
                 <!-- </div> -->
             </mat-card-actions>
         </form>
-        <p *ngIf="success" type="success" id="successfully_updated">Successfully updated.</p>
+        <p *ngIf="success" type="success" id="successfully_updated">{{"Successfully updated." | translate}}</p>
         <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>
     </div>
 </mat-card>
