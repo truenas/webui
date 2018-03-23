@@ -77,6 +77,11 @@ export class RsyncFormComponent {
         explorerType: 'directory',
         placeholder: T('Remote Path'),
       }, {
+        type: 'checkbox',
+        name: 'rsync_validate_rpath',
+        placeholder: T('Validate Remote Path'),
+        value: true,
+      }, {
         type: 'select',
         name: 'rsync_direction',
         placeholder: T('Direction'),
@@ -222,28 +227,24 @@ export class RsyncFormComponent {
          as symlinks, preserve permissions, preserve modification times,\
          preserve group, preserve owner(super-user only), and preserve device\
          files(super-user only) and special files).'),
-        value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_delete',
         placeholder: T('Delete'),
         tooltip: T('Delete files in destination directory that do not exist\
          in sending directory.'),
-        value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_quiet',
         placeholder: T('Quiet'),
         tooltip: T('Suppresses informational messages from the remote\
          server.'),
-        value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_preserveperm',
         placeholder: T('Preserve permissions'),
         tooltip: T('Preserves original file permissions; useful if user is\
          set to <i>root</i>.'),
-        value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_preserveattr',
@@ -251,7 +252,6 @@ export class RsyncFormComponent {
         tooltip: T('Both systems must support\
          <a href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
          target="_blank"> extended attributes</a>.'),
-        value: true,
       }, {
         type: 'checkbox',
         name: 'rsync_delayupdates',
@@ -287,6 +287,7 @@ export class RsyncFormComponent {
   protected rsync_ssh_field: Array<any> = [
     'rsync_remoteport',
     'rsync_remotepath',
+    'rsync_validate_rpath',
   ];
   protected user_field: any;
   protected rsync_mode_field: any;
