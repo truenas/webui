@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-plugins-available-list',
@@ -16,8 +17,8 @@ export class PluginsAvailabelListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Name', prop: '0', icon: '4' },
-    { name: 'Description', prop: '1' }
+    { name: T('Name'), prop: '0', icon: '4' },
+    { name: T('Description'), prop: '1' }
   ];
   public config: any = {
     paging: true,
@@ -29,7 +30,7 @@ export class PluginsAvailabelListComponent {
   getActions(parentRow) {
     return [{
         id: "install",
-        label: "install",
+        label: T("install"),
         onClick: (row) => {
           this.router.navigate(
             new Array('').concat(["plugins", "add", row[2]]));
