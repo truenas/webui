@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 import {RestService} from '../../../../services/rest.service';
 
@@ -19,6 +20,8 @@ export class EntityCardActionsComponent implements OnInit {
 
   public actions: any[];
   public showMenu: boolean = true;
+
+  constructor(public translate: TranslateService) {}
 
   menuActionVisible(id: string) {
     if (id == 'edit' || id == 'delete') {
