@@ -34,7 +34,7 @@ export class PreferencesService {
     console.log("*** New Instance of Preferences Service ***");
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
-      console.log(evt.data);
+      //console.log(evt.data);
       if(evt.data){
         this.core.emit({name:"UserDataRequest", data: [[["id", "=", "1" ]]] });
       }
@@ -51,18 +51,27 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ChangeThemePreference",sender:this.themeService}).subscribe((evt:CoreEvent) => {
-      console.log(evt.data);
-      
         this.preferences.userTheme = evt.data;
-        console.log(this.preferences);
+        //console.log(this.preferences);
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
       
     });
+
+    this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
+      console.log("ChangePreferences");
+      console.log(evt.data);
+      let prefs = this.preferences;
+      Object.keys(evt.data).forEach(function(key){
+        prefs[key] = evt.data[key];
+      });
+      this.preferences.timestamp = new Date();
+      this.savePreferences(this.preferences);
+    })
   }
 
   // Update local cache
   updatePreferences(data:UserPreferences){
-    console.log("UPDATING LOCAL PREFERENCES");
+    //console.log("UPDATING LOCAL PREFERENCES");
     this.preferences = data;
 
     //Notify Guided Tour & Theme Service

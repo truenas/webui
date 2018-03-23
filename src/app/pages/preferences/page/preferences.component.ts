@@ -54,13 +54,13 @@ export class PreferencesPage implements OnInit, OnChanges {
     public fieldSets: FieldSet[] = [
       {
         name:'General Preferences',
-        class:'general-prefs',
+        class:'preferences',
         label:true,
         width:'300px',
         config:[
           { 
             type: 'select', 
-            name: 'accent', 
+            name: 'userTheme', 
             width:'300px',
             placeholder: 'Choose Theme', 
             options: this.themeOptions,
@@ -142,8 +142,8 @@ export class PreferencesPage implements OnInit, OnChanges {
         switch(evt.name){
         case "FormSubmitted":
           console.log("Form Submitted");
-          console.log(evt.data);
-
+          //console.log(evt.data);
+          this.core.emit({name:"ChangePreferences",data:evt.data});
           break;
         case "CreateTheme":
           this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
