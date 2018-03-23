@@ -390,12 +390,14 @@ export class ServiceFTPComponent implements OnInit {
 
   ngOnInit() {
     this.systemGeneralService.getCertificates().subscribe((res) => {
-      this.ftp_ssltls_certfile =
-          _.find(this.fieldConfig, {'name' : 'ftp_ssltls_certfile'});
-      res.data.forEach((item) => {
-        this.ftp_ssltls_certfile.options.push(
-            {label : item.cert_common, value : item.id});
-      });
+      if (res.length > 0 && res.data) {
+        this.ftp_ssltls_certfile =
+            _.find(this.fieldConfig, {'name' : 'ftp_ssltls_certfile'});
+        res.data.forEach((item) => {
+          this.ftp_ssltls_certfile.options.push(
+              {label : item.cert_common, value : item.id});
+        });
+      }
     });
   }
 
