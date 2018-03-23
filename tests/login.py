@@ -55,6 +55,7 @@ class login_test(unittest.TestCase):
             # check if the dashboard opens
             time.sleep(1)
             self.error_check()
+            self.error_check()
             # get the ui element
             ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
             # get the weather data
