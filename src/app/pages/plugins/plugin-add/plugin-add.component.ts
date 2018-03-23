@@ -9,6 +9,7 @@ import { FieldRelationService } from '../../common/entity/entity-form/services/f
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-plugin-add',
@@ -24,21 +25,21 @@ export class PluginAddComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'name',
-      placeholder: 'Plugin Name',
+      placeholder: T('Plugin Name'),
       disabled: true,
     },
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: 'dhcp',
-      tooltip: 'Check to use DHCP to configure IP settings.',
+      placeholder: T('dhcp'),
+      tooltip: T('Check to use DHCP to configure IP settings.'),
     },
     {
       type: 'input',
       name: 'ip4_addr',
-      placeholder: 'IPv4 Address',
-      tooltip: 'Enter a unique IPv4 address that is in the local network\
- and not already in use.',
+      placeholder: T('IPv4 Address'),
+      tooltip: T('Enter a unique IPv4 address that is in the local network\
+       and not already in use.'),
       relation: [{
         action: "DISABLE",
         when: [{
@@ -50,9 +51,9 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'input',
       name: 'ip6_addr',
-      placeholder: 'IPv6 Address',
-      tooltip: 'Enter a unique IPv6 address that is in the local network\
- and not already in use.',
+      placeholder: T('IPv6 Address'),
+      tooltip: T('Enter a unique IPv6 address that is in the local network\
+       and not already in use.'),
       relation: [{
         action: "DISABLE",
         when: [{
