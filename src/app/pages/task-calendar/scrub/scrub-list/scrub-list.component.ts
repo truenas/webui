@@ -23,12 +23,13 @@ export class ScrubListComponent {
 
   public columns: Array < any > = [
     { name: 'Volume', prop: 'scrub_volume' },
+    { name: 'Threshold days', prop: 'scrub_threshold' },
     { name: 'Description', prop: 'scrub_description' },
+    { name: 'Minute', prop: 'scrub_minute' },
+    { name: 'Hour', prop: 'scrub_hour' },
     { name: 'Day of Month', prop: 'scrub_daymonth' },
     { name: 'Month', prop: 'scrub_month' },
     { name: 'Day of Week', prop: 'scrub_dayweek' },
-    { name: 'Minute', prop: 'scrub_minute' },
-    { name: 'Hour', prop: 'scrub_hour' },    
     { name: 'Enabled', prop: 'scrub_enabled' },
   ];
   public config: any = {
