@@ -98,11 +98,13 @@ export class NotificationsService {
     const returnAlerts = new Array<NotificationAlert>();
     const data: Array<any> = res.data;
 
-    data.forEach((alertObj: NotificationAlert) => {
+    if (data && data.length > 0) {
+      data.forEach((alertObj: NotificationAlert) => {
 
-      returnAlerts.push(this.addNotification(alertObj));
+        returnAlerts.push(this.addNotification(alertObj));
 
-    });
+      });
+    }
 
     return returnAlerts;
   }
