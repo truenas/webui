@@ -46,10 +46,10 @@ export class PreferencesPage implements OnInit, OnChanges {
   public values = [];
   public saveSubmitText = "Update Settings";
   protected isEntity: boolean = true; // was true
-    private colorOptions: any[] = []; 
+  private colorOptions: any[] = []; 
   private themeOptions: any[] = [];
   private favoriteFields: any[] = []
-    public fieldConfig:FieldConfig[] = [];
+  public fieldConfig:FieldConfig[] = [];
   public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
     public fieldSets: FieldSet[] = [
       {
@@ -136,6 +136,9 @@ export class PreferencesPage implements OnInit, OnChanges {
 
     init(){
       this.setThemeOptions();
+      this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
+        this.setThemeOptions();
+      });
       this.setFavoriteFields();
       this.loadValues();
       this.target.subscribe((evt:CoreEvent) => {
@@ -173,8 +176,11 @@ export class PreferencesPage implements OnInit, OnChanges {
      }
 
      setThemeOptions(){
-       for(let i = 0; i < this.themeService.freenasThemes.length; i++){
-         let theme = this.themeService.freenasThemes[i];
+       console.log("******** SETTING THEME OPTIONS ********");
+       console.log(this.themeService.allThemes);
+       this.themeOptions.splice(0,this.themeOptions.length);
+       for(let i = 0; i < this.themeService.allThemes.length; i++){
+         let theme = this.themeService.allThemes[i];
          this.themeOptions.push({label:theme.label, value: theme.name});
        }
      }
