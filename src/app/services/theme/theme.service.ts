@@ -40,6 +40,12 @@ export class ThemeService {
   public activeTheme: string = 'ix-blue';
   public activeThemeSwatch: string[];
 
+  // Theme lists
+  public allThemes: Theme[];
+  public favoriteThemes: Theme[];
+  public themesMenu: Theme[];
+  private _customThemes: Theme[];
+
   public freenasThemes: Theme[] = [
     {
       name:'ix-blue',
@@ -157,6 +163,11 @@ export class ThemeService {
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
     console.log("*** New Instance of Theme Service ***");
+    
+    // Set default list
+    this.allThemes = this.freenasThemes;
+    this.themesMenu = this.freenasThemes;
+
     this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
@@ -183,6 +194,10 @@ export class ThemeService {
         this.activeTheme = this.savedUserTheme;
       }
       this.setCssVars(this.findTheme(this.activeTheme));*/
+      if(evt.data.customThemes && evt.data.customThemes.length > 0){
+        console.log("Custom Themes Detected");
+        this.customThemes = evt.data.customThemes;
+      }
       if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme));
@@ -213,15 +228,6 @@ export class ThemeService {
 
   changeTheme(theme:string) {
     console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
-    //domHelper.changeTheme(this.freenasThemes, this.activeTheme);
-    //this.activeTheme = theme;
-    /*this.freenasThemes.forEach((t) => {
-     t.isActive = (t.name === theme.name);
-    });*/
-    /*if(this.ws.loggedIn){
-      this.saveCurrentTheme();
-    }*/
-    //this.setCssVars(this.findTheme(theme));
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
     this.core.emit({name:'ThemeChanged'});
   }
@@ -245,6 +251,25 @@ export class ThemeService {
     });
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+  }
+
+  get customThemes(){
+    return this._customThemes;
+  }
+
+  set customThemes(customThemes:Theme[]){
+    let result = [];
+    for(let i = 0; i < customThemes.length; i++){
+      if(customThemes[i].favorite){
+        result.push(customThemes[i]);
+      }
+    }
+    console.warn(result);
+    this._customThemes = customThemes;
+    this.favoriteThemes = result; 
+    this.allThemes = this.freenasThemes.concat(this.customThemes);
+    this.themesMenu = this.freenasThemes.concat(this.favoriteThemes);
+    this.core.emit({name:"ThemeListsChanged"});
   }
 
 }

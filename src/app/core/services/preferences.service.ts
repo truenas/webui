@@ -25,6 +25,7 @@ export class PreferencesService {
     "platform":"freenas",
     "timestamp":new Date(),
     "userTheme":"ix-blue", // Theme name
+    "customThemes": [], // Theme Objects
     "favoriteThemes": [], // Theme Names
     "showGuide":true,
     "showTooltips":true,
@@ -52,9 +53,25 @@ export class PreferencesService {
 
     this.core.register({observerClass:this, eventName:"ChangeThemePreference",sender:this.themeService}).subscribe((evt:CoreEvent) => {
         this.preferences.userTheme = evt.data;
-        //console.log(this.preferences);
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
-      
+    });
+
+    this.core.register({observerClass:this, eventName:"AddCustomThemePreference"}).subscribe((evt:CoreEvent) => {
+        console.log(this.preferences);
+        let newTheme:Theme;
+        newTheme = evt.data;
+        this.preferences.customThemes.push(newTheme);
+        this.core.emit({name:"UserDataUpdate", data:this.preferences  });
+        //console.log(this.preferences);
+    });
+
+    this.core.register({observerClass:this, eventName:"ReplaceCustomThemePreference"}).subscribe((evt:CoreEvent) => {
+        let oldTheme:Theme;
+        let newTheme = evt.data;
+        let replaced:boolean = this.replaceCustomTheme(oldTheme,newTheme);
+        if(replaced){
+          this.core.emit({name:"UserDataUpdate", data:this.preferences});
+        }
     });
 
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
@@ -85,6 +102,15 @@ export class PreferencesService {
       data = this.preferences;
     }
     this.core.emit({name:"UserDataUpdate", data:data});
+  }
+
+  replaceCustomTheme(oldTheme:Theme, newTheme:Theme):boolean{
+    let index = this.preferences.customThemes.indexOf(oldTheme);
+    if(index && index >= 0){
+      this.preferences.customThemes[index] = newTheme;
+      return true;
+    }
+    return false;
   }
 
 }

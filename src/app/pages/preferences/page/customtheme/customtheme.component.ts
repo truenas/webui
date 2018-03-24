@@ -7,7 +7,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { DialogService } from 'app/services/dialog.service';
@@ -379,7 +379,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       } else {
         theme = this.themeService.currentTheme();
       }
-      console.log(state);
+      //DEBUG: console.log(state);
       this._globalPreview = state;
       this.updateGlobal(theme);
       this.updatePreview(this.values);
@@ -397,6 +397,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       protected router: Router, 
       protected rest: RestService,
       protected ws: WebSocketService,
+      private core: CoreService,
       private dialog: DialogService,
       protected matdialog: MatDialog,
       protected _injector: Injector, 
@@ -416,24 +417,32 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
     init(){
       this.baseTheme = this.themeService.activeTheme;
-      this.baseThemes = this.themeService.freenasThemes;
+      this.baseThemes = this.themeService.allThemes;
+      console.warn(this.baseThemes);
       this.setupColorOptions(this.colors);
-      this.loadValues();
+      this.loadValues(this.themeService.activeTheme);
+
+      this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
+        this.baseThemes = this.themeService.allThemes;
+      });
+
       this.customThemeForm.subscribe((evt:CoreEvent) => {
         switch(evt.name){
           case "FormSubmitted":
             console.log("Form Submitted");
             console.log(evt.data);
             let valid:boolean = this.validateForm(evt.data);
-            if(valid){alert("Save to preferences service")}
+            if(valid){
+              console.log("Form was Valid!");
+              evt.data.accentColors = ['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'];
+              this.core.emit({name:"AddCustomThemePreference",data:evt.data});
+            }
           break;
           case "FormCancelled":
             console.log("Form Cancelled");
           break;
           case "FormGroupValueChanged":
           case "UpdatePreview":
-            console.log("Update Preview");
-            console.log(evt.data);
             if(this.globalPreview){
               this.updateGlobal(evt.data);
             }
@@ -457,8 +466,8 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     }
 
     loadValues(themeName?:string){
-      console.log(themeName);
-      console.log(this.baseTheme);
+      //console.log(themeName);
+      //console.log(this.baseTheme);
       let values = Object.assign({},this.values);
       let theme:Theme;
       if(!themeName){

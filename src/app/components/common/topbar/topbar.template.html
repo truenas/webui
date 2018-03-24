@@ -32,7 +32,7 @@
       </button>
       <mat-menu #themeMenu="matMenu">
         <mat-grid-list class="theme-list" cols="1" rowHeight="24px">
-          <mat-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme.name)">
+          <mat-grid-tile *ngFor="let theme of themesMenu" (click)="changeTheme(theme.name)">
             <div mat-menu-item [title]="theme.label">
               <div [style.background]="theme[theme.labelSwatch]" class="egret-swatch"></div>
               <mat-icon class="active-icon" *ngIf="theme.name == themeService.activeTheme">check</mat-icon>

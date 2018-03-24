@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
-import { ThemeService } from '../../../services/theme/theme.service';
+import { ThemeService, Theme } from '../../../services/theme/theme.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
@@ -37,11 +38,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilvering = false;
   replicationDetails;
   resilveringDetails;
+  themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
 
   constructor(
     public themeService: ThemeService,
+    public core: CoreService,
     private router: Router,
     private notificationsService: NotificationsService,
     private activeRoute: ActivatedRoute,
@@ -73,6 +76,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
+    this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
+      this.themesMenu = this.themeService.themesMenu
+    });
 
     const showTour = localStorage.getItem(this.router.url) || 'true';
 
