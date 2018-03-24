@@ -444,8 +444,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setValue(name: string, value: any) {
-    console.log(this.formGroup.controls[name]);
-    console.log(value);
     this.formGroup.controls[name].setValue(value, {emitEvent : true});
   }
 
