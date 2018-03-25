@@ -436,6 +436,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
               console.log("Form was Valid!");
               evt.data.accentColors = ['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'];
               this.core.emit({name:"AddCustomThemePreference",data:evt.data});
+              this.router.navigate(['ui-preferences']);
             }
           break;
           case "FormCancelled":

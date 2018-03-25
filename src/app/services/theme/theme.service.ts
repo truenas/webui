@@ -194,7 +194,7 @@ export class ThemeService {
         this.activeTheme = this.savedUserTheme;
       }
       this.setCssVars(this.findTheme(this.activeTheme));*/
-      if(evt.data.customThemes && evt.data.customThemes.length > 0){
+      if(evt.data.customThemes){
         console.log("Custom Themes Detected");
         this.customThemes = evt.data.customThemes;
       }
@@ -220,8 +220,8 @@ export class ThemeService {
   }
 
   findTheme(name:string):Theme{
-    for(let i in this.freenasThemes){
-      let t = this.freenasThemes[i];
+    for(let i in this.allThemes){
+      let t = this.allThemes[i];
       if(t.name == name){ return t;}
     }
   }
@@ -242,6 +242,7 @@ export class ThemeService {
   }
 
   setCssVars(theme:Theme){
+    console.log(theme);
     let palette = Object.keys(theme);
     palette.splice(0,7);
 
@@ -265,6 +266,7 @@ export class ThemeService {
       }
     }
     console.warn(result);
+    console.warn(customThemes);
     this._customThemes = customThemes;
     this.favoriteThemes = result; 
     this.allThemes = this.freenasThemes.concat(this.customThemes);

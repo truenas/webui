@@ -7,7 +7,9 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { PreferencesPage } from './page/preferences.component';
-import { CustomThemeComponent } from './page/customtheme/customtheme.component';
+import { CustomThemeComponent } from './page/forms/customtheme/customtheme.component';
+import { CustomThemeManagerFormComponent } from './page/forms/custom-theme-manager-form.component';
+import { GeneralPreferencesFormComponent } from './page/forms/general-preferences-form.component';
 
 @NgModule({
   imports: [
@@ -21,7 +23,9 @@ import { CustomThemeComponent } from './page/customtheme/customtheme.component';
   ],
   declarations: [
     PreferencesPage,
-    CustomThemeComponent
+    CustomThemeComponent,
+    CustomThemeManagerFormComponent,
+    GeneralPreferencesFormComponent
   ],
   providers:[EntityFormService],
   entryComponents:[

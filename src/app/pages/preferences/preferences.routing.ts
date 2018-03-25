@@ -1,7 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PreferencesPage } from './page/preferences.component';
-import { CustomThemeComponent } from './page/customtheme/customtheme.component';
+import { CustomThemeComponent } from './page/forms/customtheme/customtheme.component';
 
 export const routes: Routes = [
   {

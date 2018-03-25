@@ -194,6 +194,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   ngOnChanges(changes) {
+    console.log("Entity-Form_Embedded Changes Detected");
+    console.log(changes);
     if (changes.formGroup) {
       this.onFormGroupChanged();
     }

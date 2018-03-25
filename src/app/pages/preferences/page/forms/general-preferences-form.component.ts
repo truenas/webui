@@ -5,28 +5,16 @@ import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import {RestService, WebSocketService} from '../../../services/';
+import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
-  selector : 'ui-preferences',
-  template:`
-  <mat-card>
-  <mat-toolbar-row style="margin-bottom:16px;">
-  <h4>User Preferences</h4>
-  </mat-toolbar-row>
-  <mat-divider></mat-divider>
-  <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between start" style="margin-top:32px;">
-    <general-preferences-form fxFlex="100" fxFlex.gt-xs="300px" class="prefs-form"></general-preferences-form>
-    <custom-theme-manager-form fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)" class="prefs-form"></custom-theme-manager-form>
-      <div fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)"></div>
-        </mat-card-content>
-        </mat-card>
-        `
+  selector : 'general-preferences-form',
+  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="300px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
-export class PreferencesPage implements OnInit {
+export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
 
   /*
    //Preferences Object Structure
@@ -41,7 +29,70 @@ export class PreferencesPage implements OnInit {
 
    */
 
-  //public target: Subject<CoreEvent> = new Subject();
+  public target: Subject<CoreEvent> = new Subject();
+  public values = [];
+  public saveSubmitText = "Update Settings";
+  protected isEntity: boolean = true; // was true
+  private colorOptions: any[] = []; 
+  private themeOptions: any[] = [];
+  private favoriteFields: any[] = []
+  public fieldConfig:FieldConfig[] = [];
+  public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
+    public fieldSets: FieldSet[] = [
+      {
+        name:'General Preferences',
+        class:'preferences',
+        label:true,
+        width:'300px',
+        config:[
+          { 
+            type: 'select', 
+            name: 'userTheme', 
+            width:'300px',
+            placeholder: 'Choose Theme', 
+            options: this.themeOptions,
+            value:this.themeService.activeTheme,
+            tooltip: "Choose which color from the palette will be the theme's accent color",
+            class:'inline'
+          },
+          { 
+            type: 'radio', 
+            name: 'metaphor', 
+            width:'300px',
+            placeholder: 'View Type Preference',
+            options:[{label:'Cards',value:'cards'},{label:'Tables',value:'tables'},{label:'Auto',value:'auto'}],
+            value:'cards',
+            tooltip: 'Choose the view metaphor you prefer.',
+          },
+          { 
+            type: 'checkbox', 
+            name: 'showGuide', 
+            width:'300px',
+            placeholder: 'Enable Guided Tour on Startup',
+            value:true,
+            tooltip: 'Pick a color, any color!',
+            class:'inline'
+          },
+          { 
+            type: 'checkbox', 
+            name: 'showTooltips', 
+            width: '300px',
+            placeholder: 'Enable Helpful Tooltips in Forms',
+            value:true,
+            tooltip: 'Pick a color, any color!',
+            class:'inline'
+          }
+        ]
+      }
+    ]
+
+    custActions: any[] = [
+      {
+        id: 'create-theme-link',
+        name: 'Create Theme',
+        eventName:"CreateTheme"
+      }
+    ]
 
     constructor(
       protected router: Router, 
@@ -54,10 +105,10 @@ export class PreferencesPage implements OnInit {
     ) {}
 
     ngOnInit(){
-      //this.init();
+      this.init();
     }
 
-    /*ngOnChanges(changes){
+    ngOnChanges(changes){
       if(changes.baseTheme){
         alert("baseTheme Changed!")
       }
@@ -85,8 +136,8 @@ export class PreferencesPage implements OnInit {
       this.generateFieldConfig();
     }
 
-   
-  
+    /*afterInit(entityForm: any) {
+     }*/
 
      setFavoriteFields(){
        for(let i = 0; i < this.themeService.freenasThemes.length; i++){
@@ -114,12 +165,9 @@ export class PreferencesPage implements OnInit {
        }
      }
 
-     processSubmission(obj:any){
-     }
+     processSubmission(obj:any){}
 
-     loadValues(themeName?:string){
-
-     }
+     loadValues(themeName?:string){}
 
      generateFieldConfig(){
        for(let i in this.fieldSets){
@@ -127,5 +175,5 @@ export class PreferencesPage implements OnInit {
            this.fieldConfig.push(this.fieldSets[i].config[ii]);
          }
        }
-     }*/
+     }
 }

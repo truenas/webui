@@ -80,8 +80,8 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
-    //console.log("CORESERVICE: Emitting " + evt.name);
-    //console.log(this.dispatchTable)
+    //DEBUG: console.log("CORESERVICE: Emitting " + evt.name);
+    //DEBUG: console.log(this.dispatchTable)
 
     //avoid matching null values
     if(!evt.name){

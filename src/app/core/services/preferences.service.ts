@@ -56,6 +56,13 @@ export class PreferencesService {
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
     });
 
+    this.core.register({observerClass:this, eventName:"ChangeCustomThemesPreference"}).subscribe((evt:CoreEvent) => {
+        this.preferences.customThemes = evt.data;
+        console.log("New Custom Themes List!");
+        console.log(this.preferences);
+        this.core.emit({name:"UserDataUpdate", data:this.preferences  });
+    });
+
     this.core.register({observerClass:this, eventName:"AddCustomThemePreference"}).subscribe((evt:CoreEvent) => {
         console.log(this.preferences);
         let newTheme:Theme;
