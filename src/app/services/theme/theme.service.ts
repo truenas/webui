@@ -199,9 +199,16 @@ export class ThemeService {
         //console.log("Custom Themes Detected");
         this.customThemes = evt.data.customThemes;
       }
+
       if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme));
+      }
+
+      if(evt.data.showTooltips){
+        (<any>document).documentElement.style.setProperty("--tooltip","inline");
+      } else if(!evt.data.showTooltips){
+        (<any>document).documentElement.style.setProperty("--tooltip","none");
       }
     });
   }

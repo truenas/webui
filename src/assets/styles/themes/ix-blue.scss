@@ -29,6 +29,7 @@ $green:'#59d600';
 $primary: $blue;
 $accent: $yellow;
 $warn: $red;
+$tooltip:'inline';//display property
 
 $md-primary: (
     50 : #e0f2fa,
@@ -329,6 +330,10 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 
 .spacer{
   flex: 1 1 auto;
+}
+
+.dynamic-field tooltip{
+  @include variable(display, --tooltip, $tooltip);
 }
 
 // Treelists in storage/volumes
