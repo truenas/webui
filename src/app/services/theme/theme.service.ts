@@ -9,9 +9,7 @@ export interface Theme {
   description:string;
   label: string;
   labelSwatch?: string;
-  //baseColor: string;
   accentColors: string[];
-  //isActive?: boolean;
   favorite:boolean;
   hasDarkLogo: boolean;
   primary:string;
@@ -138,7 +136,6 @@ export class ThemeService {
       accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
       primary:"var(--alt-bg2)",
       accent:"var(--yellow)",
-      //'bg1':'#eee8d5',
       'bg1':'#dfdac8',
       'bg2':'#fdf6e3',
       'fg1':'#839496',
@@ -160,6 +157,8 @@ export class ThemeService {
 
   savedUserTheme:string = "";
   private loggedIn:boolean;
+  public globalPreview: boolean = false;
+  public globalPreviewData: any;
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
     console.log("*** New Instance of Theme Service ***");
@@ -173,29 +172,31 @@ export class ThemeService {
       if(this.loggedIn == true){
         this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });
       } else {
-        console.warn("SETTING DEFAULT THEME");
+        //console.warn("SETTING DEFAULT THEME");
         this.setDefaultTheme();
       }
     });
 
-    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
       
-      console.warn("SETTING USER THEME");
-      console.log(evt);
-      /*this.savedUserTheme = evt.data[0].attributes.usertheme;
-
-      // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
-      // the default in the middleware. This is a workaround until that
-      // default value can be changed
-      if(this.savedUserTheme == "egret-blue"){
-        //this.savedUserTheme = "ix-blue";
-        this.activeTheme = "ix-blue";
+      //this.globalPreview = !this.globalPreview;
+      if(evt.data){
+        this.globalPreview = true;
       } else {
-        this.activeTheme = this.savedUserTheme;
+        this.globalPreview = false;
       }
-      this.setCssVars(this.findTheme(this.activeTheme));*/
+      this.globalPreviewData = evt.data;
+      if(this.globalPreview){
+        this.setCssVars(evt.data.theme);
+      } else if(!this.globalPreview){
+        this.setCssVars(this.findTheme(this.activeTheme));
+        this.globalPreviewData = null;
+      }
+    });
+
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       if(evt.data.customThemes){
-        console.log("Custom Themes Detected");
+        //console.log("Custom Themes Detected");
         this.customThemes = evt.data.customThemes;
       }
       if(evt.data.userTheme !== this.activeTheme){
@@ -211,11 +212,6 @@ export class ThemeService {
   }
 
   currentTheme():Theme{
-    /*for(let i in this.freenasThemes){
-     let t = this.freenasThemes[i];
-     if(t.name == this.activeTheme.name){ return t;}
-    }*/
-
     return this.findTheme(this.activeTheme);
   }
 
@@ -227,22 +223,18 @@ export class ThemeService {
   }
 
   changeTheme(theme:string) {
-    console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
+    //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
     this.core.emit({name:'ThemeChanged'});
   }
 
   saveCurrentTheme(){
-    console.log("SAVING CURRENT THEME");
+    //console.log("SAVING CURRENT THEME");
     let theme = this.currentTheme();
-    /*this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
-      console.log("Saved usertheme:", res, theme.name);
-    });*/
     this.core.emit({name:"ChangeThemePreference", data:theme.name});
   }
 
-  setCssVars(theme:Theme){
-    console.log(theme);
+  setCssVars(theme:Theme){ 
     let palette = Object.keys(theme);
     palette.splice(0,7);
 
@@ -265,8 +257,6 @@ export class ThemeService {
         result.push(customThemes[i]);
       }
     }
-    console.warn(result);
-    console.warn(customThemes);
     this._customThemes = customThemes;
     this.favoriteThemes = result; 
     this.allThemes = this.freenasThemes.concat(this.customThemes);
@@ -275,4 +265,3 @@ export class ThemeService {
   }
 
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

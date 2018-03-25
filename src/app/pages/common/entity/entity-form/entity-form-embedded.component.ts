@@ -227,7 +227,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   onFormGroupChanged(){
-      console.warn(this.formGroup.controls);
+      //console.warn(this.formGroup.controls);
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
 
@@ -241,7 +241,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	  this.formGroup.addControl(name, this.createControl(config));
 	});
 
-      console.warn(this.formGroup.controls);
+      //console.warn(this.formGroup.controls);
       // Data must be replaced instead of mutated
       // or changedetection won't fire on control components
       let fg = Object.assign({}, this.formGroup);
@@ -312,7 +312,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   createControl(config: FieldConfig) {
-    console.log("******** CREATING CONTROL!! ********")
+    //console.log("******** CREATING CONTROL!! ********")
     const {disabled, validation, value} = config;
     return this.fb.control({disabled, value}, validation);
   }

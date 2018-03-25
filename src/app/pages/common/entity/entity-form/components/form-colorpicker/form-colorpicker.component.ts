@@ -11,10 +11,8 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
   styleUrls:['./form-colorpicker.component.css']
 })
 export class FormColorpickerComponent implements Field,OnInit,OnChanges{
-  //private _config: FieldConfig;
   public config:FieldConfig;
   group: FormGroup;
-  //private _group: FormGroup;
   fieldShow: string;
   public picker:boolean = false;
   private _textInput:string = '';
@@ -30,43 +28,22 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   }
 
   get colorProxy(){
-    //return this.config.value;
     return this.group.value[this.config.name];
   }
 
   set colorProxy(val:string){
-    //this.group.value[this.config.name] = val;
     this.group.controls[this.config.name].setValue(val);;
   }
 
   constructor(){}
-  
-  /*get group(){
-    return this._group;
-  }
-
-  set group(grp:FormGroup){
-    //let newConf = Object.assign({},conf);
-    //console.warn("COLORPICKER VALUE CHANGED!!");
-    //console.log(this.group.value);
-    //this._config = newConf;
-    this._group = grp;
-  }*/
 
   ngOnChanges(changes){
     if(changes.group){
-      //this.ngOnInit();
     }
-
-    /*if(changes.config){
-      console.warn("COLORPICKER VALUE CHANGED!!");
-    }*/
   }
 
   ngOnInit(){
     this.config.value = this.group.value[this.config.name];
-    //this._config.value = this.group.value[this._config.name];
-    console.warn(this);
   }
 
   cpListener(evt:string, data: any): void {
@@ -76,17 +53,10 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   inputListener(evt:string, data:any): void {
     console.log(evt);
     this.group.value[this.config.name] = data;
-    console.warn(this.group.controls[this.config.name].valueChanges)//.next(data);
-
   }
 
   public onChangeColor(color: string): any {
-    /*const hsva = this.cpService.stringToHsva(color);
-
-    const rgba = this.cpService.hsvaToRgba(hsva);
-
-    return this.cpService.rgbaToCmyk(rgba);*/
-    console.log(color);
+    //console.log(color);
   }
 
   public togglePicker(){

@@ -6,12 +6,17 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import {RestService, WebSocketService} from 'app/services/';
-import { ThemeService, Theme} from 'app/services/theme/theme.service';
+import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
+
+interface FormSnapshot {
+  theme:any;
+  baseTheme:string;
+}
 
 @Component({
   selector : 'custom-theme',
@@ -25,11 +30,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
   private _baseTheme:any; //= this.themeService.activeTheme;
   private _globalPreview:boolean = false;
   public baseThemes: Theme[];
-  //@Input() isNew: boolean = false; //change this back to false
-  
-  //protected queryCall = 'user.query';
-  //public args = [["username","=","root"]];
-  //protected addCall = 'user.update';
+  public snapshot:FormSnapshot;
 
   customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
   protected isEntity: boolean = true; // was true
@@ -63,30 +64,6 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     green:''
   }
 
-  // CONTROLS
-  /*public values:any = {
-    name:'Custom',
-    description:'Custom User Theme',
-    favorite:false,
-    primary:"var(--cyan)",
-    accent:"var(--violet)",
-    bg1:'#333333',
-    bg2:'#555555',
-    fg1:'#666666',
-    fg2:'#888888',
-    'alt-bg1':'#666666',
-    'alt-bg2':'#999999',
-    'alt-fg1':'#333333',
-    'alt-fg2':'#555555',
-    yellow:'#b58900',
-    orange:'#cb4b16',
-    red:'#dc322f',
-    magenta:'#d33682',
-    violet:'#6c71c4',
-    blue:'#268bd2',
-    cyan:'#2aa198',
-    green:'#859900'
-  }*/
   private colors: string[] = ['bg1','bg2','fg1','fg2','alt-bg1','alt-bg2','alt-fg1','alt-fg2','yellow','orange','red','magenta','violet','blue','cyan','green'];
   // Had to hard code colorVars because concatenated strings get sanitized
   private colorVars: string[] = [
@@ -164,10 +141,6 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           name: 'hasDarkLogo', 
           width:'100%',
           placeholder: 'Choose Logo Type', 
-          /*options:[
-            {label:"Dark", value: true},
-            {label:"Regular", value:false}
-          ],*/
           tooltip: "Choose the logo type",
           class:'inline'
         },
@@ -270,13 +243,6 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           tooltip: 'Pick a color, any color!',
           class:'inline'
         },
-      /*]
-    },
-    {
-      name:'Theme Colors 9-16',
-      class:'accent-colors',
-      width:'calc(50% - 300px)',
-      config:[*/
         { 
           type: 'colorpicker', 
           name: 'yellow', 
@@ -363,7 +329,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       let theme = this.themeService.findTheme(name);
       this.updatePreview(theme);
       if(this.globalPreview){
-        this.updateGlobal(theme);
+        this.updateGlobal({theme:theme,baseTheme:this._baseTheme});
       }
     }
 
@@ -372,17 +338,12 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     }
 
     set globalPreview(state:boolean){
-      let theme:Theme; 
       if(state){
-        //theme = this.themeService.findTheme(this.values);
-        theme = this.values;
+        this.updateGlobal(this.snapshot);
       } else {
-        theme = this.themeService.currentTheme();
+        this.updateGlobal();
       }
-      //DEBUG: console.log(state);
       this._globalPreview = state;
-      this.updateGlobal(theme);
-      this.updatePreview(this.values);
     }
 
     custActions: any[] = [
@@ -410,17 +371,23 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes){
-      if(changes.baseTheme){
-        alert("baseTheme Changed!")
-      }
     }
 
     init(){
-      this.baseTheme = this.themeService.activeTheme;
       this.baseThemes = this.themeService.allThemes;
-      console.warn(this.baseThemes);
       this.setupColorOptions(this.colors);
-      this.loadValues(this.themeService.activeTheme);
+
+      if(this.themeService.globalPreview){
+        let data = this.themeService.globalPreviewData;
+        console.log(data);
+        this.snapshot = data;
+        this.loadValues();
+        this.globalPreview = true;
+        this.baseTheme = data.baseTheme;
+      } else {
+        this.baseTheme = this.themeService.activeTheme;
+        this.loadValues(this.themeService.activeTheme);
+      }
 
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.baseThemes = this.themeService.allThemes;
@@ -429,28 +396,24 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       this.customThemeForm.subscribe((evt:CoreEvent) => {
         switch(evt.name){
           case "FormSubmitted":
-            console.log("Form Submitted");
-            console.log(evt.data);
             let valid:boolean = this.validateForm(evt.data);
             if(valid){
-              console.log("Form was Valid!");
               evt.data.accentColors = ['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'];
               this.core.emit({name:"AddCustomThemePreference",data:evt.data});
               this.router.navigate(['ui-preferences']);
             }
           break;
           case "FormCancelled":
-            console.log("Form Cancelled");
           break;
           case "FormGroupValueChanged":
           case "UpdatePreview":
+            this.snapshot = {theme:evt.data, baseTheme:this.baseTheme}
             if(this.globalPreview){
-              this.updateGlobal(evt.data);
+              this.updateGlobal(this.snapshot);
             }
             this.updatePreview(evt.data);
           break;
           default:
-            //console.log(evt);
           break;
         }
       });
@@ -467,16 +430,18 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     }
 
     loadValues(themeName?:string){
-      //console.log(themeName);
-      //console.log(this.baseTheme);
+      
+      
       let values = Object.assign({},this.values);
       let theme:Theme;
-      if(!themeName){
+      if(this.globalPreview){
+        theme = this.snapshot.theme;
+      } else if(!themeName){
         theme = this.themeService.currentTheme();
       } else {
         theme = this.themeService.findTheme(themeName);
       }
-      console.log(theme);
+      
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
       palette.splice(0,6);
@@ -485,9 +450,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
         values[color] = ct[color];
       });
 
-      this.values = values;
-      console.log(this.values);
-      
+      this.values = values; 
     }
 
     updatePreview(theme:Theme){
@@ -500,17 +463,14 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       });
     }
 
-    updateGlobal(theme:Theme){
-      let palette = Object.keys(theme);
-      palette.splice(0,5);
-      
-      palette.forEach(function(color){
-        let swatch = theme[color];
-      //console.log("Setting " + color + " to " + theme[color]);
-        (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
-      });
-        (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
-        (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+    updateGlobal(snapshot?:FormSnapshot){
+      if(snapshot && !this.themeService.globalPreview){
+        // Turn it on in theme service
+        this.core.emit({name:"GlobalPreviewChanged", data:snapshot});
+      } else {
+        //turn it off in theme service
+        this.core.emit({name:"GlobalPreviewChanged"});
+      }
     }
 
     generateFieldConfig(){
@@ -530,9 +490,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
           //Check for required fields
           if(field.required && !data[field.name]){
-            //console.warn(field.name + "*** Form Invalid ***");
             messages.push(field.placeholder + " is a required field.");
-
           } else if(field.required){
             //console.warn(field.name);
           } else {
@@ -575,10 +533,9 @@ export class CustomThemeComponent implements OnInit, OnChanges {
         message += " " + messages[i];
       }
 
-
       //Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for volume ") + row1.name)
       this.dialog.Info(T("Form Invalid"), T(message)).subscribe((res) => {
-        console.log(res);
+        //console.log(res);
       })
     }
 

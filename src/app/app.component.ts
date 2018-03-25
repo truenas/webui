@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { TourService } from './services/tour.service';
 import { WebSocketService } from './services/ws.service';
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
     private ws: WebSocketService,
     private rest: RestService,
     private api: ApiService,
+    private core: CoreService,
     public preferencesService: PreferencesService,
     public themeservice: ThemeService,
     private tour: TourService) {
@@ -43,6 +45,10 @@ export class AppComponent implements OnInit {
     }
 
     router.events.subscribe(s => {
+      if(this.themeservice.globalPreview){
+        // Only for globally applied theme preview
+        this.globalPreviewControl();
+      }
       if (s instanceof NavigationCancel) {
         let params = new URLSearchParams(s.url.split('#')[1]);
         let isEmbedded = params.get('embedded');
@@ -84,5 +90,16 @@ export class AppComponent implements OnInit {
 
     if(name == browserName) return true;
     else return false;
+  }
+
+  private globalPreviewControl(){
+    let snackBarRef = this.snackBar.open('Custom theme Global Preview engaged','Back to form');
+    snackBarRef.onAction().subscribe(()=> {
+      this.router.navigate(['ui-preferences','create-theme']);
+    });
+    
+    if(this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme'){
+      snackBarRef.dismiss();
+    }
   }
 }

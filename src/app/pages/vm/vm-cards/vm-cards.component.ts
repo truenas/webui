@@ -194,20 +194,21 @@ export class VmCardsComponent implements OnInit {
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
-      lazyLoaded: false,
-      vnc:false, // Until we verify otherwise we assume false
+      //lazyLoaded: false,
       devices:data.devices,
-      template:'none',
-      isNew:false,
-      cardActions:[],
-      vm_type: data.vm_type,
-      vm_comport:'/dev/nmdm' +String(data.id)+ 'B'
     }   
 
     // Leave out properties not used for update requests
     if(formatForUpdate){
       return card;
     }
+
+    card.vm_type = data.vm_type,
+    card.vm_comport = '/dev/nmdm' +String(data.id)+ 'B'
+    card.template = 'none',
+    //card.cardActions = [],
+    card.vnc = false, // Until we verify otherwise we assume false
+    card.isNew = false,
     card.id = data.id;
     card.state = "Loading...";
     card.vnc = false; // Until we verify otherwise we assume false
