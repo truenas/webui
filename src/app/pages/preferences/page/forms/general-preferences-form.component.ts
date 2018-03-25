@@ -156,8 +156,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
      }
 
      setThemeOptions(){
-       console.log("******** SETTING THEME OPTIONS ********");
-       console.log(this.themeService.allThemes);
        this.themeOptions.splice(0,this.themeOptions.length);
        for(let i = 0; i < this.themeService.allThemes.length; i++){
          let theme = this.themeService.allThemes[i];

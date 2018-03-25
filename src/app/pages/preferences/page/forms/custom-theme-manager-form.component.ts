@@ -70,19 +70,15 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
     ) {}
 
     ngOnInit(){
-      console.log("FIRST CHECKPOINT: themesExist = " + this.themesExist);
-        //this.initForm();
         this.initSubjects();
       // Only initialize if customThemes exist
       if(this.themeService.customThemes && this.themeService.customThemes.length > 0){  
         this.themesExist = true;
-        console.log("About to run initForm() ");
         this.initForm();
       }
 
       // Otherwise wait for change events from message bus
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
-        console.log("THEME LISTS CHANGED DETECTED");
         this.initForm();
       });
 
@@ -114,8 +110,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
               submission.push(theme);
             }
           }
-          console.log(evt.data)
-          console.log(submission);
           this.core.emit({name:"ChangeCustomThemesPreference",data:submission});
           break;
         case "CreateTheme":
@@ -146,8 +140,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
     }
 
      setCustomThemeFields(){
-       console.warn("******** SETTING CUSTOM THEME MANAGER FORM FIELDS ********");
-       console.log(this.themeService.customThemes);
        if(this.customThemeFields && this.customThemeFields.length > 0){
         this.customThemeFields.splice(0,this.customThemeFields.length);
        }

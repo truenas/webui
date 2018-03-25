@@ -379,7 +379,7 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
       if(this.themeService.globalPreview){
         let data = this.themeService.globalPreviewData;
-        console.log(data);
+        console.log(data); 
         this.snapshot = data;
         this.loadValues();
         this.globalPreview = true;
@@ -464,12 +464,14 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     }
 
     updateGlobal(snapshot?:FormSnapshot){
-      if(snapshot && !this.themeService.globalPreview){
+      if(snapshot){
         // Turn it on in theme service
+        console.log("Global On!!!");
         this.core.emit({name:"GlobalPreviewChanged", data:snapshot});
       } else {
         //turn it off in theme service
         this.core.emit({name:"GlobalPreviewChanged"});
+        console.log("Global Off!!!");
       }
     }
 
