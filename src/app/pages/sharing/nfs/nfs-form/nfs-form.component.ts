@@ -7,6 +7,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { RestService } from '../../../../services/rest.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-nfs-form',
@@ -27,9 +28,9 @@ export class NFSFormComponent {
       initialCount: 1,
       formarray: [{
         name: 'path',
-        placeholder: 'Path',
-        tooltip: 'Browse to the volume or dataset to be shared. Click\
- <b>Add extra path</b> to select multiple paths.',
+        placeholder: T('Path'),
+        tooltip: T('Browse to the volume or dataset to be shared. Click\
+ <b>Add extra path</b> to select multiple paths.'),
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
@@ -37,89 +38,89 @@ export class NFSFormComponent {
       {
         type: 'checkbox',
         name: 'delete',
-        placeholder: 'Delete',
+        placeholder: T('Delete'),
       }]
     },
     {
       type: 'input',
       name: 'nfs_comment',
-      placeholder: 'Comment',
-      tooltip: 'Set the share name. If left empty, share name is the\
- list of selected <b>Path</b> entries.',
+      placeholder: T('Comment'),
+      tooltip: T('Set the share name. If left empty, share name is the\
+ list of selected <b>Path</b> entries.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_alldirs',
-      placeholder: 'All dirs',
-      tooltip: 'When checked, allow the client to mount any subdirectory\
- within the <b>Path</b>.',
+      placeholder: T('All dirs'),
+      tooltip: T('When checked, allow the client to mount any subdirectory\
+ within the <b>Path</b>.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_ro',
-      placeholder: 'Read Only',
-      tooltip: 'Prohibit writing to the share.',
+      placeholder: T('Read Only'),
+      tooltip: T('Prohibit writing to the share.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_quiet',
-      placeholder: 'Quiet',
-      tooltip: 'Inhibit otherwise-useful syslog diagnostics to avoid\
+      placeholder: T('Quiet'),
+      tooltip: T('Inhibit otherwise-useful syslog diagnostics to avoid\
  some annoying error messages. See\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
- target="_blank">exports(5)</a> for examples.',
+ target="_blank">exports(5)</a> for examples.'),
     },
     {
       type: 'textarea',
       name: 'nfs_network',
-      placeholder: 'Authorized Networks',
-      tooltip: 'Space-delimited list of allowed networks in network/mask\
- CIDR notation\ (e.g. <i>1.2.3.0/24</i>). Leave empty to allow all.',
+      placeholder: T('Authorized Networks'),
+      tooltip: T('Space-delimited list of allowed networks in network/mask\
+ CIDR notation\ (e.g. <i>1.2.3.0/24</i>). Leave empty to allow all.'),
     },
        {
       type: 'textarea',
       name: 'nfs_hosts',
-      placeholder: 'Authorized Hosts and IP addresses',
-      tooltip: 'Space-delimited list of allowed IP addresses or\
- hostnames. Leave empty to allow all.',
+      placeholder: T('Authorized Hosts and IP addresses'),
+      tooltip: T('Space-delimited list of allowed IP addresses or\
+ hostnames. Leave empty to allow all.'),
     },
     {
       type: 'select',
       name: 'nfs_maproot_user',
-      placeholder: 'Maproot User',
-      tooltip: 'When a user is selected, the <i>root</i> user is\
- limited to the permissions of that user.',
+      placeholder: T('Maproot User'),
+      tooltip: T('When a user is selected, the <i>root</i> user is\
+ limited to the permissions of that user.'),
       options: []
     },
     {
       type: 'select',
       name: 'nfs_maproot_group',
-      placeholder: 'Maproot Group',
-      tooltip: 'When a group is selected, the <i>root</i> user is also\
- limited to the permissions of that group.',
+      placeholder: T('Maproot Group'),
+      tooltip: T('When a group is selected, the <i>root</i> user is also\
+ limited to the permissions of that group.'),
       options: []
     },
     {
       type: 'select',
       name: 'nfs_mapall_user',
-      placeholder: 'Mapall User',
-      tooltip: 'The specified permissions of that user are used by all\
- clients.',
+      placeholder: T('Mapall User'),
+      tooltip: T('The specified permissions of that user are used by all\
+ clients.'),
       options: []
     },
     {
       type: 'select',
       name: 'nfs_mapall_group',
-      placeholder: 'Mapall Group',
-      tooltip: 'The specified permissions of that group are used by all\
- clients.',
+      placeholder: T('Mapall Group'),
+      tooltip: T('The specified permissions of that group are used by all\
+ clients.'),
       options: []
     },
     {
       type: 'select',
       multiple: true,
       name: 'nfs_security',
-      placeholder: 'Security',
+      placeholder: T('Security'),
       options: [
         {
           label: 'sys',
@@ -149,7 +150,7 @@ export class NFSFormComponent {
   public custActions: Array<any> = [
     {
       id : 'add_path',
-      name : 'Add Additional Path',
+      name : T('Add Additional Path'),
       function : () => {
         this.initialCount += 1;
         this.entityFormService.insertFormArrayGroup(
@@ -158,7 +159,7 @@ export class NFSFormComponent {
     },
     {
       id : 'remove_path',
-      name : 'Remove Additional Path',
+      name : T('Remove Additional Path'),
       function : () => {
         this.initialCount -= 1;
         this.entityFormService.removeFormArrayGroup(this.initialCount,
@@ -167,12 +168,12 @@ export class NFSFormComponent {
     },
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : T('Basic Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : T('Advanced Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];

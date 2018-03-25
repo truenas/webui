@@ -11,6 +11,7 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogService } from '../../../../services/dialog.service';
+import { T } from '../../../../translate-marker';
 
 
 @Component({
@@ -33,19 +34,19 @@ export class DiskWipeComponent implements OnInit {
     {
       type: 'input',
       name: 'disk_name',
-      placeholder: 'Name',
-      tooltip : 'Disk to wipe.',
+      placeholder: T('Name'),
+      tooltip : T('Disk to wipe.'),
       readonly: true
     },
     {
       type: 'select',
       name: 'wipe_method',
-      placeholder: 'Method',
-      tooltip : '<i>Quick</i> erases only the partitioning information\
+      placeholder: T('Method'),
+      tooltip : T('<i>Quick</i> erases only the partitioning information\
  on a disk, making it easy to reuse, but without clearing other old\
  data. <i>Full with zeros</i> overwrites the entire disk with zeros.\
  <i>Full with random data</i> overwrites the entire disk with random\
- binary data.',
+ binary data.'),
       options: [],
     }
   ];
@@ -80,13 +81,13 @@ export class DiskWipeComponent implements OnInit {
 
     let method = [
       {
-        label: 'Quick',
+        label: T('Quick'),
         value: 'QUICK',
       }, {
-        label: 'Full with zeros',
+        label: T('Full with zeros'),
         value: 'FULL',
       }, {
-        label: 'Full with random data',
+        label: T('Full with random data'),
         value: 'FULL_RANDOM',
       }];
 
@@ -106,7 +107,7 @@ export class DiskWipeComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    this.dialogService.confirm("Wipe Disk", "Are you sure you want to wipe disk?").subscribe((res) => {
+    this.dialogService.confirm(T("Wipe Disk"), T("Are you sure you want to wipe disk?")).subscribe((res) => {
       if (res) {
         let formValue = _.cloneDeep(this.formGroup.value);
 
@@ -114,14 +115,14 @@ export class DiskWipeComponent implements OnInit {
           return false;
         }
 
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Wipe" }, disableClose: true });
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Wipe") }, disableClose: true });
         this.dialogRef.componentInstance.progressNumberType = "nopercent";
-        this.dialogRef.componentInstance.setDescription("Wiping Disk...");
+        this.dialogRef.componentInstance.setDescription(T("Wiping Disk..."));
         this.dialogRef.componentInstance.setCall('disk.wipe', [formValue.disk_name, formValue.wipe_method]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((res) => {
           this.dialogRef.close(false);
-          this.openSnackBar("Disk successfully wiped", "Success");
+          this.openSnackBar(T("Disk successfully wiped"), T("Success"));
         });
         this.dialogRef.componentInstance.failure.subscribe((res) => {
           this.dialogRef.componentInstance.setDescription(res.error);

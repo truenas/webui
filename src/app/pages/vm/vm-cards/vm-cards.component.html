@@ -23,6 +23,9 @@
         <mat-button-toggle value="slim" >Slim</mat-button-toggle>
         <mat-button-toggle value="table" >Table</mat-button-toggle>
       </mat-button-toggle-group>
+      <button mat-mini-fab class="add-vm" (click)="addDockerVMWizard()">
+        <mat-icon>add</mat-icon>
+      </button>
       <button mat-mini-fab class="add-vm" (click)="addVMWizard()">
         <mat-icon>add</mat-icon>
       </button>
@@ -115,6 +118,7 @@
               <tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
               <tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
               <tr><td class="stat-label">BootLoader:</td><td class="stat">{{ cards[i].bootloader }}</td></tr>
+              <tr><td class="stat-label">Com Port:</td><td class="stat">{{ cards[i].vm_comport }}</td></tr>
             </tbody></table>
         </div>
 
@@ -140,13 +144,11 @@
         [values]="cards[i]"
         [isNew]="cards[i].isNew"
         [machineId]="cards[i].id"  
-        [target]="controlEvents">
+        [target]="controlEvents"
+        [conf]="this">
         <!--(cancel)="cancel(i)"
         (saved)="toggleForm($event.flipState,cards[i],'none');refreshVM(i,$event.id)"-->
       </vm-card-edit>
-      <span matTooltip="Clone VM" matTooltipPosition="above">
-        <button class="indent" mat-raised-button color="primary" (click)="cloneVM(i)">Clone</button>
-      </span>
     </ng-template>
 
     <!-- Create your cards here -->

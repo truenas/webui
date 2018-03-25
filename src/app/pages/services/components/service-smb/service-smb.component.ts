@@ -16,6 +16,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'smb-edit',
@@ -38,40 +39,40 @@ export class ServiceSMBComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'cifs_srv_netbiosname',
-      placeholder: 'NetBIOS Name',
-      tooltip: 'Automatically populated with the original hostname\
- of the system. This is limited to 15 characters and must be\
- different from the <b>Workgroup</b> name.',
+      placeholder: T('NetBIOS Name'),
+      tooltip: T('Automatically populated with the original hostname\
+       of the system. This is limited to 15 characters and must be\
+       different from the <b>Workgroup</b> name.'),
     },
     {
       type: 'input',
       name: 'cifs_srv_netbiosalias',
-      placeholder: 'NetBIOS Alias',
-      tooltip: 'Limited to 15 characters.',
+      placeholder: T('NetBIOS Alias'),
+      tooltip: T('Limited to 15 characters.'),
     },
     {
       type: 'input',
       name: 'cifs_srv_workgroup',
-      placeholder: 'Workgroup',
-      tooltip: 'Must match Windows workgroup\
- name. This setting is ignored if the\
- <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
- target="_blank">Active Directory</a> or <a\
- href="http://doc.freenas.org/11/directoryservice.html#ldap"\
- target="_blank">LDAP</a> service is running.',
+      placeholder: T('Workgroup'),
+      tooltip: T('Must match Windows workgroup\
+       name. This setting is ignored if the\
+       <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+       target="_blank">Active Directory</a> or <a\
+       href="http://doc.freenas.org/11/directoryservice.html#ldap"\
+       target="_blank">LDAP</a> service is running.'),
     },
     {
       type: 'input',
       name: 'cifs_srv_description',
-      placeholder: 'Description',
-      tooltip: 'Optional. Enter a server description.',
+      placeholder: T('Description'),
+      tooltip: T('Optional. Enter a server description.'),
     },
     {
       type: 'select',
       name: 'cifs_srv_doscharset',
-      placeholder: 'DOS Charset',
-      tooltip: 'The character set Samba uses when communicating with\
-   DOS and Windows 9x/ME clients; default is CP437.',
+      placeholder: T('DOS Charset'),
+      tooltip: T('The character set Samba uses when communicating with\
+         DOS and Windows 9x/ME clients; default is CP437.'),
       options: [
         { label: 'CP437', value: 'CP437' },
         { label: 'CP850', value: 'CP850' },
@@ -88,9 +89,9 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_unixcharset',
-      placeholder: 'UNIX Charset',
-      tooltip: 'Default is UTF-8 which supports all characters in\
-   all languages.',
+      placeholder: T('UNIX Charset'),
+      tooltip: T('Default is UTF-8 which supports all characters in\
+         all languages.'),
       options: [
         { label: 'UTF-8', value: 'UTF-8' },
         { label: 'iso-8859-1', value: 'ISO-8859-1' },
@@ -103,8 +104,8 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'select',
       name: 'cifs_srv_loglevel',
-      placeholder: 'Log Level',
-      tooltip: 'Choices are Minimum, Normal, or Debug.',
+      placeholder: T('Log Level'),
+      tooltip: T('Choices are Minimum, Normal, or Debug.'),
       options: [
         { label: 'None', value: 0 },
         { label: 'Minimum', value: 1 },
@@ -116,144 +117,144 @@ export class ServiceSMBComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'cifs_srv_syslog',
-      placeholder: 'Use syslog only',
-      tooltip: 'When checked, authentication failures are\
-  logged to <i>/var/log/messages</i> instead of the default of\
- <i>/var/log/samba4/log.smbd</i>.',
+      placeholder: T('Use syslog only'),
+      tooltip: T('When checked, authentication failures are\
+        logged to <i>/var/log/messages</i> instead of the default of\
+       <i>/var/log/samba4/log.smbd</i>.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_localmaster',
-      placeholder: 'Local Master',
-      tooltip: 'Determines whether or not the system participates in\
- a browser election; should be disabled when network contains an AD\
- or LDAP server, and is not necessary when Vista or Windows 7 machines\
- are present.',
+      placeholder: T('Local Master'),
+      tooltip: T('Determines whether or not the system participates in\
+       a browser election; should be disabled when network contains an AD\
+       or LDAP server, and is not necessary when Vista or Windows 7 machines\
+       are present.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_domain_logons',
-      placeholder: 'Domain Logons',
-      tooltip: 'Check this box if it is necessary to provide the netlogin\
- service for older Windows clients.',
+      placeholder: T('Domain Logons'),
+      tooltip: T('Check this box if it is necessary to provide the netlogin\
+       service for older Windows clients.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_timeserver',
-      placeholder: 'Time Server For Domain',
-      tooltip: 'Determines whether or not the system advertises\
- itself as a time server to Windows clients; should be disabled when\
- network contains an AD or LDAP server.',
+      placeholder: T('Time Server For Domain'),
+      tooltip: T('Determines whether or not the system advertises\
+       itself as a time server to Windows clients; should be disabled when\
+       network contains an AD or LDAP server.'),
     },
     {
       type: 'select',
       name: 'cifs_srv_guest',
-      placeholder: 'Guest Account',
+      placeholder: T('Guest Account'),
       options: [],
-      tooltip: 'Account to be used for guest access; default is\
- nobody; account must have permission to access the shared\
- volume/dataset; if Guest Account user is deleted, resets to nobody.',
+      tooltip: T('Account to be used for guest access; default is\
+       nobody; account must have permission to access the shared\
+       volume/dataset; if Guest Account user is deleted, resets to nobody.'),
     },
     { type: 'permissions',
       name: 'cifs_srv_filemask',
-      placeholder: 'File Mask',
-      tooltip: 'Overrides default file creation mask of 0666 which\
- creates files with read and write access for everybody.',
+      placeholder: T('File Mask'),
+      tooltip: T('Overrides default file creation mask of 0666 which\
+       creates files with read and write access for everybody.'),
     },
     { type: 'permissions',
       name: 'cifs_srv_dirmask',
-      placeholder: 'Directory Mask',
-      tooltip: 'Overrides default directory creation mask of 0777\
- which grants directory read, write and execute access for everybody.',
+      placeholder: T('Directory Mask'),
+      tooltip: T('Overrides default directory creation mask of 0777\
+       which grants directory read, write and execute access for everybody.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_nullpw',
-      placeholder: 'Allow Empty Password',
-      tooltip: 'If checked, users can just press <b>Enter</b>\
- when prompted for a password; requires that the username/password\
- be the same as the Windows user account.',
+      placeholder: T('Allow Empty Password'),
+      tooltip: T('If checked, users can just press <b>Enter</b>\
+       when prompted for a password; requires that the username/password\
+       be the same as the Windows user account.'),
     },
     {
       type: 'textarea',
       name: 'cifs_srv_smb_options',
-      placeholder: 'Auxiliary Parameters',
-      tooltip: '<b>smb.conf</b> options not covered elsewhere in this\
- screen; see the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
- target="_blank">Samba Guide </a>\
- for additional settings.',
+      placeholder: T('Auxiliary Parameters'),
+      tooltip: T('<b>smb.conf</b> options not covered elsewhere in this\
+       screen; see the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
+       target="_blank">Samba Guide </a>\
+       for additional settings.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_unixext',
-      placeholder: 'UNIX Extensions',
-      tooltip: 'Allows non-Windows SMB clients to access symbolic\
- links and hard links, has no effect on Windows clients.',
+      placeholder: T('UNIX Extensions'),
+      tooltip: T('Allows non-Windows SMB clients to access symbolic\
+       links and hard links, has no effect on Windows clients.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_zeroconf',
-      placeholder: 'Zeroconf share discovery',
-      tooltip: 'Enable if Mac clients will be connecting to the SMB share.',
+      placeholder: T('Zeroconf share discovery'),
+      tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_hostlookup',
-      placeholder: 'Hostnames Lookups',
-      tooltip: 'Allows using hostnames rather than IP addresses in\
- the <i>Hosts Allow</b> or </i>Hosts Deny</b>fields of a SMB share; uncheck\
- if IP addresses are used to avoid the delay of a host lookup.',
+      placeholder: T('Hostnames Lookups'),
+      tooltip: T('Allows using hostnames rather than IP addresses in\
+       the <i>Hosts Allow</b> or </i>Hosts Deny</b>fields of a SMB share; uncheck\
+       if IP addresses are used to avoid the delay of a host lookup.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_allow_execute_always',
-      placeholder: 'Allow Execute Always',
-      tooltip: 'If checked, Samba will allow the user to execute\
-   a file, even if that user’s permissions are not set to execute.',
+      placeholder: T('Allow Execute Always'),
+      tooltip: T('If checked, Samba will allow the user to execute\
+         a file, even if that user’s permissions are not set to execute.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_obey_pam_restrictions',
-      placeholder: 'Obey Pam Restrictions',
-      tooltip: 'Uncheck this box to allow cross-domain\
- authentication, to allow users and groups to be managed on\
- another forest, or to allow permissions to be delegated from\
- <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
- target="_blank">Active Directory</a>\
- users and groups to domain admins on another forest.',
+      placeholder: T('Obey Pam Restrictions'),
+      tooltip: T('Uncheck this box to allow cross-domain\
+       authentication, to allow users and groups to be managed on\
+       another forest, or to allow permissions to be delegated from\
+       <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+       target="_blank">Active Directory</a>\
+       users and groups to domain admins on another forest.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
-      placeholder: 'NTLMv1 Auth',
-      tooltip: 'when checked, allow NTLMv1 authentication,\
- required by Windows XP clients and sometimes by clients in later\
- versions of Windows.',
+      placeholder: T('NTLMv1 Auth'),
+      tooltip: T('when checked, allow NTLMv1 authentication,\
+       required by Windows XP clients and sometimes by clients in later\
+       versions of Windows.'),
     },
     {
       type: 'select',
       name: 'cifs_srv_bindip',
-      placeholder: 'Bind IP Addresses',
-      tooltip: 'Check the IP addresses on which SMB should listen.',
+      placeholder: T('Bind IP Addresses'),
+      tooltip: T('Check the IP addresses on which SMB should listen.'),
       options: [],
       multiple: true
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_low',
-      placeholder: 'Range Low',
-      tooltip: 'The beginning UID/GID for which this system is\
- authoritative. Any UID/GID lower than this value is ignored, providing\
- a way to avoid accidental UID/GID overlaps between local and remotely\
- defined IDs.',
+      placeholder: T('Range Low'),
+      tooltip: T('The beginning UID/GID for which this system is\
+       authoritative. Any UID/GID lower than this value is ignored, providing\
+       a way to avoid accidental UID/GID overlaps between local and remotely\
+       defined IDs.'),
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_high',
-      placeholder: 'Range High',
-      tooltip: 'The ending UID/GID for which this system is authoritative.\
- Any UID/GID higher than this value is ignored, providing a way to avoid\
- accidental UID/GID overlaps between local and remotely defined IDs.',
+      placeholder: T('Range High'),
+      tooltip: T('The ending UID/GID for which this system is authoritative.\
+       Any UID/GID higher than this value is ignored, providing a way to avoid\
+       accidental UID/GID overlaps between local and remotely defined IDs.'),
     }
   ];
 

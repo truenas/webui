@@ -21,6 +21,7 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-volumeunlock-form',
@@ -28,7 +29,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 })
 export class VolumeUnlockFormComponent  implements Formconfiguration {
 
-  saveSubmitText = "Unlock";
+  saveSubmitText = T("Unlock");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'volumes'];
@@ -47,12 +48,12 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     },{
       type : 'input',
       name : 'name',
-      placeholder: 'passphrase',
+      placeholder: T('Passphrase'),
       isHidden: true
     },{
       type : 'input',
       name : 'passphrase',
-      placeholder: 'passphrase',
+      placeholder: T('Passphrase'),
       tooltip: 'Geli Passphrase'
     }
   ];
@@ -84,14 +85,14 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info("Unlocked Volume", "Successfully un-locked volume " + value.name);
+      this.dialogService.Info(T("Unlocked Volume"), T("Successfully un-locked volume ") + value.name);
       
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
 
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport("Error Unlocking", res.message, res.stack);
+      this.dialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
     });
   }
   

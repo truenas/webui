@@ -10,6 +10,7 @@ import {
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-staticroute-form',
@@ -25,21 +26,21 @@ export class StaticRouteFormComponent {
     {
       type : 'input',
       name : 'sr_destination',
-      placeholder : 'Destination',
-      tooltip : 'Use the format <i>A.B.C.D/E</i> where <i>E</i> is the\
- CIDR mask.',
+      placeholder : T('Destination'),
+      tooltip : T('Use the format <i>A.B.C.D/E</i> where <i>E</i> is the\
+ CIDR mask.'),
     },
     {
       type : 'input',
       name : 'sr_gateway',
-      placeholder : 'Gateway',
-      tooltip : 'Enter the IP address of the gateway.',
+      placeholder : T('Gateway'),
+      tooltip : T('Enter the IP address of the gateway.'),
     },
     {
       type : 'input',
       name : 'sr_description',
-      placeholder : 'Description',
-      tooltip : 'Optional.',
+      placeholder : T('Description'),
+      tooltip : T('Optional.'),
     },
   ];
 

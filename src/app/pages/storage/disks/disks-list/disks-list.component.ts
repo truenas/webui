@@ -12,6 +12,7 @@ import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { ErdService } from 'app/services/erd.service';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 export class DisksListConfig implements InputTableConf {
     public flattenedVolData: any;
@@ -51,7 +52,7 @@ export class DisksListConfig implements InputTableConf {
       const actions = [];
   
       actions.push({
-        label : "Edit",
+        label : T("Edit"),
         onClick : (row1) => {
           this._router.navigate(new Array('/').concat([
             "storage", "disks", "edit", row1.disk_identifier
@@ -59,7 +60,7 @@ export class DisksListConfig implements InputTableConf {
         }
       });
       actions.push({
-        label : "Wipe",
+        label : T("Wipe"),
         onClick : (row1) => {
           this._router.navigate(new Array('/').concat([
             "storage", "disks", "wipe", row1.disk_name
@@ -109,10 +110,10 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   expanded_all = true;
   expanded_zfs = false;
   conf: DisksListConfig;
-  public readonly ALL_DISKS = "All Disks";
+  public readonly ALL_DISKS = T("All Disks");
   public selectedKeyName;
 
-  public title = "View Disks";
+  public title = T("View Disks");
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 

@@ -7,6 +7,7 @@ import { Observable, Subject, Subscription } from 'rxjs/Rx';
 
 import { EntityUtils } from '../pages/common/entity/utils'
 import { WebSocketService } from './ws.service';
+import { T } from '../translate-marker';
 import { RestService } from './rest.service';
 import * as hopscotch from 'hopscotch';
 import { MatSnackBar } from '@angular/material';
@@ -22,37 +23,37 @@ export class TourService {
 
   GeneralSteps = [{
       title: 'Sidebar Controls',
-      content: 'Control left sidebar\'s display style.',
+      content: T('Control left sidebar\'s display style.'),
       target: 'sidenavToggle', // Element ID
       placement: 'bottom',
       xOffset: 10
     },
     {
-      title: 'Available Themes',
-      content: 'Choose a color scheme.',
+      title: T('Available Themes'),
+      content: T('Choose a color scheme.'),
       target: 'schemeToggle', // Element ID
       placement: 'left',
       xOffset: 20
     },
     {
-      title: 'Language',
-      content: 'Choose your language.',
+      title: T('Language'),
+      content: T('Choose your language.'),
       target: 'currentLang',
       placement: 'left',
       xOffset: 10,
       yOffset: -5
     },
     {
-      title: 'Users & Groups',
-      content: 'Setup Users and Groups.',
+      title: T('Users & Groups'),
+      content: T('Setup Users and Groups.'),
       target: 'Dashboard',
       placement: 'right',
       xOffset: 200,
       yOffset: 20
     },
     {
-      title: 'Volumes & Snapshots',
-      content: 'Create a new Volume.',
+      title: T('Volumes & Snapshots'),
+      content: T('Create a new Volume.'),
       target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
       placement: 'right',
       yOffset: 200
@@ -60,37 +61,37 @@ export class TourService {
   ]
 
   UserTour = [{
-      title: 'User Controls',
-      content: 'Control left sidebar\'s display style.',
+      title: T('User Controls'),
+      content: T('Control left sidebar\'s display style.'),
       target: 'sidenavToggle', // Element ID
       placement: 'bottom',
       xOffset: 10
     },
     {
-      title: 'Available Themes',
-      content: 'Choose a color scheme.',
+      title: T('Available Themes'),
+      content: T('Choose a color scheme.'),
       target: 'schemeToggle', // Element ID
       placement: 'left',
       xOffset: 20
     },
     {
-      title: 'Language',
-      content: 'Choose your language.',
+      title: T('Language'),
+      content: T('Choose your language.'),
       target: document.querySelector('.topbar .mat-select'),
       placement: 'left',
       xOffset: 10,
       yOffset: -5
     },
     {
-      title: 'Users & Groups',
-      content: 'Setup Users and Groups.',
+      title: T('Users & Groups'),
+      content: T('Setup Users and Groups.'),
       target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
       placement: 'right',
       yOffset: 50
     },
     {
-      title: 'Volumes & Snapshots',
-      content: 'Create a new Volume.',
+      title: T('Volumes & Snapshots'),
+      content: T('Create a new Volume.'),
       target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
       placement: 'right',
       yOffset: 200
@@ -98,15 +99,15 @@ export class TourService {
   ]
 
   StorageTour = [{
-      title: 'Storage & Groups',
-      content: 'list',
+      title: T('Storage & Groups'),
+      content: T('list'),
       target: 'ngx-datatable',
       placement: 'bottom',
       yOffset: 20
     },
     {
-      title: 'Hover to expand',
-      content: 'Create new Volume',
+      title: T('Hover to expand'),
+      content: T('Create new Volume'),
       target: 'tour-fab-buttons',
       placement: 'left',
       yOffset: 220
@@ -114,15 +115,15 @@ export class TourService {
   ]
 
   SharingTour = [{
-      title: 'Sharing Controls',
-      content: 'Control left sidebar\'s display style.',
+      title: T('Sharing Controls'),
+      content: T('Control left sidebar\'s display style.'),
       target: 'sidenavToggle', // Element ID
       placement: 'bottom',
       xOffset: 10
     },
     {
-      title: 'Available Themes',
-      content: 'Choose a color scheme.',
+      title: T('Available Themes'),
+      content: T('Choose a color scheme.'),
       target: 'schemeToggle', // Element ID
       placement: 'left',
       xOffset: 20
@@ -135,10 +136,10 @@ export class TourService {
       id: 'hello-egret',
       showPrevButton: true,
       onEnd: function() {
-        self.snackBar.open('Awesome! Now let\'s explore FreeNAS\'s cool features.', 'close', { duration: 5000 });
+        self.snackBar.open(T('Awesome! Now let\'s explore FreeNAS\'s cool features.'), T('close'), { duration: 5000 });
       },
       onClose: function() {
-        self.snackBar.open('You just closed User Tour!', 'close', { duration: 3000 });
+        self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
       },
       steps: steps
     }
@@ -169,45 +170,45 @@ export class TourService {
       id: 'hello-egret',
       showPrevButton: true,
       onEnd: function() {
-        self.snackBar.open('Awesome! Now let\'s explore FreeNAS\'s cool features.', 'close', { duration: 5000 });
+        self.snackBar.open(T('Awesome! Now let\'s explore FreeNAS\'s cool features.'), T('close'), { duration: 5000 });
       },
       onClose: function() {
-        self.snackBar.open('You just closed User Tour!', 'close', { duration: 3000 });
+        self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
         self.router.navigate(['account','users']);
       },
       steps: [{
-          title: 'Sidebar Controls',
-          content: 'Control left sidebar\'s display style.',
+          title: T('Sidebar Controls'),
+          content: T('Control left sidebar\'s display style.'),
           target: 'sidenavToggle', // Element ID
           placement: 'bottom',
           xOffset: 10
         },
         {
-          title: 'Available Themes',
-          content: 'Choose a color scheme.',
+          title: T('Available Themes'),
+          content: T('Choose a color scheme.'),
           target: 'schemeToggle', // Element ID
           placement: 'left',
           xOffset: 20
         },
         {
-          title: 'Language',
-          content: 'Choose your language.',
+          title: T('Language'),
+          content: T('Choose your language.'),
           target: 'currentLang',
           placement: 'left',
           xOffset: 10,
           yOffset: -5
         },
         {
-          title: 'Users & Groups',
-          content: 'Setup Users and Groups.',
+          title: T('Users & Groups'),
+          content: T('Setup Users and Groups.'),
           target: 'Dashboard',
           placement: 'right',
           xOffset: 200,
           yOffset: 20
         },
         {
-          title: 'Volumes & Snapshots',
-          content: 'Create a new Volume.',
+          title: T('Volumes & Snapshots'),
+          content: T('Create a new Volume.'),
           target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
           placement: 'right',
           yOffset: 200

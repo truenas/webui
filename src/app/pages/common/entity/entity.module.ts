@@ -45,6 +45,7 @@ import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
+import { EntityTaskComponent } from './entity-task/entity-task.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
@@ -92,6 +93,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     SmdFabSpeedDialActions,
     SmdFabSpeedDialComponent,
     EntityWizardComponent,
+    EntityTaskComponent,
   ],
   exports: [
     EntityDeleteComponent,
@@ -109,6 +111,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     SmdFabSpeedDialComponent,
     TooltipComponent,
     EntityWizardComponent,
+    EntityTaskComponent,
   ],
   entryComponents: [
     FormButtonComponent,

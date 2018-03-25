@@ -20,6 +20,7 @@ import {
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'tftp-edit',
@@ -37,30 +38,30 @@ export class ServiceTFTPComponent {
       initial: '/mnt',
       explorerType: 'directory',
       name : 'tftp_directory',
-      placeholder : 'Directory',
-      tooltip : 'Browse to an <b>existing</b> directory to be used for\
- storage. Some devices require a specific directory name. Refer to the\
- device documentation for more details.',
+      placeholder : T('Directory'),
+      tooltip : T('Browse to an <b>existing</b> directory to be used for\
+       storage. Some devices require a specific directory name. Refer to the\
+       device documentation for more details.'),
     },
     {
       type : 'checkbox',
       name : 'tftp_newfiles',
-      placeholder : 'Allow New Files',
-      tooltip : 'Enable this if network devices need to send files to\
- the system.',
+      placeholder : T('Allow New Files'),
+      tooltip : T('Enable this if network devices need to send files to\
+       the system.'),
     },
     {
       type : 'input',
       name : 'tftp_port',
-      placeholder : 'Port',
-      tooltip : 'Enter a UDP prort to listen for TFTP requests.',
+      placeholder : T('Port'),
+      tooltip : T('Enter a UDP prort to listen for TFTP requests.'),
     },
     {
       type : 'select',
       name : 'tftp_username',
-      placeholder : 'Username',
-      tooltip : 'Select the account to use for TFTP requests. This\
- account must have permission to the <b>Directory</b>.',
+      placeholder : T('Username'),
+      tooltip : T('Select the account to use for TFTP requests. This\
+       account must have permission to the <b>Directory</b>.'),
       options : [
         {label : '', value : ''},
         {label : 'null', value : ''},
@@ -69,17 +70,17 @@ export class ServiceTFTPComponent {
     {
       type : 'permissions',
       name : 'tftp_umask',
-      placeholder : 'Umask',
-      tooltip : 'umask for newly created files. Adjust the permissions\
- using the checkboxes.',
+      placeholder : T('Umask'),
+      tooltip : T('umask for newly created files. Adjust the permissions\
+       using the checkboxes.'),
     },
     {
       type : 'textarea',
       name : 'tftp_options',
-      placeholder : 'Extra options',
-      tooltip : 'Add more options from\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=tftpd" target="_blank">tftpd(8)</a>.\
- Add one option per line.',
+      placeholder : T('Extra options'),
+      tooltip : T('Add more options from\
+       <a href="https://www.freebsd.org/cgi/man.cgi?query=tftpd" target="_blank">tftpd(8)</a>.\
+       Add one option per line.'),
     },
   ];
 

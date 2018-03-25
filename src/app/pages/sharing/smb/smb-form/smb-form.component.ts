@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-smb-form',
@@ -24,101 +25,101 @@ export class SMBFormComponent implements OnDestroy {
       initial: '/mnt',
       explorerType: 'directory',
       name: 'cifs_path',
-      placeholder: 'Path',
-      tooltip: 'Select volume, dataset, or directory to share.'
+      placeholder: T('Path'),
+      tooltip: T('Select volume, dataset, or directory to share.')
     },
     {
       type: 'input',
       name: 'cifs_name',
-      placeholder: 'Name',
-      tooltip: 'Mandatory. Name of share.'
+      placeholder: T('Name'),
+      tooltip: T('Mandatory. Name of share.')
     },
     {
       type: 'checkbox',
       name: 'cifs_home',
-      placeholder: 'Use as home share',
-      tooltip: 'Check this box if the share is meant to hold user home\
-      directories; only one share can be the homes share'
+      placeholder: T('Use as home share'),
+      tooltip: T('Check this box if the share is meant to hold user home\
+      directories; only one share can be the homes share')
     },
     {
       type: 'checkbox',
       name: 'cifs_default_permissions',
-      placeholder: 'Default Permissions',
-      tooltip: 'Sets the ACLs to allow read and write for owner or\
+      placeholder: T('Default Permissions'),
+      tooltip: T('Sets the ACLs to allow read and write for owner or\
  group and read-only for others. Should only be unchecked when creating\
- a share on a system that already has custom ACLs set.',
+ a share on a system that already has custom ACLs set.'),
       value: false
     },
     {
       type: 'checkbox',
       name: 'cifs_ro',
-      placeholder: 'Export Read Only',
-      tooltip: 'Prohibits write'
+      placeholder: T('Export Read Only'),
+      tooltip: T('Prohibits write')
     },
     {
       type: 'checkbox',
       name: 'cifs_browsable',
-      placeholder: 'Browsable to Network Clients',
-      tooltip: 'When checked, users see the contents of <i>/homes</i>\
+      placeholder: T('Browsable to Network Clients'),
+      tooltip: T('When checked, users see the contents of <i>/homes</i>\
  (including other home directories of other users) and when  unchecked,\
- users see only their own home directory.'
+ users see only their own home directory.')
     },
     {
       type: 'checkbox',
       name: 'cifs_recyclebin',
-      placeholder: 'Export Recycle Bin',
-      tooltip: 'Deleted files are moved to a hidden <b>.recycle</b> in\
+      placeholder: T('Export Recycle Bin'),
+      tooltip: T('Deleted files are moved to a hidden <b>.recycle</b> in\
  the root folder of the share. The <b>.recycle</b> directory can be\
  deleted to reclaim space and is automatically recreated when a file is\
- deleted.'
+ deleted.')
     },
     {
       type: 'checkbox',
       name: 'cifs_showhiddenfiles',
-      placeholder: 'Show Hidden Files',
-      tooltip: 'If enabled, the Windows hidden attribute is not set\
+      placeholder: T('Show Hidden Files'),
+      tooltip: T('If enabled, the Windows hidden attribute is not set\
  when filenames that begin with a dot (a Unix hidden file) are created.\
- Existing files are not affected.'
+ Existing files are not affected.')
     },
     {
       type: 'checkbox',
       name: 'cifs_guestok',
-      placeholder: 'Allow Guest Access',
-      tooltip: 'If checked, a password is not required to connect to\
+      placeholder: T('Allow Guest Access'),
+      tooltip: T('If checked, a password is not required to connect to\
  the share. Connections with a bad password are rejected unless the\
  user account does not exist, in which case it is mapped to the guest\
  account and granted the permissions of the guest user defined in the\
  <a href="http://doc.freenas.org/11/services.html#smb" target="_blank">\
- SMB</a> service.'
+ SMB</a> service.')
     },
     {
       type: 'checkbox',
       name: 'cifs_guestonly',
-      placeholder: 'Only Allow Guest Access',
-      tooltip: 'Requires <b>Allow guest access</b> to also be checked.\
- Forces guest access for all connections.'
+      placeholder: T('Only Allow Guest Access'),
+      tooltip: T('Requires <b>Allow guest access</b> to also be checked.\
+ Forces guest access for all connections.')
     },
     {
       type: 'textarea',
       name: 'cifs_hostsallow',
-      placeholder: 'Hosts Allow',
-      tooltip: 'Comma-, space-, or tab-delimited list of allowed\
- hostnames or IP addresses.'
+      placeholder: T('Hosts Allow'),
+      tooltip: T('Comma-, space-, or tab-delimited list of allowed\
+ hostnames or IP addresses.')
     },
     {
       type: 'textarea',
       name: 'cifs_hostsdeny',
-      placeholder: 'Hosts Deny',
-      tooltip: 'Comma-, space-, or tab-delimited list of denied\
+      placeholder: T('Hosts Deny'),
+      tooltip: T('Comma-, space-, or tab-delimited list of denied\
  hostnames or IP addresses. Allowed hosts take precedence so can use\
  <i>ALL</i> in this field and specify allowed hosts in\
- <b>Hosts Allow</b>.'
+ <b>Hosts Allow</b>.')
     },
     {
       type: 'select',
       name: 'cifs_vfsobjects',
-      placeholder: 'VFS Objects',
-      tooltip: 'Adds virtual file system modules to enhance functionality.',
+      placeholder: T('VFS Objects'),
+      tooltip: T('Adds virtual file system modules to enhance functionality.'),
       options: [],
       multiple: true,
     },
@@ -136,9 +137,9 @@ export class SMBFormComponent implements OnDestroy {
     {
       type: 'textarea',
       name: 'cifs_auxsmbconf',
-      placeholder: 'Auxiliary Parameters',
-      tooltip: 'Additional <b>smb5.conf</b> parameter not covered by\
- other option fields.',
+      placeholder: T('Auxiliary Parameters'),
+      tooltip: T('Additional <b>smb5.conf</b> parameter not covered by\
+ other option fields.'),
     },
   ];
 
@@ -160,12 +161,12 @@ export class SMBFormComponent implements OnDestroy {
   public custActions: Array<any> = [
     {
       id : 'basic_mode',
-      name : 'Basic Mode',
+      name : T('Basic Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     },
     {
       'id' : 'advanced_mode',
-      name : 'Advanced Mode',
+      name : T('Advanced Mode'),
       function : () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
@@ -184,13 +185,14 @@ export class SMBFormComponent implements OnDestroy {
 
   resourceTransformIncomingRestData(data: any) {
     data['cifs_default_permissions'] = false;
+    return data;
   }
 
   afterInit(entityForm: any) {
     this.cifs_default_permissions = entityForm.formGroup.controls['cifs_default_permissions'];
     this.cifs_default_permissions_subscription = this.cifs_default_permissions.valueChanges.subscribe((value) => {
       if (value === true) {
-        this.dialog.confirm("Warning", "Setting default permissions will reset the permissions of this share and any others within its path.")
+        this.dialog.confirm(T("Warning"), T("Setting default permissions will reset the permissions of this share and any others within its path."))
         .subscribe((res) => {
           if (!res) {
             this.cifs_default_permissions.setValue(false);

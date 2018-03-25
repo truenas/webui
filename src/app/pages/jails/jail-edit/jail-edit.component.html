@@ -57,10 +57,10 @@
       </div>
       <mat-action-row>
         <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
-        <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button>
+        <!-- <button mat-button color="primary" type="button" (click)="nextStep()">{{ "Next" | translate }}</button> -->
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
+    <!-- <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ "RCTL Limits" | translate }}
@@ -73,7 +73,7 @@
       <mat-action-row>
         <button mat-button color="warn" type="button" (click)="prevStep()">{{ "Previous" | translate }}</button>
       </mat-action-row>
-    </mat-expansion-panel>
+    </mat-expansion-panel> -->
     <mat-card-actions>
       <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">{{ "Save" | translate }}</button>
       <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent" type="button">{{ "Cancel" | translate }}</button>

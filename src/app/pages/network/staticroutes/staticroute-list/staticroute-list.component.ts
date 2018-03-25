@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {RestService} from '../../../../services/rest.service';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-staticroute-list',
@@ -18,9 +19,9 @@ export class StaticRouteListComponent {
   constructor(protected rest: RestService, protected router: Router) {}
 
   public columns: Array<any> = [
-    {name : 'Destination', prop : 'sr_destination'},
-    {name : 'Gateway', prop : 'sr_gateway'},
-    {name : 'Description', prop : 'sr_description'}
+    {name : T('Destination'), prop : 'sr_destination'},
+    {name : T('Gateway'), prop : 'sr_gateway'},
+    {name : T('Description'), prop : 'sr_description'}
   ];
   public config: any = {
     paging : true,
