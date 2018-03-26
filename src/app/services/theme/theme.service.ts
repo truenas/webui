@@ -203,6 +203,7 @@ export class ThemeService {
       if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme));
+        this.core.emit({name:'ThemeChanged'});
       }
 
       if(evt.data.showTooltips){
@@ -232,7 +233,7 @@ export class ThemeService {
   changeTheme(theme:string) {
     //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
-    this.core.emit({name:'ThemeChanged'});
+    //this.core.emit({name:'ThemeChanged'});
   }
 
   saveCurrentTheme(){
