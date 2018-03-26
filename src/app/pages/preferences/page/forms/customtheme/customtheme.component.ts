@@ -1,4 +1,4 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges } from '@angular/core';
+import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -23,7 +23,7 @@ interface FormSnapshot {
   templateUrl : './customtheme.component.html',
   styleUrls: ['./customtheme.component.css'],
 })
-export class CustomThemeComponent implements OnInit, OnChanges {
+export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
   public saveSubmitText = "Save Custom Theme";
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
@@ -375,6 +375,10 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     ngOnChanges(changes){
     }
 
+    ngOnDestroy(){
+      this.core.unregister({observerClass:this}); 
+    }
+
     init(){
       this.baseThemes = this.themeService.allThemes;
       this.setupColorOptions(this.colors);
@@ -400,6 +404,8 @@ export class CustomThemeComponent implements OnInit, OnChanges {
             if(valid){
               evt.data.accentColors = ['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'];
               this.core.emit({name:"AddCustomThemePreference",data:evt.data});
+              this.globalPreview = false;
+              this.updateGlobal();
               this.router.navigate(['ui-preferences']);
             }
           break;
