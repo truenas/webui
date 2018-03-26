@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-plugins-installed-list',
@@ -20,14 +21,14 @@ export class PluginsInstalledListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Name', prop: '1' },
-    { name: 'Boot', prop: '2' },
-    { name: 'State', prop: '3' },
+    { name: T('Name'), prop: '1' },
+    { name: T('Boot'), prop: '2' },
+    { name: T('State'), prop: '3' },
     // { name: 'Type', prop: '4' },
-    { name: 'Release', prop: '5' },
-    { name: 'IP4 address', prop: '6' },
-    { name: 'IP6 address', prop: '7' },
-    { name: 'Template', prop: '8' }
+    { name: T('Release'), prop: '5' },
+    { name: T('IP4 address'), prop: '6' },
+    { name: T('IP6 address'), prop: '7' },
+    { name: T('Template'), prop: '8' }
   ];
   public config: any = {
     paging: true,
@@ -36,7 +37,7 @@ export class PluginsInstalledListComponent {
   };
   public multiActions: Array < any > = [{
       id: "mstart",
-      label: "Start",
+      label: T("Start"),
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -58,7 +59,7 @@ export class PluginsInstalledListComponent {
     },
     {
       id: "mstop",
-      label: "Stop",
+      label: T("Stop"),
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -80,7 +81,7 @@ export class PluginsInstalledListComponent {
     },
     {
       id: "mdelete",
-      label: "Delete",
+      label: T("Delete"),
       enable: true,
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
@@ -105,7 +106,7 @@ export class PluginsInstalledListComponent {
   getActions(parentRow) {
     return [{
         id: "start",
-        label: "Start",
+        label: T("Start"),
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row[1]]).subscribe(
@@ -117,7 +118,7 @@ export class PluginsInstalledListComponent {
       },
       {
         id: "stop",
-        label: "Stop",
+        label: T("Stop"),
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.stop', [row[1]]).subscribe(
@@ -129,14 +130,14 @@ export class PluginsInstalledListComponent {
       },
       {
         id: "management",
-        label: "Management",
+        label: T("Management"),
         onClick: (row) => {
           window.open(row[9]);
         }
       },
       {
         id: "delete",
-        label: "Delete",
+        label: T("Delete"),
         onClick: (row) => {
           this.entityList.doDelete(row[1]);
         }

@@ -9,7 +9,7 @@ import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'vm-card-edit',
-  template : `<entity-form-embedded [conf]="this"></entity-form-embedded>`
+  template : `<entity-form-embedded [data]="values" [target]="target" [conf]="this"></entity-form-embedded>`
 })
 export class VmCardEditComponent implements OnChanges {
 
@@ -113,6 +113,10 @@ export class VmCardEditComponent implements OnChanges {
   }
 
   ngOnChanges(changes){
+  }
+
+  goBack(){
+    this.target.next({name:"FormCancelled"});
   }
 
   afterInit(entityForm: any) {

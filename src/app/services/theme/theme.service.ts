@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ApiService } from 'app/core/services/api.service';
 
 export interface Theme {
   name: string;
   description:string;
   label: string;
   labelSwatch?: string;
-  //baseColor: string;
   accentColors: string[];
-  //isActive?: boolean;
   favorite:boolean;
   hasDarkLogo: boolean;
   primary:string;
@@ -39,15 +38,13 @@ export class ThemeService {
   public activeTheme: string = 'ix-blue';
   public activeThemeSwatch: string[];
 
+  // Theme lists
+  public allThemes: Theme[];
+  public favoriteThemes: Theme[];
+  public themesMenu: Theme[];
+  private _customThemes: Theme[];
+
   public freenasThemes: Theme[] = [
-    /*{
-     name: 'ix-blue',
-     label: 'iX Blue',
-     baseColor: '#0095D5',
-     accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-     isActive: true,
-     hasDarkLogo: false
-    }, */
     {
       name:'ix-blue',
       label: "iX Blue",
@@ -128,111 +125,151 @@ export class ThemeService {
       blue:'#268bd2',
       cyan:'#2aa198',
       green:'#859900'
-    }
-    /*{
-      name: 'native',
-      label: 'Native',
-      baseColor: '#073642',
-      accentColors:['var(--magenta)', '#2aa198', '#dc322f', '#268bd2', '#859900', '#cb4b16', '#b58900', '#6c71c4'],
-      isActive: false,
-      hasDarkLogo: false
-    }, 
-    {
-      name: 'egret-dark-purple',
-      label: 'Dark Purple',
-      baseColor: '#9c27b0',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: false,
-      hasDarkLogo: false
     },
     {
-      name: 'egret-indigo',
-      label: 'Indigo',
-      baseColor: '#3f51b5',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: false,
-      hasDarkLogo: false
-    }, 
-    {
-      name: 'freenas-sharks',
-      label: 'Sharks',
-      baseColor: '#088696',
-      accentColors:['#d238ff', '#00d0d6', '#ff0013', '#00a2ff', '#59d600', '#eec302', '#f0cb00', '#c17ecc'], // based on TangoAdapted
-      isActive: false,
-      hasDarkLogo: false
-    }*/
+      name:'solarized-light',
+      label: "Solarized Light",
+      labelSwatch:"bg2",
+      description:'Based on Solarized light color scheme',
+      hasDarkLogo:false,
+      favorite:false,
+      accentColors:['orange', 'green', 'cyan', 'yellow', 'violet', 'magenta', 'red', 'blue'],
+      primary:"var(--alt-bg2)",
+      accent:"var(--yellow)",
+      'bg1':'#dfdac8',
+      'bg2':'#fdf6e3',
+      'fg1':'#839496',
+      'fg2':'#282a36',
+      'alt-bg1':'#002b36',
+      'alt-bg2':'#073642',
+      'alt-fg1':'#586e75',
+      'alt-fg2':'#657b83',
+      yellow:'#b58900',
+      orange:'#cb4b16',
+      red:'#dc322f',
+      magenta:'#d33682',
+      violet:'#6c71c4',
+      blue:'#268bd2',
+      cyan:'#2aa198',
+      green:'#859900'
+    }
   ];
 
   savedUserTheme:string = "";
+  private loggedIn:boolean;
+  public globalPreview: boolean = false;
+  public globalPreviewData: any;
 
-  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService) {
+  constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
+    console.log("*** New Instance of Theme Service ***");
+    
+    // Set default list
+    this.allThemes = this.freenasThemes;
+    this.themesMenu = this.freenasThemes;
 
-    this.rest.get("account/users/1", {}).subscribe((res) => {
-      console.log("******** THEME SERVICE CONTRUCTOR ********");
-      console.log(res.data);
-      this.savedUserTheme = res.data.bsdusr_attributes.usertheme;
+    this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
+      this.loggedIn = evt.data;
+      if(this.loggedIn == true){
+        this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });
+      } else {
+        //console.warn("SETTING DEFAULT THEME");
+        this.setDefaultTheme();
+      }
+    });
 
-      // TEMPORARY FIX: Removed egret-blue theme but that theme is still 
-      // the default in the middleware. This is a workaround until that
-      // default value can be changed
-      if(this.savedUserTheme == "egret-blue"){
-        //this.savedUserTheme = "ix-blue";
-        this.savedUserTheme = "ix-blue";
+    this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
+      
+      //this.globalPreview = !this.globalPreview;
+      if(evt.data){
+        this.globalPreview = true;
+      } else {
+        this.globalPreview = false;
+      }
+      this.globalPreviewData = evt.data;
+      if(this.globalPreview){
+        this.setCssVars(evt.data.theme);
+      } else if(!this.globalPreview){
+        this.setCssVars(this.findTheme(this.activeTheme));
+        this.globalPreviewData = null;
+      }
+    });
+
+    this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
+      if(evt.data.customThemes){
+        //console.log("Custom Themes Detected");
+        this.customThemes = evt.data.customThemes;
       }
 
-      this.activeTheme = this.savedUserTheme;
-      this.setCssVars(this.findTheme(this.activeTheme));
+      if(evt.data.userTheme !== this.activeTheme){
+        this.activeTheme = evt.data.userTheme;
+        this.setCssVars(this.findTheme(this.activeTheme));
+        this.core.emit({name:'ThemeChanged'});
+      }
 
+      if(evt.data.showTooltips){
+        (<any>document).documentElement.style.setProperty("--tooltip","inline");
+      } else if(!evt.data.showTooltips){
+        (<any>document).documentElement.style.setProperty("--tooltip","none");
+      }
     });
   }
 
-  currentTheme():Theme{
-    /*for(let i in this.freenasThemes){
-      let t = this.freenasThemes[i];
-      if(t.name == this.activeTheme.name){ return t;}
-    }*/
+  setDefaultTheme(){
+    this.activeTheme = "ix-blue";
+    this.changeTheme(this.activeTheme);
+  }
 
+  currentTheme():Theme{
     return this.findTheme(this.activeTheme);
   }
 
   findTheme(name:string):Theme{
-    for(let i in this.freenasThemes){
-      let t = this.freenasThemes[i];
+    for(let i in this.allThemes){
+      let t = this.allThemes[i];
       if(t.name == name){ return t;}
     }
   }
 
   changeTheme(theme:string) {
-    console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
-    //domHelper.changeTheme(this.freenasThemes, this.activeTheme);
-    this.activeTheme = theme;
-    /*this.freenasThemes.forEach((t) => {
-     t.isActive = (t.name === theme.name);
-    });*/
-    this.saveCurrentTheme();
-    this.setCssVars(this.findTheme(theme));
-    this.core.emit({name:'ThemeChanged'});
+    //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
+    this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
+    //this.core.emit({name:'ThemeChanged'});
   }
 
   saveCurrentTheme(){
+    //console.log("SAVING CURRENT THEME");
     let theme = this.currentTheme();
-    //this.rest.put("account/users/1", {bsdusr_attributes:{usertheme:theme.name}}).subscribe((res) => {
-    this.ws.call('user.update', [1,{attributes:{usertheme:theme.name}}]).subscribe((res) => {
-      console.log("Saved usertheme:", res, theme.name);
+    this.core.emit({name:"ChangeThemePreference", data:theme.name});
+  }
+
+  setCssVars(theme:Theme){ 
+    let palette = Object.keys(theme);
+    palette.splice(0,7);
+
+    palette.forEach(function(color){
+      let swatch = theme[color];
+      (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
     });
+    (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
+    (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
   }
 
-    setCssVars(theme:Theme){
-      let palette = Object.keys(theme);
-      palette.splice(0,6);
+  get customThemes(){
+    return this._customThemes;
+  }
 
-      palette.forEach(function(color){
-        let swatch = theme[color];
-        (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
-      });
-      (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
-      (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+  set customThemes(customThemes:Theme[]){
+    let result = [];
+    for(let i = 0; i < customThemes.length; i++){
+      if(customThemes[i].favorite){
+        result.push(customThemes[i]);
+      }
     }
-
+    this._customThemes = customThemes;
+    this.favoriteThemes = result; 
+    this.allThemes = this.freenasThemes.concat(this.customThemes);
+    this.themesMenu = this.freenasThemes.concat(this.favoriteThemes);
+    this.core.emit({name:"ThemeListsChanged"});
   }
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+}

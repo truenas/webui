@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 
 
 /*
@@ -23,7 +24,8 @@ import { ThemeService } from 'app/services/theme/theme.service';
   providers: [
     CoreService,
     ApiService,
-    ThemeService
+    ThemeService,
+    PreferencesService
   ],
   exports: [ // Modules and Components here
     CommonModule
@@ -36,6 +38,7 @@ export class CoreServices {
       providers: [
 	CoreService,
 	ApiService,
+        PreferencesService,
         ThemeService
       ]
     }

@@ -9,103 +9,114 @@
       <mat-icon>chevron_left</mat-icon>
     </button>
     <!-- Search form
-  <div
-  fxFlex
-  fxHide.lt-sm="true"
-  class="search-bar">
-    <form class="top-search-form">
+      <div
+      fxFlex
+      fxHide.lt-sm="true"
+      class="search-bar">
+      <form class="top-search-form">
       <mat-icon role="img">search</mat-icon>
       <input autofocus="true" placeholder="Search" type="text">
-    </form>
-  </div -->
-    <span fxFlex></span>
-    <!--loading icon-->
-    <button *ngIf="showResilvering" mat-icon-button id="resilver" matTooltip="resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
-      <mat-icon class="fa-spin">autorenew</mat-icon>
-    </button>
-    <button *ngIf="showReplication" mat-icon-button id="replication" matTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
-      <mat-icon class="movement">content_copy</mat-icon>
-    </button>
-    <!-- Theme Switcher -->
-    <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="FreeNAS Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
-      <mat-icon>format_color_fill</mat-icon>
-    </button>
-    <mat-menu #themeMenu="matMenu">
-      <mat-grid-list class="theme-list" cols="1" rowHeight="24px">
-        <mat-grid-tile *ngFor="let theme of themeService.freenasThemes" (click)="changeTheme(theme.name)">
-          <div mat-menu-item [title]="theme.label">
-            <div [style.background]="theme[theme.labelSwatch]" class="egret-swatch"></div>
-            <mat-icon class="active-icon" *ngIf="theme.name == themeService.activeTheme">check</mat-icon>
-          </div>
-          <span style="cursor: pointer;"  class="text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
-        </mat-grid-tile>
-      </mat-grid-list>
-    </mat-menu>
-    <button mat-icon-button (click)="startTour()" class="topbar-button-right" matTooltip="Guide Tour" [style.overflow]="'visible'">
-      <mat-icon>flight_takeoff</mat-icon>
-    </button>
-    <!-- Notification toggle button -->
-    <button mat-icon-button matTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
-      <mat-icon>notifications</mat-icon>
-      <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
-    </button>
-    <!-- Top left user menu -->
-    <button mat-icon-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
-      <mat-icon>settings</mat-icon>
-    </button>
-    <mat-menu #accountMenu="matMenu">
-      <button mat-menu-item (click)="$event.stopPropagation()" [matMenuTriggerFor]="languageMenu">
-        <mat-icon>translate</mat-icon>
-        <ng-container *ngFor="let lang of language.availableLangs">
-          <span *ngIf="lang.code == language.currentLang">{{ lang.name }}</span>
-        </ng-container>
+      </form>
+      </div -->
+      <span fxFlex></span>
+      <!--loading icon-->
+      <button *ngIf="showResilvering" mat-icon-button id="resilver" matTooltip="resilvering" (click)="showResilveringDetails()" class="topbar-button-right">
+        <mat-icon class="fa-spin">autorenew</mat-icon>
       </button>
-      <button mat-menu-item [routerLink]="['/account/users/edit/1']">
-        <mat-icon>account_box</mat-icon>
-        <span>{{'Account' | translate}}</span>
+      <button *ngIf="showReplication" mat-icon-button id="replication" matTooltip="replication" (click)="showReplicationDetails()" class="topbar-button-right">
+        <mat-icon class="movement">content_copy</mat-icon>
       </button>
-      <button mat-menu-item [routerLink]="['/account/users/change-password']">
-        <mat-icon>dialpad</mat-icon>
-        <span>{{'Change Password' | translate}}</span>
+      <!-- Theme Switcher -->
+      <button mat-icon-button id="schemeToggle" [style.overflow]="'visible'" matTooltip="FreeNAS Themes" [matMenuTriggerFor]="themeMenu" class="topbar-button-right">
+        <mat-icon>format_color_fill</mat-icon>
       </button>
-      <button mat-menu-item [routerLink]="['/system/general']">
+      <mat-menu #themeMenu="matMenu">
+        <mat-grid-list class="theme-list" cols="1" rowHeight="24px">
+          <mat-grid-tile *ngFor="let theme of themesMenu" (click)="changeTheme(theme.name)">
+            <div mat-menu-item [title]="theme.label">
+              <div [style.background]="theme[theme.labelSwatch]" class="egret-swatch"></div>
+              <mat-icon class="active-icon" *ngIf="theme.name == themeService.activeTheme">check</mat-icon>
+            </div>
+            <span style="cursor: pointer;"  class="text-sm mat-list-item-ripple mat-ripple">{{ theme.label }}</span>
+          </mat-grid-tile>
+          <mat-grid-tile (click)="createTheme()">
+            <div mat-menu-item [title]="createThemeLabel">
+              <div style="background-color:var(--accent);" class="egret-swatch"></div>
+              <mat-icon class="active-icon" >add</mat-icon>
+            </div>
+            <span style="cursor: pointer;"  class="text-sm mat-list-item-ripple mat-ripple" >Manage Themes</span>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-menu>
+      <button mat-icon-button (click)="startTour()" class="topbar-button-right" matTooltip="Guide Tour" [style.overflow]="'visible'">
+        <mat-icon>flight_takeoff</mat-icon>
+      </button>
+      <!-- Notification toggle button -->
+      <button mat-icon-button matTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+        <mat-icon>notifications</mat-icon>
+        <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
+      </button>
+      <!-- Top left user menu -->
+      <button mat-icon-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
         <mat-icon>settings</mat-icon>
-        <span>{{'Settings' | translate}}</span>
       </button>
-      <!-- button mat-menu-item>
-      <mat-icon>notifications_off</mat-icon>
-      <span>Disable alerts</span>
-    </button -->
-      <button mat-menu-item (click)="signOut()">
-        <mat-icon>exit_to_app</mat-icon>
-        <span>{{'Log out' | translate}}</span>
-      </button>
-      <button mat-menu-item (click)="onReboot()">
-        <mat-icon>replay</mat-icon>
-        <span>{{'Restart' | translate}}</span>
-      </button>
-      <button mat-menu-item (click)="onShutdown()">
-        <mat-icon>power_settings_new</mat-icon>
-        <span>{{'Shut down' | translate}}</span>
-      </button>
-      <button mat-menu-item (click)="onShowAbout()">
-        <mat-icon>info_outline</mat-icon>
-        <span>{{'About' | translate}}</span>
-      </button>
-      <a mat-menu-item href="/legacy/">
-        <mat-icon>keyboard_return</mat-icon>
-        <span>{{'Legacy UI' | translate}}</span>
-      </a>
-    </mat-menu>
-    <mat-menu #languageMenu="matMenu" [overlapTrigger]="false" xPosition="after">
-      <ng-container *ngFor="let lang of language.availableLangs">
-        <button mat-menu-item (click)="setLang(lang.code)">
-          <span>{{ lang.name }}</span>
-          <!--span class="flag-icon" [ngClass]="{'flag-icon-us': lang.code === 'en'}" *ngIf="lang.code == 'en'">{{ lang.name }}</span>
-          <span class="flag-icon" [ngClass]="{'flag-icon-es': lang.code === 'es'}" *ngIf="lang.code == 'es'">{{ lang.name }}</span>
-          <span class="flag-icon" [ngClass]="{'flag-icon-cn': lang.code === 'zh-hans'}" *ngIf="lang.code == 'zh-hans'">{{ lang.name }}</span-->
+      <mat-menu #accountMenu="matMenu">
+        <button mat-menu-item (click)="$event.stopPropagation()" [matMenuTriggerFor]="languageMenu">
+          <mat-icon>translate</mat-icon>
+          <ng-container *ngFor="let lang of language.availableLangs">
+            <span *ngIf="lang.code == language.currentLang">{{ lang.name }}</span>
+          </ng-container>
         </button>
-      </ng-container>
-    </mat-menu>
+        <button mat-menu-item [routerLink]="['/account/users/edit/1']">
+          <mat-icon>account_box</mat-icon>
+          <span>{{'Account' | translate}}</span>
+        </button>
+        <button mat-menu-item [routerLink]="['/account/users/change-password']">
+          <mat-icon>dialpad</mat-icon>
+          <span>{{'Change Password' | translate}}</span>
+        </button>
+        <button mat-menu-item [routerLink]="['/ui-preferences']">
+          <mat-icon>settings_applications</mat-icon>
+          <span>{{'Preferences' | translate}}</span>
+        </button>
+        <button mat-menu-item [routerLink]="['/system/general']">
+          <mat-icon>settings</mat-icon>
+          <span>{{'Settings' | translate}}</span>
+        </button>
+        <!-- button mat-menu-item>
+          <mat-icon>notifications_off</mat-icon>
+          <span>Disable alerts</span>
+          </button -->
+          <button mat-menu-item (click)="signOut()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>{{'Log out' | translate}}</span>
+          </button>
+          <button mat-menu-item (click)="onReboot()">
+            <mat-icon>replay</mat-icon>
+            <span>{{'Restart' | translate}}</span>
+          </button>
+          <button mat-menu-item (click)="onShutdown()">
+            <mat-icon>power_settings_new</mat-icon>
+            <span>{{'Shut down' | translate}}</span>
+          </button>
+          <button mat-menu-item (click)="onShowAbout()">
+            <mat-icon>info_outline</mat-icon>
+            <span>{{'About' | translate}}</span>
+          </button>
+          <a mat-menu-item href="/legacy/">
+            <mat-icon>keyboard_return</mat-icon>
+            <span>{{'Legacy UI' | translate}}</span>
+          </a>
+      </mat-menu>
+      <mat-menu #languageMenu="matMenu" [overlapTrigger]="false" xPosition="after">
+        <ng-container *ngFor="let lang of language.availableLangs">
+          <button mat-menu-item (click)="setLang(lang.code)">
+            <span>{{ lang.name }}</span>
+            <!--span class="flag-icon" [ngClass]="{'flag-icon-us': lang.code === 'en'}" *ngIf="lang.code == 'en'">{{ lang.name }}</span>
+              <span class="flag-icon" [ngClass]="{'flag-icon-es': lang.code === 'es'}" *ngIf="lang.code == 'es'">{{ lang.name }}</span>
+              <span class="flag-icon" [ngClass]="{'flag-icon-cn': lang.code === 'zh-hans'}" *ngIf="lang.code == 'zh-hans'">{{ lang.name }}</span-->
+          </button>
+        </ng-container>
+      </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>

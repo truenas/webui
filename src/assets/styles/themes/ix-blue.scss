@@ -29,6 +29,7 @@ $green:'#59d600';
 $primary: $blue;
 $accent: $yellow;
 $warn: $red;
+$tooltip:'inline';//display property
 
 $md-primary: (
     50 : #e0f2fa,
@@ -322,11 +323,34 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(color, --fg2, $fg2);
 }
 
+.mat-raised-button.mat-primary[disabled],
+.mat-raised-button.mat-accent[disabled],
+.mat-raised-button.mat-warn[disabled],
+.mat-raised-button[disabled][disabled],
+.mat-fab.mat-primary[disabled],
+.mat-fab.mat-accent[disabled],
+.mat-fab.mat-warn[disabled],
+.mat-fab[disabled][disabled],
+.mat-mini-fab.mat-primary[disabled],
+.mat-mini-fab.mat-accent[disabled],
+.mat-mini-fab.mat-warn[disabled],
+.mat-mini-fab[disabled][disabled]{
+  @include variable(background-color, #999, #999);
+  opacity:0.38;
+}
+
 .egret-swatch,
 .mat-checkbox-frame{ 
   @include variable(border-color, --fg2, $fg2);
 }
 
+.spacer{
+  flex: 1 1 auto;
+}
+
+.dynamic-field tooltip{
+  @include variable(display, --tooltip, $tooltip);
+}
 
 // Treelists in storage/volumes
 .mat-expansion-panel-header{
@@ -335,6 +359,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-expansion-panel-body{
   //background-color:rgba(0,0,0,0.15);
   position:relative;
+  //padding:0;// ask pete
 }
 .dx-treelist-container{
   background:transparent;
@@ -356,6 +381,16 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   border-color: rgba(128,128,128,0.1);
 }
 
+tr.dx-row:nth-child(odd){
+  background-color:rgba(0,0,0,0.05)
+}
+
+// END Treelist styles
+
+.fieldset-label{
+  min-width:100%;
+  margin-bottom:16px;
+}
 
 /////////////////// END SpecSelectors
 
