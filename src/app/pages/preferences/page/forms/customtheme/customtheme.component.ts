@@ -25,6 +25,7 @@ interface FormSnapshot {
 })
 export class CustomThemeComponent implements OnInit, OnChanges {
 
+  public saveSubmitText = "Save Custom Theme";
   public customThemeForm: Subject<CoreEvent> = new Subject();// formerly known as target
   public loadValuesForm: Subject<CoreEvent> = new Subject();// formerly known as target
   private _baseTheme:any; //= this.themeService.activeTheme;
@@ -347,13 +348,13 @@ export class CustomThemeComponent implements OnInit, OnChanges {
       this._globalPreview = state;
     }
 
-    custActions: any[] = [
+    /*custActions: any[] = [
       {
         id:'update-preview',
         name:'Update Preview',
         eventName: "UpdatePreview"
       }
-    ]
+    ]*/
 
     constructor(
       protected router: Router, 
