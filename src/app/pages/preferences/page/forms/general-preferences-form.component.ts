@@ -87,13 +87,13 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
       }
     ]
 
-    custActions: any[] = [
+    /*custActions: any[] = [
       {
         id: 'create-theme-link',
         name: 'Create Theme',
         eventName:"CreateTheme"
       }
-    ]
+    ]*/
 
     constructor(
       protected router: Router, 

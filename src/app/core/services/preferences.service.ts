@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';
@@ -31,7 +32,7 @@ export class PreferencesService {
     "showTooltips":true,
     "metaphor":"auto"
   }
-  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService) {
+  constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router) {
     console.log("*** New Instance of Preferences Service ***");
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
@@ -88,6 +89,7 @@ export class PreferencesService {
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
       });
+      this.setShowGuide(evt.data.showGuide);
       this.preferences.timestamp = new Date();
       this.savePreferences(this.preferences);
     })
@@ -118,6 +120,14 @@ export class PreferencesService {
       return true;
     }
     return false;
+  }
+
+  setShowGuide(value:boolean){
+    if(value){
+      localStorage.setItem(this.router.url,'true')
+    } else if(!value) {
+      localStorage.setItem(this.router.url,'false')
+    }
   }
 
 }

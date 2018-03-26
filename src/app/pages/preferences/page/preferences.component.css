@@ -1,3 +1,3 @@
-/*:host ::ng-deep .fieldset{
+:host ::ng-deep .prefs-form .fieldset{
   height:400px;
-}*/
+}

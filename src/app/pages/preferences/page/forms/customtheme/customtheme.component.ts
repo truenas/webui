@@ -15,7 +15,7 @@ import { T } from 'app/translate-marker';
 
 interface FormSnapshot {
   theme:any;
-  baseTheme:string;
+  baseTheme?:string;
 }
 
 @Component({
@@ -325,11 +325,12 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
     set baseTheme(name:string){
       this._baseTheme = name;
-      this.loadValues(name);
       let theme = this.themeService.findTheme(name);
+      this.snapshot = {theme:theme,baseTheme:this._baseTheme};
+      this.loadValues(name);
       this.updatePreview(theme);
       if(this.globalPreview){
-        this.updateGlobal({theme:theme,baseTheme:this._baseTheme});
+        this.updateGlobal(this.snapshot);
       }
     }
 
@@ -379,11 +380,9 @@ export class CustomThemeComponent implements OnInit, OnChanges {
 
       if(this.themeService.globalPreview){
         let data = this.themeService.globalPreviewData;
-        console.log(data); 
-        this.snapshot = data;
-        this.loadValues();
         this.globalPreview = true;
-        this.baseTheme = data.baseTheme;
+        this.snapshot = {theme:data.theme};// ignore basetheme
+        this.loadValues(); 
       } else {
         this.baseTheme = this.themeService.activeTheme;
         this.loadValues(this.themeService.activeTheme);
@@ -407,6 +406,8 @@ export class CustomThemeComponent implements OnInit, OnChanges {
           break;
           case "FormGroupValueChanged":
           case "UpdatePreview":
+            console.log("ThemeForm Change Detected");
+            console.log(evt.data);
             this.snapshot = {theme:evt.data, baseTheme:this.baseTheme}
             if(this.globalPreview){
               this.updateGlobal(this.snapshot);
@@ -466,12 +467,10 @@ export class CustomThemeComponent implements OnInit, OnChanges {
     updateGlobal(snapshot?:FormSnapshot){
       if(snapshot){
         // Turn it on in theme service
-        console.log("Global On!!!");
         this.core.emit({name:"GlobalPreviewChanged", data:snapshot});
       } else {
         //turn it off in theme service
         this.core.emit({name:"GlobalPreviewChanged"});
-        console.log("Global Off!!!");
       }
     }
 
