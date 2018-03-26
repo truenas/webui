@@ -73,4 +73,11 @@ export class SupportComponent {
     }
   }
 
+  formValidation(){
+    if (this.username !== '' && this.password !== '' && this.category !== '' && this.title !== ''&& this.body !== ''&& this.type !== ''){
+      return false
+    }
+    return true
+  }
+
 }
