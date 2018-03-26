@@ -153,7 +153,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
            name: theme.name,
            width: '200px',
            placeholder:theme.label,
-           tooltip: 'Add ' + theme.label + ' to your favorites',
+           tooltip: 'Delete custom theme ' + theme.label ,
            class:'inline'
          }
          this.customThemeFields.push(field);

@@ -53,7 +53,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             placeholder: 'Choose Theme', 
             options: this.themeOptions,
             value:this.themeService.activeTheme,
-            tooltip: "Choose which color from the palette will be the theme's accent color",
+            tooltip:'Pick your preferred theme.',
             class:'inline'
           },
           { 
@@ -63,7 +63,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             placeholder: 'View Type Preference',
             options:[{label:'Cards',value:'cards'},{label:'Tables',value:'tables'},{label:'Auto',value:'auto'}],
             value:'cards',
-            tooltip: 'Choose the view metaphor you prefer.',
+            tooltip: 'Choose your preferred view type.',
           },
           { 
             type: 'checkbox', 
@@ -71,7 +71,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             width:'300px',
             placeholder: 'Enable Guided Tour on Startup',
             value:this.prefs.preferences.showGuide,
-            tooltip: 'Pick a color, any color!',
+            tooltip: 'Choose whether you\'d like to see the guide upon logging in.',
             class:'inline'
           },
           { 
@@ -80,7 +80,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             width: '300px',
             placeholder: 'Enable Helpful Tooltips in Forms',
             value:this.prefs.preferences.showTooltips,
-            tooltip: 'Pick a color, any color!',
+            tooltip: 'This option enables/disables tooltips in forms.',
             class:'inline'
           }
         ]
