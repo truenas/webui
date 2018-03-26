@@ -28,7 +28,7 @@
           <mat-list-item role="listitem"><span class="label bold">OS Version: </span>  <span class="value">{{data.version}}</span></mat-list-item>
           <mat-list-item role="listitem"><span class="label bold">Processor: </span>  <span class="value">{{data.model}} ({{data.cores}} cores)</span></mat-list-item>
           <mat-list-item role="listitem"><span class="label bold">Memory: </span>  <span class="value">{{memory}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold">HostName: </span>  <span class="value">{{data.hostname}}</span> <span class="label bold" style="margin-left:16px">IP Addr: </span>  <span class="value">{{ip}}</span></mat-list-item>
+          <mat-list-item role="listitem"><span class="label bold">HostName: </span>  <span class="value">{{data.hostname}}</span> <span class="label bold" style="margin-left:16px">IP Addr: </span>  <span class="value">&nbsp;&nbsp;{{connectionIp}}</span></mat-list-item>
           <mat-list-item role="listitem"><span class="label bold">Uptime: </span>  {{data.uptime}}</mat-list-item>
           <mat-list-item role="listitem">
             <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel}}</button>
