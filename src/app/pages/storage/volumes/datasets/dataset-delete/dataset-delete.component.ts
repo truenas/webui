@@ -74,9 +74,9 @@ export class DatasetDeleteComponent implements Formconfiguration {
       this.loader.close();
 
       if( body.areyousure === true && body.imaware === true  ) {
-          this.dialogService.Info(T("Detach Volue"), T("Detached Volume:" + this.pk + " successfully"));
+          this.dialogService.Info(T("Delete Dataset"), T("Deleted dataset:" + this.pk + " successfully"));
       } else {
-        this.dialogService.Info(T("Action cancled: Detach Volue"), T("Detached Volume was NOT executed:" + this.pk + " action detach was cancled."));
+        this.dialogService.Info(T("Action cancled: Delete Dataset"), T("Dataset delete was NOT executed:" + this.pk + " action was cancled."));
       }
     }, (error) => {
       this.loader.close();
