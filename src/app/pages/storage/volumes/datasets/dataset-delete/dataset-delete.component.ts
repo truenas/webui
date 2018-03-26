@@ -13,7 +13,7 @@ import { FieldConfig } from '../../../../common/entity/entity-form/models/field-
 
 @Component({
   selector: 'app-dataset-delete',
-  template: `form-delete [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>'
 })
 export class DatasetDeleteComponent implements Formconfiguration {
 
