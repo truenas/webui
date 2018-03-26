@@ -145,7 +145,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   createTheme(){
-    this.router.navigate(['/ui-preferences/create-theme']);
+    this.router.navigate(['/ui-preferences']);
   }
 
   toggleNotific() {
