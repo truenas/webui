@@ -68,8 +68,6 @@ export class SupportComponent {
           }
         }
       });
-    } else {
-      console.log("please enter valid email address");
     }
   }
 
