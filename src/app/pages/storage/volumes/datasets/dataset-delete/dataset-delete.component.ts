@@ -10,6 +10,7 @@ import { Formconfiguration } from '../../../../common/entity/entity-form/entity-
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../../translate-marker';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
 
 @Component({
   selector: 'app-dataset-delete',
@@ -23,23 +24,26 @@ export class DatasetDeleteComponent implements Formconfiguration {
   public deleteSnapshot: boolean = true;
   public route_success: string[] = ['storage', 'volumes'];
   public isNew: boolean = true;
-  public isEntity: boolean = false;
+  public isEntity: boolean = true;
+  private title: string;
 
-  public resource_name = 'storage/volume';
+  public resource_name = 'storage/dataset';
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'checkbox',
-      name : 'areyousure',
-      placeholder : T("Are you sure you want to delete?"),
-      tooltip : T('Are you sure you want to delete? the data will be lost.'),
+      type: 'checkbox',
+      name: 'areyousure',
+      placeholder: T("Are you sure you want to delete?"),
+      tooltip: T('Are you sure you want to delete? the data will be lost.'),
+      required: true
     },
 
     {
-      type : 'checkbox',
-      name : 'imaware',
-      placeholder : T('Im aware that snapsots within this data set will be deleted.'),
-      tooltip : T('Im aware that snapsots within this data set will be deleted.   This meas they will not be restorable.'),
+      type: 'checkbox',
+      name: 'imaware',
+      placeholder: T('Im aware that snapsots within this data set will be deleted.'),
+      tooltip: T('Im aware that snapsots within this data set will be deleted.   This meas they will not be restorable.'),
+      required: true
     }
 
   ];
@@ -48,39 +52,42 @@ export class DatasetDeleteComponent implements Formconfiguration {
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService, protected dialogService: DialogService, protected loader: AppLoaderService) { }
 
-  clean_name(value) {
-    let start = this.path.split('/').splice(1).join('/');
-    if (start != '') {
-      return start + '/' + value;
-    } else {
-      return value;
-    }
-  }
 
-  getPK(entityDelete, params) {
-    this.pk = params['pk'];
-    this.path = params['path'];
-    entityDelete.pk = this.path.split('/').splice(1).join('/');
+  preInit(entityForm: EntityFormComponent) {
+    let paramMap: any = (<any>this.aroute.params).getValue();
+
+    if (paramMap['pk'] !== undefined) {
+      this.pk = paramMap['pk'];
+    }
+
+    if (paramMap['path'] !== undefined) {
+      this.path = paramMap['path'];
+    }
   }
 
   afterInit(entityAdd: any) {
   }
 
-  customSubmit(body) { 
-    const url = this.resource_name + "/" + this.pk + "/datasets/";
+  customSubmit(body) {
+
+    const url = this.resource_name + "/" + this.path
+
     this.loader.open();
 
     this.rest.delete(url, {}).subscribe((res) => {
       this.loader.close();
 
-      if( body.areyousure === true && body.imaware === true  ) {
-          this.dialogService.Info(T("Delete Dataset"), T("Deleted dataset:" + this.pk + " successfully"));
-      } else {
-        this.dialogService.Info(T("Action cancled: Delete Dataset"), T("Dataset delete was NOT executed:" + this.pk + " action was cancled."));
-      }
+      this.router.navigate(new Array('/').concat(
+        ["storage", "volumes"]));
+        
+      this.dialogService.Info(T("Delete Dataset"), T("Deleted dataset:" + this.pk + " successfully"));
+
     }, (error) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error Detaching volume"), error.message, error.stack);
+      this.router.navigate(new Array('/').concat(
+        ["storage", "volumes"]));
+      this.dialogService.errorReport(T("Error Deleting Dataset"), error.message, error.stack);
     });
+   
   }
 }
