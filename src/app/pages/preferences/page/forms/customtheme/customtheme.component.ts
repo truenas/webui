@@ -348,13 +348,13 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       this._globalPreview = state;
     }
 
-    /*custActions: any[] = [
+    custActions: any[] = [
       {
-        id:'update-preview',
-        name:'Update Preview',
-        eventName: "UpdatePreview"
+        id:'cancel',
+        name:'Cancel',
+        eventName: "FormCancelled"
       }
-    ]*/
+    ]
 
     constructor(
       protected router: Router, 
@@ -410,11 +410,12 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
             }
           break;
           case "FormCancelled":
+              this.globalPreview = false;
+              this.updateGlobal();
+              this.router.navigate(['ui-preferences']);
           break;
           case "FormGroupValueChanged":
           case "UpdatePreview":
-            console.log("ThemeForm Change Detected");
-            console.log(evt.data);
             this.snapshot = {theme:evt.data, baseTheme:this.baseTheme}
             if(this.globalPreview){
               this.updateGlobal(this.snapshot);

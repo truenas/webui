@@ -30,7 +30,7 @@ export class ApiService {
         responseEvent: "UserData"
       },
       preProcessor(def:ApiCall){ 
-        console.log("API SERVICE: USER DATA REQUESTED");
+        //console.log("API SERVICE: USER DATA REQUESTED");
         return def
       }
     },
@@ -43,20 +43,19 @@ export class ApiService {
         //responseEvent: null
       },
       preProcessor(def:ApiCall){
-        console.log("USER DATA PREPROCESSOR");
+        //console.log("USER DATA PREPROCESSOR");
         let uid:number = 1;
         let redef = Object.assign({}, def);
-        console.log(def.args)
+        //console.log(def.args)
         //Do some stuff here
         // [1,{attributes:{usertheme:theme.name}}]
         redef.args =  [ uid, "preferences",def.args ] ;
-        console.log("DEBUG");
         return redef;
       },
       postProcessor(res,callArgs,core){
-        console.log("USER DATA POSTPROCESSOR");
-        console.log(res);
-        console.log(callArgs);
+        //console.log("USER DATA POSTPROCESSOR");
+        //console.log(res);
+        //console.log(callArgs);
         let cloneRes = Object.assign({},res);
         //cloneRes = {callArgs:callArgs ,data: res}
         if(res == 1){

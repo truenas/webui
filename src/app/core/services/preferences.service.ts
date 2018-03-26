@@ -43,12 +43,12 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //console.log(evt);
       if(evt.data[0].attributes.preferences){
         this.updatePreferences(evt.data[0].attributes.preferences);
       } else if(!evt.data[0].attributes.preferences){
         this.savePreferences();
-        console.warn("No Preferences Found in Middleware");
+        //console.warn("No Preferences Found in Middleware");
       }
     });
 
@@ -59,13 +59,13 @@ export class PreferencesService {
 
     this.core.register({observerClass:this, eventName:"ChangeCustomThemesPreference"}).subscribe((evt:CoreEvent) => {
         this.preferences.customThemes = evt.data;
-        console.log("New Custom Themes List!");
-        console.log(this.preferences);
+        //console.log("New Custom Themes List!");
+        //console.log(this.preferences);
         this.core.emit({name:"UserDataUpdate", data:this.preferences  });
     });
 
     this.core.register({observerClass:this, eventName:"AddCustomThemePreference"}).subscribe((evt:CoreEvent) => {
-        console.log(this.preferences);
+        //console.log(this.preferences);
         let newTheme:Theme;
         newTheme = evt.data;
         this.preferences.customThemes.push(newTheme);
@@ -83,8 +83,8 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
-      console.log("ChangePreferences");
-      console.log(evt.data);
+      //console.log("ChangePreferences");
+      //console.log(evt.data);
       let prefs = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
