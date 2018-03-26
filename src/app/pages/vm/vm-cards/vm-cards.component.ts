@@ -116,33 +116,26 @@ export class VmCardsComponent implements OnInit {
     });
 
     this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
-
-      const cardIndex = this.getCardIndex('id',evt.sender[0]);
+      let cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = evt.data.state.toLowerCase();
 
-      const cacheIndex = this.getCardIndex('id',evt.sender[0],true);
+      let cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = evt.data.state.toLowerCase();
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      //let index = this.getCardIndex('id',evt.sender[0]);
-      //this.refreshVM(index,evt.sender[0]); // Can't use this because API doesn't return vm.id
-
-      const cardIndex = this.getCardIndex('id',evt.sender[0]);
+      let cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = 'running';
 
-      const cacheIndex = this.getCardIndex('id',evt.sender[0],true);
+      let cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'running';
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
-      //let index = this.getCardIndex('id',evt.sender[0]);
-      //this.refreshVM(index,evt.sender[0]); // Workaround: sender returns the request params
-
-      const cardIndex = this.getCardIndex('id',evt.sender[0]);
+      let cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = 'stopped';
 
-      const cacheIndex = this.getCardIndex('id',evt.sender[0],true);
+      let cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'stopped';
     });
 
@@ -201,20 +194,21 @@ export class VmCardsComponent implements OnInit {
       autostart:data.autostart,
       vcpus:data.vcpus,
       memory:data.memory,
-      lazyLoaded: false,
-      vnc:false, // Until we verify otherwise we assume false
+      //lazyLoaded: false,
       devices:data.devices,
-      template:'none',
-      isNew:false,
-      cardActions:[],
-      vm_type: data.vm_type,
-      vm_comport:'/dev/nmdm' +String(data.id)+ 'B'
     }   
 
     // Leave out properties not used for update requests
     if(formatForUpdate){
       return card;
     }
+
+    card.vm_type = data.vm_type,
+    card.vm_comport = '/dev/nmdm' +String(data.id)+ 'B'
+    card.template = 'none',
+    //card.cardActions = [],
+    card.vnc = false, // Until we verify otherwise we assume false
+    card.isNew = false,
     card.id = data.id;
     card.state = "Loading...";
     card.vnc = false; // Until we verify otherwise we assume false
@@ -352,6 +346,7 @@ export class VmCardsComponent implements OnInit {
 
   removeVM(evt:CoreEvent){
     const index = this.getCardIndex("id", evt.sender);
+
     this.focusedVM = '';
     this.cards.splice(index,1);
     this.loader.close();
@@ -516,7 +511,7 @@ export class VmCardsComponent implements OnInit {
         data:[id]
       });
     } else {
-      for(let i = 0; i < this.cache.length; i++){
+      for(let i = 0; i < this.cache.length; i++){ 
         this.core.emit({
           name:"VmStatusRequest",
           data:[this.cache[i].id]

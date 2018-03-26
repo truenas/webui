@@ -80,14 +80,14 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
-      if(evt.sender[0] == this.volumeData.id){
-        //console.log("**** WidgetVolumeComponent DISKS ****");
-        //console.log(evt.data);
+      if(evt.data.callArgs[0] == this.volumeData.id){
+        console.log("**** WidgetVolumeComponent DISKS ****");
+        console.log(evt.data);
         // Simulate massive array
         for(let i = 0; i < 1; i++){
           //this.disks.push("ada" + i);
         }
-        this.disks = evt.data;
+        this.disks = evt.data.data;
 
         if(this.disks.length > 16){
           this.gridCols = 8;
@@ -122,16 +122,17 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
+      let data = evt.data.data.data;
       let temp: number;
-      for(let i = evt.data.data.length-1; i >= 0; i--){
-        if(evt.data.data[i][0]){
-          temp = evt.data.data[i][0];
+      for(let i = data.length-1; i >= 0; i--){
+        if(data[i][0]){
+          temp = data[i][0];
           break;
         }
       }
       // Test hot temps
       //temp = 64;
-      this.diskDetails[evt.sender[1]].temp = temp;
+      this.diskDetails[evt.data.callArgs[1]].temp = temp;
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {

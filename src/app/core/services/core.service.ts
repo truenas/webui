@@ -39,7 +39,7 @@ interface Registration {
 export class CoreService {
   public coreEvents: Subject<CoreEvent>;
   constructor() {
-    console.log("*** New Instance of Core Service ***");
+    //DEBUG: console.log("*** New Instance of Core Service ***");
     this.coreEvents = new Subject();
     this.coreEvents.subscribe(
       (evt:CoreEvent) => {
@@ -80,7 +80,8 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
-    //DEBUG: console.log("CORESERVICE: Emit() ");
+    //DEBUG: console.log("CORESERVICE: Emitting " + evt.name);
+    //DEBUG: console.log(this.dispatchTable)
 
     //avoid matching null values
     if(!evt.name){
@@ -92,17 +93,41 @@ export class CoreService {
 
     for(var i=0; i < this.dispatchTable.length; i++){
       let reg = this.dispatchTable[i]; // subscription
-      if(reg.eventName == evt.name && reg.sender == evt.sender){
-	//DEBUG: console.log("Matched name and sender");
+
+      let subscriptionType:string = "any";
+      if(reg.eventName && reg.sender){
+        subscriptionType = "NameSender";
+      } else if(reg.eventName){
+        subscriptionType = "Name";
+      } else if(reg.sender){
+        subscriptionType = "Sender";
+      }
+      //DEBUG: console.log(i + ":CoreService: Subscription type = " + subscriptionType);
+
+      if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
+	//DEBUG:
+        //DEBUG: console.log("Matched name and sender");
+        //DEBUG: console.log(reg.observerClass);
+        //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-      } else if(evt.name && reg.eventName == evt.name){
-	//DEBUG: console.log("Matched name only");
+        //return this;
+      } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
+	//DEBUG:
+        //DEBUG: console.log("Matched name only");
+        //DEBUG: console.log(reg.observerClass);
+        //DEBUG: console.log(evt);
 	reg.observable.next(evt);
-      } else if(evt.sender && reg.sender == evt.sender){
-	//DEBUG: console.log("Matched sender only");
+        //return this;
+      } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
+	//DEBUG: 
+        //DEBUG: console.log("Matched sender only");
+        //DEBUG: console.log(reg.observerClass);
+        //DEBUG: console.log(evt);
 	reg.observable.next(evt);
+        //return this;
       } else {
-	//DEBUG: console.log("No match found");
+	//DEBUG: 
+        //DEBUG: console.log("No match found");
       }
     }
     return this;

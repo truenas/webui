@@ -10,6 +10,7 @@ import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewch
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { environment } from 'app/../environments/environment';
 
 @Component({
   selector: 'widget-sysinfo',
@@ -26,6 +27,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   private _updateBtnStatus:string = "primary";
   public updateBtnLabel:string = "Check for Updates..."
   private _themeAccentColors: string[];
+  public connectionIp = environment.remote
 
   constructor(public router: Router){
     super();
@@ -79,12 +81,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     for(let color in theme.accentColors){
       this._themeAccentColors.push(theme[theme.accentColors[color]]);
     }
-    /*if(theme.accentColors){
-      this._themeAccentColors = theme.accentColors;
-    } else {
-      this._themeAccentColors = [];
-    }*/
-
     return this._themeAccentColors;
   }
 
