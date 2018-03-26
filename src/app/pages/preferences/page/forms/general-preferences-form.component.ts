@@ -8,6 +8,7 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import {RestService, WebSocketService} from 'app/services/';
 import { ThemeService, Theme} from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
@@ -69,7 +70,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             name: 'showGuide', 
             width:'300px',
             placeholder: 'Enable Guided Tour on Startup',
-            value:true,
+            value:this.prefs.preferences.showGuide,
             tooltip: 'Pick a color, any color!',
             class:'inline'
           },
@@ -78,7 +79,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             name: 'showTooltips', 
             width: '300px',
             placeholder: 'Enable Helpful Tooltips in Forms',
-            value:true,
+            value:this.prefs.preferences.showTooltips,
             tooltip: 'Pick a color, any color!',
             class:'inline'
           }
@@ -101,6 +102,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
       protected _injector: Injector, 
       protected _appRef: ApplicationRef,
       public themeService:ThemeService,
+      public prefs:PreferencesService,
       private core:CoreService
     ) {}
 
@@ -119,7 +121,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
       this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
         this.setThemeOptions();
       });
-      this.setFavoriteFields();
+      //this.setFavoriteFields();
       this.loadValues();
       this.target.subscribe((evt:CoreEvent) => {
         switch(evt.name){
@@ -139,7 +141,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
     /*afterInit(entityForm: any) {
      }*/
 
-     setFavoriteFields(){
+     /*setFavoriteFields(){
        for(let i = 0; i < this.themeService.freenasThemes.length; i++){
          let theme = this.themeService.freenasThemes[i];
          let field = { 
@@ -153,7 +155,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
          }
          this.favoriteFields.push(field);
        }   
-     }
+     }*/
 
      setThemeOptions(){
        this.themeOptions.splice(0,this.themeOptions.length);
