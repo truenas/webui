@@ -42,7 +42,7 @@ export class DatasetDeleteComponent implements Formconfiguration {
       type: 'checkbox',
       name: 'imaware',
       placeholder: T('I am aware that snapsots within this data set will be deleted.'),
-      tooltip: T('I am aware that snapsots within this data set will be deleted.   This meas they will not be restorable.'),
+      tooltip: T('I am aware that snapsots within this data set will be deleted.   This means they will not be restorable.'),
       required: true
     }
 
