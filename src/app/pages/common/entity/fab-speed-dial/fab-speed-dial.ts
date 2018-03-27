@@ -173,7 +173,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
      * The direction of the speed dial. Can be 'up', 'down', 'left' or 'right'
      */
     @Input() get direction() {
-        return 'left';
+        return this._direction;
     }
 
     set direction(direction: string) {
