@@ -7,23 +7,23 @@
         </p>
         <br>
         <p>
-            If you do not have an account, please <a href="https://bugs.freenas.org/account/register"> register</a>.
+            If you do not have an account, please register<a href="https://bugs.freenas.org/account/register"> <b><u>here</u></b></a>.
         </p>
         <br>
         <mat-input-container class="full-width">
-            <input matInput placeholder="{{'Username' | translate}}" [(ngModel)]="username" name="username">
+            <input matInput placeholder="{{'Username' | translate}}" [(ngModel)]="username" name="username" required>
         </mat-input-container>
         <br>
         <mat-input-container class="full-width">
-            <input matInput placeholder="{{'Password' | translate}}" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password">
+            <input matInput placeholder="{{'Password' | translate}}" type="password" (blur)="onBlurMethod()" [(ngModel)]="password" name="password" required>
         </mat-input-container>
         <br>
-        <mat-select name="type" placeholder="{{'Type' | translate}}" class="full-width" [(ngModel)]="type">
+        <mat-select name="type" placeholder="{{'Type' | translate}}" required class="full-width" [(ngModel)]="type" >
             <mat-option value="BUG">Bug</mat-option>
             <mat-option value="FEATURE">Feature</mat-option>
         </mat-select>
         <br>
-        <mat-select name="category" placeholder="{{'Category' | translate}}" class="full-width" [(ngModel)]="category">
+        <mat-select name="category" placeholder="{{'Category' | translate}}" required class="full-width" [(ngModel)]="category" >
             <mat-option *ngFor="let category of categories" [value]="category.value">
                 {{ category.label }}
             </mat-option>
@@ -34,13 +34,13 @@
         </mat-checkbox>
         <br>
         <mat-input-container class="full-width">
-            <input matInput placeholder="{{'Subject' | translate}}" name="title" [(ngModel)]="title">
+            <input matInput placeholder="{{'Subject' | translate}}" name="title" [(ngModel)]="title" required>
         </mat-input-container>
         <br>
         <mat-input-container class="full-width">
-            <textarea matInput matAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body"></textarea>
+            <textarea matInput matAutosizeMinRows minRows="6" placeholder="Description" name="body" [(ngModel)]="body" required></textarea>
         </mat-input-container>
-        <button mat-raised-button class="btn btn-block" (click)="onSubmit()" type="submit">Submit Ticket</button>
+        <button mat-raised-button class="btn btn-block" (click)="onSubmit()" type="submit" [disabled]="formValidation()">Submit</button>
     </div>
     </form>
 </mat-card>
