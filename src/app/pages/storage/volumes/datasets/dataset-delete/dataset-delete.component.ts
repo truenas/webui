@@ -80,8 +80,6 @@ export class DatasetDeleteComponent implements Formconfiguration {
       this.router.navigate(new Array('/').concat(
         ["storage", "volumes"]));
         
-      this.dialogService.Info(T("Delete Dataset"), T("Deleted dataset:" + this.pk + " successfully"));
-
     }, (error) => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(
