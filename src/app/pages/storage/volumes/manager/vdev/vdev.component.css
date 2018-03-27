@@ -28,3 +28,10 @@
 .vdevTooltip {
     display: auto; 
 }
+
+.custom_cell_styling {
+	overflow: hidden; 
+	height: 20px; 
+	width: 100%; 
+	padding-left: 5px;
+}
