@@ -9,6 +9,7 @@ export class NTPServerListComponent {
   public title = "NTP Servers";
   protected resource_name: string = 'system/ntpserver';
   protected route_add: string[] = [ 'system', 'ntpservers', 'add' ];
+  protected route_add_tooltip = "Add NTP Server";
   protected route_edit: string[] = [ 'system', 'ntpservers', 'edit' ];
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];
