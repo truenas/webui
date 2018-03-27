@@ -104,7 +104,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
     this.xterm.open(this.container.nativeElement);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
+    this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
     this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
+    this.xterm.send('\r');
   }
 
   initializeWebShell(res: string) {
