@@ -43,24 +43,32 @@ class view_guide_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_guide(self):
-        # Click an element indirectly
-        driver.find_element_by_xpath(xpaths['navGuide']).click()
-        # allowing page to load by giving explicit time(in seconds)
-        time.sleep(1)
-        # get the ui element
-        ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Guide" in page_data)
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            # Click an element indirectly
+            driver.find_element_by_xpath(xpaths['navGuide']).click()
+            # allowing page to load by giving explicit time(in seconds)
+            time.sleep(1)
+            # get the ui element
+            ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Guide" in page_data)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_check_version(self):
-        # cancelling the tour
-        if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
-            driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+        try:
+            # cancelling the tour
+            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
 
 #        driver.find_element_by_xpath("/html/body/div/nav/div[2]/ul/li[1]/a").click()
 #        ui_element=driver.find_element_by_xpath("/html/body/div/section/div/div/div[2]/div/p[5]")
@@ -71,7 +79,14 @@ class view_guide_test(unittest.TestCase):
 #        self.assertTrue("FreeNAS" in page_data)
 #        time.sleep(10)
         # Taking screenshot
-        self.screenshot("02")
+            self.screenshot("02")
+
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
     # method to test if an element is present
