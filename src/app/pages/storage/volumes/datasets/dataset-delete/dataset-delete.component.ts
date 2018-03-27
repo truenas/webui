@@ -34,7 +34,7 @@ export class DatasetDeleteComponent implements Formconfiguration {
       type: 'checkbox',
       name: 'areyousure',
       placeholder: T("Are you sure you want to delete?"),
-      tooltip: T('Are you sure you want to delete? the data will be lost.'),
+      tooltip: T('Are you sure you want to delete? The data will be lost.'),
       required: true
     },
 
