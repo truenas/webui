@@ -17,8 +17,6 @@ import { EntityUtils } from '../../../pages/common/entity/utils';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
-
-
 interface VmProfile {
   name?:string;
   id?:string;
@@ -65,6 +63,25 @@ export class VmCardsComponent implements OnInit {
   }
   protected loaderOpen = false;
 
+  public spin: boolean = true;
+  public direction: string = 'down';
+  public animationMode: string = 'fling';
+
+  public actions: any = [{
+      label : "Add DockerVM",
+      icon: "picture_in_picture",
+      onClick : () => {
+         this.addDockerVMWizard();
+       }
+    }, {
+      label : "Add VM",
+      icon: "beach_access",
+      onClick : () => {
+        this.addVMWizard();
+      }
+    }
+  ]
+
   constructor(protected ws: WebSocketService,protected rest: RestService,private core:CoreService, 
     private dialog: DialogService,protected loader: AppLoaderService,protected router: Router,
     protected matdialog: MatDialog){}
@@ -100,6 +117,7 @@ export class VmCardsComponent implements OnInit {
       default:
       break;
       }
+      
     });
 
     /* 
@@ -519,5 +537,4 @@ export class VmCardsComponent implements OnInit {
     }
     }
   }
-
 }
