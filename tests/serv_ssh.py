@@ -44,58 +44,97 @@ class conf_ssh_test(unittest.TestCase):
 
 
     def test_01_turnon_ssh (self):
-        # click Service Menu
-        driver.find_element_by_xpath(xpaths['navService']).click()
-        # allowing the button to load
-        time.sleep(1)
-        print (" turning on the ssh service")
-        # scroll down
-        driver.find_element_by_tag_name('body').send_keys(Keys.END)
-        time.sleep(2)
-        self.status_change("14", "start")
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            # click Service Menu
+            driver.find_element_by_xpath(xpaths['navService']).click()
+            # allowing the button to load
+            time.sleep(1)
+            print (" turning on the ssh service")
+            # scroll down
+            driver.find_element_by_tag_name('body').send_keys(Keys.END)
+            time.sleep(2)
+            self.status_change("14", "start")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_checkif_ssh_on (self):
-        print (" check if ssh turned on")
-        time.sleep(2)
-        self.status_check("14")
-        # Taking screenshot
-        self.screenshot("02")
+        try:
+            print (" check if ssh turned on")
+            time.sleep(2)
+            self.status_check("14")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
 
     def test_03_configure_ssh(self):
-        print (" configuring ssh service with root access")
-        time.sleep(2)
-        # click on configure button
-        driver.find_element_by_xpath(xpaths['configButton']).click()
-        # uncheck on Login as Root with Passsword
-        driver.find_element_by_xpath('//*[@id="ssh_rootlogin"]/mat-checkbox/label/div').click()
-        # click on save button
-        driver.find_element_by_xpath('//*[@id="save_button"]').click()
-        time.sleep(5)
-        # Taking screenshot
-        self.screenshot("03")
+        try:
+            print (" configuring ssh service with root access")
+            time.sleep(2)
+            # click on configure button
+            driver.find_element_by_xpath(xpaths['configButton']).click()
+            # uncheck on Login as Root with Passsword
+            driver.find_element_by_xpath('//*[@id="ssh_rootlogin"]/mat-checkbox/label/div').click()
+            # click on save button
+            driver.find_element_by_xpath('//*[@id="save_button"]').click()
+            time.sleep(5)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_04_turnoff_ssh(self):
-        # click Service Menu
-        driver.find_element_by_xpath(xpaths['navService']).click()
-        # allowing the button to load
-        time.sleep(1)
-        print (" turning off the ssh service")
-        # scroll down
-        driver.find_element_by_tag_name('html').send_keys(Keys.END)
-        time.sleep(2)
-        self.status_change("14", "stop")
-        # Taking screenshot
-        self.screenshot("04")
+        try:
+            # click Service Menu
+            driver.find_element_by_xpath(xpaths['navService']).click()
+            # allowing the button to load
+            time.sleep(1)
+            print (" turning off the ssh service")
+            # scroll down
+            driver.find_element_by_tag_name('html').send_keys(Keys.END)
+            time.sleep(2)
+            self.status_change("14", "stop")
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
     def test_05_checkif_ssh_off (self):
-        print (" check if ssh turned on")
-        time.sleep(2)
-        self.status_check("14")
-        time.sleep(10)
-        # Taking screenshot
-        self.screenshot("05")
+        try:
+            print (" check if ssh turned on")
+            time.sleep(2)
+            self.status_check("14")
+            time.sleep(10)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
         # Next step-- To check if the new user is present in the list via automation
 

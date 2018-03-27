@@ -43,62 +43,75 @@ class check_update_test(unittest.TestCase):
 
     # Test navigation Account>Users>Hover>New User and enter username,fullname,password,confirmation and wait till user is  visibile in the list
     def test_01_nav_sys_update(self):
-        # Navigating to System>Update page
-        a = driver.find_element_by_xpath(xpaths['navSystem'])
-        a.click()
-        # allowing page to load by giving explicit time(in seconds)
-        time.sleep(1)
-        # Click on the Update submenu
-        driver.find_element_by_xpath(xpaths['submenuUpdate']).click()
-        self.error_check_sys()
-        # cancelling the tour
-        if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
-            driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
-        # get the ui element
-        ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
-        # get the weather data
-        page_data=ui_element.text
-        print ("the Page now is: " + page_data)
-        # assert response
-        self.assertTrue("Update" in page_data)
-        # Taking screenshot
-        self.screenshot("01")
+        try:
+            # Navigating to System>Update page
+            a = driver.find_element_by_xpath(xpaths['navSystem'])
+            a.click()
+            # allowing page to load by giving explicit time(in seconds)
+            time.sleep(1)
+            # Click on the Update submenu
+            driver.find_element_by_xpath(xpaths['submenuUpdate']).click()
+            self.error_check_sys()
+            # cancelling the tour
+            if self.is_element_present(By.XPATH,"/html/body/div[6]/div[1]/button"):
+                driver.find_element_by_xpath("/html/body/div[6]/div[1]/button").click()
+            # get the ui element
+            ui_element=driver.find_element_by_xpath("//*[@id='breadcrumb-bar']/ul/li[2]/a")
+            # get the weather data
+            page_data=ui_element.text
+            print ("the Page now is: " + page_data)
+            # assert response
+            self.assertTrue("Update" in page_data)
+            # Taking screenshot
+            self.screenshot("_")
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     def test_02_check_update_now(self):
-        # Click on the checknow button
-        driver.find_element_by_xpath(xpaths['buttonChecknow']).click()
-        time.sleep(2)
-        # get the ui element, check if first element is present, if yes, check value text if as expected
-        if self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]"):
-            ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]")
-            update_data=ui_element.text
-            if update_data == "Upgrade":
-                print ("There is an available upgrade")
-                # assert response
-                self.assertTrue("Upgrade" in update_data)
-                self.error_check_sys()
+        try:
+            # Click on the checknow button
+            driver.find_element_by_xpath(xpaths['buttonChecknow']).click()
+            time.sleep(2)
+            # get the ui element, check if first element is present, if yes, check value text if as expected
+            if self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]"):
+                ui_element=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card[1]/div/div[4]/div/table/tbody/tr[1]/td[1]")
+                update_data=ui_element.text
+                if update_data == "Upgrade":
+                    print ("There is an available upgrade")
+                    # assert response
+                    self.assertTrue("Upgrade" in update_data)
+                    self.error_check_sys()
+                else:
+                    print ("There is an unexpected issue: it is not an upgrade")
+                    self.error_check_sys()
+            elif self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div"):
+                ui_element2=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div")
+                update_data2=ui_element2.text
+                if "No" in update_data2:
+                    print ("There is no update available")
+                    self.assertTrue("No" in update_data2)
+                    self.error_check_sys()
+                else: 
+                    print ("There is an unexpected issue: something wrong with no update available element:" + update_data2)
+                    self.error_check_sys()
             else:
-                print ("There is an unexpected issue: it is not an upgrade")
+                print ("There is an unexpected issue")
                 self.error_check_sys()
-        elif self.is_element_present(By.XPATH,"/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div"):
-            ui_element2=driver.find_element_by_xpath("/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-update/md-card/div/div[4]/div/div")
-            update_data2=ui_element2.text
-            if "No" in update_data2:
-                print ("There is no update available")
-                self.assertTrue("No" in update_data2)
-                self.error_check_sys()
-            else: 
-                print ("There is an unexpected issue: something wrong with no update available element:" + update_data2)
-                self.error_check_sys()
-        else:
-            print ("There is an unexpected issue")
-            self.error_check_sys()
-        # Taking screenshot
-        self.screenshot("02")
-
-        # Close the System Tab
-#        driver.find_element_by_xpath(xpaths['navSystem']).click()
-        time.sleep(5)
+            # Taking screenshot
+            self.screenshot("_")
+            # Close the System Tab
+#            driver.find_element_by_xpath(xpaths['navSystem']).click()
+            time.sleep(5)
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
     # method to test if an element is present
     def is_element_present(self, how, what):
