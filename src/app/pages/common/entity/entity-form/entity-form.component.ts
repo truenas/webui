@@ -224,7 +224,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 if (current_field.type === "array") {
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
-                  if (!_.isArray(this.data[i]) && current_field.type === "select") {
+                  if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
                     this.data[i] = _.split(this.data[i], ',');
                   }
                   fg.setValue(this.data[i]);

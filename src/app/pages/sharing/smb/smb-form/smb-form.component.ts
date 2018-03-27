@@ -185,6 +185,7 @@ export class SMBFormComponent implements OnDestroy {
 
   resourceTransformIncomingRestData(data: any) {
     data['cifs_default_permissions'] = false;
+    return data;
   }
 
   afterInit(entityForm: any) {

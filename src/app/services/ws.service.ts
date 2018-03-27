@@ -10,6 +10,7 @@ import { DialogService } from '../services/dialog.service';
 @Injectable()
 export class WebSocketService {
 
+  private _authStatus: Subject<any>;
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
   pendingCalls: any;
@@ -25,10 +26,15 @@ export class WebSocketService {
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
   constructor(private _router: Router, private dialogService: DialogService) {
+    this._authStatus = new Subject();
     this.onOpenSubject = new Subject();
     this.onCloseSubject = new Subject();
     this.pendingCalls = new Map();
     this.connect();
+  }
+
+  get authStatus(){
+    return this._authStatus.asObservable();
   }
 
   connect() {
@@ -217,6 +223,7 @@ export class WebSocketService {
   loginCallback(result, observer) {
     if (result === true) {
       this.loggedIn = true;
+      this._authStatus.next(this.loggedIn);
       
       // Subscribe to all events by default
       this.send({
@@ -226,6 +233,7 @@ export class WebSocketService {
       });
     } else {
       this.loggedIn = false;
+      this._authStatus.next(this.loggedIn);
     }
     observer.next(result);
     observer.complete();
