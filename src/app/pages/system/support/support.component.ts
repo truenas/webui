@@ -68,9 +68,14 @@ export class SupportComponent {
           }
         }
       });
-    } else {
-      console.log("please enter valid email address");
     }
+  }
+
+  formValidation(){
+    if (this.username !== '' && this.password !== '' && this.category !== '' && this.title !== ''&& this.body !== ''&& this.type !== ''){
+      return false
+    }
+    return true
   }
 
 }
