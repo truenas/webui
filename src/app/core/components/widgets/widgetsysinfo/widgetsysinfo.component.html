@@ -1,18 +1,6 @@
 <div class="widget widget-{{widgetSize}}" ngClass.xs="double-height xs">
   <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
-      <!--<mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar" >
-        <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
-        <button mat-icon-button [matMenuTriggerFor]="menu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        </mat-toolbar-row>
-      <mat-menu #menu="matMenu" color="warn">
-        <button mat-menu-item (click)="toggleConfig()">
-          <mat-icon>settings</mat-icon>
-          <span>Configure</span>
-        </button>
-        </mat-menu>-->
       <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
           <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
@@ -20,20 +8,41 @@
           <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
         </div>
         <div fxFlex="100" fxFlex.gt-xs="60">
-        <mat-list role="list" *ngIf="data">
+        <!--<mat-list role="list" *ngIf="data">
           <mat-list-item *ngIf="!data.system_product"><h1>FreeNAS</h1></mat-list-item>
           <mat-list-item role="listitem" *ngIf="data.system_product"><h1>{{data.system_product}}</h1></mat-list-item>
-          <mat-list-item role="listitem" *ngIf="data.system_serial"><span class="label bold">Serial Number: </span>  <span class="value">{{data.system_serial}}</span></mat-list-item>
-          <mat-list-item role="listitem" *ngIf="data.license"><span class="label bold">License: </span>  <span class="value">{{data.license}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold">OS Version: </span>  <span class="value">{{data.version}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold">Processor: </span>  <span class="value">{{data.model}} ({{data.cores}} cores)</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold">Memory: </span>  <span class="value">{{memory}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold">HostName: </span>  <span class="value">{{data.hostname}}</span> <span class="label bold" style="margin-left:16px">IP Addr: </span>  <span class="value">&nbsp;&nbsp;{{connectionIp}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold">Uptime: </span>  {{data.uptime}}</mat-list-item>
+          <mat-list-item role="listitem" *ngIf="data.system_serial && manufacturer == 'iX Systems'">
+            <div class="label bold"><strong>Serial Number:</strong> </div><span class="value">{{data.system_serial}}</span>
+          </mat-list-item>
+          <mat-list-item role="listitem" *ngIf="data.license"><span class="label bold"><strong>License:</strong> </span>  <span class="value">{{data.license}}</span></mat-list-item>
+          <mat-list-item role="listitem"><span class="label bold"><strong>OS Version:</strong> </span>  <span class="value">{{data.version}}</span></mat-list-item>
+          <mat-list-item role="listitem"><span class="label bold"><strong>Processor:</strong> </span>  <span class="value">{{data.model}} ({{data.cores}} cores)</span></mat-list-item>
+          <mat-list-item role="listitem"><span class="label bold"><strong>Memory:</strong> </span>  <span class="value">{{memory}}</span></mat-list-item>
+          <mat-list-item role="listitem"><span class="label bold"><strong>HostName:</strong> </span>  <span class="value">{{data.hostname}}</span> <span class="label bold" style="margin-left:16px"><strong>IP Addr:</strong> </span>  <span class="value">&nbsp;&nbsp;{{connectionIp}}</span></mat-list-item>
+          <mat-list-item role="listitem"><span class="label bold"><strong>Uptime:</strong> </span>  {{data.uptime}}</mat-list-item>
           <mat-list-item role="listitem">
             <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel}}</button>
           </mat-list-item>
-          </mat-list>
+          </mat-list>-->
+        <div  *ngIf="data" class="data-container">
+          <div *ngIf="!data.system_product"><h1>FreeNAS</h1></div>
+          <div *ngIf="data.system_product && manufacturer == 'iX Systems'"><h1>{{data.system_product}}</h1></div>
+          <div  *ngIf="data.system_serial && manufacturer == 'iX Systems'">
+            <div class="label bold"><strong>Serial Number:</strong> </div><p class="value">{{data.system_serial}}</p>
+          </div>
+          <div  *ngIf="data.license"><span class="label bold"><strong>License:</strong> </span>  <p class="value">{{data.license}}</p></div>
+          <div class="data-row"><span class="label bold"><strong>OS Version:</strong> </span>  <p class="value">{{data.version}}</p></div>
+          <div class="data-row"><span class="label bold"><strong>Processor:</strong> </span>  <p class="value">{{data.model}} ({{data.cores}} cores)</p></div>
+          <div class="data-row"><span class="label bold"><strong>Memory:</strong> </span>  <p class="value">{{memory}}</p></div>
+          <div class="data-row">
+            <div class="data-inline"><span class="label bold"><strong>HostName:</strong> </span>  <p class="value">{{data.hostname}}</p></div>
+            <div class="data-inline"><span class="label bold"><strong>IP Address:</strong> </span>  <p class="value">{{connectionIp}}</p></div>
+          </div>
+          <div class="data-row"><span class="label bold"><strong>Uptime:</strong> </span>  <p class="value">{{data.uptime}}</p></div>
+          <div class="data-row">
+            <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel}}</button>
+          </div>
+          </div>
         </div>
       </mat-card-content>
       <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
