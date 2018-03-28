@@ -94,7 +94,7 @@ export class SnapshotFormComponent {
   }, {
     type: 'select',
     name: 'task_byweekday',
-    placeholder: T('Weekday'),
+    placeholder: T('Day of week'),
     tooltip: T('Choose the days of the week to take snapshots.'),
     multiple: true,
     options: [{

@@ -55,6 +55,7 @@ class login_test(unittest.TestCase):
             # check if the dashboard opens
             time.sleep(1)
             self.error_check()
+            self.error_check()
             # get the ui element
             ui_element=driver.find_element_by_xpath('//*[@id="breadcrumb-bar"]/ul/li/a')
             # get the weather data
@@ -66,11 +67,12 @@ class login_test(unittest.TestCase):
             if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
             driver.execute_script("document.body.style.zoom='50 %'")
-            self.screenshot("01")
+            self.screenshot("_")
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
-            print (exc_info_p)
+            self.screenshot("-e")
+            for i in xrange(1,len(exc_info_p)):
+                print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 

@@ -7,7 +7,6 @@
     <br/>
   </div>
   <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxlayout.sm="column" fxLayout.xs="column">
-
     <div fxFlex="calc(100% - 400px)" class="padding_all">
       <mat-input-container floatPlaceholder="never">
         <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
@@ -16,26 +15,23 @@
 
     <mat-paginator fxFlex="400px" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
     </mat-paginator>
+  </div>
 
-    <!--<div fxFlex="100">
-      <div *ngIf="selected.length > 0 ? true : false" >-->
-      <ng-template *ngIf="selected.length > 0 ? true : false" >
-        <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
-          <span *ngFor="let maction of conf.multiActions">
-            <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-              <span>{{ maction?.label | translate }}</span>
-            </button>
-          </span>
-        </div>
-        <ng-template #defaultMultiActions>
-          <button mat-raised-button (click)="doMultiDelete(this.selected);">
-            <span>{{ "Delete" | translate }}</span>
+  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
+    <div *ngIf="selected.length > 0 ? true : false" >
+      <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
+        <span *ngFor="let maction of conf.multiActions">
+          <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+            <span>{{ maction?.label | translate }}</span>
           </button>
-        </ng-template>
+        </span>
+      </div>
+      <ng-template #defaultMultiActions>
+        <button mat-raised-button (click)="doMultiDelete(this.selected);">
+          <span>{{ "Delete" | translate }}</span>
+        </button>
       </ng-template>
-      <!--</div>
-        </div>-->
-
+    </div>
   </div>
 
   <div>
@@ -58,7 +54,7 @@
       [selected]='selected'
       (select)='onSelect($event)'>
 
-      <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+      <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
           <div class="headerCheckboxCell">
             <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>

@@ -28,6 +28,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   public updateBtnLabel:string = "Check for Updates..."
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
+  public manufacturer:string = '';
 
   constructor(public router: Router){
     super();
@@ -36,10 +37,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
 
   ngOnInit(){
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
-      console.log("******** SysInfo ********");
-      console.log(evt.data);
+      //DEBUG: console.log("******** SysInfo ********");
+      //DEBUG: console.log(evt.data);
       this.data = evt.data;
       this.memory = this.formatMemory(this.data.physmem, "GB");
+      if(this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
+        this.manufacturer = "iX Systems";
+      }
 
       // Hardware detection
       switch(evt.data.system_product){
@@ -58,7 +62,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     });
 
     this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       if(evt.data.status == "AVAILABLE"){
         this.updateAvailable = true;
       }

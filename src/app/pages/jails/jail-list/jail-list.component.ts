@@ -19,8 +19,6 @@ export class JailListComponent implements OnInit {
   public availablePools;
   public title = "Instances";
   protected queryCall = 'jail.query';
-  protected route_add: string[] = ['jails', 'add'];
-  protected route_add_tooltip = "Add Jail";
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
@@ -232,6 +230,13 @@ export class JailListComponent implements OnInit {
 
   getAddActions() {
     return [{
+        label: 'Add Jail',
+        icon: 'add',
+        onClick: () => {
+          this.router.navigate(
+            new Array('').concat(["jails", "add"]));
+        }
+      },{
         label: "Jail Wizard",
         icon: "beach_access",
         onClick: () => {
