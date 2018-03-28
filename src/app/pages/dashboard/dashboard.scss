@@ -24,3 +24,11 @@
   /*padding-left: -3%;*/
   width: 80%;
 }
+
+widget-sysinfo,
+widget-netinfo,
+widget-cpu-history,
+widget-load-history,
+widget-memory-history{
+  max-width:928px;
+}
