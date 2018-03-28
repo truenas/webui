@@ -252,6 +252,7 @@ export class VmCardsComponent implements OnInit {
       console.warn("New Card Detected")
       console.log("CACHE LENGTH: " + this.cache.length);
       console.log("NEW LIST LENGTH: " + res.data.length);
+      // Put window scroll stuff here
     }
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
