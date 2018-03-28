@@ -16,6 +16,8 @@ export class TunableListComponent {
   protected route_delete: string[] = ['system', 'tunable', 'delete'];
   protected route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = [ 'system', 'tunable' ];
+  protected route_add: string[] = ["system", "tunable", "add"];
+  protected route_add_tooltip = "Add Tunable";
 
   public busy: Subscription;
   public sub: Subscription;
@@ -35,20 +37,6 @@ export class TunableListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-  }
-
-  getAddActions() {
-    let actions = [];
-    actions.push({
-      label: "Add Tunable",
-      icon: "fiber_new",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "tunable", "add"]));
-      }
-    }, );
-
-    return actions;
   }
 
   preInit(entityList: any) {

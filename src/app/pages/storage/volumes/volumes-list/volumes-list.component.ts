@@ -56,8 +56,6 @@ export class VolumesListTableConfig implements InputTableConf {
   public hideTopActions = true;
   public flattenedVolData: any;
   public resource_name = 'storage/volume';
-  public route_add: string[] = ['storage', 'volumes', 'manager'];
-  public route_add_tooltip = "Create ZFS Pool";
   public rowData: ZfsPoolData[] = [];
 
   constructor(
@@ -89,6 +87,14 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getAddActions() {
     const actions = [];
+    actions.push({
+      label: T("Create ZFS Pool"),
+      icon: "add",
+      onClick: () => {
+        this._router.navigate(new Array('/').concat(
+          ["storage", "volumes", "manager"]));
+      }
+    });
 
     actions.push({
       label: T("Import Volumes"),

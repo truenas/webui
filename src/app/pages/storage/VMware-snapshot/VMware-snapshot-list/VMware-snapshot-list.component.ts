@@ -12,6 +12,8 @@ export class VMwareSnapshotListComponent {
 
   public title = "Snapshots";
   protected resource_name: string = 'storage/vmwareplugin';
+  protected route_add: string[] = ["storage", "vmware-Snapshots", "add"];
+  protected route_add_tooltip = "Add VMware Snapshot";
   protected entityList: any;
 
   public columns: Array<any> = [
@@ -31,19 +33,6 @@ export class VMwareSnapshotListComponent {
       return false;
     }
     return true;
-  }
-
-  getAddActions() {
-    let actions = [];
-    actions.push({
-      label: T("Add"),
-      icon: "card_membership",
-      onClick: () => {
-        this._router.navigate(
-          new Array('').concat(["storage", "vmware-Snapshots", "add"]));
-      }
-    });
-    return actions;
   }
 
   getActions(row) {

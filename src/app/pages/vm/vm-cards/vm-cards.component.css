@@ -34,10 +34,15 @@ mat-card.card-filter .filter-field mat-icon{
 mat-card.card-filter .view-controls{
   width:22%;
   position:relative;
-  text-align:right;
+/*  text-align:right;*/
   min-width: 274px;
   margin-right: 16px;
   margin-top:10px;
+}
+
+.vm-fab-speed-dial {
+  right: 0px;
+  top: 0px;
 }
 
 mat-card.card-filter .view-controls .mat-button-toggle-group{
