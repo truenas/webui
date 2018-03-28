@@ -25,7 +25,7 @@ export class ZvolAddComponent {
   protected pk: any;
   protected path: string;
   public sub: Subscription;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
   protected compression: any;
   protected advanced_field: Array<any> = [ 'blocksize' ];
   protected isBasicMode: boolean = true;

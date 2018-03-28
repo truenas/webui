@@ -10,6 +10,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { WebSocketService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-plugin-add',
@@ -75,7 +76,8 @@ export class PluginAddComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    protected ws: WebSocketService) {}
+    protected ws: WebSocketService,
+    protected dialogService: DialogService) {}
 
   ngOnInit() {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
@@ -152,7 +154,7 @@ export class PluginAddComponent implements OnInit {
       (res) => {
         this.loader.close();
         if (res.error) {
-          this.error = res.error;
+          this.dialogService.errorReport(res.error, '', res.exception);
           this.ws.call('jail.delete', [this.pluginName]).subscribe(
             (jailDeleteRes) => {},
             (jailDeleteRes) => {
@@ -164,7 +166,8 @@ export class PluginAddComponent implements OnInit {
         }
       },
       (res) => {
-        new EntityUtils().handleError(this, res);
+        this.loader.close();
+        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
       }
     );
   }

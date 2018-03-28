@@ -32,7 +32,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   saveSubmitText = T("Add Key");
 
   resource_name = 'storage/volume';
-  route_success: string[] = [ 'storage', 'volumes'];
+  route_success: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
   entityData = {
@@ -83,12 +83,12 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Rekeyed Volume"), T("Successfully Added Key to volume ") + value.name);
+      this.dialogService.Info(T("Add key to pool"), T("Successfully added key to pool ") + value.name);
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
+        this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error adding key to volume"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error adding key to pool"), res.message, res.stack);
     });
   }
   

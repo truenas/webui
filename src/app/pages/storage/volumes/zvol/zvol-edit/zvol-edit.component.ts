@@ -33,7 +33,7 @@ export class ZvolEditComponent {
   public error: string;
   public busy: Subscription;
   protected fs: any = (<any>window).filesize;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
 
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols/';

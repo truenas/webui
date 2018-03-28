@@ -14,6 +14,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'jail-edit',
@@ -887,7 +888,8 @@ export class JailEditComponent implements OnInit {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    public translate: TranslateService) {}
+    public translate: TranslateService,
+    protected dialogService: DialogService) {}
 
   isLowerVersion(version: any) {
     if (version < this.currentReleaseVersion) {
@@ -1022,10 +1024,10 @@ export class JailEditComponent implements OnInit {
 
     this.ws.call(this.updateCall, [this.pk, value]).subscribe(
       (res) => {
+        this.loader.close();
         if (updateRelease) {
           this.ws.job(this.upgradeCall, [this.pk, newRelease]).subscribe(
             (res_upgrade) => {
-              this.loader.close();
               if (res_upgrade.error) {
                 this.error = res_upgrade.error;
               } else {
@@ -1037,7 +1039,6 @@ export class JailEditComponent implements OnInit {
             }
           );
         } else {
-          this.loader.close();
           if (res.error) {
             this.error = res.error;
           } else {
@@ -1046,7 +1047,8 @@ export class JailEditComponent implements OnInit {
         }
       },
       (res) => {
-        new EntityUtils().handleError(this, res);
+        this.loader.close();
+        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
       }
     );
   }
