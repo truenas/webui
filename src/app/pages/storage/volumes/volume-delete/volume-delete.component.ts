@@ -24,7 +24,7 @@ export class VolumeDeleteComponent implements Formconfiguration {
     saveSubmitText = T("Detach"); 
   
     resource_name = 'storage/volume';
-    route_success: string[] = [ 'storage', 'volumes'];
+    route_success: string[] = [ 'storage', 'pools'];
     isNew = false;
     isEntity = true;
     
@@ -39,8 +39,10 @@ export class VolumeDeleteComponent implements Formconfiguration {
         name : 'destroy',
         label : T('destroy'),
         value : false,
-        placeholder : T("Destroy the Volumes data ?"),
-        tooltip: T("(unchecked means leave alone/intact)")
+        placeholder : T("Destroy the pool's data?"),
+        tooltip: T("(Checking this will result in deleting the pool, \
+           if you leave this unchecked pool will be exported and the \
+           data will remain intact)")
         
       }
     ];
@@ -73,25 +75,25 @@ export class VolumeDeleteComponent implements Formconfiguration {
         return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({destroy: value.destroy}) }).subscribe((restPostResp) => {
           console.log("restPostResp", restPostResp);
           this.loader.close();
-          this.dialogService.Info(T("Detached/Deleted Volume"), T("Successfully Detached volume ") + value.name);
+          this.dialogService.Info(T("Detach/Delete Pool"), T("Successfully detached pool") + value.name);
     
           this.router.navigate(new Array('/').concat(
-            ["storage", "volumes"]));
+            this.route_success));
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error Detaching volume"), res.message, res.stack);
+          this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
         });
       } else {
         return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
           console.log("restPostResp", restPostResp);
           this.loader.close();
-          this.dialogService.Info(T("Detached/Deleted Volume"), T("Successfully Detached volume ") + value.name);
+          this.dialogService.Info(T("Detach/Delete Pool"), T("Successfully deleted pool") + value.name);
     
           this.router.navigate(new Array('/').concat(
-            ["storage", "volumes"]));
+            this.route_success));
         }, (res) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error Detaching volume"), res.message, res.stack);
+          this.dialogService.errorReport(T("Error deleting pool"), res.message, res.stack);
         });
       }
 

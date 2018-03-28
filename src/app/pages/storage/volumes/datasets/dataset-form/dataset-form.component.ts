@@ -43,7 +43,7 @@ export class DatasetFormComponent implements Formconfiguration {
 
   public volid: string;
   public sub: Subscription;
-  public route_success: string[] = ['storage', 'volumes'];
+  public route_success: string[] = ['storage', 'pools'];
   public isBasicMode: boolean = true;
   public pk: any;
   
@@ -375,12 +375,12 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.loader.close();
       this.dialogService.Info(T("Saved dataset"), T("Successfully saved dataset: ") + this.pk);
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
+        this.route_success));
     }, (res) => {
       this.loader.close();
       //Handled in global error websocketservice
       // this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
-      console.log(T("Error Importing volume"), res.message, res.stack);
+      console.log(T("Error saving dataset"), res.message, res.stack);
     });
   }
 

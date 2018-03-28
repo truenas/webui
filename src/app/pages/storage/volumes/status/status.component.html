@@ -1,7 +1,7 @@
 <div class="material mat-card mat-card-table" *ngIf="is_ready; else emptyVolume">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">
-      Scrub Status
+      {{"Scrub Status" | translate}}
     </div>
   </div>
 
@@ -20,7 +20,7 @@
 <ng-template #emptyVolume class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">
-      Volume info not found.
+      {{ "Pool info not found." | translate}}
     </div>
   </div>
 </ng-template>

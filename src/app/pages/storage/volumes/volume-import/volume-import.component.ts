@@ -21,7 +21,7 @@ import { T } from '../../../../translate-marker';
 
 export class VolumeImportListComponent implements Formconfiguration {
   public resource_name: string = 'storage/volume_import';
-  public route_success: string[] = ['storage', 'volumes'];
+  public route_success: string[] = ['storage', 'pools'];
   public isEntity = true;
   public isNew = true;
   public fieldConfig: FieldConfig[] = [];
@@ -37,8 +37,8 @@ export class VolumeImportListComponent implements Formconfiguration {
       {
         type: 'select',
         name: 'volume_id',
-        placeholder: T('Volume/Dataset'),
-        tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
+        placeholder: T('Pool/Dataset'),
+        tooltip: T('Select an existing pool, dataset, or zvol.'),
         options: []
       }
     ];
@@ -58,7 +58,7 @@ export class VolumeImportListComponent implements Formconfiguration {
         this.initialized = true;
 
       }, (res) => {
-        this.dialogService.errorReport(T("Error getting volume data"), res.message, res.stack);
+        this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
         this.initialized = true;
       });
 
@@ -72,13 +72,13 @@ export class VolumeImportListComponent implements Formconfiguration {
     return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Imported Volume"), T("Successfully Created Key to volume ") + value.volume_id);
+      this.dialogService.Info(T("Imported Pool"), T("Successfully imported pool ") + value.volume_id);
 
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
+        this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error Importing volume"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error importing pool"), res.message, res.stack);
     });
   }
 
