@@ -8,25 +8,9 @@
           <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
         </div>
         <div fxFlex="100" fxFlex.gt-xs="60">
-        <!--<mat-list role="list" *ngIf="data">
-          <mat-list-item *ngIf="!data.system_product"><h1>FreeNAS</h1></mat-list-item>
-          <mat-list-item role="listitem" *ngIf="data.system_product"><h1>{{data.system_product}}</h1></mat-list-item>
-          <mat-list-item role="listitem" *ngIf="data.system_serial && manufacturer == 'iX Systems'">
-            <div class="label bold"><strong>Serial Number:</strong> </div><span class="value">{{data.system_serial}}</span>
-          </mat-list-item>
-          <mat-list-item role="listitem" *ngIf="data.license"><span class="label bold"><strong>License:</strong> </span>  <span class="value">{{data.license}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold"><strong>OS Version:</strong> </span>  <span class="value">{{data.version}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold"><strong>Processor:</strong> </span>  <span class="value">{{data.model}} ({{data.cores}} cores)</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold"><strong>Memory:</strong> </span>  <span class="value">{{memory}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold"><strong>HostName:</strong> </span>  <span class="value">{{data.hostname}}</span> <span class="label bold" style="margin-left:16px"><strong>IP Addr:</strong> </span>  <span class="value">&nbsp;&nbsp;{{connectionIp}}</span></mat-list-item>
-          <mat-list-item role="listitem"><span class="label bold"><strong>Uptime:</strong> </span>  {{data.uptime}}</mat-list-item>
-          <mat-list-item role="listitem">
-            <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel}}</button>
-          </mat-list-item>
-          </mat-list>-->
         <div  *ngIf="data" class="data-container">
           <div *ngIf="!data.system_product"><h1>FreeNAS</h1></div>
-          <div *ngIf="data.system_product && manufacturer == 'iX Systems'"><h1>{{data.system_product}}</h1></div>
+          <div *ngIf="data.system_product && manufacturer == 'iX Systems'"><h2>{{data.system_product}}</h2></div>
           <div  *ngIf="data.system_serial && manufacturer == 'iX Systems'">
             <div class="label bold"><strong>Serial Number:</strong> </div><p class="value">{{data.system_serial}}</p>
           </div>
