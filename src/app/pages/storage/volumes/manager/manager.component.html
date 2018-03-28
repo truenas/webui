@@ -1,6 +1,6 @@
 <mat-card class="m-0 ml-1 mr-1 p-0">
   <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">{{"ZFS Pool Manager" | translate}}</div>
+    <div class="mat-card-title-text">{{"Pool Manager" | translate}}</div>
   </div>
   <div class="mat-content p-1">
     <div class="manager">
@@ -27,7 +27,7 @@
           <mat-input-container>
             <input matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
-          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted volume will reset the passphrase and recovery key!" | translate }}</mat-error>
+          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool will reset the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
       </div>
       <div class="wrapper">

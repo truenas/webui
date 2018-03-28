@@ -22,7 +22,7 @@ export class DatasetDeleteComponent implements Formconfiguration {
   public path: string;
   public sub: Subscription;
   public deleteSnapshot: boolean = true;
-  public route_success: string[] = ['storage', 'volumes'];
+  public route_success: string[] = ['storage', 'pools'];
   public isNew: boolean = true;
   public isEntity: boolean = true;
   private title: string;
@@ -41,8 +41,8 @@ export class DatasetDeleteComponent implements Formconfiguration {
     {
       type: 'checkbox',
       name: 'imaware',
-      placeholder: T('I am aware that snapsots within this data set will be deleted.'),
-      tooltip: T('I am aware that snapsots within this data set will be deleted.   This means they will not be restorable.'),
+      placeholder: T('I am aware that snapsots within this dataset will be deleted.'),
+      tooltip: T('I am aware that snapsots within this dataset will be deleted.  This means they will not be restorable.'),
       required: true
     }
 
@@ -78,13 +78,13 @@ export class DatasetDeleteComponent implements Formconfiguration {
       this.loader.close();
 
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
+        this.route_success));
         
     }, (error) => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
-      this.dialogService.errorReport(T("Error Deleting Dataset"), error.message, error.stack);
+        this.route_success));
+      this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
     });
    
   }

@@ -17,7 +17,7 @@ export class ZvolDeleteComponent {
   protected path: string;
   public sub: Subscription;
   public deleteSnapshot: boolean = true;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols/';
   }
