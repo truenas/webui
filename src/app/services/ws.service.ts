@@ -97,7 +97,6 @@ export class WebSocketService {
       this.pendingCalls.delete(data.id);
       if (data.error) {
         console.log("Error: ", data.error);
-        this.dialogService.errorReport('Error ' + data.error.error + ':' + data.error.reason, data.error.trace.class, data.error.trace.formatted);
         call.observer.error(data.error);
       }
       if (call.observer) {
@@ -113,7 +112,6 @@ export class WebSocketService {
 
       if (data.error) {
         console.log("Error: ", data.error);
-        this.dialogService.errorReport('Error ' + data.error.error + ':' + data.error.reason, data.error.trace.class, data.error.trace.formatted);
         subObserver.error(data.error);
       }
       if (subObserver) {
