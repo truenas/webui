@@ -111,7 +111,10 @@ export class VmCardsComponent implements OnInit {
           }
         break;
         case "FormCancelled":
-
+          this.cancel(index);
+        break;
+        case "CloningVM":
+          this.cards[index].state = "creating clone";
           this.cancel(index);
         break;
       default:
@@ -245,6 +248,11 @@ export class VmCardsComponent implements OnInit {
   }
 
   setVmList(res:CoreEvent, init?:string) { 
+    if(this.cache.length < res.data.length){
+      console.warn("New Card Detected")
+      console.log("CACHE LENGTH: " + this.cache.length);
+      console.log("NEW LIST LENGTH: " + res.data.length);
+    }
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
       const card = this.parseResponse(res.data[i]);
@@ -350,25 +358,27 @@ export class VmCardsComponent implements OnInit {
     );
   }
 
-
   deleteVM(index) {
     this.dialog.confirm("Delete", "Are you sure you want to delete " + this.cards[index].name + "?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
+        this.cards[index].state = "deleting"
         this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
       }
     })
   }
 
   removeVM(evt:CoreEvent){
+    console.log("REMOVING VM");
     const index = this.getCardIndex("id", evt.sender);
 
     this.focusedVM = '';
     this.cards.splice(index,1);
     this.loader.close();
-    this.updateCache();
+    //this.updateCache();
+    this.getVmList();
   }
 
   cancel(index){
@@ -398,7 +408,8 @@ export class VmCardsComponent implements OnInit {
       new Array('').concat([ "vm", this.cards[index].id, "devices", this.cards[index].name ])
     );
   }
-  cloneVM(index){
+
+  /*cloneVM(index){
     this.loader.open();
     this.loaderOpen = true;
     this.ws.call('vm.clone', [this.cards[index].id]).subscribe((res)=>{
@@ -409,7 +420,8 @@ export class VmCardsComponent implements OnInit {
     new EntityUtils().handleError(this, eres); 
     this.loader.close();
     });
-  }
+  }*/
+
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
     card.template = template;
@@ -475,12 +487,14 @@ export class VmCardsComponent implements OnInit {
           }
           else {
             eventName = "VmStart";
+            this.cards[index].state = "starting";
             this.core.emit({name: eventName, data:[vm.id]});
           }
       });
     }
      else {
       eventName = "VmStop";
+      this.cards[index].state = "stopping";
       this.core.emit({name: eventName, data:[vm.id]});
     }
   }
