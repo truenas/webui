@@ -7,7 +7,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  SimpleChange
+  SimpleChange,
+  OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -26,7 +27,7 @@ import { TooltipComponent } from '../../../common/entity/entity-form/components/
   providers: [ShellService],
 })
 
-export class VMSerialShellComponent implements OnInit, OnChanges {
+export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   @Input() prompt= '';
   @ViewChild('terminal') container: ElementRef;
   cols: string;
@@ -76,6 +77,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
+    if (this.ss.connected){
+      this.ss.socket.close();
+    }
   };
 
   resetDefault() {
@@ -111,7 +115,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
     this.xterm._initialized = true;
     // this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
     this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
-    // this.xterm.send('\r');
+    this.xterm.send('\r');
   }
 
   initializeWebShell(res: string) {

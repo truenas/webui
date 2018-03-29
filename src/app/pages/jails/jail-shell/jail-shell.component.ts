@@ -7,7 +7,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  SimpleChange
+  SimpleChange,
+  OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -23,9 +24,9 @@ import { TooltipComponent } from '../../common/entity/entity-form/components/too
   providers: [ShellService],
 })
 
-export class JailShellComponent implements OnInit, OnChanges {
+export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
-  @Input() prompt: string = '';
+  @Input() prompt = '';
   //xter container
   @ViewChild('terminal') container: ElementRef;
   // xterm variables
@@ -72,6 +73,9 @@ export class JailShellComponent implements OnInit, OnChanges {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
+    if (this.ss.connected){
+      this.ss.socket.close();
+    }
   };
 
   resetDefault() {
@@ -81,18 +85,18 @@ export class JailShellComponent implements OnInit, OnChanges {
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
   }) {
-    let log: string[] = [];
-    for (let propName in changes) {
-      let changedProp = changes[propName];
+    const log: string[] = [];
+    for (const propName in changes) {
+      const changedProp = changes[propName];
       // reprint prompt
-      if (propName == 'prompt' && this.xterm != null) {
+      if (propName === 'prompt' && this.xterm != null) {
         this.xterm.write(this.clearLine + this.prompt)
       }
     }
   }
 
   initializeTerminal() {
-    let domHeight = document.body.offsetHeight;
+    const domHeight = document.body.offsetHeight;
     let rowNum = (domHeight * 0.75 - 104) / 21;
     if (rowNum < 10) {
       rowNum = 10;
@@ -102,7 +106,7 @@ export class JailShellComponent implements OnInit, OnChanges {
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,
-      'rows': parseInt(rowNum.toFixed()),
+      'rows': parseInt(rowNum.toFixed(), 10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
