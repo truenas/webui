@@ -1,25 +1,16 @@
-<div class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar">
-    <div class="mat-card-title-text">Members</div>
-  </div>
-
-  <div>
-    <br/>
-  </div>
-
-  <div class="padding-16" *ngIf="members.length > 0">
-    <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">
-      <ng-template #templateItem let-item="data">
+<mat-card>
+  <mat-card-title>Members</mat-card-title>
+  <mat-card-content>
+    <div class="padding-16" *ngIf="members.length > 0">
+      <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">
+        <ng-template #templateItem let-item="data">
           <mat-list-item class="pointer">{{item.username}}</mat-list-item>
-      </ng-template>
-    </app-dual-listbox>
-  </div>
-</div>
-<section class="fab">
-  <button mat-fab class="mat-fab-bottom-right-1" color="primary" (click)="updateUsers()" matTooltip="{{ 'Save' | translate }}" >
-    <mat-icon class="md-16 ">save</mat-icon>
-  </button>
-  <button mat-fab class="mat-fab-bottom-right-2" color="primary" (click)="cancel()" matTooltip="{{ 'Clear' | translate }}">
-    <mat-icon class="md-16">clear</mat-icon>
-  </button>
-</section>
+        </ng-template>
+      </app-dual-listbox>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="updateUsers()">{{ 'Save' | translate }}</button>
+    <button mat-raised-button color="accent" (click)="cancel()">{{ 'Cancel' | translate }}</button>
+  </mat-card-actions>
+</mat-card>
