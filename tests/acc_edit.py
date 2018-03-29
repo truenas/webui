@@ -203,6 +203,7 @@ class edit_test(unittest.TestCase):
             if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[4]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
                 ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[4]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                 ui_text = ui_element.text
+                print (ui_text)
             if (ui_text == name):
                 index = x
                 break
