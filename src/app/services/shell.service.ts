@@ -13,11 +13,11 @@ export class ShellService {
   pendingCalls: any;
   pendingMessages: any[] = [];
   socket: WebSocket;
-  connected: boolean = false;
-  loggedIn: boolean = false;
+  connected = false;
+  loggedIn = false;
   @LocalStorage() username;
   @LocalStorage() password;
-  redirectUrl: string = '';
+  redirectUrl = '';
   public token: string;
   public jailId: string;
 
@@ -35,7 +35,7 @@ export class ShellService {
 
   connect() {
     this.socket = new WebSocket(
-      (window.location.protocol == 'https:' ? 'wss://' : 'ws://') +
+      (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
       environment.remote + '/websocket/shell/');
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
@@ -53,7 +53,7 @@ export class ShellService {
 
   onconnect() {
     while (this.pendingMessages.length > 0) {
-      let payload = this.pendingMessages.pop();
+      const payload = this.pendingMessages.pop();
       this.send(payload);
     }
   }
@@ -65,7 +65,6 @@ export class ShellService {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
-    this._router.navigate(['/login']);
   }
 
 
@@ -78,7 +77,7 @@ export class ShellService {
       data = { 'msg': 'please discard this' };
     }
 
-    if (data.msg == "connected") {
+    if (data.msg === "connected") {
       this.connected = true;
       this.onconnect();
       return;
@@ -94,7 +93,7 @@ export class ShellService {
   }
 
   send(payload) {
-    if (this.socket.readyState == WebSocket.OPEN) {
+    if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(payload);
     } else {
       this.pendingMessages.push(payload);
@@ -102,7 +101,7 @@ export class ShellService {
   }
 
   subscribe(name): Observable < any > {
-    let source = Observable.create((observer) => {
+    const source = Observable.create((observer) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {

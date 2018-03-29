@@ -524,6 +524,13 @@ export class VmCardsComponent implements OnInit {
     }); 
   }
 
+  serial(index){
+    const vm = this.cards[index];
+    this.router.navigate(
+      new Array('').concat([ "vm","serial", vm.id])
+    );
+  }
+
   checkVnc(devices){
     if(!devices || devices.length === 0){
       return false;
