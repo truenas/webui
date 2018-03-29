@@ -221,7 +221,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '128K', value: '128K' },
         { label: '256K', value: '256K' },
         { label: '512K', value: '512K' },
-        { label: '1024K', value: '1024K' }
+        { label: '1M', value: '1M' }
       ],
     },
     {
