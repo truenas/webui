@@ -130,7 +130,6 @@ export class JailListComponent implements OnInit {
 
   getActivatedPool(){
     this.ws.call('jail.get_activated_pool').subscribe((res)=>{
-      console.log(res);
       if (res != null) {
         this.activatedPool = res;
         this.isPoolActivated = true;
