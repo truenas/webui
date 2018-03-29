@@ -63,9 +63,9 @@ export class VmCardsComponent implements OnInit {
   }
   protected loaderOpen = false;
 
-  public spin: boolean = true;
-  public direction: string = 'down';
-  public animationMode: string = 'fling';
+  public spin = true;
+  public direction ='down';
+  public animationMode = 'fling';
 
   public actions: any = [{
       label : "Add DockerVM",
@@ -111,7 +111,10 @@ export class VmCardsComponent implements OnInit {
           }
         break;
         case "FormCancelled":
-
+          this.cancel(index);
+        break;
+        case "CloningVM":
+          this.cards[index].state = "creating clone";
           this.cancel(index);
         break;
       default:
@@ -134,26 +137,26 @@ export class VmCardsComponent implements OnInit {
     });
 
     this.core.register({observerClass:this,eventName:"VmStatus"}).subscribe((evt:CoreEvent) => {
-      let cardIndex = this.getCardIndex('id',evt.data.id);
+      const cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = evt.data.state.toLowerCase();
 
-      let cacheIndex = this.getCardIndex('id',evt.data.id,true);
+      const cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = evt.data.state.toLowerCase();
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      let cardIndex = this.getCardIndex('id',evt.data.id);
+      const cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = 'running';
 
-      let cacheIndex = this.getCardIndex('id',evt.data.id,true);
+      const cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'running';
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
-      let cardIndex = this.getCardIndex('id',evt.data.id);
+      const cardIndex = this.getCardIndex('id',evt.data.id);
       this.cards[cardIndex].state = 'stopped';
 
-      let cacheIndex = this.getCardIndex('id',evt.data.id,true);
+      const cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'stopped';
     });
 
@@ -245,6 +248,9 @@ export class VmCardsComponent implements OnInit {
   }
 
   setVmList(res:CoreEvent, init?:string) { 
+    if(this.cache.length < res.data.length){;
+      // Put window scroll stuff here
+    }
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
       const card = this.parseResponse(res.data[i]);
@@ -350,13 +356,13 @@ export class VmCardsComponent implements OnInit {
     );
   }
 
-
   deleteVM(index) {
     this.dialog.confirm("Delete", "Are you sure you want to delete " + this.cards[index].name + "?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
+        this.cards[index].state = "deleting"
         this.core.emit({name:"VmDelete", data:[this.cards[index].id], sender:index});
       }
     })
@@ -368,7 +374,8 @@ export class VmCardsComponent implements OnInit {
     this.focusedVM = '';
     this.cards.splice(index,1);
     this.loader.close();
-    this.updateCache();
+    //this.updateCache();
+    this.getVmList();
   }
 
   cancel(index){
@@ -398,7 +405,8 @@ export class VmCardsComponent implements OnInit {
       new Array('').concat([ "vm", this.cards[index].id, "devices", this.cards[index].name ])
     );
   }
-  cloneVM(index){
+
+  /*cloneVM(index){
     this.loader.open();
     this.loaderOpen = true;
     this.ws.call('vm.clone', [this.cards[index].id]).subscribe((res)=>{
@@ -409,7 +417,8 @@ export class VmCardsComponent implements OnInit {
     new EntityUtils().handleError(this, eres); 
     this.loader.close();
     });
-  }
+  }*/
+
   toggleForm(flipState, card, template){
     // load #cardBack template with code here
     card.template = template;
@@ -446,15 +455,17 @@ export class VmCardsComponent implements OnInit {
                 };
                 this.ws.call('vm.decompress_gzip',[img_path, this.raw_file_path]).subscribe((decompress_gzip)=>{
                   this.ws.call('vm.raw_resize',[this.raw_file_path, this.raw_file_path_size]).subscribe((raw_resize)=>{
-                    this.ws.call('vm.start',[this.cards[index].id]).subscribe((vm_start)=>{
-                        this.loader.close();
-                        if(!vm_start){
-                          this.dialog.Info('ERROR', 'vm failed to start, please check system log.');
-                          return;
-                        }
-                        this.refreshVM(index, this.cards[index].id);
+                    // this.ws.call('vm.start',[this.cards[index].id]).subscribe((vm_start)=>{
+                    //     this.loader.close();
+                    //     if(!vm_start){
+                    //       this.dialog.Info('ERROR', 'vm failed to start, please check system log.');
+                    //       return;
+                    //     }
+                    //     this.refreshVM(index, this.cards[index].id);
 
-                      });
+                    //   });
+                    this.core.emit({name: "VmStart", data:[vm.id]});
+                    this.loader.close();
                     },
                     (error_raw_resize)=>{
                       this.loader.close();
@@ -475,12 +486,14 @@ export class VmCardsComponent implements OnInit {
           }
           else {
             eventName = "VmStart";
+            this.cards[index].state = "starting";
             this.core.emit({name: eventName, data:[vm.id]});
           }
       });
     }
      else {
       eventName = "VmStop";
+      this.cards[index].state = "stopping";
       this.core.emit({name: eventName, data:[vm.id]});
     }
   }

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import {RestService, WebSocketService} from '../../../services/';
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
@@ -18,105 +18,109 @@ export class VmCardEditComponent implements OnChanges {
   @Input() isNew: boolean = false;
   @Input() target: Subject<CoreEvent>;
   @Input() conf: any;
-  
+
   protected isEntity: boolean = true;
 
   public fieldConfig:FieldConfig[] = [];
 
   public fieldSetDisplay:string = 'default';//default | carousel | stepper
-  public fieldSets: FieldSet[] = [
-    {
-      name:'Config',
-      class:'config',
-      config:[
-        { 
-          type: 'input', 
-          name: 'name', 
-          width:'100%',
-          placeholder: 'Name',
-          tooltip: 'Enter a name to identify the VM.',
-        },
-        { type: 'input', 
-          name : 'description', 
-          width:'100%',
-          placeholder : 'Description',
-          tooltip: 'Enter a short description of the VM or its purpose.',
-        }
-      ]
-    },
-    {
-      name:'Boot Options',
-      class:'boot-options',
-      config:[
-        { 
-          type: 'checkbox', 
-          name: 'autostart', 
-          width:'50%',
-          placeholder: 'Start on Boot', 
-          tooltip: 'When checked, start the VM automatically on boot.',
-          class:'inline'},
-        { 
-          type: 'select', 
-          name: 'bootloader',
-          width:'50%',
-          placeholder: 'Boot Loader Type',
-          tooltip: 'Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b>\
-          (Compatibility Support Mode) for older operating systems that only\
-          understand BIOS booting.',
-          options: [] , class:'inline'}
-      ]
-    },
-    {
-      name:'Resources',
-      class:'resources',
-      config:[
-        { 
-          type: 'input', 
-          name: 'vcpus',
-          width:'40%',
-          placeholder : 'Virtual CPUs',
-          tooltip: 'Select the number of virtual CPUs allocated to the VM.\
-          The maximum is 16, although the host CPU might limit the maximum number.\
-          The operating system used in the VM might also have operational or licensing\
-          restrictions on the number of CPUs allowed.',
+    public fieldSets: FieldSet[] = [
+      {
+        name:'Config',
+        class:'config',
+        config:[
+          { 
+            type: 'input', 
+            name: 'name', 
+            width:'100%',
+            placeholder: 'Name',
+            tooltip: 'Enter a name to identify the VM.',
+          },
+          { type: 'input', 
+            name : 'description', 
+            width:'100%',
+            placeholder : 'Description',
+            tooltip: 'Enter a short description of the VM or its purpose.',
+          }
+        ]
+      },
+      {
+        name:'Boot Options',
+        class:'boot-options',
+        config:[
+          { 
+            type: 'checkbox', 
+            name: 'autostart', 
+            width:'50%',
+            placeholder: 'Start on Boot', 
+            tooltip: 'When checked, start the VM automatically on boot.',
+            class:'inline'},
+          { 
+            type: 'select', 
+            name: 'bootloader',
+            width:'50%',
+            placeholder: 'Boot Loader Type',
+            tooltip: 'Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b>\
+            (Compatibility Support Mode) for older operating systems that only\
+            understand BIOS booting.',
+            options: [] , class:'inline'}
+        ]
+      },
+      {
+        name:'Resources',
+        class:'resources',
+        config:[
+          { 
+            type: 'input', 
+            name: 'vcpus',
+            width:'40%',
+            placeholder : 'Virtual CPUs',
+            tooltip: 'Select the number of virtual CPUs allocated to the VM.\
+            The maximum is 16, although the host CPU might limit the maximum number.\
+            The operating system used in the VM might also have operational or licensing\
+            restrictions on the number of CPUs allowed.',
 
-          class:'inline'},
-        { 
-          type: 'input', 
-          name: 'memory', 
-          width:'60%',
-          placeholder: 'Memory Size (MiB)', 
-          tooltip: 'Select the megabytes of RAM allocated to the VM.',
-          class:'inline'}
-      ]
-    }
-  ];
-  private bootloader: any;
+            class:'inline'},
+          { 
+            type: 'input', 
+            name: 'memory', 
+            width:'60%',
+            placeholder: 'Memory Size (MiB)', 
+            tooltip: 'Select the megabytes of RAM allocated to the VM.',
+            class:'inline'}
+        ]
+      }
+    ];
+    private bootloader: any;
   public bootloader_type: any[];
   public custActions: Array<any> = [
     {
       id: 'Clone',
       name: 'Clone',
-      function: () =>{
-        this.cloneVM()
-      }
+      eventName:"CloneVM"
+    },
+    {
+      id:'cancel',
+      name:'Cancel',
+      eventName: "FormCancelled"
     }
   ]
 
-  constructor(protected router: Router, protected rest: RestService,
+  constructor(private core: CoreService ,protected router: Router, protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
   ) {}
 
   ngOnInit(){
     this.generateFieldConfig();
+    this.target.subscribe((evt) => {
+      if(evt.name == "CloneVM"){
+        this.cloneVM();
+      }
+    });
   }
 
   ngOnChanges(changes){
-  }
-
-  goBack(){
-    this.target.next({name:"FormCancelled"});
   }
 
   afterInit(entityForm: any) {
@@ -136,17 +140,8 @@ export class VmCardEditComponent implements OnChanges {
     }
   }
   cloneVM(){
-    this.conf.loader.open();
-    this.conf.loaderOpen = true;
-    this.ws.call('vm.clone', [this.machineId]).subscribe((res)=>{
-      this.conf.loader.close();
-      this.conf.getVmList();
-    },
-  (eres)=>{
-    new this.conf.EntityUtils().handleError(this, eres); 
-    this.conf.loader.close();
-    });
-
+    this.core.emit({name:"VmClone",data:[this.machineId]});
+    this.target.next({name:"CloningVM", sender:this});
   }
 
 }

@@ -34,12 +34,12 @@ export const routes: Routes = [
     data: { title: 'Storage' },
     children: [
       {
-        path: 'volumes',
-        data: { title: 'Volumes', breadcrumb: 'Volumes' },
+        path: 'pools',
+        data: { title: 'Pools', breadcrumb: 'Pools' },
         children: [
           {
             path: '', component: VolumesListComponent,
-            data: { title: 'Volumes', breadcrumb: 'Volumes' }
+            data: { title: 'Pools', breadcrumb: 'Pools' }
           },
           {
             path: 'id/:volid/dataset/add/:parent', component: DatasetFormComponent,
@@ -79,11 +79,11 @@ export const routes: Routes = [
           },
           {
             path: 'import_list', component: VolumeImportListComponent,
-            data: { title: 'Import Volume', breadcrumb: 'Import Volume' }
+            data: { title: 'Import Pool', breadcrumb: 'Import Pool' }
           },
           {
             path: 'unencryptimport_list', component: VolumeUnencryptImportListComponent,
-            data: { title: 'UnEncrypt Volumes', breadcrumb: 'UnEncrypt Volumes' }
+            data: { title: 'UnEncrypt Pool', breadcrumb: 'UnEncrypt Pool' }
           },
           {
             path: 'status/:pk', component: StatusComponent,
@@ -91,23 +91,23 @@ export const routes: Routes = [
           },
           {
             path: 'detachvolume/:pk', component: VolumeDeleteComponent,
-            data: { title: 'Detach Volume', breadcrumb: 'Detach Volume' }
+            data: { title: 'Detach Pool', breadcrumb: 'Detach Pool' }
           },
           {
             path: 'unlock/:pk', component: VolumeUnlockFormComponent,
-            data: { title: 'Unlock Volume', breadcrumb: 'Unlock Volume' }
+            data: { title: 'Unlock Pool', breadcrumb: 'Unlock Pool' }
           },
           {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,
-            data: { title: 'Rekey Volume', breadcrumb: 'Rekey Volume' }
+            data: { title: 'Rekey Pool', breadcrumb: 'Rekey Pool' }
           },
           {
             path: 'addkey/:pk', component: VolumeRekeyFormComponent,
-            data: { title: 'Rekey Volume', breadcrumb: 'Add Key Volume' }
+            data: { title: 'Add Key', breadcrumb: 'Add Key' }
           },
           {
             path: 'createkey/:pk', component: VolumeCreatekeyFormComponent,
-            data: { title: 'Create Volume', breadcrumb: 'Create Key Volume' }
+            data: { title: 'Create Key', breadcrumb: 'Create Key' }
           }
         ]
       },

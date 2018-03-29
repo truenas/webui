@@ -52,8 +52,8 @@ export class TourService {
       yOffset: 20
     },
     {
-      title: T('Volumes & Snapshots'),
-      content: T('Create a new Volume.'),
+      title: T('Pools & Snapshots'),
+      content: T('Create a new Pool.'),
       target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
       placement: 'right',
       yOffset: 200
@@ -90,8 +90,8 @@ export class TourService {
       yOffset: 50
     },
     {
-      title: T('Volumes & Snapshots'),
-      content: T('Create a new Volume.'),
+      title: T('Pools & Snapshots'),
+      content: T('Create a new Pool.'),
       target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
       placement: 'right',
       yOffset: 200
@@ -107,7 +107,7 @@ export class TourService {
     },
     {
       title: T('Hover to expand'),
-      content: T('Create new Volume'),
+      content: T('Create new Pool'),
       target: 'tour-fab-buttons',
       placement: 'left',
       yOffset: 220
@@ -151,7 +151,7 @@ export class TourService {
       case "/account/users":
         console.log("/account/users");
         return this.getTour(this.UserTour);
-      case "/storage/volumes":
+      case "/storage/pools":
         return this.getTour(this.StorageTour);
       case "/sharing/afp":
         return this.getTour(this.SharingTour);
@@ -207,8 +207,8 @@ export class TourService {
           yOffset: 20
         },
         {
-          title: T('Volumes & Snapshots'),
-          content: T('Create a new Volume.'),
+          title: T('Pools & Snapshots'),
+          content: T('Create a new Pool.'),
           target: document.querySelector('.sidebar-list-item .mat-list-item-ripple'),
           placement: 'right',
           yOffset: 200

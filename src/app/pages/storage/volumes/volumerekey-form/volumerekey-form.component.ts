@@ -29,10 +29,10 @@ import { T } from '../../../../translate-marker';
 })
 export class VolumeRekeyFormComponent  implements Formconfiguration {
 
-  saveSubmitText = T("ReKey"); 
+  saveSubmitText = T("Re-key Pool"); 
 
   resource_name = 'storage/volume';
-  route_success: string[] = [ 'storage', 'volumes'];
+  route_success: string[] = [ 'storage', 'pools'];
   isNew = false;
   isEntity = true;
   entityData = {
@@ -83,13 +83,13 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/rekey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Rekeyed Volume"), T("Successfully Rekeyed volume ") + value.name);
+      this.dialogService.Info(T("Re-keyed Pool"), T("Successfully re-keyed pool ") + value.name);
 
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
+        this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error re keying volume"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error re-keying pool"), res.message, res.stack);
     });
   }
   

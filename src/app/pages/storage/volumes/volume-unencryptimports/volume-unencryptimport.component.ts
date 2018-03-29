@@ -28,12 +28,12 @@ import { T } from '../../../../translate-marker';
  */
 export class VolumeUnencryptImportListComponent implements Formconfiguration {
   public resource_name: string = 'storage/volume_unencrypt';
-  public route_success: string[] = ['storage', 'volumes'];
+  public route_success: string[] = ['storage', 'pools'];
   public isEntity = true;
   public isNew = true;
   public fieldConfig: FieldConfig[] = [];
   public initialized = true;
-  public saveSubmitText = T("UnEncrypt Volumes");
+  public saveSubmitText = T("Decrypt Pool");
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -46,7 +46,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         type: 'upload',
         name: 'encryption_key_file',
         placeholder: T('Encryption Key File'),
-        tooltip: T('Encryption key used to un encryptd volumes before showing import.'),
+        tooltip: T('Encryption key used to decrypt pools to be imported.'),
       },
       {
         type: 'input',
@@ -72,7 +72,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         this.initialized = true;
 
       }, (res) => {
-        this.dialogService.errorReport(T("Error getting volume data"), res.message, res.stack);
+        this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
         this.initialized = true;
       });
 
@@ -86,13 +86,13 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
     return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted }) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Imported Volume"), T("Successfully UnEncrypted Volume ") + value.volume_id);
+      this.dialogService.Info(T("Imported Pool"), T("Successfully decrypted pool ") + value.volume_id);
 
       this.router.navigate(new Array('/').concat(
-        ["storage", "volumes"]));
+        this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error UnEncrypted volume"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error decrypting pool"), res.message, res.stack);
     });
   }
 
