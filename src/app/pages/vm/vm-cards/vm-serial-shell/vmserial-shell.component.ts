@@ -13,28 +13,23 @@ import {
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core'
-
-import { WebSocketService, ShellService } from '../../../services/';
-import { TooltipComponent } from '../../common/entity/entity-form/components/tooltip/tooltip.component';
-import { T } from '../../../translate-marker';
 import { Terminal } from 'vscode-xterm';
 import * as fit from 'vscode-xterm/lib/addons/fit';
 import * as attach from 'vscode-xterm/lib/addons/attach';
 
+import { WebSocketService, ShellService } from '../../../../services/';
+import { TooltipComponent } from '../../../common/entity/entity-form/components/tooltip/tooltip.component';
 
 @Component({
-  selector: 'app-jail-shell',
-  templateUrl: './jail-shell.component.html',
-  styleUrls: ['./jail-shell.component.css'],
+  selector: 'app-vmserial-shell',
+  templateUrl: './vmserial-shell.component.html',
+  styleUrls: ['./vmserial-shell.component.css'],
   providers: [ShellService],
 })
 
-export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
-  // sets the shell prompt
-  @Input() prompt = '';
-  //xter container
+export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() prompt= '';
   @ViewChild('terminal') container: ElementRef;
-  // xterm variables
   cols: string;
   rows: string;
   font_size: number;
@@ -42,13 +37,13 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
+  public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
  <b>Command + C/V</b>.<br>\
  Many utilities are built-in, including:<br>\
  <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
  <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
  and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
- chapter for more information.');
+ chapter for more information.';
 
   clearLine = "\u001b[2K\r"
   protected pk: string;
@@ -60,6 +55,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
                 Terminal.applyAddon(fit);
                 Terminal.applyAddon(attach);
               }
+              
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -96,10 +92,6 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
-      // reprint prompt
-      if (propName === 'prompt' && this.xterm != null) {
-        this.xterm.write(this.clearLine + this.prompt)
-      }
     }
   }
 
@@ -109,22 +101,25 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     if (rowNum < 10) {
       rowNum = 10;
     }
-
+    
     this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,
-      'rows': parseInt(rowNum.toFixed(), 10),
+      'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
+  
     this.xterm.open(this.container.nativeElement);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
+    // this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
+    this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
+    this.xterm.send('\r');
   }
 
   initializeWebShell(res: string) {
     this.ss.token = res;
-    this.ss.jailId = this.pk;
     this.ss.connect();
   }
 

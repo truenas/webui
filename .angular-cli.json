@@ -21,7 +21,7 @@
         "testTsconfig": "tsconfig.spec.json",
         "prefix": "app",
         "styles": [
-          "../node_modules/xterm/dist/xterm.css",
+          "../node_modules/vscode-xterm/src/xterm.css",
           "../node_modules/quill/dist/quill.core.css",
           "../node_modules/quill/dist/quill.snow.css",
           "../node_modules/dragula/dist/dragula.css",
@@ -58,9 +58,9 @@
           "../node_modules/element-resize-detector/dist/element-resize-detector.min.js",
           "../node_modules/devextreme/dist/js/dx.all.js",
           "../node_modules/filesize/lib/filesize.js",
-          "../node_modules/xterm/dist/xterm.js",
-          "../node_modules/xterm/dist/addons/attach/attach.js",
-          "../node_modules/xterm/dist/addons/fit/fit.js"
+          "../node_modules/vscode-xterm/lib/xterm.js",
+          "../node_modules/vscode-xterm/lib/addons/attach/attach.js",
+          "../node_modules/vscode-xterm/lib/addons/fit/fit.js"
 
         ],
         "environmentSource": "environments/environment.ts",

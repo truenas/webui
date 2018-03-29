@@ -13,6 +13,7 @@ import {VmListComponent} from './vm-list/';
 import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/';
 import {VMWizardComponent} from './vm-wizard/';
 import { DockerVMWizardComponent } from './dockervm-wizard/';
+import {VMSerialShellComponent} from './vm-cards/vm-serial-shell'
 
 // export const routes: Routes = [
 //   --{path : 'add', component : VmFormComponent},
@@ -54,6 +55,11 @@ export const routes: Routes = [
       path: 'dockerwizard',
       component: DockerVMWizardComponent,
       data: { title: 'Docker VM Wizard', breadcrumb: 'Docker VM Wizard'},
+    },
+    {
+      path: 'serial/:pk',
+      component: VMSerialShellComponent,
+      data: { title: 'VM Serial Shell', breadcrumb: 'VM Serial Shell'},
     },
     {
       path : ':pk/devices/:name',
