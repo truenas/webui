@@ -16,6 +16,11 @@ import { TranslateService } from '@ngx-translate/core'
 
 import { WebSocketService, ShellService } from '../../../services/';
 import { TooltipComponent } from '../../common/entity/entity-form/components/tooltip/tooltip.component';
+import { T } from '../../../translate-marker';
+import { Terminal } from 'vscode-xterm';
+import * as fit from 'vscode-xterm/lib/addons/fit';
+import * as attach from 'vscode-xterm/lib/addons/attach';
+
 
 @Component({
   selector: 'app-jail-shell',
@@ -37,13 +42,13 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
+  public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
  <b>Command + C/V</b>.<br>\
  Many utilities are built-in, including:<br>\
  <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
  <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
  and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
- chapter for more information.';
+ chapter for more information.');
 
   clearLine = "\u001b[2K\r"
   protected pk: string;
@@ -51,7 +56,10 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private ws: WebSocketService,
               public ss: ShellService,
               protected aroute: ActivatedRoute,
-              public translate: TranslateService) {}
+              public translate: TranslateService) {
+                Terminal.applyAddon(fit);
+                Terminal.applyAddon(attach);
+              }
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -102,7 +110,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
       rowNum = 10;
     }
 
-    this.xterm = new( < any > window).Terminal({
+    this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,
