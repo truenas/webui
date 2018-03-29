@@ -16,10 +16,10 @@
   </div>
 </div>
 <section class="fab">
-  <button mat-fab class="mat-fab-bottom-right-1" color="primary" (click)="updateUsers()">
-    <mat-icon class="md-16 ">{{ "Save" | translate }}</mat-icon>
+  <button mat-fab class="mat-fab-bottom-right-1" color="primary" (click)="updateUsers()" matTooltip="{{ 'Save' | translate }}" >
+    <mat-icon class="md-16 ">save</mat-icon>
   </button>
-  <button mat-fab class="mat-fab-bottom-right-2" color="primary" (click)="cancel()">
-    <mat-icon class="md-16">{{ "Clear" | translate }}</mat-icon>
+  <button mat-fab class="mat-fab-bottom-right-2" color="primary" (click)="cancel()" matTooltip="{{ 'Clear' | translate }}">
+    <mat-icon class="md-16">clear</mat-icon>
   </button>
 </section>
