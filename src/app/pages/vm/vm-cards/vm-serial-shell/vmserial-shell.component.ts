@@ -27,11 +27,8 @@ import { TooltipComponent } from '../../../common/entity/entity-form/components/
 })
 
 export class VMSerialShellComponent implements OnInit, OnChanges {
-  // sets the shell prompt
   @Input() prompt= '';
-  //xter container
   @ViewChild('terminal') container: ElementRef;
-  // xterm variables
   cols: string;
   rows: string;
   font_size: number;
@@ -76,8 +73,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
   }
 
   ngOnDestroy() {
-    console.log(this.xterm);
-
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
@@ -99,22 +94,15 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
   initializeTerminal() {
     const domHeight = document.body.offsetHeight;
     let rowNum = (domHeight * 0.75 - 104) / 21;
-    // if (rowNum < 10) {
-    //   rowNum = 10;
+    if (rowNum < 10) {
+      rowNum = 10;
+    }
     
-    // this.xterm = new( < any > window).Terminal({
-    //   'cursorBlink': true,
-    //   'tabStopWidth': 8,
-    //   'cols': 80,
-    //   'rows': parseInt(rowNum.toFixed()),
-    //   'focus': true
-    // });
     this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,
-      // 'rows': parseInt(rowNum.toFixed()),
-      'rows': 25,
+      'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
   
