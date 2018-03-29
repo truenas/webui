@@ -15,6 +15,9 @@ import { WebSocketService, ShellService } from '../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 import { T } from '../../translate-marker';
+import { Terminal } from 'vscode-xterm';
+import * as fit from 'vscode-xterm/lib/addons/fit';
+import * as attach from 'vscode-xterm/lib/addons/attach';
 
 @Component({
   selector: 'app-shell',
@@ -98,11 +101,11 @@ export class ShellComponent implements OnInit, OnChanges {
       rowNum = 10;
     }
 
-    this.xterm = new (<any>window).Terminal({
+    this.xterm = new Terminal({
       'cursorBlink': false,
       'tabStopWidth': 8,
-      'cols': parseInt(colNum.toFixed()),
-      'rows': parseInt(rowNum.toFixed()),
+      'cols': parseInt(colNum.toFixed(),10),
+      'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
@@ -134,5 +137,8 @@ export class ShellComponent implements OnInit, OnChanges {
     return this.ws.call('auth.generate_token');
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {}
+  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
+    Terminal.applyAddon(fit);
+    Terminal.applyAddon(attach);
+  }
 }

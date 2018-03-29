@@ -10,6 +10,9 @@ import {
 import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
+import { Terminal } from 'vscode-xterm';
+import * as fit from 'vscode-xterm/lib/addons/fit';
+import * as attach from 'vscode-xterm/lib/addons/attach';
 // import * as xterm from "xterm";
 // import * as Terminal from 'xterm/dist/xterm';
 // import 'xterm/dist/addons/fit/fit.js';
@@ -49,7 +52,7 @@ export class SystemProcessesComponent implements OnInit {
   };
 
   initializeTerminal() {
-    this.xterm = new (<any>window).Terminal({
+    this.xterm = new Terminal({
       //'cursorBlink': true,
       //'tabStopWidth': 4,
       'cols': 80,
@@ -72,5 +75,8 @@ export class SystemProcessesComponent implements OnInit {
     return this.ws.call('auth.generate_token');
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService) {}
+  constructor(private ws: WebSocketService, public ss: ShellService) {
+    Terminal.applyAddon(fit);
+    Terminal.applyAddon(attach);
+  }
 }
