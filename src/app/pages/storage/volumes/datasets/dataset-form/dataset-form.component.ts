@@ -348,7 +348,11 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
 
-    
+     // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
+     if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
+       let value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+       returnValue.recordsize = "" + ( 1024 * value ) + "K";
+     }
 
      return returnValue;
   }
