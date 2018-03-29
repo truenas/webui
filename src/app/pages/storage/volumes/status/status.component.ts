@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {WebSocketService} from "../../../../services/ws.service";
 import {ActivatedRoute, Params} from "@angular/router";
+import { TranslateService } from '@ngx-translate/core';
 import {RestService} from "../../../../services/rest.service";
 
 @Component({
@@ -22,7 +23,7 @@ export class StatusComponent implements OnInit {
     errors: null
   };
 
-  constructor(private ws: WebSocketService,
+  constructor(private ws: WebSocketService, public translate: TranslateService,
               private activatedRoute: ActivatedRoute) {
   }
 

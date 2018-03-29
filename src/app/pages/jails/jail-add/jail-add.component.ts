@@ -14,6 +14,7 @@ import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../common/entity/utils';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'jail-add',
@@ -883,7 +884,8 @@ export class JailAddComponent implements OnInit {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    public translate: TranslateService) {}
+    public translate: TranslateService,
+    protected dialogService: DialogService) {}
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
@@ -977,7 +979,8 @@ export class JailAddComponent implements OnInit {
         }
       },
       (res) => {
-        new EntityUtils().handleError(this, res);
+        this.loader.close();
+        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
       }
     );
   }

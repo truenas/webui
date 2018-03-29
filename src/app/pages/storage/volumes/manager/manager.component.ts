@@ -59,12 +59,12 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   public busy: Subscription;
 
-  public name_tooltip = T('ZFS volumes must conform to strict naming\
+  public name_tooltip = T('ZFS pools must conform to strict naming\
  <a href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
  target="_blank">conventions</a>. Choose a memorable name that will\
  stick out in the logs.');
   public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">GELI</a> encryption is available for ZFS volumes.\
+ target="_blank">GELI</a> encryption is available for ZFS pools.\
  <b>WARNING: </b>Read the "Encryption" section (Section 8.1.1.1) of the\
  <a href="guide">Guide</a> before activating this option.');
   public suggested_layout_tooltip = T('Arranges available disks in a\
@@ -254,7 +254,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/', 'storage', 'volumes']);
+    this.router.navigate(['/', 'storage', 'pools']);
   }
 
   openSnackBar() {

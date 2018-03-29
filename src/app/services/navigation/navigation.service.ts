@@ -103,7 +103,7 @@ export class NavigationService {
       icon: 'storage',
       state: 'storage',
       sub: [
-        { name: T('Volumes'), state: 'volumes' },
+        { name: T('Pools'), state: 'pools' },
         { name: T('Snapshots'), state: 'snapshots' },
         { name: T('VMware-Snapshots'), state: 'vmware-Snapshots' },
         { name: T('Disks'), state: 'disks' },

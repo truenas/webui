@@ -41,7 +41,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   public error: string;
   public busy: Subscription;
   protected fs: any = (<any>window).filesize;
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
   protected resource_name = 'storage/permission';
 
   public fieldConfig: FieldConfig[] = [

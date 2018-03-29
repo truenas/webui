@@ -27,7 +27,7 @@ import { T } from '../../../../translate-marker';
 export class SnapshotCloneComponent {
 
   protected resource_name: string = 'storage/snapshot';
-  protected route_success: string[] = [ 'storage', 'volumes' ];
+  protected route_success: string[] = [ 'storage', 'pools' ];
   protected route_cancel: string[] = [ 'storage', 'snapshots' ];
   protected pk: any;
   protected isEntity: boolean = true;

@@ -1,13 +1,17 @@
 import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Display } from 'app/core/components/display/display.component';
+import { ViewControllerComponent, ViewConfig, ViewControllerMetadata } from 'app/core/components/viewcontroller/viewcontroller.component';
+//import { CardComponentMetadata } from 'app/core/components/card/card.component';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { AnimationDirective } from 'app/core/directives/animation.directive';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+//import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import {CardComponent, CardComponentMetadata} from 'app/core/components/card/card.component';
 import filesize from 'filesize';
 
 interface Disk {
@@ -24,12 +28,15 @@ interface Disk {
 
 @Component({
   selector: 'widget-storage',
-  templateUrl:'./widgetstorage.component.html',
+  //templateUrl:'./widgetstorage.component.html',
+  template:ViewControllerMetadata.template,
   styleUrls: ['./widgetstorage.component.css'],
 })
-export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetStorageComponent extends ViewControllerComponent implements AfterViewInit {
 
-  @ViewChild('zpool') chartZpool:ViewChartDonutComponent;
+  //@ViewChild('zpool') chartZpool:ViewChartDonutComponent;
+  private chartZpool;
+  public chartSize:number;
   public title:string = "Storage";
   public disks:Disk[] = [];
   public selectedDisk:number = -1
@@ -80,6 +87,10 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   setPoolData(evt:CoreEvent){
     console.log("******** ZPOOL DATA ********");
     console.log(evt.data);
+
+    let card = this.create(CardComponent);
+    this.chartZpool = card.create(ViewChartDonutComponent);
+
     let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
     let used: ChartData = {
       legend: 'Used', 
@@ -98,6 +109,12 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     console.log(this.chartZpool.data);
     this.chartZpool.width = this.chartSize;
     this.chartZpool.height = this.chartSize;
+
+    card.addChild(this.chartZpool);
+    card.header = true;
+    card.headerTitle = this.title;
+    this.addChild(card);
+    this.chartZpool.render();
   };
 
   setPreferences(form:NgForm){

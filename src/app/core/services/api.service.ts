@@ -193,6 +193,21 @@ export class ApiService {
         responseEvent:"VmCreated"
       }
     },
+    VmClone:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"vm.clone",
+        args:[],
+        responseEvent:"VmProfilesRequest"
+      },
+      postProcessor(res,callArgs){
+        //console.log(res);
+        let cloneRes = Object.assign({},res);
+        cloneRes = null; 
+        return cloneRes;
+      }
+    },
     VmDelete:{
       apiCall:{
         protocol:"websocket",

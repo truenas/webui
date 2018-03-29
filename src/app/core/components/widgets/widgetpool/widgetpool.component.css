@@ -32,6 +32,7 @@
 .disk-tile{
   /*background-color:rgba(0,0,0,0.15);*/
   background-color:rgba(0, 208, 214,0.5);
+  background-color:var(--green);
 }
 
 .disk-name{
@@ -63,6 +64,7 @@
 .disk-name{
   text-align:center;
   color:#fff;
+  color:var(--fg2);
 }
 
 .disk-tile,
@@ -86,6 +88,7 @@ span.disk-detail-title,
 .disk-detail span.label{
   font-weight:bold;
   color:#666;
+  color:var(--fg1);
 }
 
 span.disk-detail-title {
@@ -102,6 +105,7 @@ span.disk-detail-subtitle {
 .pool-status{
   background-color: #333;
   background-color:rgb(0, 208, 214);
+  background-color:var(--green);
   color: #fff;
   border-radius: 2px;
   font-weight: bold;

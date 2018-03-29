@@ -88,29 +88,29 @@ export class VolumesListTableConfig implements InputTableConf {
   getAddActions() {
     const actions = [];
     actions.push({
-      label: T("Create ZFS Pool"),
+      label: T("Create Pool"),
       icon: "add",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "manager"]));
+          ["storage", "pools", "manager"]));
       }
     });
 
     actions.push({
-      label: T("Import Volumes"),
+      label: T("Import Pools"),
       icon: "vertical_align_bottom",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "import_list"]));
+          ["storage", "pools", "import_list"]));
       }
     });
 
     actions.push({
-      label: T("UnEncrypt Non Imported Volumes"),
+      label: T("Decrypt Exported Pools"),
       icon: "lock_open",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "unencryptimport_list"]));
+          ["storage", "pools", "unencryptimport_list"]));
       }
     });
 
@@ -127,7 +127,7 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Lock"), T("Proceed with locking the volume: ") + row1.name).subscribe((confirmResult) => {
+            this.dialogService.confirm(T("Lock"), T("Proceed with locking the pool: ") + row1.name).subscribe((confirmResult) => {
               if (confirmResult === true) {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
@@ -138,7 +138,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                 }, (res) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T("Error locking volume"), res.message, res.stack);
+                  this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
                 });
               }
             });
@@ -152,7 +152,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Un-Lock"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "volumes", "unlock", row1.id]));
+              ["storage", "pools", "unlock", row1.id]));
           }
         });
       }
@@ -166,7 +166,7 @@ export class VolumesListTableConfig implements InputTableConf {
       label: T("Create Recovery Key"),
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "createkey", row1.id]));
+          ["storage", "pools", "createkey", row1.id]));
       }
     });
 
@@ -174,7 +174,7 @@ export class VolumesListTableConfig implements InputTableConf {
       label: T("Add Recovery Key"),
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "addkey", row1.id]));
+          ["storage", "pools", "addkey", row1.id]));
       }
     });
 
@@ -188,7 +188,7 @@ export class VolumesListTableConfig implements InputTableConf {
             this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
               this.loader.close();
 
-              this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for volume ") + row1.name).subscribe((infoResult) => {
+              this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for pool ") + row1.name).subscribe((infoResult) => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
@@ -204,7 +204,7 @@ export class VolumesListTableConfig implements InputTableConf {
       label: T("Encryption Rekey"),
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "volumes", "rekey", row1.id]));
+          ["storage", "pools", "rekey", row1.id]));
 
       }
     });
@@ -227,34 +227,34 @@ export class VolumesListTableConfig implements InputTableConf {
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
       actions.push({
-        label: T("Detach/Delete Volume"),
+        label: T("Detach/Delete"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "detachvolume", row1.id]));
+            ["storage", "pools", "detachvolume", row1.id]));
         }
       });
       actions.push({
         label: T("Extend"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "manager", row1.id]));
+            ["storage", "pools", "manager", row1.id]));
         }
       });
       actions.push({
         label: T("Status"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "volumes", "status", row1.id]));
+            ["storage", "pools", "status", row1.id]));
         }
       });
 
       if (rowData.is_upgraded === false) {
 
         actions.push({
-          label: T("Upgrade Volume"),
+          label: T("Upgrade Pool"),
           onClick: (row1) => {
             
-            this.dialogService.confirm(T("Upgrade Volume"), T("Proceed with upgrading the volume ? (Upgrading a pool is a \
+            this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? (Upgrading a pool is a \
                                                         non-reversable operation that could make some features of \
                                                         the pool incompatible with older versions of FreeNAS): ") + row1.name).subscribe((confirmResult) => {
               if (confirmResult === true) {
@@ -268,7 +268,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                 }, (res) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T("Error Upgrading Volume ") + row1.name,  res.message, res.stack);
+                  this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name,  res.message, res.stack);
                 });
               } 
             });
@@ -283,7 +283,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Add Dataset"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+            "storage", "pools", "id", row1.path.split('/')[0], "dataset",
             "add", row1.path
           ]));
         }
@@ -292,7 +292,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Add Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row1.path.split('/')[0], "zvol", "add",
+            "storage", "pools", "id", row1.path.split('/')[0], "zvol", "add",
             row1.path
           ]));
         }
@@ -301,7 +301,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+            "storage", "pools", "id", row1.path.split('/')[0], "dataset",
             "edit", row1.path
           ]));
         }
@@ -311,7 +311,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Delete Dataset"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
               "delete", row1.path
             ]));
           }
@@ -320,7 +320,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Edit Permissions"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "volumes", "id", row1.path.split('/')[0], "dataset",
+              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
               "permissions", row1.path
             ]));
           }
@@ -350,7 +350,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Delete Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row1.path.split('/')[0], "zvol",
+            "storage", "pools", "id", row1.path.split('/')[0], "zvol",
             "delete", row1.path
           ]));
         }
@@ -359,7 +359,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "volumes", "id", row1.path.split('/')[0], "zvol", "edit",
+            "storage", "pools", "id", row1.path.split('/')[0], "zvol", "edit",
             row1.path
           ]));
         }
@@ -446,22 +446,22 @@ export class VolumesListTableConfig implements InputTableConf {
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
 
-  title = T("ZFS Pools");
+  title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Volumes", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
   };
 
   expanded = false;
@@ -510,7 +510,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
       this.paintMe = true;
     }, (res) => {
-      this.dialogService.errorReport(T("Error getting volume data"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
   }
