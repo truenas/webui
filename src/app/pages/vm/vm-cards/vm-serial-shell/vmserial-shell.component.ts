@@ -12,6 +12,9 @@ import {
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core'
+import { Terminal } from 'vscode-xterm';
+import * as fit from 'vscode-xterm/lib/addons/fit';
+import * as attach from 'vscode-xterm/lib/addons/attach';
 
 import { WebSocketService, ShellService } from '../../../../services/';
 import { TooltipComponent } from '../../../common/entity/entity-form/components/tooltip/tooltip.component';
@@ -36,13 +39,13 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
   public xterm: any;
   private shellSubscription: any;
 
-//   public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
-//  <b>Command + C/V</b>.<br>\
-//  Many utilities are built-in, including:<br>\
-//  <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
-//  <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
-//  and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
-//  chapter for more information.';
+  public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
+ <b>Command + C/V</b>.<br>\
+ Many utilities are built-in, including:<br>\
+ <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
+ <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
+ and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
+ chapter for more information.';
 
   clearLine = "\u001b[2K\r"
   protected pk: string;
@@ -50,7 +53,11 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
   constructor(private ws: WebSocketService,
               public ss: ShellService,
               protected aroute: ActivatedRoute,
-              public translate: TranslateService) {}
+              public translate: TranslateService) {
+                Terminal.applyAddon(fit);
+                Terminal.applyAddon(attach);
+              }
+              
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -69,6 +76,8 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
   }
 
   ngOnDestroy() {
+    console.log(this.xterm);
+
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
@@ -90,23 +99,31 @@ export class VMSerialShellComponent implements OnInit, OnChanges {
   initializeTerminal() {
     const domHeight = document.body.offsetHeight;
     let rowNum = (domHeight * 0.75 - 104) / 21;
-    if (rowNum < 10) {
-      rowNum = 10;
-    }
-
-    this.xterm = new( < any > window).Terminal({
+    // if (rowNum < 10) {
+    //   rowNum = 10;
+    
+    // this.xterm = new( < any > window).Terminal({
+    //   'cursorBlink': true,
+    //   'tabStopWidth': 8,
+    //   'cols': 80,
+    //   'rows': parseInt(rowNum.toFixed()),
+    //   'focus': true
+    // });
+    this.xterm = new Terminal({
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,
-      'rows': parseInt(rowNum.toFixed()),
+      // 'rows': parseInt(rowNum.toFixed()),
+      'rows': 25,
       'focus': true
     });
+  
     this.xterm.open(this.container.nativeElement);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
-    this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
+    // this.xterm.send('attachconsole.py /dev/nmdm'+this.pk+'B\n')
     this.xterm.send('cu -l /dev/nmdm'+this.pk+'B\n');
-    this.xterm.send('\r');
+    // this.xterm.send('\r');
   }
 
   initializeWebShell(res: string) {
