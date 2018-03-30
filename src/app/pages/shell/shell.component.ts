@@ -16,9 +16,9 @@ import { WebSocketService, ShellService } from '../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 import { T } from '../../translate-marker';
-import { Terminal } from 'vscode-xterm';
-import * as fit from 'vscode-xterm/lib/addons/fit';
-import * as attach from 'vscode-xterm/lib/addons/attach';
+//import { Terminal } from 'vscode-xterm';
+//import * as fit from 'vscode-xterm/lib/addons/fit';
+//import * as attach from 'vscode-xterm/lib/addons/attach';
 
 @Component({
   selector: 'app-shell',
@@ -105,7 +105,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       rowNum = 10;
     }
 
-    this.xterm = new Terminal({
+    this.xterm = new (<any>window).Terminal({ 
       'cursorBlink': false,
       'tabStopWidth': 8,
       'cols': parseInt(colNum.toFixed(),10),
@@ -142,7 +142,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
-    Terminal.applyAddon(fit);
-    Terminal.applyAddon(attach);
+//    Terminal.applyAddon(fit);
+//    Terminal.applyAddon(attach);
   }
 }
