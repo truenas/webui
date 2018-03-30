@@ -15,8 +15,26 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
 export class DisksListConfig implements InputTableConf {
+
+
+  public static ROOT_POOL: string = "Root Pool";
+  public static getRootPoolDisksQueryCall = "boot.get_disks";
+
+  static createRootNodeVolume(): ZfsPoolData {
+
+    const zfsRootPool: ZfsPoolData = {
+      id: DisksListConfig.ROOT_POOL,
+      name: DisksListConfig.ROOT_POOL,
+      path: "/"
+
+    };
+    return zfsRootPool;
+  }
+
+
   public flattenedVolData: any;
   public resource_name = 'storage/disk/';
+  public queryCall = undefined;  // I use this in the ROOT_POOL case.
   public hideTopActions = true;
   public diskMap: Map<string, string> = new Map<string, string>();
 
@@ -44,7 +62,10 @@ export class DisksListConfig implements InputTableConf {
     public title: string,
     public diskPoolMapParent: DiskPoolMap) {
 
-    if (typeof (this._classId) !== "undefined" && this._classId !== "") {
+    if (DisksListConfig.ROOT_POOL === this._classId) {
+      this.resource_name = "";
+      this.queryCall = DisksListConfig.getRootPoolDisksQueryCall;
+    } else if (this._classId !== undefined && this._classId !== "") {
       this.resource_name += "/" + this._classId;
     }
   }
@@ -61,7 +82,7 @@ export class DisksListConfig implements InputTableConf {
       }
     });
 
-    if (this.title === "" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false ) {
+    if (this.title === "" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false) {
       actions.push({
         label: T("Wipe"),
         onClick: (row1) => {
@@ -141,32 +162,51 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
+
+      if (res.data === undefined) {
+        res.data = [];
+      }
+
+      // RootNode Volume is treated just a bit specially  
+      // (uses boot.get_disks from WS instead of storage/disks from api/v1.0. 
+      res.data.push(DisksListConfig.createRootNodeVolume());
+
       res.data.forEach((volume) => {
         volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this);
         volume.type = 'zpool';
         volume.isReady = false;
-        try {
-          volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
-        } catch (error) {
-          console.log("error", error);
+
+        if (volume.id !== DisksListConfig.ROOT_POOL) {
+          try {
+            volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
+          } catch (error) {
+            console.log("error", error);
+          }
+
+          try {
+            volume.used = (<any>window).filesize(volume.used, { standard: "iec" });
+          } catch (error) {
+            console.log("error", error);
+          }
+        } else {
+
         }
 
-        try {
-          volume.used = (<any>window).filesize(volume.used, { standard: "iec" });
-        } catch (error) {
-          console.log("error", error);
-        }
-
-        this.zfsPoolRows.push(volume);
         const volumeId = volume.id;
         const volumeObj = volume;
-        this.ws.call('pool.get_disks', [volumeId]).subscribe((resGetDisks) => {
+        
+        this.zfsPoolRows.push(volume);
+        
+        let callQuery = (DisksListConfig.ROOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
+        let args =  (DisksListConfig.ROOT_POOL === volume.id) ? [] : [volumeId];
+        
+        this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
             this.diskPoolMap.set(driveName, volumeId);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
 
-         
+
 
           volume.isReady = true;
         });
