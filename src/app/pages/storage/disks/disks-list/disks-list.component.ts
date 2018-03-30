@@ -17,7 +17,7 @@ import { T } from '../../../../translate-marker';
 export class DisksListConfig implements InputTableConf {
 
 
-  public static ROOT_POOL: string = "Root Pool";
+  public static ROOT_POOL: string = T("Root Pool");
   public static getRootPoolDisksQueryCall = "boot.get_disks";
 
   static createRootNodeVolume(): ZfsPoolData {
@@ -160,7 +160,6 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
     this.selectedKeyName = this.ALL_DISKS;
 
 
-
     this.rest.get("storage/volume", {}).subscribe((res) => {
 
       if (res.data === undefined) {
@@ -188,9 +187,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
           } catch (error) {
             console.log("error", error);
           }
-        } else {
-
-        }
+        } 
 
         const volumeId = volume.id;
         const volumeObj = volume;
