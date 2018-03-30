@@ -179,13 +179,13 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
           try {
             volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
           } catch (error) {
-            console.log("error", error);
+            //console.log("error", error);
           }
 
           try {
             volume.used = (<any>window).filesize(volume.used, { standard: "iec" });
           } catch (error) {
-            console.log("error", error);
+            //console.log("error", error);
           }
         } 
 
