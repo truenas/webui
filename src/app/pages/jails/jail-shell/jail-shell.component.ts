@@ -17,9 +17,9 @@ import { TranslateService } from '@ngx-translate/core'
 import { WebSocketService, ShellService } from '../../../services/';
 import { TooltipComponent } from '../../common/entity/entity-form/components/tooltip/tooltip.component';
 import { T } from '../../../translate-marker';
-import { Terminal } from 'vscode-xterm';
-import * as fit from 'vscode-xterm/lib/addons/fit';
-import * as attach from 'vscode-xterm/lib/addons/attach';
+//import { Terminal } from 'vscode-xterm';
+//import * as fit from 'vscode-xterm/lib/addons/fit';
+//import * as attach from 'vscode-xterm/lib/addons/attach';
 
 
 @Component({
@@ -57,8 +57,8 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
               public ss: ShellService,
               protected aroute: ActivatedRoute,
               public translate: TranslateService) {
-                Terminal.applyAddon(fit);
-                Terminal.applyAddon(attach);
+                //Terminal.applyAddon(fit);
+                //Terminal.applyAddon(attach);
               }
 
   ngOnInit() {
@@ -110,7 +110,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
       rowNum = 10;
     }
 
-    this.xterm = new Terminal({
+    this.xterm = new (<any>window).Terminal({ 
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,

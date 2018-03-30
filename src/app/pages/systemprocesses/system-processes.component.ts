@@ -11,9 +11,9 @@ import {
 import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
-import { Terminal } from 'vscode-xterm';
-import * as fit from 'vscode-xterm/lib/addons/fit';
-import * as attach from 'vscode-xterm/lib/addons/attach';
+//import { Terminal } from 'vscode-xterm';
+//import * as fit from 'vscode-xterm/lib/addons/fit';
+//import * as attach from 'vscode-xterm/lib/addons/attach';
 @Component({
   selector: 'app-system-processes',
   templateUrl: './system-processes.component.html',
@@ -53,7 +53,7 @@ ngOnDestroy() {
   };
 
   initializeTerminal() {
-    this.xterm = new Terminal({
+    this.xterm = new (<any>window).Terminal({ 
       //'cursorBlink': true,
       //'tabStopWidth': 4,
       'cols': 80,
@@ -77,7 +77,7 @@ ngOnDestroy() {
   }
 
   constructor(private ws: WebSocketService, public ss: ShellService) {
-    Terminal.applyAddon(fit);
-    Terminal.applyAddon(attach);
+//    Terminal.applyAddon(fit);
+//    Terminal.applyAddon(attach);
   }
 }
