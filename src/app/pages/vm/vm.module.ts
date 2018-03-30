@@ -34,6 +34,8 @@ import { VmSummaryComponent } from './vm-cards/vm-summary.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
 import { DockerVMWizardComponent } from './dockervm-wizard/';
+import {VMSerialShellComponent} from './vm-cards/vm-serial-shell'
+
 
 @NgModule({
   imports : [
@@ -59,7 +61,8 @@ import { DockerVMWizardComponent } from './dockervm-wizard/';
     DeviceRawFileAddComponent,
     VmSummaryComponent,
     VMWizardComponent,
-    DockerVMWizardComponent
+    DockerVMWizardComponent,
+    VMSerialShellComponent
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
 })

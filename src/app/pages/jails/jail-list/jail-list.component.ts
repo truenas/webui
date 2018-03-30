@@ -16,7 +16,7 @@ export class JailListComponent implements OnInit {
   public isPoolActivated: boolean = false;
   public selectedPool;
   public activatedPool: any;
-  public availablePools;
+  public availablePools: any = [];
   public title = "Instances";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
@@ -143,14 +143,11 @@ export class JailListComponent implements OnInit {
     })
   }
 
-  activatePool(){
-    console.log(this.selectedPool);
-    if (this.selectedPool!=null) {
-      this.ws.call('jail.activate', [this.selectedPool.name]).subscribe(res=>{
-        console.log(res);
+  activatePool(event: Event){
+    this.ws.call('jail.activate', [this.selectedPool.name]).subscribe(
+      (res)=>{
+        this.isPoolActivated = true;
       });
-    }   
-    this.isPoolActivated = true;
   }
   getActions(parentRow) {
     return [{

@@ -25,11 +25,14 @@ export class DatasetDeleteComponent implements Formconfiguration {
   public route_success: string[] = ['storage', 'pools'];
   public isNew: boolean = true;
   public isEntity: boolean = true;
-  private title: string;
 
   public resource_name = 'storage/dataset';
 
   public fieldConfig: FieldConfig[] = [
+    {  type: 'input',
+       name: 'name',
+       readonly: true
+    },
     {
       type: 'checkbox',
       name: 'areyousure',
@@ -63,6 +66,9 @@ export class DatasetDeleteComponent implements Formconfiguration {
     if (paramMap['path'] !== undefined) {
       this.path = paramMap['path'];
     }
+
+    this.fieldConfig[0].value = this.path;
+
   }
 
   afterInit(entityAdd: any) {

@@ -28,7 +28,7 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync-delete.component';
-
+import { ResilverComponent } from './resilver/resilver.component';
 
 @NgModule({
   imports: [
@@ -60,7 +60,8 @@ import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync
     ScrubFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
-    CloudsyncDeleteComponent
+    CloudsyncDeleteComponent,
+    ResilverComponent
   ],
   providers: [ ReplicationService ]
 })
