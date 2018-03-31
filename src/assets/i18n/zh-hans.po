@@ -4,7 +4,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "(unchecked means leave alone/intact)"
+msgid ""
+"(Checking this will result in deleting the pool,            if you leave "
+"this unchecked pool will be exported and the            data will remain "
+"intact)"
 msgstr ""
 
 msgid ""
@@ -18,7 +21,7 @@ msgid ""
 "<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-"
 "RELEASE+and+Ports\" target=\"_blank\">GELI</a> encryption is available for "
-"ZFS volumes. <b>WARNING: </b>Read the \"Encryption\" section (Section "
+"ZFS pools. <b>WARNING: </b>Read the \"Encryption\" section (Section "
 "8.1.1.1) of the <a href=\"guide\">Guide</a> before activating this option."
 msgstr ""
 
@@ -119,7 +122,7 @@ msgstr ""
 msgid "Acoustic Level"
 msgstr ""
 
-msgid "Activate"
+msgid "Activate "
 msgstr ""
 
 msgid "Activate Jail Manager"
@@ -136,9 +139,6 @@ msgid "Active Directory"
 msgstr ""
 
 msgid "Adapter Type"
-msgstr ""
-
-msgid "Add"
 msgstr ""
 
 msgid "Add Additional Path"
@@ -180,6 +180,9 @@ msgid "Add an optional description for this service."
 msgstr ""
 
 msgid "Add any notes about this zvol."
+msgstr ""
+
+msgid "Add key to pool"
 msgstr ""
 
 msgid ""
@@ -455,6 +458,12 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
+msgid "Are you sure you want to delete?"
+msgstr ""
+
+msgid "Are you sure you want to delete? The data will be lost."
+msgstr ""
+
 msgid "Are you sure you want to wipe disk?"
 msgstr ""
 
@@ -528,7 +537,13 @@ msgstr ""
 msgid "Available Disks"
 msgstr ""
 
+msgid "Available Themes"
+msgstr ""
+
 msgid "Available space threshold (%)"
+msgstr ""
+
+msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
 
 msgid "Back"
@@ -1061,6 +1076,9 @@ msgid ""
 "href=\"guide\">Guide</a> for more details."
 msgstr ""
 
+msgid "Choose a color scheme."
+msgstr ""
+
 msgid ""
 "Choose a compression algorithm. The <b>Storage/Volumes/Create "
 "Dataset/Compression</b> of the <a href=\"guide\">Guide</a> fully describes "
@@ -1136,7 +1154,7 @@ msgstr ""
 msgid "Choose when the system must stop taking snapshots."
 msgstr ""
 
-msgid "Clear"
+msgid "Choose your language."
 msgstr ""
 
 msgid "Click <b>Browse</b> to select a location to store the uploaded ISO."
@@ -1157,7 +1175,7 @@ msgstr ""
 msgid "Cloud Credentials"
 msgstr ""
 
-msgid "Cloud Sync"
+msgid "Cloud Sync Tasks"
 msgstr ""
 
 msgid "Comma-, space-, or tab-delimited list of allowed hostnames or IP addresses."
@@ -1292,6 +1310,9 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
+msgid "Control left sidebar's display style."
+msgstr ""
+
 msgid ""
 "Controls whether the access time for files is updated when they are read; "
 "setting this property to <b>Off</b> avoids producing log traffic when "
@@ -1310,6 +1331,14 @@ msgid ""
 "information."
 msgstr ""
 
+msgid ""
+"Copy/paste with <b>Ctrl + C/V</b> or <b>Command + C/V</b>.<br> Many "
+"utilities are built-in, including:<br> <b>Iperf</b>, <b>Netperf</b>, "
+"<b>IOzone</b>, <b>arcsat</b>, <b>tw_cli</b>, "
+"<b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>, and <b>Dmidecode</b>. See "
+"the <b>Guide > Command Line Utilities</b> chapter for more information."
+msgstr ""
+
 msgid "Country"
 msgstr ""
 
@@ -1319,16 +1348,28 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
+msgid "Create Pool"
+msgstr ""
+
+msgid "Create Pool Key"
+msgstr ""
+
 msgid "Create Recovery Key"
+msgstr ""
+
+msgid "Create a Pool "
+msgstr ""
+
+msgid "Create a new Pool."
 msgstr ""
 
 msgid "Create a new Primary Group for the user."
 msgstr ""
 
-msgid "Create new disk image"
+msgid "Create new Pool"
 msgstr ""
 
-msgid "Created Volume Key"
+msgid "Create new disk image"
 msgstr ""
 
 msgid "Credential"
@@ -1374,6 +1415,12 @@ msgid "Day of month"
 msgstr ""
 
 msgid "Day of week"
+msgstr ""
+
+msgid "Decrypt Exported Pools"
+msgstr ""
+
+msgid "Decrypt Pool"
 msgstr ""
 
 msgid "Dedicated User"
@@ -1602,16 +1649,16 @@ msgstr ""
 msgid "Destination Path"
 msgstr ""
 
-msgid "Destroy the Volumes data ?"
+msgid "Destroy the pool's data?"
 msgstr ""
 
 msgid "Detach"
 msgstr ""
 
-msgid "Detach/Delete Volume"
+msgid "Detach/Delete"
 msgstr ""
 
-msgid "Detached/Deleted Volume"
+msgid "Detach/Delete Pool"
 msgstr ""
 
 msgid ""
@@ -1924,7 +1971,7 @@ msgstr ""
 msgid "Encryption Rekey"
 msgstr ""
 
-msgid "Encryption key used to un encryptd volumes before showing import."
+msgid "Encryption key used to decrypt pools to be imported."
 msgstr ""
 
 msgid "Encryption type. Choices are <i>Plain, SSL</i>, or       <i>TLS</i>."
@@ -2229,49 +2276,58 @@ msgid ""
 " files(super-user only) and special files)."
 msgstr ""
 
-msgid "Error Creating key to volume"
-msgstr ""
-
 msgid "Error Deleting Key"
-msgstr ""
-
-msgid "Error Detaching volume"
-msgstr ""
-
-msgid "Error Importing volume"
 msgstr ""
 
 msgid "Error Promoted dataset "
 msgstr ""
 
-msgid "Error UnEncrypted volume"
-msgstr ""
-
 msgid "Error Unlocking"
 msgstr ""
 
-msgid "Error Upgrading Volume "
+msgid "Error Upgrading Pool "
 msgstr ""
 
-msgid "Error adding key to volume"
+msgid "Error adding key to pool"
+msgstr ""
+
+msgid "Error decrypting pool"
+msgstr ""
+
+msgid "Error deleting dataset"
+msgstr ""
+
+msgid "Error deleting pool"
+msgstr ""
+
+msgid "Error detaching pool"
 msgstr ""
 
 msgid "Error getting disk data"
 msgstr ""
 
-msgid "Error getting volume data"
+msgid "Error getting pool data"
 msgstr ""
 
 msgid "Error getting volume/dataset data"
 msgstr ""
 
-msgid "Error locking volume"
+msgid "Error importing pool"
 msgstr ""
 
-msgid "Error re keying volume"
+msgid "Error locking pool"
+msgstr ""
+
+msgid "Error re-keying pool"
+msgstr ""
+
+msgid "Error saving dataset"
 msgstr ""
 
 msgid "Estimated raw capacity:"
+msgstr ""
+
+msgid "Exec"
 msgstr ""
 
 msgid "Export Read Only"
@@ -2283,7 +2339,7 @@ msgstr ""
 msgid "Extend"
 msgstr ""
 
-msgid "Extending an encrypted volume will reset the passphrase and recovery key!"
+msgid "Extending an encrypted pool will reset the passphrase and recovery key!"
 msgstr ""
 
 msgid ""
@@ -2365,6 +2421,9 @@ msgid ""
 msgstr ""
 
 msgid "Forest Level"
+msgstr ""
+
+msgid "Form Invalid"
 msgstr ""
 
 msgid "From E-mail"
@@ -2493,7 +2552,18 @@ msgstr ""
 msgid "Hour"
 msgstr ""
 
+msgid "Hover to expand"
+msgstr ""
+
 msgid "How often the IP is checked in seconds."
+msgstr ""
+
+msgid "I am aware that snapsots within this dataset will be deleted."
+msgstr ""
+
+msgid ""
+"I am aware that snapsots within this dataset will be deleted.  This means "
+"they will not be restorable."
 msgstr ""
 
 msgid "IBurst"
@@ -2710,10 +2780,10 @@ msgstr ""
 msgid "Import Disk"
 msgstr ""
 
-msgid "Import Volumes"
+msgid "Import Pools"
 msgstr ""
 
-msgid "Imported Volume"
+msgid "Imported Pool"
 msgstr ""
 
 msgid "Importing Disk"
@@ -3236,6 +3306,9 @@ msgstr ""
 msgid "Nic to attach"
 msgstr ""
 
+msgid "No Pools found."
+msgstr ""
+
 msgid "No Stat"
 msgstr ""
 
@@ -3606,6 +3679,21 @@ msgstr ""
 msgid "Pool Available Space Threshold (%)"
 msgstr ""
 
+msgid "Pool Manager"
+msgstr ""
+
+msgid "Pool info not found."
+msgstr ""
+
+msgid "Pool/Dataset"
+msgstr ""
+
+msgid "Pools"
+msgstr ""
+
+msgid "Pools & Snapshots"
+msgstr ""
+
 msgid "Port"
 msgstr ""
 
@@ -3637,6 +3725,9 @@ msgstr ""
 msgid "Prefer"
 msgstr ""
 
+msgid "Preferences"
+msgstr ""
+
 msgid "Preserve extended attributes"
 msgstr ""
 
@@ -3666,12 +3757,12 @@ msgstr ""
 msgid "Private Key"
 msgstr ""
 
-msgid "Proceed with locking the volume: "
+msgid "Proceed with locking the pool: "
 msgstr ""
 
 msgid ""
-"Proceed with upgrading the volume ? (Upgrading a pool is a                  "
-"                                       non-reversable operation that could "
+"Proceed with upgrading the pool? (Upgrading a pool is a                     "
+"                                    non-reversable operation that could "
 "make some features of                                                       "
 "  the pool incompatible with older versions of FreeNAS): "
 msgstr ""
@@ -3755,7 +3846,10 @@ msgstr ""
 msgid "Re-enter the S3 password to confirm."
 msgstr ""
 
-msgid "ReKey"
+msgid "Re-key Pool"
+msgstr ""
+
+msgid "Re-keyed Pool"
 msgstr ""
 
 msgid "Read Only"
@@ -3819,9 +3913,6 @@ msgid "Redirect Stdout"
 msgstr ""
 
 msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
-msgstr ""
-
-msgid "Rekeyed Volume"
 msgstr ""
 
 msgid "Release"
@@ -3965,10 +4056,16 @@ msgstr ""
 msgid "Reset font size to default value"
 msgstr ""
 
+msgid "Resilver Priority"
+msgstr ""
+
 msgid "Restart"
 msgstr ""
 
 msgid "Restore default"
+msgstr ""
+
+msgid "Root Pool"
 msgstr ""
 
 msgid "Root directory for anonymous FTP connections."
@@ -4029,10 +4126,10 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-msgid "Saved dataset"
+msgid "Script"
 msgstr ""
 
-msgid "Script"
+msgid "Scrub Status"
 msgstr ""
 
 msgid "Scrub Tasks"
@@ -4121,6 +4218,9 @@ msgid "Select an existing ZFS volume, dataset, or zvol."
 msgstr ""
 
 msgid "Select an existing disk"
+msgstr ""
+
+msgid "Select an existing pool, dataset, or zvol."
 msgstr ""
 
 msgid ""
@@ -4356,6 +4456,9 @@ msgstr ""
 msgid "Setup Mode"
 msgstr ""
 
+msgid "Setup Users and Groups."
+msgstr ""
+
 msgid ""
 "Several providers are supported. If your provider is       not listed, "
 "select <i>Custom Provider</i> and enter the information in       the "
@@ -4366,6 +4469,9 @@ msgid "Share Name"
 msgstr ""
 
 msgid "Sharing"
+msgstr ""
+
+msgid "Sharing Controls"
 msgstr ""
 
 msgid "Shell"
@@ -4404,6 +4510,9 @@ msgid "Shutdown Mode"
 msgstr ""
 
 msgid "Shutdown Timer"
+msgstr ""
+
+msgid "Sidebar Controls"
 msgstr ""
 
 msgid "Sign in"
@@ -4516,6 +4625,9 @@ msgstr ""
 msgid "Storage"
 msgstr ""
 
+msgid "Storage & Groups"
+msgstr ""
+
 msgid "Stripe"
 msgstr ""
 
@@ -4531,34 +4643,34 @@ msgstr ""
 msgid "Success"
 msgstr ""
 
-msgid "Successfully Added Key to volume "
-msgstr ""
-
-msgid "Successfully Created Key to volume "
-msgstr ""
-
-msgid "Successfully Detached volume "
-msgstr ""
-
 msgid "Successfully Promoted "
-msgstr ""
-
-msgid "Successfully Rekeyed volume "
-msgstr ""
-
-msgid "Successfully UnEncrypted Volume "
 msgstr ""
 
 msgid "Successfully Upgraded "
 msgstr ""
 
-msgid "Successfully deleted recovery key for volume "
+msgid "Successfully added key to pool "
 msgstr ""
 
-msgid "Successfully saved dataset: "
+msgid "Successfully decrypted pool "
 msgstr ""
 
-msgid "Successfully un-locked volume "
+msgid "Successfully deleted pool "
+msgstr ""
+
+msgid "Successfully deleted recovery key for pool "
+msgstr ""
+
+msgid "Successfully detached pool"
+msgstr ""
+
+msgid "Successfully imported pool "
+msgstr ""
+
+msgid "Successfully re-keyed pool "
+msgstr ""
+
+msgid "Successfully unlocked pool "
 msgstr ""
 
 msgid "Successfully updated."
@@ -5000,12 +5112,6 @@ msgstr ""
 msgid "Un-Lock"
 msgstr ""
 
-msgid "UnEncrypt Non Imported Volumes"
-msgstr ""
-
-msgid "UnEncrypt Volumes"
-msgstr ""
-
 msgid ""
 "Uncheck this box to allow cross-domain       authentication, to allow users "
 "and groups to be managed on       another forest, or to allow permissions "
@@ -5057,7 +5163,7 @@ msgstr ""
 msgid "Unlock"
 msgstr ""
 
-msgid "Unlocked Volume"
+msgid "Unlock Pool"
 msgstr ""
 
 msgid ""
@@ -5074,7 +5180,7 @@ msgstr ""
 msgid "Update and Reboot"
 msgstr ""
 
-msgid "Upgrade Volume"
+msgid "Upgrade Pool"
 msgstr ""
 
 msgid "Upgraded"
@@ -5135,6 +5241,9 @@ msgstr ""
 msgid "User"
 msgstr ""
 
+msgid "User Controls"
+msgstr ""
+
 msgid "User ID"
 msgstr ""
 
@@ -5152,6 +5261,9 @@ msgstr ""
 
 msgid "Users"
 msgstr "用户"
+
+msgid "Users & Groups"
+msgstr ""
 
 msgid "VFS Objects"
 msgstr ""
@@ -5172,6 +5284,9 @@ msgid "VMs"
 msgstr ""
 
 msgid "VMware-Snapshots"
+msgstr ""
+
+msgid "Validate Remote Path"
 msgstr ""
 
 msgid "Value"
@@ -5206,9 +5321,6 @@ msgstr ""
 msgid "Volume/Dataset"
 msgstr ""
 
-msgid "Volumes"
-msgstr ""
-
 msgid "Warning"
 msgstr ""
 
@@ -5234,9 +5346,6 @@ msgid "Webdav Password"
 msgstr ""
 
 msgid "Webdav SSL Certificate"
-msgstr ""
-
-msgid "Weekday"
 msgstr ""
 
 msgid "When"
@@ -5340,6 +5449,9 @@ msgstr ""
 msgid "Xen initiator compat mode"
 msgstr ""
 
+msgid "You just closed User Tour!"
+msgstr ""
+
 msgid "ZFS Deduplication"
 msgstr ""
 
@@ -5349,17 +5461,11 @@ msgstr ""
 msgid "ZFS Filesystem"
 msgstr ""
 
-msgid "ZFS Pool Manager"
-msgstr ""
-
-msgid "ZFS Pools"
-msgstr ""
-
 msgid "ZFS deplication"
 msgstr ""
 
 msgid ""
-"ZFS volumes must conform to strict naming <a "
+"ZFS pools must conform to strict naming <a "
 "href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" "
 "target=\"_blank\">conventions</a>. Choose a memorable name that will stick "
 "out in the logs."
@@ -5414,6 +5520,9 @@ msgid "cifs_srv_max_protocol"
 msgstr ""
 
 msgid "cifs_srv_min_protocol"
+msgstr ""
+
+msgid "close"
 msgstr ""
 
 msgid "comment"
@@ -5537,6 +5646,9 @@ msgid "jail_zfs_dataset"
 msgstr ""
 
 msgid "jail_zfs_mountpoint"
+msgstr ""
+
+msgid "list"
 msgstr ""
 
 msgid "login_flags"
