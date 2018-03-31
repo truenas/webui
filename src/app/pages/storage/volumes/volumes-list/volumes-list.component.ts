@@ -21,33 +21,33 @@ import { T } from '../../../../translate-marker';
 
 
 export interface ZfsPoolData {
-  avail: number;
-  availStr: string;
-  id: string;
-  is_decrypted: boolean;
-  is_upgraded: boolean;
-  mountpoint: string;
-  name: string;
-  path: string;
-  nodePath: string;
-  parentPath: string;
-  status: string;
-  used: number;
-  used_pct: string;
-  usedStr: string;
-  sed_pct: string;
-  vol_encrypt: number;
-  vol_encryptkey: string;
-  vol_guid: string;
-  vol_name: string;
-  type: string;
-  compression: string;
-  dedup: string;
-  readonly: string;
-  children: any[];
-  dataset_data: any;
-  actions: any[];
-  volumesListTableConfig: VolumesListTableConfig;
+  avail?: number;
+  availStr?: string;
+  id?: string;
+  is_decrypted?: boolean;
+  is_upgraded?: boolean;
+  mountpoint?: string;
+  name?: string;
+  path?: string;
+  nodePath?: string;
+  parentPath?: string;
+  status?: string;
+  used?: number;
+  used_pct?: string;
+  usedStr?: string;
+  sed_pct?: string;
+  vol_encrypt?: number;
+  vol_encryptkey?: string;
+  vol_guid?: string;
+  vol_name?: string;
+  type?: string;
+  compression?: string;
+  dedup?: string;
+  readonly?: string;
+  children?: any[];
+  dataset_data?: any;
+  actions?: any[];
+  volumesListTableConfig?: VolumesListTableConfig;
 
 }
 

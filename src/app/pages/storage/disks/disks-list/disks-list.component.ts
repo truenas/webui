@@ -15,96 +15,129 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
 export class DisksListConfig implements InputTableConf {
-    public flattenedVolData: any;
-    public resource_name = 'storage/disk/';
-    public hideTopActions = true;
-    public diskMap: Map<string,string> = new Map<string,string>();
-    
-    public columns: Array<any> = [
-      {name : 'Name', prop : 'disk_name'},
-      {name : 'Serial', prop : 'disk_serial'},
-      {name : 'Disk Size', prop : 'disk_size'},
-      {name : 'Description', prop : 'disk_description'},
-      {name : 'Transfer Mode', prop : 'disk_transfermode'},
-      {name : 'HDD Standby', prop : 'disk_hddstandby'},
-      {name : 'Advanced Power Management', prop : 'disk_advpowermgmt'},
-      {name : 'Acoustic Level', prop : 'disk_acousticlevel'},
-      {name : 'Enable S.M.A.R.T.', prop : 'disk_togglesmart'},
-      {name : 'S.M.A.R.T. extra options', prop : 'disk_smartoptions'},
-      {name : 'Enclosure Slot', prop : 'disk_enclosure_slot'}
-    ];
-    public config: any = {
-      paging : true,
-      sorting : {columns : this.columns},
+
+
+  public static ROOT_POOL: string = T("Root Pool");
+  public static getRootPoolDisksQueryCall = "boot.get_disks";
+
+  static createRootNodeVolume(): ZfsPoolData {
+
+    const zfsRootPool: ZfsPoolData = {
+      id: DisksListConfig.ROOT_POOL,
+      name: DisksListConfig.ROOT_POOL,
+      path: "/"
+
     };
-  
-    constructor(
-      protected _router: Router,
-      protected _classId: string,
-      public title: string) {
-  
-      if (typeof (this._classId) !== "undefined" && this._classId !== "") {
-        this.resource_name += "/" + this._classId;
-      }
+    return zfsRootPool;
+  }
+
+
+  public flattenedVolData: any;
+  public resource_name = 'storage/disk/';
+  public queryCall = undefined;  // I use this in the ROOT_POOL case.
+  public hideTopActions = true;
+  public diskMap: Map<string, string> = new Map<string, string>();
+
+  public columns: Array<any> = [
+    { name: 'Name', prop: 'disk_name' },
+    { name: 'Serial', prop: 'disk_serial' },
+    { name: 'Disk Size', prop: 'disk_size' },
+    { name: 'Description', prop: 'disk_description' },
+    { name: 'Transfer Mode', prop: 'disk_transfermode' },
+    { name: 'HDD Standby', prop: 'disk_hddstandby' },
+    { name: 'Advanced Power Management', prop: 'disk_advpowermgmt' },
+    { name: 'Acoustic Level', prop: 'disk_acousticlevel' },
+    { name: 'Enable S.M.A.R.T.', prop: 'disk_togglesmart' },
+    { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions' },
+    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' }
+  ];
+  public config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
+  };
+
+  constructor(
+    protected _router: Router,
+    protected _classId: string,
+    public title: string,
+    public diskPoolMapParent: DiskPoolMap) {
+
+    if (DisksListConfig.ROOT_POOL === this._classId) {
+      this.resource_name = "";
+      this.queryCall = DisksListConfig.getRootPoolDisksQueryCall;
+    } else if (this._classId !== undefined && this._classId !== "") {
+      this.resource_name += "/" + this._classId;
     }
-    
-    getActions(row) {
-      const actions = [];
-  
+  }
+
+  getActions(row) {
+    const actions = [];
+
+    actions.push({
+      label: T("Edit"),
+      onClick: (row1) => {
+        this._router.navigate(new Array('/').concat([
+          "storage", "disks", "edit", row1.disk_identifier
+        ]));
+      }
+    });
+
+    if (this.title === "" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false) {
       actions.push({
-        label : T("Edit"),
-        onClick : (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "disks", "edit", row1.disk_identifier
-          ]));
-        }
-      });
-      actions.push({
-        label : T("Wipe"),
-        onClick : (row1) => {
+        label: T("Wipe"),
+        onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
             "storage", "disks", "wipe", row1.disk_name
           ]));
         }
       });
-  
-      return actions;
     }
 
-    rowValue(row, attr) {
-      switch (attr) {
-        case 'disk_size':
-          return (<any>window).filesize(row[attr], { standard: "iec" });
-        default:
-          return row[attr];
-      }
-    }
-
-    resourceTransformIncomingRestData(data: any): any {
-      data = new EntityUtils().flattenData(data);
-      const returnData: any[] = [];
-      
-      for (let i = 0; i < data.length; i++) {
-
-        if( this.diskMap.size < 1 ) {
-          returnData.push(data[i]);
-        } else if( this.diskMap.has(data[i].disk_name) ) {
-          returnData.push(data[i]);
-        } 
-      }
-      
-      console.log("this:", this);
-      return returnData;
-    };
-    
+    return actions;
   }
+
+  rowValue(row, attr) {
+    switch (attr) {
+      case 'disk_size':
+        return (<any>window).filesize(row[attr], { standard: "iec" });
+      default:
+        return row[attr];
+    }
+  }
+
+  resourceTransformIncomingRestData(data: any): any {
+    data = new EntityUtils().flattenData(data);
+    const returnData: any[] = [];
+
+    for (let i = 0; i < data.length; i++) {
+
+      if (this.diskMap.size < 1) {
+        returnData.push(data[i]);
+      } else if (this.diskMap.has(data[i].disk_name)) {
+        returnData.push(data[i]);
+      }
+    }
+
+    console.log("this:", this);
+    return returnData;
+  };
+
+}
+
+
+
+interface DiskPoolMap {
+  diskPoolMap: Map<string, string>
+}
 
 
 @Component({
   selector: 'app-disks-list',
   templateUrl: './disks-list.component.html'
 })
-export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit {
+export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMap {
+
+  public diskPoolMap: Map<string, string> = new Map<string, string>();
 
   zfsPoolRows: ZfsPoolData[] = [];
   expanded_all = true;
@@ -116,50 +149,69 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public title = T("View Disks");
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
+    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
-      this.conf = new DisksListConfig(this.router, "", "");
+    this.conf = new DisksListConfig(this.router, "", "", this);
   }
 
   ngOnInit(): void {
 
     this.selectedKeyName = this.ALL_DISKS;
-    
-    
+
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
+
+      if (res.data === undefined) {
+        res.data = [];
+      }
+
+      // RootNode Volume is treated just a bit specially  
+      // (uses boot.get_disks from WS instead of storage/disks from api/v1.0. 
+      res.data.push(DisksListConfig.createRootNodeVolume());
+
       res.data.forEach((volume) => {
-        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name);
+        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this);
         volume.type = 'zpool';
         volume.isReady = false;
-        try {
-          volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
-        } catch( error ) {
-          console.log("error", error );
-        }
 
-        try {
-          volume.used = (<any>window).filesize(volume.used, { standard: "iec" });
-        } catch( error ) {
-          console.log("error", error );
-        }
+        if (volume.id !== DisksListConfig.ROOT_POOL) {
+          try {
+            volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
+          } catch (error) {
+            //console.log("error", error);
+          }
 
-        this.zfsPoolRows.push(volume);
+          try {
+            volume.used = (<any>window).filesize(volume.used, { standard: "iec" });
+          } catch (error) {
+            //console.log("error", error);
+          }
+        } 
+
         const volumeId = volume.id;
         const volumeObj = volume;
-        this.ws.call('pool.get_disks', [volumeId]).subscribe((resGetDisks) => {
-          resGetDisks.forEach((driveName)=>{
+        
+        this.zfsPoolRows.push(volume);
+        
+        let callQuery = (DisksListConfig.ROOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
+        let args =  (DisksListConfig.ROOT_POOL === volume.id) ? [] : [volumeId];
+        
+        this.ws.call(callQuery, args).subscribe((resGetDisks) => {
+          resGetDisks.forEach((driveName) => {
+            this.diskPoolMap.set(driveName, volumeId);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
 
+
+
           volume.isReady = true;
         });
-    
-        
+
+
       });
 
-      if( this.zfsPoolRows.length === 1 ) {
+      if (this.zfsPoolRows.length === 1) {
         this.expanded_zfs = true;
       }
     });
@@ -172,7 +224,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   tabSelectChangeHandler($event): void {
     const selectedTabName: string = $event.tab.textLabel;
-    this.selectedKeyName = selectedTabName; 
+    this.selectedKeyName = selectedTabName;
   }
 
 }
