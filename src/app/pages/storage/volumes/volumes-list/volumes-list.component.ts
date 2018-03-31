@@ -12,11 +12,13 @@ import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 
 
@@ -57,6 +59,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public flattenedVolData: any;
   public resource_name = 'storage/volume';
   public rowData: ZfsPoolData[] = [];
+  protected dialogRef: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -65,6 +68,7 @@ export class VolumesListTableConfig implements InputTableConf {
     private title: string,
     public mdDialog: MatDialog,
     protected rest: RestService,
+    protected ws: WebSocketService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService) {
@@ -332,16 +336,16 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           this.loader.open();
 
-          this.rest.post("storage/dataset/" + this._classId + "/promote", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+          this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
             this.loader.close();
 
-            this.dialogService.Info(T("Cloned"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
+            this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
               this.parentVolumesListComponent.repaintMe();
             });
           }, (res) => {
             this.loader.close();
-            this.dialogService.errorReport(T("Error Promoted dataset ") + row1.path, res.message, res.stack);
-          });
+            this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
+          });          
         }
       });
     }
@@ -448,20 +452,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
   };
 
   expanded = false;
@@ -486,7 +490,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
       res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.dialogService, this.loader, this.translate);
+        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
         volume.type = 'zpool';
 
 
