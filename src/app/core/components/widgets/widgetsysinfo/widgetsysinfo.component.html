@@ -4,7 +4,8 @@
       <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
           <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
-          <div class="logo-bg" *ngIf="cardBg == 'logo.svg'" animate [colorLoop]="themeAccentColors"><img class="os-logo" src="assets/images/logo.svg"></div>
+          <div class="logo-bg" id="widget-sysinfo-logo-bg"  *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>
+          <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'" animate [colorLoop]="themeAccentColors"><img class="os-logo" src="assets/images/logo.svg"></div>-->
           <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
         </div>
         <div fxFlex="100" fxFlex.gt-xs="60">

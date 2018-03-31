@@ -75,8 +75,7 @@
 
 
 <div class="entity-cards-container" *ngIf="viewMode.value == 'cards' || viewMode.value == 'slim'">
-  <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" 
-                                               [ngClass]="{'slim':viewMode.value == 'slim'}">
+  <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper vm-card-{{card.id}}" [ngClass]="{'slim':viewMode.value == 'slim'}">
     <!-- 
       This is where both the regular and slim cards are created. The difference between
       slim and regular card views are generated purely via css there is no
