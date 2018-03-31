@@ -77,7 +77,7 @@ class create_user_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -117,7 +117,7 @@ class create_user_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -161,7 +161,7 @@ class create_user_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -202,7 +202,7 @@ class create_user_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -241,7 +241,7 @@ class create_user_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -254,7 +254,7 @@ class create_user_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
