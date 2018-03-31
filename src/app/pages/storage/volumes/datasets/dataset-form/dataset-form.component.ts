@@ -27,6 +27,7 @@ interface DatasetFormData {
   refreservation: string;
   reservation: string;
   deduplication: string;
+  exec: string;
   readonly: string;
   snapdir: string;
   copies: string;
@@ -169,6 +170,17 @@ export class DatasetFormComponent implements Formconfiguration {
     },
     {
       type: 'select',
+      name: 'exec',
+      placeholder: T('Exec'),
+      tooltip: T('Only available in <b>Advanced Mode</b>;\
+ choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
+      options: [
+        { label: 'ON', value: 'ON' },
+        { label: 'OFF', value: 'OFF' }
+      ],
+    },
+    {
+      type: 'select',
       name: 'readonly',
       placeholder: T('Read-only'),
       tooltip: T('Only available in <b>Advanced Mode</b>;\
@@ -249,6 +261,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     'snapdir',
     'copies',
     'recordsize',
+    'exec',
   ];
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
@@ -340,6 +353,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
         quota: this.getFieldValueOrRaw(wsResponse.quota),
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
+        exec: this.getFieldValueOrRaw(wsResponse.exec),
         recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
         refquota: this.getFieldValueOrRaw(wsResponse.refquota),
         refreservation: this.getFieldValueOrRaw(wsResponse.refreservation),
@@ -348,7 +362,11 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
 
-    
+     // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
+     if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
+       let value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+       returnValue.recordsize = "" + ( 1024 * value ) + "K";
+     }
 
      return returnValue;
   }
@@ -373,7 +391,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Saved dataset"), T("Successfully saved dataset: ") + this.pk);
+      
       this.router.navigate(new Array('/').concat(
         this.route_success));
     }, (res) => {

@@ -7,7 +7,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  SimpleChange
+  SimpleChange,
+  OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -15,6 +16,11 @@ import { TranslateService } from '@ngx-translate/core'
 
 import { WebSocketService, ShellService } from '../../../services/';
 import { TooltipComponent } from '../../common/entity/entity-form/components/tooltip/tooltip.component';
+import { T } from '../../../translate-marker';
+//import { Terminal } from 'vscode-xterm';
+//import * as fit from 'vscode-xterm/lib/addons/fit';
+//import * as attach from 'vscode-xterm/lib/addons/attach';
+
 
 @Component({
   selector: 'app-jail-shell',
@@ -23,9 +29,9 @@ import { TooltipComponent } from '../../common/entity/entity-form/components/too
   providers: [ShellService],
 })
 
-export class JailShellComponent implements OnInit, OnChanges {
+export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
-  @Input() prompt: string = '';
+  @Input() prompt = '';
   //xter container
   @ViewChild('terminal') container: ElementRef;
   // xterm variables
@@ -36,13 +42,13 @@ export class JailShellComponent implements OnInit, OnChanges {
   public xterm: any;
   private shellSubscription: any;
 
-  public shell_tooltip = 'Copy/paste with <b>Ctrl + C/V</b> or\
+  public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
  <b>Command + C/V</b>.<br>\
  Many utilities are built-in, including:<br>\
  <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
  <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
  and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
- chapter for more information.';
+ chapter for more information.');
 
   clearLine = "\u001b[2K\r"
   protected pk: string;
@@ -50,7 +56,10 @@ export class JailShellComponent implements OnInit, OnChanges {
   constructor(private ws: WebSocketService,
               public ss: ShellService,
               protected aroute: ActivatedRoute,
-              public translate: TranslateService) {}
+              public translate: TranslateService) {
+                //Terminal.applyAddon(fit);
+                //Terminal.applyAddon(attach);
+              }
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -72,6 +81,9 @@ export class JailShellComponent implements OnInit, OnChanges {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
+    if (this.ss.connected){
+      this.ss.socket.close();
+    }
   };
 
   resetDefault() {
@@ -81,28 +93,28 @@ export class JailShellComponent implements OnInit, OnChanges {
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
   }) {
-    let log: string[] = [];
-    for (let propName in changes) {
-      let changedProp = changes[propName];
+    const log: string[] = [];
+    for (const propName in changes) {
+      const changedProp = changes[propName];
       // reprint prompt
-      if (propName == 'prompt' && this.xterm != null) {
+      if (propName === 'prompt' && this.xterm != null) {
         this.xterm.write(this.clearLine + this.prompt)
       }
     }
   }
 
   initializeTerminal() {
-    let domHeight = document.body.offsetHeight;
+    const domHeight = document.body.offsetHeight;
     let rowNum = (domHeight * 0.75 - 104) / 21;
     if (rowNum < 10) {
       rowNum = 10;
     }
 
-    this.xterm = new( < any > window).Terminal({
+    this.xterm = new (<any>window).Terminal({ 
       'cursorBlink': true,
       'tabStopWidth': 8,
       'cols': 80,
-      'rows': parseInt(rowNum.toFixed()),
+      'rows': parseInt(rowNum.toFixed(), 10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);

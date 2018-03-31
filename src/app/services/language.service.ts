@@ -67,7 +67,7 @@ export class LanguageService {
   },
   {
     code: "de",
-    name: "Deutsche"
+    name: "Deutsch"
   },
   {
     code: "dsb",

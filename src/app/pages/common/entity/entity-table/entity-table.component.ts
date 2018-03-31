@@ -25,6 +25,7 @@ export interface InputTableConf {
   
   columns?:any[];
   hideTopActions?: boolean;
+  queryCall?: string;
   queryCallOption?: any;
   resource_name?: string;
   route_edit?: string;
@@ -37,7 +38,6 @@ export interface InputTableConf {
   preInit?(entity: EntityTableComponent);
   afterInit?(entity: EntityTableComponent);
   dataHandler?(entity: EntityTableComponent);
-  queryCall?(resp);
   resourceTransformIncomingRestData?(data);
   getActions?(row): any [];
   getAddActions?(): any [];

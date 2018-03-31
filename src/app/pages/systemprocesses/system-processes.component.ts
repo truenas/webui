@@ -5,23 +5,22 @@ import {
   ElementRef,
   Output,
   EventEmitter,
-  SimpleChange
+  SimpleChange,
+  OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { WebSocketService, ShellService } from '../../services/';
-// import * as xterm from "xterm";
-// import * as Terminal from 'xterm/dist/xterm';
-// import 'xterm/dist/addons/fit/fit.js';
-// import 'xterm/dist/addons/attach/attach.js';
-
+//import { Terminal } from 'vscode-xterm';
+//import * as fit from 'vscode-xterm/lib/addons/fit';
+//import * as attach from 'vscode-xterm/lib/addons/attach';
 @Component({
   selector: 'app-system-processes',
   templateUrl: './system-processes.component.html',
   providers: [ShellService],
 })
 
-export class SystemProcessesComponent implements OnInit {
+export class SystemProcessesComponent implements OnInit, OnDestroy {
 
   //xter container
   @ViewChild('terminal') container: ElementRef;
@@ -44,12 +43,17 @@ export class SystemProcessesComponent implements OnInit {
     });
   }
 
-  ngOnDestroy() {
-    this.shellSubscription.unsubscribe();
+ngOnDestroy() {
+    if (this.shellSubscription) {
+      this.shellSubscription.unsubscribe();
+    }
+    if (this.ss.connected){
+      this.ss.socket.close();
+    }
   };
 
   initializeTerminal() {
-    this.xterm = new (<any>window).Terminal({
+    this.xterm = new (<any>window).Terminal({ 
       //'cursorBlink': true,
       //'tabStopWidth': 4,
       'cols': 80,
@@ -72,5 +76,8 @@ export class SystemProcessesComponent implements OnInit {
     return this.ws.call('auth.generate_token');
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService) {}
+  constructor(private ws: WebSocketService, public ss: ShellService) {
+//    Terminal.applyAddon(fit);
+//    Terminal.applyAddon(attach);
+  }
 }

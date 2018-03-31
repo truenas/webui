@@ -7,7 +7,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  SimpleChange
+  SimpleChange,
+  OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -15,6 +16,9 @@ import { WebSocketService, ShellService } from '../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 import { T } from '../../translate-marker';
+//import { Terminal } from 'vscode-xterm';
+//import * as fit from 'vscode-xterm/lib/addons/fit';
+//import * as attach from 'vscode-xterm/lib/addons/attach';
 
 @Component({
   selector: 'app-shell',
@@ -23,9 +27,9 @@ import { T } from '../../translate-marker';
   providers: [ShellService],
 })
 
-export class ShellComponent implements OnInit, OnChanges {
+export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
-  @Input() prompt: string = '';
+  @Input() prompt = '';
   //xter container
   @ViewChild('terminal') container: ElementRef;
   // xterm variables
@@ -34,7 +38,7 @@ export class ShellComponent implements OnInit, OnChanges {
   font_size: number;
   public token: any;
   public xterm: any;
-  public resize_terminal: boolean = true;
+  public resize_terminal = true;
   private shellSubscription: any;
 
   public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
@@ -60,6 +64,9 @@ export class ShellComponent implements OnInit, OnChanges {
   }
 
   ngOnDestroy() {
+    if (this.ss.connected){
+      this.ss.socket.close();
+    }
     if(this.shellSubscription){
       this.shellSubscription.unsubscribe();
     }
@@ -76,19 +83,19 @@ export class ShellComponent implements OnInit, OnChanges {
   ngOnChanges(changes: {
     [propKey: string]: SimpleChange
   }) {
-    let log: string[] = [];
-    for (let propName in changes) {
-      let changedProp = changes[propName];
+    const log: string[] = [];
+    for (const propName in changes) {
+      const changedProp = changes[propName];
       // reprint prompt
-      if (propName == 'prompt' && this.xterm != null) {
+      if (propName === 'prompt' && this.xterm != null) {
         this.xterm.write(this.clearLine + this.prompt)
       }
     }
   }
 
   initializeTerminal() {
-    let domHeight = document.body.offsetHeight;
-    let domWidth = document.body.offsetWidth;
+    const domHeight = document.body.offsetHeight;
+    const domWidth = document.body.offsetWidth;
     let colNum = (domWidth * 0.75 - 104) / 10;
     if (colNum < 80) {
       colNum = 80;
@@ -98,11 +105,11 @@ export class ShellComponent implements OnInit, OnChanges {
       rowNum = 10;
     }
 
-    this.xterm = new (<any>window).Terminal({
+    this.xterm = new (<any>window).Terminal({ 
       'cursorBlink': false,
       'tabStopWidth': 8,
-      'cols': parseInt(colNum.toFixed()),
-      'rows': parseInt(rowNum.toFixed()),
+      'cols': parseInt(colNum.toFixed(),10),
+      'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
@@ -111,8 +118,8 @@ export class ShellComponent implements OnInit, OnChanges {
   }
 
   resizeTerm(){
-    let domHeight = document.body.offsetHeight;
-    let domWidth = document.body.offsetWidth;
+    const domHeight = document.body.offsetHeight;
+    const domWidth = document.body.offsetWidth;
     let colNum = (domWidth * 0.75 - 104) / 10;
     if (colNum < 80) {
       colNum = 80;
@@ -134,5 +141,8 @@ export class ShellComponent implements OnInit, OnChanges {
     return this.ws.call('auth.generate_token');
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {}
+  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
+//    Terminal.applyAddon(fit);
+//    Terminal.applyAddon(attach);
+  }
 }

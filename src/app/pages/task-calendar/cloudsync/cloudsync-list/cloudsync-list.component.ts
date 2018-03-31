@@ -12,10 +12,10 @@ import { TaskService } from '../../../../services/';
 })
 export class CloudsyncListComponent {
 
-  public title = "Cloud Sync Jobs";
+  public title = "Cloud Sync Tasks";
   protected queryCall = 'backup.query';
   protected route_add: string[] = ['tasks', 'cloudsync', 'add'];
-  protected route_add_tooltip = "Add Cloud Sync Job";
+  protected route_add_tooltip = "Add Cloud Sync Task";
   protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
   protected route_delete: string[] = ['tasks', 'cloudsync', 'delete'];
   protected entityList: any;

@@ -27,11 +27,6 @@ export class DeviceListComponent {
   public  wsDelete = 'datastore.delete';
   public busy: Subscription;
   protected loaderOpen = false;
-
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
-              public dialogService: DialogService) {}
-
   public columns: Array<any> = [
     {name : 'Type', prop : 'dtype'},
   ];
@@ -40,12 +35,17 @@ export class DeviceListComponent {
     sorting : {columns : this.columns},
   };
 
+  constructor(protected router: Router, protected aroute: ActivatedRoute,
+              protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
+              public dialogService: DialogService) {}
+
+
   isActionVisible(actionId: string, row: any) {
-    return actionId == 'delete' && row.id === true ? false : true;
+    return actionId === 'delete' && row.id === true ? false : true;
   }
 
   getAddActions() {
-    let actions = [];
+    const actions = [];
     actions.push({
       label : "Add CDROM",
       icon: "album",
@@ -70,14 +70,7 @@ export class DeviceListComponent {
             [ "vm", this.pk, "devices", this.vm, "disk", "add" ]));
       }
     });
-    actions.push({
-      label : "Add VNC",
-      icon: "cast",
-      onClick : () => {
-        this.router.navigate(new Array('').concat(
-            [ "vm", this.pk, "devices", this.vm, "vnc", "add" ]));
-      }
-    });
+
     actions.push({
       label : "Add RawFile",
       icon: "description",
@@ -86,23 +79,34 @@ export class DeviceListComponent {
             [ "vm", this.pk, "devices", this.vm, "rawfile", "add" ]));
       }
     });
+    this.ws.call('vm.query', [[['id', '=', this.pk]]]).subscribe((vm)=>{
+      if (vm[0].bootloader !== 'GRUB'){
+        actions.push({
+          label : "Add VNC",
+          icon: "cast",
+          onClick : () => {
+            this.router.navigate(new Array('').concat(
+                [ "vm", this.pk, "devices", this.vm, "vnc", "add" ]));
+          }
+        });
+      };
+    });
     return actions;
   }
 
   getActions(row) {
-    let actions = [];
+    const actions = [];
     actions.push({
       label : "Edit",
-      onClick : (row) => {
-        // console.log(row);
+      onClick : (edit_row) => {
         this.router.navigate(new Array('').concat(
-            [ "vm", this.pk, "devices", this.vm, "edit", row.id, row.dtype ]));
+            [ "vm", this.pk, "devices", this.vm, "edit", edit_row.id, edit_row.dtype ]));
       }
     });
     actions.push({
       label : "Delete",
-      onClick : (row) => {
-        this.deviceDelete(row.id);
+      onClick : (delete_row) => {
+        this.deviceDelete(delete_row.id);
       },
     });
     return actions;
