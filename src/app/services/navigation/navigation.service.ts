@@ -78,7 +78,7 @@ export class NavigationService {
         { name: T('Replication Tasks'), state: 'replication' },
         { name: T('Resilver Priority'), state: 'resilver' },
         { name: T('Scrub Tasks'), state: 'scrub' },
-        { name: T('Cloud Sync'), state: 'cloudsync'},
+        { name: T('Cloud Sync Tasks'), state: 'cloudsync'},
       ]
     },
     {
