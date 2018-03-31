@@ -26,7 +26,7 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
 
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setCPUData(evt);
     });
 
@@ -38,8 +38,8 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
   }
 
   setCPUData(evt:CoreEvent){
-    console.log("SET CPU DATA");
-    console.log(evt.data);
+    //DEBUG: console.log("SET CPU DATA");
+    //DEBUG: console.log(evt.data);
     let cpuUserObj = evt.data;
 
     let parsedData = [];

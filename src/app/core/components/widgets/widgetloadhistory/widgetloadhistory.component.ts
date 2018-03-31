@@ -26,7 +26,7 @@ export class WidgetLoadHistoryComponent extends WidgetComponent implements After
 
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"StatsLoadAvgData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setChartData(evt);
     });
 
@@ -38,8 +38,8 @@ export class WidgetLoadHistoryComponent extends WidgetComponent implements After
   }
 
   setChartData(evt:CoreEvent){
-    console.log("SET LOAD AVG DATA");
-    console.log(evt.data);
+    //DEBUG: console.log("SET LOAD AVG DATA");
+    //DEBUG: console.log(evt.data);
     let memUserObj = evt.data;
 
     let parsedData = [];

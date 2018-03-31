@@ -35,15 +35,15 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   init(){
-    console.log("******** Dashboard Initializing... ********");
+    //DEBUG: console.log("******** Dashboard Initializing... ********");
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setPoolData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setDisksData(evt);
     });
 
@@ -53,8 +53,8 @@ export class DashboardComponent implements AfterViewInit {
 
 
   setDisksData(evt:CoreEvent){
-    console.log("******** DISKS INFO ********");
-    console.log(evt);
+    //DEBUG: console.log("******** DISKS INFO ********");
+    //DEBUG: console.log(evt);
     for(let i in evt.data){
       let disk:Disk = {
         name:evt.data[i].name,
@@ -73,8 +73,8 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   setPoolData(evt:CoreEvent){
-    console.log("******** ZPOOL DATA ********");
-    console.log(evt.data);
+    //DEBUG: console.log("******** ZPOOL DATA ********");
+    //DEBUG: console.log(evt.data);
     for(let i in evt.data){
       let zvol = {
         avail: evt.data[i].avail,

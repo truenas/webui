@@ -21,14 +21,14 @@ export class AnimationService {
 
   constructor(private core:CoreService){
     this.core.register({observerClass:this,eventName:"ScrollTo"}).subscribe((evt:CoreEvent) => {
-      console.log("Message Received");
-      console.log(evt.data);
+      //DEBUG: console.log("Message Received");
+      //DEBUG: console.log(evt.data);
       this.scrollTo(evt.data);
     });
 
     this.core.register({observerClass:this,eventName:"AnimateColorLoopStart"}).subscribe((evt:CoreEvent) => {
-      console.log("Message Received");
-      console.log(evt.data);
+      //DEBUG: console.log("Message Received");
+      //DEBUG: console.log(evt.data);
       this.colorLoopAnimation(evt.data.element,evt.data.colors);
     });
   }
@@ -41,8 +41,8 @@ export class AnimationService {
     // Grab reference to the target element 
     // you want to scroll to
     const dest = (<any>document).querySelector(destination);
-    console.log(dest)
-    const elementScroll = scroll(target);
+    //DEBUG: console.log(dest)
+    const elementScroll = scroll(target,{});
 
     //elementScroll.set('top', 400);
 
@@ -56,8 +56,8 @@ export class AnimationService {
 
   colorLoopAnimation(obj,colors){
     const target = (<any>document).querySelector(obj);
-    const elStyler:any = styler(target,{});
-    console.warn(elStyler);
+    const elStyler:any = styler(target);
+    //DEBUG: console.warn(elStyler);
     const s = keyframes({
       values: colors,
       duration: 60000,
@@ -66,7 +66,7 @@ export class AnimationService {
     });
 
     const startColorLoop = () => { 
-      console.warn(elStyler);
+      //DEBUG: console.warn(elStyler);
       const a = s.start(elStyler.set('background-color'));
        return a;
     }
@@ -82,10 +82,10 @@ export class AnimationService {
     reset();
 
     if(colors){
-      console.log("Starting the Color Loop");
+      //DEBUG: console.log("Starting the Color Loop");
       this.colorLoopActive.resume();
     } else if(!colors){
-      console.log("Stopping the Color Loop");
+      //DEBUG: console.log("Stopping the Color Loop");
       reset();
     }
     //return s;
@@ -135,12 +135,12 @@ export class AnimationService {
 
    // HELLO WORLD!
    animate(){
-     console.log(this.animation);
+     //DEBUG: console.log(this.animation);
      switch(this.animation){
      case 'stop':
-       console.log("Stopping animations");
+       //DEBUG: console.log("Stopping animations");
        if(this.inMotion){
-         console.log(this.inMotion);
+         //DEBUG: console.log(this.inMotion);
          this.inMotion.pause()
        }
        break;
@@ -196,17 +196,17 @@ export class AnimationService {
      reset();
 
      if(this.shake){
-       console.log("Starting the shaking");
+       //DEBUG: console.log("Starting the shaking");
        this.shaking.resume();
      } else if(!this.shake){
-       console.log("Stopping the shaking");
+       //DEBUG: console.log("Stopping the shaking");
        reset();
      }
      //return s;
      }
 
    flipV(reverse?:boolean){
-     console.log("**** FLIP ANIMATION ****");
+     //DEBUG: console.log("**** FLIP ANIMATION ****");
 
      let start: number;
      let finish: number;
@@ -229,7 +229,7 @@ export class AnimationService {
    }
 
    flipH(reverse?:boolean){
-     console.log("**** FLIP ANIMATION ****");
+     //DEBUG: console.log("**** FLIP ANIMATION ****");
 
      let start: number;
      let finish: number;
@@ -252,7 +252,7 @@ export class AnimationService {
    }
 
    slide(){
-     console.log("**** SLIDE ANIMATION ****");
+     //DEBUG: console.log("**** SLIDE ANIMATION ****");
 
      let startX:  number;
      let finishX:  number;
@@ -273,7 +273,7 @@ export class AnimationService {
        startX = this.elStyler.get('translateX');
        fromProps.x = startX;
        toProps.x = finishX;
-       console.warn(startX)
+       //DEBUG: console.warn(startX)
      }
      if(this.slideProps.y){
        // Detect and convert if percentage value
@@ -302,7 +302,7 @@ export class AnimationService {
     let spl = value.split('%');
     let num = Number(spl[0])/100;
     let result = d*num;
-    console.warn(result);
+    //DEBUG: console.warn(result);
     return result;
    }*/
 

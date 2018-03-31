@@ -26,7 +26,7 @@ export class WidgetMemoryHistoryComponent extends WidgetComponent implements Aft
 
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"StatsMemoryData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setChartData(evt);
     });
 
@@ -38,8 +38,8 @@ export class WidgetMemoryHistoryComponent extends WidgetComponent implements Aft
   }
 
   setChartData(evt:CoreEvent){
-    console.log("SET MEMORY DATA");
-    console.log(evt.data);
+    //DEBUG: console.log("SET MEMORY DATA");
+    //DEBUG: console.log(evt.data);
     let memUserObj = evt.data;
 
     let parsedData = [];

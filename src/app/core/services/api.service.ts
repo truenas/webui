@@ -135,7 +135,7 @@ export class ApiService {
         responseEvent: "VmProfileRequest"
       },
       postProcessor(res,callArgs){
-        console.log(res);
+        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = [[["id","=",res]]];// eg. [["id", "=", "foo"]]
         return cloneRes;
@@ -178,7 +178,7 @@ export class ApiService {
         responseEvent:"VmStopped"
       },
       postProcessor(res,callArgs){
-        console.log(res);
+        //DEBUG: console.log(res);
         let cloneRes = Object.assign({},res);
         cloneRes = {id:callArgs[0]} // res:boolean
         return cloneRes;
@@ -312,8 +312,8 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        console.log("******** MEM STAT RESPONSE ********");
-        console.log(res);
+        //DEBUG: console.log("******** MEM STAT RESPONSE ********");
+        //DEBUG: console.log(res);
 
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
@@ -353,9 +353,9 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,callArgs){
-        console.log("******** DISK TEMP RESPONSE ********");
-        console.log(res);
-        console.log(callArgs);
+        //DEBUG: console.log("******** DISK TEMP RESPONSE ********");
+        //DEBUG: console.log(res);
+        //DEBUG: console.log(callArgs);
 
         let cloneRes = Object.assign({},res);
         let legend = res.meta.legend;
@@ -396,8 +396,8 @@ export class ApiService {
         return redef;
       },
       postProcessor(res,call){
-        console.log("******** LOAD STAT RESPONSE ********");
-        console.log(res);
+        //DEBUG: console.log("******** LOAD STAT RESPONSE ********");
+        //DEBUG: console.log(res);
         //return res;
 
         let cloneRes = Object.assign({},res);
