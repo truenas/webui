@@ -36,6 +36,8 @@ import { MarkdownModule } from 'angular2-markdown';
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { StatsService } from 'app/services/stats.service';
+
 import { ErdService } from 'app/services/erd.service';
 import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 
@@ -75,6 +77,7 @@ export function createTranslateLoader(http: HttpClient) {
     RestService,
     AppLoaderService, 
     NotificationsService,
+    StatsService,
     ErdService,
     ENV_PROVIDERS],
   bootstrap: [

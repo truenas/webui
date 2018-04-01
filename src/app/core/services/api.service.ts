@@ -238,10 +238,19 @@ export class ApiService {
     StatsRequest:{
       apiCall:{
         protocol:"websocket",
-        version:"1",
+        version:"2",
         namespace:"stats.get_data",
         args:[],
         responseEvent:"StatsData"
+      }
+    },
+    StatsSourcesRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"1",
+        namespace:"stats.get_sources",
+        args:[],
+        responseEvent:"StatsSources"
       }
     },
     StatsCpuRequest:{
