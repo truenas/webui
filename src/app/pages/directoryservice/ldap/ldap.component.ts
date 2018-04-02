@@ -50,7 +50,7 @@ export class LdapComponent {
       'id' : 'ds_clearcache',
       'name' : 'Rebuild Directory Service Cache',
        function : async () => {
-         await this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
           this.dialogservice.Info("LDAP", "The cache is being rebuilt.");
           
         })
