@@ -25,7 +25,7 @@ export class DatasetDeleteComponent implements Formconfiguration {
   public route_success: string[] = ['storage', 'pools'];
   public isNew: boolean = true;
   public isEntity: boolean = true;
-  public saveSubmitText: "Delete";
+  public saveSubmitText = "Delete";
 
   public resource_name = 'storage/dataset';
 
@@ -71,7 +71,7 @@ export class DatasetDeleteComponent implements Formconfiguration {
   customSubmit(body) {
 
 
-    this.dialogService.confirm(T("Delete"), T("Are you sure you want to delete " + this.path + ".  Please confirm"), false).subscribe((res) => {
+    this.dialogService.confirm(T("Delete"), T("This action is irreversible and will delete any existing snapshots of this dataset (" + this.path + ").  Please confirm."), false).subscribe((res) => {
       if (res) {
 
         const url = this.resource_name + "/" + this.path
