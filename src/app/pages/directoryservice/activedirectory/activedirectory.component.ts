@@ -1,19 +1,57 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
+import {  DialogService } from '../../../services/';
 
 @Component({
-  selector : 'activedirectory',
+  selector : 'app-activedirectory',
   template : '<entity-form [conf]="this"></entity-form>',
 })
 
 export class ActiveDirectoryComponent {
-  protected resource_name: string = 'directoryservice/activedirectory';
-  protected isBasicMode: boolean = true;
+  protected resource_name = 'directoryservice/activedirectory';
+  protected isBasicMode = true;
   protected idmapBacked: any;
+  protected ad_certificate: any;
+  protected ad_kerberos_realm: any;
+  protected ad_kerberos_principal: any;
+  protected ad_ssl: any;
+  protected ad_idmap_backend: any;
+  protected ad_nss_info: any;
+  protected ad_ldap_sasl_wrapping: any;
+
+  public custActions: Array<any> = [
+    {
+      'id' : 'basic_mode',
+      'name' : 'Basic Mode',
+      function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      'id' : 'advanced_mode',
+      'name' : 'Advanced Mode',
+      function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      'id' : 'edit_idmap',
+      'name' : 'Edit Idmap',
+      function : () => {
+        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
+      }
+    },
+    {
+      'id' : 'ds_clearcache',
+      'name' : 'Rebuild Directory Service Cache',
+       function : async () => {
+         await this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+          this.dialogservice.Info("Active Directory", "The cache is being rebuilt.");
+          
+        })
+      }
+    }
+  ];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -291,38 +329,13 @@ export class ActiveDirectoryComponent {
     return true;
   }
 
-  public custActions: Array<any> = [
-    {
-      'id' : 'basic_mode',
-      'name' : 'Basic Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      'id' : 'advanced_mode',
-      'name' : 'Advanced Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      'id' : 'edit_idmap',
-      'name' : 'Edit Idmap',
-      function : () => {
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
-      }
-    }
-  ];
 
-  protected ad_certificate: any;
-  protected ad_kerberos_realm: any;
-  protected ad_kerberos_principal: any;
-  protected ad_ssl: any;
-  protected ad_idmap_backend: any;
-  protected ad_nss_info: any;
-  protected ad_ldap_sasl_wrapping: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService) {}
+              protected systemGeneralService: SystemGeneralService, 
+              private dialogservice: DialogService) {}
 
   afterInit(entityEdit: any) {
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
