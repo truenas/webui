@@ -25,27 +25,21 @@ export class DatasetDeleteComponent implements Formconfiguration {
   public route_success: string[] = ['storage', 'pools'];
   public isNew: boolean = true;
   public isEntity: boolean = true;
+  public saveSubmitText: "Delete";
 
   public resource_name = 'storage/dataset';
 
   public fieldConfig: FieldConfig[] = [
-    {  type: 'input',
-       name: 'name',
-       readonly: true
+    {
+      type: 'input',
+      name: 'name',
+      readonly: true
     },
     {
       type: 'checkbox',
       name: 'areyousure',
       placeholder: T("Are you sure you want to delete?"),
       tooltip: T('Are you sure you want to delete? The data will be lost.'),
-      required: true
-    },
-
-    {
-      type: 'checkbox',
-      name: 'imaware',
-      placeholder: T('I am aware that snapsots within this dataset will be deleted.'),
-      tooltip: T('I am aware that snapsots within this dataset will be deleted.  This means they will not be restorable.'),
       required: true
     }
 
@@ -76,22 +70,32 @@ export class DatasetDeleteComponent implements Formconfiguration {
 
   customSubmit(body) {
 
-    const url = this.resource_name + "/" + this.path
 
-    this.loader.open();
+    this.dialogService.confirm(T("Delete"), T("Are you sure you want to delete " + this.path + ".  Please confirm"), false).subscribe((res) => {
+      if (res) {
 
-    this.rest.delete(url, {}).subscribe((res) => {
-      this.loader.close();
+        const url = this.resource_name + "/" + this.path
 
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
-        
-    }, (error) => {
-      this.loader.close();
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
-      this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
-    });
-   
+        this.loader.open();
+
+        this.rest.delete(url, {}).subscribe((res) => {
+          this.loader.close();
+
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+
+        }, (error) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+          this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
+        });
+
+      }
+    })
+
+
+
+
   }
 }
