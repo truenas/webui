@@ -17,7 +17,7 @@ import { T } from '../../../../translate-marker';
 export class DisksListConfig implements InputTableConf {
 
 
-  public static ROOT_POOL: string = T("Root Pool");
+  public static ROOT_POOL: string = T("ROOT");
 
   public static DISK_NOT_IN_POOL: string = T("Unused");
 
