@@ -9,6 +9,7 @@ import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { IscsiService } from '../../../../../services/';
 import { T } from '../../../../../translate-marker';
+import {Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
@@ -31,6 +32,8 @@ export class ExtentFormComponent {
       placeholder : T('Extent name'),
       tooltip: T('Name of Extent. If the <b>Extent size</b> is not\
  <i>0</i>, it cannot be an existing file within the voulme/dataset.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'select',
