@@ -10,6 +10,7 @@ import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
 import { T } from '../../../../translate-marker';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'rsync-task-add',
@@ -33,6 +34,8 @@ export class RsyncFormComponent {
         placeholder: T('Path'),
         tooltip: T('Browse to the path to be copied; note that a path\
          length greater than 255 characters will fail.'),
+        required: true,
+        validation : [ Validators.required ]
       }, {
         type: 'select',
         name: 'rsync_user',
