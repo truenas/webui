@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
+import {Validators} from '@angular/forms';
 
 import { NetworkService, RestService } from '../../../../services';
 import {
@@ -29,12 +30,16 @@ export class InterfacesFormComponent {
       placeholder : T('NIC'),
       tooltip : T('The FreeBSD device name of the interface. This can not\
  be changed after creating the interface.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'int_name',
       placeholder : T('Interface Name'),
       tooltip : T('Description of interface.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'checkbox',
