@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -43,7 +44,9 @@ export class JailEditComponent implements OnInit {
       placeholder: T('UUID'),
       disabled: true,
       tooltip: T('This field displays the numeric <i>UUID</i> or custom\
- <i>name</i> of the jail.')
+ <i>name</i> of the jail.'),
+      required: true,
+      validation: [ Validators.required ],
     },
     {
       type: 'select',
@@ -52,6 +55,8 @@ export class JailEditComponent implements OnInit {
       options: [],
       tooltip: T('Select the FreeBSD release for the jail. Releases\
  already downloaded display <b>(fetched)</b>.'),
+      required: true,
+      validation: [ Validators.required ],
     },
     {
       type: 'checkbox',
