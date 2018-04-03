@@ -10,9 +10,9 @@ import { TourService } from '../../../../services/tour.service';
 export class UserListComponent implements OnInit {
 
   public title = "Users";
-  protected resource_name: string = 'account/users';
+  protected resource_name = 'account/users';
   protected route_add: string[] = ['account', 'users', 'add'];
-  protected route_add_tooltip: string = "Add User";
+  protected route_add_tooltip = "Add User";
   protected route_edit: string[] = ['account', 'users', 'edit'];
   protected route_delete: string[] = ['account', 'users', 'delete'];
 
@@ -23,6 +23,12 @@ export class UserListComponent implements OnInit {
     { name: 'Home directory', prop: 'bsdusr_home' },
     { name: 'Shell', prop: 'bsdusr_shell' },
     { name: 'Builtin', prop: 'bsdusr_builtin' },
+    { name: 'Full Name', prop: 'bsdusr_full_name' },
+    { name: 'Email', prop: 'bsdusr_email' },
+    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled' },
+    { name: 'Lock User', prop: 'bsdusr_locked' },
+    { name: 'Permit Sudo', prop: 'bsdusr_sudo' },
+    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account' },
   ];
   public config: any = {
     paging: true,
@@ -47,8 +53,8 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit() {
-    let showTour = localStorage.getItem(this.router.url) || 'false';
-    if (showTour != "true") {
+    const showTour = localStorage.getItem(this.router.url) || 'false';
+    if (showTour !== "true") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
       localStorage.setItem(this.router.url, 'true');
     }
