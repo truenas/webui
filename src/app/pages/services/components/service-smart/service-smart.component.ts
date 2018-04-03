@@ -40,6 +40,8 @@ export class ServiceSMARTComponent {
       placeholder : T('Check Interval'),
       tooltip: T('In minutes, how often <b>smartd</b> wakes up to check if\
             any tests have been configured to run.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
@@ -53,7 +55,9 @@ export class ServiceSMARTComponent {
         {label : 'Sleep', value : 'sleep'},
         {label : 'Standby', value : 'standby'},
         {label : 'Idle', value : 'idle'},
-      ]
+      ],
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -62,6 +66,8 @@ export class ServiceSMARTComponent {
       tooltip: T('Default of <i>0</i> disables this\
        check, otherwise reports if the temperature of a drive has\
        changed by N degrees Celsius since last report.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -70,6 +76,8 @@ export class ServiceSMARTComponent {
       tooltip: T('default of 0 disables this check, otherwise will\
        message with a log level of LOG_INFO if the temperature is higher\
        than specified degrees in Celsius.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -78,6 +86,8 @@ export class ServiceSMARTComponent {
       tooltip: T('Default of 0 disables this check, otherwise will\
        message with a log level of LOG_CRIT and send an email if the\
        temperature is higher than specified degrees in Celsius.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
