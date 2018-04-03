@@ -17,7 +17,7 @@ import {
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../translate-marker';
-
+import { Validators } from '@angular/forms';
 @Component({
   selector: 'smb-edit',
   template: ` <entity-form [conf]="this"></entity-form>`,
@@ -43,6 +43,8 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: T('Automatically populated with the original hostname\
        of the system. This is limited to 15 characters and must be\
        different from the <b>Workgroup</b> name.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -60,6 +62,8 @@ export class ServiceSMBComponent implements OnInit {
        target="_blank">Active Directory</a> or <a\
        href="http://doc.freenas.org/11/directoryservice.html#ldap"\
        target="_blank">LDAP</a> service is running.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
