@@ -29,6 +29,8 @@ export class AuthorizedAccessFormComponent {
  <i>1</i> will inherit the authentication profile associated with Group\
  <i>1</i>.'),
       inputType : 'integer',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -37,6 +39,8 @@ export class AuthorizedAccessFormComponent {
       tooltip: T('Name of user account to create for CHAP authentication\
  with the user on the remote system. Many initiators default to using\
  the initiator name as the user.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
