@@ -1,7 +1,7 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 
 import {
   RestService,
@@ -11,16 +11,52 @@ import {
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
+import {  DialogService } from '../../../services/';
 
 @Component({
-  selector : 'ldap',
+  selector : 'app-ldap',
   template : '<entity-form [conf]="this"></entity-form>',
 })
 
 export class LdapComponent {
-  protected resource_name: string = 'directoryservice/ldap';
-  protected isBasicMode: boolean = true;
+  protected resource_name = 'directoryservice/ldap';
+  protected isBasicMode = true;
   protected idmapBacked: any;
+  protected ldap_kerberos_realm: any;
+  protected ldap_kerberos_principal: any;
+  protected ldap_ssl: any;
+  protected ldapCertificate: any;
+  protected ldap_idmap_backend: any;
+  protected ldap_schema: any;
+  public custActions: Array<any> = [
+    {
+      id : 'basic_mode',
+      name : 'Basic Mode',
+      function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id : 'advanced_mode',
+      name : 'Advanced Mode',
+      function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id : 'edit_idmap',
+      name : 'Edit Idmap',
+      function : () => {
+        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'ldap']));
+      }
+    },
+    {
+      'id' : 'ds_clearcache',
+      'name' : 'Rebuild Directory Service Cache',
+       function : async () => {
+         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+          this.dialogservice.Info("LDAP", "The cache is being rebuilt.");
+          
+        })
+      }
+    }
+  ];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -229,37 +265,14 @@ export class LdapComponent {
     return true;
   }
 
-  public custActions: Array<any> = [
-    {
-      id : 'basic_mode',
-      name : 'Basic Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      id : 'advanced_mode',
-      name : 'Advanced Mode',
-      function : () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      id : 'edit_idmap',
-      name : 'Edit Idmap',
-      function : () => {
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'ldap']));
-      }
-    }
-  ];
   
-  protected ldap_kerberos_realm: any;
-  protected ldap_kerberos_principal: any;
-  protected ldap_ssl: any;
-  protected ldapCertificate: any;
-  protected ldap_idmap_backend: any;
-  protected ldap_schema: any;
+
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService) {}
+              protected systemGeneralService: SystemGeneralService,
+              private dialogservice: DialogService) {}
 
   afterInit(entityEdit: any) {
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
