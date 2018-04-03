@@ -7,7 +7,7 @@
   </div>
   <div>
     <mat-tab-group (selectChange)="tabSelectChangeHandler($event)">
-      <mat-tab label="ALL_DISKS">
+      <mat-tab label="ALL_DISKS" *ngIf="zfsPoolRows.length > 0">
         <div>
           <entity-table [conf]="conf" [title]="conf.title"></entity-table>
         </div>

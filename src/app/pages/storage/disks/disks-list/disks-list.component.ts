@@ -18,6 +18,9 @@ export class DisksListConfig implements InputTableConf {
 
 
   public static ROOT_POOL: string = T("Root Pool");
+
+  public static DISK_NOT_IN_POOL: string = T("Unused");
+
   public static getRootPoolDisksQueryCall = "boot.get_disks";
 
   static createRootNodeVolume(): ZfsPoolData {
@@ -40,6 +43,7 @@ export class DisksListConfig implements InputTableConf {
 
   public columns: Array<any> = [
     { name: 'Name', prop: 'disk_name' },
+    { name: 'Pool', prop: "poolName"},
     { name: 'Serial', prop: 'disk_serial' },
     { name: 'Disk Size', prop: 'disk_size' },
     { name: 'Description', prop: 'disk_description' },
@@ -131,6 +135,8 @@ export class DisksListConfig implements InputTableConf {
     const returnData: any[] = [];
 
     for (let i = 0; i < data.length; i++) {
+      const poolName = ( this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
+      data[i].poolName = poolName;
 
       if (this.diskMap.size < 1) {
         returnData.push(data[i]);
@@ -162,8 +168,6 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public diskPoolMap: Map<string, string> = new Map<string, string>();
 
   zfsPoolRows: ZfsPoolData[] = [];
-  expanded_all = true;
-  expanded_zfs = false;
   conf: DisksListConfig;
   public readonly ALL_DISKS = T("All Disks");
   public selectedKeyName;
@@ -230,7 +234,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
-            this.diskPoolMap.set(driveName, volumeId);
+            this.diskPoolMap.set(driveName,  volume.name);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
 
@@ -242,9 +246,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
       });
 
-      if (this.zfsPoolRows.length === 1) {
-        this.expanded_zfs = true;
-      }
+      
     });
 
   }
