@@ -95,8 +95,9 @@ export class DisksListConfig implements InputTableConf {
         }
       });
 
+    } else {  // It DOES HAVE A POOL 
       actions.push({
-        label : T("Detach"),
+        label : T("Detach From Pool"),
         onClick : (row1) => {
           this.loader.open();
 
