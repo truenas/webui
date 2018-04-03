@@ -17,7 +17,7 @@ import { T } from '../../../../translate-marker';
 export class DisksListConfig implements InputTableConf {
 
 
-  public static ROOT_POOL: string = T("ROOT");
+  public static BOOT_POOL: string = T("BOOT POOL");
 
   public static DISK_NOT_IN_POOL: string = T("Unused");
 
@@ -26,8 +26,8 @@ export class DisksListConfig implements InputTableConf {
   static createRootNodeVolume(): ZfsPoolData {
 
     const zfsRootPool: ZfsPoolData = {
-      id: DisksListConfig.ROOT_POOL,
-      name: DisksListConfig.ROOT_POOL,
+      id: DisksListConfig.BOOT_POOL,
+      name: DisksListConfig.BOOT_POOL,
       path: "/"
 
     };
@@ -69,7 +69,7 @@ export class DisksListConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected rest: RestService) {
 
-    if (DisksListConfig.ROOT_POOL === this._classId) {
+    if (DisksListConfig.BOOT_POOL === this._classId) {
       this.resource_name = "";
       this.queryCall = DisksListConfig.getRootPoolDisksQueryCall;
     } else if (this._classId !== undefined && this._classId !== "") {
@@ -210,7 +210,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         volume.type = 'zpool';
         volume.isReady = false;
 
-        if (volume.id !== DisksListConfig.ROOT_POOL) {
+        if (volume.id !== DisksListConfig.BOOT_POOL) {
           try {
             volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
           } catch (error) {
@@ -229,8 +229,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         
         this.zfsPoolRows.push(volume);
         
-        let callQuery = (DisksListConfig.ROOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
-        let args =  (DisksListConfig.ROOT_POOL === volume.id) ? [] : [volumeId];
+        let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
+        let args =  (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
         
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
