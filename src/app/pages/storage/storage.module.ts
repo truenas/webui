@@ -16,7 +16,6 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
 import { StatusComponent } from './volumes/status/status.component';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
@@ -56,7 +55,6 @@ import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptim
     DiskComponent,
     VdevComponent,
     DatasetFormComponent,
-    DatasetDeleteComponent,
     // VolumesEditComponent,
     VolumeDeleteComponent,
     VolumeUnlockFormComponent,

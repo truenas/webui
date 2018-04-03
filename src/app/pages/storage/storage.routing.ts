@@ -7,7 +7,6 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
 import { ManagerComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
 import { VolumeDeleteComponent } from './volumes/volume-delete/index';
@@ -56,10 +55,6 @@ export const routes: Routes = [
           {
             path: 'id/:pk/zvol/edit/:path', component: ZvolEditComponent,
             data: { title: 'Edit Zvol', breadcrumb: 'Edit Zvol' }
-          },
-          {
-            path: 'id/:pk/dataset/delete/:path', component: DatasetDeleteComponent,
-            data: { title: 'Delete Dataset', breadcrumb: 'Delete Dataset' }
           },
           {
             path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,

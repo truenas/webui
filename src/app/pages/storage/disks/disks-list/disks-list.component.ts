@@ -60,7 +60,10 @@ export class DisksListConfig implements InputTableConf {
     protected _router: Router,
     protected _classId: string,
     public title: string,
-    public diskPoolMapParent: DiskPoolMap) {
+    public diskPoolMapParent: DiskPoolMapParent,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    protected rest: RestService) {
 
     if (DisksListConfig.ROOT_POOL === this._classId) {
       this.resource_name = "";
@@ -91,7 +94,24 @@ export class DisksListConfig implements InputTableConf {
           ]));
         }
       });
+
+      actions.push({
+        label : T("Detach"),
+        onClick : (row1) => {
+          this.loader.open();
+
+          this.rest.post("storage/disk/" +  row1.id + "/detach", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+            this.loader.close();
+            this.diskPoolMapParent.repaintMe();
+          }, (res) => {
+            this.loader.close();
+            this.dialogService.errorReport(T("Error detaching disk: ") + row1.disk_name, res.message, res.stack);
+          });
+        }
+      });
     }
+
+
 
     return actions;
   }
@@ -126,8 +146,9 @@ export class DisksListConfig implements InputTableConf {
 
 
 
-interface DiskPoolMap {
-  diskPoolMap: Map<string, string>
+interface DiskPoolMapParent {
+  diskPoolMap: Map<string, string>;
+  repaintMe();
 }
 
 
@@ -135,7 +156,7 @@ interface DiskPoolMap {
   selector: 'app-disks-list',
   templateUrl: './disks-list.component.html'
 })
-export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMap {
+export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMapParent {
 
   public diskPoolMap: Map<string, string> = new Map<string, string>();
 
@@ -145,6 +166,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   conf: DisksListConfig;
   public readonly ALL_DISKS = T("All Disks");
   public selectedKeyName;
+  public repaintIt = true;
 
   public title = T("View Disks");
 
@@ -152,7 +174,15 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
-    this.conf = new DisksListConfig(this.router, "", "", this);
+    this.conf = new DisksListConfig(this.router, "", "", this, this.loader, this.dialogService, this.rest);
+  }
+
+
+  public repaintMe() {
+    this.repaintIt = false;
+    setTimeout(()=>{
+      this.repaintIt = true;
+    }, -1);
   }
 
   ngOnInit(): void {
@@ -171,7 +201,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
       res.data.push(DisksListConfig.createRootNodeVolume());
 
       res.data.forEach((volume) => {
-        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this);
+        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this, this.loader, this.dialogService, this.rest);
         volume.type = 'zpool';
         volume.isReady = false;
 

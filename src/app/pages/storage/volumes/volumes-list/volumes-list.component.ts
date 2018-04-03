@@ -136,10 +136,8 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
 
-                  this.dialogService.Info(T("Lock"), T("Locked ") + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
                 }, (res) => {
                   this.loader.close();
                   this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
@@ -257,26 +255,26 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Upgrade Pool"),
           onClick: (row1) => {
-            
+
             this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? (Upgrading a pool is a \
                                                         non-reversable operation that could make some features of \
                                                         the pool incompatible with older versions of FreeNAS): ") + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-                this.loader.open();
+                if (confirmResult === true) {
+                  this.loader.open();
 
-                this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  this.loader.close();
-    
-                  this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
+                  this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                    this.loader.close();
+
+                    this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
+                      this.parentVolumesListComponent.repaintMe();
+                    });
+                  }, (res) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name, res.message, res.stack);
                   });
-                }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name,  res.message, res.stack);
-                });
-              } 
-            });
-            
+                }
+              });
+
           }
         });
       }
@@ -314,10 +312,27 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Delete Dataset"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "delete", row1.path
-            ]));
+
+            this.dialogService.confirm(T("Delete"), T("This action is irreversible and will \
+             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false).subscribe((res) => {
+                if (res) {
+
+                  this.loader.open();
+
+                  const url = "storage/dataset/" + row1.path;
+
+
+                  this.rest.delete(url, {}).subscribe((res) => {
+                    this.loader.close();
+                    this.parentVolumesListComponent.repaintMe();
+                  }, (error) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
+                  });
+
+                }
+              });
+
           }
         });
         actions.push({
@@ -345,7 +360,7 @@ export class VolumesListTableConfig implements InputTableConf {
           }, (res) => {
             this.loader.close();
             this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
-          });          
+          });
         }
       });
     }
@@ -369,14 +384,14 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
 
-      
+
     }
     return actions;
   }
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
-  
+
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
