@@ -45,6 +45,8 @@ export class CloudCredentialsAmazonComponent {
       name: 'name',
       placeholder: T('Account Name'),
       tooltip: T('Enter the Amazon Web Service account name.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'textarea',
