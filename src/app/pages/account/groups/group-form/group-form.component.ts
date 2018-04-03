@@ -26,12 +26,14 @@ export class GroupFormComponent {
  have IDs above 1000, and groups used by a service have\
  an ID number that matches the default port number used by the service.\
  For example, the sshd group has an ID of 22.'),
+      required: true,
     },
     {
       type: 'input',
       name: 'bsdgrp_group',
       placeholder: T('Name'),
       tooltip: T('Entering a name is required'),
+      required: true
     },
     {
       type: 'checkbox',

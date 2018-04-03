@@ -381,6 +381,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           this.loader.close();
                           if (this.conf.errorReport){
                             this.conf.errorReport(res);
+                          } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
+                            this.dialog.errorReport(res.type, res.reason, res.trace.formatted);
                           }
                           else {
                               new EntityUtils().handleError(this, res);
