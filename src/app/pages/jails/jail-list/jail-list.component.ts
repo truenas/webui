@@ -36,7 +36,8 @@ export class JailListComponent implements OnInit {
     sorting: { columns: this.columns },
     multiSelect: true,
   };
-  public multiActions: Array < any > = [{
+  public multiActions: Array < any > = [
+    {
       id: "mstart",
       label: "Start",
       enable: true,
@@ -106,6 +107,34 @@ export class JailListComponent implements OnInit {
         this.entityList.doMultiDelete(selected);
       }
     },
+    {
+      id: "medIt",
+      label: "Edit",
+      enable: true,
+      onClick: (row) => {
+        this.router.navigate(
+          new Array('').concat(["jails", "edit", row.host_hostuuid]));
+      }
+    },
+    {
+      id: "mmount",
+      label: "Mount Points",
+      enable: true,
+      onClick: (selected) => {
+        console.log('mount points');
+      }
+    }
+  ];
+  public singleActions: Array < any > = [
+   
+    {
+      id: "roger",
+      label: "Roger",
+      enable: true,
+      onClick: (selected) => {
+        console.log('roger');
+      }
+    }
   ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
@@ -151,23 +180,6 @@ export class JailListComponent implements OnInit {
   }
   getActions(parentRow) {
     return [{
-        id: "edit",
-        label: "Edit",
-        onClick: (row) => {
-          this.router.navigate(
-            new Array('').concat(["jails", "edit", row.host_hostuuid]));
-        }
-      },
-      {
-        id: "mount",
-        label: "Mount points",
-        onClick: (row) => {
-          this.router.navigate(
-            //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
-            new Array('').concat(["jails", "storage", row.host_hostuuid]));
-        }
-      },
-      {
         id: "start",
         label: "Start",
         onClick: (row) => {
@@ -221,7 +233,24 @@ export class JailListComponent implements OnInit {
         onClick: (row) => {
           this.entityList.doDelete(row.host_hostuuid);
         }
-      }
+      },
+      {
+        id: "edit",
+        label: "Edit",
+        onClick: (row) => {
+          this.router.navigate(
+            new Array('').concat(["jails", "edit", row.host_hostuuid]));
+        }
+      },
+      {
+        id: "mount",
+        label: "Mount points",
+        onClick: (row) => {
+          this.router.navigate(
+            //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
+            new Array('').concat(["jails", "storage", row.host_hostuuid]));
+        }
+      },
     ]
   }
 
