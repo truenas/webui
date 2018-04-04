@@ -63,7 +63,8 @@ export class LdapComponent {
       type : 'input',
       name : 'ldap_hostname',
       placeholder : 'Hostname',
-      tooltip: 'Hostname or IP address of LDAP server.'
+      tooltip: 'Hostname or IP address of LDAP server.',
+      required: true
     },
     {
       type : 'input',

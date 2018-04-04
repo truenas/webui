@@ -12,13 +12,14 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 export class KerberosKeytabsFormComponent {
 
   protected route_success: string[] = ['directoryservice', 'kerberoskeytabs'];
-  protected resource_name: string = 'directoryservice/kerberoskeytab';
-  protected isEntity: boolean = true;
+  protected resource_name = 'directoryservice/kerberoskeytab';
+  protected isEntity =  true;
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'keytab_name',
       placeholder: 'Name',
+      required: true
     },
     {
       type: 'input',
@@ -26,6 +27,7 @@ export class KerberosKeytabsFormComponent {
       name: 'keytab_file',
       placeholder: 'Kerberos Keytab',
       fileType: 'binary',
+      required: true
     },
   ];
 

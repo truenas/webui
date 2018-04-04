@@ -39,6 +39,7 @@ export class NISComponent {
       name : 'nis_domain',
       placeholder : 'NIS domain:',
       tooltip: 'Name of NIS domain.',
+      required: true
     },
     {
       type : 'input',

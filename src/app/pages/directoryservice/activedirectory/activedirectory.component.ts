@@ -62,6 +62,7 @@ export class ActiveDirectoryComponent {
  or child domain (<i>sales.example.com</i>). This setting is mandatory\
  and the GUI refuses to save the settings if the domain controller\
  for the specified domain cannot be found.',
+      required: true
     },
     {
       type : 'input',
