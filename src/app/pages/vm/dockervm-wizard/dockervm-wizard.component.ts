@@ -38,7 +38,8 @@ export class DockerVMWizardComponent {
       { type: 'input',
         name : 'name',
         placeholder :  T ('Name of the VM'),
-        validation : [ Validators.required ]
+        validation : [ Validators.required ],
+        required: true,
       },
       { type: 'checkbox',
         name : 'autostart',
@@ -53,9 +54,10 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'vcpus',
           placeholder:  T('Virtual CPUs'),
-          value: 1,
           inputType: 'number',
-          min: 1
+          min: 1,
+          validation : [ Validators.required,  Validators.min(1)],
+          value: 1
         },
         {
           type: 'input',
@@ -64,7 +66,8 @@ export class DockerVMWizardComponent {
           tooltip: '',
           value: 2048,
           inputType: 'number',
-          min: 2048
+          min: 2048,
+          required: true,
         },
       ]
     },
@@ -113,7 +116,8 @@ export class DockerVMWizardComponent {
           name: 'raw_filename',
           placeholder : T('filename'),
           tooltip: T('Provide a filename, this file will be created at user specific location'),
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true
         },
         {
           type: 'input',
@@ -123,7 +127,8 @@ export class DockerVMWizardComponent {
           value: 10,
           inputType: 'number',
           min: 10,
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true
         },
         {
           type: 'explorer',
@@ -132,7 +137,8 @@ export class DockerVMWizardComponent {
           tooltip: T('please select a path for existing directory'),
           explorerType: "directory",
           initial: '/mnt',
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true
         },
         {
           type: 'input',
@@ -203,6 +209,11 @@ export class DockerVMWizardComponent {
       });
       ( < FormGroup > entityWizard.formArray.get([3])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([3])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
+          this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+        })
+      });
+      ( < FormGroup > entityWizard.formArray.get([3])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
+        ( < FormGroup > entityWizard.formArray.get([3])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
           this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });

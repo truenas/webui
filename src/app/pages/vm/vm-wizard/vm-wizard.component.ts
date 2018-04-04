@@ -52,7 +52,8 @@ export class VMWizardComponent {
         name : 'name',
         placeholder : T('VM Name'),
         tooltip : T('Type an alphanumeric name to identify the VM.'),
-        validation : [ Validators.required ]
+        validation : [ Validators.required ],
+        required: true,
       },
       { type: 'select',
         name : 'bootloader',
@@ -91,6 +92,7 @@ export class VMWizardComponent {
  host processor cores, the CPU may limit the maximum number. The VM\
  operating system may also have operational or licensing restrictions on\
  the number of CPUs allowed.'),
+          required: true,
         },
         {
           type: 'input',
