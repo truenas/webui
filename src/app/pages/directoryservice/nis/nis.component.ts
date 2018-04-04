@@ -3,6 +3,7 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Subscription';
 import {  DialogService } from '../../../services/';
+import { Validators } from '@angular/forms';
 
 import {
   RestService,
@@ -39,7 +40,8 @@ export class NISComponent {
       name : 'nis_domain',
       placeholder : 'NIS domain:',
       tooltip: 'Name of NIS domain.',
-      required: true
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',

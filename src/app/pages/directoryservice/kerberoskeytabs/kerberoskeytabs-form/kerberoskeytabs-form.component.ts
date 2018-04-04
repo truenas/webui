@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-kerberos-keytbas-form',
@@ -19,7 +20,8 @@ export class KerberosKeytabsFormComponent {
       type: 'input',
       name: 'keytab_name',
       placeholder: 'Name',
-      required: true
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -27,7 +29,8 @@ export class KerberosKeytabsFormComponent {
       name: 'keytab_file',
       placeholder: 'Kerberos Keytab',
       fileType: 'binary',
-      required: true
+      required: true,
+      validation : [ Validators.required ]
     },
   ];
 

@@ -2,6 +2,7 @@ import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs/Subscription';
+import { Validators } from '@angular/forms';
 
 import {
   RestService,
@@ -64,7 +65,8 @@ export class LdapComponent {
       name : 'ldap_hostname',
       placeholder : 'Hostname',
       tooltip: 'Hostname or IP address of LDAP server.',
-      required: true
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',

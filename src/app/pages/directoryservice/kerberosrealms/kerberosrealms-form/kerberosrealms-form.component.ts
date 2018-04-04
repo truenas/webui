@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-group-form',
@@ -21,7 +22,8 @@ export class KerberosRealmsFormComponent {
       name: 'krb_realm',
       placeholder: 'Realm',
       tooltip: 'Mandatory. Name of the realm.',
-      required: true
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
