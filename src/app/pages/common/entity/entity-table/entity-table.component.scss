@@ -25,6 +25,10 @@
 	margin-top: -8px;
 }
 
-.multiActionsButton {
-	height: 40px;
+.multiActionsButton, .singleActionsButton {
+    height: 40px;
+    margin-bottom: 5px;
+}
+.singleActionsButton {
+    margin-left: 3px;
 }

@@ -108,15 +108,15 @@ export class JailListComponent implements OnInit {
       }
     }
   ];
+  // new stuff
   public singleActions: Array < any > = [
-   
     {
       id: "medIt",
       label: "Edit",
       enable: true,
-      onClick: (row) => {
-        this.router.navigate(
-          new Array('').concat(["jails", "edit", row.host_hostuuid]));
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        console.log(selectedJails[0]);
       }
     },
     {
@@ -124,9 +124,11 @@ export class JailListComponent implements OnInit {
       label: "Mount Points",
       enable: true,
       onClick: (selected) => {
-        console.log('mount points');
+        let selectedJails = this.getSelectedNames(selected);
+        console.log(selectedJails[0]);
       }
     }
+    // end
   ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 

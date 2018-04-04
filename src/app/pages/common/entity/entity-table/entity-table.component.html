@@ -17,8 +17,8 @@
     </mat-paginator>
   </div>
 
-  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
-    <div *ngIf="selected.length > 0 ? true : false" >
+  <div fxLayout="row wrap" fxLayoutAlign="start center">
+    <div class="multiActionsButton" *ngIf="selected.length > 0 ? true : false" ><!-- relocated class name here -->
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
         <span *ngFor="let maction of conf.multiActions">
           <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
@@ -32,21 +32,18 @@
         </button>
       </ng-template>
     </div>
-    <div  class="singleActionsButton">
-      <div *ngIf="selected.length === 1 ? true : false" >
+
+    <!-- New stuff -->
+    <div class="singleActionsButton">
+      <div *ngIf="selected.length > 0 ? true : false" >
         <div *ngIf="conf.singleActions; else defaultSingleActions" fxFlex="100">
           <span *ngFor="let maction of conf.singleActions">
-            <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+            <button [disabled]="selected.length !== 1" mat-raised-button  *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
               <span>{{ maction?.label | translate }}</span>
             </button>
           </span>
         </div>
-        <ng-template #defaultMultiActions>
-          <button mat-raised-button (click)="doMultiDelete(this.selected);">
-            <span>{{ "Delete" | translate }}</span>
-          </button>
-        </ng-template>
-      </div>
+      </div>    
     </div>
   </div>
 
