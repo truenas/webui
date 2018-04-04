@@ -57,7 +57,8 @@ export class DockerVMWizardComponent {
           inputType: 'number',
           min: 1,
           validation : [ Validators.required,  Validators.min(1)],
-          value: 1
+          value: 1,
+          required: true,
         },
         {
           type: 'input',
