@@ -106,7 +106,10 @@ export class JailListComponent implements OnInit {
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }
-    },
+    }
+  ];
+  public singleActions: Array < any > = [
+   
     {
       id: "medIt",
       label: "Edit",
@@ -122,17 +125,6 @@ export class JailListComponent implements OnInit {
       enable: true,
       onClick: (selected) => {
         console.log('mount points');
-      }
-    }
-  ];
-  public singleActions: Array < any > = [
-   
-    {
-      id: "roger",
-      label: "Roger",
-      enable: true,
-      onClick: (selected) => {
-        console.log('roger');
       }
     }
   ];
