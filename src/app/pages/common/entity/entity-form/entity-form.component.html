@@ -2,7 +2,7 @@
 <p *ngIf="!hasConf">
     Please <button mat-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to setup configuration first.
 </p>
-<mat-card>
+<mat-card class="form-card">
     <div class="mat-content">
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
             <ng-container *ngFor="let field of fieldConfig; let i = index">

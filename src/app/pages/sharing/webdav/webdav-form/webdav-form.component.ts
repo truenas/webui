@@ -1,5 +1,6 @@
 // import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { Component } from '@angular/core';
+import {Validators} from '@angular/forms';
 
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -20,7 +21,9 @@ export class WebdavFormComponent {
         type : 'input',
         name : 'webdav_name',
         placeholder : T('Share Name'),
-        tooltip: T('Input a name for the share.')
+        tooltip: T('Input a name for the share.'),
+        required: true,
+        validation : [ Validators.required ]
       },
       {
         type : 'input',
@@ -34,7 +37,9 @@ export class WebdavFormComponent {
         name : 'webdav_path',
         explorerType: 'directory',
         placeholder : T('Path'),
-        tooltip: T('Browse to the volume or dataset to share.')
+        tooltip: T('Browse to the volume or dataset to share.'),
+        required: true,
+        validation : [ Validators.required ]
       },
       {
         type : 'checkbox',
