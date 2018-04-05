@@ -534,7 +534,6 @@ export class CloudsyncFormComponent implements OnInit {
       auxPayLoad.push(payload)
       this.ws.call('backup.create', auxPayLoad).subscribe((res)=>{
         this.loader.close();
-        console.log(res);
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
@@ -545,10 +544,9 @@ export class CloudsyncFormComponent implements OnInit {
       this.loader.close();
       this.ws.job('backup.update', [parseInt(this.pid), payload]).subscribe((res)=>{
         this.loader.close();
-        console.log(res);
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err)=>{
-        console.log(err);
+        console.log("error: ", err);
         this.dialog.errorReport('Error', err.reason, err.trace.formatted);
       });
     }
