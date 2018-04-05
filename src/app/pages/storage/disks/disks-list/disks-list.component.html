@@ -2,10 +2,7 @@
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">{{title}}</div>
   </div>
-  <div>
-    <br/>
-  </div>
-
+ 
   <mat-card>
     <mat-button-toggle-group #group="matButtonToggleGroup">
       <mat-button-toggle [checked]='true' value="All">
@@ -17,10 +14,7 @@
     </mat-button-toggle-group>
   </mat-card>
   
-  <div>
-    <br/>
-  </div>
-
+ 
   <div *ngIf="zfsPoolRows.length > 0 && group.value === conf.title">
     <entity-table [conf]="conf" [title]="conf.title"></entity-table>
   </div>
