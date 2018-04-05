@@ -116,7 +116,8 @@ export class JailListComponent implements OnInit {
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
-        console.log(selectedJails[0]);
+        this.router.navigate(
+          new Array('').concat(["jails", "edit", selectedJails[0][0]]));
       }
     },
     {
@@ -125,7 +126,8 @@ export class JailListComponent implements OnInit {
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
-        console.log(selectedJails[0]);
+        this.router.navigate(
+          new Array('').concat(["jails", "storage", selectedJails[0][0]]));
       }
     }
     // end
