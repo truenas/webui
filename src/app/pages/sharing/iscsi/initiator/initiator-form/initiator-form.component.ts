@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Validators } from '@angular/forms';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../../translate-marker';
@@ -23,6 +24,8 @@ export class InitiatorFormComponent {
  separated by spaces.'),
       value : 'ALL',
       inputType : 'textarea',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -32,6 +35,8 @@ export class InitiatorFormComponent {
  mask such as <i>192.168.2.0/24</i>.'),
       value : 'ALL',
       inputType : 'textarea',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
