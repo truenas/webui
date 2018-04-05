@@ -7,7 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService, RestService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,8 @@ export class CronFormComponent implements OnInit {
     type: 'input',
     name: 'cron_command',
     placeholder: T('Command'),
+    required: true,
+    validation : [ Validators.required ],
     tooltip: T('The <b>full path</b> to the command or script to be run.\
      If it is a script, test it at the command line to ensure it works.'),
   }, {
@@ -43,6 +45,8 @@ export class CronFormComponent implements OnInit {
     tooltip: T('Make sure the selected user has permission to run the\
      specified command or script.'),
     options: [],
+    required: true,
+    validation : [ Validators.required ],
   }, {
     type: 'select',
     name: 'cron_repeat',
