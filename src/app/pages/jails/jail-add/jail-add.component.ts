@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core'
+import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -39,6 +40,8 @@ export class JailAddComponent implements OnInit {
       placeholder: T('Jails Name'),
       tooltip: T('Mandatory. Can only contain letters, numbers, dashes,\
  or the underscore character.'),
+      required: true,
+      validation: [ Validators.required ],
     },
     {
       type: 'select',
@@ -47,6 +50,8 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Select the FreeBSD release for the jail. Releases\
  already downloaded display <b>(fetched)</b>.'),
       options: [],
+      required: true,
+      validation: [ Validators.required ],
     },
     {
       type: 'checkbox',
@@ -934,7 +939,6 @@ export class JailAddComponent implements OnInit {
         if (value[i] == undefined) {
           delete value[i];
         } else {
-          console.log(i);
           if (_.indexOf(this.TFfields, i) > -1) {
             if (value[i]) {
               property.push(i + '=1');
@@ -950,7 +954,6 @@ export class JailAddComponent implements OnInit {
               }
               delete value[i];
           } else if (_.indexOf(this.YNfields, i) > -1) {
-            console.log('YNfield');
             if (value[i]) {
                 property.push(i + '=yes');
               } else {

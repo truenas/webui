@@ -1,6 +1,6 @@
 import { Component, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormArray } from '@angular/forms';
+import { FormArray, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -34,6 +34,8 @@ export class NFSFormComponent {
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
+        required: true,
+        validation : [ Validators.required ]
       },
       {
         type: 'checkbox',

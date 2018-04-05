@@ -47,6 +47,8 @@ export class CloudCredentialsGCSComponent {
       name : 'name',
       placeholder : T('Account Name'),
       tooltip : T('Enter the Google Cloud Service account name.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'textarea',

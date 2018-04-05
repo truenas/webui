@@ -53,6 +53,8 @@ export class CertificateInternalComponent {
       placeholder : T('Identifier'),
       tooltip: T('Enter a descriptive name for the certificate using\
        only alphanumeric, underscore (_), and dash (-) characters.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',

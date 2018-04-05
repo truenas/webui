@@ -27,6 +27,8 @@ export class AssociatedTargetFormComponent {
       tooltip: T('Select the pre-created target.'),
       options: [],
       value: '',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',

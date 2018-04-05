@@ -41,6 +41,8 @@ export class CertificateAuthorityImportComponent {
       placeholder : T('Identifier'),
       tooltip : T('Mandatory. Enter a descriptive name for the CA using\
        only alphanumeric, underscore (_), and dash(-) characters.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'textarea',
@@ -76,6 +78,8 @@ export class CertificateAuthorityImportComponent {
       placeholder : T('Serial'),
       tooltip : T('Mandatory. Enter the serial number for the\
        certificate.'),
+      required: true,
+      validation : [ Validators.required ]
     },
   ];
 

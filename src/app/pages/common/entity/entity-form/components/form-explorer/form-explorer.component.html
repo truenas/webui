@@ -1,6 +1,6 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
     <mat-input-container class="full-width">
-        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name">
+        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
     </mat-input-container>
     <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
     <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button>
