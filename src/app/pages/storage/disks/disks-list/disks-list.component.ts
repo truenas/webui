@@ -179,7 +179,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
-    this.conf = new DisksListConfig(this.router, "", "", this, this.loader, this.dialogService, this.rest);
+    this.conf = new DisksListConfig(this.router, "", "All", this, this.loader, this.dialogService, this.rest);
   }
 
 
