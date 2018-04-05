@@ -12,6 +12,12 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import {EntityUtils} from '../../../common/entity/utils';
+import {
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 
 @Component({
   selector: 'cloudsync-add',
@@ -32,6 +38,8 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'description',
     placeholder: T('Description'),
     tooltip: T('Optional.'),
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'direction',
@@ -39,14 +47,18 @@ export class CloudsyncFormComponent implements OnInit {
     options: [
       { label: 'PULL', value: 'PULL' },
       { label: 'PUSH', value: 'PUSH' },
-    ]
+    ],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'credential',
     placeholder: T('Credential'),
     options: [{
       label: '---', value: null
-    }]
+    }],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'bucket',
@@ -78,6 +90,8 @@ export class CloudsyncFormComponent implements OnInit {
     value: '/mnt',
     tooltip: T('Browse to the name of an <b>existing</b> volume or\
           dataset that the user will be assigned permission to access.'),
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'transfer_mode',
@@ -86,7 +100,9 @@ export class CloudsyncFormComponent implements OnInit {
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
       { label: 'MOVE', value: 'MOVE' },
-    ]
+    ],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'repeat',
