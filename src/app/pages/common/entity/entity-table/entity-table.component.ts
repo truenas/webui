@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateService } from '@ngx-translate/core';
 
+import { T } from '../../../../translate-marker';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
@@ -307,7 +308,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doDelete(id) {
-    this.dialogService.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+    this.dialogService.confirm(T("Delete"), T("Are you sure you want to delete the selected item?"), false, T("Delete")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

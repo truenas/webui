@@ -1,6 +1,7 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'confirm-dialog',
@@ -11,6 +12,7 @@ export class ConfirmDialog {
 
   public title: string;
   public message: string;
+  public buttonMsg: string = T("Ok");
   public hideCheckBox: boolean = false;
   public isSubmitEnabled: boolean = false;
 
