@@ -26,7 +26,6 @@ import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { VolumeImportListComponent } from './volumes/volume-import/';
 import { routing } from './storage.routing';
-import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add'
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
@@ -61,7 +60,6 @@ import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptim
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,
-    ZvolDeleteComponent,
     ZvolAddComponent,
     ZvolEditComponent,
     VolumeImportListComponent,

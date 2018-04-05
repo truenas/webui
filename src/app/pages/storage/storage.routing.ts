@@ -12,7 +12,6 @@ import { ManagerComponent } from './volumes/manager/';
 import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add/';
-import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VolumeImportListComponent } from './volumes/volume-import/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
@@ -59,10 +58,6 @@ export const routes: Routes = [
           {
             path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
-          },
-          {
-            path: 'id/:pk/zvol/delete/:path', component: ZvolDeleteComponent,
-            data: { title: 'Delete Zvol', breadcrumb: 'Delete Zvol' }
           },
           {
             path: 'manager', component: ManagerComponent,

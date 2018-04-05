@@ -353,7 +353,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
           this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
             this.loader.close();
-
+            // Showing info here because theres no feedback on list parent for this if promoted.
             this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
               this.parentVolumesListComponent.repaintMe();
             });
@@ -366,14 +366,28 @@ export class VolumesListTableConfig implements InputTableConf {
     }
     if (rowData.type === "zvol") {
       actions.push({
-        label: T("Delete Zvol"),
+        label: T("Delete zvol"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.path.split('/')[0], "zvol",
-            "delete", row1.path
-          ]));
+
+
+          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
+            if (confirmed === true) {
+              this.loader.open();
+              
+              this.rest.delete('storage/volume/' + this._classId + '/zvols/' + row1.name, {}).subscribe((wsResp) => {
+                this.loader.close();
+                this.parentVolumesListComponent.repaintMe();
+
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error Deleting zvol ") + row1.path, res.reason, res.stack);
+              });
+            }
+          });
+
+
         }
-      });
+      });// return 'storage/volume/' + this.pk + '/zvols/';
       actions.push({
         label: T("Edit Zvol"),
         onClick: (row1) => {
