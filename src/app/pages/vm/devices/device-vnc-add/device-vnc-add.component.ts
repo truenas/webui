@@ -21,7 +21,7 @@ import * as _ from 'lodash';
 })
 export class DeviceVncAddComponent {
 
-  protected resource_name: string = 'vm/device';
+  protected resource_name = 'vm/device';
   protected pk: any;
   protected route_success: string[];
   public vm: string;
@@ -82,7 +82,7 @@ public fieldConfig: FieldConfig[]  = [
       type: 'checkbox'
     },
   ];
-  protected dtype: string = 'VNC';
+  protected dtype  = 'VNC';
   afterInit() {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
@@ -92,7 +92,7 @@ public fieldConfig: FieldConfig[]  = [
     this.systemGeneralService.getIPChoices().subscribe((res) => {
       if (res.length > 0) {
         this.ipAddress = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
-        for (let item of res){
+        for (const item of res){
           this.ipAddress.options.push({label : item[1], value : item[0]});
         }
       }

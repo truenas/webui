@@ -8,7 +8,7 @@ import {
   ViewContainerRef,
   QueryList
 } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
   FieldConfig
@@ -105,6 +105,8 @@ export class DeviceEditComponent implements OnInit {
  performace.',
           type: 'select',
           options : [],
+          required: true,
+          validation : [Validators.required]
         },
         {
           name : 'NIC_mac',
@@ -115,6 +117,7 @@ export class DeviceEditComponent implements OnInit {
           type: 'input',
           value : '',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+          required: true,
         },
         {
           name : 'nic_attach',
@@ -124,6 +127,8 @@ export class DeviceEditComponent implements OnInit {
  cards.',
           type: 'select',
           options : [],
+          required: true,
+          validation : [Validators.required]
         },
       ];
     } else if (this.dtype === "VNC") {
@@ -194,6 +199,8 @@ export class DeviceEditComponent implements OnInit {
           type: 'explorer',
           explorerType: "zvol",
           initial: '/mnt',
+          required: true,
+          validation : [Validators.required]
         },
         {
           name : 'DISK_mode',
@@ -224,6 +231,8 @@ export class DeviceEditComponent implements OnInit {
           name : 'RAW_path',
           placeholder : 'Raw File',
           tooltip : 'Select the location of the RAW file being added.',
+          required: true,
+          validation : [Validators.required]
         },
         {
           type : 'input',

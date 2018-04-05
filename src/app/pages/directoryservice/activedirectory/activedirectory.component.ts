@@ -5,6 +5,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {RestService, SystemGeneralService, WebSocketService} from '../../../services/';
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector : 'app-activedirectory',
@@ -62,6 +63,8 @@ export class ActiveDirectoryComponent {
  or child domain (<i>sales.example.com</i>). This setting is mandatory\
  and the GUI refuses to save the settings if the domain controller\
  for the specified domain cannot be found.',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
