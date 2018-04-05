@@ -1,18 +1,18 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 
 
 import {RestService, WebSocketService} from '../../../../services/';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector : 'app-device-list',
   template : `
-  <h1> VM: {{ this.vm }} Devices </h1>
-  <entity-table [conf]="this"></entity-table>
+  <entity-table [title]="title" [conf]="this"></entity-table>
   `
 })
 export class DeviceListComponent {
@@ -30,6 +30,7 @@ export class DeviceListComponent {
   public columns: Array<any> = [
     {name : 'Type', prop : 'dtype'},
   ];
+  public title = "VM ";
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
@@ -37,7 +38,7 @@ export class DeviceListComponent {
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
-              public dialogService: DialogService) {}
+              public dialogService: DialogService, private cdRef:ChangeDetectorRef) {}
 
 
   isActionVisible(actionId: string, row: any) {
@@ -142,6 +143,8 @@ export class DeviceListComponent {
       this.route_delete = [ 'vm', this.pk, 'devices', this.vm, 'delete' ];
       // this is filter by vm's id to show devices belonging to that VM
       this.resource_name = 'vm/device/?vm__id=' + this.pk;
+      this.title = this.title + this.vm + ' devices';
+      this.cdRef.detectChanges();
     });
   }
 }

@@ -29,6 +29,8 @@ export class SnapshotFormComponent {
     placeholder: T('Volume/Dataset'),
     tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
     options: [],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'checkbox',
     name: 'task_recursive',
@@ -76,6 +78,8 @@ export class SnapshotFormComponent {
     tooltip: T('Choose when the system can begin taking snapshots.'),
     options: [],
     value: '',
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'task_end',
@@ -83,6 +87,8 @@ export class SnapshotFormComponent {
     tooltip: T('Choose when the system must stop taking snapshots.'),
     options: [],
     value: '',
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'task_interval',
@@ -91,6 +97,8 @@ export class SnapshotFormComponent {
      <b>Begin</b> and <b>End</b> times.'),
     options: [],
     value: '',
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'task_byweekday',
@@ -120,6 +128,8 @@ export class SnapshotFormComponent {
       value: '7',
     }],
     value: ['1', '2', '3', '4', '5'],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'checkbox',
     name: 'task_enabled',

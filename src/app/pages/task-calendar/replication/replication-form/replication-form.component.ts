@@ -169,6 +169,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         tooltip : T('Choose an existing ZFS volume or dataset on the source\
          computer containing the snapshots to replicate.'),
         options : [],
+        required: true,
         validation : Validators.required
       },
       {
@@ -179,6 +180,7 @@ export class ReplicationFormComponent implements AfterViewInit {
          computer which will store the snapshots. If the destination dataset is\
          not present, it will be created. <b>/mnt/</b> is assumed, do not\
          include it in the path.'),
+        required: true,
         validation : Validators.required
       },
       {
@@ -262,6 +264,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         placeholder : T('Remote Hostname'),
         tooltip : T('Type the IP address or DNS name of the remote\
          computer to receive the replication data.'),
+        required: true,
         validation: Validators.required
       },
       {
@@ -347,7 +350,9 @@ export class ReplicationFormComponent implements AfterViewInit {
         customEventMethod : function(data) {
           theThis.customEventMethod(data);
         },
-        isHidden : false
+        isHidden : false,
+        required: true,
+        validation : [ Validators.required ]
       },
     ];
   }

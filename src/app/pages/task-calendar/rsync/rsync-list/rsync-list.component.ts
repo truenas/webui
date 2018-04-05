@@ -7,11 +7,12 @@ import { TaskService } from '../../../../services/';
 
 @Component({
   selector: 'app-rsync-list',
-  template: `<entity-table [conf]="this"></entity-table>`,
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService]
 })
 export class RsyncListComponent {
 
+  public title = "Rsync Tasks";
   protected resource_name = 'tasks/rsync';
   protected route_add: string[] = ['tasks', 'rsync', 'add'];
   protected route_add_tooltip = "Add Rsync Task";

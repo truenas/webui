@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../services/';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 @Component({
@@ -62,6 +62,8 @@ export class ResilverComponent {
       value: '7',
     }],
     value: ['1', '2', '3', '4', '5', '6', '7'],
+    required: true,
+    validation : [ Validators.required ],
   }];
 
   protected begin_field: any;

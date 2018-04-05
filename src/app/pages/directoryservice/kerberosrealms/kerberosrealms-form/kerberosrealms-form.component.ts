@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-group-form',
@@ -12,15 +13,17 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 export class KerberosRealmsFormComponent {
 
   protected route_success: string[] = ['directoryservice', 'kerberosrealms'];
-  protected resource_name: string = 'directoryservice/kerberosrealm';
-  protected isEntity: boolean = true;
-  protected isBasicMode: boolean = true;
+  protected resource_name = 'directoryservice/kerberosrealm';
+  protected isEntity = true;
+  protected isBasicMode = true;
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'krb_realm',
       placeholder: 'Realm',
-      tooltip: 'Mandatory. Name of the realm.'
+      tooltip: 'Mandatory. Name of the realm.',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -63,9 +66,9 @@ export class KerberosRealmsFormComponent {
   constructor(protected rest: RestService, private router: Router) {}
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
