@@ -13,7 +13,7 @@ import {  DialogService } from '../../../../services/';
 })
 export class ReplicationListComponent {
   
-  public title = "Replication";
+  public title = "Replication Tasks";
   protected resource_name = 'storage/replication';
   protected route_success: string[] = ['tasks', 'replication'];
   protected entityList: any;

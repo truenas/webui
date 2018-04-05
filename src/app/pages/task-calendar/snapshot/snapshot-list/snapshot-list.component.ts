@@ -12,7 +12,7 @@ import { TaskService } from '../../../../services/';
 })
 export class SnapshotListComponent {
 
-  public title = "Snapshots";
+  public title = "Periodic Snapshot Tasks";
   protected resource_name = 'storage/task';
   protected route_add: string[] = ['tasks', 'snapshot', 'add'];
   protected route_add_tooltip = "Add Periodic Snapshot Task";
