@@ -38,7 +38,8 @@ export class DeviceNicAddComponent {
  performace.',
       type: 'select',
       options: [],
-      validation: [Validators.required]
+      validation: [Validators.required],
+      required: true
     },
     {
       name: 'NIC_mac',
@@ -58,7 +59,8 @@ export class DeviceNicAddComponent {
  cards.',
       type: 'select',
       options: [],
-      validation: [Validators.required]
+      validation: [Validators.required],
+      required: true
     },
   ];
   private nic_attach: any;
