@@ -5,12 +5,13 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService, RestService, WebSocketService } from '../../../../services/';
+import { TaskService, UserService, RestService, WebSocketService, DialogService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
+import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({
   selector: 'cloudsync-add',
@@ -234,6 +235,7 @@ export class CloudsyncFormComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
     protected rest: RestService,
+    protected dialog: DialogService,
     protected ws: WebSocketService) {}
 
 
@@ -526,13 +528,29 @@ export class CloudsyncFormComponent implements OnInit {
     attributes['folder'] = value.folder;
     payload['attributes'] = attributes;
     
+    this.loader.open();
     if (!this.pk) {
+      console.log("create cloud sync");
       auxPayLoad.push(payload)
-      this.ws.call('backup.create', auxPayLoad).subscribe(res=>{});
+      this.ws.call('backup.create', auxPayLoad).subscribe((res)=>{
+        this.loader.close();
+        console.log(res);
+        this.router.navigate(new Array('/').concat(this.route_success));
+      }, (err) => {
+        this.loader.close();
+        console.log("error: ", err);
+        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+      });
     } else {
+      this.loader.close();
       this.ws.job('backup.update', [parseInt(this.pid), payload]).subscribe((res)=>{
+        this.loader.close();
+        console.log(res);
+        this.router.navigate(new Array('/').concat(this.route_success));
+      }, (err)=>{
+        console.log(err);
+        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
       });
     }
-    this.router.navigate(new Array('/').concat(this.route_success));
   }
 }
