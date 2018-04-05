@@ -72,27 +72,27 @@ export const routes: Routes = [
         },
         {
           path:'cdrom/add',
-          data: {title: 'CDROM Add', breadcrumb: 'CDROM Add'},
+          data: {title: 'Add CDROM', breadcrumb: 'Add CDROM'},
           component : DeviceCdromAddComponent,
         },
         {
           path:'nic/add',
-          data: {title: '', breadcrumb: 'add'},
+          data: {title: 'Add NIC', breadcrumb: 'Add NIC'},
           component : DeviceNicAddComponent,
         },
         {
           path:'disk/add',
-          data: {title: 'add', breadcrumb: 'add'},
+          data: {title: 'Add Disk', breadcrumb: 'Add Disk'},
           component : DeviceDiskAddComponent,
         },
         {
           path:'vnc/add',
-          data: {title: 'add', breadcrumb: 'add'},
+          data: {title: 'Add VNC', breadcrumb: 'Add VNC'},
           component : DeviceVncAddComponent,
         },
         {
           path:'rawfile/add',
-          data: {title: 'add', breadcrumb: 'add'},
+          data: {title: 'Add Raw File', breadcrumb: 'Add Raw File'},
           component : DeviceRawFileAddComponent,
         },
       ]

@@ -61,7 +61,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'directoryservice',
         loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
-        data: { title: 'directoryservice', breadcrumb: 'Directory Service' }
+        data: { title: 'Directory Service', breadcrumb: 'Directory Service' }
       },
       {
         path: 'vm',
@@ -91,7 +91,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
-        data: { title: 'reportsdashboard', breadcrumb: 'REPORTING' }
+        data: { title: 'Reporting', breadcrumb: 'Reporting' }
       },
       {
         path: 'systemprocesses',
@@ -101,7 +101,7 @@ export const rootRouterConfig: Routes = [{
       {
         path : 'shell',
         loadChildren : './pages/shell/shell.module#ShellModule',
-        data: { title: 'Shell', breadcrumb: 'SHELL'}
+        data: { title: 'Shell', breadcrumb: 'Shell'}
       },
       {
         path : 'guide',
@@ -111,7 +111,7 @@ export const rootRouterConfig: Routes = [{
       {
         path : 'ui-preferences',
         loadChildren : './pages/preferences/preferences.module#PreferencesModule',
-        data: { title: 'UI Preferences', breadcrumb: 'UI-Preferences'}
+        data: { title: 'UI Preferences', breadcrumb: 'UI Preferences'}
       }
     ]
   },

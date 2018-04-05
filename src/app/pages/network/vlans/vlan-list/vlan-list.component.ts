@@ -10,7 +10,7 @@ import { T } from '../../../../translate-marker';
 })
 export class VlanListComponent {
 
-  public title = "Vlans";
+  public title = "VLANs";
   protected resource_name: string = 'network/vlan/';
   protected route_add: string[] = [ 'network', 'vlans', 'add' ];
   protected route_add_tooltip: string = "Add VLAN";
