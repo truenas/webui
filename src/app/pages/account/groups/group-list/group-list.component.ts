@@ -15,8 +15,8 @@ export class GroupListComponent {
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
   public columns: Array<any> = [
-    {name : 'GID', prop : 'bsdgrp_gid'},
     {name : 'Group', prop : 'bsdgrp_group'},
+    {name : 'GID', prop : 'bsdgrp_gid'},
     {name : 'Builtin', prop : 'bsdgrp_builtin'},
     {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},
   ];
