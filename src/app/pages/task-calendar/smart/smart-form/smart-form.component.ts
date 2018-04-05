@@ -8,7 +8,7 @@ import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, StorageService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -31,6 +31,8 @@ export class SmartFormComponent {
       tooltip : T('Highlight disks to monitor.'),
       options: [],
       multiple: true,
+      required: true,
+      validation : [ Validators.required ]
     }, {
       type: 'select',
       name: 'smarttest_type',
@@ -43,6 +45,8 @@ export class SmartFormComponent {
        offline. Do not schedule S.M.A.R.T. tests at the same time as a scrub\
        or during a resilver operation).'),
       options: [],
+      required: true,
+      validation : [ Validators.required ]
     }, {
       type: 'input',
       name: 'smarttest_desc',
