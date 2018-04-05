@@ -89,7 +89,7 @@ export class DisksListConfig implements InputTableConf {
       }
     });
 
-    if (this.title === "" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false) {
+    if (this.title === "All" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false) {
       actions.push({
         label: T("Wipe"),
         onClick: (row1) => {
