@@ -7,7 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -41,6 +41,8 @@ export class InitshutdownFormComponent {
     name: 'ini_command',
     placeholder: T('Command'),
     tooltip: T('Enter the command plus any desired options.'),
+    required: true,
+    validation : [ Validators.required ],
   }, {
     type : 'explorer',
     initial: '/mnt',
@@ -70,6 +72,8 @@ export class InitshutdownFormComponent {
       value: 'shutdown',
     }],
     value: '',
+    required: true,
+    validation : [ Validators.required ],
   }, {
     type: 'checkbox',
     name: 'ini_enabled',
