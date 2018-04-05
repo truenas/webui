@@ -89,20 +89,21 @@
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div id="{{col.prop}}_{{row[col.prop]}}" 
                title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
-            <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
+          <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/> 
             {{row[col.prop]}}
           </div>
         </ng-template>
       </ngx-datatable-column>
 
+         <!--  Here's where the 3-dot menu gets made 
       <ngx-datatable-column>
         <ng-template let-row="row" ngx-datatable-cell-template>
           <app-entity-table-actions [entity]="this" [row]="row">
           </app-entity-table-actions>
         </ng-template>
-      </ngx-datatable-column>
+      </ngx-datatable-column> -->
 
-    </ngx-datatable>
+    </ngx-datatable> 
   </div>
 
 </div>
