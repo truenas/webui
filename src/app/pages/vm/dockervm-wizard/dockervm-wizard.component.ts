@@ -68,6 +68,7 @@ export class DockerVMWizardComponent {
           value: 2048,
           inputType: 'number',
           min: 2048,
+          validation : [ Validators.required],
           required: true,
         },
       ]
@@ -85,7 +86,8 @@ export class DockerVMWizardComponent {
      performace.'),
           type: 'select',
           options : [],
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true,
         },
         {
           name : 'NIC_mac',
@@ -105,7 +107,8 @@ export class DockerVMWizardComponent {
      cards.'),
           type: 'select',
           options : [],
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true,
         },
       ]
     },

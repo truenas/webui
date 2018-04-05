@@ -47,6 +47,7 @@ export class VMWizardComponent {
             {label: 'Linux', value: 'linux'},
             {label: 'FreeBSD', value: 'freeBSD'},
           ],
+          validation : [ Validators.required ],
         },
       { type: 'input',
         name : 'name',
@@ -158,7 +159,8 @@ export class VMWizardComponent {
      performace.'),
           type: 'select',
           options : [],
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true,
         },
         {
           name : 'NIC_mac',
@@ -178,7 +180,8 @@ export class VMWizardComponent {
      cards.'),
           type: 'select',
           options : [],
-          validation : [ Validators.required ]
+          validation : [ Validators.required ],
+          required: true,
         },
       ]
     },
@@ -193,6 +196,7 @@ export class VMWizardComponent {
           tooltip: T('Click <b>Browse</b> to select the path to the\
  installation media.'),
           validation : [ Validators.required ],
+          required: true,
         },
         {
           type: 'checkbox',
