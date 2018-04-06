@@ -215,7 +215,7 @@ export class CloudsyncFormComponent implements OnInit {
   }, {
     type: 'checkbox',
     name: 'enabled',
-    placeholder: T('Enable'),
+    placeholder: T('Enabled'),
     tooltip: T('Uncheck to disable the job without deleting it.'),
     value: true,
   }];

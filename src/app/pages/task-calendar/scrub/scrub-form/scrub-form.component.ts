@@ -170,7 +170,7 @@ export class ScrubFormComponent {
     }, {
       type: 'checkbox',
       name: 'scrub_enabled',
-      placeholder: T('Enable'),
+      placeholder: T('Enabled'),
       tooltip : T('Uncheck to disable the scheduled scrub without\
        deleting it.'),
       value: true,
