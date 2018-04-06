@@ -6,9 +6,9 @@
 
 
 <div mat-dialog-actions>
-  <mat-checkbox *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
+  <mat-checkbox class="confirm-checkbox" *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
   <span fxFlex></span>
-  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">{{"Ok"| translate}}
-  </button>
   <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Cancel" | translate}}</button>
+  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">{{buttonMsg | translate}}
+  </button>
 </div>
