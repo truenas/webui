@@ -17,14 +17,17 @@ import { T } from '../../../../translate-marker';
 export class DisksListConfig implements InputTableConf {
 
 
-  public static ROOT_POOL: string = T("Root Pool");
+  public static BOOT_POOL: string = T("Boot Pool");
+
+  public static DISK_NOT_IN_POOL: string = T("Unused");
+
   public static getRootPoolDisksQueryCall = "boot.get_disks";
 
   static createRootNodeVolume(): ZfsPoolData {
 
     const zfsRootPool: ZfsPoolData = {
-      id: DisksListConfig.ROOT_POOL,
-      name: DisksListConfig.ROOT_POOL,
+      id: DisksListConfig.BOOT_POOL,
+      name: DisksListConfig.BOOT_POOL,
       path: "/"
 
     };
@@ -40,6 +43,7 @@ export class DisksListConfig implements InputTableConf {
 
   public columns: Array<any> = [
     { name: 'Name', prop: 'disk_name' },
+    { name: 'Pool', prop: "poolName"},
     { name: 'Serial', prop: 'disk_serial' },
     { name: 'Disk Size', prop: 'disk_size' },
     { name: 'Description', prop: 'disk_description' },
@@ -60,9 +64,12 @@ export class DisksListConfig implements InputTableConf {
     protected _router: Router,
     protected _classId: string,
     public title: string,
-    public diskPoolMapParent: DiskPoolMap) {
+    public diskPoolMapParent: DiskPoolMapParent,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    protected rest: RestService) {
 
-    if (DisksListConfig.ROOT_POOL === this._classId) {
+    if (DisksListConfig.BOOT_POOL === this._classId) {
       this.resource_name = "";
       this.queryCall = DisksListConfig.getRootPoolDisksQueryCall;
     } else if (this._classId !== undefined && this._classId !== "") {
@@ -82,7 +89,7 @@ export class DisksListConfig implements InputTableConf {
       }
     });
 
-    if (this.title === "" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false) {
+    if (this.title === "All" && this.diskPoolMapParent.diskPoolMap.has(row.disk_name) === false) {
       actions.push({
         label: T("Wipe"),
         onClick: (row1) => {
@@ -91,7 +98,25 @@ export class DisksListConfig implements InputTableConf {
           ]));
         }
       });
+
+    } else {  // It DOES HAVE A POOL 
+      actions.push({
+        label : T("Detach From Pool"),
+        onClick : (row1) => {
+          this.loader.open();
+
+          this.rest.post("storage/disk/" +  row1.id + "/detach", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+            this.loader.close();
+            this.diskPoolMapParent.repaintMe();
+          }, (res) => {
+            this.loader.close();
+            this.dialogService.errorReport(T("Error detaching disk: ") + row1.disk_name, res.message, res.stack);
+          });
+        }
+      });
     }
+
+
 
     return actions;
   }
@@ -110,6 +135,8 @@ export class DisksListConfig implements InputTableConf {
     const returnData: any[] = [];
 
     for (let i = 0; i < data.length; i++) {
+      const poolName = ( this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
+      data[i].poolName = poolName;
 
       if (this.diskMap.size < 1) {
         returnData.push(data[i]);
@@ -126,8 +153,9 @@ export class DisksListConfig implements InputTableConf {
 
 
 
-interface DiskPoolMap {
-  diskPoolMap: Map<string, string>
+interface DiskPoolMapParent {
+  diskPoolMap: Map<string, string>;
+  repaintMe();
 }
 
 
@@ -135,16 +163,15 @@ interface DiskPoolMap {
   selector: 'app-disks-list',
   templateUrl: './disks-list.component.html'
 })
-export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMap {
+export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMapParent {
 
   public diskPoolMap: Map<string, string> = new Map<string, string>();
 
   zfsPoolRows: ZfsPoolData[] = [];
-  expanded_all = true;
-  expanded_zfs = false;
   conf: DisksListConfig;
   public readonly ALL_DISKS = T("All Disks");
   public selectedKeyName;
+  public repaintIt = true;
 
   public title = T("View Disks");
 
@@ -152,7 +179,15 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
-    this.conf = new DisksListConfig(this.router, "", "", this);
+    this.conf = new DisksListConfig(this.router, "", "All", this, this.loader, this.dialogService, this.rest);
+  }
+
+
+  public repaintMe() {
+    this.repaintIt = false;
+    setTimeout(()=>{
+      this.repaintIt = true;
+    }, -1);
   }
 
   ngOnInit(): void {
@@ -171,11 +206,11 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
       res.data.push(DisksListConfig.createRootNodeVolume());
 
       res.data.forEach((volume) => {
-        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this);
+        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this, this.loader, this.dialogService, this.rest);
         volume.type = 'zpool';
         volume.isReady = false;
 
-        if (volume.id !== DisksListConfig.ROOT_POOL) {
+        if (volume.id !== DisksListConfig.BOOT_POOL) {
           try {
             volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
           } catch (error) {
@@ -194,12 +229,12 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         
         this.zfsPoolRows.push(volume);
         
-        let callQuery = (DisksListConfig.ROOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
-        let args =  (DisksListConfig.ROOT_POOL === volume.id) ? [] : [volumeId];
+        let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
+        let args =  (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
         
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
-            this.diskPoolMap.set(driveName, volumeId);
+            this.diskPoolMap.set(driveName,  volume.name);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
 
@@ -211,9 +246,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
       });
 
-      if (this.zfsPoolRows.length === 1) {
-        this.expanded_zfs = true;
-      }
+      
     });
 
   }

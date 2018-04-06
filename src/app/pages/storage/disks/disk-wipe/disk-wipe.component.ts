@@ -122,7 +122,9 @@ export class DiskWipeComponent implements OnInit {
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((res) => {
           this.dialogRef.close(false);
-          this.openSnackBar(T("Disk successfully wiped"), T("Success"));
+          this.router.navigate(new Array('/').concat([
+            "storage", "disks"
+          ]));
         });
         this.dialogRef.componentInstance.failure.subscribe((res) => {
           this.dialogRef.componentInstance.setDescription(res.error);
