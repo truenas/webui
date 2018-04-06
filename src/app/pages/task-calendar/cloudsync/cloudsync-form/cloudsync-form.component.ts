@@ -5,12 +5,18 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService, RestService, WebSocketService } from '../../../../services/';
+import { TaskService, UserService, RestService, WebSocketService, DialogService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
+import {EntityUtils} from '../../../common/entity/utils';
+import {
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 
 @Component({
   selector: 'cloudsync-add',
@@ -31,6 +37,8 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'description',
     placeholder: T('Description'),
     tooltip: T('Optional.'),
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'direction',
@@ -38,14 +46,18 @@ export class CloudsyncFormComponent implements OnInit {
     options: [
       { label: 'PULL', value: 'PULL' },
       { label: 'PUSH', value: 'PUSH' },
-    ]
+    ],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'credential',
     placeholder: T('Credential'),
     options: [{
       label: '---', value: null
-    }]
+    }],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'bucket',
@@ -77,6 +89,8 @@ export class CloudsyncFormComponent implements OnInit {
     value: '/mnt',
     tooltip: T('Browse to the name of an <b>existing</b> volume or\
           dataset that the user will be assigned permission to access.'),
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'transfer_mode',
@@ -85,7 +99,9 @@ export class CloudsyncFormComponent implements OnInit {
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
       { label: 'MOVE', value: 'MOVE' },
-    ]
+    ],
+    required: true,
+    validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'repeat',
@@ -234,6 +250,7 @@ export class CloudsyncFormComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
     protected rest: RestService,
+    protected dialog: DialogService,
     protected ws: WebSocketService) {}
 
 
@@ -519,20 +536,34 @@ export class CloudsyncFormComponent implements OnInit {
     payload['minute'] = value.minute;
     payload['hour'] = value.hour;
     payload['daymonth'] = value.daymonth;
-    payload['dayweek'] = value.dayweek;
-    payload['month'] = value.month;
+    payload['dayweek'] = value.dayweek.join(",");
+    payload['month'] = value.month.join(",");
     payload['enabled'] = value.enabled;
     attributes['bucket'] = value.bucket;
     attributes['folder'] = value.folder;
     payload['attributes'] = attributes;
     
+    this.loader.open();
     if (!this.pk) {
+      console.log("create cloud sync");
       auxPayLoad.push(payload)
-      this.ws.call('backup.create', auxPayLoad).subscribe(res=>{});
+      this.ws.call('backup.create', auxPayLoad).subscribe((res)=>{
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      }, (err) => {
+        this.loader.close();
+        console.log("error: ", err);
+        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+      });
     } else {
+      this.loader.close();
       this.ws.job('backup.update', [parseInt(this.pid), payload]).subscribe((res)=>{
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      }, (err)=>{
+        console.log("error: ", err);
+        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
       });
     }
-    this.router.navigate(new Array('/').concat(this.route_success));
   }
 }
