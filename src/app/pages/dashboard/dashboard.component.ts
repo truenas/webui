@@ -29,7 +29,13 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
   public shake = false;
 
   constructor(protected core:CoreService, stats: StatsService){
-    this.core.emit({name:"StatsAddListener", data:["PoolData","DisksInfo"],sender:this});
+    this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
+    this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"test", obj:this }});
+    this.core.emit({name:"StatsAddListener", data:{name:"Cpu", obj:this }});
+    setTimeout(() => {
+      this.core.emit({name:"StatsRemoveListener", data:{name:"Cpu", obj:this} });
+    }, 20000);
+
   }
 
   ngAfterViewInit(){

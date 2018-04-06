@@ -25,7 +25,13 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
   }
 
   ngAfterViewInit(){
+    this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate",key:"sum", obj:this} });
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
+      //DEBUG: console.log(evt);
+      //this.setCPUData(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"CpuAggregateSum"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
       this.setCPUData(evt);
     });
