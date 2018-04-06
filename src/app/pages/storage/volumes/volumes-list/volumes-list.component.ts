@@ -225,6 +225,10 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
+    let rowDataPathSplit = [];
+    if (rowData.path) {
+      rowDataPathSplit = rowData.path.split('/');
+    }
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
@@ -335,15 +339,17 @@ export class VolumesListTableConfig implements InputTableConf {
 
           }
         });
-        actions.push({
-          label: T("Edit Permissions"),
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "permissions", row1.path
-            ]));
-          }
-        });
+        if (rowDataPathSplit.length > 1 && rowDataPathSplit[1] !== "iocage") {
+          actions.push({
+            label: T("Edit Permissions"),
+            onClick: (row1) => {
+              this._router.navigate(new Array('/').concat([
+                "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+                "permissions", row1.path
+              ]));
+            }
+          });
+        }
       }
 
       actions.push({
