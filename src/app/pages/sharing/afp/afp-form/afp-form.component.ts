@@ -97,7 +97,9 @@ export class AFPFormComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'afp_home',
-      placeholder: T('Use as home share')
+      placeholder: T('Use as home share'),
+      tooltip: T('Check this box if the share is meant to hold user\
+      home directories; only one share can be the home share.')
     },
     {
       type: 'checkbox',
