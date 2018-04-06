@@ -19,6 +19,9 @@ export class JailWizardComponent {
 
   protected addWsCall = 'jail.create';
   public route_success: string[] = ['jails'];
+  public summary = {};
+  summary_title = "Jail Summary";
+  objectKeys = Object.keys;
 
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -158,7 +161,28 @@ export class JailWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
+      this.summary[T('Jail Name')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.subscribe((res) => {
+      this.summary[T('Release')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
+      this.summary[T('IPv4 Address')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.subscribe((res) => {
+      this.summary[T('Default Router For IPv4')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
+      this.summary[T('IPv6 Address')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.subscribe((res) => {
+      this.summary[T('Default Router For IPv6')] = res;
+    });
+
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+      this.summary[T('DHCP autoconfigure IPv4')] = res;
+
       if (res) {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
@@ -167,6 +191,8 @@ export class JailWizardComponent {
       }
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
+      this.summary[T('VirtIO Virtual Networking')] = res;
+
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
