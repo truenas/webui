@@ -12,7 +12,7 @@ import { T } from '../../../../translate-marker';
 })
 export class LaggListComponent {
 
-  public title = "Link Aggregation";
+  public title = "Link Aggregations";
   protected resource_name: string = 'network/lagg/';
   protected route_add: string[] = [ 'network', 'laggs', 'add' ];
   protected route_add_tooltip: string = "Add Link Aggregation";

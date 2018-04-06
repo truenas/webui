@@ -31,11 +31,11 @@ export const TaskCalendarRoutes: Routes = [{
   // }, 
   {
     path: 'cloudsync',
-    data: {title: 'Cloud Sync', breadcrumb: 'Cloud Sync'},
+    data: {title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks'},
     children: [{
       path: '',
       component: CloudsyncListComponent,
-      data: { title: 'Cloud Sync', breadcrumb: 'Cloud Sync'} 
+      data: { title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks'} 
     }, {
       path: 'add',
       component: CloudsyncFormComponent,
@@ -47,7 +47,7 @@ export const TaskCalendarRoutes: Routes = [{
     }, {
       path: 'delete/:pk',
       component: CloudsyncDeleteComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit' }
+      data: { title: 'Delete', breadcrumb: 'Delete' }
     }]
   },
   {
@@ -84,11 +84,11 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'snapshot',
-    data: { title: 'Periodic Snapshot Task', breadcrumb: 'Periodic Snapshot Task' },
+    data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
     children: [{
       path: '',
       component: SnapshotListComponent,
-      data: { title: 'Periodic Snapshot Task', breadcrumb: 'Periodic Snapshot Task' },
+      data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
     }, {
       path: 'add',
       component: SnapshotFormComponent,
@@ -100,11 +100,11 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'replication',
-    data: { title: 'Replication', breadcrumb: 'Replication' },
+    data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
     children: [{
         path: '',
         component: ReplicationListComponent,
-        data: { title: 'Replication', breadcrumb: 'Replication' },
+        data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
       }, {
         path: 'add-replication',
         component: ReplicationFormComponent,

@@ -112,22 +112,22 @@ export const routes: Routes = [
       {
         path: 'create',
         component: BootEnvironmentCreateComponent,
-        data: { title: 'create', breadcrumb: 'create' },
+        data: { title: 'Create', breadcrumb: 'Create' },
       },
       {
         path: 'status',
         component: BootStatusListComponent,
-        data: { title: 'BootStatus', breadcrumb: 'BootStatus' },
+        data: { title: 'Status', breadcrumb: 'Status' },
       },
       {
         path: 'attach/:pk',
         component: BootEnvAttachFormComponent,
-        data: { title: 'Attach', breadcrumb: 'attach' },
+        data: { title: 'Attach', breadcrumb: 'Attach' },
       },
       {
         path: 'replace/:pk',
         component: BootEnvReplaceFormComponent,
-        data: { title: 'replace', breadcrumb: 'replace' },
+        data: { title: 'Replace', breadcrumb: 'Replace' },
       }
     ]
     }, {
@@ -154,11 +154,11 @@ export const routes: Routes = [
       data: { title: 'Update', breadcrumb: 'Update' },
     }, {
       path: 'ntpservers',
-      data: { title: 'NTPservers', breadcrumb: 'NTPservers' },
+      data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
       children: [{
           path: '',
           component: NTPServerListComponent,
-          data: { title: 'NTPservers', breadcrumb: 'NTPservers' },
+          data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
         }, {
           path: 'add',
           component: NTPServerAddComponent,
@@ -174,23 +174,23 @@ export const routes: Routes = [
     {
       path : 'email', 
       component : EmailComponent,
-      data: { title: 'email', breadcrumb: 'email' },
+      data: { title: 'Email', breadcrumb: 'Email' },
     },
     {
       path: 'alertservice',
-      data: { title: 'AlertService', breadcrumb: 'AlertService' },
+      data: { title: 'Alert Services', breadcrumb: 'Alert Services' },
       children: [{
           path: '',
           component: AlertServiceListComponent,
-          data: { title: 'AlertService', breadcrumb: 'AlertService' },
+          data: { title: 'Alert Services', breadcrumb: 'Alert Services' },
         }, {
           path: 'add-aws',
           component: AlertServiceAddAWSComponent,
-          data: { title: 'Add AWSSNS', breadcrumb: 'Add AWS' },
+          data: { title: 'Add AWS', breadcrumb: 'Add AWS' },
         },{
           path: 'edit-aws/:pk',
           component: AlertServiceEditAWSComponent,
-          data: { title: 'Edit AWSSNS', breadcrumb: 'Edit AWS' },
+          data: { title: 'Edit AWS', breadcrumb: 'Edit AWS' },
         },{
           path: 'add-hipchat',
           component: AlertServiceAddHipchatComponent,
@@ -202,11 +202,11 @@ export const routes: Routes = [
         },{
           path: 'add-influxdb',
           component: AlertServiceAddInfluxdbComponent,
-          data: { title: 'Add Influxdb', breadcrumb: 'Add Influxdb' },
+          data: { title: 'Add InfluxDB', breadcrumb: 'Add InfluxDB' },
         },{
           path: 'edit-influxdb/:pk',
           component: AlertServiceEditInfluxdbComponent,
-          data: { title: 'Edit Influxdb', breadcrumb: 'Edit Influxdb' },
+          data: { title: 'Edit InfluxDB', breadcrumb: 'Edit InfluxDB' },
         },{
           path: 'add-mattermost',
           component: AlertServiceAddMattermostComponent,
@@ -234,19 +234,19 @@ export const routes: Routes = [
         },{
           path: 'add-slack',
           component: AlertServiceAddSlackComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add Slack' },
+          data: { title: 'Add Slack', breadcrumb: 'Add Slack' },
         },{
           path: 'edit-slack/:pk',
           component: AlertServiceEditSlackComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit Slack' },
+          data: { title: 'Edit Slack', breadcrumb: 'Edit Slack' },
         },{
           path: 'add-victorops',
           component: AlertServiceAddVictoropsComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add VictOps' },
+          data: { title: 'Add VictorOps', breadcrumb: 'Add VictorOps' },
         },{
           path: 'edit-victorops/:pk',
           component: AlertServiceEditVictoropsComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit VictorOps' },
+          data: { title: 'Edit VictorOps', breadcrumb: 'Edit VictorOps' },
         }
       ]
     },{
@@ -260,57 +260,57 @@ export const routes: Routes = [
         {
           path: 'gcs',
           component: CloudCredentialsGCSComponent,
-          data: { title: 'gcs', breadcrumb: 'gcs' },
+          data: { title: 'Add GCS', breadcrumb: 'Add GCS' },
         },
         {
           path: 'gcs/:pk',
           component: CloudCredentialsGCSComponent,
-          data: { title: 'gcs', breadcrumb: 'gcs' },
+          data: { title: 'Edit GCS', breadcrumb: 'Edit GCS' },
         },
         {
           path: 'amazon',
           component: CloudCredentialsAmazonComponent,
-          data: { title: 'amazon', breadcrumb: 'amazon' },
+          data: { title: 'Add Amazon', breadcrumb: 'Add Amazon' },
         },
         {
           path: 'amazon/:pk',
           component: CloudCredentialsAmazonComponent,
-          data: { title: 'amazon', breadcrumb: 'amazon' },
+          data: { title: 'Edit Amazon', breadcrumb: 'Edit Amazon' },
         },
         {
           path: 'azure',
           component: CloudCredentialsAzureComponent,
-          data: { title: 'azure', breadcrumb: 'azure' },
+          data: { title: 'Add Azure', breadcrumb: 'Add Azure' },
         },
         {
           path: 'azure/:pk',
           component: CloudCredentialsAzureComponent,
-          data: { title: 'azure', breadcrumb: 'azure' },
+          data: { title: 'Edit Azure', breadcrumb: 'Edit Azure' },
         },
         {
           path: 'b2',
           component: CloudCredentialsB2Component,
-          data: { title: 'b2', breadcrumb: 'b2' },
+          data: { title: 'Add B2', breadcrumb: 'Add B2' },
         },
         {
           path: 'b2/:pk',
           component: CloudCredentialsB2Component,
-          data: { title: 'b2', breadcrumb: 'b2' },
+          data: { title: 'Edit B2', breadcrumb: 'Edit B2' },
         },
         {
           path: ':pk/delete',
           component: CloudCredentialsDeleteComponent,
-          data: { title: 'delete', breadcrumb: 'delete' },
+          data: { title: 'Delete', breadcrumb: 'Delete' },
         },
       ]
     },
     {
       path: 'ca',
-      data: { title: 'CAs', breadcrumb: 'CAs' },
+      data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
       children: [{
         path: '',
         component: CertificateAuthorityListComponent,
-        data: { title: 'CAs', breadcrumb: 'CAs' },
+        data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
       }, {
         path: 'import',
         component: CertificateAuthorityImportComponent,

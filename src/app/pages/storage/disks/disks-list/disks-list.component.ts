@@ -173,7 +173,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public selectedKeyName;
   public repaintIt = true;
 
-  public title = T("View Disks");
+  public title = T("Disks");
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,

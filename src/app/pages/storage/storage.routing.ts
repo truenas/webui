@@ -128,11 +128,11 @@ export const routes: Routes = [
       },
       {
         path: 'vmware-Snapshots',
-        data: { title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots' },
+        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
         children: [
           {
             path: '', component: VMwareSnapshotListComponent,
-            data: { title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots' }
+            data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' }
           },
           {
             path: 'add', component: VMwareSnapshotFormComponent,
@@ -147,11 +147,11 @@ export const routes: Routes = [
       },
       {
         path: 'disks',
-        data: { title: 'disks', breadcrumb: 'disks' },
+        data: { title: 'Disks', breadcrumb: 'Disks' },
         children: [
           {
             path: '', component: DisksListComponent,
-            data: { title: 'View Disks', breadcrumb: 'View Disks' }
+            data: { title: 'Disks', breadcrumb: 'Disks' }
           },
           {
             path: 'edit/:pk', component: DiskFormComponent,
