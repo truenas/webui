@@ -11,12 +11,12 @@
     max-width: 400px;
     width: 90vw;
     margin: auto;
-    padding: 10px 15px;
+    padding: 11px 15px;
     border-radius: 6px;
     border: 1px solid #fff;
     color: #fff;
     font-size: 110%;
-    text-align: center;
+    text-align: left;
     z-index: 1;
     visibility: hidden;
     opacity: 0;
