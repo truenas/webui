@@ -13,6 +13,7 @@ export class TooltipComponent {
 
   public isShowTooltip: Boolean;
   public tooltipMsgStyle: any;
+  public tooltipSize: any;
 
   constructor(public translate: TranslateService) {}
 
@@ -32,6 +33,16 @@ export class TooltipComponent {
       let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
       this.tooltipMsgStyle = {'left' : diffX};
     }    
-  }
 
+    if(this.message.length < 35) {
+      console.log(this.message.length);
+      //this.tooltipMsgStyle = this.tooltipMsgStyle + "{'background-color' : 'blue'};"
+    }
+  }
 }
+
+  /* Working on dynamically resizing tooltips above...dkm*/
+
+
+  
+
