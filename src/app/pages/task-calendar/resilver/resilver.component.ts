@@ -20,7 +20,7 @@ export class ResilverComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'enabled',
-    placeholder: T('Enable'),
+    placeholder: T('Enabled'),
     value: true,
   }, {
     type: 'select',

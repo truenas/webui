@@ -173,7 +173,7 @@ export class CronFormComponent implements OnInit {
   }, {
     type: 'checkbox',
     name: 'cron_enabled',
-    placeholder: T('Enable'),
+    placeholder: T('Enabled'),
     tooltip: T('Uncheck to disable the cron job without deleting it.'),
     value: true,
   }];
