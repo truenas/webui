@@ -536,8 +536,8 @@ export class CloudsyncFormComponent implements OnInit {
     payload['minute'] = value.minute;
     payload['hour'] = value.hour;
     payload['daymonth'] = value.daymonth;
-    payload['dayweek'] = value.dayweek;
-    payload['month'] = value.month;
+    payload['dayweek'] = value.dayweek.join(",");
+    payload['month'] = value.month.join(",");
     payload['enabled'] = value.enabled;
     attributes['bucket'] = value.bucket;
     attributes['folder'] = value.folder;
