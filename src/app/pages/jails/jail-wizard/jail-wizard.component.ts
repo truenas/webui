@@ -27,7 +27,7 @@ export class JailWizardComponent {
   firstFormGroup: FormGroup;
 
   protected wizardConfig: Wizard[] = [{
-      label: 'Name the jail and choose a FreeBSD release.',
+      label: T('Name the jail and choose a FreeBSD release.'),
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
@@ -49,7 +49,7 @@ export class JailWizardComponent {
       ]
     },
     {
-      label: 'Configure jail networking',
+      label: T('Configure jail networking'),
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
