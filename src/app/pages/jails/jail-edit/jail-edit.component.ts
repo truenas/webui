@@ -12,6 +12,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker'
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +21,7 @@ import { DialogService } from '../../../services/dialog.service';
 @Component({
   selector: 'jail-edit',
   templateUrl: './jail-edit.component.html',
-  providers: [JailService, EntityFormService]
+  providers: [JailService, EntityFormService, FieldRelationService]
 })
 export class JailEditComponent implements OnInit {
 
@@ -94,6 +95,13 @@ export class JailEditComponent implements OnInit {
  format: <b>interface|ip-address/netmask</b>. Multiple interface format:\
  <b>interface|ip-address/netmask,interface|ip-address/netmask</b>.\
  Example: <b>vnet0|192.168.0.10/24</b>'),
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'input',
@@ -102,6 +110,13 @@ export class JailEditComponent implements OnInit {
       tooltip: T('Type <i>none</i> or a valid IP address. Setting this\
  property to anything other than <i>none</i> configures a default route\
  inside a <b>VNET</b> jail.'),
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
+      }]
     },
     {
       type: 'input',
@@ -892,6 +907,7 @@ export class JailEditComponent implements OnInit {
     protected jailService: JailService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
+    protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     public translate: TranslateService,
     protected dialogService: DialogService) {}
@@ -933,6 +949,43 @@ export class JailEditComponent implements OnInit {
 
     this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
     this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
+
+    for (const i in this.formFileds) {
+      const config = this.formFileds[i];
+      if (config.relation.length > 0) {
+        this.setRelation(config);
+      }
+    }
+
+    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.formGroup.controls['vnet'].setValue(true);
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = true;
+        this.formGroup.controls['bpf'].setValue(true);
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = true;
+      } else {
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
+         _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
+      }
+    });
+    this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
+      if (this.formGroup.controls['dhcp'].value && !res) {
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
+      } else {
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
+      }
+    });
+    this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
+      if (this.formGroup.controls['dhcp'].value && !res) {
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required';
+      } else {
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
+      }
+    });
 
     this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
@@ -979,6 +1032,43 @@ export class JailEditComponent implements OnInit {
       });
     });
 
+  }
+
+  setRelation(config: FieldConfig) {
+    const activations =
+        this.fieldRelationService.findActivationRelation(config.relation);
+    if (activations) {
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+          activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled);
+
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
+          .forEach(control => {
+            control.valueChanges.subscribe(
+                () => { this.relationUpdate(config, activations); });
+          });
+    }
+  }
+
+  setDisabled(name: string, disable: boolean) {
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
+
+    this.formFileds = this.formFileds.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+      }
+      return item;
+    });
+  }
+
+  relationUpdate(config: FieldConfig, activations: any) {
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+        activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled);
   }
 
   goBack() {
