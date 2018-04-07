@@ -10,7 +10,7 @@ import {
   SimpleChange,
   OnDestroy
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import { WebSocketService, ShellService } from '../../services/';
 import { TranslateService } from '@ngx-translate/core';

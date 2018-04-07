@@ -242,6 +242,7 @@ export class UserFormComponent {
         entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
         entityForm.formGroup.controls['groups'].setValue(res[0].groups);
         entityForm.formGroup.controls['home'].setValue(res[0].home);
+        entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
