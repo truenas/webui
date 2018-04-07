@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import {Validators} from '@angular/forms';
@@ -17,11 +17,11 @@ import { T } from '../../../../translate-marker';
   selector : 'app-interfaces-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class InterfacesFormComponent {
+export class InterfacesFormComponent implements OnDestroy {
 
-  protected resource_name: string = 'network/interface/';
+  protected resource_name = 'network/interface/';
   protected route_success: string[] = [ 'network', 'interfaces' ];
-  protected isEntity: boolean = true;
+  protected isEntity = true;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -109,8 +109,14 @@ export class InterfacesFormComponent {
     },
   ];
 
+  private int_dhcp: any;
+  private int_dhcp_subscription: any;
+  private int_ipv6auto: any;
+  private int_ipv6auto_subscription: any;
   private int_v4netmaskbit: any;
+  private int_ipv4address: any;
   private int_v6netmaskbit: any;
+  private int_ipv6address: any;
   private int_interface: any;
   private entityForm: any;
 
@@ -129,6 +135,8 @@ export class InterfacesFormComponent {
   }
 
   afterInit(entityForm: any) {
+    this.int_ipv4address = _.find(this.fieldConfig, {'name': 'int_ipv4address'});
+    this.int_ipv6address = _.find(this.fieldConfig, {'name': 'int_ipv6address'}); 
     this.int_v4netmaskbit =
         _.find(this.fieldConfig, {'name' : 'int_v4netmaskbit'});
     this.int_v4netmaskbit.options = this.networkService.getV4Netmasks();
@@ -136,6 +144,19 @@ export class InterfacesFormComponent {
     this.int_v6netmaskbit =
         _.find(this.fieldConfig, {'name' : 'int_v6netmaskbit'});
     this.int_v6netmaskbit.options = this.networkService.getV6PrefixLength();
+
+    this.int_dhcp = entityForm.formGroup.controls['int_dhcp'];
+    this.int_ipv6auto = entityForm.formGroup.controls['int_ipv6auto'];
+
+    this.int_ipv4address.isHidden = this.int_v4netmaskbit.isHidden = this.int_dhcp.value;
+    this.int_ipv6address.isHidden = this.int_v6netmaskbit.isHidden = this.int_ipv6auto.value;
+
+    this.int_dhcp_subscription = this.int_dhcp.valueChanges.subscribe((value) => {
+      this.int_ipv4address.isHidden = this.int_v4netmaskbit.isHidden = value;
+    });
+    this.int_ipv6auto_subscription = this.int_ipv6auto.valueChanges.subscribe((value) => {
+      this.int_ipv6address.isHidden = this.int_v6netmaskbit.isHidden = value;
+    });
 
     if (!entityForm.isNew) {
       entityForm.setDisabled('int_interface', true);
@@ -147,5 +168,10 @@ export class InterfacesFormComponent {
         });
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.int_dhcp_subscription.unsubscribe();
+    this.int_ipv6auto_subscription.unsubscribe();
   }
 }
