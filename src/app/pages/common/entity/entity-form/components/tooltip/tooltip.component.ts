@@ -22,27 +22,31 @@ export class TooltipComponent {
 
     let screenW = document.body.clientWidth;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
+    let dynamicWidth = this.message.length * 9.5;
 
-    if((screenW - posX) > 420) {
-      this.tooltipMsgStyle = {'left' : '0px'};
-    }
-    else if(posX > 420) {
-      this.tooltipMsgStyle = {'right' : '0px'};
+    if(this.message.length <= 40) {
+      if((screenW - posX) > 420) {
+        this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
+      }
+      else if(posX > 420) {
+        this.tooltipMsgStyle = {'right' : '0px', 'max-width' :  dynamicWidth + 'px'};
+      }
+      else {
+        let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
+        this.tooltipMsgStyle = {'left' : diffX, 'max-width' : dynamicWidth + 'px'};
+      }    
     }
     else {
-      let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
-      this.tooltipMsgStyle = {'left' : diffX};
-    }    
-
-    if(this.message.length < 35) {
-      console.log(this.message.length);
-      //this.tooltipMsgStyle = this.tooltipMsgStyle + "{'background-color' : 'blue'};"
+      if((screenW - posX) > 420) {
+        this.tooltipMsgStyle = {'left' : '0px'};
+      }
+      else if(posX > 420) {
+        this.tooltipMsgStyle = {'right' : '0px'};
+      }
+      else {
+        let diffX = 'calc( -45vw - ' + (posX - screenW/2) + 'px )';
+        this.tooltipMsgStyle = {'left' : diffX};
+      }    
     }
   }
 }
-
-  /* Working on dynamically resizing tooltips above...dkm*/
-
-
-  
-
