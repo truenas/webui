@@ -24,7 +24,7 @@ export class TooltipComponent {
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
     let dynamicWidth = this.message.length * 9.5;
 
-    if(this.message.length < 40) {
+    if(this.message.length <= 40) {
       if((screenW - posX) > 420) {
         this.tooltipMsgStyle = {'left' : '0px', 'max-width' : dynamicWidth + 'px'};
       }
