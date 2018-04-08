@@ -61,12 +61,12 @@
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
-        <button mat-menu-item (click)="$event.stopPropagation()" [matMenuTriggerFor]="languageMenu">
+        <!--button mat-menu-item (click)="$event.stopPropagation()" [matMenuTriggerFor]="languageMenu">
           <mat-icon>translate</mat-icon>
           <ng-container *ngFor="let lang of language.availableLangs">
             <span *ngIf="lang.code == language.currentLang">{{ lang.name }}</span>
           </ng-container>
-        </button>
+        </button-->
         <button mat-menu-item [routerLink]="['/account/users/edit/1']">
           <mat-icon>account_box</mat-icon>
           <span>{{'Account' | translate}}</span>
