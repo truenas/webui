@@ -60,6 +60,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public resource_name = 'storage/volume';
   public rowData: ZfsPoolData[] = [];
   protected dialogRef: any;
+  protected datasetData: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -85,6 +86,9 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
+    this.ws.call('pool.dataset.query', []).subscribe((res) => {
+      this.datasetData = res;
+    });
 
 
   }
@@ -352,23 +356,26 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       }
 
-      actions.push({
-        label: T("Promote Dataset"),
-        onClick: (row1) => {
-          this.loader.open();
+      let rowDataset = _.find(this.datasetData, {id:rowData.path});
+      if (rowDataset && rowDataset.origin && !!rowDataset.origin.parsed) {
+        actions.push({
+          label: T("Promote Dataset"),
+          onClick: (row1) => {
+            this.loader.open();
 
-          this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
-            this.loader.close();
-            // Showing info here because theres no feedback on list parent for this if promoted.
-            this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
-              this.parentVolumesListComponent.repaintMe();
+            this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
+              this.loader.close();
+              // Showing info here because theres no feedback on list parent for this if promoted.
+              this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
             });
-          }, (res) => {
-            this.loader.close();
-            this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
-          });
-        }
-      });
+          }
+        });
+      }
     }
     if (rowData.type === "zvol") {
       actions.push({
