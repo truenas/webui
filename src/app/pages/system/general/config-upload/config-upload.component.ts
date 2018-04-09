@@ -5,6 +5,7 @@ import { NgFileSelectDirective, UploadInput, UploadFile, UploadStatus } from 'ng
 import { Observable, Observer, Subscription } from 'rxjs';
 import { WebSocketService } from '../../../../services/';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'config-upload',
@@ -20,7 +21,8 @@ export class ConfigUploadComponent {
   @ViewChild(NgFileSelectDirective) file: NgFileSelectDirective;
 
   constructor(@Inject(NgZone) private zone: NgZone,
-    protected ws: WebSocketService) {
+    protected ws: WebSocketService,
+    private _location: Location) {
     this.options = {
       url: '/_upload',
       type: "uploadFile",
@@ -52,5 +54,9 @@ export class ConfigUploadComponent {
                    })
                    .subscribe();
     this.busy.push(this.sub);
+  }
+
+  goBack() {
+    this._location.back()
   }
 }
