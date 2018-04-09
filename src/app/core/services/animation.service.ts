@@ -56,7 +56,7 @@ export class AnimationService {
 
   colorLoopAnimation(obj,colors){
     const target = (<any>document).querySelector(obj);
-    const elStyler:any = styler(target);
+    const elStyler:any = styler(target,{});
     //DEBUG: console.warn(elStyler);
     const s = keyframes({
       values: colors,
