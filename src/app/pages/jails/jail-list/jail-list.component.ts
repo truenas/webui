@@ -121,7 +121,7 @@ export class JailListComponent implements OnInit {
     },
     {
       id: "mmount",
-      label: "Mount Points",
+      label: "Mnt Pts",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
