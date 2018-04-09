@@ -128,6 +128,16 @@ export class JailListComponent implements OnInit {
         this.router.navigate(
           new Array('').concat(["jails", "storage", selectedJails[0][0]]));
       }
+    },
+    {
+      id: "shell",
+      label: "Shell",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.router.navigate(
+          new Array('').concat(["jails", "shell", selectedJails[0][0]]));
+      }
     }
   ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
