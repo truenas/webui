@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { WebSocketService } from '../../../../services/';
 import { MatSnackBar } from '@angular/material';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'general-config-save',
@@ -17,7 +18,7 @@ export class ConfigSaveComponent {
   public sub: Subscription;
   public secretseed: boolean = false;
 
-  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar) {}
+  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar, private _location: Location) {}
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action , {
@@ -36,5 +37,9 @@ export class ConfigSaveComponent {
           this.openSnackBar("Please check your network connection", "Failed");
         }
       );
+  }
+
+  goBack() {
+    this._location.back()
   }
 }
