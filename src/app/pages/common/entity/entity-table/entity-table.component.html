@@ -33,12 +33,11 @@
       </ng-template>
     </div>
 
-    <!-- New stuff -->
     <div class="singleActionsButton">
       <div *ngIf="selected.length > 0 ? true : false" >
         <div *ngIf="conf.singleActions; else defaultSingleActions" fxFlex="100">
           <span *ngFor="let maction of conf.singleActions">
-            <button [disabled]="selected.length !== 1" mat-raised-button  *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+            <button mat-raised-button color="accent" aria-labelledby="maction?.label" matTooltip="Available only when a single jail is selected" [disabled]="selected.length !== 1" mat-raised-button  *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
               <span>{{ maction?.label | translate }}</span>
             </button>
           </span>
@@ -46,7 +45,6 @@
       </div>    
     </div>
   </div>
-  <!-- end -->
 
   <div>
     <ngx-datatable class='material' 

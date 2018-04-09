@@ -108,7 +108,6 @@ export class JailListComponent implements OnInit {
       }
     }
   ];
-  // new stuff
   public singleActions: Array < any > = [
     {
       id: "medIt",
@@ -130,7 +129,6 @@ export class JailListComponent implements OnInit {
           new Array('').concat(["jails", "storage", selectedJails[0][0]]));
       }
     }
-    // end
   ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
