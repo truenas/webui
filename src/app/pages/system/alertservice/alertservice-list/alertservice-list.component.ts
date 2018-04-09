@@ -15,7 +15,7 @@ import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/tes
 })
 export class AlertServiceListComponent {
 
-  public title = "Alert Service";
+  public title = "Alert Services";
   protected resource_name = 'system/consulalerts';
   protected route_success: string[] = ['system', 'alertservice'];
   protected entityList: any;

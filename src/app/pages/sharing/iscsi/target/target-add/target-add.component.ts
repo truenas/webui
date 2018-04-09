@@ -228,7 +228,7 @@ export class TargetAddComponent implements OnInit {
                     body : JSON.stringify(iscsi_group_value[i]),
                   })
                   .subscribe(
-                    (res) => { console.log(res.data); },
+                    (res) => { },
                     (res) => {
                      let data = {};
                      this.rest

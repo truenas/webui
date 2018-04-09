@@ -39,6 +39,7 @@ export class ServiceDCComponent {
       label : 'Realm',
       placeholder : T('Realm'),
       tooltip: T('Capitalized DNS realm name.'),
+      required: true,
       validation : [ Validators.required ]
     },
     {
@@ -47,6 +48,7 @@ export class ServiceDCComponent {
       label : 'Domain',
       placeholder : T('Domain'),
       tooltip: T('Capitalized domain name.'),
+      required: true,
       validation : [ Validators.required ]
     },
     {
@@ -67,6 +69,7 @@ export class ServiceDCComponent {
       placeholder : T('DNS Forwarder'),
       tooltip: T('IP address of DNS forwarder. Required for recursive\
        queries when <i>SAMBA_INTERNAL</i> is selected.'),
+      required: true,
       validation : [ Validators.required ]
     },
     {

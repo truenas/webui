@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
 import {
@@ -37,7 +38,9 @@ export class LaggFormComponent {
  preferred. If the network switch does not support LACP, choose\
  <i>Failover</i>. For <i>LACP</i>, verify the switch is configured for\
  <i>active LACP</i>; <i>passive LCAP</i> is not supported'),
-      options : []
+      options : [],
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
@@ -47,7 +50,9 @@ export class LaggFormComponent {
  <b>Warning:</b> Lagg creation fails if any interfaces are manually\
  configured.'),
       options : [],
-      multiple : true
+      multiple : true,
+      required: true,
+      validation : [ Validators.required ]
     },
   ];
 

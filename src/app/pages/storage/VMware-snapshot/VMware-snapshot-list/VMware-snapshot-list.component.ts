@@ -10,7 +10,7 @@ import { T } from '../../../../translate-marker';
 })
 export class VMwareSnapshotListComponent {
 
-  public title = "Snapshots";
+  public title = "VMware Snapshots";
   protected resource_name: string = 'storage/vmwareplugin';
   protected route_add: string[] = ["storage", "vmware-Snapshots", "add"];
   protected route_add_tooltip = "Add VMware Snapshot";

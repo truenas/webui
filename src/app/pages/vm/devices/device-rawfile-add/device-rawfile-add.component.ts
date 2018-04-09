@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import { Validators } from '@angular/forms';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -31,6 +32,8 @@ export class DeviceRawFileAddComponent {
       name : 'RAW_path',
       placeholder : 'Raw File',
       tooltip : 'Select the location of the RAW file being added.',
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',

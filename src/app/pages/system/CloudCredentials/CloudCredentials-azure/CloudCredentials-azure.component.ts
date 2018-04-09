@@ -46,6 +46,8 @@ export class CloudCredentialsAzureComponent {
     name : 'name',
     placeholder : T('Name'),
     tooltip : T('Enter a descriptive name for the cloud credential.'),
+    required: true,
+    validation : [ Validators.required ]
   },
   {
     type : 'input',

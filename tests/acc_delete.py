@@ -63,7 +63,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -79,7 +79,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -95,7 +95,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -112,7 +112,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -135,7 +135,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -150,7 +150,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -165,7 +165,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("02_02-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -180,7 +180,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("01-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -195,7 +195,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("02_03-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -210,7 +210,7 @@ class delete_test(unittest.TestCase):
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
             self.screenshot("03_00-e")
-            for i in xrange(1,len(exc_info_p)):
+            for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
@@ -265,8 +265,8 @@ class delete_test(unittest.TestCase):
             print ("username/groupname- " + name + " exists")
 
             for x in range(1, 10):
-                if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[4]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                    ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[4]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+                if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                    ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                     ui_text = ui_element.text
                 if (ui_text == name):
                     index = x
@@ -277,7 +277,7 @@ class delete_test(unittest.TestCase):
             time.sleep(1)
 
             # click on the 3 dots
-            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[4]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
             time.sleep(1)
             # click on delete option
 #            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()

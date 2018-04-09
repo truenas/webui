@@ -39,6 +39,7 @@ export class UserFormComponent {
       tooltip : T('By convention, user accounts have an ID greater than\
   1000 and system accounts have an ID equal to the default port number\
   used by the service.'),
+      required: true,
       validation : [ Validators.required ]
     },
     {
@@ -50,6 +51,7 @@ export class UserFormComponent {
  a hyphen or contain a space, tab, or these characters:\
  <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can only be used\
  as the last character.'),
+      required: true,
       validation : [ Validators.required ]
     },
 
@@ -110,6 +112,7 @@ export class UserFormComponent {
       name : 'full_name',
       placeholder : T('Full Name'),
       tooltip : T('Entering a name is required. Spaces are allowed.'),
+      required: true,
       validation : [ Validators.required ]
     },
     {
@@ -239,6 +242,7 @@ export class UserFormComponent {
         entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
         entityForm.formGroup.controls['groups'].setValue(res[0].groups);
         entityForm.formGroup.controls['home'].setValue(res[0].home);
+        entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);

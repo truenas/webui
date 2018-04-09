@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import {Validators} from '@angular/forms';
 import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService } from '../../../../services/';
@@ -26,12 +27,16 @@ export class GroupFormComponent {
  have IDs above 1000, and groups used by a service have\
  an ID number that matches the default port number used by the service.\
  For example, the sshd group has an ID of 22.'),
+      validation : [ Validators.required ],
+      required: true,
     },
     {
       type: 'input',
       name: 'bsdgrp_group',
       placeholder: T('Name'),
       tooltip: T('Entering a name is required'),
+      validation : [ Validators.required ],
+      required: true
     },
     {
       type: 'checkbox',

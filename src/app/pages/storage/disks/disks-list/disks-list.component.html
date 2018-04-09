@@ -1,13 +1,39 @@
-<div id="disks-list.component_html" class="material mat-card mat-card-table">
+<div id="disks-list.component_html" class="material mat-card mat-card-table" *ngIf="repaintIt === true">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">{{title}}</div>
   </div>
+ 
+  <mat-card>
+    <mat-button-toggle-group #group="matButtonToggleGroup">
+      <mat-button-toggle [checked]='true' value="All">
+        All
+      </mat-button-toggle>
+      <mat-button-toggle *ngFor="let row of zfsPoolRows" value="{{row.name}}">
+          {{row.name}}
+       </mat-button-toggle> 
+    </mat-button-toggle-group>
+  </mat-card>
+  
+ 
+  <div *ngIf="zfsPoolRows.length > 0 && group.value === conf.title">
+    <entity-table [conf]="conf" [title]="conf.title"></entity-table>
+  </div>
+
+  <div *ngFor="let row of zfsPoolRows">
+    <div *ngIf="group.value === row.name">
+      <entity-table *ngIf="row.isReady" [conf]="row.disksListConfig"></entity-table>
+    </div>
+  </div>
+
+
   <div>
     <br/>
   </div>
+
+  <!--
   <div>
     <mat-tab-group (selectChange)="tabSelectChangeHandler($event)">
-      <mat-tab label="ALL_DISKS">
+      <mat-tab label="ALL_DISKS" *ngIf="zfsPoolRows.length > 0">
         <div>
           <entity-table [conf]="conf" [title]="conf.title"></entity-table>
         </div>
@@ -19,4 +45,6 @@
       </mat-tab>
     </mat-tab-group>
   </div>
+-->
+
 </div>

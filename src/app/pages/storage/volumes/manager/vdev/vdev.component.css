@@ -2,7 +2,8 @@
     display: flex;
 }
 .vdev-table {
-	flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding-bottom: 10px;
 }
 
 .vdev-actions {

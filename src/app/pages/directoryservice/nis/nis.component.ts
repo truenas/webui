@@ -1,8 +1,9 @@
 import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
-
+import {Subscription} from 'rxjs/Subscription';
+import {  DialogService } from '../../../services/';
+import { Validators } from '@angular/forms';
 
 import {
   RestService,
@@ -14,12 +15,24 @@ import {
 } from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector : 'nis',
+  selector : 'app-nis',
   template : `<entity-form [conf]="this"></entity-form>`,
 })
 
 export class NISComponent {
-  protected resource_name: string = 'directoryservice/nis/';
+  protected resource_name =  'directoryservice/nis/';
+  public custActions: Array<any> = [
+    {
+      'id' : 'ds_clearcache',
+      'name' : 'Rebuild Directory Service Cache',
+       function : async () => {
+         this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
+          this.dialogservice.Info("NIS", "The cache is being rebuilt.");
+          
+        })
+      }
+    }
+  ];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -27,6 +40,8 @@ export class NISComponent {
       name : 'nis_domain',
       placeholder : 'NIS domain:',
       tooltip: 'Name of NIS domain.',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -62,5 +77,6 @@ export class NISComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService) {}
+              protected systemGeneralService: SystemGeneralService,
+              private dialogservice: DialogService) {}
 }

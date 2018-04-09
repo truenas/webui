@@ -46,6 +46,8 @@ export class CloudCredentialsB2Component {
     name : 'name',
     placeholder : T('Account Name'),
     tooltip : T('Enter the Backblaze account name.'),
+    required: true,
+    validation : [ Validators.required ]
   },
   {
     type : 'textarea',

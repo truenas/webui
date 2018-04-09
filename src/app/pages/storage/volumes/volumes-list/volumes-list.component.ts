@@ -60,6 +60,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public resource_name = 'storage/volume';
   public rowData: ZfsPoolData[] = [];
   protected dialogRef: any;
+  protected datasetData: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -85,6 +86,9 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
+    this.ws.call('pool.dataset.query', []).subscribe((res) => {
+      this.datasetData = res;
+    });
 
 
   }
@@ -136,10 +140,8 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
 
-                  this.dialogService.Info(T("Lock"), T("Locked ") + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
                 }, (res) => {
                   this.loader.close();
                   this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
@@ -227,6 +229,10 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
+    let rowDataPathSplit = [];
+    if (rowData.path) {
+      rowDataPathSplit = rowData.path.split('/');
+    }
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
@@ -257,26 +263,26 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Upgrade Pool"),
           onClick: (row1) => {
-            
+
             this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? (Upgrading a pool is a \
                                                         non-reversable operation that could make some features of \
                                                         the pool incompatible with older versions of FreeNAS): ") + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-                this.loader.open();
+                if (confirmResult === true) {
+                  this.loader.open();
 
-                this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  this.loader.close();
-    
-                  this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
+                  this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                    this.loader.close();
+
+                    this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
+                      this.parentVolumesListComponent.repaintMe();
+                    });
+                  }, (res) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name, res.message, res.stack);
                   });
-                }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name,  res.message, res.stack);
-                });
-              } 
-            });
-            
+                }
+              });
+
           }
         });
       }
@@ -314,51 +320,87 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Delete Dataset"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "delete", row1.path
-            ]));
+
+            this.dialogService.confirm(T("Delete"), T("This action is irreversible and will \
+             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false).subscribe((res) => {
+                if (res) {
+
+                  this.loader.open();
+
+                  const url = "storage/dataset/" + row1.path;
+
+
+                  this.rest.delete(url, {}).subscribe((res) => {
+                    this.loader.close();
+                    this.parentVolumesListComponent.repaintMe();
+                  }, (error) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
+                  });
+
+                }
+              });
+
           }
         });
+        if (rowDataPathSplit.length > 1 && rowDataPathSplit[1] !== "iocage") {
+          actions.push({
+            label: T("Edit Permissions"),
+            onClick: (row1) => {
+              this._router.navigate(new Array('/').concat([
+                "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+                "permissions", row1.path
+              ]));
+            }
+          });
+        }
+      }
+
+      let rowDataset = _.find(this.datasetData, {id:rowData.path});
+      if (rowDataset && rowDataset.origin && !!rowDataset.origin.parsed) {
         actions.push({
-          label: T("Edit Permissions"),
+          label: T("Promote Dataset"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "permissions", row1.path
-            ]));
+            this.loader.open();
+
+            this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
+              this.loader.close();
+              // Showing info here because theres no feedback on list parent for this if promoted.
+              this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
+            });
           }
         });
       }
-
-      actions.push({
-        label: T("Promote Dataset"),
-        onClick: (row1) => {
-          this.loader.open();
-
-          this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
-            this.loader.close();
-
-            this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
-              this.parentVolumesListComponent.repaintMe();
-            });
-          }, (res) => {
-            this.loader.close();
-            this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
-          });          
-        }
-      });
     }
     if (rowData.type === "zvol") {
       actions.push({
-        label: T("Delete Zvol"),
+        label: T("Delete zvol"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.path.split('/')[0], "zvol",
-            "delete", row1.path
-          ]));
+
+
+          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
+            if (confirmed === true) {
+              this.loader.open();
+              
+              this.rest.delete('storage/volume/' + this._classId + '/zvols/' + row1.name, {}).subscribe((wsResp) => {
+                this.loader.close();
+                this.parentVolumesListComponent.repaintMe();
+
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error Deleting zvol ") + row1.path, res.reason, res.stack);
+              });
+            }
+          });
+
+
         }
-      });
+      });// return 'storage/volume/' + this.pk + '/zvols/';
       actions.push({
         label: T("Edit Zvol"),
         onClick: (row1) => {
@@ -369,14 +411,14 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
 
-      
+
     }
     return actions;
   }
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
-  
+
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();

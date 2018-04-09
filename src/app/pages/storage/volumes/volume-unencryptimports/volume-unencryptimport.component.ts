@@ -50,6 +50,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
       },
       {
         type: 'input',
+        inputType: 'password',
         name: 'passphrase',
         label: T('Passphrase'),
         placeholder: T('Passphrase'),

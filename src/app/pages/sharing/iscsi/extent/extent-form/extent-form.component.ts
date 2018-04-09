@@ -7,8 +7,9 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { IscsiService } from '../../../../../services/';
+import { IscsiService, RestService } from '../../../../../services/';
 import { T } from '../../../../../translate-marker';
+import {Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
@@ -31,6 +32,8 @@ export class ExtentFormComponent {
       placeholder : T('Extent name'),
       tooltip: T('Name of Extent. If the <b>Extent size</b> is not\
  <i>0</i>, it cannot be an existing file within the voulme/dataset.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'select',
@@ -56,6 +59,8 @@ export class ExtentFormComponent {
  unformatted disk, controller, zvol snapshot, or HAST device.'),
       options: [],
       isHidden: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -178,10 +183,12 @@ different block size.'),
   ];
   protected extent_type_control: any;
   protected extent_disk_control: any;
+  protected pk: string;
 
   constructor(protected router: Router, 
               protected aroute: ActivatedRoute,
-              protected iscsiService: IscsiService) {}
+              protected iscsiService: IscsiService,
+              protected rest: RestService) {}
 
   preInit() {
     this.sub = this.aroute.params.subscribe(params => {
@@ -191,6 +198,9 @@ different block size.'),
         this.fieldConfig = _.filter(this.fieldConfig, function(item) {
           return item.name != 'iscsi_target_extent_serial';
         });
+      } else {
+        this.isNew = false;
+        this.pk = params['pk'];
       }
     });
   }
@@ -206,6 +216,7 @@ different block size.'),
     });
 
     this.extent_disk_control = _.find(this.fieldConfig, {'name' : 'iscsi_target_extent_disk'});
+    //get all zvols
     this.iscsiService.getVolumes().subscribe((res) => {
       res.data.forEach((vol) => {
         this.iscsiService.getZvols(vol.name).subscribe((res) => {
@@ -216,7 +227,22 @@ different block size.'),
         });
       })
     });
-
+    //get all unused disks
+    this.iscsiService.getUnusedDisk().subscribe((res) => {
+      for(let i = 0; i < res.length; i++) {
+        let label = res[i].name + ' (' +  (<any>window).filesize(res[i].size, {standard : "iec"}) + ')';
+        this.extent_disk_control.options.push({label: label, value: res[i].name});
+      }
+    })
+    //show current value if isNew is false
+    if (!this.isNew) {
+      this.rest.get('/services/iscsi/extent/'+this.pk, {}).subscribe((res) =>{
+        if (res.data) {
+          this.extent_disk_control.options.push({label: res.data.iscsi_target_extent_path.substring(5), value: res.data.iscsi_target_extent_path.substring(5)});
+          this.entityForm.formGroup.controls['iscsi_target_extent_disk'].setValue(res.data.iscsi_target_extent_path.substring(5));
+        }
+      })
+    }
     this.extent_type_control = entityForm.formGroup.controls['iscsi_target_extent_type'];
     this.extent_type_control.valueChanges.subscribe((value) => {
       this.formUpdate(value);

@@ -34,6 +34,7 @@ export class PluginAddComponent implements OnInit {
       name: 'dhcp',
       placeholder: T('dhcp'),
       tooltip: T('Check to use DHCP to configure IP settings.'),
+      value: true,
     },
     {
       type: 'input',

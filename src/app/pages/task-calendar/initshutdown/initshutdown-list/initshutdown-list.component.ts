@@ -24,7 +24,7 @@ export class InitshutdownListComponent {
     { name: 'Command', prop: 'ini_command' },
     { name: 'Script', prop: 'ini_script' },
     { name: 'When', prop: 'ini_when' },
-    { name: 'Enable', prop: 'ini_enabled' },
+    { name: 'Enabled', prop: 'ini_enabled' },
   ];
   public config: any = {
     paging: true,

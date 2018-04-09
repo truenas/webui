@@ -39,6 +39,8 @@ export class CertificateImportComponent {
       tooltip: T('Internal identifier of the certificate.\
        Only alphanumeric, underscore (_),\
        and dash (-) characters are allowed.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'textarea',

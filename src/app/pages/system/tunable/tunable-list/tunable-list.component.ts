@@ -31,7 +31,7 @@ export class TunableListComponent {
     { name: 'Value', prop: 'tun_value' },
     { name: 'Type', prop: 'tun_type' },
     { name: 'Comment', prop: 'tun_comment' },
-    { name: 'Enable', prop: 'tun_enabled' },
+    { name: 'Enabled', prop: 'tun_enabled' },
   ];
 
   public config: any = {

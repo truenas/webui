@@ -74,7 +74,7 @@ export class TunableFormComponent {
     {
       type: 'checkbox',
       name: 'tun_enabled',
-      placeholder: T('Enable'),
+      placeholder: T('Enabled'),
       tooltip: T('Uncheck to disable the tunable without deleting it.'),
     },
   ];
