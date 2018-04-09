@@ -38,6 +38,8 @@ export class TunableFormComponent {
       placeholder: T('Variable'),
       tooltip: T('Typically the name of the sysctl or driver to load,\
        as indicated by its man page.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'textarea',
@@ -47,6 +49,8 @@ export class TunableFormComponent {
        carefully. Refer to the man page for the specific driver or the\
        <a href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/" target="_blank">FreeBSD Handbook</a>\
        for suggested values.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'select',
