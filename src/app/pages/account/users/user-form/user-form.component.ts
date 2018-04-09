@@ -18,6 +18,7 @@ import {
 } from '../../../common/entity/entity-form/validators/password-validation';
 import {  DialogService } from '../../../../services/';
 import {Validators} from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector : 'app-user-form',
@@ -144,6 +145,7 @@ export class UserFormComponent {
       tooltip : T('Disables password logins and authentication to SMB\
  shares. Checking this grays out <b>Lock user</b> and\
  <b>Permit Sudo</b>, which are mutually exclusive.'),
+      value: false,
     },
     {
       type : 'checkbox',
@@ -152,6 +154,7 @@ export class UserFormComponent {
       tooltip : T('Check this to prevent the user from logging in until\
  the account is unlocked (this box is unchecked). Checking this box\
  grays out <b>Disable password login</b> which is mutually exclusive.'),
+      value: false,
     },
     {
       type : 'checkbox',
@@ -159,6 +162,7 @@ export class UserFormComponent {
       placeholder : T('Permit Sudo'),
       tooltip : T('Check this to give members of the group permission to\
  use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
+      value: false,
     },
 
     {
@@ -194,14 +198,68 @@ export class UserFormComponent {
   private groups: any;
   private creategroup: any;
   private group_create: any;
+  private password_disabled: any;
+  private sudo: any;
+  private locked: any;
+  private password_disabled_state = false;
+  private sudo_state = false;
+  private locked_state = false;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
-              private dialog:DialogService ) {}
+              private dialog:DialogService, private cdRef:ChangeDetectorRef ) {}
 
 
   afterInit(entityForm: any) {
     this.isNew = entityForm.isNew;
+    this.password_disabled = entityForm.formGroup.controls['password_disabled'];
+    this.sudo = entityForm.formGroup.controls['sudo'];
+    this.locked = entityForm.formGroup.controls['locked'];
+
+    this.password_disabled.valueChanges.subscribe((password_disabled)=>{
+
+      if(password_disabled && !this.sudo_state && !this.locked_state){
+        entityForm.setDisabled('sudo', password_disabled);
+        entityForm.setDisabled('locked', password_disabled);
+        this.password_disabled_state = password_disabled;
+      }
+      else if(!this.password_disabled_state && !this.sudo_state && this.locked_state){
+        entityForm.setDisabled('password_disabled', this.locked_state, "VALID");
+      }
+      else if(!this.password_disabled_state && this.sudo_state && !this.locked_state){
+        entityForm.setDisabled('password_disabled', this.sudo_state, "VALID");
+      
+      }
+      else {
+        this.password_disabled_state = !this.password_disabled_state;
+        entityForm.setDisabled('sudo', !this.sudo_state);
+        entityForm.setDisabled('locked', !this.locked_state);
+      }
+      this.cdRef.detectChanges();
+    })
+    this.locked.valueChanges.subscribe((locked)=>{
+      if(locked && !this.password_disabled_state){
+        this.locked_state = locked;
+        entityForm.setDisabled('password_disabled', locked);
+      }
+      else{
+        this.locked_state = !this.locked_state;
+      }
+      this.cdRef.detectChanges();
+    });
+
+    this.sudo.valueChanges.subscribe((sudo)=>{
+      if(sudo && !this.password_disabled_state){
+        this.sudo_state = sudo;
+        entityForm.setDisabled('password_disabled', sudo); 
+      }
+      else{
+        this.sudo_state = !this.sudo_state;
+      }
+      this.cdRef.detectChanges();
+    });
+
+
     if (!entityForm.isNew) {
       _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
       entityForm.formGroup.controls['group_create'].setValue(false);

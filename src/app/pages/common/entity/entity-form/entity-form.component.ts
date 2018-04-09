@@ -430,9 +430,19 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({disabled, value}, validation);
   }
 
-  setDisabled(name: string, disable: boolean) {
+  setDisabled(name: string, disable: boolean, status?:string) {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
+      if (status){
+        if (status !== this.formGroup.controls[name].status){
+          //this.formGroup.controls[name][method]();
+          return;
+        }
+      }
+      else{
+        this.formGroup.controls[name][method]();
+        return;
+      }
       this.formGroup.controls[name][method]();
       return;
     }
