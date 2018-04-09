@@ -42,7 +42,7 @@ export class AnimationService {
     // you want to scroll to
     const dest = (<any>document).querySelector(destination);
     //DEBUG: console.log(dest)
-    const elementScroll = scroll(target);
+    const elementScroll = scroll(target,{});
 
     //elementScroll.set('top', 400);
 
