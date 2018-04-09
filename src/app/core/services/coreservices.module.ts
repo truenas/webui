@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from 'app/core/services/api.service';
+import { AnimationService } from 'app/core/services/animation.service';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -24,6 +25,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
   providers: [
     CoreService,
     ApiService,
+    AnimationService,
     ThemeService,
     PreferencesService
   ],
@@ -38,6 +40,7 @@ export class CoreServices {
       providers: [
 	CoreService,
 	ApiService,
+	AnimationService,
         PreferencesService,
         ThemeService
       ]

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -15,7 +15,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
   selector: 'widget-cpu-history',
   templateUrl:'./widgetcpuhistory.component.html'
 })
-export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
   public title:string = "CPU History";
@@ -24,8 +24,18 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
     super();
   }
 
+  ngOnDestroy(){
+    this.core.emit({name:"StatsRemoveListener", data:{name:"CpuAggregate", obj:this}});
+  }
+
   ngAfterViewInit(){
+    this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate",key:"sum", obj:this} });
     this.core.register({observerClass:this,eventName:"StatsCpuData"}).subscribe((evt:CoreEvent) => {
+      //DEBUG: console.log(evt);
+      //this.setCPUData(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"StatsCpuAggregateSum"}).subscribe((evt:CoreEvent) => {
       console.log(evt);
       this.setCPUData(evt);
     });
@@ -34,16 +44,17 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
       this.chartCpu.refresh();
     });
 
-    this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
+    //this.core.emit({name:"StatsCpuRequest", data:[['user','interrupt','system'/*,'idle','nice'*/],{step:'10', start:'now-10m'}]});
   }
 
   setCPUData(evt:CoreEvent){
-    console.log("SET CPU DATA");
-    console.log(evt.data);
+    //DEBUG: console.log("SET CPU DATA");
+    //DEBUG: console.log(evt.data);
     let cpuUserObj = evt.data;
 
     let parsedData = [];
-    let dataTypes = evt.data.meta.legend;
+    let dataTypes = [];
+    dataTypes = evt.data.meta.legend;
 
     for(let index in dataTypes){
       let chartData:ChartData = {
@@ -64,6 +75,7 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
      this.chartCpu.data = parsedData;//[cpuUser];
      this.chartCpu.width = this.chartSize;
      this.chartCpu.height = this.chartSize;
+     this.chartCpu.refresh();
   }
 
   setPreferences(form:NgForm){

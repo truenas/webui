@@ -29,12 +29,12 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       this.defaultRoutes = evt.data.default_routes.toString();
       this.nameServers = evt.data.nameservers.toString();
-      console.warn(evt);
+      //DEBUG: console.warn(evt);
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
       for(let nic in netInfo){
-        console.log(nic);
+        //DEBUG: console.log(nic);
 
         let ipv4 = netInfo[nic]["IPV4"];
         let ips = this.trimRanges(ipv4);
@@ -92,7 +92,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
   isPrimary(ip:string):boolean{
     let def = this.getSubnet(this.data.default_routes[0]);
-    console.warn(ip);
+    //DEBUG: console.warn(ip);
     let subnet = this.getSubnet(ip);
     if(subnet == def){
       return true;

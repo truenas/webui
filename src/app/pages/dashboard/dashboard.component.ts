@@ -1,5 +1,6 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { StatsService } from 'app/services/stats.service';
 
 import { Subject } from 'rxjs/Subject';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
@@ -12,7 +13,7 @@ import {RestService,WebSocketService} from '../../services/';
   selector: 'dashboard',
   templateUrl:'./dashboard.html'
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements AfterViewInit,OnDestroy {
  
   public large: string = "lg";
   public medium: string = "md";
@@ -27,23 +28,34 @@ export class DashboardComponent implements AfterViewInit {
   public animation = "stop";
   public shake = false;
 
-  constructor(protected core:CoreService){
+  constructor(protected core:CoreService, stats: StatsService){
+    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
+    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"average", obj:this }});
+    //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"test", obj:this }});
+    /*this.core.emit({name:"StatsAddListener", data:{name:"Cpu", obj:this }});
+    setTimeout(() => {
+      this.core.emit({name:"StatsRemoveListener", data:{name:"Cpu", obj:this} });
+    }, 20000);*/
+
   }
 
   ngAfterViewInit(){
     this.init();
   }
 
+  ngOnDestroy(){
+  }
+
   init(){
     console.log("******** Dashboard Initializing... ********");
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setPoolData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setDisksData(evt);
     });
 
@@ -53,8 +65,8 @@ export class DashboardComponent implements AfterViewInit {
 
 
   setDisksData(evt:CoreEvent){
-    console.log("******** DISKS INFO ********");
-    console.log(evt);
+    //DEBUG: console.log("******** DISKS INFO ********");
+    //DEBUG: console.log(evt);
     for(let i in evt.data){
       let disk:Disk = {
         name:evt.data[i].name,
@@ -73,8 +85,8 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   setPoolData(evt:CoreEvent){
-    console.log("******** ZPOOL DATA ********");
-    console.log(evt.data);
+    //DEBUG: console.log("******** ZPOOL DATA ********");
+    //DEBUG: console.log(evt.data);
     for(let i in evt.data){
       let zvol = {
         avail: evt.data[i].avail,
