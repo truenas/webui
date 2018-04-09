@@ -60,13 +60,13 @@ export class VolumesListTableConfig implements InputTableConf {
   public resource_name = 'storage/volume';
   public rowData: ZfsPoolData[] = [];
   protected dialogRef: any;
-  protected datasetData: any;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
     private _classId: string,
     private title: string,
+    private datasetData: Object,
     public mdDialog: MatDialog,
     protected rest: RestService,
     protected ws: WebSocketService,
@@ -86,9 +86,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    this.ws.call('pool.dataset.query', []).subscribe((res) => {
-      this.datasetData = res;
-    });
+
 
 
   }
@@ -357,7 +355,7 @@ export class VolumesListTableConfig implements InputTableConf {
       }
 
       let rowDataset = _.find(this.datasetData, {id:rowData.path});
-      if (rowDataset && rowDataset.origin && !!rowDataset.origin.parsed) {
+      if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
         actions.push({
           label: T("Promote Dataset"),
           onClick: (row1) => {
@@ -494,20 +492,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
   };
 
   expanded = false;
@@ -530,31 +528,35 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
-    this.rest.get("storage/volume", {}).subscribe((res) => {
-      res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
-        volume.type = 'zpool';
+    this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
+      this.rest.get("storage/volume", {}).subscribe((res) => {
+        res.data.forEach((volume: ZfsPoolData) => {
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
+          volume.type = 'zpool';
 
 
-        try {
-          volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
-        } catch (error) {
-          volume.availStr = "" + volume.avail;
+          try {
+            volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
+          } catch (error) {
+            volume.availStr = "" + volume.avail;
+          }
+
+          try {
+            volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
+          } catch (error) {
+            volume.usedStr = "" + volume.used;
+          }
+          this.zfsPoolRows.push(volume);
+        });
+
+        if (this.zfsPoolRows.length === 1) {
+          this.expanded = true;
         }
 
-        try {
-          volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
-        } catch (error) {
-          volume.usedStr = "" + volume.used;
-        }
-        this.zfsPoolRows.push(volume);
+        this.paintMe = true;
+      }, (res) => {
+        this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
-
-      if (this.zfsPoolRows.length === 1) {
-        this.expanded = true;
-      }
-
-      this.paintMe = true;
     }, (res) => {
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
