@@ -27,7 +27,6 @@ import { T } from '../../../../translate-marker';
  * 
  */
 export class VolumeUnencryptImportListComponent implements Formconfiguration {
-  public resource_name: string = 'storage/volume_unencrypt';
   public route_success: string[] = ['storage', 'pools'];
   public isEntity = true;
   public isNew = true;
@@ -44,9 +43,12 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
     this.fieldConfig = [
       {
         type: 'upload',
-        name: 'encryption_key_file',
+        name: 'key',
         placeholder: T('Encryption Key File'),
         tooltip: T('Encryption key used to decrypt pools to be imported.'),
+        acceptedFiles: ',.key',
+        fileLocation: '',
+        validation : [  ],
       },
       {
         type: 'input',
@@ -84,10 +86,10 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
   customSubmit(value) {
     this.loader.open();
     console.log("VALUE", value);
-    return this.rest.post(this.resource_name, { body: JSON.stringify({ volume_id: value.volume_id, is_decrypted: value.is_decrypted }) }).subscribe((restPostResp) => {
+    return this.rest.post("_upload", { body: JSON.stringify(value) }, false ).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Imported Pool"), T("Successfully decrypted pool ") + value.volume_id);
+      this.dialogService.Info(T("Uploaded key"), T("Uploaded Key"));
 
       this.router.navigate(new Array('/').concat(
         this.route_success));
