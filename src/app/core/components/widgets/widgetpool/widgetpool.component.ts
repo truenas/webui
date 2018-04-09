@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnChanges } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnChanges, OnDestroy } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -44,7 +44,7 @@ export interface VolumeData {
   templateUrl:'./widgetpool.component.html',
   styleUrls: ['./widgetpool.component.css'],
 })
-export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @ViewChild('zvol') chartZvol:ViewChartDonutComponent;
   public title:string = "Pool";
@@ -70,6 +70,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       //DEBUG: console.log("**** WidgetVolumeComponent Changes detected ****");
       this.parseVolumeData();
     }
+  }
+
+  ngOnDestroy(){
+    //this.core.emit({name:"StatsRemoveListener", data:{name:"DiskTemp",obj:this}});
   }
 
   ngAfterViewInit(){
@@ -120,8 +124,23 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       }
     });
 
-    this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
+    /*this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
+      let data = evt.data.data.data;
+      let temp: number;
+      for(let i = data.length-1; i >= 0; i--){
+        if(data[i][0]){
+          temp = data[i][0];
+          break;
+        }
+      }
+      // Test hot temps
+      //temp = 64;
+      this.diskDetails[evt.data.callArgs[1]].temp = temp;
+    });*/
+
+    this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       let data = evt.data.data.data;
       let temp: number;
       for(let i = data.length-1; i >= 0; i--){
@@ -146,6 +165,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     //this.core.emit({name:"PoolDataRequest"});
     this.core.emit({name:"DisksInfoRequest"});
+    //this.core.emit({ name:"StatsAddListener", data:{ name:"DiskTemp", obj:this} });
   }
 
   setDisksData(evt:CoreEvent){

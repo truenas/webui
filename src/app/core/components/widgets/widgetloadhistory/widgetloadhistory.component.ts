@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnDestroy } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -15,7 +15,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
   selector: 'widget-load-history',
   templateUrl:'./widgetloadhistory.component.html'
 })
-export class WidgetLoadHistoryComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetLoadHistoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('chartLoad') chartLoad: ViewChartLineComponent;
   public title:string = "System Load";
@@ -24,17 +24,28 @@ export class WidgetLoadHistoryComponent extends WidgetComponent implements After
     super();
   }
 
+  ngOnDestroy(){
+    this.core.emit({name:"StatsRemoveListener", data:{name:"Processes",obj:this}});
+  }
+
   ngAfterViewInit(){
-    this.core.register({observerClass:this,eventName:"StatsLoadAvgData"}).subscribe((evt:CoreEvent) => {
+    this.core.emit({ name:"StatsAddListener", data:{name:"Processes", key:"processes", obj:this} });
+
+    this.core.register({observerClass:this,eventName:"StatsProcesses"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
       this.setChartData(evt);
+    });
+
+    this.core.register({observerClass:this,eventName:"StatsLoadAvgData"}).subscribe((evt:CoreEvent) => {
+      //DEBUG: console.log(evt);
+      //this.setChartData(evt);
     });
 
     this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe(() => {
       this.chartLoad.refresh();
     });
 
-    this.core.emit({name:"StatsLoadAvgRequest", data:[["state-blocked", "state-sleeping", "state-wait", "state-stopped", "state-zombies", "state-running"],{step:'10', start:'now-10m'}]});
+    //this.core.emit({name:"StatsLoadAvgRequest", data:[["state-blocked", "state-sleeping", "state-wait", "state-stopped", "state-zombies", "state-running"],{step:'10', start:'now-10m'}]});
   }
 
   setChartData(evt:CoreEvent){

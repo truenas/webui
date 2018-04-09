@@ -14,13 +14,13 @@
     </mat-card>
     <mat-card class="back">
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
-        <form (ngSubmit)="setPreferences(f)" #f="ngForm" id="preferences" *ngIf="chartCpu.legend.length > 0">
+        <!--<form (ngSubmit)="setPreferences(f)" #f="ngForm" id="preferences" *ngIf="chartCpu.legend.length > 0">
           <ng-container *ngFor="let legend of chartCpu.legend; let i=index">
             <mat-checkbox ngModel name="{{chartCpu.legend[i].name}}">
               {{chartCpu.legend[i].name}}
             </mat-checkbox><br>
-          </ng-container>
-        </form>
+            </ng-container>
+            </form>-->
       </mat-card-content>
       <div class="widget-footer">
         <button mat-raised-button color="accent" (click)="toggleConfig()">Cancel</button>

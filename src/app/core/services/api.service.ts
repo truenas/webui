@@ -235,15 +235,38 @@ export class ApiService {
         responseEvent:"NetInfo"
       }
     },*/
+    // Used by stats service!!
     StatsRequest:{
       apiCall:{
         protocol:"websocket",
         version:"2",
         namespace:"stats.get_data",
-        args:[],
+        args:{},
         responseEvent:"StatsData"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        redef.responseEvent = "Stats" + def.args.responseEvent;
+        redef.args = def.args.args; 
+        return redef;
+      },
+      postProcessor(res,callArgs){
+        let cloneRes = Object.assign({},res);
+        let legend = res.meta.legend;
+        let l = [];
+        for(let i in legend){
+          if(callArgs.legendPrefix){
+            let spl = legend[i].split(callArgs.legendPrefix);
+            l.push(spl[1]);
+          } else {
+            l.push(legend[i]);
+          }
+        }
+        cloneRes.meta.legend = l;
+        return cloneRes;
       }
     },
+    // Used by stats service!!
     StatsSourcesRequest:{
       apiCall:{
         protocol:"websocket",

@@ -5,6 +5,7 @@ import { ApiService } from 'app/core/services/api.service';
 interface StatSource {
   name:string;
   prefix:string;
+  legendPrefix?: string;
   keys: string[];
   properties: string[];
   available:string[];
@@ -37,6 +38,7 @@ export class StatsService {
     {
       name:"CpuAggregate",
       prefix: "aggregation-cpu-",
+      legendPrefix:"/cpu-",
       keys:["average", "max","min","num","stddev","sum"],
       properties:[],
       available:[],
@@ -89,7 +91,7 @@ export class StatsService {
       listeners:[]
     },
     {
-      name:"DiskTemps",
+      name:"DiskTemp",
       prefix: "disktemp-",
       keys:["any"],
       properties:[],
@@ -125,8 +127,28 @@ export class StatsService {
       listeners:[]
     },
     {
+      name:"Load",
+      prefix: "",
+      keys:["load"],
+      properties:[],
+      available:[],
+      realtime:false,
+      listeners:[]
+    },
+    {
+      name:"Processes",
+      prefix: "",
+      legendPrefix:"/ps_state-",
+      keys:["processes"],
+      properties:[],
+      available:[],
+      realtime:false,
+      listeners:[]
+    },
+    {
       name:"Memory",
       prefix: "",
+      legendPrefix:"/memory-",
       keys:["memory"],
       properties:[],
       available:[],
@@ -146,12 +168,13 @@ export class StatsService {
 
   //private sourcesRealtime: StatSource[] = [];
   //private sources: StatSource[] = [];
+  private debug:boolean = false;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
-  private bufferSize:number = 15000;// milliseconds
+  private bufferSize:number = 10000;// milliseconds
   private bufferSizeRealtime:number = 1000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
@@ -175,10 +198,12 @@ export class StatsService {
 
     this.core.register({observerClass:this,eventName:"StatsSources"}).subscribe((evt:CoreEvent) => {
       //this.checkAvailability(evt.data);
-      console.log("**** StatsSources ****");
-      console.log(evt.data);
       this.updateSources(evt.data);
-      console.warn(this.sources);
+      if(this.debug){
+        console.log("**** StatsSources ****");
+        console.log(evt.data);
+        console.warn(this.sources);
+      }
       //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
       }); 
 
@@ -189,61 +214,95 @@ export class StatsService {
   }
 
   startBroadcast(){
-    console.log("Starting Broadcast...");
-    console.log(this.messages);
-    console.log(this.messagesRealtime);
-    //if(this.sources.length > 0){
-    this.broadcast(this.messages, this.bufferSize);
-    //}
-    //if(this.sourcesRealtime.length > 0){
-    this.broadcast(this.messagesRealtime, this.bufferSizeRealtime);
-    //}
+    this.started = true;
+    if(this.debug){
+      console.log("Starting Broadcast...");
     }
+    
+    this.broadcast(this.messages, this.bufferSize); 
+    this.broadcast(this.messagesRealtime, this.bufferSizeRealtime); 
+  }
 
   stopBroadcast(messageList?){
+    this.started = false;
+    if(this.debug){
+      console.log("Stopping Broadcast!");
+    }
     if(messageList && messageList == this.messagesRealtime){
       clearInterval(this.broadcastRealtimeId);
     } else if(messageList && messageList == this.messages){
       clearInterval(this.broadcastId);
+      console.log(this.broadcastId);
     } else {
       clearInterval(this.broadcastRealtimeId);
       clearInterval(this.broadcastId);
     }
+
   }
 
   broadcast(messages:CoreEvent[],buffer){
+    if(messages.length == 0){
+      console.warn("Timer only runs when message list is not empty");
+      return ;
+    }
+
+    // B4 looping dispatch all messages
+    this.dispatchAllMessages(messages);
+
     // Recurring loop
     let i = 1;
-    let intervalId =  setInterval(()=>{
-      // Reset Counter
-      if(i < messages.length){
-        i++
-      } else {
-        i = 1;
-      }
-      let index = i-1;
-      // Avoid error
-      let job = messages[index];
-      if(index < messages.length){
-        //console.log(messages);
-        if(buffer == 15000){
-          console.warn(job);
-        } else {
-          console.log(job);
-        }
-        //console.log(job);
-        /*for(let jobIndex = 0; jobIndex < job.length; job++){
-          let message = job[jobIndex];
-          //console.log(message);
-        }*/
-      }
-    },buffer);
-
-    // Store interval id so we can stop it later.
+    let id;
     if(messages == this.messages){
-      this.broadcastId == intervalId;
-    } else if(messages == this.messagesRealtime){
-      this.broadcastRealtimeId == intervalId;
+      this.broadcastId =  setInterval(()=>{
+        // Reset Counter
+        if(i < messages.length){
+          i++
+        } else {
+          i = 1;
+        }
+        let index = i-1;
+        // Avoid error
+        let job = messages[index];
+        if(index < messages.length){
+          //console.log(messages);
+          if(buffer == 15000){
+            //console.warn(job);
+            this.jobExec(job);
+          } else {
+            //console.log(job);
+            this.jobExec(job);
+          }
+        }
+      },buffer);
+    } else if(messages == this.messagesRealtime) {
+      this.broadcastRealtimeId =  setInterval(()=>{
+        // Reset Counter
+        if(i < messages.length){
+          i++
+        } else {
+          i = 1;
+        }
+        let index = i-1;
+        // Avoid error
+        let job = messages[index];
+        if(index < messages.length){
+          //console.log(messages);
+          if(buffer == 15000){
+            //console.warn(job);
+            this.jobExec(job);
+          } else {
+            //console.log(job);
+            this.jobExec(job);
+          }
+        }
+      },buffer);
+    }
+  }
+
+  dispatchAllMessages(messages){
+    for(let i = 0; i < messages.length; i++){
+      let job = messages[i];
+      this.jobExec(job);
     }
   }
 
@@ -251,18 +310,60 @@ export class StatsService {
     let options = {step:'10',start:'now-10m'}
     let dataList = [];
     let src = source.prefix + key;
+    let eventName;
     if(source.keys[0] == "any"){
       src = key;
+      let spl = key.split(source.prefix);
+      let suffix = spl[1];
+      eventName = source.name + suffix;
+    } else if(source.name == this.capitalize(key)){
+      eventName = source.name;
+    } else {
+      eventName = source.name + this.capitalize(key);
     }
     for(let prop in source.properties){
+      // Filter this because it's never wanted
+      // If more props need to be filtered,
+      // move to dedicated method.
+      if(source.properties[prop] == "cpu-idle" || source.properties[prop] == "ps_state-idle"){
+        continue;
+      }
       dataList.push({
         source:src,//"aggregation-cpu-sum",
         type:source.properties[prop],
         dataset:"value"
       });
+    } 
+    let messageData;
+    if(source.legendPrefix){
+      messageData = {responseEvent:eventName, legendPrefix: src + source.legendPrefix, args: [dataList, options ]};
+    } else {
+      messageData = {responseEvent:eventName, args: [dataList, options ]};
     }
-    let message =  { name:"StatsRequest", data:[ [dataList, options ] ]};
+    let message =  { name:"StatsRequest", data: messageData};
     return message;
+  }
+
+  capitalize(str:string){
+    let cap = str[0].toUpperCase();
+    let restOfWord = str.substring(1, str.length);
+    return cap + restOfWord;
+  }
+
+  jobExec(job){
+    if(this.debug){
+      console.log("JOB STARTING...");
+    }
+    for(let i  = 0; i < job.length; i++){
+      let message = job[i];
+      if(this.debug){
+        console.log(message);
+      }
+      this.core.emit(message);
+    }
+    if(this.debug){
+      console.log("JOB FINISHED")
+    }
   }
 
   checkAvailability(){
@@ -310,15 +411,41 @@ export class StatsService {
     }
 
     //this.startBroadcast();
-    if(this.started){
+    if(this.messages.length > 0 || this.messagesRealtime.length > 0){
       this.startBroadcast();
     }
 
   }
 
   // Updates listeners in this.sources with messages
-  updateListeners(source:StatSource){
+  updateListeners(source:StatSource, removed?){
     for(let i = 0; i < source.listeners.length; i++){
+      let messageList; 
+      if(source.realtime){
+        messageList = this.messagesRealtime;
+      } else {
+        messageList = this.messages;
+      }
+
+      if(source.listeners.length > 0){
+        let oldJobIndex:number;
+        if(removed){
+          let removedIndex = source.listeners.indexOf(removed);
+          oldJobIndex = this.findJob(messageList, removed.message);
+          source.listeners.splice(removedIndex, 1);
+        } else {
+          oldJobIndex = this.findJob(messageList, source.listeners[0].message);
+        }
+        // If there is a previous job 
+        // from this source then remove it
+        if(oldJobIndex != -1){
+          messageList.splice(oldJobIndex, 1);
+        }
+        if(source.listeners.length == 0){
+          return ;
+        }
+      }
+      
       let reg = source.listeners[i];
 
       // Abort if data source not available
@@ -326,19 +453,12 @@ export class StatsService {
         reg.message = null;
         continue;
       }
-      
+
       let keychain = [];
       if(!reg.key){
         keychain = source.available;
       } else {
         keychain.push(reg.key.toLowerCase());
-      }
-
-      let messageList; 
-      if(source.realtime){
-        messageList = this.messagesRealtime;
-      } else {
-        messageList = this.messages;
       }
 
       let job: CoreEvent[] = [];
@@ -359,37 +479,55 @@ export class StatsService {
   }
 
   addListener(reg: ListenerRegistration){
+    let test = this.hasListeners();
+    if(!this.started && !test){
+      this.setupBroadcast();
+    }
+
     let index = this.findSource(reg.name);
     let source = this.sources[this.findSource(reg.name)];
 
     // Make sure listener registration is unique
     if(source.listeners.indexOf(reg) == -1){
       source.listeners.push(reg);
-    }
-
+      this.updateListeners(source);
+    }    
   }
 
   removeListener(obj:any){
-    console.warn("REMOVING LISTENER")
-    console.log(obj);
+    if(this.debug){
+      console.warn("REMOVING LISTENER")
+      console.log(obj);
+    }
     let messageList;
      // Remove from sources
      for(let i = 0; i < this.sources.length; i++){
        for(let index = 0; index < this.sources[i].listeners.length; index++){
          if(this.sources[i].listeners[index].obj == obj){
-           this.sources[i].listeners.splice(index,1);
+           //this.sources[i].listeners.splice(index,1);
            if(this.sources[i].realtime){
             messageList = this.messagesRealtime;
            } else {
             messageList = this.messages;
            }
+           this.updateListeners(this.sources[i], this.sources[i].listeners[index]);
          }
        }
      }
 
-     if(messageList.length = 0){
+     if(messageList.length == 0){
+       console.log("REMOVE LISTENER METHOD STOPPING BROADCAST");
        this.stopBroadcast(messageList);
      }
+  }
+
+  hasListeners():boolean{
+    for(let i = 0; i > this.sources.length; i++){
+      if(this.sources[i].listeners.length > 0){
+        return true;
+      }
+    }
+    return false;
   }
 
   findListener(obj:any, listeners:ListenerRegistration[]){
@@ -416,6 +554,16 @@ export class StatsService {
     } else {
       return -1;
     }
+  }
+
+  findJob(messageList, message){
+    for(let i = 0; i < messageList.length; i++){
+      let job = messageList[i];
+      if(job.indexOf(message) != -1){
+        return i;
+      }
+    }
+    return -1;
   }
 
 }

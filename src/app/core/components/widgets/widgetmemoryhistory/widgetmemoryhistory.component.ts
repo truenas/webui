@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -15,7 +15,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
   selector: 'widget-memory-history',
   templateUrl:'./widgetmemoryhistory.component.html'
 })
-export class WidgetMemoryHistoryComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetMemoryHistoryComponent extends WidgetComponent implements AfterViewInit,OnDestroy {
 
   @ViewChild('chartMem') chartMem: ViewChartLineComponent;
   public title:string = "Memory Usage";
@@ -24,17 +24,27 @@ export class WidgetMemoryHistoryComponent extends WidgetComponent implements Aft
     super();
   }
 
+  ngOnDestroy(){
+    this.core.emit({name:"StatsRemoveListener", data:{name:"Memory", obj:this}});
+  }
+
   ngAfterViewInit(){
+    this.core.emit({name:"StatsAddListener", data:{name:"Memory", key:"memory", obj:this}});
+
+    this.core.register({observerClass:this,eventName:"StatsMemory"}).subscribe((evt:CoreEvent) => {
+      this.setChartData(evt);
+    });
+
     this.core.register({observerClass:this,eventName:"StatsMemoryData"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
-      this.setChartData(evt);
+      //this.setChartData(evt);
     });
 
     this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe(() => {
       this.chartMem.refresh();
     });
 
-    this.core.emit({name:"StatsMemoryRequest", data:[['free','active','cache','wired','inactive'],{step:'10', start:'now-10m'}]});
+    //this.core.emit({name:"StatsMemoryRequest", data:[['free','active','cache','wired','inactive'],{step:'10', start:'now-10m'}]});
   }
 
   setChartData(evt:CoreEvent){
