@@ -151,15 +151,15 @@ export class GeneralComponent {
   public custActions: Array<any> = [
   {
     id : 'save_config',
-    name : 'Save Config',
+    name : T('Save Config'),
     function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-save']))}
   },{
     id : 'upload_config',
-    name: 'Upload Config',
+    name: T('Upload Config'),
     function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-upload']))}
   },{
     id : 'reset_config',
-    name: 'Reset Config',
+    name: T('Reset Config'),
     function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
   }];
   private stg_guiaddress: any;
