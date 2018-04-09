@@ -1,3 +1,15 @@
+<div fxLayout="row wrap" fxLayoutAlign="start center" class="singleActionsButton">
+  <!-- <div *ngIf="selected.length > 0 ? true : false" > -->
+    <!-- <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100"> -->
+      <span *ngFor="let action of singleActions">
+        <button mat-raised-button *ngIf="action.enable" (click)="action.onClick(this.selected);">
+          <span>{{ action?.label | translate }}</span>
+        </button>
+      </span>
+    <!-- </div> -->
+  <!-- </div> -->
+</div>
+
 <ngx-datatable #datatable
 class='material'
 [style.height.px]="tableHeight"

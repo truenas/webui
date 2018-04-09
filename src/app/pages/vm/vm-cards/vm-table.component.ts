@@ -144,6 +144,24 @@ export class VmTableComponent implements OnChanges{
     pagedData.page = page;
     return pagedData;
   }
+  public singleActions: Array < any > = [
+    {
+      id: "edit",
+      label: "Edit",
+      enable: true,
+      onClick: (selected) => {
+        console.log(selected);
+      }
+    },
+    {
+      id: "delete",
+      label: "Delete",
+      enable: true,
+      onClick: (selected) => {
+        console.log(selected);
+      }
+    }
+];
 
   editRow(row){
     let index = this.data.indexOf(row);
