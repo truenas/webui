@@ -87,7 +87,6 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Unlock Pool"), T("Successfully unlocked pool ") + value.name);
       
       this.router.navigate(new Array('/').concat(
         this.route_success));

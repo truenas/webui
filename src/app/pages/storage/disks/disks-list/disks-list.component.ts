@@ -104,8 +104,8 @@ export class DisksListConfig implements InputTableConf {
         label : T("Detach From Pool"),
         onClick : (row1) => {
           this.loader.open();
-
-          this.rest.post("storage/disk/" +  row1.id + "/detach", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+          let data = { label: row1.disk_name};
+          this.rest.post("storage/volume/" +  row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
             this.loader.close();
             this.diskPoolMapParent.repaintMe();
           }, (res) => {
