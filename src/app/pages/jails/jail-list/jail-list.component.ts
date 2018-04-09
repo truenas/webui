@@ -110,7 +110,7 @@ export class JailListComponent implements OnInit {
   ];
   public singleActions: Array < any > = [
     {
-      id: "medIt",
+      id: "medit",
       label: "Edit",
       enable: true,
       onClick: (selected) => {
