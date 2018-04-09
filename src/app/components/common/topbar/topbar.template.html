@@ -57,7 +57,7 @@
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
       <!-- Top left user menu -->
-      <button mat-icon-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
+      <button mat-icon-button matTooltip="Settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
