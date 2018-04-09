@@ -246,6 +246,14 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
       });
 
+      // For debug.. Seems to return the same fields as rest api.
+      // I need a way to detech offline vs online status of a disk in a pool?
+     // this.ws.call("disk.query", []).subscribe((resp)=>{
+     //   console.log("response", resp);
+     // }, (errorReport)=>{
+     //   console.log("errorReport", errorReport);
+     // });
+
       
     });
 
