@@ -44,6 +44,7 @@ export class DisksListConfig implements InputTableConf {
   public columns: Array<any> = [
     { name: 'Name', prop: 'disk_name' },
     { name: 'Pool', prop: "poolName" },
+    { name: 'Status', prop: 'status' },
     { name: 'Serial', prop: 'disk_serial' },
     { name: 'Disk Size', prop: 'disk_size' },
     { name: 'Description', prop: 'disk_description' },
@@ -53,8 +54,7 @@ export class DisksListConfig implements InputTableConf {
     { name: 'Acoustic Level', prop: 'disk_acousticlevel' },
     { name: 'Enable S.M.A.R.T.', prop: 'disk_togglesmart' },
     { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions' },
-    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' },
-    { name: 'Status', prop: 'status' }
+    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' }
   ];
   public config: any = {
     paging: true,
@@ -105,7 +105,7 @@ export class DisksListConfig implements InputTableConf {
         label: T("Detach From Pool"),
         onClick: (row1) => {
           this.loader.open();
-          let data = { label: row1.disk_name };
+          let data = { label: row1.diskLabel };
           this.rest.post("storage/volume/" + row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
             this.loader.close();
             this.diskPoolMapParent.repaintMe();
@@ -139,6 +139,24 @@ export class DisksListConfig implements InputTableConf {
       const poolName = (this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
       data[i].poolName = poolName;
       data[i].status = "";
+      data[i].diskLabel = "";
+
+      if( this.diskPoolMapParent.poolNamePoolDataMap.has(poolName) === true ) {
+        const volume = this.diskPoolMapParent.poolNamePoolDataMap.get(poolName);
+        
+        if( volume.driveStatusdata !== undefined && volume.driveStatusdata.disks !== undefined  ) {
+          for( let i2 = 0; i2 < volume.driveStatusdata.disks.length; ++ i2 ) {
+            const disk = volume.driveStatusdata.disks[i2];
+            if( disk.name.startsWith(data[i].disk_name) === true  ) {
+              data[i].status = disk.status;
+              data[i].diskLabel = disk.label;
+              break;
+            }
+          }
+
+        }
+      }
+      
 
       if (this.diskMap.size < 1) {
         returnData.push(data[i]);
@@ -158,6 +176,8 @@ export class DisksListConfig implements InputTableConf {
 
 interface DiskPoolMapParent {
   diskPoolMap: Map<string, string>;
+  poolNamePoolDataMap: Map<string, any>;
+  
   lockRefCount: number;
   
   repaintMe();
@@ -188,7 +208,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   }
 
   public diskPoolMap: Map<string, string> = new Map<string, string>();
-
+  public poolNamePoolDataMap: Map<string, any> = new Map<string, any>();
+  
   zfsPoolRows: ZfsPoolData[] = [];
   conf: DisksListConfig;
   public readonly ALL_DISKS = T("All Disks");
@@ -212,7 +233,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
     }, -1);
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
 
     this.selectedKeyName = this.ALL_DISKS;
     
@@ -230,6 +251,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
       res.data.push(DisksListConfig.createRootNodeVolume());
 
       res.data.forEach((volume) => {
+        this.poolNamePoolDataMap.set(volume.name, volume);
+
         volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this, this.loader, this.dialogService, this.rest);
         volume.type = 'zpool';
         volume.isReady = false;
@@ -257,7 +280,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
           this.addRef("VOL_STATS");
           this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
             volume.driveStatusdata = volumeStatusResponse.data[0];
-            volume.driveStatusdata
+            volume.driveStatusdata.disks = ( volume.driveStatusdata.children === undefined) ? [] : volume.driveStatusdata.children[0].children;
+            
             console.log("volume:" + volume.name, volume);
             this.releaseRef("VOL_STATS");
           });
@@ -289,7 +313,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
 
   }
 
