@@ -148,7 +148,20 @@ export class GeneralComponent {
  set, log entries write to both the console and remote server.'),
     }
   ];
-
+  public custActions: Array<any> = [
+  {
+    id : 'save_config',
+    name : T('Save Config'),
+    function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-save']))}
+  },{
+    id : 'upload_config',
+    name: T('Upload Config'),
+    function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-upload']))}
+  },{
+    id : 'reset_config',
+    name: T('Reset Config'),
+    function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
+  }];
   private stg_guiaddress: any;
   private stg_guiv6address: any;
   private stg_guicertificate: any;
@@ -230,20 +243,5 @@ export class GeneralComponent {
 
   beforeSubmit(value) {
     this.language.setLang(value.stg_language);
-  }
-
-  gotoSaveConfig() {
-    this.router.navigate(
-      new Array('').concat(['system', 'general', 'config-save']));
-  }
-
-  gotoUploadConfig() {
-    this.router.navigate(
-      new Array('').concat(['system', 'general', 'config-upload']));
-  }
-
-  gotoResetConfig() {
-    this.router.navigate(
-      new Array('').concat(['system', 'general', 'config-reset']));
   }
 }
