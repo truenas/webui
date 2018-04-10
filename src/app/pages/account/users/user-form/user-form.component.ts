@@ -139,13 +139,17 @@ export class UserFormComponent {
 
     },
     {
-      type : 'checkbox',
+      type : 'select',
       name : 'password_disabled',
       placeholder : T('Disable password login'),
       tooltip : T('Disables password logins and authentication to SMB\
  shares. Checking this grays out <b>Lock user</b> and\
  <b>Permit Sudo</b>, which are mutually exclusive.'),
-      value: false,
+      options : [
+        {label:'No', value: false },
+        {label:'Yes', value: true },
+      ],
+      value: false
     },
     {
       type : 'checkbox',
@@ -154,7 +158,7 @@ export class UserFormComponent {
       tooltip : T('Check this to prevent the user from logging in until\
  the account is unlocked (this box is unchecked). Checking this box\
  grays out <b>Disable password login</b> which is mutually exclusive.'),
-      value: false,
+      isHidden: false
     },
     {
       type : 'checkbox',
@@ -162,7 +166,7 @@ export class UserFormComponent {
       placeholder : T('Permit Sudo'),
       tooltip : T('Check this to give members of the group permission to\
  use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
-      value: false,
+      isHidden: false
     },
 
     {
@@ -201,9 +205,6 @@ export class UserFormComponent {
   private password_disabled: any;
   private sudo: any;
   private locked: any;
-  private password_disabled_state = false;
-  private sudo_state = false;
-  private locked_state = false;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
@@ -217,47 +218,20 @@ export class UserFormComponent {
     this.locked = entityForm.formGroup.controls['locked'];
 
     this.password_disabled.valueChanges.subscribe((password_disabled)=>{
-
-      if(password_disabled && !this.sudo_state && !this.locked_state){
-        entityForm.setDisabled('sudo', password_disabled);
-        entityForm.setDisabled('locked', password_disabled);
-        this.password_disabled_state = password_disabled;
+      if(password_disabled){
+        _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+        _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+        entityForm.setDisabled('password', password_disabled);
+        entityForm.setDisabled('password_conf', password_disabled);
+      } else{
+        entityForm.formGroup.controls['sudo'].setValue(false);
+        entityForm.formGroup.controls['locked'].setValue(false);
+        _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+        _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+        entityForm.setDisabled('password', password_disabled);
+        entityForm.setDisabled('password_conf', password_disabled);
       }
-      else if(!this.password_disabled_state && !this.sudo_state && this.locked_state){
-        entityForm.setDisabled('password_disabled', this.locked_state, "VALID");
-      }
-      else if(!this.password_disabled_state && this.sudo_state && !this.locked_state){
-        entityForm.setDisabled('password_disabled', this.sudo_state, "VALID");
-      
-      }
-      else {
-        this.password_disabled_state = !this.password_disabled_state;
-        entityForm.setDisabled('sudo', !this.sudo_state);
-        entityForm.setDisabled('locked', !this.locked_state);
-      }
-      this.cdRef.detectChanges();
     })
-    this.locked.valueChanges.subscribe((locked)=>{
-      if(locked && !this.password_disabled_state){
-        this.locked_state = locked;
-        entityForm.setDisabled('password_disabled', locked);
-      }
-      else{
-        this.locked_state = !this.locked_state;
-      }
-      this.cdRef.detectChanges();
-    });
-
-    this.sudo.valueChanges.subscribe((sudo)=>{
-      if(sudo && !this.password_disabled_state){
-        this.sudo_state = sudo;
-        entityForm.setDisabled('password_disabled', sudo); 
-      }
-      else{
-        this.sudo_state = !this.sudo_state;
-      }
-      this.cdRef.detectChanges();
-    });
 
 
     if (!entityForm.isNew) {
@@ -337,6 +311,7 @@ export class UserFormComponent {
     if (!entityForm.isNew){
       entityForm.submitFunction = this.submitFunction;
     }
+  
   }
 
   clean_uid(value) {
@@ -357,6 +332,11 @@ export class UserFormComponent {
           entityForm.home = entityForm.home+'/'+ entityForm.username;
         }
       }
+      if(entityForm.password_disabled){
+        entityForm.sudo = false;
+        entityForm.locked = false;
+      }
+
     }
   }
   submitFunction(this: any, entityForm: any, ){
