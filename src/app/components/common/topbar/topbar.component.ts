@@ -105,7 +105,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.getTourPerference(); 
     }
     catch{
-      this.showTour = true;
+      this.showTour = false;
     }
     if (this.showTour == true) {
       this.disableTour();
