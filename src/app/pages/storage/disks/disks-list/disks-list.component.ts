@@ -158,7 +158,12 @@ export class DisksListConfig implements InputTableConf {
 
 interface DiskPoolMapParent {
   diskPoolMap: Map<string, string>;
+  lockRefCount: number;
+  
   repaintMe();
+
+  addRef(label:string);
+  releaseRef(label:string);
 }
 
 
@@ -167,6 +172,20 @@ interface DiskPoolMapParent {
   templateUrl: './disks-list.component.html'
 })
 export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMapParent {
+
+  public lockRefCount = 0;
+  
+  public addRef(label:string) {
+    this.lockRefCount += 1;
+    console.log("addRef:" + label + ":" + this.lockRefCount);
+  };
+
+  public releaseRef(label:string) {
+      if( this.lockRefCount > 0 ) {
+        this.lockRefCount -= 1;
+      }
+      console.log("releaseRef:" + label + ":" + this.lockRefCount);
+  }
 
   public diskPoolMap: Map<string, string> = new Map<string, string>();
 
@@ -196,10 +215,12 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   ngOnInit(): void {
 
     this.selectedKeyName = this.ALL_DISKS;
-
+    
+    this.addRef("OUTER REST");
+          
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
-
+      
       if (res.data === undefined) {
         res.data = [];
       }
@@ -233,11 +254,12 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         this.zfsPoolRows.push(volume);
 
         if( volume.name !== DisksListConfig.BOOT_POOL) {
-
+          this.addRef("VOL_STATS");
           this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
             volume.driveStatusdata = volumeStatusResponse.data[0];
-            volume.driveStatusdata.children = new EntityUtils().flattenData(volume.driveStatusdata.children);
+            volume.driveStatusdata
             console.log("volume:" + volume.name, volume);
+            this.releaseRef("VOL_STATS");
           });
   
         }
@@ -246,30 +268,24 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
         let args = (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
 
+        this.addRef("WS");
+          
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
             this.diskPoolMap.set(driveName, volume.name);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
-
-
-
-          volume.isReady = true;
+          
+          this.releaseRef("WS");
         });
+       
+      });  // END OF forEach
 
-
-      });
-
-      // For debug.. Seems to return the same fields as rest api.
-      // I need a way to detech offline vs online status of a disk in a pool?
-      // this.ws.call("disk.query", []).subscribe((resp)=>{
-      //   console.log("response", resp);
-      // }, (errorReport)=>{
-      //   console.log("errorReport", errorReport);
-      // });
-
+      this.releaseRef("OUTER REST");
 
     });
+
+
 
   }
 

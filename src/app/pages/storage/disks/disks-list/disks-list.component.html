@@ -1,4 +1,4 @@
-<div id="disks-list.component_html" class="material mat-card mat-card-table" *ngIf="repaintIt === true">
+<div id="disks-list.component_html" class="material mat-card mat-card-table" *ngIf="repaintIt === true && lockRefCount === 0">
   <div class="mat-toolbar mat-card-toolbar">
     <div class="mat-card-title-text">{{title}}</div>
   </div>
@@ -14,14 +14,16 @@
     </mat-button-toggle-group>
   </mat-card>
   
- 
+ <!-- Note the strange group.value.. That's being set abov in mat-button-toggle-group #group where the name "group" can be any name
+      then becomes a global variable seen in the template as Im doing below... It's the selected button basically.. In the button-toggle-group 
+    -->
   <div *ngIf="zfsPoolRows.length > 0 && group.value === conf.title">
     <entity-table [conf]="conf" [title]="conf.title"></entity-table>
   </div>
 
   <div *ngFor="let row of zfsPoolRows">
     <div *ngIf="group.value === row.name">
-      <entity-table *ngIf="row.isReady" [conf]="row.disksListConfig"></entity-table>
+      <entity-table [conf]="row.disksListConfig"></entity-table>
     </div>
   </div>
 
@@ -29,22 +31,5 @@
   <div>
     <br/>
   </div>
-
-  <!--
-  <div>
-    <mat-tab-group (selectChange)="tabSelectChangeHandler($event)">
-      <mat-tab label="ALL_DISKS" *ngIf="zfsPoolRows.length > 0">
-        <div>
-          <entity-table [conf]="conf" [title]="conf.title"></entity-table>
-        </div>
-      </mat-tab>
-      <mat-tab *ngFor="let row of zfsPoolRows" label="{{row.name}}">
-        <div *ngIf="selectedKeyName === row.name">
-          <entity-table *ngIf="row.isReady" [conf]="row.disksListConfig"></entity-table>
-        </div>
-      </mat-tab>
-    </mat-tab-group>
-  </div>
--->
 
 </div>
