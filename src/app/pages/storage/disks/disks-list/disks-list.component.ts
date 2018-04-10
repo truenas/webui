@@ -234,9 +234,9 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
 
         this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
-          console.log("volumeStatusResponse: " + volumeId, volumeStatusResponse);
           volume.driveStatusdata = volumeStatusResponse.data[0];
           volume.driveStatusdata.children = new EntityUtils().flattenData(volume.driveStatusdata.children);
+          console.log("volume:" + volume.name, volume);
         });
 
 
