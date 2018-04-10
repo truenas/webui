@@ -146,8 +146,8 @@ export class UserFormComponent {
  shares. selecting <b>No</b> hides out <b>Lock user</b> and\
  <b>Permit Sudo</b>, which are mutually exclusive.'),
       options : [
-        {label:'No', value: true },
         {label:'Yes', value: false },
+        {label:'No', value: true },
       ],
       value: false
     },
