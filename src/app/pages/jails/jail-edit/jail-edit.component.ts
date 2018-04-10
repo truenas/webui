@@ -652,12 +652,12 @@ export class JailEditComponent implements OnInit {
  href="https://www.freebsd.org/cgi/man.cgi?query=linprocfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  target="_blank">linprocfs(5)</a> filesystem in the jail.'),
     },
-    {
-      type: 'checkbox',
-      name: 'template',
-      placeholder: T('template'),
-      tooltip: T('Check to set this jail as a template.'),
-    },
+    // {
+    //   type: 'checkbox',
+    //   name: 'template',
+    //   placeholder: T('template'),
+    //   tooltip: T('Check to set this jail as a template.'),
+    // },
     {
       type: 'checkbox',
       name: 'host_time',
