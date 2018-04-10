@@ -43,7 +43,7 @@ export class DisksListConfig implements InputTableConf {
 
   public columns: Array<any> = [
     { name: 'Name', prop: 'disk_name' },
-    { name: 'Pool', prop: "poolName"},
+    { name: 'Pool', prop: "poolName" },
     { name: 'Serial', prop: 'disk_serial' },
     { name: 'Disk Size', prop: 'disk_size' },
     { name: 'Description', prop: 'disk_description' },
@@ -53,7 +53,8 @@ export class DisksListConfig implements InputTableConf {
     { name: 'Acoustic Level', prop: 'disk_acousticlevel' },
     { name: 'Enable S.M.A.R.T.', prop: 'disk_togglesmart' },
     { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions' },
-    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' }
+    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' },
+    { name: 'Status', prop: 'status' }
   ];
   public config: any = {
     paging: true,
@@ -101,11 +102,11 @@ export class DisksListConfig implements InputTableConf {
 
     } else {  // It DOES HAVE A POOL 
       actions.push({
-        label : T("Detach From Pool"),
-        onClick : (row1) => {
+        label: T("Detach From Pool"),
+        onClick: (row1) => {
           this.loader.open();
-          let data = { label: row1.disk_name};
-          this.rest.post("storage/volume/" +  row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
+          let data = { label: row1.disk_name };
+          this.rest.post("storage/volume/" + row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
             this.loader.close();
             this.diskPoolMapParent.repaintMe();
           }, (res) => {
@@ -135,8 +136,9 @@ export class DisksListConfig implements InputTableConf {
     const returnData: any[] = [];
 
     for (let i = 0; i < data.length; i++) {
-      const poolName = ( this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
+      const poolName = (this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
       data[i].poolName = poolName;
+      data[i].status = "";
 
       if (this.diskMap.size < 1) {
         returnData.push(data[i]);
@@ -145,7 +147,8 @@ export class DisksListConfig implements InputTableConf {
       }
     }
 
-    console.log("this:", this);
+
+
     return returnData;
   };
 
@@ -185,7 +188,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   public repaintMe() {
     this.repaintIt = false;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.repaintIt = true;
     }, -1);
   }
@@ -222,19 +225,27 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
           } catch (error) {
             //console.log("error", error);
           }
-        } 
+        }
 
         const volumeId = volume.id;
         const volumeObj = volume;
-        
+
         this.zfsPoolRows.push(volume);
-        
+
+
+        this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
+          console.log("volumeStatusResponse: " + volumeId, volumeStatusResponse);
+          volume.driveStatusdata = volumeStatusResponse.data[0];
+          volume.driveStatusdata.children = new EntityUtils().flattenData(volume.driveStatusdata.children);
+        });
+
+
         let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
-        let args =  (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
-        
+        let args = (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
+
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
-            this.diskPoolMap.set(driveName,  volume.name);
+            this.diskPoolMap.set(driveName, volume.name);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
 
@@ -248,13 +259,13 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
       // For debug.. Seems to return the same fields as rest api.
       // I need a way to detech offline vs online status of a disk in a pool?
-     // this.ws.call("disk.query", []).subscribe((resp)=>{
-     //   console.log("response", resp);
-     // }, (errorReport)=>{
-     //   console.log("errorReport", errorReport);
-     // });
+      // this.ws.call("disk.query", []).subscribe((resp)=>{
+      //   console.log("response", resp);
+      // }, (errorReport)=>{
+      //   console.log("errorReport", errorReport);
+      // });
 
-      
+
     });
 
   }
