@@ -233,12 +233,14 @@ export class UserFormComponent {
       name:'divider',
       divider:true
     }
-  ]
-
-
-
-
-
+  ];
+  public custActions: Array<any> = [
+    {
+      id : 'register_authenticator',
+      name : T('Register Authenticator'),
+      function : () => {this.registerAuthenticator();}
+    },
+  ];
   private home: any;
   private mode: any;
   private shells: any;
@@ -389,5 +391,14 @@ export class UserFormComponent {
     delete entityForm['group_create']
     delete entityForm['password_conf']
     return this.ws.call('user.update', [this.pk, entityForm]);
+  }
+
+  registerAuthenticator(this: any, entityForm: any, ){
+    console.log("REGISTERING ZE AUSSENTICATOR");
+    this.ws.call('user.authenticator_challenge', [this.pk]).subscribe(
+      (challenge) => {
+        challenge = new Uint8Array(challenge);
+        console.log(challenge);
+      });
   }
 }
