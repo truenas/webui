@@ -252,6 +252,7 @@ export class UserFormComponent {
   private password_disabled: any;
   private sudo: any;
   private locked: any;
+  private entityForm: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
@@ -359,6 +360,7 @@ export class UserFormComponent {
       entityForm.submitFunction = this.submitFunction;
     }
 
+    this.entityForm = entityForm;
   }
 
   clean_uid(value) {
@@ -393,12 +395,30 @@ export class UserFormComponent {
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
 
-  registerAuthenticator(this: any, entityForm: any, ){
-    console.log("REGISTERING ZE AUSSENTICATOR");
-    this.ws.call('user.authenticator_challenge', [this.pk]).subscribe(
-      (challenge) => {
-        challenge = new Uint8Array(challenge);
-        console.log(challenge);
-      });
+  registerAuthenticator(){
+    console.log("REGISTERING AUTHENTICATOR");
+    let entityForm = this.entityForm;
+    this.ws.call('user.authenticator_challenge', [entityForm.pk]).subscribe(
+      (createData) => {
+        var cancelled = false;
+        console.log(createData);
+        createData.user.id = new Uint8Array(createData.user.id);
+        createData.challenge = new Uint8Array(createData.challenge);
+        this.dialog.Info(
+          'Register Authenticator',
+          'Please touch the blinking authenticator...',
+          'Cancel').subscribe(() => { cancelled = true; });
+        navigator.credentials.create({publicKey: createData}).then(
+          (attestation) => {
+            console.log(cancelled);
+            console.log(attestation);
+          }
+        ).catch(
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
+    );
   }
 }
