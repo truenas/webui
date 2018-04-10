@@ -404,14 +404,41 @@ export class UserFormComponent {
         console.log(createData);
         createData.user.id = new Uint8Array(createData.user.id);
         createData.challenge = new Uint8Array(createData.challenge);
-        this.dialog.Info(
+        var dialog = this.dialog.Operation(
           'Register Authenticator',
           'Please touch the blinking authenticator...',
-          'Cancel').subscribe(() => { cancelled = true; });
+        );
+        dialog.afterClosed().subscribe(() => { cancelled = true; });
+        console.log(dialog);
         navigator.credentials.create({publicKey: createData}).then(
           (attestation) => {
+            if (cancelled) {
+              return;
+            }
+
             console.log(cancelled);
             console.log(attestation);
+            dialog.close();
+
+            console.log(this);
+            this.ws.call('user.authenticator_register', [
+              entityForm.pk,
+              Array.from(new Uint8Array(attestation.response.attestationObject)),
+              Array.from(new Uint8Array(attestation.response.clientDataJSON))
+            ]).subscribe(
+              (succeeded) => {
+                console.log(succeeded);
+                if (succeeded) {
+                  this.dialog.Info(
+                    'Register Authenticator',
+                    'Authenticator successfully registered.');
+                } else {
+                  this.dialog.Info(
+                    'Register Authenticator',
+                    'Authenticator registration failed.');
+                }
+              }
+            );
           }
         ).catch(
           (err) => {
