@@ -141,13 +141,13 @@ export class UserFormComponent {
     {
       type : 'select',
       name : 'password_disabled',
-      placeholder : T('Disable password login'),
-      tooltip : T('Disables password logins and authentication to SMB\
- shares. Checking this grays out <b>Lock user</b> and\
+      placeholder : T('Enable password login'),
+      tooltip : T('Enable password logins and authentication to SMB\
+ shares. selecting <b>No</b> hides out <b>Lock user</b> and\
  <b>Permit Sudo</b>, which are mutually exclusive.'),
       options : [
-        {label:'No', value: false },
-        {label:'Yes', value: true },
+        {label:'No', value: true },
+        {label:'Yes', value: false },
       ],
       value: false
     },
