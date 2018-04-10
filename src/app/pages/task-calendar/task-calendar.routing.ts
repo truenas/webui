@@ -133,11 +133,11 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'smart',
-    data: { title: 'S.M.A.R.T Tests', breadcrumb: 'S.M.A.R.T Tests' },
+    data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests' },
     children: [{
       path: '',
       component: SmartListComponent,
-      data: { title: 'S.M.A.R.T Tests', breadcrumb: 'S.M.A.R.T Tests' },
+      data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests' },
     }, {
       path: 'add',
       component: SmartFormComponent,

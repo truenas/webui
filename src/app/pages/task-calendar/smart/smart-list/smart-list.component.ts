@@ -11,11 +11,11 @@ import { TaskService } from '../../../../services/';
   providers: [TaskService]
 })
 export class SmartListComponent {
-  public title = "S.M.A.R.T Tests";
+  public title = "S.M.A.R.T. Tests";
 
   protected resource_name = 'tasks/smarttest';
   protected route_add: string[] = ['tasks', 'smart', 'add'];
-  protected route_add_tooltip = "Add S.M.A.R.T Test";
+  protected route_add_tooltip = "Add S.M.A.R.T. Test";
   protected route_edit: string[] = ['tasks', 'smart', 'edit'];
   protected entityList: any;
 
