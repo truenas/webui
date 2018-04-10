@@ -17,7 +17,8 @@ export class ConfigSaveComponent {
 
   public sub: Subscription;
   public secretseed: boolean = false;
-
+  public route_success: string[] = ['system', 'general'];
+  
   constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar, private _location: Location) {}
 
   openSnackBar(message: string, action: string) {
@@ -40,6 +41,6 @@ export class ConfigSaveComponent {
   }
 
   goBack() {
-    this._location.back()
+    this.router.navigate(new Array('').concat(this.route_success));
   }
 }
