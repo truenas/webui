@@ -18,11 +18,13 @@ export class ConfigUploadComponent {
   public sub: Subscription;
   public observer: Observer < any > ;
   public jobId: Number;
+  public route_success: string[] = ['system', 'general'];
   @ViewChild(NgFileSelectDirective) file: NgFileSelectDirective;
 
   constructor(@Inject(NgZone) private zone: NgZone,
     protected ws: WebSocketService,
-    private _location: Location) {
+    private _location: Location,
+    protected router: Router) {
     this.options = {
       url: '/_upload',
       type: "uploadFile",
@@ -39,7 +41,7 @@ export class ConfigUploadComponent {
   }
 
   handleUpload(ufile: UploadFile) {
-    if (ufile.progress.status === UploadStatus.Done ) {
+    if (ufile.progress.status === UploadStatus.Done) {
       let resp = JSON.parse(ufile.response);
       this.jobId = resp.job_id;
       this.observer.complete();
@@ -48,15 +50,15 @@ export class ConfigUploadComponent {
 
   doSubmit($event) {
     this.sub = Observable
-                   .create((observer) => {
-                     this.observer = observer;
-                     this.file.upload.uploadScheduler.complete();
-                   })
-                   .subscribe();
+      .create((observer) => {
+        this.observer = observer;
+        this.file.upload.uploadScheduler.complete();
+      })
+      .subscribe();
     this.busy.push(this.sub);
   }
 
   goBack() {
-    this._location.back()
+    this.router.navigate(new Array('').concat(this.route_success));
   }
 }
