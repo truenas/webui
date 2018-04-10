@@ -228,6 +228,17 @@ export class WebSocketService {
     });
   }
 
+  authenticatorLogin(username, attestation): Observable<any> {
+    return Observable.create((observer) => {
+      this.call('auth.authenticator_signin', [
+        username,
+        Array.from(new Uint8Array(attestation.response.authenticatorData)),
+        Array.from(new Uint8Array(attestation.response.clientDataJSON)),
+        Array.from(new Uint8Array(attestation.response.signature))
+      ]).subscribe((result) => { this.loginCallback(result, observer); });
+    });
+  }
+
   loginCallback(result, observer) {
     if (result === true) {
       this.loggedIn = true;

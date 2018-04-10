@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from '../../../services/';
 
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -16,6 +17,7 @@ export class SigninComponent implements OnInit {
   @ViewChild(MatButton) submitButton: MatButton;
 
   private failed: Boolean = false;
+  private using_authenticator: Boolean = false;
   public is_freenas: Boolean = false;
   public logo_ready: Boolean = false;
 
@@ -52,11 +54,53 @@ export class SigninComponent implements OnInit {
   }
 
   signin() {
+    this.using_authenticator = false;
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
     this.ws.login(this.signinData.username, this.signinData.password)
                       .subscribe((result) => { this.loginCallback(result); });
+  }
+
+  authenticatorSignin() {
+    console.log("OH BOY WE HERE");
+    this.using_authenticator = true;
+
+    this.ws.call('auth.authenticator_signin_challenge', [this.signinData.username]).subscribe((result) => {
+      console.log(result);
+
+      result.challenge = new Uint8Array(result.challenge);
+      result.allowCredentials.forEach((item) => {
+        item.id = new Uint8Array(item.id);
+      });
+
+      console.log(result);
+
+      var cancelled = false;
+
+      var dialog = this.dialogService.Operation(
+        'Authenticator Sign In',
+        'Please touch the blinking authenticator...',
+      );
+      dialog.afterClosed().subscribe(() => { cancelled = true; });
+
+      navigator.credentials.get({publicKey: result}).then((attestation) => {
+        console.log(attestation);
+        console.log(cancelled);
+
+        if (cancelled) {
+          return;
+        }
+
+        dialog.close();
+
+        this.ws.authenticatorLogin(this.signinData.username, attestation).subscribe((result) => {
+          this.loginCallback(result);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    })
   }
 
   loginCallback(result) {
@@ -89,7 +133,11 @@ export class SigninComponent implements OnInit {
     this.signinData.password = '';
     let message = '';
     if (this.ws.token === null) {
-      message = 'Username or Password is incorrect';
+      if (this.using_authenticator) {
+        message = 'Error signing in with authenticator';
+      } else {
+        message = 'Username or Password is incorrect';
+      }
     } else {
       message = 'Token expired, please log back in';
       this.ws.token = null;
