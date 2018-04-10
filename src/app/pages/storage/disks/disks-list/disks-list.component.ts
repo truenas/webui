@@ -232,13 +232,16 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
         this.zfsPoolRows.push(volume);
 
+        if( volume.name !== DisksListConfig.BOOT_POOL) {
 
-        this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
-          volume.driveStatusdata = volumeStatusResponse.data[0];
-          volume.driveStatusdata.children = new EntityUtils().flattenData(volume.driveStatusdata.children);
-          console.log("volume:" + volume.name, volume);
-        });
-
+          this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
+            volume.driveStatusdata = volumeStatusResponse.data[0];
+            volume.driveStatusdata.children = new EntityUtils().flattenData(volume.driveStatusdata.children);
+            console.log("volume:" + volume.name, volume);
+          });
+  
+        }
+        
 
         let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
         let args = (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
