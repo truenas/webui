@@ -43,7 +43,8 @@ export class DisksListConfig implements InputTableConf {
 
   public columns: Array<any> = [
     { name: 'Name', prop: 'disk_name' },
-    { name: 'Pool', prop: "poolName"},
+    { name: 'Pool', prop: "poolName" },
+    { name: 'Status', prop: 'status' },
     { name: 'Serial', prop: 'disk_serial' },
     { name: 'Disk Size', prop: 'disk_size' },
     { name: 'Description', prop: 'disk_description' },
@@ -101,11 +102,11 @@ export class DisksListConfig implements InputTableConf {
 
     } else {  // It DOES HAVE A POOL 
       actions.push({
-        label : T("Detach From Pool"),
-        onClick : (row1) => {
+        label: T("Detach From Pool"),
+        onClick: (row1) => {
           this.loader.open();
-
-          this.rest.post("storage/disk/" +  row1.id + "/detach", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+          let data = { label: row1.diskLabel };
+          this.rest.post("storage/volume/" + row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
             this.loader.close();
             this.diskPoolMapParent.repaintMe();
           }, (res) => {
@@ -135,8 +136,27 @@ export class DisksListConfig implements InputTableConf {
     const returnData: any[] = [];
 
     for (let i = 0; i < data.length; i++) {
-      const poolName = ( this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
+      const poolName = (this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
       data[i].poolName = poolName;
+      data[i].status = "";
+      data[i].diskLabel = "";
+
+      if( this.diskPoolMapParent.poolNamePoolDataMap.has(poolName) === true ) {
+        const volume = this.diskPoolMapParent.poolNamePoolDataMap.get(poolName);
+        
+        if( volume.driveStatusdata !== undefined && volume.driveStatusdata.disks !== undefined  ) {
+          for( let i2 = 0; i2 < volume.driveStatusdata.disks.length; ++ i2 ) {
+            const disk = volume.driveStatusdata.disks[i2];
+            if( disk.name.startsWith(data[i].disk_name) === true  ) {
+              data[i].status = disk.status;
+              data[i].diskLabel = disk.label;
+              break;
+            }
+          }
+
+        }
+      }
+      
 
       if (this.diskMap.size < 1) {
         returnData.push(data[i]);
@@ -145,7 +165,8 @@ export class DisksListConfig implements InputTableConf {
       }
     }
 
-    console.log("this:", this);
+
+
     return returnData;
   };
 
@@ -155,7 +176,14 @@ export class DisksListConfig implements InputTableConf {
 
 interface DiskPoolMapParent {
   diskPoolMap: Map<string, string>;
+  poolNamePoolDataMap: Map<string, any>;
+  
+  lockRefCount: number;
+  
   repaintMe();
+
+  addRef(label:string);
+  releaseRef(label:string);
 }
 
 
@@ -165,8 +193,23 @@ interface DiskPoolMapParent {
 })
 export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMapParent {
 
-  public diskPoolMap: Map<string, string> = new Map<string, string>();
+  public lockRefCount = 0;
+  
+  public addRef(label:string) {
+    this.lockRefCount += 1;
+    console.log("addRef:" + label + ":" + this.lockRefCount);
+  };
 
+  public releaseRef(label:string) {
+      if( this.lockRefCount > 0 ) {
+        this.lockRefCount -= 1;
+      }
+      console.log("releaseRef:" + label + ":" + this.lockRefCount);
+  }
+
+  public diskPoolMap: Map<string, string> = new Map<string, string>();
+  public poolNamePoolDataMap: Map<string, any> = new Map<string, any>();
+  
   zfsPoolRows: ZfsPoolData[] = [];
   conf: DisksListConfig;
   public readonly ALL_DISKS = T("All Disks");
@@ -185,18 +228,20 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   public repaintMe() {
     this.repaintIt = false;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.repaintIt = true;
     }, -1);
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
 
     this.selectedKeyName = this.ALL_DISKS;
-
+    
+    this.addRef("OUTER REST");
+          
 
     this.rest.get("storage/volume", {}).subscribe((res) => {
-
+      
       if (res.data === undefined) {
         res.data = [];
       }
@@ -206,6 +251,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
       res.data.push(DisksListConfig.createRootNodeVolume());
 
       res.data.forEach((volume) => {
+        this.poolNamePoolDataMap.set(volume.name, volume);
+
         volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this, this.loader, this.dialogService, this.rest);
         volume.type = 'zpool';
         volume.isReady = false;
@@ -222,36 +269,51 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
           } catch (error) {
             //console.log("error", error);
           }
-        } 
+        }
 
         const volumeId = volume.id;
         const volumeObj = volume;
-        
+
         this.zfsPoolRows.push(volume);
+
+        if( volume.name !== DisksListConfig.BOOT_POOL) {
+          this.addRef("VOL_STATS");
+          this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
+            volume.driveStatusdata = volumeStatusResponse.data[0];
+            volume.driveStatusdata.disks = ( volume.driveStatusdata.children === undefined) ? [] : volume.driveStatusdata.children[0].children;
+            
+            console.log("volume:" + volume.name, volume);
+            this.releaseRef("VOL_STATS");
+          });
+  
+        }
         
+
         let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
-        let args =  (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
-        
+        let args = (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
+
+        this.addRef("WS");
+          
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
-            this.diskPoolMap.set(driveName,  volume.name);
+            this.diskPoolMap.set(driveName, volume.name);
             (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
-
-
-
-          volume.isReady = true;
+          
+          this.releaseRef("WS");
         });
+       
+      });  // END OF forEach
 
+      this.releaseRef("OUTER REST");
 
-      });
-
-      
     });
+
+
 
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
 
   }
 

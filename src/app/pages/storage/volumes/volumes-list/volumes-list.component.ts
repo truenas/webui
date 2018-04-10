@@ -314,6 +314,18 @@ export class VolumesListTableConfig implements InputTableConf {
           ]));
         }
       });
+      if (rowDataPathSplit[1] !== "iocage") {
+        actions.push({
+          label: T("Edit Permissions"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat([
+              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
+              "permissions", row1.path
+            ]));
+          }
+        });
+      }
+
       if (rowData.path.indexOf('/') !== -1) {
         actions.push({
           label: T("Delete Dataset"),
@@ -338,23 +350,12 @@ export class VolumesListTableConfig implements InputTableConf {
 
                 }
               });
-
           }
         });
-        if (rowDataPathSplit.length > 1 && rowDataPathSplit[1] !== "iocage") {
-          actions.push({
-            label: T("Edit Permissions"),
-            onClick: (row1) => {
-              this._router.navigate(new Array('/').concat([
-                "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-                "permissions", row1.path
-              ]));
-            }
-          });
-        }
+
       }
 
-      let rowDataset = _.find(this.datasetData, {id:rowData.path});
+      let rowDataset = _.find(this.datasetData, { id: rowData.path });
       if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
         actions.push({
           label: T("Promote Dataset"),
@@ -384,7 +385,7 @@ export class VolumesListTableConfig implements InputTableConf {
           this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
-              
+
               this.rest.delete('storage/volume/' + this._classId + '/zvols/' + row1.name, {}).subscribe((wsResp) => {
                 this.loader.close();
                 this.parentVolumesListComponent.repaintMe();
