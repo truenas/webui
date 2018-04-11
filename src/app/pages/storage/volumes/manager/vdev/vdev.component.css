@@ -8,7 +8,7 @@
 
 .vdev-actions {
     display: flex;
-    padding: 70px 0;
+    padding: 50px 0;
     flex-direction: column;
     flex: 0 0 auto;
 }
@@ -39,4 +39,5 @@
 .arrow {
     font-size: 36px;
     padding-right: 12px;
+    
 }
