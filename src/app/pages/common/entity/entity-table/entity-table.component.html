@@ -21,13 +21,13 @@
     <div *ngIf="selected.length > 0 ? true : false" >
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
         <span *ngFor="let maction of conf.multiActions">
-          <button mat-button style.background-color="var(--green)" *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+          <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
             <span>{{ maction?.label | translate }}</span>
           </button>
         </span>
       </div>
       <ng-template #defaultMultiActions>
-        <button mat-button (click)="doMultiDelete(this.selected);">
+        <button mat-raised-button (click)="doMultiDelete(this.selected);">
           <span>{{ "Delete" | translate }}</span>
         </button>
       </ng-template>
