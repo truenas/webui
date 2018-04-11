@@ -97,7 +97,7 @@ export const routes: Routes = [
           },
           {
             path: 'createkey/:pk', component: VolumeCreatekeyFormComponent,
-            data: { title: 'Create Key', breadcrumb: 'Create Key' }
+            data: { title: 'Create Passphrase', breadcrumb: 'Create Passphrase' }
           }
         ]
       },

@@ -167,7 +167,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
     actions.push({
-      label: T("Create Recovery Key"),
+      label: T("Create Passphrase"),
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
           ["storage", "pools", "createkey", row1.id]));
