@@ -52,7 +52,9 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       name : 'passphrase',
       label : T('Passphrase'),
       placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase')
+      tooltip: T('Geli Passphrase'),
+      validation: [Validators.required],
+      required: true
     }
   ];
 

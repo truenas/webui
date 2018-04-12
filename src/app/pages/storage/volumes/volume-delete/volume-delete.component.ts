@@ -52,7 +52,7 @@ export class VolumeDeleteComponent implements Formconfiguration {
       placeholder: T("Confirm this detach procedure."),
       tooltip: T("Checking this will in the pool being detached.  If you selected Detroy the data will be gone."),
       validation: [Validators.required],
-      required: true,
+      required: true
 
     }
   ];
