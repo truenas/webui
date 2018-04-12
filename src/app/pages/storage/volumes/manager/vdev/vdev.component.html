@@ -1,7 +1,7 @@
 <div class="vdev-wrapper">
 <div class="vdev-actions">
-    <button mat-flat-button class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><mat-icon>chevron_right</mat-icon></button>
-    <button mat-flat-button class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><mat-icon>chevron_left</mat-icon></button>
+    <button mat-flat-button name="vdev-add-button" class="vdev-action-btn" (click)="addSelectedDisks()" [disabled]="!manager.selected.length"><mat-icon>chevron_right</mat-icon></button>
+    <button mat-flat-button name="vdev-remove-button" class="vdev-action-btn" (click)="removeSelectedDisks()" [disabled]="!selected.length"><mat-icon>chevron_left</mat-icon></button>
 </div>
 <div class="vdev-table">
     <ngx-datatable
