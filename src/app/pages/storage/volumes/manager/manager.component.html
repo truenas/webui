@@ -7,7 +7,7 @@
       <div class="fields m-3">
         <div *ngIf="isNew;else extend">
           <mat-input-container>
-            <input matInput placeholder="{{'Name' | translate}}" [(ngModel)]="name" required>
+            <input matInput name="poolname" placeholder="{{'Name' | translate}}" [(ngModel)]="name" required>
           </mat-input-container>
           <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
           <mat-checkbox
@@ -52,9 +52,9 @@
                     </div>
                   </ng-template>
           
-                  <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                  <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div class="checkboxCell">
-                      <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+                      <mat-checkbox name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </div>
                   </ng-template>
                 </ngx-datatable-column>
@@ -107,7 +107,7 @@
       </div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="buttons">
-        <button mat-raised-button class="btn btn-primary" (click)="doSubmit()" color="primary" [disabled]="!name">{{"Save" | translate }}</button>
+        <button mat-raised-button name="save-button" class="btn btn-primary" (click)="doSubmit()" color="primary" [disabled]="!name">{{"Save" | translate }}</button>
         <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
         <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
         <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>
