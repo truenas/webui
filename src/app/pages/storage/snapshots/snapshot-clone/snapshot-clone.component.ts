@@ -55,7 +55,9 @@ export class SnapshotCloneComponent {
             name: 'name',
             placeholder: 'Name',
             tooltip: T('Enter a name for the cloned snapshot.'),
-            value: this.pk.replace("@", "/") + "-clone"
+            value: this.pk.replace("@", "-") + "-clone",
+            required: true,
+            validation : [ Validators.required ]
           }
         ];
     });

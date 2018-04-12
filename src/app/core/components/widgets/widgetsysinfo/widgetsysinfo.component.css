@@ -17,6 +17,7 @@
 .logo-bg{
   padding: 24px;
   border: solid #dedede 8px;
+  border-color:rgba(128,128,128,0.5);
   box-shadow: 0 3px 5px rgba(0,0,0,0.55);
   border-radius: 50%;
   top: 28%;

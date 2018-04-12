@@ -5,6 +5,7 @@ import { ThemeService, Theme } from '../../../services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
@@ -16,6 +17,7 @@ import { LanguageService } from "../../../services/language.service"
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from '../../../pages/common/entity/utils';
 
 @Component({
   selector: 'topbar',
@@ -41,6 +43,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
+  public showTour: boolean = false;
 
   constructor(
     public themeService: ThemeService,
@@ -56,7 +59,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     private idle: Idle,
-    public translate: TranslateService ) {
+    public translate: TranslateService,
+    protected loader: AppLoaderService, ) {
 
     idle.setIdle(10); // 10 seconds for delaying
     idle.setTimeout(900); // 15 minutes for waiting of activity
@@ -73,18 +77,39 @@ export class TopbarComponent implements OnInit, OnDestroy {
     idle.watch();
   }
 
+  getTourPerference(){
+    this.rest.get("account/users/1", {}).subscribe((res) => {
+      this.showTour = res.data.bsdusr_attributes['showTour'] || false;
+    });
+  }
+
+  disableTour(){
+    this.loader.open();
+    this.ws.call('user.set_attribute', [1, 'showTour', false]).subscribe((res)=>{
+      this.loader.close();
+      this.snackBar.open("Tour perference saved.", 'close', { duration: 5000 });
+    }, (err)=>{
+      this.loader.close();
+      new EntityUtils().handleError(this, err);
+    })
+  }
+
   ngOnInit() {
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
       this.themesMenu = this.themeService.themesMenu
     });
-
-    const showTour = localStorage.getItem(this.router.url) || 'true';
-
-    if (showTour === "true") {
+    
+    try{
+      this.getTourPerference(); 
+    }
+    catch{
+      this.showTour = false;
+    }
+    if (this.showTour == true) {
+      this.disableTour();
       hopscotch.startTour(this.tour.startTour(this.router.url));
-      localStorage.setItem(this.router.url, 'false');
     }
 
     const notifications = this.notificationsService.getNotificationList();
@@ -132,7 +157,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   startTour() {
     hopscotch.startTour(this.tour.startTour(this.router.url));
-    localStorage.setItem(this.router.url, 'true');
+    this.disableTour();
   }
 
   setLang(lang) {

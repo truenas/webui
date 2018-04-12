@@ -73,7 +73,7 @@ export class NavigationService {
         { name: T('Cron Jobs'), state: 'cron' },
         { name: T('Init/Shutdown Scripts'), state: 'initshutdown' },
         { name: T('Rsync Tasks'), state: 'rsync' },
-        { name: T('S.M.A.R.T Tests'), state: 'smart' },
+        { name: T('S.M.A.R.T. Tests'), state: 'smart' },
         { name: T('Periodic Snapshot Tasks'), state: 'snapshot' },
         { name: T('Replication Tasks'), state: 'replication' },
         { name: T('Resilver Priority'), state: 'resilver' },

@@ -21,7 +21,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 
 export class DeviceCdromAddComponent {
 
-  protected resource_name: string = 'vm/device';
+  protected resource_name = 'vm/device';
   protected pk: any;
   protected route_success: string[];
   public vm: string;
@@ -33,11 +33,12 @@ export class DeviceCdromAddComponent {
       placeholder : 'CDROM Path',
       tooltip : 'Select the path to the CDROM. The image must be\
  present on an accessible portion of the FreeNAS storage.',
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      required: true
     },
     
   ];
-  protected dtype: string = 'CDROM';
+  protected dtype = 'CDROM';
 
   afterInit() {
     this.route.params.subscribe(params => {

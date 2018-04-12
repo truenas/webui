@@ -30,6 +30,8 @@ export class ScrubFormComponent {
       placeholder: T('Volume'),
       tooltip : T('Volume to be scrubbed.'),
       options: [],
+      required: true,
+      validation : [ Validators.required ],
     }, {
       type: 'input',
       inputType: 'number',
@@ -37,7 +39,8 @@ export class ScrubFormComponent {
       placeholder: T('Threshold days'),
       value: 35,
       min: 0,
-      validation: [ Validators.min(0) ]
+      required: true,
+      validation: [ Validators.min(0), Validators.required ]
     }, {
       type: 'input',
       name: 'scrub_description',
@@ -167,7 +170,7 @@ export class ScrubFormComponent {
     }, {
       type: 'checkbox',
       name: 'scrub_enabled',
-      placeholder: T('Enable'),
+      placeholder: T('Enabled'),
       tooltip : T('Uncheck to disable the scheduled scrub without\
        deleting it.'),
       value: true,

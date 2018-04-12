@@ -18,6 +18,7 @@ import {
 } from '../../../common/entity/entity-form/validators/password-validation';
 import {  DialogService } from '../../../../services/';
 import {Validators} from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector : 'app-user-form',
@@ -138,12 +139,17 @@ export class UserFormComponent {
 
     },
     {
-      type : 'checkbox',
+      type : 'select',
       name : 'password_disabled',
-      placeholder : T('Disable password login'),
-      tooltip : T('Disables password logins and authentication to SMB\
- shares. Checking this grays out <b>Lock user</b> and\
+      placeholder : T('Enable password login'),
+      tooltip : T('Enable password logins and authentication to SMB\
+ shares. selecting <b>No</b> hides out <b>Lock user</b> and\
  <b>Permit Sudo</b>, which are mutually exclusive.'),
+      options : [
+        {label:'Yes', value: false },
+        {label:'No', value: true },
+      ],
+      value: false
     },
     {
       type : 'checkbox',
@@ -152,6 +158,7 @@ export class UserFormComponent {
       tooltip : T('Check this to prevent the user from logging in until\
  the account is unlocked (this box is unchecked). Checking this box\
  grays out <b>Disable password login</b> which is mutually exclusive.'),
+      isHidden: false
     },
     {
       type : 'checkbox',
@@ -159,6 +166,7 @@ export class UserFormComponent {
       placeholder : T('Permit Sudo'),
       tooltip : T('Check this to give members of the group permission to\
  use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
+      isHidden: false
     },
 
     {
@@ -194,14 +202,38 @@ export class UserFormComponent {
   private groups: any;
   private creategroup: any;
   private group_create: any;
+  private password_disabled: any;
+  private sudo: any;
+  private locked: any;
 
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected storageService: StorageService,
-              private dialog:DialogService ) {}
+              private dialog:DialogService, private cdRef:ChangeDetectorRef ) {}
 
 
   afterInit(entityForm: any) {
     this.isNew = entityForm.isNew;
+    this.password_disabled = entityForm.formGroup.controls['password_disabled'];
+    this.sudo = entityForm.formGroup.controls['sudo'];
+    this.locked = entityForm.formGroup.controls['locked'];
+
+    this.password_disabled.valueChanges.subscribe((password_disabled)=>{
+      if(password_disabled){
+        _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+        _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+        entityForm.setDisabled('password', password_disabled);
+        entityForm.setDisabled('password_conf', password_disabled);
+      } else{
+        entityForm.formGroup.controls['sudo'].setValue(false);
+        entityForm.formGroup.controls['locked'].setValue(false);
+        _.find(this.fieldConfig, {name : "locked"}).isHidden = password_disabled;
+        _.find(this.fieldConfig, {name : "sudo"}).isHidden = password_disabled;
+        entityForm.setDisabled('password', password_disabled);
+        entityForm.setDisabled('password_conf', password_disabled);
+      }
+    })
+
+
     if (!entityForm.isNew) {
       _.find(this.fieldConfig, {name : "group_create"}).isHidden = true;
       entityForm.formGroup.controls['group_create'].setValue(false);
@@ -242,6 +274,7 @@ export class UserFormComponent {
         entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
         entityForm.formGroup.controls['groups'].setValue(res[0].groups);
         entityForm.formGroup.controls['home'].setValue(res[0].home);
+        entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         if (res[0].builtin) {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('uid', true);
@@ -278,6 +311,7 @@ export class UserFormComponent {
     if (!entityForm.isNew){
       entityForm.submitFunction = this.submitFunction;
     }
+  
   }
 
   clean_uid(value) {
@@ -298,6 +332,11 @@ export class UserFormComponent {
           entityForm.home = entityForm.home+'/'+ entityForm.username;
         }
       }
+      if(entityForm.password_disabled){
+        entityForm.sudo = false;
+        entityForm.locked = false;
+      }
+
     }
   }
   submitFunction(this: any, entityForm: any, ){

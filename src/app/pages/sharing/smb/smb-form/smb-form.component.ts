@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
@@ -26,7 +27,9 @@ export class SMBFormComponent implements OnDestroy {
       explorerType: 'directory',
       name: 'cifs_path',
       placeholder: T('Path'),
-      tooltip: T('Select volume, dataset, or directory to share.')
+      tooltip: T('Select volume, dataset, or directory to share.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',

@@ -35,8 +35,16 @@
           <br/>
         </div>
         <div>
-          <dx-tree-list keyExpr="nodePath" parentIdExpr="parentPath" [dataSource]="row.volumesListTableConfig.rowData" [showRowLines]="true" [allowColumnResizing]="true" [columnAutoWidth]="true" [columnResizingMode]="'widget'" [columnMinWidth]="50" [expandedRowKeys]="['1']">
+          <dx-tree-list keyExpr="nodePath" 
+                        parentIdExpr="parentPath"
+                        [dataSource]="row.volumesListTableConfig.rowData" 
+                        [showRowLines]="true" [allowColumnResizing]="true" 
+                        [columnAutoWidth]="true" 
+                        [columnResizingMode]="'widget'" 
+                        [columnMinWidth]="50" [expandedRowKeys]="['1']">
             
+            <dxo-selection mode="single"></dxo-selection>
+
             <dxi-column dataField='name' cellTemplate="cellTemplateName"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplateName'">
               <div class="panel_container" id="row_name_{{rowData.data.name}}">

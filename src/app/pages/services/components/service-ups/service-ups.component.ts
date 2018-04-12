@@ -54,6 +54,8 @@ export class ServiceUPSComponent {
       placeholder : T('Identifier'),
       tooltip : T('Enter a string. It can contain alphanumeric, period,\
        comma, hyphen, and underscore characters.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
@@ -62,12 +64,16 @@ export class ServiceUPSComponent {
       tooltip : T('Check the\
        <a href="http://networkupstools.org/stable-hcl.html" target="_blank">Network UPS Tools compatibility list</a>\
        for a list of supported UPS devices.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
       name : 'ups_port',
       placeholder : T('Port'),
       tooltip : T('Select the serial or USB port the UPS is plugged into.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'textarea',
@@ -114,12 +120,16 @@ export class ServiceUPSComponent {
       placeholder : T('Shutdown Command'),
       tooltip : T('Type the command to shut down the computer when either\
        battery power is low or the shutdown timer ends.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'ups_monuser',
       placeholder : T('Monitor User'),
       tooltip : T('Keeping the default is recommended.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',

@@ -40,10 +40,10 @@ export const routes: Routes = [
       },
       {
         path : 'vlans',
-        data: {title:'Vlans', breadcrumb: 'Vlans'},
+        data: {title:'VLANs', breadcrumb: 'VLANs'},
         children: [
           {path : '', component : VlanListComponent,
-            data: {title:'Vlans', breadcrumb: 'Vlans'}},
+            data: {title:'VLANs', breadcrumb: 'VLANs'}},
           {path : 'add', component : VlanFormComponent,
             data: {title: 'Add', breadcrumb:'Add' }},
           {path : 'edit/:pk', component : VlanFormComponent,
@@ -52,10 +52,10 @@ export const routes: Routes = [
       },
       {
         path : 'laggs',
-        data: {title:'Laggs', breadcrumb:'Laggs' },
+        data: {title:'Link Aggregations', breadcrumb:'Link Aggregations' },
         children: [
           {path : '', component : LaggListComponent,
-           data: {title:'Laggs', breadcrumb:'Laggs' }},
+           data: {title:'Link Aggregations', breadcrumb:'Link Aggregations' }},
           {path : 'add', component : LaggFormComponent,
            data: {title: 'Add', breadcrumb:'Add' }},
         ]

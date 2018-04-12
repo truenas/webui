@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -28,7 +29,9 @@ export class AFPFormComponent implements OnDestroy {
       placeholder: T('Path'),
       tooltip: T('Browse to the voume or dataset to share. Do not nest\
  addtional volumes, datasets, or symbolic links beneath this path\
- because Netatalk does not fully support that.')
+ because Netatalk does not fully support that.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -94,7 +97,9 @@ export class AFPFormComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'afp_home',
-      placeholder: T('Use as home share')
+      placeholder: T('Use as home share'),
+      tooltip: T('Check this box if the share is meant to hold user\
+      home directories; only one share can be the home share.')
     },
     {
       type: 'checkbox',

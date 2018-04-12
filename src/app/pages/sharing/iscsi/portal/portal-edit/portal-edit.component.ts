@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -81,6 +81,8 @@ export class PortalEditComponent {
  or the wildcard address of <i>0.0.0.0</i> (any interface).'),
           value : '0.0.0.0',
           options : [],
+          required: true,
+          validation: [ Validators.required ],
         },
         {
           type : 'input',
@@ -89,6 +91,8 @@ export class PortalEditComponent {
           tooltip: T('TCP port used to access the iSCSI target. Default\
  is <i>3260</i>.'),
           value : '3260',
+          required: true,
+          validation: [ Validators.required ],
         },
         {
           type: 'checkbox',

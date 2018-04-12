@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
+import { AnimationService } from 'app/core/services/animation.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { TourService } from './services/tour.service';
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit {
     private ws: WebSocketService,
     private rest: RestService,
     private api: ApiService,
+    private animations: AnimationService,
     private core: CoreService,
     public preferencesService: PreferencesService,
     public themeservice: ThemeService,

@@ -46,6 +46,8 @@ export class ServiceFTPComponent implements OnInit {
       name : 'ftp_clients',
       placeholder : T('Clients'),
       tooltip: T('Maximum number of simultaneous clients.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -53,6 +55,8 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Connections'),
       tooltip: T('Maximum number of connections per IP address where\
        <i>0</i> means unlimited.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -60,6 +64,8 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Login Attempts'),
       tooltip: T('Maximum number of attempts before client is\
        disconnected. Increase this if users are prone to typos.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -67,6 +73,8 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Timeout'),
       tooltip: T('Maximum client idle time in seconds before client is\
        disconnected.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'checkbox',

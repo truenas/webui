@@ -27,6 +27,8 @@ export class AssociatedTargetFormComponent {
       tooltip: T('Select the pre-created target.'),
       options: [],
       value: '',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -48,6 +50,8 @@ export class AssociatedTargetFormComponent {
       tooltip: T('Select the pre-created extent.'),
       options: [],
       value: '',
+      required: true,
+      validation : [ Validators.required ]
     },
   ];
 
@@ -58,8 +62,6 @@ export class AssociatedTargetFormComponent {
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   afterInit(entityForm: any) {
-    console.log(entityForm.formGroup);
-
     this.target_control = _.find(this.fieldConfig, {'name' : 'iscsi_target'});
     this.target_control.options.push({label: '----------', value: ''});
     this.iscsiService.getTargets().subscribe((res) => {
@@ -72,7 +74,6 @@ export class AssociatedTargetFormComponent {
     this.extent_control.options.push({label: '----------', value: ''});
     this.iscsiService.getExtents().subscribe((res) => {
       res.data.forEach((extent) => {
-        console.log(extent);
         this.extent_control.options.push({label: extent.iscsi_target_extent_name, value: extent.id});
       })
     });

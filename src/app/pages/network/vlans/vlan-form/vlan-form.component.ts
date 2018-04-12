@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
+import {Validators} from '@angular/forms';
 
 import {
   NetworkService,
@@ -30,6 +31,8 @@ export class VlanFormComponent {
       placeholder : 'Virtual Interface',
       tooltip : 'Use the format <i>vlanX</i> where <i>X</i> is a number\
  representing a vlan interface not currently being used as a parent.',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'select',
@@ -38,7 +41,9 @@ export class VlanFormComponent {
       tooltip : 'Usually an ethernet card connected to a properly\
  configured switch port. Note that newly created link aggreagations\
  will not appear in the drop-down until the system is rebooted.',
-      options : []
+      options : [],
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -46,6 +51,8 @@ export class VlanFormComponent {
       placeholder : 'Vlan Tag',
       tooltip : 'Number between 1 and 4095 which matches a numeric tag\
  set up in the switched network.',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',

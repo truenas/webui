@@ -7,13 +7,11 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
 import { ManagerComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
 import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add/';
-import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VolumeImportListComponent } from './volumes/volume-import/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
@@ -58,16 +56,8 @@ export const routes: Routes = [
             data: { title: 'Edit Zvol', breadcrumb: 'Edit Zvol' }
           },
           {
-            path: 'id/:pk/dataset/delete/:path', component: DatasetDeleteComponent,
-            data: { title: 'Delete Dataset', breadcrumb: 'Delete Dataset' }
-          },
-          {
             path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
-          },
-          {
-            path: 'id/:pk/zvol/delete/:path', component: ZvolDeleteComponent,
-            data: { title: 'Delete Zvol', breadcrumb: 'Delete Zvol' }
           },
           {
             path: 'manager', component: ManagerComponent,
@@ -107,7 +97,7 @@ export const routes: Routes = [
           },
           {
             path: 'createkey/:pk', component: VolumeCreatekeyFormComponent,
-            data: { title: 'Create Key', breadcrumb: 'Create Key' }
+            data: { title: 'Create Passphrase', breadcrumb: 'Create Passphrase' }
           }
         ]
       },
@@ -138,11 +128,11 @@ export const routes: Routes = [
       },
       {
         path: 'vmware-Snapshots',
-        data: { title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots' },
+        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
         children: [
           {
             path: '', component: VMwareSnapshotListComponent,
-            data: { title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots' }
+            data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' }
           },
           {
             path: 'add', component: VMwareSnapshotFormComponent,
@@ -157,11 +147,11 @@ export const routes: Routes = [
       },
       {
         path: 'disks',
-        data: { title: 'disks', breadcrumb: 'disks' },
+        data: { title: 'Disks', breadcrumb: 'Disks' },
         children: [
           {
             path: '', component: DisksListComponent,
-            data: { title: 'View Disks', breadcrumb: 'View Disks' }
+            data: { title: 'Disks', breadcrumb: 'Disks' }
           },
           {
             path: 'edit/:pk', component: DiskFormComponent,

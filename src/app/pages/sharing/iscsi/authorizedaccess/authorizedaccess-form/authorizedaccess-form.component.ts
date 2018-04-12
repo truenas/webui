@@ -28,7 +28,10 @@ export class AuthorizedAccessFormComponent {
  authentication profiles. For instance, all users with a group ID of\
  <i>1</i> will inherit the authentication profile associated with Group\
  <i>1</i>.'),
-      inputType : 'integer',
+      inputType : 'number',
+      min: 0,
+      required: true,
+      validation : [ Validators.required, Validators.min(0) ]
     },
     {
       type : 'input',
@@ -37,6 +40,8 @@ export class AuthorizedAccessFormComponent {
       tooltip: T('Name of user account to create for CHAP authentication\
  with the user on the remote system. Many initiators default to using\
  the initiator name as the user.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -45,8 +50,10 @@ export class AuthorizedAccessFormComponent {
       tooltip: T('Password to be associated with <b>User</b>. The iSCSI\
  standard requires that this be between 12 and 16 characters.'),
       inputType : 'password',
+      required: true,
       validation : [
-        Validators.minLength(8),
+        Validators.minLength(12),
+        Validators.required,
         matchOtherValidator('iscsi_target_auth_secret_confirm'),
       ],
     },
@@ -72,7 +79,7 @@ export class AuthorizedAccessFormComponent {
  <b>Peer User</b> is set.'),
       inputType : 'password',
       validation : [
-        Validators.minLength(8),
+        Validators.minLength(12),
         matchOtherValidator('iscsi_target_auth_peersecret_confirm'),
       ],
     },

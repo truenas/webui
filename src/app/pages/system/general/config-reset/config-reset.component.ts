@@ -4,13 +4,16 @@ import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { MatSnackBar } from '@angular/material';
 import { RestService, WebSocketService } from '../../../../services/';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'config-reset',
   templateUrl: './config-reset.component.html'
 })
 export class ConfigResetComponent {
-  constructor(protected ws: WebSocketService, private _location: Location, public snackBar: MatSnackBar) {}
+
+  public route_success: string[] = ['system', 'general'];
+  constructor(protected router: Router, protected ws: WebSocketService, private _location: Location, public snackBar: MatSnackBar) {}
 
   _displayTime() {
 
@@ -29,6 +32,6 @@ export class ConfigResetComponent {
   }
 
   goBack() {
-    this._location.back()
+    this.router.navigate(new Array('').concat(this.route_success));
   }
 }

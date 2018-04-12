@@ -7,14 +7,15 @@ import { TaskService } from '../../../../services/';
 
 @Component({
   selector: 'app-smart-list',
-  template: `<entity-table [conf]="this"></entity-table>`,
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService]
 })
 export class SmartListComponent {
+  public title = "S.M.A.R.T. Tests";
 
   protected resource_name = 'tasks/smarttest';
   protected route_add: string[] = ['tasks', 'smart', 'add'];
-  protected route_add_tooltip = "Add S.M.A.R.T Test";
+  protected route_add_tooltip = "Add S.M.A.R.T. Test";
   protected route_edit: string[] = ['tasks', 'smart', 'edit'];
   protected entityList: any;
 

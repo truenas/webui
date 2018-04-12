@@ -66,6 +66,7 @@ export class VolumesListTableConfig implements InputTableConf {
     private _router: Router,
     private _classId: string,
     private title: string,
+    private datasetData: Object,
     public mdDialog: MatDialog,
     protected rest: RestService,
     protected ws: WebSocketService,
@@ -84,6 +85,7 @@ export class VolumesListTableConfig implements InputTableConf {
         this.dialogService.errorReport(T("Error getting volume/dataset data"), res.message, res.stack);
       });
     }
+
 
 
 
@@ -136,10 +138,8 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                   this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
 
-                  this.dialogService.Info(T("Lock"), T("Locked ") + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
-                  });
                 }, (res) => {
                   this.loader.close();
                   this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
@@ -167,7 +167,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
     actions.push({
-      label: T("Create Recovery Key"),
+      label: T("Create Passphrase"),
       onClick: (row1) => {
         this._router.navigate(new Array('/').concat(
           ["storage", "pools", "createkey", row1.id]));
@@ -227,6 +227,10 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
+    let rowDataPathSplit = [];
+    if (rowData.path) {
+      rowDataPathSplit = rowData.path.split('/');
+    }
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
@@ -257,26 +261,26 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Upgrade Pool"),
           onClick: (row1) => {
-            
+
             this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? (Upgrading a pool is a \
                                                         non-reversable operation that could make some features of \
                                                         the pool incompatible with older versions of FreeNAS): ") + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-                this.loader.open();
+                if (confirmResult === true) {
+                  this.loader.open();
 
-                this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  this.loader.close();
-    
-                  this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
-                    this.parentVolumesListComponent.repaintMe();
+                  this.rest.post("storage/volume/" + row1.id + "/upgrade", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                    this.loader.close();
+
+                    this.dialogService.Info(T("Upgraded"), T("Successfully Upgraded ") + row1.name).subscribe((infoResult) => {
+                      this.parentVolumesListComponent.repaintMe();
+                    });
+                  }, (res) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name, res.message, res.stack);
                   });
-                }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error Upgrading Pool ") + row1.name,  res.message, res.stack);
-                });
-              } 
-            });
-            
+                }
+              });
+
           }
         });
       }
@@ -310,16 +314,7 @@ export class VolumesListTableConfig implements InputTableConf {
           ]));
         }
       });
-      if (rowData.path.indexOf('/') !== -1) {
-        actions.push({
-          label: T("Delete Dataset"),
-          onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.path.split('/')[0], "dataset",
-              "delete", row1.path
-            ]));
-          }
-        });
+      if (rowDataPathSplit[1] !== "iocage") {
         actions.push({
           label: T("Edit Permissions"),
           onClick: (row1) => {
@@ -331,34 +326,80 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-      actions.push({
-        label: T("Promote Dataset"),
-        onClick: (row1) => {
-          this.loader.open();
+      if (rowData.path.indexOf('/') !== -1) {
+        actions.push({
+          label: T("Delete Dataset"),
+          onClick: (row1) => {
 
-          this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
-            this.loader.close();
+            this.dialogService.confirm(T("Delete"), T("This action is irreversible and will \
+             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false).subscribe((res) => {
+                if (res) {
 
-            this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
-              this.parentVolumesListComponent.repaintMe();
+                  this.loader.open();
+
+                  const url = "storage/dataset/" + row1.path;
+
+
+                  this.rest.delete(url, {}).subscribe((res) => {
+                    this.loader.close();
+                    this.parentVolumesListComponent.repaintMe();
+                  }, (error) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
+                  });
+
+                }
+              });
+          }
+        });
+
+      }
+
+      let rowDataset = _.find(this.datasetData, { id: rowData.path });
+      if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
+        actions.push({
+          label: T("Promote Dataset"),
+          onClick: (row1) => {
+            this.loader.open();
+
+            this.ws.call('pool.dataset.promote', [row1.path]).subscribe((wsResp) => {
+              this.loader.close();
+              // Showing info here because theres no feedback on list parent for this if promoted.
+              this.dialogService.Info(T("Promote Dataset"), T("Successfully Promoted ") + row1.path).subscribe((infoResult) => {
+                this.parentVolumesListComponent.repaintMe();
+              });
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
             });
-          }, (res) => {
-            this.loader.close();
-            this.dialogService.errorReport(T("Error Promoting dataset ") + row1.path, res.reason, res.stack);
-          });          
-        }
-      });
+          }
+        });
+      }
     }
     if (rowData.type === "zvol") {
       actions.push({
-        label: T("Delete Zvol"),
+        label: T("Delete zvol"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.path.split('/')[0], "zvol",
-            "delete", row1.path
-          ]));
+
+
+          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
+            if (confirmed === true) {
+              this.loader.open();
+
+              this.rest.delete('storage/volume/' + this._classId + '/zvols/' + row1.name, {}).subscribe((wsResp) => {
+                this.loader.close();
+                this.parentVolumesListComponent.repaintMe();
+
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error Deleting zvol ") + row1.path, res.reason, res.stack);
+              });
+            }
+          });
+
+
         }
-      });
+      });// return 'storage/volume/' + this.pk + '/zvols/';
       actions.push({
         label: T("Edit Zvol"),
         onClick: (row1) => {
@@ -369,14 +410,14 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
 
-      
+
     }
     return actions;
   }
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
-  
+
     data = new EntityUtils().flattenData(data);
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
@@ -452,20 +493,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
   };
 
   expanded = false;
@@ -488,31 +529,35 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
-    this.rest.get("storage/volume", {}).subscribe((res) => {
-      res.data.forEach((volume: ZfsPoolData) => {
-        volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
-        volume.type = 'zpool';
+    this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
+      this.rest.get("storage/volume", {}).subscribe((res) => {
+        res.data.forEach((volume: ZfsPoolData) => {
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
+          volume.type = 'zpool';
 
 
-        try {
-          volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
-        } catch (error) {
-          volume.availStr = "" + volume.avail;
+          try {
+            volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
+          } catch (error) {
+            volume.availStr = "" + volume.avail;
+          }
+
+          try {
+            volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
+          } catch (error) {
+            volume.usedStr = "" + volume.used;
+          }
+          this.zfsPoolRows.push(volume);
+        });
+
+        if (this.zfsPoolRows.length === 1) {
+          this.expanded = true;
         }
 
-        try {
-          volume.usedStr = (<any>window).filesize(volume.used, { standard: "iec" }) + " (" + volume.used_pct + ")";
-        } catch (error) {
-          volume.usedStr = "" + volume.used;
-        }
-        this.zfsPoolRows.push(volume);
+        this.paintMe = true;
+      }, (res) => {
+        this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
-
-      if (this.zfsPoolRows.length === 1) {
-        this.expanded = true;
-      }
-
-      this.paintMe = true;
     }, (res) => {
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
