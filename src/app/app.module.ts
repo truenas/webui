@@ -20,6 +20,7 @@ import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.comp
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
+import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
 import { WebSocketService } from './services/ws.service';
@@ -40,6 +41,7 @@ import { StatsService } from 'app/services/stats.service';
 
 import { ErdService } from 'app/services/erd.service';
 import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
+import {FormsModule} from '@angular/forms';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -66,9 +68,10 @@ export function createTranslateLoader(http: HttpClient) {
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
     CoreServices.forRoot(),
-    CoreComponents
+    CoreComponents,
+    FormsModule
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, TestAlertModalDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, TestAlertModalDialogComponent, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -91,7 +94,8 @@ export function createTranslateLoader(http: HttpClient) {
     AboutModalDialog,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
-    TestAlertModalDialogComponent
+    TestAlertModalDialogComponent,
+    SelectDialogComponent
   ],
 })
 export class AppModule { 
