@@ -1381,15 +1381,8 @@ body.safari-platform .mat-raised-button {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
 }
 
-/*---- Make ngx-datatable cells overflow with ellipsis ----*/
-.datacell {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/*---- Should make ngx-datatable headers overflow with ellipsis...but doesn't! ----*/
-span.datatable-header-cell-label { 
-    overflow: hidden !important; 
-    text-overflow: ellipsis !important; 
-    white-space: normal !important; 
+ngx-datatable * { 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    /* white-space: normal;  */
 }
