@@ -39,7 +39,6 @@ export class VmTableComponent implements OnChanges{
   protected toggleStart: string = "vm.start";
   protected toggleStop: string = "vm.stop";
 
-	
   public title = "Virtual Machines"
 
   public columns: Array<any> = [
@@ -144,13 +143,16 @@ export class VmTableComponent implements OnChanges{
     pagedData.page = page;
     return pagedData;
   }
+
+  selected = [];
+
   public singleActions: Array < any > = [
     {
       id: "edit",
       label: "Edit",
       enable: true,
       onClick: (selected) => {
-        console.log(selected);
+        console.log(JSON.stringify(selected));
       }
     },
     {
@@ -158,7 +160,7 @@ export class VmTableComponent implements OnChanges{
       label: "Delete",
       enable: true,
       onClick: (selected) => {
-        console.log(selected);
+        console.log('The delete button ' + this.selected);
       }
     }
 ];
@@ -181,4 +183,10 @@ export class VmTableComponent implements OnChanges{
     this.power.emit(index);
   }
 
+  storeRow(row) {
+    console.log(this.data.indexOf(row));
+  }
 }
+
+
+
