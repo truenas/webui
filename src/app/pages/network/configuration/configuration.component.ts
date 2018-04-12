@@ -40,6 +40,14 @@ export class ConfigurationComponent {
       tooltip : T('System domain name.'),
     },
     {
+      type : 'textarea',
+      name : 'gc_domains',
+      placeholder: T('Additional Domains'),
+      tooltip : T('Additional domains to be searched can be entered here, \
+                  separated by spaces. Be aware that adding search domains \
+                  can cause slow DNS lookups.')
+    },
+    {
       type : 'input',
       name : 'gc_ipv4gateway',
       placeholder : T('IPv4 Default Gateway'),
