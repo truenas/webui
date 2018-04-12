@@ -243,13 +243,13 @@ class delete_test(unittest.TestCase):
         # num specifies the column of the 3 dots which is different in user/group
         # delNum speifies the option number where del is after clicking on the 3 dots
         if (type == "user"):
-            num = 7
+            num = 13
             delNum = 2
             path = "User"
             plug = "bsdusr_username"
 #            ED_DEL = "DELETE"
         elif (type == "group"):
-            num = 4
+            num = 5
             delNum = 3
             path = "Group"
             plug = "bsdgrp_group"
@@ -289,8 +289,13 @@ class delete_test(unittest.TestCase):
                     print ("loop-" + str(i))
                     break
             # click on confirmation button
-            driver.find_element_by_xpath('//*[contains(text(), "Ok")]').click()
-
+            time.sleep(1)
+            if (self.is_element_present(By.XPATH,'//*[contains(text(), "Delete")]')):
+                driver.find_element_by_xpath('//*[contains(text(), "Delete")]').click()
+                print ("Delete button clicked")
+                driver.find_element_by_xpath('//*[contains(text(), "Delete")]').click()
+                print ("Delete button clicked")
+                driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/button[2]').click()
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
 

@@ -183,12 +183,12 @@ class edit_test(unittest.TestCase):
         # num specifies the column of the 3 dots which is different in user/group
         # delNum speifies the option number where edit is after clicking on the 3 dots
         if (type == "user"):
-            num = 7
+            num = 13
             delNum = 1
             path = "User"
            # ED = "EDIT"
         elif (type == "group"):
-            num = 4
+            num = 5
             delNum = 2
             path = "Group"
            # ED = "Edit"
