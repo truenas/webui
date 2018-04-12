@@ -52,7 +52,7 @@
                     </div>
                   </ng-template>
           
-                  <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                  <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div class="checkboxCell">
                       <mat-checkbox name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                     </div>
