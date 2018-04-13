@@ -13,6 +13,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../../translate-marker';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'volume-import',
@@ -39,7 +40,9 @@ export class VolumeImportListComponent implements Formconfiguration {
         name: 'volume_id',
         placeholder: T('Pool/Dataset'),
         tooltip: T('Select an existing pool, dataset, or zvol.'),
-        options: []
+        options: [],
+        validation : [ Validators.required ],
+        required: true,
       }
     ];
 
