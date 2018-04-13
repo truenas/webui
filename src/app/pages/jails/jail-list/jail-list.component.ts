@@ -36,7 +36,8 @@ export class JailListComponent implements OnInit {
     sorting: { columns: this.columns },
     multiSelect: true,
   };
-  public multiActions: Array < any > = [{
+  public multiActions: Array < any > = [
+    {
       id: "mstart",
       label: "Start",
       enable: true,
@@ -105,7 +106,39 @@ export class JailListComponent implements OnInit {
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }
+    }
+  ];
+  public singleActions: Array < any > = [
+    {
+      id: "medit",
+      label: "Edit",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.router.navigate(
+          new Array('').concat(["jails", "edit", selectedJails[0][0]]));
+      }
     },
+    {
+      id: "mmount",
+      label: "Mnt Pts",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.router.navigate(
+          new Array('').concat(["jails", "storage", selectedJails[0][0]]));
+      }
+    },
+    {
+      id: "shell",
+      label: "Shell",
+      enable: true,
+      onClick: (selected) => {
+        let selectedJails = this.getSelectedNames(selected);
+        this.router.navigate(
+          new Array('').concat(["jails", "shell", selectedJails[0][0]]));
+      }
+    }
   ];
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
@@ -151,23 +184,6 @@ export class JailListComponent implements OnInit {
   }
   getActions(parentRow) {
     return [{
-        id: "edit",
-        label: "Edit",
-        onClick: (row) => {
-          this.router.navigate(
-            new Array('').concat(["jails", "edit", row.host_hostuuid]));
-        }
-      },
-      {
-        id: "mount",
-        label: "Mount points",
-        onClick: (row) => {
-          this.router.navigate(
-            //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
-            new Array('').concat(["jails", "storage", row.host_hostuuid]));
-        }
-      },
-      {
         id: "start",
         label: "Start",
         onClick: (row) => {
@@ -221,7 +237,24 @@ export class JailListComponent implements OnInit {
         onClick: (row) => {
           this.entityList.doDelete(row.host_hostuuid);
         }
-      }
+      },
+      {
+        id: "edit",
+        label: "Edit",
+        onClick: (row) => {
+          this.router.navigate(
+            new Array('').concat(["jails", "edit", row.host_hostuuid]));
+        }
+      },
+      {
+        id: "mount",
+        label: "Mount points",
+        onClick: (row) => {
+          this.router.navigate(
+            //new Array('').concat(["jails", "storage", "add", row.host_hostuuid]));
+            new Array('').concat(["jails", "storage", row.host_hostuuid]));
+        }
+      },
     ]
   }
 
