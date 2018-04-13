@@ -6,6 +6,8 @@ import { MaterialModule } from '../../appMaterial.module';
 
 import {EntityModule} from '../common/entity/entity.module';
 import {NetworkService} from '../../services';
+import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
+
 
 import {VlanFormComponent} from './vlans/vlan-form/';
 import {VlanListComponent} from './vlans/vlan-list/';
@@ -36,7 +38,7 @@ import {routing} from './network.routing';
     ConfigurationComponent,
     IPMIComponent,
   ],
-  providers : [NetworkService]
+  providers : [NetworkService, EntityFormService]
 })
 export class NetworkModule {
 }

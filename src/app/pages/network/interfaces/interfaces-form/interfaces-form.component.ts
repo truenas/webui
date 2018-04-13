@@ -1,7 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Validators} from '@angular/forms';
+import {Validators, FormArray} from '@angular/forms';
 
 import { NetworkService, RestService } from '../../../../services';
 import {
@@ -11,6 +11,7 @@ import {
   regexValidator
 } from '../../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../../translate-marker';
+import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 
 
 @Component({
@@ -54,7 +55,7 @@ export class InterfacesFormComponent implements OnDestroy {
       placeholder : T('IPv4 Address'),
       tooltip : T('Enter a static IP address in the format\
  <i>###.###.###.###</i> if <b>DHCP</b> is unchecked.'),
-      validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
+      validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
@@ -64,7 +65,7 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'int_v4netmaskbit',
       placeholder : T('IPv4 Netmask'),
       tooltip : T('Enter a netmask if <b>DHCP</b> is unchecked.'),
-      options : [],
+      options : this.networkService.getV4Netmasks(),
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
       ]
@@ -84,7 +85,7 @@ export class InterfacesFormComponent implements OnDestroy {
       placeholder : T('IPv6 Address'),
       tooltip : T('Enter a static IPv6 address if <b>DHCP</b> is unchecked.\
  Example address: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
-      validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
+      validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
       ]
@@ -94,7 +95,7 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'int_v6netmaskbit',
       placeholder : T('IPv6 Prefix Length'),
       tooltip : T('Match the prefix length used on the network.'),
-      options : [],
+      options : this.networkService.getV6PrefixLength(),
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
       ]
@@ -106,6 +107,54 @@ export class InterfacesFormComponent implements OnDestroy {
       tooltip : T('Enter any additional parameters from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  target="_blank">ifconfig(8)</a>. Separate multiple parameters with a space.'),
+    },
+    {
+      type: 'array',
+      name : 'ipv4_addresses',
+      initialCount: 1,
+      formarray: [{
+        name: 'alias_address',
+        placeholder: T('IPv4 Address'),
+        tooltip: T('Enter a static IP address in the format\
+        <i>###.###.###.###</i>'),
+        type: 'input',
+        validation : [ regexValidator(this.networkService.ipv4_regex) ]
+      },
+      {
+        name: 'alias_netmaskbit',
+        placeholder: T('IPv4 Netmask'),
+        type: 'select',
+        options : this.networkService.getV4Netmasks()
+      },
+      {
+        type: 'checkbox',
+        name: 'delete',
+        placeholder: T('Delete'),
+      }]
+    },
+    {
+      type: 'array',
+      name : 'ipv6_addresses',
+      initialCount: 1,
+      formarray: [{
+        name: 'alias_address',
+        placeholder: T('IPv6 Address'),
+        tooltip: T('Enter a static IPv6 address, for example:\
+        <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
+        type: 'input',
+        validation : [ regexValidator(this.networkService.ipv6_regex) ]
+      },
+      {
+        name: 'alias_netmaskbit',
+        placeholder: T('IPv6 Prefix Length'),
+        type: 'select',
+        options : this.networkService.getV6PrefixLength()
+      },
+      {
+        type: 'checkbox',
+        name: 'delete',
+        placeholder: T('Delete'),
+      }]
     },
   ];
 
@@ -119,31 +168,92 @@ export class InterfacesFormComponent implements OnDestroy {
   private int_ipv6address: any;
   private int_interface: any;
   private entityForm: any;
+  protected ipv4formArray: FormArray;
+  protected ipv6formArray: FormArray;
+  protected ipv6arrayControl: any;
+  protected ipv4arrayControl: any;
+  protected initialCount = {'ipv4_addresses':1, 'ipv6_addresses': 1};
+  protected initialCount_default = {'ipv4_addresses':1, 'ipv6_addresses': 1};
+
+  public custActions: Array<any> = [
+    {
+      id : 'add_ipv4_alias',
+      name : T('Add Additional IPv4 Alias'),
+      function : () => {
+        this.initialCount.ipv4_addresses += 1;
+        this.entityFormService.insertFormArrayGroup(
+            this.initialCount.ipv4_addresses, this.ipv4formArray, this.ipv4arrayControl.formarray);
+      }
+    },
+    {
+      id : 'remove_ipv4_alias',
+      name : T('Remove Additional IPv4 Alias'),
+      function : () => {
+        this.initialCount.ipv4_addresses -= 1;
+        this.entityFormService.removeFormArrayGroup(this.initialCount.ipv4_addresses,
+                                                    this.ipv4formArray);
+      }
+    },
+    {
+      id : 'add_ipv6_alias',
+      name : T('Add Additional IPv6 Alias'),
+      function : () => {
+        this.initialCount.ipv6_addresses += 1;
+        this.entityFormService.insertFormArrayGroup(
+          this.initialCount.ipv6_addresses, this.ipv6formArray, this.ipv6arrayControl.formarray);
+        }
+    },
+    {
+    id : 'remove_ipv6_alias',
+    name : T('Remove Additional IPv6 Alias'),
+    function : () => {
+      this.initialCount.ipv6_addresses -= 1;
+      this.entityFormService.removeFormArrayGroup(this.initialCount.ipv6_addresses,
+                                                  this.ipv6formArray);
+    }
+  }];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService,
+              protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService) {}
+
+  isCustActionVisible(actionId: string) {
+    if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_addresses'] <= this.initialCount_default['ipv4_addresses']) {
+      return false;
+    }
+    if (actionId == 'remove_ipv6_alias' && this.initialCount['ipv6_addresses'] <= this.initialCount_default['ipv6_addresses']) {
+      return false;
+    }
+    return true;
+  }
 
   preInit(entityForm: any) {
     this.int_interface = _.find(this.fieldConfig, {'name' : 'int_interface'});
+    this.ipv4arrayControl = _.find(this.fieldConfig, {'name' : 'ipv4_addresses'});
+    this.ipv6arrayControl = _.find(this.fieldConfig, {'name' : 'ipv6_addresses'});
     this.route.params.subscribe(params => {
       if(!params['pk']) {
         this.int_interface.type = 'select';
         this.int_interface.options = [];
+      } else {
+        this.ipv4arrayControl.initialCount = this.initialCount['ipv4_addresses'] 
+          = this.initialCount_default['ipv4_addresses'] = 0;
+        this.ipv6arrayControl.initialCount = this.initialCount['ipv6_addresses']
+          = this.initialCount_default['ipv6_addresses'] = 0;
       }
     });
   }
 
   afterInit(entityForm: any) {
+    this.ipv4formArray = entityForm.formGroup.controls['ipv4_addresses'];
+    this.ipv6formArray = entityForm.formGroup.controls['ipv6_addresses'];
     this.int_ipv4address = _.find(this.fieldConfig, {'name': 'int_ipv4address'});
     this.int_ipv6address = _.find(this.fieldConfig, {'name': 'int_ipv6address'}); 
     this.int_v4netmaskbit =
         _.find(this.fieldConfig, {'name' : 'int_v4netmaskbit'});
-    this.int_v4netmaskbit.options = this.networkService.getV4Netmasks();
 
     this.int_v6netmaskbit =
         _.find(this.fieldConfig, {'name' : 'int_v6netmaskbit'});
-    this.int_v6netmaskbit.options = this.networkService.getV6PrefixLength();
 
     this.int_dhcp = entityForm.formGroup.controls['int_dhcp'];
     this.int_ipv6auto = entityForm.formGroup.controls['int_ipv6auto'];
@@ -168,6 +278,39 @@ export class InterfacesFormComponent implements OnDestroy {
         });
       });
     }
+  }
+
+  clean(data) {
+    let aliases = []
+    for (let i = 0; i < data.ipv4_addresses.length; i++) {
+      if (!data.ipv4_addresses[i]['delete'] && 
+          !!data.ipv4_addresses[i]['alias_address'] && 
+          !!data.ipv4_addresses[i]['alias_netmaskbit']) {
+        aliases.push(data.ipv4_addresses[i]['alias_address'] + '/' 
+          + data.ipv4_addresses[i]['alias_netmaskbit']);
+      }
+    }
+    for (let i = 0; i < data.ipv6_addresses.length; i++) {
+      if (!data.ipv6_addresses[i]['delete'] && 
+            !!data.ipv6_addresses[i]['alias_address'] && 
+            !!data.ipv6_addresses[i]['alias_netmaskbit']) {
+        aliases.push(data.ipv6_addresses[i]['alias_address'] + '/' 
+           + data.ipv6_addresses[i]['alias_netmaskbit']);
+      }
+    }
+    data.int_aliases = aliases;
+    return data;
+  }
+
+  preHandler(data: any[]): any[] {
+    let aliases = [];
+    for (let i = 0; i < data.length; i++) {
+      let alias = data[i].split('/');
+      if (alias.length === 2) {
+        aliases.push({alias_address:alias[0], alias_netmaskbit:alias[1]});
+      }
+    }
+    return aliases;
   }
 
   ngOnDestroy() {

@@ -463,8 +463,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     data.forEach((value, index) => {
-      this.conf.initialCount += 1;
-      this.conf.initialCount_default += 1;
+      if (this.conf.initialCount.hasOwnProperty(name)) {
+        this.conf.initialCount[name] += 1;
+        this.conf.initialCount_default[name] += 1;
+      } else {
+        this.conf.initialCount += 1;
+        this.conf.initialCount_default += 1;
+      }
 
       const formGroup = this.entityFormService.createFormGroup(array_controls);
       for (const i in value) {
