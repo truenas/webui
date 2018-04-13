@@ -151,16 +151,17 @@ export class VmTableComponent implements OnChanges{
       id: "edit",
       label: "Edit",
       enable: true,
-      onClick: (selected) => {
-        console.log(JSON.stringify(selected));
+      onClick: ({ selected }) => {
+        this.editRow(this.selected[0]);
       }
     },
     {
       id: "delete",
       label: "Delete",
       enable: true,
-      onClick: (selected) => {
-        console.log('The delete button ' + this.selected);
+      onClick: ({ selected }) => {
+        console.log('The delete button ' + JSON.stringify(this.selected));
+        this.deleteRow(this.selected[0]);
       }
     }
 ];
@@ -185,6 +186,10 @@ export class VmTableComponent implements OnChanges{
 
   storeRow(row) {
     console.log(this.data.indexOf(row));
+  }
+
+  onSelect({ selected }) {
+    console.log('Select Event', selected[0]);
   }
 }
 
