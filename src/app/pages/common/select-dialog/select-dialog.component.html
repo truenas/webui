@@ -2,7 +2,7 @@
     {{ title | translate }}
   </h1>
   <div mat-dialog-content>
-    <mat-select  name="name" [(ngModel)]="DisplaySelection" (change)=switchSelection()>
+    <mat-select  name="name"  placeholder="{{optionPlaceHolder}}"   [(ngModel)]="DisplaySelection" (change)=switchSelection()>
         <mat-option *ngFor="let option of options" [value]="option.value">
             {{ option.label }}
         </mat-option>
