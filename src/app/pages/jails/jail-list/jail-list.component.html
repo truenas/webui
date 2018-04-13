@@ -9,14 +9,14 @@
               <mat-option *ngFor="let pool of availablePools" [value]="pool">{{pool.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!selectedPool">{{ "Activate " | translate }}</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!selectedPool">{{ "Activate" | translate }}</button>
         </form>
       </div>
       <ng-template #noPool>
         <span>
           No pools exist. Jails cannot be created or managed until a pool is present for storing them. Please create a pool first.
         </span>
-        <button mat-raised-button color="primary" routerLink="/storage/pools/manager">{{ "Create a Pool " | translate }}</button>
+        <button mat-raised-button color="primary" routerLink="/storage/pools/manager">{{ "Create a Pool" | translate }}</button>
       </ng-template>
     </mat-card>
   </div>
