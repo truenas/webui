@@ -1,8 +1,9 @@
 import {ApplicationRef, Component, Injector, OnInit, Input, ViewChild, ElementRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { MaterialModule } from '../../../appMaterial.module';
+import {  DialogService } from '../../../services/';
 
 import {
   RestService,
@@ -42,9 +43,9 @@ import { T } from '../../../translate-marker';
 export class IPMIComponent {
   @Input('conf') conf: any;
   @ViewChild('selectedChannel') select: ElementRef;
-  selectedValue: string
+  selectedValue: string;
 
-  protected resource_name: string = '';
+  protected resource_name = '';
   public formGroup: FormGroup;
   public busy: Subscription;
   public channels = [];
@@ -52,6 +53,26 @@ export class IPMIComponent {
   protected netmask: any;
   protected ipaddress: any;
   protected entityEdit: any;
+  private options: Array<any> = [
+    {label:'Indefinitely', value: 'force'},
+    {label:'15 seconds', value: 15},
+    {label:'30 seconds', value: 30},
+    {label:'1 minute', value: 60},
+    {label:'2 minute', value: 120},
+    {label:'3 minute', value: 180},
+    {label:'4 minute', value: 240},
+    {label:'Turn OFF', value: 0}
+  ]
+  public custActions: Array<any> = [
+    {
+      'id' : 'ipmi_identify',
+      'name' : 'Identify Light',
+       function :  () => {
+        this.dialog.select(
+          'IPMI Identify',this.options,'IPMI flash duration','ipmi.identify','seconds', "IPMI identify command issued");
+      }
+    }
+  ];
   public fieldConfig: FieldConfig[] = [
 
     {
@@ -111,7 +132,7 @@ export class IPMIComponent {
               protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected tooltipsService: TooltipsService,
-              protected networkService: NetworkService
+              protected networkService: NetworkService, protected dialog: DialogService
             ) {}
 
 
