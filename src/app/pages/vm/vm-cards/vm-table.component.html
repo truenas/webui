@@ -1,11 +1,9 @@
 <div fxLayout="row wrap" fxLayoutAlign="start center" class="singleActionsButton" >
-  <!-- <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100"> -->
-      <span *ngFor="let action of singleActions">
-        <button mat-button [disabled]="selected.length !== 1" *ngIf="action.enable" (click)="action.onClick(this.selected);">
-          <span>{{ action?.label | translate }}</span>
-        </button>
-      </span>
-  <!-- </div> -->
+  <span *ngFor="let action of singleActions">
+    <button mat-button [disabled]="selected.length !== 1" *ngIf="action.enable" (click)="action.onClick(this.selected);">
+      <span>{{ action?.label | translate }}</span>
+    </button>
+  </span>
 </div>
 
 <ngx-datatable #datatable
@@ -34,22 +32,22 @@ class='material'
 </ngx-datatable-column>
 
 <ngx-datatable-column name="State">
-<ng-template let-column="column" ngx-datatable-header-template>
-{{column.name}}
-</ng-template>
-<ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-<button mat-icon-button (click)="onPower(row)" style="position:absolute;bottom:6px;"><mat-icon [style.color]="value == 'running' ? '#41bd45' : '#900'">power_settings_new</mat-icon></button>
-<!--<span> {{value}} </span>-->
-</ng-template>
+  <ng-template let-column="column" ngx-datatable-header-template>
+    {{column.name}}
+  </ng-template>
+  <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+    <button mat-icon-button (click)="onPower(row)" style="position:absolute;bottom:6px;"><mat-icon [style.color]="value == 'running' ? '#41bd45' : '#900'">power_settings_new</mat-icon></button>
+    <!--<span> {{value}} </span>-->
+  </ng-template>
 </ngx-datatable-column>
 
 <ngx-datatable-column name="Name" [minWidth]="100">
-<ng-template let-column="column" ngx-datatable-header-template>
-{{column.name}}
-</ng-template>
-<ng-template let-value="value" ngx-datatable-cell-template>
-<div><strong>{{value}}</strong></div>
-</ng-template>
+  <ng-template let-column="column" ngx-datatable-header-template>
+    {{column.name}}
+  </ng-template>
+  <ng-template let-value="value" ngx-datatable-cell-template>
+    <div><strong>{{value}}</strong></div>
+  </ng-template>
 </ngx-datatable-column>
 
 <ngx-datatable-column name="Description">
