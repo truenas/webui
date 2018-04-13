@@ -13,8 +13,10 @@ export class ConfirmDialog {
   public title: string;
   public message: string;
   public buttonMsg: string = T("Ok");
-  public hideCheckBox: boolean = false;
-  public isSubmitEnabled: boolean = false;
+  public hideCheckBox = false;
+  public isSubmitEnabled = false;
+  public secondaryCheckBox = false;
+  public secondaryCheckBoxMsg = '';
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
 
@@ -22,5 +24,8 @@ export class ConfirmDialog {
 
   toggleSubmit(data) {
     this.isSubmitEnabled = data.checked;
+  }
+  secondaryCheckBoxEvent(data){
+
   }
 }
