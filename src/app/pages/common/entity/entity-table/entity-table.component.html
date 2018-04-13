@@ -37,7 +37,7 @@
       <div *ngIf="selected.length === 1 ? true : false" >
         <div *ngIf="conf.singleActions; else defaultSingleActions" fxFlex="100">
           <span *ngFor="let maction of conf.singleActions">
-            <button mat-button [disabled]="selected.length !== 1" *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+            <button mat-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
               <span>{{ maction?.label | translate }}</span>
             </button>
           </span>
