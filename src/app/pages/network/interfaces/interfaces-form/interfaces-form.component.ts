@@ -174,6 +174,12 @@ export class InterfacesFormComponent implements OnDestroy {
   protected ipv4arrayControl: any;
   protected initialCount = {'ipv4_addresses':1, 'ipv6_addresses': 1};
   protected initialCount_default = {'ipv4_addresses':1, 'ipv6_addresses': 1};
+  public confirmSubmit = false;
+  public confirmSubmitDialog = {
+    title: T("Save Network Interface Changes"),
+    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    hideCheckbox: false
+  }
 
   public custActions: Array<any> = [
     {
@@ -236,6 +242,7 @@ export class InterfacesFormComponent implements OnDestroy {
         this.int_interface.type = 'select';
         this.int_interface.options = [];
       } else {
+        this.confirmSubmit = true;
         this.ipv4arrayControl.initialCount = this.initialCount['ipv4_addresses'] 
           = this.initialCount_default['ipv4_addresses'] = 0;
         this.ipv6arrayControl.initialCount = this.initialCount['ipv6_addresses']

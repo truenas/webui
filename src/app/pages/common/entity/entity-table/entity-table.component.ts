@@ -34,6 +34,7 @@ export interface InputTableConf {
   queryRes?: any [];
   isActionVisible?: any;
   config?: any;
+  confirmDeleteDialog?: Object;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -308,7 +309,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doDelete(id) {
-    this.dialogService.confirm(T("Delete"), T("Are you sure you want to delete the selected item?"), false, T("Delete")).subscribe((res) => {
+    let dialog = {};
+    if (this.conf.confirmDeleteDialog) {
+      dialog = this.conf.confirmDeleteDialog;
+    }
+    this.dialogService.confirm(
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"), 
+        dialog.hasOwnProperty("message") ? dialog['message'] : T("Are you sure you want to delete the selected item?"), 
+        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

@@ -29,6 +29,7 @@ import {FieldConfig} from './models/field-config.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import {  DialogService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
 
 import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
 
@@ -63,6 +64,8 @@ export interface Formconfiguration {
   custom_add_query?
   custActions?: any[];
   customFilter?:any[];
+  confirmSubmit?;
+  confirmSubmitDialog?:Object;
   
   beforeSubmit?;
   customSubmit?;
@@ -332,6 +335,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   onSubmit(event: Event) {
+    if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
+      this.dialog.confirm(this.conf.confirmSubmitDialog['title'],
+                          this.conf.confirmSubmitDialog['message'], 
+                          this.conf.confirmSubmitDialog.hasOwnProperty("hideCheckbox") ?
+                              this.conf.confirmSubmitDialog['hideCheckbox'] : false,
+                          this.conf.confirmSubmitDialog.hasOwnProperty("button") ?
+                              this.conf.confirmSubmitDialog['button']: T("Ok")).subscribe((confirm) => {
+                            if (!confirm) {
+                              return;
+                            } else {
+                              this.doSubmit(event);
+                            }
+                          });
+    } else {
+      this.doSubmit(event);
+    }
+  }
+
+  doSubmit(event: Event) {  
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
@@ -385,7 +407,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                             this.dialog.errorReport(res.type, res.reason, res.trace.formatted);
                           }
                           else {
-                              new EntityUtils().handleError(this, res);
+                            new EntityUtils().handleError(this, res);
                           }
                         });
     }
