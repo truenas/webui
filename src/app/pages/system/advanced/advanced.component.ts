@@ -220,7 +220,6 @@ export class AdvancedComponent implements OnInit {
                 this.load.open();
                 this.ws.job('system.debug').subscribe((res) => {
                   this.load.close();
-                  console.log(res);
                   if (res.state === "SUCCESS") {
                     this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
                       (res) => {
