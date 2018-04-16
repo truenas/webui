@@ -974,6 +974,43 @@ export class JailAddComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
       }
     });
+
+    this.ws.call("jail.query", [
+      [
+        ["jail", "=", "default"]
+      ]
+    ]).subscribe(
+    (res) => {
+      for (let i in res[0]) {
+        if (this.formGroup.controls[i]) {
+          if (_.indexOf(this.TFfields, i) > 0) {
+            if (res[0][i] == '1') {
+              res[0][i] = true;
+            } else {
+              res[0][i] = false;
+            }
+          }
+          if (_.indexOf(this.OFfields, i) > 0) {
+            if (res[0][i] == 'on') {
+              res[0][i] = true;
+            } else {
+              res[0][i] = false;
+            }
+          }
+          if (_.indexOf(this.YNfields, i) > 0) {
+            if (res[0][i] == 'yes') {
+              res[0][i] = true;
+            } else {
+              res[0][i] = false;
+            }
+          }
+          this.formGroup.controls[i].setValue(res[0][i]);
+        }
+      }
+    },
+    (res) => {
+      new EntityUtils().handleError(this, res);
+    });
   }
 
   setRelation(config: FieldConfig) {
