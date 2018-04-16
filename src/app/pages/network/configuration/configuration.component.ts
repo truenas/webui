@@ -105,15 +105,15 @@ export class ConfigurationComponent {
       tooltip : T('Space-delimited list of IP addresses to\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank"><ins>ping(8)</ins></a>.\
  If multiple IP addresses are specified, each is tried until one is\
- successful or the list is exhausted. If empty the default gateway is\
+ successful or the list is exhausted. If empty, the default gateway is\
  used.')
     },
     {
       type : 'textarea',
       name : 'gc_hosts',
-      placeholder : T('Host name data base'),
+      placeholder : T('Host name database'),
       tooltip :
-          T('This field is appended to <i>/etc/hosts</i> which contains\
+          T('This value is appended to <i>/etc/hosts</i> which contains\
  information regarding known hosts on the network. See\
  <a href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports" target="_blank"><ins>hosts(5)</ins></a>.')
     },

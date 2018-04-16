@@ -740,8 +740,8 @@ export class JailAddComponent implements OnInit {
       type: 'checkbox',
       name: 'cputime',
       placeholder: T('cputime'),
-      tooltip: T('Define the maximium amount of CPU time a jail process\
- may consume. The kernel will terminate processes exceeding the defined\
+      tooltip: T('Define the maximum amount of CPU time a jail process\
+ may consume. The kernel terminates processes exceeding the defined\
  limit.'),
     },
     {
@@ -842,7 +842,7 @@ export class JailAddComponent implements OnInit {
   protected releaseField: any;
   public step: any = 0;
 
-  // fields only accpeted by ws with value 0/1
+  // fields only accepted by ws with value 0/1
   protected TFfields: any = [
     'ip4_saddrsel',
     'ip6_saddrsel',
@@ -864,7 +864,7 @@ export class JailAddComponent implements OnInit {
     'mount_procfs',
     'mount_linprocfs'
   ];
-  // fields only accpeted by ws with value on/off
+  // fields only accepted by ws with value on/off
   protected OFfields: any = [
     'cpuset',
     'rlimits',
@@ -891,7 +891,7 @@ export class JailAddComponent implements OnInit {
     'jail_zfs',
     'vnet',
   ];
-  // fields only accpeted by ws with value yes/no
+  // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
     'template',
