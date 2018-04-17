@@ -148,7 +148,7 @@ export class PluginsInstalledListComponent {
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
-      selected.push(selectedJails[i][1]);
+      selected.push([selectedJails[i][1]]);
     }
     return selected;
   }

@@ -15,19 +15,19 @@
     <div *ngFor="let item of menuItems; let i = index">
         <!-- if it's not disabled and not a separator and not icon -->
         <mat-list-item sideNavAccordion class="sidebar-list-item" role="listitem" *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}">
-            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'">
+            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
             </a>
-            <a *ngIf="item.type === 'dropDown'">
+            <a *ngIf="item.type === 'dropDown'" name="{{item.name.replace(' ', '_')}}-menu">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
                 <span fxFlex></span>
                 <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
             </a>
-            <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank">
+            <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank" name="{{item.name.replace(' ', '_')}}-menu">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
@@ -38,7 +38,7 @@
                 </mat-list-item>
             </mat-nav-list>
             <a mat-button style="height: 0; position: absolute;">
-                <!-- 'absorbs' the foucs behavior -->
+                <!-- 'absorbs' the focus behavior -->
             </a>
         </mat-list-item>
 

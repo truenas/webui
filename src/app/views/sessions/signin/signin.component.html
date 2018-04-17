@@ -29,7 +29,7 @@
                 </mat-error>
               </mat-input-container>
             </div>
-            <button mat-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
+            <button name="signin_button" mat-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
           </form>
         </div>
         <ng-template #notconnected>
