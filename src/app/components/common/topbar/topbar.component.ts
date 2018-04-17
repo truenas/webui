@@ -222,7 +222,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onReboot() {
-    this.translate.get('Restart').subscribe((reboot: string) => {
+    this.translate.get('Reboot').subscribe((reboot: string) => {
       this.translate.get('Are you sure you wish to reboot the system?').subscribe((reboot_prompt: string) => {
         this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
           if (res) {
