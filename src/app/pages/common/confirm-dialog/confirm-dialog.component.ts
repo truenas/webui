@@ -1,5 +1,5 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 
@@ -17,6 +17,9 @@ export class ConfirmDialog {
   public isSubmitEnabled = false;
   public secondaryCheckBox = false;
   public secondaryCheckBoxMsg = '';
+  public method: string;
+  public data: string;
+  @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
 
@@ -26,6 +29,7 @@ export class ConfirmDialog {
     this.isSubmitEnabled = data.checked;
   }
   secondaryCheckBoxEvent(data){
+    this.switchSelectionEmitter.emit(this.secondaryCheckBox);
 
   }
 }
