@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -28,7 +28,7 @@ import { T } from '../../../../translate-marker';
   providers : [ SystemGeneralService ]
 })
 
-export class ServiceWebdavComponent implements OnInit {
+export class ServiceWebdavComponent implements OnInit, OnDestroy {
 
   protected resource_name: string = 'services/webdav';
   protected route_success: string[] = [ 'services' ];
