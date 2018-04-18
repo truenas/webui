@@ -741,8 +741,8 @@ export class JailEditComponent implements OnInit {
       type: 'checkbox',
       name: 'cputime',
       placeholder: T('cputime'),
-      tooltip: T('Define the maximium amount of CPU time a jail process\
- may consume. The kernel will terminate processes exceeding the defined\
+      tooltip: T('Define the maximum amount of CPU time a jail process\
+ may consume. The kernel terminates processes exceeding the defined\
  limit.'),
     },
     {
@@ -844,7 +844,7 @@ export class JailEditComponent implements OnInit {
   public step: any = 0;
   protected wsResponse: any;
 
-  // fields only accpeted by ws with value 0/1
+  // fields only accepted by ws with value 0/1
   protected TFfields: any = [
     'ip4_saddrsel',
     'ip6_saddrsel',
@@ -866,7 +866,7 @@ export class JailEditComponent implements OnInit {
     'mount_procfs',
     'mount_linprocfs'
   ];
-  // fields only accpeted by ws with value on/off
+  // fields only accepted by ws with value on/off
   protected OFfields: any = [
     'cpuset',
     'rlimits',
@@ -893,7 +893,7 @@ export class JailEditComponent implements OnInit {
     'jail_zfs',
     'vnet',
   ];
-  // fields only accpeted by ws with value yes/no
+  // fields only accepted by ws with value yes/no
   protected YNfields: any = [
     'bpf',
     'template',
@@ -1082,7 +1082,7 @@ export class JailEditComponent implements OnInit {
     let value = _.cloneDeep(this.formGroup.value);
 
     for (let i in value) {
-      // dont send value[i] if value[i] no change
+      // do not send value[i] if value[i] no change
       if (value[i] == this.wsResponse[i]) {
         delete value[i];
       }
