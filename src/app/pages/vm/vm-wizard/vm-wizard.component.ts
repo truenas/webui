@@ -407,14 +407,14 @@ async customSubmit(value) {
 
   }
   async create_vnc_device(vm_payload: any) {
-    await this.ws.call('interfaces.ipv4_in_use').toPromise().then( res=>{
+    await this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).toPromise().then( res=>{
       vm_payload["devices"].push(
         {
           "dtype": "VNC", "attributes": {
             "wait": true,
             "vnc_port": String(this.getRndInteger(5553,6553)),
             "vnc_resolution": "1024x768",
-            "vnc_bind": res[0],
+            "vnc_bind": res[0].address,
             "vnc_password": "",
             "vnc_web": true
           }
