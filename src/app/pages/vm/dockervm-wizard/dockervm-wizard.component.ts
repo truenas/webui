@@ -38,12 +38,14 @@ export class DockerVMWizardComponent {
       { type: 'input',
         name : 'name',
         placeholder :  T ('Name of the VM'),
+        tooltip : T('Enter a descriptive name for the Docker VM.'),
         validation : [ Validators.required ],
         required: true,
       },
       { type: 'checkbox',
         name : 'autostart',
-        placeholder : 'Start on Boot',
+        placeholder : T ('Start on Boot'),
+        tooltip : T('Check to start this VM at system boot.'),
         value: true
       },
       ]
@@ -54,6 +56,9 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'vcpus',
           placeholder:  T('Virtual CPUs'),
+          tooltip : T('Allocate up to 16 virtual CPUs to the VM. The\
+           host CPU or VM operating system can impose limitations on\
+           the number of allowed CPUs.'),
           inputType: 'number',
           min: 1,
           validation : [ Validators.required,  Validators.min(1)],
@@ -64,7 +69,7 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'memory',
           placeholder: T('Memory Size (MiB)'),
-          tooltip: '',
+          tooltip: T('Allocate RAM in MiB to the VM.'),
           value: 2048,
           inputType: 'number',
           min: 2048,
@@ -79,11 +84,10 @@ export class DockerVMWizardComponent {
         {
           name : 'NIC_type',
           placeholder : T('Adapter Type'),
-          tooltip : T('The default emulates an Intel E1000 (82545) Ethernet\
-     card for compatibility with most operating systems. If the operating\
-     system installed in the VM supports VirtIO paravirtualized network\
-     drivers, this can be changed to <i>VirtIO</i> to provide better\
-     performace.'),
+          tooltip : T('The default emulates an Intel E1000 (82545)\
+           Ethernet card for compatibility with most operating\
+           systems. When available, the <i>VirtIO</i> option can\
+           provide better performance.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ],
@@ -91,20 +95,18 @@ export class DockerVMWizardComponent {
         },
         {
           name : 'NIC_mac',
-          placeholder : T('Mac Address'),
-          tooltip : T('By default, the VM receives an auto-generated random\
-     MAC address. To override the default with a custom value, enter the\
-     desired address into the field.'),
+          placeholder : T('MAC Address'),
+          tooltip : T('The VM receives an auto-generated random MAC\
+           address. Enter a different address to override this default.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
         },
         {
           name : 'nic_attach',
-          placeholder : T('Nic to attach'),
-          tooltip : T('Can be used to specify which physical interface to\
-     associate with the VM if the system has multiple physical network\
-     cards.'),
+          placeholder : T('Attach NIC'),
+          tooltip : T('Specify the physical interface to associate with\
+           the VM.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ],
@@ -118,16 +120,17 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'raw_filename',
-          placeholder : T('filename'),
-          tooltip: T('Provide a filename, this file will be created at user specific location'),
+          placeholder : T('RAW filename'),
+          tooltip: T('Enter a name for a new RAW file. This file is\
+           created at the user designated location.'),
           validation : [ Validators.required ],
           required: true
         },
         {
           type: 'input',
           name: 'size',
-          placeholder : T('Define the size (in GiB) for the raw file.'),
-          tooltip: T('Type a number of GiB to allocate to the new RAW file.'),
+          placeholder : T('RAW file size'),
+          tooltip: T('Allocate a number of GiB to the new RAW file.'),
           value: 10,
           inputType: 'number',
           min: 10,
@@ -137,8 +140,9 @@ export class DockerVMWizardComponent {
         {
           type: 'explorer',
           name: 'raw_file_directory',
-          placeholder: T('Select a directory'),
-          tooltip: T('please select a path for existing directory'),
+          placeholder: T('RAW file location'),
+          tooltip: T('Define the path to an existing directory to store\
+           the new RAW file.'),
           explorerType: "directory",
           initial: '/mnt',
           validation : [ Validators.required ],
@@ -147,8 +151,9 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'sectorsize',
-          placeholder : T('sectorsize'),
-          tooltip: '.',
+          placeholder : T('Disk sector size'),
+          tooltip: T('Define the disk sector size in bytes. Enter\
+           <i>0</i> to leave the sector size unset.'),
           value: 0,
           inputType: 'number',
           min: 0
