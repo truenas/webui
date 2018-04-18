@@ -30,9 +30,9 @@
 .multiActionsButton {
 	height: 40px;
 }
-#mstop, #mdelete {
+#mstop, #mdelete, #state_down {
     color: red;
 }
-#mstart {
+#mstart, #state_up {
     color: green;
 }
