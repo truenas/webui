@@ -21,6 +21,7 @@ import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../../translate-marker';
+import { parse } from 'path';
 
 @Component({
   selector : 'tftp-edit',
@@ -70,7 +71,7 @@ export class ServiceTFTPComponent {
     {
       type : 'permissions',
       name : 'tftp_umask',
-      placeholder : T('Umask'),
+      placeholder : T('File Permissions'),
       tooltip : T('umask for newly created files. Adjust the permissions\
        using the checkboxes.'),
     },
@@ -88,6 +89,17 @@ export class ServiceTFTPComponent {
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
+
+  resourceTransformIncomingRestData(data: any) {
+    let perm = parseInt(data['tftp_umask'], 8);
+    let mask = (~perm & 0o666).toString(8);
+    while (mask.length < 3) {
+      mask = '0' + mask;
+    }
+    data['tftp_umask'] = mask;
+
+    return data;
+  }
 
   afterInit(entityEdit: any) { }
 }
