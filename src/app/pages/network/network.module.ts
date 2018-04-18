@@ -13,6 +13,8 @@ import {VlanFormComponent} from './vlans/vlan-form/';
 import {VlanListComponent} from './vlans/vlan-list/';
 import {LaggFormComponent} from './laggs/lagg-form/';
 import {LaggListComponent} from './laggs/lagg-list/';
+import {LaggMembersFormComponent} from './laggs/members/members-form';
+import {LaggMembersListComponent} from './laggs/members/members-list';
 import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
 import {InterfacesFormComponent} from './interfaces/interfaces-form/';
@@ -31,6 +33,8 @@ import {routing} from './network.routing';
     VlanListComponent,
     LaggFormComponent,
     LaggListComponent,
+    LaggMembersFormComponent,
+    LaggMembersListComponent,
     StaticRouteFormComponent,
     StaticRouteListComponent,
     InterfacesListComponent,
