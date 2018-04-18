@@ -17,8 +17,9 @@ export class PluginsAvailabelListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: T('Name'), prop: '0', icon: '4' },
-    { name: T('Description'), prop: '1' }
+    { name: T('Name'), prop: '0', icon: '5' },
+    { name: T('Description'), prop: '1' },
+    { name: T('Official'), prop: '4'},
   ];
   public config: any = {
     paging: true,
