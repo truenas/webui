@@ -48,15 +48,11 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     },{
       type : 'input',
       inputType: 'password',
-      name : 'name',
-      placeholder: T('Passphrase'),
-      isHidden: true
-    },{
-      type : 'input',
-      inputType: 'password',
       name : 'passphrase',
       placeholder: T('Passphrase'),
-      tooltip: 'Geli Passphrase'
+      tooltip: 'Geli Passphrase',
+      validation: [Validators.required],
+      required: true
     }
   ];
 

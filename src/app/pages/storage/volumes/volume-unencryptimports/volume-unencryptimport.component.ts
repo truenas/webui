@@ -13,6 +13,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../../translate-marker';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'volume-unencryptimport',
@@ -48,7 +49,9 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         tooltip: T('Encryption key used to decrypt pools to be imported.'),
         acceptedFiles: ',.key',
         fileLocation: '',
-        validation : [  ],
+        validation: [Validators.required],
+        required: true
+        
       },
       {
         type: 'input',
@@ -56,7 +59,9 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         name: 'passphrase',
         label: T('Passphrase'),
         placeholder: T('Passphrase'),
-        tooltip: T('Geli Passphrase')
+        tooltip: T('Geli Passphrase'),
+        validation: [Validators.required],
+        required: true
       }
     ];
 

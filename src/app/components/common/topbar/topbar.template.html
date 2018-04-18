@@ -56,8 +56,8 @@
         <mat-icon>notifications</mat-icon>
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
-      <!-- Top left user menu -->
-      <button mat-icon-button matTooltip="Settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
+      <!-- Top right user menu -->
+      <button name="Settings" mat-icon-button matTooltip="Settings" [matMenuTriggerFor]="accountMenu" class="topbar-button-right">
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
@@ -67,43 +67,43 @@
             <span *ngIf="lang.code == language.currentLang">{{ lang.name }}</span>
           </ng-container>
         </button-->
-        <button mat-menu-item [routerLink]="['/account/users/edit/1']">
+        <button name="settings-account" mat-menu-item [routerLink]="['/account/users/edit/1']">
           <mat-icon>account_box</mat-icon>
           <span>{{'Account' | translate}}</span>
         </button>
-        <button mat-menu-item [routerLink]="['/account/users/change-password']">
+        <button name="settings-change-password" mat-menu-item [routerLink]="['/account/users/change-password']">
           <mat-icon>dialpad</mat-icon>
           <span>{{'Change Password' | translate}}</span>
         </button>
-        <button mat-menu-item [routerLink]="['/ui-preferences']">
+        <button name="settings-preferences" mat-menu-item [routerLink]="['/ui-preferences']">
           <mat-icon>settings_applications</mat-icon>
           <span>{{'Preferences' | translate}}</span>
         </button>
-        <button mat-menu-item [routerLink]="['/system/general']">
+        <button name="settings-settings" mat-menu-item [routerLink]="['/system/general']">
           <mat-icon>settings</mat-icon>
           <span>{{'Settings' | translate}}</span>
         </button>
-        <!-- button mat-menu-item>
+        <!-- button name="settings-disable-alerts" mat-menu-item>
           <mat-icon>notifications_off</mat-icon>
           <span>Disable alerts</span>
           </button -->
-          <button mat-menu-item (click)="signOut()">
+          <button name="settings-log-out" mat-menu-item (click)="signOut()">
             <mat-icon>exit_to_app</mat-icon>
             <span>{{'Log out' | translate}}</span>
           </button>
-          <button mat-menu-item (click)="onReboot()">
+          <button name="settings-restart" mat-menu-item (click)="onReboot()">
             <mat-icon>replay</mat-icon>
             <span>{{'Restart' | translate}}</span>
           </button>
-          <button mat-menu-item (click)="onShutdown()">
+          <button name="settings-shut-down" mat-menu-item (click)="onShutdown()">
             <mat-icon>power_settings_new</mat-icon>
             <span>{{'Shut down' | translate}}</span>
           </button>
-          <button mat-menu-item (click)="onShowAbout()">
+          <button name="settings-about" mat-menu-item (click)="onShowAbout()">
             <mat-icon>info_outline</mat-icon>
             <span>{{'About' | translate}}</span>
           </button>
-          <a mat-menu-item href="/legacy/">
+          <a name="settings-legacy-ui" mat-menu-item href="/legacy/">
             <mat-icon>keyboard_return</mat-icon>
             <span>{{'Legacy UI' | translate}}</span>
           </a>

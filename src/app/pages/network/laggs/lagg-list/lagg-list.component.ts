@@ -18,6 +18,9 @@ export class LaggListComponent {
   protected route_add_tooltip: string = "Add Link Aggregation";
   protected editIds: any = {};
   protected entityList: any;
+  protected confirmDeleteDialog = {
+    message: T("Network connectivity will be interrupted. Do you want to delete the selected interface?"),
+  }
 
   constructor(protected rest: RestService, protected router: Router) {}
 
