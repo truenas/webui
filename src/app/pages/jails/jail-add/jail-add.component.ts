@@ -687,156 +687,157 @@ export class JailAddComponent implements OnInit {
     },
   ];
   public rctlConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'memoryuse',
-      placeholder: T('memoryuse'),
-      tooltip: T('Define the resident set size in bytes. See <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">RCTL(8)</a> for more details.'),
-    },
-    {
-      type: 'input',
-      name: 'pcpu',
-      placeholder: T('pcpu'),
-      tooltip: T('Write a percentage limit of a single CPU core.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'cpuset',
-      placeholder: T('cpuset'),
-      tooltip: T('Define the jail CPU affinity. Options are <i>off</i> or\
- a combination of <i>1-4</i>, separated by commas (,). <b>Example:</b>\
- <i>1,2,3,4</i>'),
-    },
-    {
-      type: 'checkbox',
-      name: 'rlimits',
-      placeholder: T('rlimits'),
-      tooltip: T('Set resource limitations of the jail using the <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=setrlimit&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">getrlimit(2)</a> utility.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'memorylocked',
-      placeholder: T('memorylocked'),
-      tooltip: T('Define in bytes the amount of locked memory for the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'vmemoryuse',
-      placeholder: T('vmemoryuse'),
-      tooltip: T('Define in bytes the address space limit for the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'maxproc',
-      placeholder: T('maxproc'),
-      tooltip: T('Enter a number to define the maximum number of processes\
- for the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'cputime',
-      placeholder: T('cputime'),
-      tooltip: T('Define the maximum amount of CPU time a jail process\
- may consume. The kernel terminates processes exceeding the defined\
- limit.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'datasize',
-      placeholder: T('datasize'),
-      tooltip: T('Define the jail data size in bytes.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'stacksize',
-      placeholder: T('stacksize'),
-      tooltip: T('Define the jail stack size in bytes.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'coredumpsize',
-      placeholder: T('coredumpsize'),
-      tooltip: T('Define the jail core dump size in bytes.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'openfiles',
-      placeholder: T('openfiles'),
-      tooltip: T('Enter a numeric value to define the file descriptor\
- table size.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'pseudoterminals',
-      placeholder: T('pseudoterminals'),
-      tooltip: T('Enter a numeric value for the number of PTYs available\
- to the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'swapuse',
-      placeholder: T('swapuse'),
-      tooltip: T('Enter a numeric value to define the maximum swap use for\
- the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'nthr',
-      placeholder: T('nthr'),
-      tooltip: T('Enter a numeric value for the number of threads the jail\
- can use.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'msgqqueued',
-      placeholder: T('msgqqueued'),
-      tooltip: T('Define the number of queued SysV messages allowed for\
- the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'msgqsize',
-      placeholder: T('msgqsize'),
-      tooltip: T('Define in bytes the maximum SysV message queue size for\
- the jail.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'nmsgq',
-      placeholder: T('nmsgq'),
-      tooltip: T('Define the maximum number of SysV message queues.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'nsemop',
-      placeholder: T('nsemop'),
-      tooltip: T('Define the number of SysV semaphores modified in a single\
- <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=semop&sektion=2&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">semop(2)</a> call.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'nshm',
-      placeholder: T('nshm'),
-      tooltip: T('Enter the number of SysV shared memory segments.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'shmsize',
-      placeholder: T('shmsize'),
-      tooltip: T('Define in bytes the number of SysV shared memory segments.'),
-    },
-    {
-      type: 'checkbox',
-      name: 'wallclock',
-      placeholder: T('wallclock'),
-      tooltip: T('Define in seconds the wallclock time.'),
-    },
+
+ //    {
+ //      type: 'input',
+ //      name: 'memoryuse',
+ //      placeholder: T('memoryuse'),
+ //      tooltip: T('Define the resident set size in bytes. See <a\
+ // href="https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ // target="_blank">RCTL(8)</a> for more details.'),
+ //    },
+ //    {
+ //      type: 'input',
+ //      name: 'pcpu',
+ //      placeholder: T('pcpu'),
+ //      tooltip: T('Write a percentage limit of a single CPU core.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'cpuset',
+ //      placeholder: T('cpuset'),
+ //      tooltip: T('Define the jail CPU affinity. Options are <i>off</i> or\
+ // a combination of <i>1-4</i>, separated by commas (,). <b>Example:</b>\
+ // <i>1,2,3,4</i>'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'rlimits',
+ //      placeholder: T('rlimits'),
+ //      tooltip: T('Set resource limitations of the jail using the <a\
+ // href="https://www.freebsd.org/cgi/man.cgi?query=setrlimit&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ // target="_blank">getrlimit(2)</a> utility.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'memorylocked',
+ //      placeholder: T('memorylocked'),
+ //      tooltip: T('Define in bytes the amount of locked memory for the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'vmemoryuse',
+ //      placeholder: T('vmemoryuse'),
+ //      tooltip: T('Define in bytes the address space limit for the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'maxproc',
+ //      placeholder: T('maxproc'),
+ //      tooltip: T('Enter a number to define the maximum number of processes\
+ // for the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'cputime',
+ //      placeholder: T('cputime'),
+ //      tooltip: T('Define the maximium amount of CPU time a jail process\
+ // may consume. The kernel will terminate processes exceeding the defined\
+ // limit.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'datasize',
+ //      placeholder: T('datasize'),
+ //      tooltip: T('Define the jail data size in bytes.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'stacksize',
+ //      placeholder: T('stacksize'),
+ //      tooltip: T('Define the jail stack size in bytes.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'coredumpsize',
+ //      placeholder: T('coredumpsize'),
+ //      tooltip: T('Define the jail core dump size in bytes.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'openfiles',
+ //      placeholder: T('openfiles'),
+ //      tooltip: T('Enter a numeric value to define the file descriptor\
+ // table size.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'pseudoterminals',
+ //      placeholder: T('pseudoterminals'),
+ //      tooltip: T('Enter a numeric value for the number of PTYs available\
+ // to the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'swapuse',
+ //      placeholder: T('swapuse'),
+ //      tooltip: T('Enter a numeric value to define the maximum swap use for\
+ // the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'nthr',
+ //      placeholder: T('nthr'),
+ //      tooltip: T('Enter a numeric value for the number of threads the jail\
+ // can use.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'msgqqueued',
+ //      placeholder: T('msgqqueued'),
+ //      tooltip: T('Define the number of queued SysV messages allowed for\
+ // the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'msgqsize',
+ //      placeholder: T('msgqsize'),
+ //      tooltip: T('Define in bytes the maximum SysV message queue size for\
+ // the jail.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'nmsgq',
+ //      placeholder: T('nmsgq'),
+ //      tooltip: T('Define the maximum number of SysV message queues.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'nsemop',
+ //      placeholder: T('nsemop'),
+ //      tooltip: T('Define the number of SysV semaphores modified in a single\
+ // <a\
+ // href="https://www.freebsd.org/cgi/man.cgi?query=semop&sektion=2&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ // target="_blank">semop(2)</a> call.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'nshm',
+ //      placeholder: T('nshm'),
+ //      tooltip: T('Enter the number of SysV shared memory segments.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'shmsize',
+ //      placeholder: T('shmsize'),
+ //      tooltip: T('Define in bytes the number of SysV shared memory segments.'),
+ //    },
+ //    {
+ //      type: 'checkbox',
+ //      name: 'wallclock',
+ //      placeholder: T('wallclock'),
+ //      tooltip: T('Define in seconds the wallclock time.'),
+ //    },
   ];
 
   protected releaseField: any;
@@ -973,6 +974,43 @@ export class JailAddComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
       }
+    });
+
+    this.ws.call("jail.query", [
+      [
+        ["jail", "=", "default"]
+      ]
+    ]).subscribe(
+    (res) => {
+      for (let i in res[0]) {
+        if (this.formGroup.controls[i]) {
+          if (_.indexOf(this.TFfields, i) > 0) {
+            if (res[0][i] == '1') {
+              res[0][i] = true;
+            } else {
+              res[0][i] = false;
+            }
+          }
+          if (_.indexOf(this.OFfields, i) > 0) {
+            if (res[0][i] == 'on') {
+              res[0][i] = true;
+            } else {
+              res[0][i] = false;
+            }
+          }
+          if (_.indexOf(this.YNfields, i) > 0) {
+            if (res[0][i] == 'yes') {
+              res[0][i] = true;
+            } else {
+              res[0][i] = false;
+            }
+          }
+          this.formGroup.controls[i].setValue(res[0][i]);
+        }
+      }
+    },
+    (res) => {
+      new EntityUtils().handleError(this, res);
     });
   }
 

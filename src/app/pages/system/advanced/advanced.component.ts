@@ -212,13 +212,14 @@ export class AdvancedComponent implements OnInit {
     });
   }
   public custActions: Array < any > = [{
-      id: 'basic_mode',
+      id: 'save_debug',
       name: 'Save Debug',
       function: () => {
-        this.dialog.confirm(T("Generating Debug File"), T("Run this in the background?")).subscribe((res) => {
+        this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?")).subscribe((res) => {
               if (res) {
+                this.load.open();
                 this.ws.job('system.debug').subscribe((res) => {
-                  console.log(res);
+                  this.load.close();
                   if (res.state === "SUCCESS") {
                     this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
                       (res) => {
@@ -231,8 +232,10 @@ export class AdvancedComponent implements OnInit {
                     );
                   }
                 }, () => {
+                  this.load.close();
 
                 }, () => {
+                  this.load.close();
                   if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
                     this.openSnackBar(T("Please check the network connection"), T("Failed"));
                   }

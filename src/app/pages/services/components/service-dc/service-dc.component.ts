@@ -54,8 +54,8 @@ export class ServiceDCComponent {
     {
       type : 'select',
       name : 'dc_role',
-      label : 'Server Roll',
-      placeholder : T('Server Roll'),
+      label : 'Server Role',
+      placeholder : T('Server Role'),
       tooltip: T('At this time, the only supported role is as the domain\
        controller for a new domain.'),
       options : [
@@ -75,8 +75,8 @@ export class ServiceDCComponent {
     {
       type : 'select',
       name : 'dc_forest_level',
-      label : 'Forest Level',
-      placeholder : T('Forest Level'),
+      label : 'Domain Forest Level',
+      placeholder : T('Domain Forest Level'),
       tooltip: T('Choices are <i>2000, 2003, 2008, 2008_R2, 2012,</i> or <i>2012_R2</i>.\
        Refer to <a\
        href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"\
@@ -95,7 +95,7 @@ export class ServiceDCComponent {
       type : 'input',
       name : 'dc_passwd',
       inputType : 'password',
-      placeholder : T('Administration Password'),
+      placeholder : T('Administrator Password'),
       tooltip: T('Password to be used for the\
        <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
        target="_blank">Active Directory</a> administrator account.'),
