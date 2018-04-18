@@ -26,6 +26,7 @@ import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
 import {FieldConfig} from './models/field-config.interface';
+import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import {  DialogService } from '../../../../services/';
@@ -95,6 +96,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   @Input('conf') conf: Formconfiguration;
 
   public pk: any;
+  public fieldSetDisplay: string = 'default';
+  public fieldSets: FieldSet[]
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
   public resourceName: string;
@@ -180,6 +183,26 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       this.fieldConfig = this.conf.fieldConfig;
+
+      // Make sure fieldSetDisplay is defined
+      if(this.conf.fieldSetDisplay){
+        this.fieldSetDisplay = this.conf.fieldSetDisplay;
+      } else {
+        this.fieldSetDisplay = "default";
+      }
+
+      // Fallback if no fieldsets are defined
+      if(this.conf.fieldSets){
+        this.fieldSets = this.conf.fieldSets;
+      } else {
+        this.fieldSets = [
+          {
+            name:'FallBack',
+            class:'fallback',
+            config: this.fieldConfig
+          }
+        ]
+      }
       this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
       for (const i in this.fieldConfig) {
