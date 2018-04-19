@@ -9,6 +9,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class AlertServiceListComponent {
 
   public title = "Alert Services";
+  protected route_add_tooltip = "Add Alert Service";
   protected queryCall = 'alertservice.query';
   protected wsDelete = 'alertservice.delete';
   protected route_success: string[] = ['system', 'alertservice'];
