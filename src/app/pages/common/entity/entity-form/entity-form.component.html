@@ -25,8 +25,6 @@
                 <!--</ng-template>-->
               </div>
             </ng-container>
-          </div>
-            <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
             <mat-card-actions class="buttons">
                 <button id="save_button" class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid" >{{saveSubmitText | translate}}</button>
                 <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
@@ -38,6 +36,8 @@
                 <button mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
                 <!-- </div> -->
             </mat-card-actions>
+          </div>
+            <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
         </form>
         <p *ngIf="success" type="success" id="successfully_updated">{{"Successfully updated." | translate}}</p>
         <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>

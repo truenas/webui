@@ -221,6 +221,22 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(background, --bg1, $bg1);
     }
 
+/////////////////// Typography (egret overrides)
+
+html,body{
+  font-size:13px;
+  /* Experimental thin fonts */
+  font-weight:250;
+}
+
+h1,h2,h3,h4,h5,h6{
+  font-weight:500;
+}
+
+h4{
+  font-size:15px;
+}
+
 /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
 .mat-toolbar,
 .mat-raised-button{
@@ -390,6 +406,16 @@ tr.dx-row:nth-child(odd){
 .fieldset-label{
   min-width:100%;
   margin-bottom:16px;
+}
+
+.mat-checkbox-inner-container{
+  width:16px;
+  height:16px;
+  margin-bottom:4px;
+}
+.mat-checkbox-ripple{
+  left:-17px;
+  top:-17px;
 }
 
 /////////////////// END SpecSelectors
