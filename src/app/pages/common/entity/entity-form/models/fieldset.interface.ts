@@ -5,5 +5,6 @@ export interface FieldSet {
   label?:boolean;
   class?:string;
   width?:string;
+  divider?:boolean;
   config?:FieldConfig[];
 }

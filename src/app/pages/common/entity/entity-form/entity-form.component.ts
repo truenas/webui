@@ -199,7 +199,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           {
             name:'FallBack',
             class:'fallback',
+            width:'100%',
+            divider:false,
             config: this.fieldConfig
+          },
+          {
+            name:'divider',
+            divider:true,
+            width:'100%'
           }
         ]
       }
