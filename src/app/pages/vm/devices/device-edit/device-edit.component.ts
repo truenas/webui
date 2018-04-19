@@ -22,12 +22,15 @@ import {WebSocketService, NetworkService, SystemGeneralService} from '../../../.
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
+import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'device-edit',
-  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
+  // WTF?
+  //templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
+  template:'<entity-form [conf]="conf"></entity-form>',
   providers : [ VmService ]
 })
 

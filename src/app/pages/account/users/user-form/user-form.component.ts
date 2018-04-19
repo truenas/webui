@@ -10,9 +10,8 @@ import {
   WebSocketService,
   StorageService
 } from '../../../../services/';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
@@ -32,168 +31,213 @@ export class UserFormComponent {
   protected isEntity  = true;
   protected isNew: boolean;
 
-  public fieldConfig: FieldConfig[] = [
+  public fieldSetDisplay:string = 'default';//default | carousel | stepper
+  public fieldConfig: FieldConfig[] = [];
+  public fieldSets: FieldSet[] = [
     {
-      type : 'input',
-      name : 'uid',
-      placeholder : T('User ID'),
-      tooltip : T('By convention, user accounts have an ID greater than\
-  1000 and system accounts have an ID equal to the default port number\
-  used by the service.'),
-      required: true,
-      validation : [ Validators.required ]
-    },
-    {
-      type : 'input',
-      name : 'username',
-      placeholder : T('Username'),
-      tooltip : T('Maximum length is 16 characters, although using 8 or\
- less is recommended for interoperability. Usernames cannot begin with\
- a hyphen or contain a space, tab, or these characters:\
- <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can only be used\
- as the last character.'),
-      required: true,
-      validation : [ Validators.required ]
-    },
-
-    {
-      type : 'checkbox',
-      name : 'group_create',
-      placeholder : T('Create a new Primary Group for the user.'),
-      tooltip : T('By default, a primary group with the same name as the\
- user is created. Uncheck this box to select a different primary group\
- name.'),
-      value : true,
-      isHidden: false
-    },
-
-    {
-      type : 'select',
-      name : 'group',
-      placeholder : T('Primary Group'),
-      tooltip : T('For security reasons, FreeBSD will not give a user\
- <b>su</b> permissions if <i>wheel</i> is their primary group.'),
-      options : [],
-      relation : [
+      name:'Name & Contact',
+      class:'name-and-contact',
+      label:true,
+      config:[
         {
-          action : 'DISABLE',
-          when : [ {
-            name : 'group_create',
-            value : true,
-          } ]
+          type : 'input',
+          name : 'username',
+          placeholder : T('Username'),
+          tooltip : T('Maximum length is 16 characters, although using 8 or\
+          less is recommended for interoperability. Usernames cannot begin with\
+          a hyphen or contain a space, tab, or these characters:\
+          <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can only be used\
+          as the last character.'),
+          required: true,
+          validation : [ Validators.required ]
         },
-      ],
+        {
+          type : 'input',
+          name : 'full_name',
+          placeholder : T('Full Name'),
+          tooltip : T('Entering a name is required. Spaces are allowed.'),
+          required: true,
+          validation : [ Validators.required ]
+        },
+        {
+          type : 'input',
+          name : 'email',
+          placeholder : T('Email'),
+          tooltip : T('Associate an email address with the account'),
+        },
+        {
+          type : 'input',
+          name : 'password',
+          placeholder : T('Password'),
+          tooltip : T('Required unless <b>Disable password login</b> is\
+     checked. Passwords cannot contain a <b>?</b>.'),
+          inputType : 'password',
+        },
+        {
+          type : 'input',
+          name : 'password_conf',
+          placeholder : T('Confirm Password'),
+          inputType : 'password',
+          validation : [ matchOtherValidator('password') ],
+    
+        },
+      ]
     },
     {
-      type : 'explorer',
-      initial: '/mnt',
-      explorerType: 'directory',
-      name: 'home',
-      placeholder: T('Home Directory'),
-      value: '/nonexistent',
-      tooltip : T('Browse to the name of an <b>existing</b> volume or\
-      dataset that the user will be assigned permission to access.'),
+      name:'divider',
+      divider:true
     },
     {
-      type : 'permissions',
-      name : 'home_mode',
-      placeholder : T('Home Directory Mode'),
-      tooltip : T('Sets default Unix permissions of the user home\
- directory. Read-only for built-in users.'),
+      name:'ID & Groups',
+      class:'id-and-groups',
+      label:true,
+      config:[
+        {
+          type : 'input',
+          name : 'uid',
+          placeholder : T('User ID'),
+          tooltip : T('By convention, user accounts have an ID greater than\
+      1000 and system accounts have an ID equal to the default port number\
+      used by the service.'),
+          required: true,
+          validation : [ Validators.required ]
+        },
+        {
+          type : 'checkbox',
+          name : 'group_create',
+          placeholder : T('Create a new Primary Group for the user.'),
+          tooltip : T('By default, a primary group with the same name as the\
+     user is created. Uncheck this box to select a different primary group\
+     name.'),
+          value : true,
+          isHidden: false
+        },
+        {
+          type : 'select',
+          name : 'group',
+          placeholder : T('Primary Group'),
+          tooltip : T('For security reasons, FreeBSD will not give a user\
+     <b>su</b> permissions if <i>wheel</i> is their primary group.'),
+          options : [],
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [ {
+                name : 'group_create',
+                value : true,
+              } ]
+            },
+          ],
+        },
+        {
+          type : 'select',
+          name : 'groups',
+          placeholder : T('Auxiliary Groups'),
+          tooltip : T('Add this user to more groups. Choose one or more groups from the dropdown list.'),
+          options : [],
+          multiple : true
+        },
+      ]
     },
     {
-      type : 'select',
-      name : 'shell',
-      placeholder : T('Shell'),
-      tooltip : T('Select the shell to use for local and SSH logins.'),
-      options : [],
+      name:'divider',
+      divider:true
     },
     {
-      type : 'input',
-      name : 'full_name',
-      placeholder : T('Full Name'),
-      tooltip : T('Entering a name is required. Spaces are allowed.'),
-      required: true,
-      validation : [ Validators.required ]
+      name:'Directories & Permissions',
+      class:'directories-and-permissions',
+      label:true,
+      width:'50%',
+      config:[
+        {
+          type : 'explorer',
+          initial: '/mnt',
+          explorerType: 'directory',
+          name: 'home',
+          placeholder: T('Home Directory'),
+          value: '/nonexistent',
+          tooltip : T('Browse to the name of an <b>existing</b> volume or\
+          dataset that the user will be assigned permission to access.'),
+        },
+        {
+          type : 'permissions',
+          name : 'home_mode',
+          placeholder : T('Home Directory Mode'),
+          tooltip : T('Sets default Unix permissions of the user home\
+     directory. Read-only for built-in users.'),
+        },
+      ]
     },
     {
-      type : 'input',
-      name : 'email',
-      placeholder : T('Email'),
-      tooltip : T('Associate an email address with the account'),
+      name:'Authentication',
+      class:'authentication',
+      label:true,
+      width:'50%',
+      config:[
+        {
+          type : 'textarea',
+          name : 'sshpubkey',
+          placeholder : T('SSH Public Key'),
+          tooltip : T('Paste the <b>public</b> SSH key of the user for any\
+          key-based authentication. <b>Do not paste the private key!</b>'),
+        },
+        {
+          type : 'select',
+          name : 'password_disabled',
+          placeholder : T('Enable password login'),
+          tooltip : T('Enable password logins and authentication to SMB\
+     shares. selecting <b>No</b> hides out <b>Lock user</b> and\
+     <b>Permit Sudo</b>, which are mutually exclusive.'),
+          options : [
+            {label:'Yes', value: false },
+            {label:'No', value: true },
+          ],
+          value: false
+        },
+        {
+          type : 'select',
+          name : 'shell',
+          placeholder : T('Shell'),
+          tooltip : T('Select the shell to use for local and SSH logins.'),
+          options : [],
+        },
+        {
+          type : 'checkbox',
+          name : 'locked',
+          placeholder : T('Lock user'),
+          tooltip : T('Check this to prevent the user from logging in until\
+     the account is unlocked (this box is unchecked). Checking this box\
+     grays out <b>Disable password login</b> which is mutually exclusive.'),
+          isHidden: false
+        },
+        {
+          type : 'checkbox',
+          name : 'sudo',
+          placeholder : T('Permit Sudo'),
+          tooltip : T('Check this to give members of the group permission to\
+     use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
+          isHidden: false
+        },
+    
+        {
+          type : 'checkbox',
+          name : 'microsoft_account',
+          placeholder : T('Microsoft Account'),
+          tooltip : T('Check this if the user will be connecting from a\
+          Windows 8 or higher system.'),
+        },
+      ]
     },
     {
-      type : 'input',
-      name : 'password',
-      placeholder : T('Password'),
-      tooltip : T('Required unless <b>Disable password login</b> is\
- checked. Passwords cannot contain a <b>?</b>.'),
-      inputType : 'password',
-    },
-    {
-      type : 'input',
-      name : 'password_conf',
-      placeholder : T('Confirm Password'),
-      inputType : 'password',
-      validation : [ matchOtherValidator('password') ],
+      name:'divider',
+      divider:true
+    }
+  ]
 
-    },
-    {
-      type : 'select',
-      name : 'password_disabled',
-      placeholder : T('Enable password login'),
-      tooltip : T('Enable password logins and authentication to SMB\
- shares. selecting <b>No</b> hides out <b>Lock user</b> and\
- <b>Permit Sudo</b>, which are mutually exclusive.'),
-      options : [
-        {label:'Yes', value: false },
-        {label:'No', value: true },
-      ],
-      value: false
-    },
-    {
-      type : 'checkbox',
-      name : 'locked',
-      placeholder : T('Lock user'),
-      tooltip : T('Check this to prevent the user from logging in until\
- the account is unlocked (this box is unchecked). Checking this box\
- grays out <b>Disable password login</b> which is mutually exclusive.'),
-      isHidden: false
-    },
-    {
-      type : 'checkbox',
-      name : 'sudo',
-      placeholder : T('Permit Sudo'),
-      tooltip : T('Check this to give members of the group permission to\
- use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
-      isHidden: false
-    },
 
-    {
-      type : 'checkbox',
-      name : 'microsoft_account',
-      placeholder : T('Microsoft Account'),
-      tooltip : T('Check this if the user will be connecting from a\
-      Windows 8 or higher system.'),
-    },
 
-    {
-      type : 'textarea',
-      name : 'sshpubkey',
-      placeholder : T('SSH Public Key'),
-      tooltip : T('Paste the <b>public</b> SSH key of the user for any\
-      key-based authentication. <b>Do not paste the private key!</b>'),
-    },
-    {
-      type : 'select',
-      name : 'groups',
-      placeholder : T('Auxiliary Groups'),
-      tooltip : T('Add this user to more groups. Choose one or more groups from the dropdown list.'),
-      options : [],
-      multiple : true
-    },
 
-  ];
+
   private home: any;
   private mode: any;
   private shells: any;
