@@ -46,6 +46,9 @@ export class AlertServiceComponent implements OnInit {
         label: 'E-Mail',
         value: 'Mail',
       }, {
+        label: 'Slack',
+        value: 'Slack',
+      }, {
         label: 'SNMP Trap',
         value: 'SNMPTrap',
       }],
@@ -64,11 +67,53 @@ export class AlertServiceComponent implements OnInit {
 
   public snmpTrapFieldConfig: FieldConfig[] = [];
 
+  public slackFieldConfig: FieldConfig[] = [
+    {
+      type : 'input',
+      name : 'username',
+      placeholder: 'Username',
+      tooltip: 'Enter the Slack username.',
+    },{
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'Cluster name',
+      tooltip: 'Enter the name of the cluster. This is optional and can\
+ be left blank.',
+    },{
+      type : 'input',
+      name : 'url',
+      placeholder: 'Webhook URL',
+      tooltip: 'Paste the incoming webhook URL associated with this\
+ service. Refer to the <a href="https://api.slack.com/incoming-webhooks"\
+ target="_blank">Slack API documentation</a> for more information about\
+ setting up incoming webhooks.',
+    },{
+      type : 'input',
+      name : 'channel',
+      placeholder: 'Channel',
+      tooltip: 'Enter a Slack channel for the Incoming WebHook to post\
+ messages to it.',
+    },{
+      type : 'input',
+      name : 'icon_url',
+      placeholder: 'Icon URL',
+      tooltip: 'URL of a custom image for notification icons. This\
+ overrides the default if set in the Incoming Webhook settings. This\
+ field is optional and can be left blank.',
+    },{
+      type : 'checkbox',
+      name : 'detailed',
+      placeholder : 'Detailed',
+      tooltip: 'Enable detailed Slack notifications.',
+      value: true,
+    }
+  ];
 
   public formGroup: any;
   public activeFormGroup: any;
   public emailFormGroup: any;
   public snmpTrapFormGroup: any;
+  public slackFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -83,6 +128,7 @@ export class AlertServiceComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.emailFormGroup = this.entityFormService.createFormGroup(this.emailFieldConfig);
     this.snmpTrapFormGroup = this.entityFormService.createFormGroup(this.snmpTrapFieldConfig);
+    this.slackFormGroup = this.entityFormService.createFormGroup(this.slackFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -91,6 +137,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.emailFormGroup;
       } else if (res == 'SNMPTrap') {
         this.activeFormGroup = this.snmpTrapFormGroup;
+      } else if (res == 'Slack') {
+        this.activeFormGroup = this.slackFormGroup;
       }
     });
 
