@@ -57,6 +57,7 @@ import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice
 import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 import {EmailComponent} from './email/';
+import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -247,6 +248,10 @@ export const routes: Routes = [
           path: 'edit-victorops/:pk',
           component: AlertServiceEditVictoropsComponent,
           data: { title: 'Edit VictorOps', breadcrumb: 'Edit VictorOps' },
+        }, {
+          path: 'add',
+          component: AlertServiceComponent,
+          data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
         }
       ]
     },{

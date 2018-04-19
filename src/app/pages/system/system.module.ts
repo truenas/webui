@@ -64,6 +64,7 @@ import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice
 import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
+import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 
 @NgModule({
   imports: [
@@ -126,6 +127,7 @@ import { EmailComponent } from './email';
     CertificateCSRComponent,
     SupportComponent,
     EmailComponent,
+    AlertServiceComponent,
   ],
   providers: []
 })
