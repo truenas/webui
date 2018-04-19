@@ -43,6 +43,9 @@ export class AlertServiceComponent implements OnInit {
       name: 'type',
       placeholder: 'Type',
       options: [{
+        label: 'AWS SNS',
+        value: 'AWSSNS',
+      }, {
         label: 'E-Mail',
         value: 'Mail',
       }, {
@@ -56,64 +59,105 @@ export class AlertServiceComponent implements OnInit {
     },
   ];
 
-  public emailFieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      inputType: 'email',
-      name: 'email_address',
-      placeholder: 'E-mail address',
-    }
-  ];
+  public emailFieldConfig: FieldConfig[] = [{
+    type: 'input',
+    inputType: 'email',
+    name: 'email_address',
+    placeholder: 'E-mail address',
+  }];
 
   public snmpTrapFieldConfig: FieldConfig[] = [];
 
   public slackFieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'username',
+      type: 'input',
+      name: 'username',
       placeholder: 'Username',
       tooltip: 'Enter the Slack username.',
-    },{
-      type : 'input',
-      name : 'cluster_name',
+    }, {
+      type: 'input',
+      name: 'cluster_name',
       placeholder: 'Cluster name',
       tooltip: 'Enter the name of the cluster. This is optional and can\
- be left blank.',
-    },{
-      type : 'input',
-      name : 'url',
+   be left blank.',
+    }, {
+      type: 'input',
+      name: 'url',
       placeholder: 'Webhook URL',
       tooltip: 'Paste the incoming webhook URL associated with this\
- service. Refer to the <a href="https://api.slack.com/incoming-webhooks"\
- target="_blank">Slack API documentation</a> for more information about\
- setting up incoming webhooks.',
-    },{
-      type : 'input',
-      name : 'channel',
+   service. Refer to the <a href="https://api.slack.com/incoming-webhooks"\
+   target="_blank">Slack API documentation</a> for more information about\
+   setting up incoming webhooks.',
+    }, {
+      type: 'input',
+      name: 'channel',
       placeholder: 'Channel',
       tooltip: 'Enter a Slack channel for the Incoming WebHook to post\
- messages to it.',
-    },{
-      type : 'input',
-      name : 'icon_url',
+   messages to it.',
+    }, {
+      type: 'input',
+      name: 'icon_url',
       placeholder: 'Icon URL',
       tooltip: 'URL of a custom image for notification icons. This\
- overrides the default if set in the Incoming Webhook settings. This\
- field is optional and can be left blank.',
-    },{
-      type : 'checkbox',
-      name : 'detailed',
-      placeholder : 'Detailed',
+   overrides the default if set in the Incoming Webhook settings. This\
+   field is optional and can be left blank.',
+    }, {
+      type: 'checkbox',
+      name: 'detailed',
+      placeholder: 'Detailed',
       tooltip: 'Enable detailed Slack notifications.',
       value: true,
     }
   ];
+
+  public awssnsFieldConfig: FieldConfig[] = [
+    {
+      type : 'input',
+      name : 'region',
+      placeholder : 'Region',
+      tooltip: 'Paste the region for the AWS account here.',
+    },
+    {
+      type: 'input',
+      name: 'topic_arn',
+      placeholder: 'ARN',
+      tooltip: 'Enter the Topic Amazon Resource Name (ARN) for\
+ publishing. Here is an example ARN:\
+ <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
+    },
+    // {
+    //   type : 'input',
+    //   name : 'base_url',
+    //   placeholder : 'Base URL',
+    //   value: 'http://s3.example.com',
+    //   tooltip: 'Enter the base url for the S3 system.',
+    // },
+    {
+      type : 'input',
+      name : 'aws_access_key_id',
+      placeholder : 'Key ID',
+      tooltip: 'Enter the AWS Access Key ID for the AWS account.',
+    },
+    {
+      type: 'input',
+      name: 'aws_secret_access_key',
+      placeholder: 'Secret Key',
+      tooltip: 'Enter the AWS Secret Access Key for the AWS account.',
+    },
+  ];
+  // public htpchatFieldConfig: FieldConfig[] = [];
+  // public influxdbFieldConfig: FieldConfig[] = [];
+  // public mattermostFieldConfig: FieldConfig[] = [];
+  // public opsgenieFieldConfig: FieldConfig[] = [];
+  // public pagerdutyFieldConfig: FieldConfig[] = [];
+  // public victoropsFieldConfig: FieldConfig[] = [];
 
   public formGroup: any;
   public activeFormGroup: any;
   public emailFormGroup: any;
   public snmpTrapFormGroup: any;
   public slackFormGroup: any;
+  public awssnsFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -122,13 +166,14 @@ export class AlertServiceComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar,) {}
+    protected snackBar: MatSnackBar, ) {}
 
   ngOnInit() {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.emailFormGroup = this.entityFormService.createFormGroup(this.emailFieldConfig);
     this.snmpTrapFormGroup = this.entityFormService.createFormGroup(this.snmpTrapFieldConfig);
     this.slackFormGroup = this.entityFormService.createFormGroup(this.slackFieldConfig);
+    this.awssnsFormGroup = this.entityFormService.createFormGroup(this.awssnsFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -139,6 +184,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.snmpTrapFormGroup;
       } else if (res == 'Slack') {
         this.activeFormGroup = this.slackFormGroup;
+      } else if (res == 'AWSSNS') {
+        this.activeFormGroup = this.awssnsFormGroup;
       }
     });
 
@@ -146,7 +193,11 @@ export class AlertServiceComponent implements OnInit {
       this.pk = params['pk'];
       if (this.pk) {
         this.isNew = false;
-        this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).subscribe((res) => {
+        this.ws.call(this.queryCall, [
+          [
+            ['id', '=', this.pk]
+          ]
+        ]).subscribe((res) => {
           console.log(res[0]);
           for (const i in this.formGroup.controls) {
             this.formGroup.controls[i].setValue(res[0][i]);
@@ -190,7 +241,7 @@ export class AlertServiceComponent implements OnInit {
           console.log(res);
         });
     }
-      
+
   }
 
   sendTestAlet() {
