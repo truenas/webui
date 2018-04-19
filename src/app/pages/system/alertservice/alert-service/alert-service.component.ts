@@ -49,6 +49,9 @@ export class AlertServiceComponent implements OnInit {
         label: 'E-Mail',
         value: 'Mail',
       }, {
+        label: 'InfluxDB',
+        value: 'InfluxDB',
+      }, {
         label: 'Slack',
         value: 'Slack',
       }, {
@@ -116,14 +119,13 @@ export class AlertServiceComponent implements OnInit {
       name : 'region',
       placeholder : 'Region',
       tooltip: 'Paste the region for the AWS account here.',
-    },
-    {
+    }, {
       type: 'input',
       name: 'topic_arn',
       placeholder: 'ARN',
       tooltip: 'Enter the Topic Amazon Resource Name (ARN) for\
- publishing. Here is an example ARN:\
- <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
+     publishing. Here is an example ARN:\
+     <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
     },
     // {
     //   type : 'input',
@@ -137,8 +139,7 @@ export class AlertServiceComponent implements OnInit {
       name : 'aws_access_key_id',
       placeholder : 'Key ID',
       tooltip: 'Enter the AWS Access Key ID for the AWS account.',
-    },
-    {
+    }, {
       type: 'input',
       name: 'aws_secret_access_key',
       placeholder: 'Secret Key',
@@ -146,7 +147,34 @@ export class AlertServiceComponent implements OnInit {
     },
   ];
   // public htpchatFieldConfig: FieldConfig[] = [];
-  // public influxdbFieldConfig: FieldConfig[] = [];
+  public influxdbFieldConfig: FieldConfig[] = [
+    {
+      type : 'input',
+      name : 'username',
+      placeholder: 'Username',
+      tooltip: 'Enter the username for this service.',
+    }, {
+      type : 'input',
+      name : 'password',
+      placeholder: 'Password',
+      tooltip: 'Enter password.',
+    }, {
+      type : 'input',
+      name : 'host',
+      placeholder: 'Host',
+      tooltip: 'Enter the InfluxDB host.',
+    }, {
+      type : 'input',
+      name : 'database',
+      placeholder: 'Database',
+      tooltip: 'Enter the InfluxDB database name.',
+    }, {
+      type : 'input',
+      name : 'series_name',
+      placeholder: 'Series',
+      tooltip: 'Enter the InfluxDB series name for the points.',
+    }
+  ];
   // public mattermostFieldConfig: FieldConfig[] = [];
   // public opsgenieFieldConfig: FieldConfig[] = [];
   // public pagerdutyFieldConfig: FieldConfig[] = [];
@@ -158,6 +186,7 @@ export class AlertServiceComponent implements OnInit {
   public snmpTrapFormGroup: any;
   public slackFormGroup: any;
   public awssnsFormGroup: any;
+  public influxdbFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -174,6 +203,7 @@ export class AlertServiceComponent implements OnInit {
     this.snmpTrapFormGroup = this.entityFormService.createFormGroup(this.snmpTrapFieldConfig);
     this.slackFormGroup = this.entityFormService.createFormGroup(this.slackFieldConfig);
     this.awssnsFormGroup = this.entityFormService.createFormGroup(this.awssnsFieldConfig);
+    this.influxdbFormGroup = this.entityFormService.createFormGroup(this.influxdbFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -186,6 +216,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.slackFormGroup;
       } else if (res == 'AWSSNS') {
         this.activeFormGroup = this.awssnsFormGroup;
+      } else if (res == 'InfluxDB') {
+        this.activeFormGroup = this.influxdbFormGroup;
       }
     });
 

@@ -18,6 +18,10 @@
       <ng-container *ngFor="let awssnsField of awssnsFieldConfig;" dynamicField [config]="awssnsField" [group]="awssnsFormGroup">
       </ng-container>
     </div>
+    <div *ngIf="selectedType == 'InfluxDB'">
+      <ng-container *ngFor="let influxdbField of influxdbFieldConfig;" dynamicField [config]="influxdbField" [group]="influxdbFormGroup">
+      </ng-container>
+    </div>
     <mat-card-actions class="buttons">
       <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
       <button *ngIf="route_success" type="button" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
