@@ -52,6 +52,9 @@ export class AlertServiceComponent implements OnInit {
         label: 'InfluxDB',
         value: 'InfluxDB',
       }, {
+        label: 'Mattermost',
+        value: 'Mattermost',
+      }, {
         label: 'Slack',
         value: 'Slack',
       }, {
@@ -175,7 +178,52 @@ export class AlertServiceComponent implements OnInit {
       tooltip: 'Enter the InfluxDB series name for the points.',
     }
   ];
-  // public mattermostFieldConfig: FieldConfig[] = [];
+  public mattermostFieldConfig: FieldConfig[] = [
+    {
+      type : 'input',
+      name : 'username',
+      placeholder: 'Username',
+      tooltip: 'Enter the Mattermost username.',
+    }, {
+      type : 'input',
+      inputType: 'password',
+      name : 'password',
+      placeholder: 'Password',
+      tooltip: 'Enter the Mattermost password.',
+    }, {
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'Cluster name',
+      tooltip: 'Enter the name of the cluster to join.',
+    }, {
+      type : 'input',
+      name : 'url',
+      placeholder: 'Webhook URL',
+      tooltip:'Paste the incoming webhook URL associated with this\
+       service. Refer to the <a\
+       href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
+       target="_blank">Mattermost User Guide</a> for more information about\
+       incoming webhooks.',
+    }, {
+      type : 'input',
+      name : 'channel',
+      placeholder: 'Channel',
+      tooltip: 'Enter the name of the channel to receive notifications.\
+       This overrides the default channel in the Incoming Webhook settings.\
+       Refer to the <a\
+       href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
+       target="_blank">Mattermost User Guide</a> for more information about\
+       managing channels.',
+    }, {
+      type : 'input',
+      name : 'team',
+      placeholder: 'Team',
+      tooltip: 'Enter the Mattermost team name. Refer to the <a\
+       href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
+       target="_blank">Mattermost User Guide</a> for more information about\
+       creating teams.',
+    }
+  ];
   // public opsgenieFieldConfig: FieldConfig[] = [];
   // public pagerdutyFieldConfig: FieldConfig[] = [];
   // public victoropsFieldConfig: FieldConfig[] = [];
@@ -187,6 +235,7 @@ export class AlertServiceComponent implements OnInit {
   public slackFormGroup: any;
   public awssnsFormGroup: any;
   public influxdbFormGroup: any;
+  public mattermostFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -204,6 +253,7 @@ export class AlertServiceComponent implements OnInit {
     this.slackFormGroup = this.entityFormService.createFormGroup(this.slackFieldConfig);
     this.awssnsFormGroup = this.entityFormService.createFormGroup(this.awssnsFieldConfig);
     this.influxdbFormGroup = this.entityFormService.createFormGroup(this.influxdbFieldConfig);
+    this.mattermostFormGroup = this.entityFormService.createFormGroup(this.mattermostFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -218,6 +268,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.awssnsFormGroup;
       } else if (res == 'InfluxDB') {
         this.activeFormGroup = this.influxdbFormGroup;
+      } else if (res == 'Mattermost') {
+        this.activeFormGroup = this.mattermostFormGroup;
       }
     });
 
