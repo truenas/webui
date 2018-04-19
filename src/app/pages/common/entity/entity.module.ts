@@ -21,6 +21,7 @@ import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dy
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
 import { FormButtonComponent } from './entity-form/components/form-button/form-button.component';
 import { FormCheckboxComponent } from './entity-form/components/form-checkbox/form-checkbox.component';
+import { FormComboboxComponent } from './entity-form/components/form-combobox/form-combobox.component';
 import { FormInputComponent } from './entity-form/components/form-input/form-input.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
@@ -75,6 +76,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormSelectComponent,
     FormRadioComponent,
     FormCheckboxComponent,
+    FormComboboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
@@ -118,6 +120,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormInputComponent,
     FormSelectComponent,
     FormCheckboxComponent,
+    FormComboboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
