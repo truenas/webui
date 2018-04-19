@@ -36,3 +36,9 @@
 #mstart, #state_up {
     color: green;
 }
+#state_up::before {
+    content: '+ '
+}
+#state_down::before {
+    content: '- ';
+}
