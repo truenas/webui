@@ -59,21 +59,21 @@ export class VMWizardComponent {
       { type: 'select',
         name : 'bootloader',
         placeholder : T('Boot Method'),
-        tooltip : T('Select <i>UEFI</i> for newer operating systems or\
- <i>UEFI-CSM</i> (Compatability Support Mode) for older operating\
+        tooltip : T('Select <i>UEFI</i> for newer operating systems, or\
+ <i>UEFI-CSM</i> (Compatibility Support Mode) for older operating\
  systems that only understand BIOS booting.'),
         options: []
       },
       { type: 'checkbox',
         name : 'autostart',
         placeholder : T('Start on Boot'),
-        tooltip : T('Check to start this VM when the system boots.'),
+        tooltip : T('Start this VM when the system boots.'),
         value: true
       },
       { type: 'checkbox',
       name : 'enable_vnc',
       placeholder : T('Enable VNC'),
-      tooltip : T('Check to activate a Virtual Network Computing (VNC)\
+      tooltip : T('Activate a Virtual Network Computing (VNC)\
  remote connection for a VM set to <i>UEFI</i> booting.'),
       value: true
     }
@@ -156,7 +156,7 @@ export class VMWizardComponent {
      card for compatibility with most operating systems. If the operating\
      system installed in the VM supports VirtIO paravirtualized network\
      drivers, this can be changed to <i>VirtIO</i> to provide better\
-     performace.'),
+     performance.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ],
@@ -407,14 +407,14 @@ async customSubmit(value) {
 
   }
   async create_vnc_device(vm_payload: any) {
-    await this.ws.call('interfaces.ipv4_in_use').toPromise().then( res=>{
+    await this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).toPromise().then( res=>{
       vm_payload["devices"].push(
         {
           "dtype": "VNC", "attributes": {
             "wait": true,
             "vnc_port": String(this.getRndInteger(5553,6553)),
             "vnc_resolution": "1024x768",
-            "vnc_bind": res[0],
+            "vnc_bind": res[0].address,
             "vnc_password": "",
             "vnc_web": true
           }

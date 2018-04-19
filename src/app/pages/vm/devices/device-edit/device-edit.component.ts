@@ -102,7 +102,7 @@ export class DeviceEditComponent implements OnInit {
  card for compatibility with most operating systems. If the operating\
  system installed in the VM supports VirtIO paravirtualized network\
  drivers, this can be changed to <i>VirtIO</i> to provide better\
- performace.',
+ performance.',
           type: 'select',
           options : [],
           required: true,
