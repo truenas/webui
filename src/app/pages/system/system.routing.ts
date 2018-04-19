@@ -252,6 +252,10 @@ export const routes: Routes = [
           path: 'add',
           component: AlertServiceComponent,
           data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
+        }, {
+          path: 'edit/:pk',
+          component: AlertServiceComponent,
+          data: { title: 'Edit Alert Service', breadcrumb: 'Edit Alert Service' },
         }
       ]
     },{

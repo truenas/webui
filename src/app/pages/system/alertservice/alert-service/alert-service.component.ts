@@ -17,15 +17,24 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 export class AlertServiceComponent implements OnInit {
 
   protected addCall = 'alertservice.create';
+  protected queryCall = 'alertservice.query';
+  protected editCall = 'alertservice.update';
   public route_success: string[] = ['system', 'alertservice'];
   protected isNew = true;
-  protected isEntity = true;
+  protected pk: any;
   public selectedType = 'Mail';
 
-  public fieldConfig: FieldConfig[] = [{
+  public fieldConfig: FieldConfig[] = [
+    {
       type: 'input',
       name: 'name',
       placeholder: 'Name',
+    },
+    {
+      type: 'checkbox',
+      name: 'enabled',
+      placeholder: 'Enabled',
+      value: false,
     },
     {
       type: 'select',
@@ -42,24 +51,17 @@ export class AlertServiceComponent implements OnInit {
     },
   ];
 
-  public emailFieldConfig: FieldConfig[] = [{
+  public emailFieldConfig: FieldConfig[] = [
+    {
       type: 'input',
       inputType: 'email',
       name: 'email_address',
       placeholder: 'E-mail address',
-    },
-    {
-      type: 'checkbox',
-      name: 'enabled',
-      placeholder: 'Enabled',
     }
   ];
 
-  public snmpTrapFieldConfig: FieldConfig[] = [{
-    type: 'checkbox',
-    name: 'enabled',
-    placeholder: 'Enabled',
-  }];
+  public snmpTrapFieldConfig: FieldConfig[] = [];
+
 
   public formGroup: any;
   public activeFormGroup: any;
@@ -88,6 +90,24 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.snmpTrapFormGroup;
       }
     });
+
+    this.route.params.subscribe(params => {
+      this.pk = params['pk'];
+      if (this.pk) {
+        this.isNew = false;
+        this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).subscribe((res) => {
+          console.log(res[0]);
+          for (const i in this.formGroup.controls) {
+            this.formGroup.controls[i].setValue(res[0][i]);
+          }
+          for (const j in this.activeFormGroup.controls) {
+            this.activeFormGroup.controls[j].setValue(res[0].attributes[j]);
+          }
+        })
+      } else {
+        this.isNew = true;
+      }
+    });
   }
 
   onSubmit(event: Event) {
@@ -99,17 +119,34 @@ export class AlertServiceComponent implements OnInit {
     payload['settings'] = {};
 
     this.loader.open();
-    this.ws.call(this.addCall, [payload]).subscribe(
-      (res) => {
-        this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      },
-      (res) => {
-        this.loader.close();
-      });
+    if (this.isNew) {
+      this.ws.call(this.addCall, [payload]).subscribe(
+        (res) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (res) => {
+          this.loader.close();
+        });
+    } else {
+      this.ws.call(this.editCall, [this.pk, payload]).subscribe(
+        (res) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (res) => {
+          this.loader.close();
+          console.log(res);
+        });
+    }
+      
   }
 
   sendTestAlet() {
 
+  }
+
+  goBack() {
+    this.router.navigate(new Array('/').concat(this.route_success));
   }
 }
