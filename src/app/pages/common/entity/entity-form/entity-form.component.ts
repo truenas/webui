@@ -182,7 +182,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
       }
 
-      this.fieldConfig = this.conf.fieldConfig;
 
       // Make sure fieldSetDisplay is defined
       if(this.conf.fieldSetDisplay){
@@ -193,8 +192,17 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       // Fallback if no fieldsets are defined
       if(this.conf.fieldSets){
+        this.fieldConfig = [];
         this.fieldSets = this.conf.fieldSets;
+        for(let i = 0; i < this.fieldSets.length; i++){
+          let fieldset = this.fieldSets[i];
+          if(fieldset.config){
+            this.fieldConfig = this.fieldConfig.concat(fieldset.config);
+          }
+        }
+        this.conf.fieldConfig = this.fieldConfig;
       } else {
+        this.fieldConfig = this.conf.fieldConfig;
         this.fieldSets = [
           {
             name:'FallBack',
