@@ -1381,12 +1381,7 @@ body.safari-platform .mat-raised-button {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
 }
 
-.datatable-header-cell:not(:first-of-type) * { 
+/* ngx-datatable * { 
     overflow: hidden; 
     text-overflow: ellipsis; 
-}
-
-.datatable-body-cell:not(:first-child) * { 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-}
+} */
