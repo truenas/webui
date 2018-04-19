@@ -8,6 +8,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-alertservice',
@@ -19,6 +20,7 @@ export class AlertServiceComponent implements OnInit {
   protected addCall = 'alertservice.create';
   protected queryCall = 'alertservice.query';
   protected editCall = 'alertservice.update';
+  protected testCall = 'alertservice.test';
   public route_success: string[] = ['system', 'alertservice'];
   protected isNew = true;
   protected pk: any;
@@ -74,7 +76,8 @@ export class AlertServiceComponent implements OnInit {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
-    protected loader: AppLoaderService,) {}
+    protected loader: AppLoaderService,
+    protected snackBar: MatSnackBar,) {}
 
   ngOnInit() {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
@@ -143,7 +146,27 @@ export class AlertServiceComponent implements OnInit {
   }
 
   sendTestAlet() {
+    console.log('send test alert');
+    let testPayload = _.cloneDeep(this.formGroup.value);
+    let serviceValue = _.cloneDeep(this.activeFormGroup.value);
 
+    testPayload['attributes'] = serviceValue;
+    testPayload['settings'] = {};
+
+    this.loader.open();
+    this.ws.call(this.testCall, [testPayload]).subscribe(
+      (res) => {
+        this.loader.close();
+        if (res) {
+          this.snackBar.open('A test alert send out successfully!', 'close', { duration: 5000 });
+        } else {
+          this.snackBar.open('A test alert send out failed!', 'close', { duration: 5000 });
+        }
+      },
+      (res) => {
+        this.loader.close();
+        console.log(res);
+      });
   }
 
   goBack() {
