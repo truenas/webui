@@ -51,6 +51,9 @@ export class AlertServiceComponent implements OnInit {
         label: 'E-Mail',
         value: 'Mail',
       }, {
+        label: 'HipChat',
+        value: 'HtpChat',
+      }, {
         label: 'InfluxDB',
         value: 'InfluxDB',
       }, {
@@ -154,7 +157,33 @@ export class AlertServiceComponent implements OnInit {
       tooltip: 'Enter the AWS Secret Access Key for the AWS account.',
     },
   ];
-  // public htpchatFieldConfig: FieldConfig[] = [];
+  public htpchatFieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'hfrom',
+      placeholder: 'From',
+    }, {
+      type: 'input',
+      name: 'cluster_name',
+      placeholder: 'Cluster Name',
+      tooltip: 'Enter the name of the cluster.',
+    }, {
+      type: 'input',
+      name: 'base_url',
+      placeholder: 'URL',
+      tooltip: 'Enter the HipChat base URL.',
+    }, {
+      type: 'input',
+      name: 'room_id',
+      placeholder: 'Room',
+      tooltip: 'Enter the name of the room.',
+    }, {
+      type: 'input',
+      name: 'auth_token',
+      placeholder: 'Auth Token',
+      tooltip: 'Paste the Authentication token here.',
+    },
+  ];
   public influxdbFieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -265,6 +294,7 @@ export class AlertServiceComponent implements OnInit {
   public influxdbFormGroup: any;
   public mattermostFormGroup: any;
   public opsgenieFormGroup: any;
+  public htpchatFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -284,6 +314,7 @@ export class AlertServiceComponent implements OnInit {
     this.influxdbFormGroup = this.entityFormService.createFormGroup(this.influxdbFieldConfig);
     this.mattermostFormGroup = this.entityFormService.createFormGroup(this.mattermostFieldConfig);
     this.opsgenieFormGroup = this.entityFormService.createFormGroup(this.opsgenieFieldConfig);
+    this.htpchatFormGroup = this.entityFormService.createFormGroup(this.htpchatFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -302,6 +333,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.mattermostFormGroup;
       } else if (res == 'OpsGenie') {
         this.activeFormGroup = this.opsgenieFormGroup;
+      } else if (res == 'HtpChat') {
+        this.activeFormGroup = this.htpchatFormGroup;
       }
     });
 
