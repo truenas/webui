@@ -55,6 +55,9 @@ export class AlertServiceComponent implements OnInit {
         label: 'Mattermost',
         value: 'Mattermost',
       }, {
+        label: 'OpsGenie',
+        value: 'OpsGenie',
+      }, {
         label: 'Slack',
         value: 'Slack',
       }, {
@@ -224,7 +227,30 @@ export class AlertServiceComponent implements OnInit {
        creating teams.',
     }
   ];
-  // public opsgenieFieldConfig: FieldConfig[] = [];
+  public opsgenieFieldConfig: FieldConfig[] = [
+    {
+      type : 'input',
+      name : 'cluster_name',
+      placeholder: 'Cluster name',
+      tooltip: 'Enter the name of the cluster. To find the\
+       <b>cluster_name</b>, sign in to the OpsGenie web interface and\
+       navigate <b>Integrations -> Configured Integrations</b>. Click the\
+       desired integration and go to the <b>Name</b> field of the\
+       <b>Settings</b> form to locate the cluster name.',
+    },{
+      type : 'input',
+      name : 'api_key',
+      placeholder: 'API key',
+      tooltip: 'Paste the <b>api_key</b> here. To find the API key, sign\
+       in to the OpsGenie web interface, and navigate\
+       <b>Integrations -> Configured Integrations</b>. Click the desired\
+       integration and go to the <b>API Key</b> field of the <b>Settings</b>\
+       form to locate the API key. Refer to the <a\
+       href="https://docs.opsgenie.com/v1.0/docs/api-integration"\
+       target="_blank">OpsGenie documentation </a> for more information about\
+       API integration.',
+    }
+  ];
   // public pagerdutyFieldConfig: FieldConfig[] = [];
   // public victoropsFieldConfig: FieldConfig[] = [];
 
@@ -236,6 +262,7 @@ export class AlertServiceComponent implements OnInit {
   public awssnsFormGroup: any;
   public influxdbFormGroup: any;
   public mattermostFormGroup: any;
+  public opsgenieFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -254,6 +281,7 @@ export class AlertServiceComponent implements OnInit {
     this.awssnsFormGroup = this.entityFormService.createFormGroup(this.awssnsFieldConfig);
     this.influxdbFormGroup = this.entityFormService.createFormGroup(this.influxdbFieldConfig);
     this.mattermostFormGroup = this.entityFormService.createFormGroup(this.mattermostFieldConfig);
+    this.opsgenieFormGroup = this.entityFormService.createFormGroup(this.opsgenieFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -270,6 +298,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.influxdbFormGroup;
       } else if (res == 'Mattermost') {
         this.activeFormGroup = this.mattermostFormGroup;
+      } else if (res == 'OpsGenie') {
+        this.activeFormGroup = this.opsgenieFormGroup;
       }
     });
 
