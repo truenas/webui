@@ -52,7 +52,7 @@
         <mat-icon>flight_takeoff</mat-icon>
       </button>
       <!-- Notification toggle button -->
-      <button mat-icon-button matTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+      <button mat-icon-button matTooltip="Alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
         <mat-icon>notifications</mat-icon>
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>

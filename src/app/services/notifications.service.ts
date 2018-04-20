@@ -86,7 +86,7 @@ export class NotificationsService {
   }
 
   /**
-  * Takes incomming JSON REST message from system/alert rest api
+  * Takes incoming JSON REST message from system/alert rest api
   * res.data  array where each element looks like:
   *  {"dismissed":false,
   *   "id":"d90e9594a20cba9660003a55c3f51a6c",
