@@ -24,7 +24,7 @@ export class AlertServiceComponent implements OnInit {
   public route_success: string[] = ['system', 'alertservice'];
   protected isNew = true;
   protected pk: any;
-  public selectedType = 'Mail';
+  public selectedType = 'AWSSNS';
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -75,66 +75,15 @@ export class AlertServiceComponent implements OnInit {
         label: 'VictorOps',
         value: 'VictorOps',
       }],
-      value: 'Mail',
+      value: 'AWSSNS',
     },
-  ];
-
-  public emailFieldConfig: FieldConfig[] = [{
-    type: 'input',
-    inputType: 'email',
-    name: 'email_address',
-    placeholder: 'E-mail address',
-  }];
-
-  public snmpTrapFieldConfig: FieldConfig[] = [];
-
-  public slackFieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'username',
-      placeholder: 'Username',
-      tooltip: 'Enter the Slack username.',
-    }, {
-      type: 'input',
-      name: 'cluster_name',
-      placeholder: 'Cluster name',
-      tooltip: 'Enter the name of the cluster. This is optional and can\
-   be left blank.',
-    }, {
-      type: 'input',
-      name: 'url',
-      placeholder: 'Webhook URL',
-      tooltip: 'Paste the incoming webhook URL associated with this\
-   service. Refer to the <a href="https://api.slack.com/incoming-webhooks"\
-   target="_blank">Slack API documentation</a> for more information about\
-   setting up incoming webhooks.',
-    }, {
-      type: 'input',
-      name: 'channel',
-      placeholder: 'Channel',
-      tooltip: 'Enter a Slack channel for the Incoming WebHook to post\
-   messages to it.',
-    }, {
-      type: 'input',
-      name: 'icon_url',
-      placeholder: 'Icon URL',
-      tooltip: 'URL of a custom image for notification icons. This\
-   overrides the default if set in the Incoming Webhook settings. This\
-   field is optional and can be left blank.',
-    }, {
-      type: 'checkbox',
-      name: 'detailed',
-      placeholder: 'Detailed',
-      tooltip: 'Enable detailed Slack notifications.',
-      value: true,
-    }
   ];
 
   public awssnsFieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'region',
-      placeholder : 'Region',
+      placeholder : 'AWS Region',
       tooltip: 'Paste the region for the AWS account here.',
     }, {
       type: 'input',
@@ -143,15 +92,7 @@ export class AlertServiceComponent implements OnInit {
       tooltip: 'Enter the Topic Amazon Resource Name (ARN) for\
      publishing. Here is an example ARN:\
      <b>arn:aws:sns:us-west-2:111122223333:MyTopic</b>.',
-    },
-    // {
-    //   type : 'input',
-    //   name : 'base_url',
-    //   placeholder : 'Base URL',
-    //   value: 'http://s3.example.com',
-    //   tooltip: 'Enter the base url for the S3 system.',
-    // },
-    {
+    }, {
       type : 'input',
       name : 'aws_access_key_id',
       placeholder : 'Key ID',
@@ -163,6 +104,12 @@ export class AlertServiceComponent implements OnInit {
       tooltip: 'Enter the AWS Secret Access Key for the AWS account.',
     },
   ];
+  public emailFieldConfig: FieldConfig[] = [{
+    type: 'input',
+    inputType: 'email',
+    name: 'email',
+    placeholder: 'Email Address',
+  }];
   public htpchatFieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -193,6 +140,11 @@ export class AlertServiceComponent implements OnInit {
   public influxdbFieldConfig: FieldConfig[] = [
     {
       type : 'input',
+      name : 'host',
+      placeholder: 'Host',
+      tooltip: 'Enter the InfluxDB host.',
+    }, {
+      type : 'input',
       name : 'username',
       placeholder: 'Username',
       tooltip: 'Enter the username for this service.',
@@ -201,11 +153,6 @@ export class AlertServiceComponent implements OnInit {
       name : 'password',
       placeholder: 'Password',
       tooltip: 'Enter password.',
-    }, {
-      type : 'input',
-      name : 'host',
-      placeholder: 'Host',
-      tooltip: 'Enter the InfluxDB host.',
     }, {
       type : 'input',
       name : 'database',
@@ -221,19 +168,8 @@ export class AlertServiceComponent implements OnInit {
   public mattermostFieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'username',
-      placeholder: 'Username',
-      tooltip: 'Enter the Mattermost username.',
-    }, {
-      type : 'input',
-      inputType: 'password',
-      name : 'password',
-      placeholder: 'Password',
-      tooltip: 'Enter the Mattermost password.',
-    }, {
-      type : 'input',
       name : 'cluster_name',
-      placeholder: 'Cluster name',
+      placeholder: 'Cluster Name',
       tooltip: 'Enter the name of the cluster to join.',
     }, {
       type : 'input',
@@ -246,14 +182,15 @@ export class AlertServiceComponent implements OnInit {
        incoming webhooks.',
     }, {
       type : 'input',
-      name : 'channel',
-      placeholder: 'Channel',
-      tooltip: 'Enter the name of the channel to receive notifications.\
-       This overrides the default channel in the Incoming Webhook settings.\
-       Refer to the <a\
-       href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
-       target="_blank">Mattermost User Guide</a> for more information about\
-       managing channels.',
+      name : 'username',
+      placeholder: 'Username',
+      tooltip: 'Enter the Mattermost username.',
+    }, {
+      type : 'input',
+      inputType: 'password',
+      name : 'password',
+      placeholder: 'Password',
+      tooltip: 'Enter the Mattermost password.',
     }, {
       type : 'input',
       name : 'team',
@@ -262,13 +199,23 @@ export class AlertServiceComponent implements OnInit {
        href="https://docs.mattermost.com/help/getting-started/creating-teams.html"\
        target="_blank">Mattermost User Guide</a> for more information about\
        creating teams.',
+    }, {
+      type : 'input',
+      name : 'channel',
+      placeholder: 'Channel',
+      tooltip: 'Enter the name of the channel to receive notifications.\
+       This overrides the default channel in the Incoming Webhook settings.\
+       Refer to the <a\
+       href="https://docs.mattermost.com/help/getting-started/organizing-conversations.html#managing-channels"\
+       target="_blank">Mattermost User Guide</a> for more information about\
+       managing channels.',
     }
   ];
   public opsgenieFieldConfig: FieldConfig[] = [
     {
       type : 'input',
       name : 'cluster_name',
-      placeholder: 'Cluster name',
+      placeholder: 'Cluster Name',
       tooltip: 'Enter the name of the cluster. To find the\
        <b>cluster_name</b>, sign in to the OpsGenie web interface and\
        navigate <b>Integrations -> Configured Integrations</b>. Click the\
@@ -277,7 +224,7 @@ export class AlertServiceComponent implements OnInit {
     },{
       type : 'input',
       name : 'api_key',
-      placeholder: 'API key',
+      placeholder: 'API Key',
       tooltip: 'Paste the <b>api_key</b> here. To find the API key, sign\
        in to the OpsGenie web interface, and navigate\
        <b>Integrations -> Configured Integrations</b>. Click the desired\
@@ -299,6 +246,48 @@ export class AlertServiceComponent implements OnInit {
       placeholder: 'Client Name',
     }
   ];
+  public slackFieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'cluster_name',
+      placeholder: 'Cluster Name',
+      tooltip: 'Enter the name of the cluster. This is optional and can\
+   be left blank.',
+    }, {
+      type: 'input',
+      name: 'url',
+      placeholder: 'Webhook URL',
+      tooltip: 'Paste the incoming webhook URL associated with this\
+   service. Refer to the <a href="https://api.slack.com/incoming-webhooks"\
+   target="_blank">Slack API documentation</a> for more information about\
+   setting up incoming webhooks.',
+    }, {
+      type: 'input',
+      name: 'channel',
+      placeholder: 'Channel',
+      tooltip: 'Enter a Slack channel for the Incoming WebHook to post\
+   messages to it.',
+    }, {
+      type: 'input',
+      name: 'username',
+      placeholder: 'Username',
+      tooltip: 'Enter the Slack username.',
+    },  {
+      type: 'input',
+      name: 'icon_url',
+      placeholder: 'Icon URL',
+      tooltip: 'URL of a custom image for notification icons. This\
+   overrides the default if set in the Incoming Webhook settings. This\
+   field is optional and can be left blank.',
+    }, {
+      type: 'checkbox',
+      name: 'detailed',
+      placeholder: 'Detailed',
+      tooltip: 'Enable detailed Slack notifications.',
+      value: true,
+    }
+  ];
+  public snmpTrapFieldConfig: FieldConfig[] = [];
   public victoropsFieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -345,7 +334,7 @@ export class AlertServiceComponent implements OnInit {
     this.pagerdutyFormGroup = this.entityFormService.createFormGroup(this.pagerdutyFieldConfig);
     this.victoropsFormGroup = this.entityFormService.createFormGroup(this.victoropsFieldConfig);
 
-    this.activeFormGroup = this.emailFormGroup;
+    this.activeFormGroup = this.awssnsFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
       this.selectedType = res;
       if (res == 'Mail') {
@@ -395,7 +384,6 @@ export class AlertServiceComponent implements OnInit {
   }
 
   onSubmit(event: Event) {
-    console.log(this.formGroup.value, this.activeFormGroup.value);
     let payload = _.cloneDeep(this.formGroup.value);
     let serviceValue = _.cloneDeep(this.activeFormGroup.value);
 
@@ -427,7 +415,6 @@ export class AlertServiceComponent implements OnInit {
   }
 
   sendTestAlet() {
-    console.log('send test alert');
     let testPayload = _.cloneDeep(this.formGroup.value);
     let serviceValue = _.cloneDeep(this.activeFormGroup.value);
 
