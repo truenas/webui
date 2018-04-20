@@ -27,6 +27,7 @@ export class VdevComponent implements OnInit {
   public selected: Array < any > = [];
   public id: number;
   public size;
+  //public temp: Array < any > = [];
 
   public vdev_type_tooltip = T('Choose a <b>Stripe</b>, <b>Mirror</b>, or\
  <b>Raid-Z</b> configuration for the chosen disk layout. See the\
@@ -51,8 +52,17 @@ export class VdevComponent implements OnInit {
   addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
+    // for (let i = 0; i < this.disks.length; i++) {
+    //   if (this.temp.length === 0) {
+    //     this.temp.push(this.disks[i]) 
+    //   } else if (this.disks[i].devname < this.temp[i].devname) {
+    //     this.temp.splice(i, 0, this.disks[i]);
+    //   }  
+    // }
+    //this.disks = this.temp; 
     this.guessVdevType();
     this.estimateSize();
+    //console.log(this.temp);
   }
 
   removeDisk(disk: any) {
