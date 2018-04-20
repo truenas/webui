@@ -261,3 +261,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   text-align:center;
 }
 
+.widget .card-title-text{
+  font-size:20px;
+}
+
