@@ -9,6 +9,7 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatSnackBar } from '@angular/material';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-alertservice',
@@ -369,7 +370,6 @@ export class AlertServiceComponent implements OnInit {
             ['id', '=', this.pk]
           ]
         ]).subscribe((res) => {
-          console.log(res[0]);
           for (const i in this.formGroup.controls) {
             this.formGroup.controls[i].setValue(res[0][i]);
           }
@@ -399,6 +399,7 @@ export class AlertServiceComponent implements OnInit {
         },
         (res) => {
           this.loader.close();
+          new EntityUtils().handleError(this, res);
         });
     } else {
       this.ws.call(this.editCall, [this.pk, payload]).subscribe(
@@ -408,7 +409,7 @@ export class AlertServiceComponent implements OnInit {
         },
         (res) => {
           this.loader.close();
-          console.log(res);
+          new EntityUtils().handleError(this, res);
         });
     }
 
@@ -433,7 +434,7 @@ export class AlertServiceComponent implements OnInit {
       },
       (res) => {
         this.loader.close();
-        console.log(res);
+        new EntityUtils().handleError(this, res);
       });
   }
 
