@@ -185,7 +185,7 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'exec',
       placeholder: T('Exec'),
       tooltip: T('Only available in <b>Advanced Mode</b>;\
- choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
+ choices are <b>Inherit (on)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
         { label: 'ON', value: 'ON' },
         { label: 'OFF', value: 'OFF' }
