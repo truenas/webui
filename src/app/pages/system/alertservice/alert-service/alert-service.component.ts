@@ -31,6 +31,8 @@ export class AlertServiceComponent implements OnInit {
       type: 'input',
       name: 'name',
       placeholder: 'Name',
+      required: true,
+      validation: [Validators.required],
     },
     {
       type: 'checkbox',
