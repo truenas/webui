@@ -8,6 +8,7 @@ import { DialogService } from "../../../services/dialog.service";
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
 import { RestService, UserService, WebSocketService } from '../../../services/';
+import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { T } from '../../../translate-marker';
 import {
   FieldConfig
@@ -21,24 +22,25 @@ import {
 })
 
 export class AdvancedComponent implements OnInit {
-  protected resource_name: string = 'system/advanced';
+  //protected resource_name: string = 'system/advanced';
   public job: any = {};
+  protected queryCall: string = 'system.advanced.config';
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
-    name: 'adv_consolemenu',
+    name: 'consolemenu',
     placeholder: T('Enable Console Menu'),
     tooltip: T('Uncheck this to add a login prompt to the system before\
  the console menu is shown.')
   }, {
     type: 'checkbox',
-    name: 'adv_serialconsole',
+    name: 'serialconsole',
     placeholder: T('Enable Serial Console'),
     tooltip: T('<b>Do not</b> check this box if the <b>serial port</b> is\
  disabled.')
   }, {
     type: 'select',
-    name: 'adv_serialport',
+    name: 'serialport',
     placeholder: T('Serial Port'),
     options: [
       { label: '---', value: null},
@@ -46,17 +48,17 @@ export class AdvancedComponent implements OnInit {
     tooltip: T('Select the serial port address in\
  hex.'),
     relation: [
-      {
-        action : 'DISABLE',
-        when : [{
-          name: 'adv_serialconsole',
-          value: false
-        }]
-      }
-    ]
+    {
+      action : 'DISABLE',
+      when : [{
+        name: 'serialconsole',
+        value: false
+      }]
+    }
+  ]
   }, {
     type: 'select',
-    name: 'adv_serialspeed',
+    name: 'serialspeed',
     placeholder: T('Serial Speed'),
     options: [
         { label: '---', value: null},
@@ -71,14 +73,14 @@ export class AdvancedComponent implements OnInit {
       {
         action : 'DISABLE',
         when : [{
-          name: 'adv_serialconsole',
+          name: 'serialconsole',
           value: false
         }]
       }
     ],
   }, {
     type: 'input',
-    name: 'adv_swapondrive',
+    name: 'swapondrive',
     placeholder: T('Swap size on each drive in GiB, affects new disks\
  only. Setting this to 0 disables swap creation completely (STRONGLY\
  DISCOURAGED).'),
@@ -87,12 +89,12 @@ export class AdvancedComponent implements OnInit {
  created without swap.')
   }, {
     type: 'checkbox',
-    name: 'adv_consolescreensaver',
+    name: 'consolescreensaver',
     placeholder: T('Enable Console Screensaver'),
     tooltip: T('Enable or disable the console screensaver.')
   }, {
     type: 'checkbox',
-    name: 'adv_powerdaemon',
+    name: 'powerdaemon',
     placeholder: T('Enable Power Saving Daemon'),
     tooltip: T('<a\
  href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
@@ -100,7 +102,7 @@ export class AdvancedComponent implements OnInit {
  CPU frequency accordingly.')
   }, {
     type: 'checkbox',
-    name: 'adv_autotune',
+    name: 'autotune',
     placeholder: T('Enable autotune'),
     tooltip: T('Enables the <b>autotune</b> script\
  which attempts to optimize the system depending on the installed\
@@ -110,13 +112,13 @@ export class AdvancedComponent implements OnInit {
  more information.')
   }, {
     type: 'checkbox',
-    name: 'adv_debugkernel',
+    name: 'debugkernel',
     placeholder: T('Enable Debug Kernel'),
     tooltip: T('When checked, the next system boot uses a debug version of\
  the kernel.')
   }, {
     type: 'checkbox',
-    name: 'adv_consolemsg',
+    name: 'consolemsg',
     placeholder: T('Show console messages'),
     tooltip: T('Display console messages in real time\
  at the bottom of the browser. Click the <b>Console</b> to bring up a\
@@ -125,32 +127,32 @@ export class AdvancedComponent implements OnInit {
  messages as they occur.')
   }, {
     type: 'textarea',
-    name: 'adv_motd',
+    name: 'motd',
     placeholder: T('MOTD Banner'),
     tooltip: T('Write a message to be shown when a user logs in with SSH.')
   }, {
     type: 'checkbox',
-    name: 'adv_traceback',
+    name: 'traceback',
     placeholder: T('Show tracebacks in case of fatal error'),
     tooltip: T('Provides a pop-up window of diagnostic information if a\
  fatal error occurs.')
   }, {
     type: 'checkbox',
-    name: 'adv_advancedmode',
+    name: 'advancedmode',
     placeholder: T('Show advanced fields by default'),
     tooltip: T('Many GUI menus provide an\
  <b>Advanced Mode</b> button to access additional features. Enabling\
  this shows these features by default.')
   }, {
     type: 'checkbox',
-    name: 'adv_uploadcrash',
+    name: 'uploadcrash',
     placeholder: T('Enable automatic upload of kernel crash dumps and\
  daily telemetry'),
     tooltip: T('Report kernel crash dumps and daily\
  performance measurements to iXsystems.')
   }, {
     type: 'select',
-    name: 'adv_periodic_notifyuser',
+    name: 'periodic_notifyuser',
     placeholder: T('Periodic Notification User'),
     options: [],
     tooltip: T('Choose a user to receive security output emails. This\
@@ -158,20 +160,20 @@ export class AdvancedComponent implements OnInit {
  encounters an error.')
   }, {
     type: 'input',
-    name: 'adv_graphite',
+    name: 'graphite',
     placeholder: T('Remote Graphite Server Hostname'),
     tooltip: T('Enter the IP address or hostname of a remote server\
  running Graphite.')
   }, {
     type: 'checkbox',
-    name: 'adv_fqdn_syslog',
+    name: 'fqdn_syslog',
     placeholder: T('Use FQDN for logging'),
     tooltip: T('Check to include the\
  Fully-Qualified Domain Name (FQDN) in logs to precisely identify\
  systems with similar hostnames.')
   }, {
     type: 'checkbox',
-    name: 'adv_cpu_in_percentage',
+    name: 'cpu_in_percentage',
     placeholder: T('Report CPU usage in percentage'),
     tooltip: T('Check to display CPU usage as percentages in\
  <b>Reporting</b>.')
@@ -181,6 +183,7 @@ export class AdvancedComponent implements OnInit {
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
+    public adminLayout: AdminLayoutComponent,
     public snackBar: MatSnackBar) {}
 
   openSnackBar(message: string, action: string) {
@@ -191,26 +194,55 @@ export class AdvancedComponent implements OnInit {
 
   ngOnInit() {}
 
+  protected adv_serialconsole: any;
+  protected adv_serialconsole_subscription: any;
   public adv_serialport: any;
+  public adv_serialspeed: any;
   public adv_periodic_notifyuser: any;
 
   afterInit(entityEdit: any) {
+    this.adv_serialport =
+    _.find(this.fieldConfig, { 'name': 'serialport' });
+    this.adv_serialspeed =
+    _.find(this.fieldConfig, { 'name': 'serialspeed' });
+    this.adv_serialconsole =
+    entityEdit.formGroup.controls['serialconsole'];
+    this.adv_serialspeed.isHidden = !this.adv_serialconsole.value;
+    this.adv_serialport.isHidden = !this.adv_serialconsole.value;
+    this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
+      this.adv_serialspeed.isHidden = !value;
+      this.adv_serialport.isHidden = !value;
+    });
     entityEdit.ws.call('device.get_info', ['SERIAL']).subscribe((res) => {
-      let adv_serialport =
-        _.find(this.fieldConfig, { 'name': 'adv_serialport' });
       res.forEach((item) => {
-        adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
+        this.adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
       });
     });
 
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
       let adv_periodic_notifyuser =
-        _.find(this.fieldConfig, { 'name': 'adv_periodic_notifyuser' });
+        _.find(this.fieldConfig, { 'name': 'periodic_notifyuser' });
       res.data.forEach((item) => {
         adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
       });
     });
   }
+
+  public customSubmit(body) {
+    this.load.open();
+
+
+    return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
+      this.load.close();
+      this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+      this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
+      
+    }, (res) => {
+      this.load.close();
+      this.dialog.errorReport(T("Error saving"), res.reason, res.trace.formatted);
+    });
+  }
+
   public custActions: Array < any > = [{
       id: 'save_debug',
       name: 'Save Debug',
