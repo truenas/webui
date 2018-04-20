@@ -34,6 +34,10 @@
       <ng-container *ngFor="let htpchatField of htpchatFieldConfig;" dynamicField [config]="htpchatField" [group]="htpchatFormGroup">
       </ng-container>
     </div>
+    <div *ngIf="selectedType == 'PagerDuty'">
+      <ng-container *ngFor="let pagerdutyField of pagerdutyFieldConfig;" dynamicField [config]="pagerdutyField" [group]="pagerdutyFormGroup">
+      </ng-container>
+    </div>
     <mat-card-actions class="buttons">
       <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
       <button *ngIf="route_success" type="button" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>

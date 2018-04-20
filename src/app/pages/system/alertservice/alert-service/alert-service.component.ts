@@ -63,6 +63,9 @@ export class AlertServiceComponent implements OnInit {
         label: 'OpsGenie',
         value: 'OpsGenie',
       }, {
+        label: 'PagerDuty',
+        value: 'PagerDuty',
+      }, {
         label: 'Slack',
         value: 'Slack',
       }, {
@@ -282,7 +285,17 @@ export class AlertServiceComponent implements OnInit {
        API integration.',
     }
   ];
-  // public pagerdutyFieldConfig: FieldConfig[] = [];
+  public pagerdutyFieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'service_key',
+      placeholder: 'Service Key',
+    }, {
+      type: 'input',
+      name: 'client_name',
+      placeholder: 'Client Name',
+    }
+  ];
   // public victoropsFieldConfig: FieldConfig[] = [];
 
   public formGroup: any;
@@ -295,6 +308,7 @@ export class AlertServiceComponent implements OnInit {
   public mattermostFormGroup: any;
   public opsgenieFormGroup: any;
   public htpchatFormGroup: any;
+  public pagerdutyFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -315,6 +329,7 @@ export class AlertServiceComponent implements OnInit {
     this.mattermostFormGroup = this.entityFormService.createFormGroup(this.mattermostFieldConfig);
     this.opsgenieFormGroup = this.entityFormService.createFormGroup(this.opsgenieFieldConfig);
     this.htpchatFormGroup = this.entityFormService.createFormGroup(this.htpchatFieldConfig);
+    this.pagerdutyFormGroup = this.entityFormService.createFormGroup(this.pagerdutyFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -335,6 +350,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.opsgenieFormGroup;
       } else if (res == 'HtpChat') {
         this.activeFormGroup = this.htpchatFormGroup;
+      } else if (res == 'PagerDuty') {
+        this.activeFormGroup = this.pagerdutyFormGroup;
       }
     });
 
