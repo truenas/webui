@@ -71,6 +71,9 @@ export class AlertServiceComponent implements OnInit {
       }, {
         label: 'SNMP Trap',
         value: 'SNMPTrap',
+      }, {
+        label: 'VictorOps',
+        value: 'VictorOps',
       }],
       value: 'Mail',
     },
@@ -296,7 +299,16 @@ export class AlertServiceComponent implements OnInit {
       placeholder: 'Client Name',
     }
   ];
-  // public victoropsFieldConfig: FieldConfig[] = [];
+  public victoropsFieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'api_key',
+      placeholder: 'API Key',
+    }, {
+      type: 'input',
+      name: 'routing_key',
+      placeholder: 'Routing Key',
+    }];
 
   public formGroup: any;
   public activeFormGroup: any;
@@ -309,6 +321,7 @@ export class AlertServiceComponent implements OnInit {
   public opsgenieFormGroup: any;
   public htpchatFormGroup: any;
   public pagerdutyFormGroup: any;
+  public victoropsFormGroup: any;
 
   constructor(protected router: Router,
     protected route: ActivatedRoute,
@@ -330,6 +343,7 @@ export class AlertServiceComponent implements OnInit {
     this.opsgenieFormGroup = this.entityFormService.createFormGroup(this.opsgenieFieldConfig);
     this.htpchatFormGroup = this.entityFormService.createFormGroup(this.htpchatFieldConfig);
     this.pagerdutyFormGroup = this.entityFormService.createFormGroup(this.pagerdutyFieldConfig);
+    this.victoropsFormGroup = this.entityFormService.createFormGroup(this.victoropsFieldConfig);
 
     this.activeFormGroup = this.emailFormGroup;
     this.formGroup.controls['type'].valueChanges.subscribe((res) => {
@@ -352,6 +366,8 @@ export class AlertServiceComponent implements OnInit {
         this.activeFormGroup = this.htpchatFormGroup;
       } else if (res == 'PagerDuty') {
         this.activeFormGroup = this.pagerdutyFormGroup;
+      } else if (res == 'VictorOps') {
+        this.activeFormGroup = this.victoropsFormGroup;
       }
     });
 
