@@ -235,7 +235,7 @@ export class VolumesListTableConfig implements InputTableConf {
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
       actions.push({
-        label: T("Detach/Delete"),
+        label: T("Detach"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "detachvolume", row1.id]));
