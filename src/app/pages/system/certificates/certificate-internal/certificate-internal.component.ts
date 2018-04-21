@@ -45,7 +45,9 @@ export class CertificateInternalComponent {
        or created using <a href="https://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.'),
       options : [
         {label: '---', value: null}
-      ]
+      ],
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -67,6 +69,9 @@ export class CertificateInternalComponent {
         {label : '2048', value : 2048},
         {label : '4096', value : 4096},
       ],
+      value: 2048,
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'select',
@@ -81,6 +86,9 @@ export class CertificateInternalComponent {
         {label : 'SHA384', value : 'SHA384'},
         {label : 'SHA512', value : 'SHA512'},
       ],
+      value: 'SHA256',
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -89,6 +97,8 @@ export class CertificateInternalComponent {
       tooltip: T('The lifetime of the certificate is\
        specified in days.'),
       inputType: 'number',
+      required: true,
+      value: 3650,
       validation: [Validators.required, Validators.min(0)]
     },
     {
@@ -97,6 +107,8 @@ export class CertificateInternalComponent {
       placeholder : T('Country'),
       tooltip: T('Select the country for the organization.'),
       options : [],
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -104,6 +116,8 @@ export class CertificateInternalComponent {
       placeholder : T('State'),
       tooltip: T('Enter the State or Province name\
        (for example, California).'),
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -111,6 +125,8 @@ export class CertificateInternalComponent {
       placeholder : T('Locality'),
       tooltip: T('Enter the location of the organization\
        (for example, city or town).'),
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -118,6 +134,8 @@ export class CertificateInternalComponent {
       placeholder : 'Organization',
       tooltip: 'Enter the name of the organization\
  (for example, company name).',
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -125,7 +143,8 @@ export class CertificateInternalComponent {
       placeholder : 'Email',
       tooltip:'Enter the email address of\
  the person responsible for the CA.',
-      validation : [ Validators.email ]
+      required: true,
+      validation : [ Validators.email, Validators.required ]
     },
     {
       type : 'input',
@@ -134,6 +153,8 @@ export class CertificateInternalComponent {
       tooltip: T('Enter the fully-qualified hostname (FQDN) of the\
        system. This name **must** be unique within a certificate\
        chain.'),
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'textarea',
