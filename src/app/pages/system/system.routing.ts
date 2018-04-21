@@ -28,7 +28,6 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -225,11 +224,6 @@ export const routes: Routes = [
           path: 'b2/:pk',
           component: CloudCredentialsB2Component,
           data: { title: 'Edit B2', breadcrumb: 'Edit B2' },
-        },
-        {
-          path: ':pk/delete',
-          component: CloudCredentialsDeleteComponent,
-          data: { title: 'Delete', breadcrumb: 'Delete' },
         },
       ]
     },
