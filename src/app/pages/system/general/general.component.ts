@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { RestService, UserService, WebSocketService, LanguageService } from '../../../services/';
+import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -162,6 +162,7 @@ export class GeneralComponent {
     name: T('Reset Config'),
     function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
   }];
+  private stg_guiprotocol: any;
   private stg_guiaddress: any;
   private stg_guiv6address: any;
   private stg_guicertificate: any;
@@ -171,7 +172,16 @@ export class GeneralComponent {
   private stg_sysloglevel: any;
   private stg_syslogserver: any;
 
-  constructor(protected rest: RestService, protected router: Router, protected language: LanguageService) {}
+  private protocol: any;
+
+  constructor(protected rest: RestService, protected router: Router, 
+    protected language: LanguageService, protected ws: WebSocketService,
+    protected dialog: DialogService) {}
+
+  resourceTransformIncomingRestData(value) {
+    this.protocol = value['stg_guiprotocol'];
+    return value;
+  }
 
   afterInit(entityEdit: any) {
     entityEdit.ws.call('certificate.query', [
@@ -241,7 +251,29 @@ export class GeneralComponent {
       });
   }
 
-  beforeSubmit(value) {
+  afterSubmit(value) {
+    let newprotocol = value.stg_guiprotocol;
+    if (this.protocol !== newprotocol) {
+      this.dialog.confirm(T("Restart Web Service"), T("In order for the protocol \
+      changes to take effect the web service will need to be restarted, you will \
+      temporarily lose connection to the UI.  Do you wish to restart the service?"))
+        .subscribe((res)=> {
+          if (res) {
+            let href = window.location.href;
+            this.ws.call("service.restart", ["http"]).subscribe((res)=> {
+              if (res) {
+                if (this.protocol === 'http' && newprotocol === 'https') {
+                  window.location.replace(href.replace(/^http\:/,"https:"));
+                } else if (this.protocol === 'https' && newprotocol === 'http') {
+                  window.location.replace(href.replace(/^https\:/,"http:"));
+                } else {
+          
+                }
+              }
+            });
+          }
+        });
+    }
     this.language.setLang(value.stg_language);
   }
 }
