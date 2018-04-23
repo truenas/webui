@@ -19,6 +19,10 @@ import {  DialogService } from '../../../../services/';
 import {Validators} from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 
+interface Navigator {
+  credentials: any;
+}
+
 @Component({
   selector : 'app-user-form',
   template : `<entity-form [conf]="this"></entity-form>`
