@@ -274,7 +274,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             }
           } else {
             this.queryResponse = res;
-            this.wsResponse = res[0];
+            if (res[0]) {
+              this.wsResponse = res[0];
+            } else {
+              this.wsResponse = res;
+            }
 
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
@@ -433,9 +437,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                             this.success = true;
                           }
 
-                          if (this.conf.resource_name === "system/advanced") {                            
-                            this.adminLayout.onShowConsoleFooterBar(value['adv_consolemsg']);
-                          }                          
                         },
                         (res) => {
                           this.loader.close();
