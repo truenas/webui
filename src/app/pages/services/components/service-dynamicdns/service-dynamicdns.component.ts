@@ -24,90 +24,112 @@ import { T } from '../../../../translate-marker';
 })
 
 export class ServiceDDNSComponent {
-  protected resource_name: string = 'services/dynamicdns';
+  // protected resource_name = 'services/dynamicdns';
+  protected addCall = 'dyndns.update';
   protected route_success: string[] = [ 'services' ];
 
   public fieldConfig: FieldConfig[] = [
     {
       type : 'select',
-      name : 'ddns_provider',
+      name : 'provider',
       placeholder : T('Provider'),
       tooltip: T('Several providers are supported. If your provider is\
        not listed, select <i>Custom Provider</i> and enter the information in\
        the <i>Custom Server</i> and <i>Custom Path</i> fields.'),
       options : [
-        {label : 'dyndns.org', value : 'dyndns@dyndns.org'},
-        {label : 'freedns.afraid.org', value : 'default@freedns.afraid.org'},
-        {label : 'zoneedit.com', value : 'default@zoneedit.com'},
-        {label : 'no-ip.com', value : 'default@no-ip.com'},
-        {label : 'easydns.com', value : 'default@easydns.com'},
-        {label : '3322.org', value : 'dyndns@3322.org'},
-        {label : 'sitelutions.com', value : 'default@sitelutions.com'},
-        {label : 'dnsomatic.com', value : 'default@dnsomatic.com'},
-        {label : 'he.net', value : 'default@he.net'},
-        {label : 'tzo.com', value : 'default@tzo.com'},
-        {label : 'dynsip.org', value : 'default@dynsip.org'},
-        {label : 'dhis.org', value : 'default@dhis.org'},
-        {label : 'majimoto.net', value : 'default@majimoto.net'},
-        {label : 'zerigo', value : 'default@zerigo.com'},
+        {label :'dyndns@3322.org',  value :'3322.org'},
+        {label :'default@changeip.com',  value :'changeip.com'},
+        {label :'default@cloudxns.net',  value :'cloudxns.net'},
+        {label :'default@ddnss.de',  value :'ddnss.de'},
+        {label :'default@dhis.org',  value :'dhis.org'},
+        {label :'default@dnsexit.com',  value :'dnsexit.com'},
+        {label :'default@dnsomatic.com',  value :'dnsomatic.com'},
+        {label :'default@dnspod.cn',  value :'dnspod.cn'},
+        {label :'default@domains.google.com',  value :'domains.google.com'},
+        {label :'default@dtdns.com',  value :'dtdns.com'},
+        {label :'default@duckdns.org',  value :'duckdns.org'},
+        {label :'default@duiadns.net',  value :'duiadns.net'},
+        {label :'default@dyndns.org',  value :'dyndns.org'},
+        {label :'default@dynsip.org',  value :'dynsip.org'},
+        {label :'default@dynv6.com',  value :'dynv6.com'},
+        {label :'default@easydns.com',  value :'easydns.com'},
+        {label :'default@freedns.afraid.org',  value :'freedns.afraid.org'},
+        {label :'default@freemyip.com',  value :'freemyip.com'},
+        {label :'default@gira.de',  value :'gira.de'},
+        {label :'ipv6tb@he.net',  value :'he.net'},
+        {label :'default@ipv4.dynv6.com',  value :'ipv4.dynv6.com'},
+        {label :'default@loopia.com',  value :'loopia.com'},
+        {label :'default@no-ip.com',  value :'no-ip.com'},
+        {label :'ipv4@nsupdate.info',  value :'nsupdate.info'},
+        {label :'default@ovh.com',  value :'ovh.com'},
+        {label :'default@sitelutions.com',  value :'sitelutions.com'},
+        {label :'default@spdyn.de',  value :'spdyn.de'},
+        {label :'default@strato.com',  value :'strato.com'},
+        {label :'default@tunnelbroker.net', value : 'tunnelbroker.net'},
+        {label :'default@tzo.com',  value :'tzo.com'},
+        {label :'default@zerigo.com', value : 'zerigo.com'},
+        {label :'default@zoneedit.com', value : 'zoneedit.com'},
+        {label :'custom', value : 'Custom Provider'},
       ]
     },
     {
+      type : 'checkbox',
+      name : 'checkip_ssl',
+      placeholder : T('CheckIP Server SSL'),
+      tooltip: T(''),
+    },
+    {
       type : 'input',
-      name : 'ddns_ipserver',
-      placeholder : T('IP Server'),
+      name : 'checkip_server',
+      placeholder : T('CheckIP Server'),
       tooltip: T('Enter the name and port of the server that reports the\
        external IP address in the format <i>server.name.org:port</i>.'),
     },
     {
       type : 'input',
-      name : 'ddns_domain',
+      name : 'checkip_path',
+      placeholder : T('CheckIP Path'),
+      tooltip: T(''),
+    },
+    {
+      type : 'checkbox',
+      name : '  ssl',
+      placeholder : T('CheckIP Server SSL'),
+      tooltip: T(''),
+    },
+    {
+      type : 'input',
+      name : 'domain',
       placeholder : T('Domain name'),
-      tooltip: T('Fully qualified domain name (e.g.\
-       <i>yourname.dyndns.org</i>).'),
+      tooltip: T(''),
     },
     {
       type : 'input',
-      name : 'ddns_username',
-      placeholder : T('User name'),
-      tooltip: T('Username used to logon to the provider and update the\
-       record.'),
+      name : 'username',
+      placeholder : T('Username'),
+      tooltip: T(''),
     },
     {
       type : 'input',
-      name : 'ddns_password',
+      name : 'password',
       placeholder : T('Password'),
       tooltip: T('Password used to logon to the provider and update the\
        record.'),
       inputType : 'password',
       validation :
-          [ Validators.minLength(8), matchOtherValidator('ddns_password2') ]
+          [ Validators.minLength(8), matchOtherValidator('password2') ]
     },
     {
       type : 'input',
-      name : 'ddns_password2',
+      name : 'password2',
       placeholder : T('Confirm Password'),
       inputType : 'password',
     },
     {
       type : 'input',
-      name : 'ddns_updateperiod',
+      name : 'period',
       placeholder : T('Update Period'),
       tooltip: T('How often the IP is checked in seconds.'),
-    },
-    {
-      type : 'input',
-      name : 'ddns_fupdateperiod',
-      placeholder : T('Forced Update Period'),
-      tooltip : T('Not recommended. Enter an interval in seconds for the\
-       system to force IP updates.'),
-    },
-    {
-      type : 'input',
-      name : 'lldp_location',
-      placeholder : T('Auxiliary Parameters'),
-      tooltip : T('Enter any additional parameters to pass to the provider\
-       during a record update.'),
     },
   ];
 
@@ -116,5 +138,11 @@ export class ServiceDDNSComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityForm: any) { }
+
+  submitFunction(this: any, entityForm: any,){
+
+    return this.ws.call('dyndns.update', [entityForm]);
+
+  }
 }
