@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
@@ -26,7 +26,7 @@ import { T } from '../../../../translate-marker';
 })
 export class CloudCredentialsB2Component {
 
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected addCall = 'backup.credential.create';
   protected queryCall = 'backup.credential.query';
   protected route_success: string[] = ['system', 'cloudcredentials'];
@@ -56,12 +56,16 @@ export class CloudCredentialsB2Component {
     tooltip : T('Paste the account access key. For more information refer\
      to the <a href="https://www.backblaze.com/help.html" target="_blank">\
      BACKBLAZE help</a> page.'),
+     required: true,
+     validation : [ Validators.required ]
   },
   {
     type : 'textarea',
     name : 'secretkey',
     placeholder : T('Secret Key'),
     tooltip : T('Enter the secret key generated.'),
+    required: true,
+    validation : [ Validators.required ]
   },
 ];
 
@@ -79,7 +83,7 @@ export class CloudCredentialsB2Component {
     this.route.params.subscribe(params => {
       this.queryPayload.push("id")
       this.queryPayload.push("=")
-      this.queryPayload.push(parseInt(params['pk']));
+      this.queryPayload.push(parseInt(params['pk'],0));
       this.pk = [this.queryPayload];
     });
   }
@@ -119,7 +123,7 @@ export class CloudCredentialsB2Component {
   dataAttributeHandler(entityForm: any){
     const formvalue = _.cloneDeep(entityForm.formGroup.value);
     if (typeof entityForm.wsResponseIdx === "object"){
-      for (let flds in entityForm.wsResponseIdx){
+      for (const flds in entityForm.wsResponseIdx){
         if (flds === 'accesskey'){
           entityForm.formGroup.controls['accesskey'].setValue(entityForm.wsResponseIdx.accesskey);
         } else if (flds === 'secretkey'){
