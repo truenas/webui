@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
@@ -26,7 +26,7 @@ import { T } from '../../../../translate-marker';
 })
 export class CloudCredentialsAzureComponent {
 
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected addCall = 'backup.credential.create';
   protected queryCall = 'backup.credential.query';
   public formGroup: FormGroup;
@@ -54,6 +54,8 @@ export class CloudCredentialsAzureComponent {
     name : 'account_name',
     placeholder : T('Account Name'),
     tooltip : T('Enter the Azure Storage account name.'),
+    required: true,
+    validation : [ Validators.required ]
   },
   {
     type : 'textarea',
@@ -62,6 +64,8 @@ export class CloudCredentialsAzureComponent {
     tooltip : T('Paste the Azure Storage account key. Refer to the\
      <a href="https://docs.microsoft.com/en-us/azure/storage/"\
      target="_blank">Azure Storage Documentation</a> for more information.'),
+     required: true,
+     validation : [ Validators.required ]
   },
 ];
 
@@ -79,7 +83,7 @@ export class CloudCredentialsAzureComponent {
     this.route.params.subscribe(params => {
       this.queryPayload.push("id")
       this.queryPayload.push("=")
-      this.queryPayload.push(parseInt(params['pk']));
+      this.queryPayload.push(parseInt(params['pk'],0));
       this.pk = [this.queryPayload];
     });
   }
@@ -119,7 +123,7 @@ export class CloudCredentialsAzureComponent {
   dataAttributeHandler(entityForm: any){
     const formvalue = _.cloneDeep(entityForm.formGroup.value);
     if (typeof entityForm.wsResponseIdx === "object"){
-      for (let flds in entityForm.wsResponseIdx){
+      for (const flds in entityForm.wsResponseIdx){
         if (flds === 'account_key'){
           entityForm.formGroup.controls['account_key'].setValue(entityForm.wsResponseIdx.account_key);
         } else if (flds === 'account_name'){
