@@ -51,6 +51,7 @@ export class VdevComponent implements OnInit {
     this.disks.push(disk);
     this.disks = [...this.disks];
     
+    // Sort disks by name as they are added to VDevs
     function compare(a, b) {
       let comparison;
       if (a.devname > b.devname) {
@@ -149,16 +150,5 @@ export class VdevComponent implements OnInit {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);
-
-    function compare(a, b) {
-      let comparison;
-      if (a.devname > b.devname) {
-        comparison = 1;
-      } else if (a.name < b.name) {
-        comparison = -1;
-      }
-      return comparison;
-    }
-    this.manager = this.manager.sort(compare); 
   }
 }
