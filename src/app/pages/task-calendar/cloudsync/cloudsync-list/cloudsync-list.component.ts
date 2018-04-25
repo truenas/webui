@@ -17,7 +17,7 @@ export class CloudsyncListComponent {
   protected route_add: string[] = ['tasks', 'cloudsync', 'add'];
   protected route_add_tooltip = "Add Cloud Sync Task";
   protected route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  protected route_delete: string[] = ['tasks', 'cloudsync', 'delete'];
+  protected wsDelete = "backup.delete";
   protected entityList: any;
 
   public columns: Array < any > = [
@@ -36,28 +36,6 @@ export class CloudsyncListComponent {
     sorting: { columns: this.columns },
   };
 
-  protected month_choice: any;
   constructor(protected router: Router, protected ws: WebSocketService, protected taskService: TaskService) {
-    this.ws.call('backup.query',{}).subscribe( res => {
-    })
-  }
-
-  getActions(row) {
-    let actions = [];
-    if (!row.type) {
-      actions.push({
-        label : "Edit",
-        onClick : (row) => {
-          this.router.navigate(new Array('/').concat(['tasks', 'cloudsync', 'edit', row.id]));}
-      });
-    }
-    if (!row.type) {
-      actions.push({
-        label : "Delete",
-        onClick : (row) => {
-          this.router.navigate(new Array('/').concat(["tasks", "cloudsync", "delete", row.id]));}
-      });
-    }
-    return actions;
   }
 }
