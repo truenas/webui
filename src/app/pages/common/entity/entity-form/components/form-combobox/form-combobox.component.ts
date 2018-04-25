@@ -18,11 +18,7 @@ export class FormComboboxComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  onChangeOption($event) {
-    if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
-      this.config.onChangeOption({ event: $event });
-    } else {
-      this.group.controls[this.config.name].setValue($event.value);
-    }
+  onChangeOption(value) {
+    this.group.controls[this.config.name].setValue(value);
   }
 }

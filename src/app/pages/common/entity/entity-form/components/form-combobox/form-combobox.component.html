@@ -1,22 +1,27 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-   <mat-input-container *ngIf="config.inputType != 'file' else elseBlock" class="full-width">
-    <input matInput [type]="config.inputType ? config.inputType : 'text'"
-      list="options"
-			[placeholder]="config.placeholder | translate"
-			[attr.value]="config.value"
-			[formControlName]="config.name"
-			[readonly]="config.readonly"
-			[required]="config.required"
-			[max]="config.max"
-      [min]="config.min">
+  <div>
+    <mat-input-container *ngIf="config.inputType != 'file' else elseBlock">
+      <input matInput [type]="config.inputType ? config.inputType : 'text'"
+        list="options"
+		  	[placeholder]="config.placeholder | translate"
+		  	[attr.value]="config.value"
+		  	[formControlName]="config.name"
+		  	[readonly]="config.readonly"
+		  	[required]="config.required"
+		  	[max]="config.max"
+        [min]="config.min">
     </mat-input-container>
-    <mat-form-field class="full-width">
-    <mat-select [multiple]="config.multiple" (change)="onChangeOption($event)">
-      <mat-option *ngFor="let option of config.options" [value]="option.value">
-        {{ option.label }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+    <mat-button mat-icon-button id="{{config.name}}-select" type="button" [matMenuTriggerFor]="options">
+      <mat-icon>arrow_drop_down</mat-icon>
+    </mat-button>
+    <mat-menu #options>
+      <ng-container *ngFor="let option of config.options">
+        <button mat-menu-item (click)="onChangeOption(option.value)">
+          <span>{{ option.label }}</span>
+        </button>
+      </ng-container>
+    </mat-menu>
+    <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+  </div>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>
