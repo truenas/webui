@@ -134,6 +134,8 @@ export class EmailComponent implements OnDestroy {
           } ]
         },
       ],
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
@@ -151,6 +153,7 @@ export class EmailComponent implements OnDestroy {
           } ]
         },
       ],
+      required: true,
       validation : [ matchOtherValidator('em_pass2'), Validators.required ]
     },
     {
@@ -168,6 +171,7 @@ export class EmailComponent implements OnDestroy {
           } ]
         },
       ],
+      required: true,
       validation : [ Validators.required ]
     },
   ];
