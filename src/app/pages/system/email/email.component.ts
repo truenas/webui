@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -26,7 +26,7 @@ import { T } from '../../../translate-marker';
   <entity-form [conf]="this"></entity-form>
   `
 })
-export class EmailComponent {
+export class EmailComponent implements OnDestroy {
 
   protected resource_name = 'system/email';
   public entityEdit: any;
@@ -173,6 +173,12 @@ export class EmailComponent {
   ];
   protected dialogRef: any;
 
+  private em_smtp;
+  private em_smtp_subscription;
+  private em_user;
+  private em_pass1;
+  private em_pass2;
+
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef,private dialogservice: DialogService,
@@ -187,7 +193,21 @@ afterInit(entityEdit: any) {
     payload.push("root");
     this.ws.call('user.query', [[payload]]).subscribe((res)=>{
       this.rootEmail = res[0].email;
-    })
+    });
+    this.em_user = _.find(this.fieldConfig, {'name': 'em_user'});
+    this.em_pass1 = _.find(this.fieldConfig, {'name': 'em_pass1'});
+    this.em_pass2 = _.find(this.fieldConfig, {'name': 'em_pass2'});
+
+    this.em_smtp = entityEdit.formGroup.controls['em_smtp'];
+    this.em_user.isHidden = !this.em_smtp.value;
+    this.em_pass1.isHidden = !this.em_smtp.value;
+    this.em_pass2.isHidden = !this.em_smtp.value;
+
+    this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
+      this.em_user.isHidden = !value;
+      this.em_pass1.isHidden = !value;
+      this.em_pass2.isHidden = !value;
+    });
    
   }
   sendMail(): void {
@@ -227,6 +247,10 @@ afterInit(entityEdit: any) {
     else{
       this.dialogservice.Info("email", "please setup root user email address");
     }
+  }
+
+  ngOnDestroy() {
+    this.em_smtp_subscription.unsubscribe();
   }
 
 }
