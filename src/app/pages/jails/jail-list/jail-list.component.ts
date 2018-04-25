@@ -39,6 +39,7 @@ export class JailListComponent implements OnInit {
   public multiActions: Array < any > = [{
       id: "mstart",
       label: "Start",
+      icon: "play_arrow",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -61,6 +62,7 @@ export class JailListComponent implements OnInit {
     {
       id: "mstop",
       label: "Stop",
+      icon: "stop",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -83,6 +85,7 @@ export class JailListComponent implements OnInit {
     {
       id: "mupdate",
       label: "Update",
+      icon: "update",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -101,6 +104,7 @@ export class JailListComponent implements OnInit {
     {
       id: "mdelete",
       label: "Delete",
+      icon: "delete",
       enable: true,
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);

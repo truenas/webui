@@ -22,6 +22,7 @@
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
         <span *ngFor="let maction of conf.multiActions">
           <button mat-raised-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+            <mat-icon id="{{ maction?.id }}">{{ maction?.icon }}</mat-icon>
             <span>{{ maction?.label | translate }}</span>
           </button>
         </span>

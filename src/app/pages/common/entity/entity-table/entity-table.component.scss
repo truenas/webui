@@ -1,3 +1,5 @@
+// @import "../../../../../assets/styles/themes/ix-blue.scss";
+
 .padding_all {
     padding: 20px;
 }
@@ -27,4 +29,16 @@
 
 .multiActionsButton {
 	height: 40px;
+}
+#mstop, #mdelete, #state_down {
+    color: red;
+}
+#mstart, #state_up {
+    color: green;
+}
+#state_up::before {
+    content: '+ '
+}
+#state_down::before {
+    content: '- ';
 }
