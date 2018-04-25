@@ -27,8 +27,6 @@ export class VdevComponent implements OnInit {
   public selected: Array < any > = [];
   public id: number;
   public size;
-  //public temp: Array < any > = [];
-
   public vdev_type_tooltip = T('Choose a <b>Stripe</b>, <b>Mirror</b>, or\
  <b>Raid-Z</b> configuration for the chosen disk layout. See the\
  <b>Storage/Volumes</b> section of the <a href="guide">Guide</a> for\
@@ -52,17 +50,20 @@ export class VdevComponent implements OnInit {
   addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
-    // for (let i = 0; i < this.disks.length; i++) {
-    //   if (this.temp.length === 0) {
-    //     this.temp.push(this.disks[i]) 
-    //   } else if (this.disks[i].devname < this.temp[i].devname) {
-    //     this.temp.splice(i, 0, this.disks[i]);
-    //   }  
-    // }
-    //this.disks = this.temp; 
+    
+    function compare(a, b) {
+      let comparison;
+      if (a.devname > b.devname) {
+        comparison = 1;
+      } else if (a.name < b.name) {
+        comparison = -1;
+      }
+      return comparison;
+    }
+    this.disks = this.disks.sort(compare); 
+
     this.guessVdevType();
     this.estimateSize();
-    //console.log(this.temp);
   }
 
   removeDisk(disk: any) {
@@ -148,5 +149,16 @@ export class VdevComponent implements OnInit {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);
+
+    function compare(a, b) {
+      let comparison;
+      if (a.devname > b.devname) {
+        comparison = 1;
+      } else if (a.name < b.name) {
+        comparison = -1;
+      }
+      return comparison;
+    }
+    this.manager = this.manager.sort(compare); 
   }
 }
