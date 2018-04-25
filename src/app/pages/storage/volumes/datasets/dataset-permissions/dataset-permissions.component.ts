@@ -144,9 +144,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     this.userService.listAllGroups().subscribe(res => {
       let groups = [];
       let items = res.data.items;
-      console.log(items);
       for (let i = 0; i < items.length; i++) {
-        console.log(items[i]);
         groups.push({label: items[i].label, value: items[i].id});
       }
       this.mp_group = _.find(this.fieldConfig, {'name' : 'mp_group'});
@@ -159,8 +157,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.storageService.filesystemStat(this.path).subscribe(res => {
       entityEdit.formGroup.controls['mp_mode'].setValue(res.mode.toString(8).substring(2,5));
-      entityEdit.formGroup.controls['mp_user'].setValue(res.uid);
-      entityEdit.formGroup.controls['mp_group'].setValue(res.gid);
+      entityEdit.formGroup.controls['mp_user'].setValue(res.user);
+      entityEdit.formGroup.controls['mp_group'].setValue(res.group);
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
