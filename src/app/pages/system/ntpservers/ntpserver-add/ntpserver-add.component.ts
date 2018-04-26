@@ -64,7 +64,7 @@ export class NTPServerAddComponent {
       name : 'ntp_minpoll',
       placeholder : T('Min. Poll'),
       tooltip: T('Power of 2 in seconds; cannot be lower than 4 or\
-       higher than <i>Max. Poll</i>'),
+       higher than <i>Max. Poll</i>.'),
       value : 6
     },
     {
