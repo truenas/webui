@@ -50,7 +50,7 @@ $ ./setup_env.js -i <ip address>
 To start run
 ```npm start```
 
-This runs a local webserver with the newe WebUI, by default at http://localhost:4200.
+This runs a local webserver with the new WebUI, by default at http://localhost:4200.
 If this webserver is kept running, changes to the project will be rebuilt incrementally.
 
 To test AOT in dev mode run

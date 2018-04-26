@@ -1,0 +1,51 @@
+<mat-card>
+  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm">
+    <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup">
+    </ng-container>
+    <div *ngIf="selectedType == 'Mail'">
+      <ng-container *ngFor="let emailField of emailFieldConfig;" dynamicField [config]="emailField" [group]="emailFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'SNMPTrap'">
+      <ng-container *ngFor="let snmpTrapField of snmpTrapFieldConfig;" dynamicField [config]="snmpTrapField" [group]="snmpTrapFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'Slack'">
+      <ng-container *ngFor="let slackField of slackFieldConfig;" dynamicField [config]="slackField" [group]="slackFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'AWSSNS'">
+      <ng-container *ngFor="let awssnsField of awssnsFieldConfig;" dynamicField [config]="awssnsField" [group]="awssnsFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'InfluxDB'">
+      <ng-container *ngFor="let influxdbField of influxdbFieldConfig;" dynamicField [config]="influxdbField" [group]="influxdbFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'Mattermost'">
+      <ng-container *ngFor="let mattermostField of mattermostFieldConfig;" dynamicField [config]="mattermostField" [group]="mattermostFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'OpsGenie'">
+      <ng-container *ngFor="let opsgenieField of opsgenieFieldConfig;" dynamicField [config]="opsgenieField" [group]="opsgenieFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'HtpChat'">
+      <ng-container *ngFor="let htpchatField of htpchatFieldConfig;" dynamicField [config]="htpchatField" [group]="htpchatFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'PagerDuty'">
+      <ng-container *ngFor="let pagerdutyField of pagerdutyFieldConfig;" dynamicField [config]="pagerdutyField" [group]="pagerdutyFormGroup">
+      </ng-container>
+    </div>
+    <div *ngIf="selectedType == 'VictorOps'">
+      <ng-container *ngFor="let victoropsField of victoropsFieldConfig;" dynamicField [config]="victoropsField" [group]="victoropsFormGroup">
+      </ng-container>
+    </div>
+    <mat-card-actions class="buttons">
+      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
+      <button *ngIf="route_success" type="button" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
+      <button type="button" (click)="sendTestAlet()" mat-raised-button [disabled]="!entityForm.form.valid">{{"Send Test Alert" | translate}}</button>
+    </mat-card-actions>
+  </form>
+</mat-card>

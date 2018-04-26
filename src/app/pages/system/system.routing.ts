@@ -28,7 +28,6 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -40,23 +39,8 @@ import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
-import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
-import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
-import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/alertservice-add-hipchat/alertservice-add-hipchat.component';
-import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
-import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
-import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
-import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
-import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
-import { AlertServiceEditVictoropsComponent } from 'app/pages/system/alertservice/alertservice-edit-victorops';
-import { AlertServiceAddVictoropsComponent } from 'app/pages/system/alertservice/alertservice-add-victorops';
-import { AlertServiceEditSlackComponent } from 'app/pages/system/alertservice/alertservice-edit-slack';
-import { AlertServiceAddSlackComponent } from 'app/pages/system/alertservice/alertservice-add-slack';
-import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-edit-pagerduty';
-import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
-import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
-import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 import {EmailComponent} from './email/';
+import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -184,69 +168,13 @@ export const routes: Routes = [
           component: AlertServiceListComponent,
           data: { title: 'Alert Services', breadcrumb: 'Alert Services' },
         }, {
-          path: 'add-aws',
-          component: AlertServiceAddAWSComponent,
-          data: { title: 'Add AWS', breadcrumb: 'Add AWS' },
-        },{
-          path: 'edit-aws/:pk',
-          component: AlertServiceEditAWSComponent,
-          data: { title: 'Edit AWS', breadcrumb: 'Edit AWS' },
-        },{
-          path: 'add-hipchat',
-          component: AlertServiceAddHipchatComponent,
-          data: { title: 'Add Hipchat', breadcrumb: 'Add Hipchat' },
-        },{
-          path: 'edit-hipchat/:pk',
-          component: AlertServiceEditHipchatComponent,
-          data: { title: 'Edit Hipchat', breadcrumb: 'Edit Hipchat' },
-        },{
-          path: 'add-influxdb',
-          component: AlertServiceAddInfluxdbComponent,
-          data: { title: 'Add InfluxDB', breadcrumb: 'Add InfluxDB' },
-        },{
-          path: 'edit-influxdb/:pk',
-          component: AlertServiceEditInfluxdbComponent,
-          data: { title: 'Edit InfluxDB', breadcrumb: 'Edit InfluxDB' },
-        },{
-          path: 'add-mattermost',
-          component: AlertServiceAddMattermostComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add Mattermost' },
-        },{
-          path: 'edit-mattermost/:pk',
-          component: AlertServiceEditMattermostComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit Mattermost' },
-        },{
-          path: 'add-opsgenie',
-          component: AlertServiceAddOpsgenieComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add OpsGenie' },
-        },{
-          path: 'edit-opsgenie/:pk',
-          component: AlertServiceEditOpsgenieComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit OpsGenie' },
-        },{
-          path: 'add-pagerduty',
-          component: AlertServiceAddPagerdutyComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add PagerDuty' },
-        },{
-          path: 'edit-pagerduty/:pk',
-          component: AlertServiceEditPagerdutyComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit PagerDuty' },
-        },{
-          path: 'add-slack',
-          component: AlertServiceAddSlackComponent,
-          data: { title: 'Add Slack', breadcrumb: 'Add Slack' },
-        },{
-          path: 'edit-slack/:pk',
-          component: AlertServiceEditSlackComponent,
-          data: { title: 'Edit Slack', breadcrumb: 'Edit Slack' },
-        },{
-          path: 'add-victorops',
-          component: AlertServiceAddVictoropsComponent,
-          data: { title: 'Add VictorOps', breadcrumb: 'Add VictorOps' },
-        },{
-          path: 'edit-victorops/:pk',
-          component: AlertServiceEditVictoropsComponent,
-          data: { title: 'Edit VictorOps', breadcrumb: 'Edit VictorOps' },
+          path: 'add',
+          component: AlertServiceComponent,
+          data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
+        }, {
+          path: 'edit/:pk',
+          component: AlertServiceComponent,
+          data: { title: 'Edit Alert Service', breadcrumb: 'Edit Alert Service' },
         }
       ]
     },{
@@ -296,11 +224,6 @@ export const routes: Routes = [
           path: 'b2/:pk',
           component: CloudCredentialsB2Component,
           data: { title: 'Edit B2', breadcrumb: 'Edit B2' },
-        },
-        {
-          path: ':pk/delete',
-          component: CloudCredentialsDeleteComponent,
-          data: { title: 'Delete', breadcrumb: 'Delete' },
         },
       ]
     },

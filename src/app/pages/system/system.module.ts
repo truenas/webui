@@ -33,7 +33,6 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
 import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
@@ -46,24 +45,9 @@ import { CertificateInternalComponent } from './certificates/certificate-interna
 import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
-import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
-import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
-import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/alertservice-add-hipchat/alertservice-add-hipchat.component';
-import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
-import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
-import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
-import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
-import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
-import { AlertServiceEditVictoropsComponent } from 'app/pages/system/alertservice/alertservice-edit-victorops';
-import { AlertServiceAddVictoropsComponent } from 'app/pages/system/alertservice/alertservice-add-victorops';
-import { AlertServiceEditSlackComponent } from 'app/pages/system/alertservice/alertservice-edit-slack';
-import { AlertServiceAddSlackComponent } from 'app/pages/system/alertservice/alertservice-add-slack';
-import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-edit-pagerduty';
-import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
-import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
-import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
+import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 
 @NgModule({
   imports: [
@@ -91,29 +75,12 @@ import { EmailComponent } from './email';
     NTPServerListComponent,
     NTPServerAddComponent,
     NTPServerEditComponent,
-    AlertServiceAddAWSComponent,
-    AlertServiceEditAWSComponent,
-    AlertServiceAddHipchatComponent,
-    AlertServiceEditHipchatComponent,
-    AlertServiceAddInfluxdbComponent,
-    AlertServiceEditInfluxdbComponent,
-    AlertServiceAddMattermostComponent,
-    AlertServiceEditMattermostComponent,
-    AlertServiceAddOpsgenieComponent,
-    AlertServiceEditOpsgenieComponent,
-    AlertServiceAddPagerdutyComponent,
-    AlertServiceEditPagerdutyComponent,
-    AlertServiceAddSlackComponent,
-    AlertServiceEditSlackComponent,
-    AlertServiceAddVictoropsComponent,
-    AlertServiceEditVictoropsComponent,
     AlertServiceListComponent,
     CloudCredentialsGCSComponent,
     CloudCredentialsAmazonComponent,
     CloudCredentialsAzureComponent,
     CloudCredentialsB2Component,
     CloudCredentialsListComponent,
-    CloudCredentialsDeleteComponent,
     CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityImportComponent,
@@ -126,6 +93,7 @@ import { EmailComponent } from './email';
     CertificateCSRComponent,
     SupportComponent,
     EmailComponent,
+    AlertServiceComponent,
   ],
   providers: []
 })
