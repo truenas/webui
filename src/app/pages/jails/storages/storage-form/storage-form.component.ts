@@ -74,10 +74,9 @@ export class StorageFormComponent {
       explorerType: 'directory',
       name: 'destination',
       placeholder: T('Destination'),
-      tooltip: T('Select an existing, empty directory within the\
- jail to link to the <b>Source</b> storage area. If that directory does\
- not exist yet, enter the desired directory name and check the\
- <b>Create directory</b> box.'),
+      tooltip: T('Browse to an existing and empty directory or enter a\
+ new directory name within the jail to link to the <b>Source</b> storage\
+ area. The directory is automatically created if it does not exist.'),
     },
     {
       type: 'checkbox',
