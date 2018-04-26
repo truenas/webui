@@ -40,7 +40,6 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { StatsService } from 'app/services/stats.service';
 
 import { ErdService } from 'app/services/erd.service';
-import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
 import {FormsModule} from '@angular/forms';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -71,7 +70,7 @@ export function createTranslateLoader(http: HttpClient) {
     CoreComponents,
     FormsModule
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, TestAlertModalDialogComponent, SelectDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -94,7 +93,6 @@ export function createTranslateLoader(http: HttpClient) {
     AboutModalDialog,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
-    TestAlertModalDialogComponent,
     SelectDialogComponent
   ],
 })

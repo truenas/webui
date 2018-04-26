@@ -221,12 +221,36 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(background, --bg1, $bg1);
     }
 
+/////////////////// Typography (egret overrides)
+
+html,body{
+  font-size:13px;
+  /* Experimental thin fonts */
+  font-weight:250;
+}
+
+h1,h2,h3,h4,h5,h6{
+  font-weight:500;
+}
+
+h4{
+  font-size:15px;
+}
+
 /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+.mat-tab-label, .mat-tab-link{
+  @include variable(color, --fg1, $fg1);
+}
+.mat-menu-item .mat-icon:not([color]),
+.mat-menu-item-submenu-trigger::after{
+  @include variable(color, --fg1, $fg1, !important);
+}
 .mat-toolbar,
 .mat-raised-button{
   background-color:rgba(0,0,0,0.1);
   @include variable(color, --fg1, $fg1);
 }
+
 .mat-bg-primary,
 .mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary,
 .topbar, 
@@ -265,6 +289,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .mat-select-content, 
 .mat-select-panel-done-animating,
 .mat-expansion-panel,
+.mat-dialog-container,
 .mat-stepper-horizontal, .mat-stepper-vertical,
 .dx-treelist-container{
   @include variable(background, --bg2, $bg2);
@@ -390,6 +415,16 @@ tr.dx-row:nth-child(odd){
 .fieldset-label{
   min-width:100%;
   margin-bottom:16px;
+}
+
+.mat-checkbox-inner-container{
+  width:16px;
+  height:16px;
+  margin-bottom:4px;
+}
+.mat-checkbox-ripple{
+  left:-17px;
+  top:-17px;
 }
 
 /////////////////// END SpecSelectors

@@ -1381,8 +1381,7 @@ body.safari-platform .mat-raised-button {
     font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace !important;
 }
 
-ngx-datatable * { 
+/* ngx-datatable * { 
     overflow: hidden; 
     text-overflow: ellipsis; 
-    /* white-space: normal;  */
-}
+} */

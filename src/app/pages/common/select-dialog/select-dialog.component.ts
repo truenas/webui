@@ -1,6 +1,6 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import {ApplicationRef, Component, Injector, OnInit, Input, ViewChild, ElementRef,Output,EventEmitter} from '@angular/core';
+import { Component, Output, EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'app-select-dialog',

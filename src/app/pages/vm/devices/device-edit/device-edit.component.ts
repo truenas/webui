@@ -22,12 +22,15 @@ import {WebSocketService, NetworkService, SystemGeneralService} from '../../../.
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
+import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'device-edit',
-  templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
+  // WTF?
+  //templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
+  template:'<entity-form [conf]="conf"></entity-form>',
   providers : [ VmService ]
 })
 
@@ -102,7 +105,7 @@ export class DeviceEditComponent implements OnInit {
  card for compatibility with most operating systems. If the operating\
  system installed in the VM supports VirtIO paravirtualized network\
  drivers, this can be changed to <i>VirtIO</i> to provide better\
- performace.',
+ performance.',
           type: 'select',
           options : [],
           required: true,

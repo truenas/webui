@@ -40,10 +40,10 @@ export class SmartFormComponent {
       tooltip : T('Select type of test to run. See\
        <a\
        href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
-       target="_blank">smartctl(8)</a> for a description of each type of test\
-       (note that some test types will degrade performace or take disks\
-       offline. Do not schedule S.M.A.R.T. tests at the same time as a scrub\
-       or during a resilver operation).'),
+       target="_blank">smartctl(8)</a> for a description of each type of test.\
+       Some test types will degrade performance or take disks offline. Do not\
+       schedule S.M.A.R.T. tests at the same time as a scrub or during a resilver\
+       operation.'),
       options: [],
       required: true,
       validation : [ Validators.required ]

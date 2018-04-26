@@ -72,7 +72,7 @@ export class ServiceAFPComponent {
       type : 'select',
       name : 'afp_srv_chmod_request',
       placeholder : T('Chmod Request'),
-      tooltip: T('Indicates how to handle Acess Control Lists(ACL); choices are\
+      tooltip: T('Indicates how to handle Access Control Lists(ACL); choices are\
        <b>Ignore</b> - This option is used to completely ignore requests, and to give\
        the parent directory ACL inheritance full control over new items.\
        <b>Preserve </b> - This option preserves ZFS ACEs for named users and groups or the POSIX\

@@ -52,7 +52,7 @@
         <mat-icon>flight_takeoff</mat-icon>
       </button>
       <!-- Notification toggle button -->
-      <button mat-icon-button matTooltip="Notifications" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
+      <button mat-icon-button matTooltip="Alerts" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right">
         <mat-icon>notifications</mat-icon>
         <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
       </button>
@@ -78,10 +78,6 @@
         <button name="settings-preferences" mat-menu-item [routerLink]="['/ui-preferences']">
           <mat-icon>settings_applications</mat-icon>
           <span>{{'Preferences' | translate}}</span>
-        </button>
-        <button name="settings-settings" mat-menu-item [routerLink]="['/system/general']">
-          <mat-icon>settings</mat-icon>
-          <span>{{'Settings' | translate}}</span>
         </button>
         <!-- button name="settings-disable-alerts" mat-menu-item>
           <mat-icon>notifications_off</mat-icon>

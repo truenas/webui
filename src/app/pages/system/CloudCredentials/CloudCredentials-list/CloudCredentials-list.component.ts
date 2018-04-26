@@ -1,7 +1,6 @@
 import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { RestService, WebSocketService } from '../../../../services/';
 
 
@@ -15,7 +14,9 @@ export class CloudCredentialsListComponent {
   protected queryCall = 'backup.credential.query';
   protected route_edit: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
   protected route_success: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
-    
+  protected entityList: any;
+  protected wsDelete = 'backup.credential.delete'
+
   public columns: Array<any> = [
     {name : 'Account Name', prop : 'name'},
     {name : 'Provider', prop : 'provider'},
@@ -29,9 +30,12 @@ export class CloudCredentialsListComponent {
      protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
+afterInit(entityList: any) {
+      this.entityList = entityList;
+    }
 
   getAddActions() {
-    let actions = [];
+    const actions = [];
     actions.push({
       label: "GCLOUD",
       icon: "card_membership",
@@ -69,42 +73,44 @@ export class CloudCredentialsListComponent {
   }
   getActions(row) {
     
-    let actions = [];
+    const actions = [];
     if (!row.type) {
       actions.push({
         label : "Delete",
-        onClick : (row) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));}
+        onClick : (Delete) => {
+          this.entityList.doDelete(row.id)
+          // this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));
+        }
       });
     }
-    if(row.provider == "GCLOUD"){
+    if(row.provider === "GCLOUD"){
       actions.push({
         label : "Edit",
-        onClick : (row) => {
+        onClick : (GCLOUD) => {
           this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs",row.id]));
         }
       });
     }
-    if(row.provider == "AMAZON"){
+    if(row.provider === "AMAZON"){
       actions.push({
         label : "Edit",
-        onClick : (row) => {
+        onClick : (AMAZON) => {
           this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "amazon",row.id]));
         }
       });
     }
-    if(row.provider == "AZURE"){
+    if(row.provider === "AZURE"){
       actions.push({
         label : "Edit",
-        onClick : (row) => {
+        onClick : (AZURE) => {
           this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "azure",row.id]));
         }
       });
     }
-    if(row.provider == "BACKBLAZE"){
+    if(row.provider === "BACKBLAZE"){
       actions.push({
         label : "Edit",
-        onClick : (row) => {
+        onClick : (BACKBLAZE) => {
           this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
         }
       });

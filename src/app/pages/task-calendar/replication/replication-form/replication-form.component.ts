@@ -178,7 +178,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_zfs',
         placeholder : T("Remote ZFS Pool/Dataset"),
         tooltip : T('Enter the ZFS pool/dataset on the remote or\
-         destination computer computer which will store snapshots.\
+         destination computer which will store snapshots.\
          Example: Poolname/Datasetname, not the mountpoint or filesystem\
          path.'),
         required: true,

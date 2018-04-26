@@ -176,7 +176,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     this.mp_recursive = entityEdit.formGroup.controls['mp_recursive'];
     this.mp_recursive_subscription = this.mp_recursive.valueChanges.subscribe((value) => {
       if (value === true) {
-        this.dialog.confirm(T("Warning"), T("Seting permissions recursively will affect this directory and all those below it. This can result in data that is inaccessible."))
+        this.dialog.confirm(T("Warning"), T("Setting permissions recursively will affect this directory and all those below it. This can result in data that is inaccessible."))
         .subscribe((res) => {
           if (!res) {
             this.mp_recursive.setValue(false);

@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {RestService, WebSocketService} from '../../../../services/';
 import {
   FieldConfig
@@ -26,7 +26,7 @@ import { T } from '../../../../translate-marker';
 })
 export class CloudCredentialsGCSComponent {
 
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected addCall = 'backup.credential.create';
   protected queryCall = 'backup.credential.query';
   protected route_success: string[] = ['system', 'cloudcredentials'];
@@ -82,9 +82,9 @@ export class CloudCredentialsGCSComponent {
     this.route.params.subscribe(params => {
       this.queryPayload.push("id")
       this.queryPayload.push("=")
-      this.queryPayload.push(parseInt(params['pk']));
+      this.queryPayload.push(parseInt(params['pk'],0));
       this.pk = [this.queryPayload];
-      this.queryPk = parseInt(params['pk']);
+      this.queryPk = parseInt(params['pk'],0);
       
     });
   }

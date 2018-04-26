@@ -285,7 +285,7 @@ export class ActiveDirectoryComponent {
       name : 'ad_netbiosname_a',
       placeholder : 'Netbios Name',
       tooltip : 'Limited to 15 characters. Automatically populated with\
- the orginal host name of the system. It <b>must</b> be different from\
+ the original host name of the system. It <b>must</b> be different from\
  the <i>Workgroup</i> name.',
     },
     {

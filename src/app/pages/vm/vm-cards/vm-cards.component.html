@@ -102,7 +102,16 @@
 
 
         <div class="side-content-header">
-          <button class="card-close" (click)="deleteVM(i)"><mat-icon>close</mat-icon></button>
+          <!--<button class="card-close" (click)="deleteVM(i)"><mat-icon>close</mat-icon></button>-->
+          <button class="card-close" [matMenuTriggerFor]="cardMenu"><mat-icon>more_vert</mat-icon></button>
+          <mat-menu #cardMenu="matMenu">
+            <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i)">Stop</button>
+            <button *ngIf="cards[i].state == 'stopped'" mat-menu-item (click)="toggleVmState(i)">Start</button>
+            <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i,true)">Power Off</button>
+            <button *ngIf="cards[i].state == 'stopped'" mat-menu-item disabled>Power Off</button>
+            <button mat-menu-item (click)="deleteVM(i)">Delete</button>
+          </mat-menu>
+
           <button mat-fab 
                   *ngIf="viewMode.value == 'cards'"
                   class="vm-power-btn"

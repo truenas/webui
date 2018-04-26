@@ -1,6 +1,14 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 
+
+
+
 <div mat-dialog-content>
+  <span *ngIf="secondaryCheckBox">
+      <mat-checkbox class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)"></mat-checkbox>
+      {{ secondaryCheckBoxMsg | translate }}
+      <br><br>
+  </span>
   {{ message | translate }}
 </div>
 

@@ -26,6 +26,7 @@ import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
 import {FieldConfig} from './models/field-config.interface';
+import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import {  DialogService } from '../../../../services/';
@@ -95,6 +96,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   @Input('conf') conf: Formconfiguration;
 
   public pk: any;
+  public fieldSetDisplay: string = 'default';
+  public fieldSets: FieldSet[]
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
   public resourceName: string;
@@ -163,7 +166,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.pk = params['pk'];
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
-            this.submitFunction = this.editCall;  // this is strange so iM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+            this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
                                                   // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
             this.submitFunction = this.editSubmit;
@@ -179,7 +182,42 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
       }
 
-      this.fieldConfig = this.conf.fieldConfig;
+
+      // Make sure fieldSetDisplay is defined
+      if(this.conf.fieldSetDisplay){
+        this.fieldSetDisplay = this.conf.fieldSetDisplay;
+      } else {
+        this.fieldSetDisplay = "default";
+      }
+
+      // Fallback if no fieldsets are defined
+      if(this.conf.fieldSets){
+        this.fieldConfig = [];
+        this.fieldSets = this.conf.fieldSets;
+        for(let i = 0; i < this.fieldSets.length; i++){
+          let fieldset = this.fieldSets[i];
+          if(fieldset.config){
+            this.fieldConfig = this.fieldConfig.concat(fieldset.config);
+          }
+        }
+        this.conf.fieldConfig = this.fieldConfig;
+      } else {
+        this.fieldConfig = this.conf.fieldConfig;
+        this.fieldSets = [
+          {
+            name:'FallBack',
+            class:'fallback',
+            width:'100%',
+            divider:false,
+            config: this.fieldConfig
+          },
+          {
+            name:'divider',
+            divider:true,
+            width:'100%'
+          }
+        ]
+      }
       this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
       for (const i in this.fieldConfig) {
@@ -236,7 +274,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             }
           } else {
             this.queryResponse = res;
-            this.wsResponse = res[0];
+            if (res[0]) {
+              this.wsResponse = res[0];
+            } else {
+              this.wsResponse = res;
+            }
 
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
@@ -395,9 +437,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                             this.success = true;
                           }
 
-                          if (this.conf.resource_name === "system/advanced") {                            
-                            this.adminLayout.onShowConsoleFooterBar(value['adv_consolemsg']);
-                          }                          
                         },
                         (res) => {
                           this.loader.close();

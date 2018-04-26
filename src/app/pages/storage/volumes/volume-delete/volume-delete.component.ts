@@ -40,17 +40,16 @@ export class VolumeDeleteComponent implements Formconfiguration {
       name: 'destroy',
       label: T('destroy'),
       value: false,
-      placeholder: T("Destroy the pool's data?"),
-      tooltip: T("(Checking this will result in deleting the pool, \
-           if you leave this unchecked pool will be exported and the \
-           data will remain intact)")
+      placeholder: T("Destroy data on this pool?"),
+      tooltip: T("Check this box to cause all information stored on this pool to be \
+                  permanently erased when the detach operation is confirmed.")
 
     }, {
       type: 'checkbox',
-      name: 'confirm',
-      label: T("Confirm it's ok to proceed with Detach."),
+      name: 'confirm_detach_checkbox',
+      label: T("Confirm it is okay to proceed with Detach."),
       placeholder: T("Confirm this detach procedure."),
-      tooltip: T("Checking this will in the pool being detached.  If you selected Detroy the data will be gone."),
+      tooltip: T("Check this box to confirm that the pool is to be detached."),
       validation: [Validators.required],
       required: true
 
@@ -85,7 +84,7 @@ export class VolumeDeleteComponent implements Formconfiguration {
       return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
         console.log("restPostResp", restPostResp);
         this.loader.close();
-        this.dialogService.Info(T("Detach/Delete Pool"), T("Successfully detached pool") + value.name);
+        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
 
         this.router.navigate(new Array('/').concat(
           this.route_success));
@@ -97,13 +96,13 @@ export class VolumeDeleteComponent implements Formconfiguration {
       return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
         console.log("restPostResp", restPostResp);
         this.loader.close();
-        this.dialogService.Info(T("Detach/Delete Pool"), T("Successfully deleted pool ") + value.name);
+        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
 
         this.router.navigate(new Array('/').concat(
           this.route_success));
       }, (res) => {
         this.loader.close();
-        this.dialogService.errorReport(T("Error deleting pool"), res.message, res.stack);
+        this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
       });
     }
 
