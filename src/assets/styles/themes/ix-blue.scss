@@ -392,6 +392,10 @@ tr.dx-row:nth-child(odd){
   margin-bottom:16px;
 }
 
+.combo-box-menu.mat-menu-panel {
+    max-height: 256px;
+}
+
 /////////////////// END SpecSelectors
 
     
