@@ -51,7 +51,8 @@ export class GroupFormComponent {
       type: 'checkbox',
       name: 'allow',
       placeholder: T('Allow repeated GIDs'),
-      tooltip: T('Allow multiple groups to share the same group ID.'),
+      tooltip: T('<b>Not recommended.</b> Allow multiple groups to share '
+               + 'the same group ID.'),
       disabled: false
     },
   ];
