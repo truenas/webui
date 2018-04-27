@@ -17,11 +17,11 @@ export class UserListComponent implements OnInit {
   protected route_delete: string[] = ['account', 'users', 'delete'];
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username' },
-    { name: 'UID', prop: 'bsdusr_uid' },
+    { name: 'Username', prop: 'bsdusr_username', freeze: "true" },
+    { name: 'UID', prop: 'bsdusr_uid', freeze: "true" },
     { name: 'GID', prop: 'bsdusr_group' },
     { name: 'Home directory', prop: 'bsdusr_home' },
-    { name: 'Shell', prop: 'bsdusr_shell' },
+    { name: 'Shell', prop: 'bsdusr_shell', freeze: "true" },
     { name: 'Builtin', prop: 'bsdusr_builtin' },
     { name: 'Full Name', prop: 'bsdusr_full_name' },
     { name: 'Email', prop: 'bsdusr_email' },
