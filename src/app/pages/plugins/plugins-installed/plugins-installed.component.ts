@@ -172,4 +172,12 @@ export class PluginsInstalledListComponent {
     params.push(this.getSelectedNames(selected));
     return params;
   }
+
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.split(entityList.rows[i][6], '|').length > 1) {
+        entityList.rows[i][6] = _.split(entityList.rows[i][6], '|')[1];
+      }
+    }
+  }
 }
