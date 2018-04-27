@@ -22,10 +22,11 @@ export class GroupFormComponent {
       type: 'input',
       name: 'bsdgrp_gid',
       placeholder: T('GID'),
-      tooltip: T('The Group ID (GID) is a unique number used to identify\
- a Unix group. Enter a number above 1000 for a group with user accounts.\
- Groups used by a service must have an ID that matches the default port\
- number used by the service.'),
+      tooltip: T('The Group ID (GID) is a unique number used to identify '
+               + 'a Unix group. Enter a number above 1000 for a group '
+               + 'with user accounts. Groups used by a service must have '
+               + 'an ID that matches the default port number used by the '
+               + 'service.'),
       validation : [ Validators.required ],
       required: true,
     },
@@ -41,9 +42,10 @@ export class GroupFormComponent {
       type: 'checkbox',
       name: 'bsdgrp_sudo',
       placeholder: T('Permit Sudo'),
-      tooltip: T('Allow group members to use\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank">sudo</a>.\
- Group members are prompted for their password when using <b>sudo</b>.'),
+      tooltip: T('Allow group members to use <a '
+               + 'href="https://www.freebsd.org/cgi/man.cgi?query=sudo&manpath=FreeBSD+11.1-RELEASE+and+Ports" '
+               + 'target="_blank">sudo</a>. Group members are prompted '
+               + 'for their password when using <b>sudo</b>.'),
     },
     {
       type: 'checkbox',
