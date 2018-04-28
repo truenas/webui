@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core'
 })
 export class JailListComponent implements OnInit {
 
-  public isPoolActivated: boolean = false;
+  public isPoolActivated: boolean = true;
   public selectedPool;
   public activatedPool: any;
   public availablePools: any = [];
@@ -133,6 +133,8 @@ export class JailListComponent implements OnInit {
       if (res != null) {
         this.activatedPool = res;
         this.isPoolActivated = true;
+      } else {
+        this.isPoolActivated = false;
       }
     })
   }
