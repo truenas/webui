@@ -84,7 +84,7 @@ export class VolumeDeleteComponent implements Formconfiguration {
       return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
         console.log("restPostResp", restPostResp);
         this.loader.close();
-        this.dialogService.Info(T("Detach/Delete Pool"), T("Successfully detached pool ") + value.name);
+        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
 
         this.router.navigate(new Array('/').concat(
           this.route_success));
@@ -96,13 +96,13 @@ export class VolumeDeleteComponent implements Formconfiguration {
       return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
         console.log("restPostResp", restPostResp);
         this.loader.close();
-        this.dialogService.Info(T("Detach/Delete Pool"), T("Successfully deleted pool ") + value.name);
+        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
 
         this.router.navigate(new Array('/').concat(
           this.route_success));
       }, (res) => {
         this.loader.close();
-        this.dialogService.errorReport(T("Error deleting pool"), res.message, res.stack);
+        this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
       });
     }
 

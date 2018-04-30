@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { RestService, WebSocketService } from '../../../../services/';
 import {
   FieldConfig
@@ -26,7 +26,7 @@ import { T } from '../../../../translate-marker';
 })
 export class CloudCredentialsAmazonComponent {
 
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected addCall = 'backup.credential.create';
   protected queryCall = 'backup.credential.query';
   public formGroup: FormGroup;
@@ -57,6 +57,8 @@ export class CloudCredentialsAmazonComponent {
        Amazon AWS</a> website by clicking on <b>My account</b>, then\
        <b>Security Credentials</b> and\
        <b>Access Keys (Access Key ID and Secret Access Key)</b>.'),
+       required: true,
+       validation : [ Validators.required ]
     },
     {
       type: 'textarea',
@@ -66,6 +68,8 @@ export class CloudCredentialsAmazonComponent {
        Credential Access Key field, enter the <b>Secret Key</b> value saved\
        when the pair was created. If the Secret Key value is not known, a new\
        key pair can be created on the same Amazon screen.'),
+       required: true,
+       validation : [ Validators.required ]
     },
   ];
 
@@ -83,7 +87,7 @@ export class CloudCredentialsAmazonComponent {
       this.route.params.subscribe(params => {
         this.queryPayload.push("id")
         this.queryPayload.push("=")
-        this.queryPayload.push(parseInt(params['pk']));
+        this.queryPayload.push(parseInt(params['pk'],0));
         this.pk = [this.queryPayload];
       });
     }
@@ -121,7 +125,7 @@ export class CloudCredentialsAmazonComponent {
   dataAttributeHandler(entityForm: any) {
     const formvalue = _.cloneDeep(entityForm.formGroup.value);
     if (typeof entityForm.wsResponseIdx === "object") {
-      for (let flds in entityForm.wsResponseIdx) {
+      for (const flds in entityForm.wsResponseIdx) {
         if (flds === 'accesskey') {
           entityForm.formGroup.controls['accesskey'].setValue(entityForm.wsResponseIdx.accesskey);
         } else if (flds === 'secretkey') {

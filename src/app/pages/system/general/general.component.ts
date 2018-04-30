@@ -143,9 +143,9 @@ export class GeneralComponent {
       type: 'input',
       name: 'stg_syslogserver',
       placeholder: T('Syslog server'),
-      tooltip: T('Define an\
- <i>IP address_or_hostname:optional_port_number</i> to send logs. When\
- set, log entries write to both the console and remote server.'),
+      tooltip: T('Define an <i>IP address or hostname:optional_port_number</i>\
+ to send logs. When set, log entries write to both the console and\
+ remote server.'),
     }
   ];
   public custActions: Array<any> = [

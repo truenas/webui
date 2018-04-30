@@ -7,13 +7,16 @@ import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
 import {WebSocketService} from '../services/ws.service';
 import { MatSnackBar } from '@angular/material';
+import { AppLoaderService } from '../services/app-loader/app-loader.service';
 
 @Injectable()
 export class DialogService {
+    protected loaderOpen = false;
 
-    constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,) { }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string): Observable<boolean> {
+    constructor(private dialog: MatDialog, private ws: WebSocketService, public snackBar: MatSnackBar,protected loader: AppLoaderService) { }
+
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, secondaryCheckBoxMsg?: string, method?:string, data?:any): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -28,8 +31,23 @@ export class DialogService {
 
         if(hideCheckBox) {
             dialogRef.componentInstance.hideCheckBox = hideCheckBox;
-        }        
-
+        } 
+        
+        if(secondaryCheckBox) {
+            dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
+            dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
+            dialogRef.componentInstance.data = data;
+            dialogRef.componentInstance.method = method;
+            dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
+            if(selection){
+                if(data[1].hasOwnProperty('delete_users')){
+                    data[1].delete_users = !data[1].delete_users;
+                }
+                return dialogRef;
+            }
+        });
+            return dialogRef;
+        }
         return dialogRef.afterClosed();
     }
 

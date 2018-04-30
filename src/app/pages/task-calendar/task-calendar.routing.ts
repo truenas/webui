@@ -16,8 +16,7 @@ import { ReplicationFormComponent } from 'app/pages/task-calendar/replication/re
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
-import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component'; 
-import { CloudsyncDeleteComponent } from './cloudsync/cloudsync-delete/cloudsync-delete.component';
+import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { ResilverComponent } from './resilver/resilver.component';
 
 export const TaskCalendarRoutes: Routes = [{
@@ -44,10 +43,6 @@ export const TaskCalendarRoutes: Routes = [{
       path: 'edit/:pk',
       component: CloudsyncFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
-    }, {
-      path: 'delete/:pk',
-      component: CloudsyncDeleteComponent,
-      data: { title: 'Delete', breadcrumb: 'Delete' }
     }]
   },
   {

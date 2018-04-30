@@ -35,6 +35,7 @@ export interface InputTableConf {
   isActionVisible?: any;
   config?: any;
   confirmDeleteDialog?: Object;
+  checkbox_confirm?: any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -47,7 +48,7 @@ export interface InputTableConf {
   wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
-  updateMultiAction?(selected): any;
+  updateMultiAction?(selected): any; 
 }
 
 export interface SortingConfig {
@@ -310,6 +311,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   doDelete(id) {
     let dialog = {};
+    if (this.conf.checkbox_confirm) {
+      this.conf.checkbox_confirm(id);
+      return;
+    }
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }
