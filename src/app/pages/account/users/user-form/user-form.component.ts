@@ -44,7 +44,7 @@ export class UserFormComponent {
           name : 'username',
           placeholder : T('Username'),
           tooltip : T('Enter an alphanumeric username of 8 characters '
-                    + 'or less. Usernames can not begin with a hyphen '
+                    + 'or less. Usernames cannot begin with a hyphen '
                     + '(<b>-</b>) or contain a space, tab, or these '
                     + 'characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> '
                     + '. A <b>$</b> can only be used as the last '
@@ -223,8 +223,9 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'microsoft_account',
           placeholder : T('Microsoft Account'),
-          tooltip : T('Check when the user connects from a '
-                    + 'Windows 8 or newer system.'),
+          tooltip : T('Set to allow additional username authentication '
+                    + 'methods when the user is connecting from a '
+                    + 'Windows 8 or newer operating system.'),
         },
       ]
     },
