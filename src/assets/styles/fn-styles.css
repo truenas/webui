@@ -1385,7 +1385,3 @@ ngx-datatable * {
     overflow: hidden; 
     text-overflow: ellipsis; 
 } 
-input[ng-reflect-name="ftp_anonpath"] {
-    font-size: 150%;
-    color: var(--red);
-} 

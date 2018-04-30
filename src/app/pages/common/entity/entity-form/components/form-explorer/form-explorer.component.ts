@@ -81,6 +81,11 @@ export class FormExplorerComponent implements Field, OnInit {
       }     
     });
   }
+  
+  changeStyle() {
+    console.log('Yipee');
+    
+  }
 
   customTemplateStringOptions = {
     displayField: this.displayFieldName,
