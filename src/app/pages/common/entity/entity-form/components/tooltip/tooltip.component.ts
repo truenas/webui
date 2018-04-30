@@ -22,7 +22,7 @@ export class TooltipComponent {
 
     let screenW = document.body.clientWidth;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
-    let dynamicWidth = this.message.length * 9.5;
+    let dynamicWidth = this.message.length * 9.8;
 
     if(this.message.length <= 40) {
       if((screenW - posX) > 420) {
