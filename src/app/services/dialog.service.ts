@@ -43,6 +43,9 @@ export class DialogService {
                 if(data[1].hasOwnProperty('delete_users')){
                     data[1].delete_users = !data[1].delete_users;
                 }
+                if(data[1].hasOwnProperty('delete_groups')){
+                    data[1].delete_groups = !data[1].delete_groups;
+                }
                 return dialogRef;
             }
         });
