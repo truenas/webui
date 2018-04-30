@@ -74,15 +74,6 @@ afterInit(entityList: any) {
   getActions(row) {
     
     const actions = [];
-    if (!row.type) {
-      actions.push({
-        label : "Delete",
-        onClick : (Delete) => {
-          this.entityList.doDelete(row.id)
-          // this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));
-        }
-      });
-    }
     if(row.provider === "GCLOUD"){
       actions.push({
         label : "Edit",
@@ -112,6 +103,15 @@ afterInit(entityList: any) {
         label : "Edit",
         onClick : (BACKBLAZE) => {
           this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
+        }
+      });
+    }
+    if (!row.type) {
+      actions.push({
+        label : "Delete",
+        onClick : (Delete) => {
+          this.entityList.doDelete(row.id)
+          // this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));
         }
       });
     }
