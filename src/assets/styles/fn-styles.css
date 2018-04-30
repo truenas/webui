@@ -1385,3 +1385,9 @@ ngx-datatable * {
     overflow: hidden; 
     text-overflow: ellipsis; 
 } 
+
+input[ng-reflect-name="ftp_anonpath"] {
+    font-size: 150%;
+    color: #0095d5;
+} 
+/* The color is standard blue, used in all themes */ 
