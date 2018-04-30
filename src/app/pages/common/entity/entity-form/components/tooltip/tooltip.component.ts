@@ -21,8 +21,15 @@ export class TooltipComponent {
     this.isShowTooltip = $event;
 
     let screenW = document.body.clientWidth;
+    let screenH = document.body.clientHeight;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
+    let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
     let dynamicWidth = this.message.length * 9.5;
+
+    if((posY / screenH > .85)) {
+      console.log(posY, screenH);
+      this.tooltipMsgStyle = {'above' : '0px', 'max-width' : dynamicWidth + 'px'};
+    }
 
     if(this.message.length <= 40) {
       if((screenW - posX) > 420) {
@@ -37,7 +44,7 @@ export class TooltipComponent {
       }    
     }
     else {
-      if((screenW - posX) > 420) {
+       if((screenW - posX) > 420) {
         this.tooltipMsgStyle = {'left' : '0px'};
       }
       else if(posX > 420) {
