@@ -15,7 +15,7 @@
   </mat-card>
   
  <!-- Note the strange group.value.. That's being set abov in mat-button-toggle-group #group where the name "group" can be any name
-      then becomes a global variable seen in the template as Im doing below... It's the selected button basically.. In the button-toggle-group 
+      then becomes a global variable seen in the template as done below... It's the selected button basically.. In the button-toggle-group 
     -->
   <div *ngIf="zfsPoolRows.length > 0 && group.value === conf.title">
     <entity-table [conf]="conf" [title]="conf.title"></entity-table>

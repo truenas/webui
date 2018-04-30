@@ -29,6 +29,8 @@ import { T } from '../../../../translate-marker';
 })
 
 export class ServiceUPSComponent {
+  protected ups_driver: any;
+  protected ups_port: any;
   protected resource_name: string = 'services/ups';
   protected route_success: string[] = [ 'services' ];
 
@@ -65,12 +67,14 @@ export class ServiceUPSComponent {
        <a href="http://networkupstools.org/stable-hcl.html" target="_blank">Network UPS Tools compatibility list</a>\
        for a list of supported UPS devices.'),
       required: true,
+      options: [],
       validation : [ Validators.required ]
     },
     {
-      type : 'select',
+      type : 'input', //fixme - this should be a select but we need api for options
       name : 'ups_port',
       placeholder : T('Port'),
+      //options: [],
       tooltip : T('Select the serial or USB port the UPS is plugged into.'),
       required: true,
       validation : [ Validators.required ]
@@ -107,6 +111,7 @@ export class ServiceUPSComponent {
     },
     {
       type : 'input',
+      inputType: 'number',
       name : 'ups_shutdowntimer',
       placeholder : T('Shutdown Timer'),
       tooltip : T('Enter a value in seconds for the the UPS to wait\
@@ -124,6 +129,15 @@ export class ServiceUPSComponent {
       validation : [ Validators.required ]
     },
     {
+      type: 'input',
+      inputType: 'number',
+      name: 'ups_nocommwarntime',
+      placeholder: T('No Communication Warning Time'),
+      tooltip: T('Notify after this many seconds if it can’t reach any of \
+        the UPS. It keeps warning you until the situation is fixed. Default \
+        is 300 seconds.')
+    },
+    {
       type : 'input',
       name : 'ups_monuser',
       placeholder : T('Monitor User'),
@@ -134,6 +148,7 @@ export class ServiceUPSComponent {
     {
       type : 'input',
       name : 'ups_monpwd',
+      inputType: 'password',
       placeholder : T('Monitor Password'),
       tooltip : T('Change this default password. The new password cannot\
        contain a <i>space</i> or <b>#</b> .'),
@@ -189,5 +204,12 @@ export class ServiceUPSComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityEdit: any) {
+    this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
+    this.ws.call('notifier.choices', ['UPSDRIVER_CHOICES']).subscribe((res) => {
+      for (let item of res) {
+        this.ups_driver.options.push({ label: item[1], value: item[0] });
+      }
+    });
+  }
 }

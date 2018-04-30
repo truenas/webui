@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -28,7 +28,7 @@ import { T } from '../../../../translate-marker';
   providers : [ SystemGeneralService ]
 })
 
-export class ServiceWebdavComponent implements OnInit {
+export class ServiceWebdavComponent implements OnInit, OnDestroy {
 
   protected resource_name: string = 'services/webdav';
   protected route_success: string[] = [ 'services' ];
@@ -81,6 +81,7 @@ export class ServiceWebdavComponent implements OnInit {
       tooltip : T('<i>Basic Authentication</i> is unencrypted.\
        <i>Digest Authentication</i> is encrypted.'),
       options : [
+        {label : 'No Authentication', value: 'none'},
         {label : 'Basic Authentication', value : 'basic'},
         {label : 'Digest Authentication', value : 'digest'},
       ]
@@ -102,7 +103,15 @@ export class ServiceWebdavComponent implements OnInit {
     },
   ];
 
+  private webdav_protocol: any;
+  private webdav_protocol_subscription: any;
+  private webdav_tcpport: any;
+  private webdav_tcpportssl: any;
   private webdav_certssl: any;
+  private webdav_htauth: any;
+  private webdav_htauth_subscription: any;
+  private webdav_password: any;
+  private webdav_password2: any;
 
   constructor(
       protected router: Router,
@@ -125,7 +134,56 @@ export class ServiceWebdavComponent implements OnInit {
     });
   }
 
+  resourceTransformIncomingRestData(data) {
+    delete(data['webdav_password']);
+    return data;
+  }
+
   afterInit(entityForm: any) {
-    entityForm.formGroup.controls['webdav_password2'].setValue('davtest');
+    this.webdav_tcpport = _.find(this.fieldConfig, {'name': 'webdav_tcpport'});
+    this.webdav_tcpportssl = _.find(this.fieldConfig, {'name': 'webdav_tcpportssl'});
+    this.webdav_password = _.find(this.fieldConfig, {'name': 'webdav_password'});
+    this.webdav_password2 = _.find(this.fieldConfig, {'name': 'webdav_password2'});
+    this.webdav_htauth = entityForm.formGroup.controls['webdav_htauth'];
+    this.webdav_protocol = entityForm.formGroup.controls['webdav_protocol'];
+    this.handleProtocol(this.webdav_protocol.value);
+    this.handleAuth(this.webdav_htauth.value);
+    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.subscribe((value) => {
+      this.handleProtocol(value);
+    });
+    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.subscribe((value) => {
+      this.handleAuth(value); 
+    });
+  }
+
+  handleProtocol(value: any) {
+    if (value === 'http') {
+      this.webdav_tcpport.isHidden = false;
+      this.webdav_tcpportssl.isHidden = true;
+      this.webdav_certssl.isHidden = true;
+    } else if (value === 'https') {
+      this.webdav_tcpport.isHidden = true;
+      this.webdav_tcpportssl.isHidden = false;
+      this.webdav_certssl.isHidden = false;
+    } else if (value === 'httphttps') {
+      this.webdav_tcpport.isHidden = false;
+      this.webdav_tcpportssl.isHidden = false;
+      this.webdav_certssl.isHidden = false;
+    }
+  }
+
+  handleAuth(value: any) {
+    if (value === 'none') {
+      this.webdav_password.isHidden = true;
+      this.webdav_password2.isHidden = true;
+    } else {
+      this.webdav_password.isHidden = false;
+      this.webdav_password2.isHidden = false;
+    }
+  }
+
+  ngOnDestroy() {
+    this.webdav_protocol_subscription.unsubscribe();
+    this.webdav_htauth_subscription.unsubscribe();
   }
 }

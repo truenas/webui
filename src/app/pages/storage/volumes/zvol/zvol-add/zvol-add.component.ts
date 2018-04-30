@@ -5,7 +5,7 @@ import {
   ViewContainerRef
 } from '@angular/core';
 import {
-  FormGroup,
+  FormGroup, Validators,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
@@ -47,6 +47,8 @@ export class ZvolAddComponent {
       placeholder: T('zvol name:'),
       tooltip: T('Keep the <b>zvol name</b> short. Using a <b>zvol name</b>\
  longer than 63 characters can prevent accessing the zvol as a device.'),
+      validation: [Validators.required],
+      required: true
     },
     {
       type: 'input',
@@ -71,6 +73,8 @@ export class ZvolAddComponent {
         {label : 'zle (runs of zeros)', value : "zle"},
         {label : 'lzjb (legacy, not recommended)', value : "lzjb"},
       ],
+      validation: [Validators.required],
+      required: true
     },
     {
       type: 'select',
@@ -86,6 +90,8 @@ export class ZvolAddComponent {
         {label : 'Verify', value : "verify"},
         {label : 'Off', value : "off"},
       ],
+      validation: [Validators.required],
+      required: true
     },
     {
       type: 'input',

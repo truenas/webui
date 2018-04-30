@@ -18,7 +18,7 @@ export class ServiceNFSComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'nfs_srv_servers',
-      placeholder: T('Number of servers:'),
+      placeholder: T('Number of servers'),
       tooltip: T('Specifies how many servers to create. The number of\
        servers can be increased if NFS client responses are slow; to limit\
        CPU context switching, keep this number less than or equal to the\
@@ -29,13 +29,13 @@ export class ServiceNFSComponent {
     {
       type: 'checkbox',
       name: 'nfs_srv_udp',
-      placeholder: T('Serve UDP NFS clients:'),
+      placeholder: T('Serve UDP NFS clients'),
       tooltip: T('Checks if NFS clients need to use UDP.'),
     },
     {
       type: 'select',
       name: 'nfs_srv_bindip',
-      placeholder: T('Bind IP Addresses:'),
+      placeholder: T('Bind IP Addresses'),
       tooltip: T('Select the IP addresses to listen to for NFS requests.\
        When unchecked, NFS listens on all available addresses.'),
       options: [],
@@ -44,20 +44,20 @@ export class ServiceNFSComponent {
     {
       type: 'checkbox',
       name: 'nfs_srv_allow_nonroot',
-      placeholder: T('Allow non-root mount:'),
+      placeholder: T('Allow non-root mount'),
       tooltip: T('Check this box only if the NFS client requires it.\
        When checked non-root mount requests are allowed to be served.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_v4',
-      placeholder: T('Enable NFSv4:'),
+      placeholder: T('Enable NFSv4'),
       tooltip: T('NFSv3 is the default, check this box to switch to NFSv4.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_v4_v3owner',
-      placeholder: T('NFSv3 ownership model for NFSv4:'),
+      placeholder: T('NFSv3 ownership model for NFSv4'),
       tooltip: T('Grayed out unless <b>Enable NFSv4 </b> is checked and, in turn, will\
        gray out <b>Support>16</b> groups which is incompatible; check this box if\
        NFSv4 ACL support is needed without requiring the client and the\
@@ -73,34 +73,34 @@ export class ServiceNFSComponent {
     {
       type: 'checkbox',
       name: 'nfs_srv_v4_krb',
-      placeholder: T('Require Kerberos for NFSv4:'),
+      placeholder: T('Require Kerberos for NFSv4'),
       tooltip: T('When checked, NFS shares will fail if the Kerberos ticket is unavailable.'),
     },
     {
       type: 'input',
       name: 'nfs_srv_mountd_port',
-      placeholder: T('mountd(8) bind port:'),
+      placeholder: T('mountd(8) bind port'),
       tooltip: T('Optional; specify port that <a href="https://www.freebsd.org/cgi/man.cgi?query=mountd" target="_blank">mountd(8)</a>\
        binds to.'),
     },
     {
       type: 'input',
       name: 'nfs_srv_rpcstatd_port',
-      placeholder: T('rpc.statd(8) bind port:'),
+      placeholder: T('rpc.statd(8) bind port'),
       tooltip: T('Optional; specify port that <a href="https://www.freebsd.org/cgi/man.cgi?query=rpc.statd" target="_blank">rpc.statd(8)</a>\
        binds to.'),
     },
     {
       type: 'input',
       name: 'nfs_srv_rpclockd_port',
-      placeholder: T('rpc.lockd(8) bind port:'),
+      placeholder: T('rpc.lockd(8) bind port'),
       tooltip: T('Optional; specify port that <a href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd" target="_blank">rpc.lockd(8)</a>\
        binds to.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_srv_16',
-      placeholder: T('Support >16 groups:'),
+      placeholder: T('Support >16 groups'),
       tooltip: T('Check this box if any users are members of more than\
        16 groups (useful in AD environments); note that this assumes that\
        group membership has been configured correctly on the NFS server.'),
@@ -108,7 +108,7 @@ export class ServiceNFSComponent {
     {
       type: 'checkbox',
       name: 'nfs_srv_mountd_log',
-      placeholder: T('Log mountd(8) requests:'),
+      placeholder: T('Log mountd(8) requests'),
       tooltip: T('Enable logging of <a href="https://www.freebsd.org/cgi/man.cgi?query=mountd" target="_blank">mountd(8)</a>\
        requests by syslog.'),
     },

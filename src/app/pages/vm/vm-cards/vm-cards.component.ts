@@ -451,7 +451,7 @@ export class VmCardsComponent implements OnInit {
   }
 
   // toggles VM on/off
-  toggleVmState(index){
+  toggleVmState(index, poweroff?:boolean){
     const vm = this.cards[index];
     let eventName: string;
     if (vm.state !== 'running') {
@@ -514,7 +514,11 @@ export class VmCardsComponent implements OnInit {
       });
     }
      else {
-      eventName = "VmStop";
+      if(poweroff){
+        eventName = "VmPowerOff";
+      } else {
+        eventName = "VmStop";
+      }
       this.cards[index].state = "stopping";
       this.core.emit({name: eventName, data:[vm.id]});
     }

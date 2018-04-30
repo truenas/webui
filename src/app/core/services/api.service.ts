@@ -184,6 +184,27 @@ export class ApiService {
         return cloneRes;
       }
     },
+    VmPowerOff:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2",
+        namespace:"vm.stop",
+        args:[],
+        responseEvent:"VmStopped"
+      },
+      preProcessor(def:ApiCall){
+        let uid:number = 1;
+        let redef = Object.assign({}, def);
+        redef.args.push(true);
+        return redef;
+      },
+      postProcessor(res,callArgs){
+        //DEBUG: console.log(res);
+        let cloneRes = Object.assign({},res);
+        cloneRes = {id:callArgs[0]} // res:boolean
+        return cloneRes;
+      }
+    },
     VmCreate:{
       apiCall:{
         protocol:"websocket",

@@ -44,14 +44,18 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
         name: 'dataset',
         placeholder: T('Volume/Dataset'),
         tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
-        options: []
+        options: [],
+        validation: [Validators.required],
+        required: true
       },
       {
         type: 'input',
         name: 'name',
         placeholder: 'Name',
         tooltip: T('Add a name for the new snapshot'),
-        options: []
+        options: [],
+        validation: [Validators.required],
+        required: true
       },
       {
         type: 'checkbox',

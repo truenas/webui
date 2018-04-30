@@ -165,9 +165,10 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'select',
         name : 'repl_filesystem',
-        placeholder : T('Volume/Dataset'),
-        tooltip : T('Choose an existing ZFS volume or dataset on the source\
-         computer containing the snapshots to replicate.'),
+        placeholder : T('Pool/Dataset'),
+        tooltip : T('Choose an existing ZFS pool or dataset with an\
+         active periodic snapshot task on the source computer containing\
+         the snapshots to replicate.'),
         options : [],
         required: true,
         validation : Validators.required
@@ -175,11 +176,11 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'input',
         name : 'repl_zfs',
-        placeholder : T("Remote ZFS Volume/Dataset"),
-        tooltip : T('Enter the ZFS volume on the remote or destination\
-         computer which will store the snapshots. If the destination dataset is\
-         not present, it will be created. <b>/mnt/</b> is assumed, do not\
-         include it in the path.'),
+        placeholder : T("Remote ZFS Pool/Dataset"),
+        tooltip : T('Enter the ZFS pool/dataset on the remote or\
+         destination computer which will store snapshots.\
+         Example: Poolname/Datasetname, not the mountpoint or filesystem\
+         path.'),
         required: true,
         validation : Validators.required
       },
@@ -303,7 +304,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_remote_token',
         placeholder : T('Remote Auth Token'),
         tooltip : T('Paste the temporary token from the computer\
-         with the <b>Remote ZFS Volume/Dataset</b> here.'),
+         with the <b>Remote ZFS Pool/Dataset</b> here.'),
         isHidden : true,
       },
       {

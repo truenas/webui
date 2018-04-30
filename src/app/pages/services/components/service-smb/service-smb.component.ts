@@ -1,9 +1,12 @@
 import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
-import { FormControl, NG_VALIDATORS } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import {
+  regexValidator
+} from '../../../common/entity/entity-form/validators/regex-validation';
 
 import {
   IdmapService,
@@ -159,17 +162,19 @@ export class ServiceSMBComponent implements OnInit {
        nobody; account must have permission to access the shared\
        volume/dataset; if Guest Account user is deleted, resets to nobody.'),
     },
-    { type: 'permissions',
+    { type: 'input',
       name: 'cifs_srv_filemask',
       placeholder: T('File Mask'),
       tooltip: T('Overrides default file creation mask of 0666 which\
        creates files with read and write access for everybody.'),
+      validation : [ regexValidator(/^[0-1]?[0-7][0-7][0-7]$/) ],
     },
-    { type: 'permissions',
+    { type: 'input',
       name: 'cifs_srv_dirmask',
       placeholder: T('Directory Mask'),
       tooltip: T('Overrides default directory creation mask of 0777\
        which grants directory read, write and execute access for everybody.'),
+      validation : [ regexValidator(/^[0-1]?[0-7][0-7][0-7]$/) ],
     },
     {
       type: 'checkbox',

@@ -23,6 +23,12 @@ export class VlanFormComponent {
   protected resource_name: string = 'network/vlan/';
   protected route_success: string[] = [ 'network', 'vlans' ];
   protected isEntity: boolean = true;
+  public confirmSubmit = false;
+  public confirmSubmitDialog = {
+    title: T("Save VLAN Interface Changes"),
+    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    hideCheckbox: false
+  }
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -82,6 +88,7 @@ export class VlanFormComponent {
     this.route.params.subscribe(params => {
       if(params['pk']) {
         this.vlan_pint.type = 'input';
+        this.confirmSubmit = true;
       }
     });
   }

@@ -45,14 +45,18 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       type : 'input',
       name : 'name',
       label : T('name'),
-      isHidden: true
+      isHidden: true,
+      validation: [Validators.required],
+      required: true
     },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
       label : T('Passphrase'),
       placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase')
+      tooltip: T('Geli Passphrase'),
+      validation: [Validators.required],
+      required: true
     }
   ];
 

@@ -148,7 +148,7 @@ export class PluginsInstalledListComponent {
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
-      selected.push(selectedJails[i][1]);
+      selected.push([selectedJails[i][1]]);
     }
     return selected;
   }
@@ -171,5 +171,13 @@ export class PluginsInstalledListComponent {
     let params: Array<any> = ['jail.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
+  }
+
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.split(entityList.rows[i][6], '|').length > 1) {
+        entityList.rows[i][6] = _.split(entityList.rows[i][6], '|')[1];
+      }
+    }
   }
 }

@@ -81,7 +81,7 @@ export class UpdateComponent implements OnInit {
   onTrainChanged(event){
     var isValid = this.validUpdate(this.selectedTrain, event.value);
     if (isValid) {
-      this.dialogService.confirm("Switch Train", "Are you sure you want ot switch train?").subscribe((res)=>{
+      this.dialogService.confirm("Switch Train", "Are you sure you want to switch trains?").subscribe((res)=>{
         if (res) {
           this.train = event.value;
         }else {
@@ -89,7 +89,7 @@ export class UpdateComponent implements OnInit {
         }
       });
     } else {
-      this.dialogService.Info("Confirm", "You're not allowed to change away from the train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train").subscribe(res => {
+      this.dialogService.Info("Confirm", "Changing away from the train is not permitted, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train").subscribe(res => {
         this.train = this.selectedTrain;
       });
     }

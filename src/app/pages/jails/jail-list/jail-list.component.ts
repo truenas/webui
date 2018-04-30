@@ -270,4 +270,13 @@ export class JailListComponent implements OnInit {
     params.push(this.getSelectedNames(selected));
     return params;
   }
+
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
+        entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];
+      }
+    }
+  }
+
 }

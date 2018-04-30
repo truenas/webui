@@ -22,6 +22,7 @@ interface DatasetFormData {
   sync: string;
   compression: string;
   atime: string;
+  share_type: string;
   refquota: string;
   quota: string;
   refreservation: string;
@@ -83,7 +84,7 @@ export class DatasetFormComponent implements Formconfiguration {
     {
       type: 'select',
       name: 'sync',
-      placeholder: 'sync',
+      placeholder: T('Sync'),
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
@@ -120,6 +121,17 @@ export class DatasetFormComponent implements Formconfiguration {
         { label: 'ON', value: 'ON' },
         { label: 'OFF', value: 'OFF' }
       ],
+    },
+    {
+      type: 'radio',
+      name: 'share_type',
+      placeholder: T('Share Type'),
+      tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
+                type that matches the type of client accessing the volume/dataset.'),
+      options: [{label:'Unix', value: 'UNIX'},
+                {label:'Windows', value: 'WINDOWS'},
+                {label:'Mac', value: 'MAC'}],
+      value: 'UNIX'
     },
     {
       type: 'input',
@@ -222,6 +234,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  adapts the record size dynamically to adapt to data, if the data has a fixed size\
  for example, a database, matching that size may result in better performance.'),
       options: [
+        { label: 'Inherit', value: null},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -248,6 +261,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: 'INSENSITIVE', value: 'INSENSITIVE' },
         { label: 'MIXED', value: 'MIXED' }
       ],
+      value: 'SENSITIVE'
     }
 
   ];
@@ -346,6 +360,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
      const returnValue: DatasetFormData = {
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
+        share_type: this.getFieldValueOrRaw(wsResponse.share_type),
         casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
         comments: this.getFieldValueOrRaw(wsResponse.comments),
         compression: this.getFieldValueOrRaw(wsResponse.compression),
@@ -397,8 +412,8 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     }, (res) => {
       this.loader.close();
       //Handled in global error websocketservice
-      // this.dialogService.errorReport("Error Importing volume", res.message, res.stack);
-      console.log(T("Error saving dataset"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
+      //console.log(T("Error saving dataset"), res.message, res.stack);
     });
   }
 

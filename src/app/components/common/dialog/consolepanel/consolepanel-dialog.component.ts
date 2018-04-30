@@ -8,7 +8,8 @@ import { WebSocketService } from '../../../../services/';
   templateUrl: './consolepanel-dialog.component.html'
 })
 export class ConsolePanelModalDialog {
-
+  
+  public refreshMsg: String = "Check to stop refresh";
   public intervalPing;
   public consoleMsg: String = "Loading...";
   @ViewChild('footerBarScroll') private footerBarScroll: ElementRef;
@@ -58,9 +59,11 @@ export class ConsolePanelModalDialog {
   onStopRefresh(data) {
     if(data.checked) {
       clearInterval(this.intervalPing);
+      this.refreshMsg = 'Uncheck to restart refresh';
     }
     else {
       this.getLogConsoleMsg();
+      this.refreshMsg = "Check to stop refresh";
     }    
   }
 }

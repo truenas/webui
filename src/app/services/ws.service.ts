@@ -5,7 +5,6 @@ import {LocalStorage} from 'ngx-webstorage';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
-import { DialogService } from '../services/dialog.service';
 
 @Injectable()
 export class WebSocketService {
@@ -25,7 +24,7 @@ export class WebSocketService {
 
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
-  constructor(private _router: Router, private dialogService: DialogService) {
+  constructor(private _router: Router) {
     this._authStatus = new Subject();
     this.onOpenSubject = new Subject();
     this.onCloseSubject = new Subject();
