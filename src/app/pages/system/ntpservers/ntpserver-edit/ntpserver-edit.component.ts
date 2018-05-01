@@ -4,6 +4,7 @@ import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/form
 import { RestService } from '../../../../services/rest.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { greaterThan } from '../../../common/entity/entity-form/validators/compare-validation';
 
 @Component({
   selector: 'app-ntpserver-edit',
@@ -49,7 +50,7 @@ export class NTPServerEditComponent {
       name: 'ntp_minpoll',
       placeholder: T('Min. Poll'),
       inputType: 'number',
-      validation: [Validators.required, Validators.min(0)],
+      validation: [Validators.min(4),Validators.required],
       tooltip: T('Power of 2 in seconds; cannot be lower than 4 or\
        higher than <i>Max. Poll</i>.'),
     },
@@ -58,7 +59,7 @@ export class NTPServerEditComponent {
       name: 'ntp_maxpoll',
       placeholder: T('Max. Poll'),
       inputType: 'number',
-      validation: [Validators.required, Validators.min(0)],
+      validation: [Validators.max(17), greaterThan('ntp_minpoll'), Validators.required,],
       tooltip: T('Power of 2 in seconds; cannot be higher than 17 or\
        lower than <i>Min. Poll</i>.'),
     },
