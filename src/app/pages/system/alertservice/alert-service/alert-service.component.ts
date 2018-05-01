@@ -39,7 +39,7 @@ export class AlertServiceComponent implements OnInit {
       type: 'checkbox',
       name: 'enabled',
       placeholder: 'Enabled',
-      value: false,
+      value: true,
     },
     {
       type: 'select',
