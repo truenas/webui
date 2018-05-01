@@ -19,6 +19,7 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { greaterThan } from '../../../common/entity/entity-form/validators/compare-validation';
 
 @Component({
   selector : 'app-ntpserver-add',
@@ -65,7 +66,8 @@ export class NTPServerAddComponent {
       placeholder : T('Min. Poll'),
       tooltip: T('Power of 2 in seconds; cannot be lower than 4 or\
        higher than <i>Max. Poll</i>.'),
-      value : 6
+      value : 6,
+      validation: [Validators.min(4),Validators.required]
     },
     {
       type : 'input',
@@ -74,6 +76,7 @@ export class NTPServerAddComponent {
       tooltip: T('Power of 2 in seconds; cannot be higher than 17 or\
        lower than <i>Min. Poll</i>.'),
       value : 10,
+      validation: [Validators.max(17), greaterThan('ntp_minpoll'), Validators.required,]
     },
     {
       type : 'checkbox',
