@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
+import {MessageService} from '../../common/entity/entity-form/services/message.service';
 import * as _ from 'lodash';
 
 import { EntityUtils } from '../../common/entity/utils';
@@ -225,6 +226,7 @@ export class VMWizardComponent {
           acceptedFiles: ',.iso',
           fileLocation: '',
           validation : [  ],
+          message: this.messageService
         },
       ]
     },
@@ -240,7 +242,7 @@ export class VMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    private router: Router) {
+    public messageService: MessageService,private router: Router) {
 
   }
 
@@ -261,6 +263,9 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
       });
+      this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+        ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
+      })
       if (res === 'windows') {
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
