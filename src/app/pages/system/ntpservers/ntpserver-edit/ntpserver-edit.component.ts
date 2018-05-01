@@ -50,7 +50,6 @@ export class NTPServerEditComponent {
       name: 'ntp_minpoll',
       placeholder: T('Min. Poll'),
       inputType: 'number',
-      value : 6,
       validation: [Validators.min(4),Validators.required],
       tooltip: T('Power of 2 in seconds; cannot be lower than 4 or\
        higher than <i>Max. Poll</i>.'),
