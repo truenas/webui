@@ -54,7 +54,7 @@ Optional Commands:
                             [account, system, guide, service, theme]
 
 --driver <d_v>             - version of the driver
-                             [U]
+                             [U, G]
 
 """ % argument[0]
 
@@ -100,7 +100,9 @@ else:
     if (driver_v == "U"):
         from driverU import webDriver
         print ("Running Ubuntu driver")
-
+    elif (driver_v == "G"):
+        from driverG import webDriver
+        print ("Running Selenium Grid")
 
 global runDriver
 runDriver = webDriver()
