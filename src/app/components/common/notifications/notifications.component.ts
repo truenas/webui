@@ -63,21 +63,21 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   closeAll(e) {
     e.preventDefault();
-    this.notificationsService.clearNotifications(this.notifications, true);
+    this.notificationsService.dismissNotifications(this.notifications);
   }
 
   reopenAll(e) {
     e.preventDefault();
-    this.notificationsService.clearNotifications(this.dismissedNotifications, false);
+    this.notificationsService.restoreNotifications(this.dismissedNotifications);
   }
 
   turnMeOff(notification: NotificationAlert, e) {
     e.preventDefault();
-    this.notificationsService.clearNotifications([notification], true);
+    this.notificationsService.dismissNotifications([notification]);
   }
 
   turnMeOn(notification: NotificationAlert, e) {
     e.preventDefault();
-    this.notificationsService.clearNotifications([notification], false);
+    this.notificationsService.restoreNotifications([notification]);
   }
 }

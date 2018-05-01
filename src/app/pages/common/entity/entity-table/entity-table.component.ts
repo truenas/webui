@@ -36,6 +36,7 @@ export interface InputTableConf {
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
+  checkbox_confirm_show?: any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -292,7 +293,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       try {
         return this.conf.rowValue(row, attr);
       } catch(e) {
-        console.log("Conversion issue defaulting to straight value (calling rowValue in conf", this.conf );
         return row[attr];
       }
     }
@@ -311,7 +311,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   doDelete(id) {
     let dialog = {};
-    if (this.conf.checkbox_confirm) {
+    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
       this.conf.checkbox_confirm(id);
       return;
     }

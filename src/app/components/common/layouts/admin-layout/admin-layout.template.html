@@ -55,7 +55,7 @@
     </div>
   </mat-sidenav-content>
   <!-- Notificaation bar -->
-  <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify($event)" (close)="onCloseNotify($event)">
+  <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify($event)" (close)="onCloseNotify($event)" class="notification-sidenav">
     <div class="navigation-hold" fxLayout="column">
       <app-notifications *ngIf="isSidenotOpen" [notificPanel]="notificationPanel"></app-notifications>
     </div>

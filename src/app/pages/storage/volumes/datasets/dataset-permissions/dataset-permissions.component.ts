@@ -69,7 +69,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       value: true
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'mp_user',
       placeholder: T('User'),
       tooltip: T('Select the user to control the volume/dataset.\
@@ -85,7 +85,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       value: true
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'mp_group',
       placeholder: T('Group'),
       tooltip: T('Select the group to control the volume/dataset.\
@@ -131,19 +131,21 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.mp_path.value = this.path;
     });
 
-    this.userService.listUsers().subscribe(res => {
+    this.userService.listAllUsers().subscribe(res => {
       let users = [];
-      for (let user of res.data) {
-        users.push({label: user['bsdusr_username'], value: user['bsdusr_uid']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
       }
       this.mp_user = _.find(this.fieldConfig, {'name' : 'mp_user'});
       this.mp_user.options = users;
     });
 
-    this.userService.listGroups().subscribe(res => {
+    this.userService.listAllGroups().subscribe(res => {
       let groups = [];
-      for (let group of res.data) {
-        groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_gid']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
       }
       this.mp_group = _.find(this.fieldConfig, {'name' : 'mp_group'});
         this.mp_group.options = groups;
@@ -155,8 +157,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.storageService.filesystemStat(this.path).subscribe(res => {
       entityEdit.formGroup.controls['mp_mode'].setValue(res.mode.toString(8).substring(2,5));
-      entityEdit.formGroup.controls['mp_user'].setValue(res.uid);
-      entityEdit.formGroup.controls['mp_group'].setValue(res.gid);
+      entityEdit.formGroup.controls['mp_user'].setValue(res.user);
+      entityEdit.formGroup.controls['mp_group'].setValue(res.group);
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
