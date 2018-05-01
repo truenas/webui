@@ -8,6 +8,7 @@ import { T } from '../../../translate-marker';
 @Component({
   selector: 'app-plugins-available-list',
   templateUrl: './plugins-available-list.component.html',
+  styleUrls: ['./plugins-available-list.component.css'],
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class PluginsAvailabelListComponent {

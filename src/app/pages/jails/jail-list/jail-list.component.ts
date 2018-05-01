@@ -9,7 +9,8 @@ import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'app-jail-list',
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
-  templateUrl: './jail-list.component.html' 
+  templateUrl: './jail-list.component.html',
+  styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
 })
 export class JailListComponent implements OnInit {
 
