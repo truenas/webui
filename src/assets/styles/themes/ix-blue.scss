@@ -503,10 +503,12 @@ tr.dx-row:nth-child(odd){
   
 }
 
-
-tree-root {
-  background-color: var(--primary);
+.myselected:active {
+    background-color: var(--bg1);
 }
+
+
+
 
 
 
