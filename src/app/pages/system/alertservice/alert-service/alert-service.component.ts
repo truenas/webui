@@ -399,7 +399,7 @@ export class AlertServiceComponent implements OnInit {
             ['id', '=', this.pk]
           ]
         ]).subscribe((res) => {
-          if (res[0].settings.length > 0) {
+          if ((<any>Object).keys(res[0].settings).length > 0) {
             this.settingEnabled = true;
           }
           for (const i in this.formGroup.controls) {
@@ -421,9 +421,15 @@ export class AlertServiceComponent implements OnInit {
   onSubmit(event: Event) {
     let payload = _.cloneDeep(this.formGroup.value);
     let serviceValue = _.cloneDeep(this.activeFormGroup.value);
+    let settingValue = _.cloneDeep(this.settingFormGroup.value);
+    for (let i in settingValue) {
+      if (settingValue[i] == 'INHERIT') {
+        delete settingValue[i];
+      }
+    }
 
     payload['attributes'] = serviceValue;
-    payload['settings'] = {};
+    payload['settings'] = settingValue;
 
     this.loader.open();
     if (this.isNew) {
