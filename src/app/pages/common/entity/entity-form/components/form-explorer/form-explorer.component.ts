@@ -35,7 +35,6 @@ export class FormExplorerComponent implements Field, OnInit {
       },
       click: (tree, node, $event) => {
         this.setPath(node);
-        this.changeStyle(node);
         TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event)
       }
     },
@@ -83,11 +82,6 @@ export class FormExplorerComponent implements Field, OnInit {
     });
   }
   
-  changeStyle(node) {
-    console.log(node);
-    
-  }
-
   customTemplateStringOptions = {
     displayField: this.displayFieldName,
     isExpandedField: 'expanded',
@@ -98,10 +92,6 @@ export class FormExplorerComponent implements Field, OnInit {
     allowDrag: true,
     useVirtualScroll: false,
     useTriState: false,
-    nodeClass: (node:TreeNode) => {
-      return "myselected";
-    }
-    
   }
   
   private toggleTree() {
