@@ -412,6 +412,18 @@ tr.dx-row:nth-child(odd){
 
 // END Treelist styles
 
+//Entity Module Overrides
+
+entity-task .form-card.mat-card,
+entity-form .form-card.mat-card{
+  max-width:960px;
+  margin:0 auto;
+}
+
+.form-card.mat-card{
+  font-size:12px;
+}
+
 .fieldset-label{
   min-width:100%;
   margin-bottom:16px;
