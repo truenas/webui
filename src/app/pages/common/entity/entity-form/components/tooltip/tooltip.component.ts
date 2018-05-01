@@ -25,6 +25,8 @@ export class TooltipComponent {
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
     let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
     let dynamicWidth = this.message.length * 9.5;
+    let dynamicWidth = this.message.length * 9.8;
+
 
     if((posY / screenH > .85)) {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
