@@ -90,7 +90,7 @@ export class EmailComponent implements OnDestroy {
       name : 'em_outgoingserver',
       placeholder : T('Outgoing Mail Server'),
       tooltip : T('Hostname or IP address of SMTP server to use for '
-                + 'sending this email.',)
+                + 'sending this email.'),
     },
     {
       type : 'input',
