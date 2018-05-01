@@ -27,8 +27,7 @@ export class TooltipComponent {
     let dynamicWidth = this.message.length * 9.5;
 
     if((posY / screenH > .85)) {
-      console.log(posY, screenH);
-      this.tooltipMsgStyle = {'above' : '0px', 'max-width' : dynamicWidth + 'px'};
+      this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
     }
 
     if(this.message.length <= 40) {
