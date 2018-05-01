@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, Injector, OnInit, Inject, NgZone, ViewChild, EventEmitter } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Observable, Observer, Subscription } from 'rxjs';
+import { Observable, Observer, Subscription, Subject } from 'rxjs';
 import { HttpClient, HttpParams, HttpRequest, HttpEvent, HttpHeaders } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -52,17 +52,23 @@ export class FormUploadComponent {
 
     this.http.post(this.apiEndPoint, formData).subscribe(
       (data) => {
+        this.newMessage(location + '/' + fileBrowser.files[0].name);
         this.loader.close();
         this.snackBar.open("your files are uploaded", 'close', { duration: 5000 });
       },
       (error) => {
         this.loader.close();
         this.dialog.errorReport(error.status, error.statusText, error._body);
-        
       }
     );
   } else{
     this.loader.close();
   };
+}
+newMessage(message){
+  if(this.config.message){
+    this.config.message.newMessage(message);
+  }
+  
 }
 }
