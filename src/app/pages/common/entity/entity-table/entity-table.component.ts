@@ -433,4 +433,23 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.updateMultiAction(this.selected);
     }
   }
+
+  toggle(col) {
+    const isChecked = this.isChecked(col);
+
+    if(isChecked) {
+      this.conf.columns = this.conf.columns.filter(c => { 
+        return c.name !== col.name; 
+      });
+    } else {
+      this.conf.columns = [...this.conf.columns, col];
+    }
+  }
+
+  isChecked(col) {
+    return this.conf.columns.find(c => {
+      return c.name === col.name;
+    });
+}
+
 }

@@ -94,4 +94,19 @@
     </ngx-datatable>
   </div>
 
+  <div class="selected-columns">
+    <h4>Available Columns</h4>
+    <ul>
+      <li *ngFor="let col of conf.columns">
+        <input 
+          type="checkbox"
+          [id]="col.name"
+          (click)="toggle(col)"
+          [checked]="isChecked(col)"
+          />
+          <label [attr.for]="col.name">{{col.name}}</label>
+      </li>
+    </ul>
+  </div>
+
 </div>
