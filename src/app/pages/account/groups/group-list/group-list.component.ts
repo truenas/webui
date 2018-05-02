@@ -96,4 +96,7 @@ export class GroupListComponent {
     }
   );
   };
+  checkbox_confirm_show(id: any){
+    return true;
+  }
 }
