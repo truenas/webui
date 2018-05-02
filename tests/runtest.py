@@ -40,7 +40,7 @@ from theme import run_change_theme_test
 from logout import run_logout_test
 if path.exists("/usr/local/etc/ixautomation.conf"):
     copyfile("/usr/local/etc/ixautomation.conf", "config.py")
-from config import *
+    from config import *
 if "Grid_ip" in locals():
     grid_sever_ip = Grid_ip
 else:
@@ -98,24 +98,25 @@ except NameError:
     print(UsageMSG)
     sys.exit(1)
 
+global runDriver
 try:
     driver_v
 except NameError:
     from driverG import webDriver
     print("Running Selenium Grid")
-    global runDriver
+#    global runDriver
     runDriver = webDriver(grid_sever_ip)
 
 else:
     if (driver_v == "U"):
         from driverU import webDriver
         print ("Running Ubuntu driver")
-        global runDriver
+#        global runDriver
         runDriver = webDriver()
     elif (driver_v == "G"):
         from driverG import webDriver
         print("Running Selenium Grid")
-        global runDriver
+#        global runDriver
         runDriver = webDriver(grid_sever_ip)
 
 # turning on the autoflush to display result
