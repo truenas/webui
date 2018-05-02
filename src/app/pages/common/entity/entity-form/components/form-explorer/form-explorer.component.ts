@@ -35,7 +35,7 @@ export class FormExplorerComponent implements Field, OnInit {
       },
       click: (tree, node, $event) => {
         this.setPath(node);
-        TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event)
+        TREE_ACTIONS.FOCUS(tree, node, $event);
       }
     },
     keys: {
@@ -91,7 +91,6 @@ export class FormExplorerComponent implements Field, OnInit {
     nodeHeight: 23,
     allowDrag: true,
     useVirtualScroll: false,
-    useTriState: false,
   }
   
   private toggleTree() {
