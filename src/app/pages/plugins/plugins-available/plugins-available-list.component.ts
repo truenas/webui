@@ -33,6 +33,11 @@ export class PluginsAvailabelListComponent {
   public activatedPool: any;
   public availablePools: any = [];
 
+  public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the iocage jail manager \
+  to create a /iocage dataset in the selected pool. The '/iocage' dataset may not be visible \
+  until after the first jail is created. iocage uses this dataset to store FreeBSD RELEASES \
+  and all other jail data. To create a new ZFS Pool, navigate Storage/Volumes and click 'Create ZFS Pool'.");
+
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {
     this.getActivatedPool();
     this.getAvailablePools();

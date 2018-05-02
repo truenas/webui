@@ -10,7 +10,7 @@
                 <mat-option *ngFor="let pool of availablePools" [value]="pool">{{pool.name}}</mat-option>
               </mat-select>
             </mat-form-field>
-            <tooltip message= "{{ 'Choose an existing ZFS Pool to allow the iocage jail manager to create a /iocage dataset in the selected pool. The \'/iocage\' dataset may not be visible until after the first jail is created. iocage uses this dataset to store FreeBSD RELEASES and all other jail data. To create a new ZFS Pool, navigate Storage/Volumes and click \'Create ZFS Pool\'.' | translate }}"></tooltip>
+            <tooltip [message]=tooltipMsg></tooltip>
           </div>
           <button mat-raised-button color="primary" type="submit" [disabled]="!selectedPool">{{ "Activate" | translate }}</button>
         </form>
