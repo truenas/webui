@@ -28,6 +28,8 @@ export class TooltipComponent {
 
     if((posY / screenH > .85)) {
       this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
+    } else {
+      this.tooltip.nativeElement.lastElementChild.id = "";
     }
 
     if(this.message.length <= 40) {
