@@ -6,12 +6,14 @@
 
 import sys
 import getopt
+from shutil import copyfile
 from subprocess import call
 from os import path
-# when running for jenkins user driver, and when running on  an ubuntu system user driverU, because of  capabilities
+# when running for jenkins user driver, and when running on  an ubuntu system
+# user driverU, because of capabilities
 
-#from driver import webDriver
-#from driverU import webDriver
+# from driver import webDriver
+# from driverU import webDriver
 # Importing test
 # from autoflush import autoflush
 from login import run_login_test
@@ -36,7 +38,13 @@ from acc_edit import run_edit_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
 from logout import run_logout_test
-import sys
+if path.exists("/usr/local/etc/ixautomation.conf"):
+    copyfile("/usr/local/etc/ixautomation.conf", "config.py")
+from config import *
+if "Grid_ip" in locals():
+    grid_sever_ip = Grid_ip
+else:
+    grid_sever_ip = "127.0.0.1"
 sys.stdout.flush()
 
 argument = sys.argv
@@ -93,19 +101,23 @@ except NameError:
 try:
     driver_v
 except NameError:
-    from driver import webDriver
-    print ("Running jenkin/truos driver")
+    from driverG import webDriver
+    print("Running Selenium Grid")
+    global runDriver
+    runDriver = webDriver(grid_sever_ip)
 
 else:
     if (driver_v == "U"):
         from driverU import webDriver
         print ("Running Ubuntu driver")
+        global runDriver
+        runDriver = webDriver()
     elif (driver_v == "G"):
         from driverG import webDriver
-        print ("Running Selenium Grid")
+        print("Running Selenium Grid")
+        global runDriver
+        runDriver = webDriver(grid_sever_ip)
 
-global runDriver
-runDriver = webDriver()
 # turning on the autoflush to display result
 # autoflush(True)
 # Starting the test and genewratinf result
@@ -128,7 +140,7 @@ except NameError:
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)
-# temporary shutdown 
+# temporary shutdown
 #    run_conf_lldp_test(runDriver)
 #    run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
