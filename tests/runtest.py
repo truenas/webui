@@ -41,15 +41,10 @@ from logout import run_logout_test
 if path.exists("/usr/local/etc/ixautomation.conf"):
     copyfile("/usr/local/etc/ixautomation.conf", "config.py")
     from config import *
-<<<<<<< HEAD
     if "Grid_ip" in locals():
         grid_sever_ip = Grid_ip
     else:
         grid_sever_ip = "127.0.0.1"
-=======
-if "Grid_ip" in locals():
-    grid_sever_ip = Grid_ip
->>>>>>> 443c711517b9596edecca8d52b70cc8eee1fa30a
 else:
     grid_sever_ip = "127.0.0.1"
 
