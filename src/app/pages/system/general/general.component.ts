@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services/';
+import {AppLoaderService} from '../../../services/app-loader/app-loader.service';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -173,17 +174,38 @@ export class GeneralComponent {
   private stg_syslogserver: any;
 
   private protocol: any;
+  private http_port: any;
+  private https_port: any;
+  private redirect: any;
+  //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
+  private entityForm: any;
 
   constructor(protected rest: RestService, protected router: Router, 
     protected language: LanguageService, protected ws: WebSocketService,
-    protected dialog: DialogService) {}
+    protected dialog: DialogService, protected loader: AppLoaderService) {}
 
   resourceTransformIncomingRestData(value) {
     this.protocol = value['stg_guiprotocol'];
+    this.http_port = value['stg_guiport'];
+    this.https_port = value['stg_guihttpsport'];
+    this.redirect = value['stg_guihttpsredirect']
     return value;
   }
 
+  reconnect(href) {
+    if (this.entityForm.ws.connected) {
+      this.loader.close();
+      // ws is connected
+      window.location.replace(href);
+    } else {
+      setTimeout(() => {
+        this.reconnect(href);
+      }, 5000);
+    }
+  }
+
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     entityEdit.ws.call('certificate.query', [
         [
           ['cert_CSR', '=', null]
@@ -253,24 +275,48 @@ export class GeneralComponent {
 
   afterSubmit(value) {
     let newprotocol = value.stg_guiprotocol;
-    if (this.protocol !== newprotocol) {
+    let new_http_port = value.stg_guiport;
+    let new_https_port = value.stg_guihttpsport;
+    let new_redirect = value.stg_guihttpsredirect;
+    if (this.protocol !== newprotocol ||
+        this.http_port !== new_http_port ||
+        this.https_port !== new_https_port ||
+        this.redirect !== new_redirect) {
       this.dialog.confirm(T("Restart Web Service"), T("In order for the protocol \
       changes to take effect the web service will need to be restarted, you will \
       temporarily lose connection to the UI.  Do you wish to restart the service?"))
         .subscribe((res)=> {
           if (res) {
             let href = window.location.href;
-            this.ws.call("service.restart", ["http"]).subscribe((res)=> {
-              if (res) {
-                if (this.protocol === 'http' && newprotocol === 'https') {
-                  window.location.replace(href.replace(/^http\:/,"https:"));
-                } else if (this.protocol === 'https' && newprotocol === 'http') {
-                  window.location.replace(href.replace(/^https\:/,"http:"));
-                } else {
-          
-                }
-              }
+            let hostname = window.location.hostname;
+            let port = window.location.port;
+            let protocol;
+            if (newprotocol === 'httphttps') {
+              protocol = 'http:'
+            } else {
+              protocol = newprotocol + ':';
+            }
+
+            if (new_http_port !== this.http_port && protocol == 'http:') {
+              port = new_http_port;
+            } else if (new_https_port !== this.https_port && protocol == 'https:') {
+              port = new_https_port;
+            }
+
+            href = protocol + '//' + hostname + ':' + port + window.location.pathname;
+
+            this.loader.open();
+            this.entityForm.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
+            this.entityForm.ws.call("service.restart", ["http"]).subscribe((res)=> {
+            }, (res) => {
+              this.loader.close();
+              this.dialog.errorReport(T("Error restarting web service"), res.reason, res.trace.formatted);
             });
+
+            this.entityForm.ws.reconnect(protocol, hostname + ':' + port);
+            setTimeout(() => {
+              this.reconnect(href);
+            }, 1000);
           }
         });
     }
