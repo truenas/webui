@@ -214,11 +214,12 @@ export class AdvancedComponent implements OnInit {
       this.adv_serialport.isHidden = !value;
     });
     entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
-      serial_port_choices.forEach((serial_port)=>{
+      for(let i=0; i<serial_port_choices.length; i++){
         this.adv_serialport.options.push(
-          {label: serial_port, value: serial_port
-        })
-      })
+          {
+            label: serial_port_choices[i], value: serial_port_choices[i]
+          }
+        )}
       
     });
     entityEdit.ws.call('device.get_info', ['SERIAL']).subscribe((res) => {
