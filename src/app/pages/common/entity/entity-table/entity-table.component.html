@@ -1,3 +1,20 @@
+<div class="selected-columns">
+    <h4>Available Columns</h4>
+    <ul>
+      <li *ngFor="let col of allColumns">
+        <div>
+          <!-- The following works perfectly as input, but not as mat-checkbox -->
+          <input
+            type="checkbox"
+            [id]="col.name"
+            (click)="toggle(col)"
+            [checked]="isChecked(col)">
+          <label [attr.for]="col.name">{{col.name}}</label>
+        </div>
+      </li>
+    </ul>
+  </div>
+
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
@@ -52,8 +69,7 @@
       (sort)='reorderEvent($event)'
       [selectionType]="'checkbox'"
       [selected]='selected'
-      (select)='onSelect($event)'
-      [scrollbarH]="true">
+      (select)='onSelect($event)'>
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
@@ -84,7 +100,7 @@
         </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column [frozenRight]="true">
+      <ngx-datatable-column>
         <ng-template let-row="row" ngx-datatable-cell-template>
           <app-entity-table-actions [entity]="this" [row]="row">
           </app-entity-table-actions>
@@ -92,21 +108,6 @@
       </ngx-datatable-column>
 
     </ngx-datatable>
-  </div>
-
-  <div class="selected-columns">
-    <h4>Available Columns</h4>
-    <ul>
-      <li *ngFor="let col of conf.columns">
-        <input 
-          type="checkbox"
-          [id]="col.name"
-          (click)="toggle(col)"
-          [checked]="isChecked(col)"
-          />
-          <label [attr.for]="col.name">{{col.name}}</label>
-      </li>
-    </ul>
   </div>
 
 </div>

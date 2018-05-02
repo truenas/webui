@@ -17,13 +17,13 @@ export class UserListComponent implements OnInit {
   protected route_delete: string[] = ['account', 'users', 'delete'];
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', freezeLeft: "true" },
-    { name: 'UID', prop: 'bsdusr_uid', freezeLeft: "true" },
+    { name: 'Username', prop: 'bsdusr_username', checked: 'checked' },
+    { name: 'UID', prop: 'bsdusr_uid'},
     { name: 'GID', prop: 'bsdusr_group' },
-    { name: 'Home directory', prop: 'bsdusr_home' },
+    { name: 'Home directory', prop: 'bsdusr_home', checked: 'checked' },
     { name: 'Shell', prop: 'bsdusr_shell' },
     { name: 'Builtin', prop: 'bsdusr_builtin' },
-    { name: 'Full Name', prop: 'bsdusr_full_name' },
+    { name: 'Full Name', prop: 'bsdusr_full_name', checked: 'checked' },
     { name: 'Email', prop: 'bsdusr_email' },
     { name: 'Disable Password Login', prop: 'bsdusr_password_disabled' },
     { name: 'Lock User', prop: 'bsdusr_locked' },
@@ -44,7 +44,7 @@ export class UserListComponent implements OnInit {
 
   getUserList() {
     this.rest.get(this.resource_name, {}).subscribe((res) => {
-      console.log(res);
+      //console.log(res);
     })
   }
 
@@ -59,4 +59,5 @@ export class UserListComponent implements OnInit {
       localStorage.setItem(this.router.url, 'true');
     }
   }
+  
 }

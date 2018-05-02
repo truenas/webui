@@ -85,6 +85,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
+  public allColumns: Array<any> = [];
+  
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
   public seenRows: any[] = [];
@@ -112,6 +114,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }   
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
+      this.allColumns.push(column);
     });
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
@@ -152,6 +155,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
+
+      console.log(this.allColumns);
+      console.log(this.conf.columns);
   }
   
 
@@ -433,9 +439,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.updateMultiAction(this.selected);
     }
   }
-
+// -------------------------------------------
   toggle(col) {
     const isChecked = this.isChecked(col);
+    console.log(isChecked);
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
@@ -444,12 +451,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
+
+    console.log(this.allColumns);
+    console.log(this.conf.columns);
   }
 
   isChecked(col) {
     return this.conf.columns.find(c => {
       return c.name === col.name;
     });
-}
+  }
 
 }
