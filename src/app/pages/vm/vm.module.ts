@@ -4,6 +4,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
+import {MessageService} from '../../pages/common/entity/entity-form/services/message.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 //import { BrowserModule } from '@angular/platform-browser';
@@ -64,7 +65,7 @@ import {VMSerialShellComponent} from './vm-cards/vm-serial-shell'
     DockerVMWizardComponent,
     VMSerialShellComponent
   ],
-  providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService ]
+  providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService,MessageService ]
 })
 /*
     export class VmModule {} import {
