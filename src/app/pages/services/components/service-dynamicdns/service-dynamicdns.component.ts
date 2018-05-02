@@ -93,7 +93,7 @@ export class ServiceDDNSComponent {
     },
     {
       type : 'checkbox',
-      name : '  ssl',
+      name : 'ssl',
       placeholder : T('CheckIP Server SSL'),
       tooltip: T(''),
     },
@@ -117,7 +117,7 @@ export class ServiceDDNSComponent {
        record.'),
       inputType : 'password',
       validation :
-          [ Validators.minLength(8), matchOtherValidator('password2') ]
+          [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ]
     },
     {
       type : 'input',
@@ -138,7 +138,25 @@ export class ServiceDDNSComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  afterInit(entityForm: any) { }
+  afterInit(entityForm: any) {
+    entityForm.ws.call('dyndns.config').subscribe((res)=>{
+      entityForm.formGroup.controls['provider'].setValue(res.provider);
+      entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
+      entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
+      entityForm.formGroup.controls['checkip_path'].setValue(res.checkip_path);
+      entityForm.formGroup.controls['ssl'].setValue(res.ssl);
+      entityForm.formGroup.controls['domain'].setValue(res.domain);
+      entityForm.formGroup.controls['username'].setValue(res.username);
+      entityForm.formGroup.controls['period'].setValue(res.period);
+    })
+    entityForm.submitFunction = this.submitFunction;
+   }
+
+   clean(value) {
+    delete value['password2'];
+
+    return value;
+  }
 
   submitFunction(this: any, entityForm: any,){
 
