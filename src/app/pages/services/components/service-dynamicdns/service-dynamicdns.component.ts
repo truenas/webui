@@ -108,6 +108,7 @@ export class ServiceDDNSComponent {
       name : 'username',
       placeholder : T('Username'),
       tooltip: T(''),
+      required: true
     },
     {
       type : 'input',
@@ -117,13 +118,15 @@ export class ServiceDDNSComponent {
        record.'),
       inputType : 'password',
       validation :
-          [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ]
+          [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ],
+      required: true
     },
     {
       type : 'input',
       name : 'password2',
       placeholder : T('Confirm Password'),
       inputType : 'password',
+      required: true
     },
     {
       type : 'input',
