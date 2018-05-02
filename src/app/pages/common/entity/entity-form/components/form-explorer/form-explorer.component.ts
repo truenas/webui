@@ -1,7 +1,7 @@
 import {Component, ViewContainerRef, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {EntityFormService} from '../../services/entity-form.service';
-import {TreeNode, TREE_ACTIONS, KEYS, IActionMapping} from 'angular-tree-component';
+import {TreeNode, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -35,7 +35,7 @@ export class FormExplorerComponent implements Field, OnInit {
       },
       click: (tree, node, $event) => {
         this.setPath(node);
-        TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event)
+        TREE_ACTIONS.FOCUS(tree, node, $event);
       }
     },
     keys: {
@@ -81,7 +81,7 @@ export class FormExplorerComponent implements Field, OnInit {
       }     
     });
   }
-
+  
   customTemplateStringOptions = {
     displayField: this.displayFieldName,
     isExpandedField: 'expanded',
@@ -90,7 +90,7 @@ export class FormExplorerComponent implements Field, OnInit {
     actionMapping: this.actionMapping,
     nodeHeight: 23,
     allowDrag: true,
-    useVirtualScroll: false
+    useVirtualScroll: false,
   }
   
   private toggleTree() {
