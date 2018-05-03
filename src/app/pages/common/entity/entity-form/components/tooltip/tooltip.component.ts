@@ -21,8 +21,16 @@ export class TooltipComponent {
     this.isShowTooltip = $event;
 
     let screenW = document.body.clientWidth;
+    let screenH = document.body.clientHeight;
     let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
-    let dynamicWidth = this.message.length * 9.8;
+    let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
+    let dynamicWidth = this.message.length * 9.5;
+
+    if((posY / screenH > .85)) {
+      this.tooltip.nativeElement.lastElementChild.id = "raised-tooltip";
+    } else {
+      this.tooltip.nativeElement.lastElementChild.id = "";
+    }
 
     if(this.message.length <= 40) {
       if((screenW - posX) > 420) {
