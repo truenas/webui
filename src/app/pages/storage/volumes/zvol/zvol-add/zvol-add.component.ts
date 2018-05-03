@@ -74,7 +74,8 @@ export class ZvolAddComponent {
         {label : 'lzjb (legacy, not recommended)', value : "lzjb"},
       ],
       validation: [Validators.required],
-      required: true
+      required: true,
+      value: "inherit"
     },
     {
       type: 'select',
@@ -91,13 +92,16 @@ export class ZvolAddComponent {
         {label : 'Off', value : "off"},
       ],
       validation: [Validators.required],
-      required: true
+      required: true,
+      value:"inherit"
     },
     {
       type: 'input',
       name: 'volsize',
       placeholder: T('Size for this zvol:'),
       tooltip : T('Specify a size and value such as <i>10 GiB</i>.'),
+      validation: [Validators.required],
+      required: true,
     },
     {
       type: 'checkbox',
