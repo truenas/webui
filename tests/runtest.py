@@ -41,10 +41,13 @@ from logout import run_logout_test
 if path.exists("/usr/local/etc/ixautomation.conf"):
     copyfile("/usr/local/etc/ixautomation.conf", "config.py")
     from config import *
-if "Grid_ip" in locals():
-    grid_sever_ip = Grid_ip
+    if "Grid_ip" in locals():
+        grid_sever_ip = Grid_ip
+    else:
+        grid_sever_ip = "127.0.0.1"
 else:
     grid_sever_ip = "127.0.0.1"
+
 sys.stdout.flush()
 
 argument = sys.argv
@@ -99,6 +102,7 @@ except NameError:
     sys.exit(1)
 
 global runDriver
+
 try:
     driver_v
 except NameError:
@@ -113,8 +117,12 @@ else:
         runDriver = webDriver()
     elif (driver_v == "G"):
         from driverG import webDriver
+<<<<<<< HEAD
         print("Running Selenium Grid hosted by local server")
         grid_server_ip = "127.0.0.1"
+=======
+        print("Running Selenium Grid")
+>>>>>>> refs/remotes/origin/master
         runDriver = webDriver(grid_sever_ip)
 
 # turning on the autoflush to display result
