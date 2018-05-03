@@ -76,7 +76,7 @@ export class ServiceDDNSComponent {
       type : 'checkbox',
       name : 'checkip_ssl',
       placeholder : T('CheckIP Server SSL'),
-      tooltip: T(''),
+      tooltip: T('Set to use HTTPS for the connection to the <b>CheckIP Server</b>.'),
     },
     {
       type : 'input',
@@ -89,32 +89,32 @@ export class ServiceDDNSComponent {
       type : 'input',
       name : 'checkip_path',
       placeholder : T('CheckIP Path'),
-      tooltip: T(''),
+      tooltip: T('Enter the path requested by the <b>CheckIP Server</b> to determine the user IP address.'),
     },
     {
       type : 'checkbox',
       name : 'ssl',
-      placeholder : T('CheckIP Server SSL'),
-      tooltip: T(''),
+      placeholder : T('SSL'),
+      tooltip: T('Set to use HTTPS for the connection to the server that updates the DNS record.'),
     },
     {
       type : 'input',
       name : 'domain',
       placeholder : T('Domain name'),
-      tooltip: T(''),
+      tooltip: T('Enter a fully qualified domain name. Example: <i>yourname.dyndns.org</i>'),
     },
     {
       type : 'input',
       name : 'username',
       placeholder : T('Username'),
-      tooltip: T(''),
+      tooltip: T('Username used to log on to the provider and update the record.'),
       required: true
     },
     {
       type : 'input',
       name : 'password',
       placeholder : T('Password'),
-      tooltip: T('Password used to logon to the provider and update the\
+      tooltip: T('Password used to log on to the provider and update the\
        record.'),
       inputType : 'password',
       validation :
