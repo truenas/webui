@@ -47,14 +47,14 @@ export class DisksListConfig implements InputTableConf {
     { name: 'Status', prop: 'status' },
     { name: 'Serial', prop: 'disk_serial' },
     { name: 'Disk Size', prop: 'disk_size' },
-    { name: 'Description', prop: 'disk_description' },
-    { name: 'Transfer Mode', prop: 'disk_transfermode' },
-    { name: 'HDD Standby', prop: 'disk_hddstandby' },
+    { name: 'Description', prop: 'disk_description', hidden: true },
+    { name: 'Transfer Mode', prop: 'disk_transfermode', hidden: true },
+    { name: 'HDD Standby', prop: 'disk_hddstandby', hidden: true },
     { name: 'Advanced Power Management', prop: 'disk_advpowermgmt' },
     { name: 'Acoustic Level', prop: 'disk_acousticlevel' },
     { name: 'Enable S.M.A.R.T.', prop: 'disk_togglesmart' },
-    { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions' },
-    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' }
+    { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions', hidden: true },
+    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot', hidden: true }
   ];
   public config: any = {
     paging: true,

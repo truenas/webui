@@ -22,7 +22,7 @@
 
 
 <!-- Selected columns checkbox ----------------- -->
-<div id="col-select-box" class="selected-columns">
+<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 5 ? true : false">
   <h4>Available Columns</h4>
   <ul>
     <li *ngFor="let col of allColumns">

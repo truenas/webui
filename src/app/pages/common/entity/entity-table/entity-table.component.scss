@@ -30,11 +30,13 @@
 }
 
 #col-select-box {
-    margin-left: 10px;
+    margin-left: 20px;
 
     li {
        list-style: none;
        display: inline-block;
-       margin: 0 10px 0 10px;
-    }    
+       margin: 2px;
+       padding: 0;
+       width: 220px;
+    }   
 }
