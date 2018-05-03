@@ -85,7 +85,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
-  public allColumns: Array<any> = [];
+  public allColumns: Array<any> = []; // Need this for the checkbox headings
   
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -156,8 +156,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
 
-      console.log(this.allColumns);
-      console.log(this.conf.columns);
+      // Next section sets the checked/displayed columns
+      this.conf.columns = [];
+
+      for (let item of this.allColumns) {
+        if (!item.hidden) {
+          this.conf.columns.push(item);
+        }
+      }
+      // End of checked/display section ------------
   }
   
 
@@ -439,10 +446,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.updateMultiAction(this.selected);
     }
   }
-// -------------------------------------------
+
+  // Next section operates the checkboxes to show/hide columns 
   toggle(col) {
     const isChecked = this.isChecked(col);
-    console.log(isChecked);
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
@@ -451,9 +458,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.conf.columns = [...this.conf.columns, col];
     }
-
-    console.log(this.allColumns);
-    console.log(this.conf.columns);
   }
 
   isChecked(col) {
@@ -461,5 +465,5 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       return c.name === col.name;
     });
   }
-
+  // End checkbox section -----------------------
 }

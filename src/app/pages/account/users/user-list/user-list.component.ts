@@ -17,18 +17,18 @@ export class UserListComponent implements OnInit {
   protected route_delete: string[] = ['account', 'users', 'delete'];
 
   public columns: Array < any > = [
-    { name: 'Username', prop: 'bsdusr_username', checked: 'checked' },
-    { name: 'UID', prop: 'bsdusr_uid'},
+    { name: 'Username', prop: 'bsdusr_username' },
+    { name: 'UID', prop: 'bsdusr_uid' },
     { name: 'GID', prop: 'bsdusr_group' },
-    { name: 'Home directory', prop: 'bsdusr_home', checked: 'checked' },
-    { name: 'Shell', prop: 'bsdusr_shell' },
-    { name: 'Builtin', prop: 'bsdusr_builtin' },
-    { name: 'Full Name', prop: 'bsdusr_full_name', checked: 'checked' },
-    { name: 'Email', prop: 'bsdusr_email' },
-    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled' },
-    { name: 'Lock User', prop: 'bsdusr_locked' },
-    { name: 'Permit Sudo', prop: 'bsdusr_sudo' },
-    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account' },
+    { name: 'Home directory', prop: 'bsdusr_home' },
+    { name: 'Shell', prop: 'bsdusr_shell', hidden: true },
+    { name: 'Builtin', prop: 'bsdusr_builtin', hidden: true },
+    { name: 'Full Name', prop: 'bsdusr_full_name' },
+    { name: 'Email', prop: 'bsdusr_email', hidden: true },
+    { name: 'Disable Password Login', prop: 'bsdusr_password_disabled', hidden: true },
+    { name: 'Lock User', prop: 'bsdusr_locked', hidden: true },
+    { name: 'Permit Sudo', prop: 'bsdusr_sudo', hidden: true },
+    { name: 'Microsoft Account', prop: 'bsdusr_microsoft_account', hidden: true },
   ];
   public config: any = {
     paging: true,

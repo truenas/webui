@@ -28,3 +28,13 @@
 .multiActionsButton {
 	height: 40px;
 }
+
+#col-select-box {
+    margin-left: 10px;
+
+    li {
+       list-style: none;
+       display: inline-block;
+       margin: 0 10px 0 10px;
+    }    
+}

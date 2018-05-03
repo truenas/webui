@@ -1,19 +1,5 @@
-<div class="selected-columns">
-    <h4>Available Columns</h4>
-    <ul>
-      <li *ngFor="let col of allColumns">
-        <div>
-          <!-- The following works perfectly as input, but not as mat-checkbox -->
-          <input
-            type="checkbox"
-            [id]="col.name"
-            (click)="toggle(col)"
-            [checked]="isChecked(col)">
-          <label [attr.for]="col.name">{{col.name}}</label>
-        </div>
-      </li>
-    </ul>
-  </div>
+
+
 
 <div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
@@ -33,6 +19,27 @@
     <mat-paginator fxFlex="auto" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
     </mat-paginator>
   </div>
+
+
+<!-- Selected columns checkbox ----------------- -->
+<div id="col-select-box" class="selected-columns">
+  <h4>Available Columns</h4>
+  <ul>
+    <li *ngFor="let col of allColumns">
+      <div>
+        <!-- The following works perfectly as input, but not as mat-checkbox -->
+        <input
+          type="checkbox"
+          [id]="col.name"
+          (click)="toggle(col)"
+          [checked]="isChecked(col)"
+          >
+        <label [attr.for]="col.name">{{col.name}}</label>
+      </div>
+    </li>
+  </ul>
+</div>
+<!-- End checkbox ------------------------------ -->
 
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
     <div *ngIf="selected.length > 0 ? true : false" >
@@ -88,9 +95,7 @@
       <ngx-datatable-column
                *ngFor="let col of conf.columns"
                prop="{{col.prop}}"
-               name="{{col.name | translate}}"
-               [frozenLeft]=col.freezeLeft
-               [frozenRight]=col.freezeRight>
+               name="{{col.name | translate}}">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div id="{{col.prop}}_{{row[col.prop]}}" 
                title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
