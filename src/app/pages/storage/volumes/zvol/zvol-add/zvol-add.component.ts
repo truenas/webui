@@ -100,6 +100,8 @@ export class ZvolAddComponent {
       name: 'volsize',
       placeholder: T('Size for this zvol:'),
       tooltip : T('Specify a size and value such as <i>10 GiB</i>.'),
+      validation: [Validators.required],
+      required: true,
     },
     {
       type: 'checkbox',
