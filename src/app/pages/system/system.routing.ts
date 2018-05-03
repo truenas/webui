@@ -41,6 +41,7 @@ import { CertificateListComponent } from './certificates/certificate-list';
 import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
+import { AlertConfigComponent } from './alert/alert.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -159,6 +160,11 @@ export const routes: Routes = [
       path : 'email', 
       component : EmailComponent,
       data: { title: 'Email', breadcrumb: 'Email' },
+    },
+    {
+      path : 'alertsettings',
+      component : AlertConfigComponent,
+      data: { title: 'Alert Settings', breadcrumb: 'Alert Settings' },
     },
     {
       path: 'alertservice',
