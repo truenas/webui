@@ -27,13 +27,11 @@
   <ul>
     <li *ngFor="let col of allColumns">
       <div>
-        <!-- The following works perfectly as input, but not as mat-checkbox -->
-        <input
+        <mat-checkbox
           type="checkbox"
           [id]="col.name"
-          (click)="toggle(col)"
-          [checked]="isChecked(col)"
-          >
+          (change)="toggle(col)"
+          [checked]="isChecked(col)"></mat-checkbox>
         <label [attr.for]="col.name">{{col.name}}</label>
       </div>
     </li>

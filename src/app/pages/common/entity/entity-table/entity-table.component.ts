@@ -460,10 +460,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  isChecked(col) {
+  isChecked(col:any) {
     return this.conf.columns.find(c => {
       return c.name === col.name;
-    });
+    }) !=undefined;
   }
   // End checkbox section -----------------------
 }
