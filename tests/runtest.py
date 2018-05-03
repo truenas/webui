@@ -42,11 +42,11 @@ if path.exists("/usr/local/etc/ixautomation.conf"):
     copyfile("/usr/local/etc/ixautomation.conf", "config.py")
     from config import *
     if "Grid_ip" in locals():
-        grid_sever_ip = Grid_ip
+        grid_server_ip = Grid_ip
     else:
-        grid_sever_ip = "127.0.0.1"
+        grid_server_ip = "127.0.0.1"
 else:
-    grid_sever_ip = "127.0.0.1"
+    grid_server_ip = "127.0.0.1"
 
 sys.stdout.flush()
 
@@ -65,7 +65,7 @@ Optional Commands:
                             [account, system, guide, service, theme]
 
 --driver <d_v>             - version of the driver
-                             [U, G]
+                             [U]
 
 """ % argument[0]
 
@@ -108,28 +108,16 @@ try:
 except NameError:
     from driverG import webDriver
     print("Running Selenium Grid")
-    runDriver = webDriver(grid_sever_ip)
+    runDriver = webDriver(grid_server_ip)
 
 else:
     if (driver_v == "U"):
         from driverU import webDriver
         print ("Running Ubuntu driver")
         runDriver = webDriver()
-    elif (driver_v == "G"):
-        from driverG import webDriver
-<<<<<<< HEAD
-        print("Running Selenium Grid hosted by local server")
-        grid_server_ip = "127.0.0.1"
-=======
-        print("Running Selenium Grid")
->>>>>>> refs/remotes/origin/master
-        runDriver = webDriver(grid_sever_ip)
 
-# turning on the autoflush to display result
-# autoflush(True)
-# Starting the test and genewratinf result
+#running tests
 run_login_test(runDriver, ip)
-# run_guide_test(runDriver)
 
 try:
     test_name
@@ -187,8 +175,7 @@ else:
         run_change_theme_test(runDriver)
 
 run_logout_test(runDriver)
-# turning off autoflush, the default mode
-# autoflush(False)
+
 # Example test run
 # run_creat_nameofthetest(runDriver)
 
