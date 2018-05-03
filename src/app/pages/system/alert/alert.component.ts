@@ -64,7 +64,7 @@ export class AlertConfigComponent implements OnInit {
         this.fieldConfig.push({
           type: 'select',
           name: res[i].name,
-          placeholder: res[i].title,
+          placeholder: T(res[i].title),
           options: this.settingOptions,
           value: 'IMMEDIATELY',
         });
