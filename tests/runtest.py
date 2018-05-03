@@ -104,19 +104,17 @@ try:
 except NameError:
     from driverG import webDriver
     print("Running Selenium Grid")
-#    global runDriver
     runDriver = webDriver(grid_sever_ip)
 
 else:
     if (driver_v == "U"):
         from driverU import webDriver
         print ("Running Ubuntu driver")
-#        global runDriver
         runDriver = webDriver()
     elif (driver_v == "G"):
         from driverG import webDriver
-        print("Running Selenium Grid")
-#        global runDriver
+        print("Running Selenium Grid hosted by local server")
+        grid_server_ip = "127.0.0.1"
         runDriver = webDriver(grid_sever_ip)
 
 # turning on the autoflush to display result

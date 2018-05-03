@@ -44,17 +44,20 @@ This virtual machine run tests with firefox
 This virtual machine will be the FreeNAS target running ui tests with firefox.
 
 
-
-Important Notes regarding actual test scripts
-
 #Download freenas/webui repo
-git clone https://github.com/freenas/webui/
+Stable: git clone https://github.com/freenas/webui/
+Unstable: git clone https://github.com/rishabh27892/webui
 cd webui/test/
 
-Jenkin/TrueOS: sudo python3.6 runtest.py --ip <10.20.21.216> --test-name account 
-Ubuntu: sudo python runtest.py --ip <10.20.21.216> --test-name account --driver U
+#Selenium Grid- check webui/test/selenium-utils/README.md
+
+Selenium-Grid (Dedicated selenium grid-server): No parameters #python runtest.py --ip <ip_of.the_machine.to_be.tested>
+Selenium-Grid (Local selenium-grid server): #python runtest.py --ip <ip_of.the_machine.to_be.tested> --driver G
+Ubuntu (Local system): sudo python runtest.py --ip <ip_of.the_machine.to_be.tested> --test-name account --driver U
+Jenkin/TrueOS(Mostly depreciated): sudo python3.6 runtest.py --ip <10.20.21.216> --test-name account
+
 Runtest
-	#For running tests on a desktop, use driverU and for jenkins use driver
+	#For running tests on a desktop, use driverU(U) , for Local selenium grid use driverG(G), for selenium grid dedicated server no paramters at all, it will use driverG by default(null) 
 	#Use a fixed delay on the end of each script to fix script execution issue(similar to race condition)
 	#click on main nav again before starting a new script to make sure failure of one script doesnt effect execution of the other
 
