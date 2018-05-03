@@ -39,7 +39,7 @@ export class AlertServiceComponent implements OnInit {
       type: 'checkbox',
       name: 'enabled',
       placeholder: 'Enabled',
-      value: false,
+      value: true,
     },
     {
       type: 'select',
@@ -300,6 +300,8 @@ export class AlertServiceComponent implements OnInit {
       placeholder: 'Routing Key',
     }];
 
+  public settingFieldConfig: FieldConfig[] = [];
+
   public formGroup: any;
   public activeFormGroup: any;
   public emailFormGroup: any;
@@ -313,6 +315,13 @@ export class AlertServiceComponent implements OnInit {
   public pagerdutyFormGroup: any;
   public victoropsFormGroup: any;
 
+  protected settingOptions: any = [{
+    label: 'INHERIT',
+    value: 'INHERIT',
+  }];
+  public settingFormGroup: any;
+  public settingEnabled: boolean = false;
+
   constructor(protected router: Router,
     protected route: ActivatedRoute,
     protected rest: RestService,
@@ -320,9 +329,29 @@ export class AlertServiceComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    protected snackBar: MatSnackBar, ) {}
+    protected snackBar: MatSnackBar, ) {
+    this.ws.call('alert.list_policies', []).subscribe((res) => {
+      for(let i = 0; i < res.length; i++) {
+        this.settingOptions.push({label: res[i], value: res[i]});
+      }
+    });
+    this.ws.call('alert.list_sources', []).subscribe((res) => {
+      for (let i = 0; i < res.length; i++) {
+        this.settingFieldConfig.push(
+          {
+            type: 'select',
+            name: res[i].name,
+            placeholder: res[i].title,
+            options: this.settingOptions,
+            value: 'INHERIT',
+          });
+      }
+      this.settingFormGroup = this.entityFormService.createFormGroup(this.settingFieldConfig);
+    });
+  }
 
   ngOnInit() {
+
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.emailFormGroup = this.entityFormService.createFormGroup(this.emailFieldConfig);
     this.snmpTrapFormGroup = this.entityFormService.createFormGroup(this.snmpTrapFieldConfig);
@@ -370,11 +399,17 @@ export class AlertServiceComponent implements OnInit {
             ['id', '=', this.pk]
           ]
         ]).subscribe((res) => {
+          if ((<any>Object).keys(res[0].settings).length > 0) {
+            this.settingEnabled = true;
+          }
           for (const i in this.formGroup.controls) {
             this.formGroup.controls[i].setValue(res[0][i]);
           }
           for (const j in this.activeFormGroup.controls) {
             this.activeFormGroup.controls[j].setValue(res[0].attributes[j]);
+          }
+          for (const k in res[0].settings) {
+            this.settingFormGroup.controls[k].setValue(res[0].settings[k]);
           }
         })
       } else {
@@ -386,9 +421,15 @@ export class AlertServiceComponent implements OnInit {
   onSubmit(event: Event) {
     let payload = _.cloneDeep(this.formGroup.value);
     let serviceValue = _.cloneDeep(this.activeFormGroup.value);
+    let settingValue = _.cloneDeep(this.settingFormGroup.value);
+    for (let i in settingValue) {
+      if (settingValue[i] == 'INHERIT') {
+        delete settingValue[i];
+      }
+    }
 
     payload['attributes'] = serviceValue;
-    payload['settings'] = {};
+    payload['settings'] = settingValue;
 
     this.loader.open();
     if (this.isNew) {

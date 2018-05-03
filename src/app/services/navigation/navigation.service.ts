@@ -54,6 +54,7 @@ export class NavigationService {
         { name: T('Email'), state: 'email'},
         { name: T('System Dataset'), state: 'dataset'},
         { name: T('Alert Services'), state: 'alertservice' },
+        { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
         { name: T('Tunables'), state: 'tunable' },
         { name: T('Update'), state: 'update' },
