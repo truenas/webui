@@ -43,12 +43,12 @@ export class UserFormComponent {
           type : 'input',
           name : 'username',
           placeholder : T('Username'),
-          tooltip : T('Enter an alphanumeric username of 8 characters '
-                    + 'or less. Usernames cannot begin with a hyphen '
-                    + '(<b>-</b>) or contain a space, tab, or these '
-                    + 'characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> '
-                    + '. A <b>$</b> can only be used as the last '
-                    + 'character.'),
+          tooltip : T('Enter an alphanumeric username of 8 characters\
+                      or less. Usernames cannot begin with a hyphen\
+                      (<b>-</b>) or contain a space, tab, or these\
+                      characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
+                      . A <b>$</b> can only be used as the last\
+                      character.'),
           required: true,
           validation : [ Validators.required ]
         },
@@ -70,8 +70,8 @@ export class UserFormComponent {
           type : 'input',
           name : 'password',
           placeholder : T('Password'),
-          tooltip : T('Required unless <b>Enable password login</b> is '
-                    + '<i>No</i>. Passwords cannot contain a <b>?</b>.'),
+          tooltip : T('Required unless <b>Enable password login</b> is\
+                      <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
         },
         {
@@ -96,9 +96,9 @@ export class UserFormComponent {
           type : 'input',
           name : 'uid',
           placeholder : T('User ID'),
-          tooltip : T('User accounts have an ID greater than 1000 and '
-                    + 'system accounts have an ID equal to the default '
-                    + 'port number used by the service.'),
+          tooltip : T('User accounts have an ID greater than 1000 and\
+                      system accounts have an ID equal to the default\
+                      port number used by the service.'),
           required: true,
           validation : [ Validators.required ]
         },
@@ -106,9 +106,9 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'group_create',
           placeholder : T('New Primary Group'),
-          tooltip : T('Create a new primary group with the same name as '
-                    + 'the user. Uncheck to select an existing group for '
-                    + 'the user.'),
+          tooltip : T('Create a new primary group with the same name as\
+                      the user. Uncheck to select an existing group for\
+                      the user.'),
           value : true,
           isHidden: false
         },
@@ -116,8 +116,8 @@ export class UserFormComponent {
           type : 'select',
           name : 'group',
           placeholder : T('Primary Group'),
-          tooltip : T('New users are not given <b>su</b> permissions if '
-                    + '<i>wheel</i> is their primary group.'),
+          tooltip : T('New users are not given <b>su</b> permissions if\
+                      <i>wheel</i> is their primary group.'),
           options : [],
           relation : [
             {
@@ -156,16 +156,16 @@ export class UserFormComponent {
           name: 'home',
           placeholder: T('Home Directory'),
           value: '/nonexistent',
-          tooltip : T('Define an <b>existing</b> pool or dataset as '
-                    + 'the user home directory and adjust the '
-                    + 'permissions.'),
+          tooltip : T('Define an <b>existing</b> pool or dataset as\
+                      the user home directory and adjust the\
+                      permissions.'),
         },
         {
           type : 'permissions',
           name : 'home_mode',
           placeholder : T('Home Directory Permissions'),
-          tooltip : T('Sets default Unix permissions of the user home '
-                    + 'directory. This is read-only for built-in users.'),
+          tooltip : T('Sets default Unix permissions of the user home\
+                      directory. This is read-only for built-in users.'),
         },
       ]
     },
@@ -179,17 +179,17 @@ export class UserFormComponent {
           type : 'textarea',
           name : 'sshpubkey',
           placeholder : T('SSH Public Key'),
-          tooltip : T('Enter or paste the <b>public</b> SSH key of the '
-                    + 'user for any key-based authentication. <b>Do not '
-                    + 'paste the private key!</b>'),
+          tooltip : T('Enter or paste the <b>public</b> SSH key of the\
+                      user for any key-based authentication. <b>Do not\
+                      paste the private key!</b>'),
         },
         {
           type : 'select',
           name : 'password_disabled',
           placeholder : T('Enable password login'),
-          tooltip : T('Enable password logins and authentication to SMB '
-                    + 'shares. Selecting <b>No</b> removes the <b>Lock '
-                    + 'User</b> and <b>Permit Sudo</b> options.'),
+          tooltip : T('Enable password logins and authentication to SMB\
+                      shares. Selecting <b>No</b> removes the <b>Lock\
+                      User</b> and <b>Permit Sudo</b> options.'),
           options : [
             {label:'Yes', value: false },
             {label:'No', value: true },
@@ -214,18 +214,18 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'sudo',
           placeholder : T('Permit Sudo'),
-          tooltip : T('Give this user permission to use <a '
-                    + 'href="https://www.sudo.ws/" '
-                    + 'target="_blank">sudo</a>.'),
+          tooltip : T('Give this user permission to use <a\
+                      href="https://www.sudo.ws/"\
+                      target="_blank">sudo</a>.'),
           isHidden: false
         },
         {
           type : 'checkbox',
           name : 'microsoft_account',
           placeholder : T('Microsoft Account'),
-          tooltip : T('Set to allow additional username authentication '
-                    + 'methods when the user is connecting from a '
-                    + 'Windows 8 or newer operating system.'),
+          tooltip : T('Set to allow additional username authentication\
+                      methods when the user is connecting from a\
+                      Windows 8 or newer operating system.'),
         },
       ]
     },
