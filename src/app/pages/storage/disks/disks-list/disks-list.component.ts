@@ -100,22 +100,24 @@ export class DisksListConfig implements InputTableConf {
         }
       });
 
-    } else {  // It DOES HAVE A POOL 
-      actions.push({
-        label: T("Detach From Pool"),
-        onClick: (row1) => {
-          this.loader.open();
-          let data = { label: row1.diskLabel };
-          this.rest.post("storage/volume/" + row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
-            this.loader.close();
-            this.diskPoolMapParent.repaintMe();
-          }, (res) => {
-            this.loader.close();
-            this.dialogService.errorReport(T("Error detaching disk: ") + row1.disk_name, res.message, res.stack);
-          });
-        }
-      });
-    }
+    } 
+    // else {  // It DOES HAVE A POOL 
+
+    //   actions.push({
+    //     label: T("Detach From Pool"),
+    //     onClick: (row1) => {
+    //       this.loader.open();
+    //       let data = { label: row1.diskLabel };
+    //       this.rest.post("storage/volume/" + row1.poolName + "/detach", { body: JSON.stringify(data) }).subscribe((restPostResp) => {
+    //         this.loader.close();
+    //         this.diskPoolMapParent.repaintMe();
+    //       }, (res) => {
+    //         this.loader.close();
+    //         this.dialogService.errorReport(T("Error detaching disk: ") + row1.disk_name, res.message, res.stack);
+    //       });
+    //     }
+    //   });
+    // }
 
 
 
