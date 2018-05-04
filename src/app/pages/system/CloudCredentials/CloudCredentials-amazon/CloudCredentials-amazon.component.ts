@@ -50,7 +50,7 @@ export class CloudCredentialsAmazonComponent {
     },
     {
       type: 'textarea',
-      name: 'accesskey',
+      name: 'access_key',
       placeholder: T('Access Key'),
       tooltip: T('Paste the Amazon account access key. This can be found\
        on the <a href="https://aws.amazon.com/" target="_blank">\
@@ -62,7 +62,7 @@ export class CloudCredentialsAmazonComponent {
     },
     {
       type: 'textarea',
-      name: 'secretkey',
+      name: 'secret_key',
       placeholder: T('Secret Key'),
       tooltip: T('After pasting the Access Key value to the FreeNAS Cloud\
        Credential Access Key field, enter the <b>Secret Key</b> value saved\
@@ -70,6 +70,11 @@ export class CloudCredentialsAmazonComponent {
        key pair can be created on the same Amazon screen.'),
        required: true,
        validation : [ Validators.required ]
+    },
+    {
+      type: 'input',
+      name: 'endpoint',
+      placeholder: T('Endpoint URL'),
     },
   ];
 
@@ -101,7 +106,11 @@ export class CloudCredentialsAmazonComponent {
     const formvalue = _.cloneDeep(this.formGroup.value);
     payload['provider'] = formvalue.provider;
     payload['name'] = formvalue.name;
-    payload['attributes'] = { 'accesskey': formvalue.accesskey, 'secretkey': formvalue.secretkey };
+    payload['attributes'] = {
+      'access_key': formvalue.access_key,
+      'secret_key': formvalue.secret_key,
+      'endpoint': formvalue.endpoint,
+    };
     if (!this.pk) {
       auxPayLoad.push(payload)
       return this.ws.call('backup.credential.create', auxPayLoad);
@@ -113,10 +122,12 @@ export class CloudCredentialsAmazonComponent {
   }
   dataHandler(entityForm: any) {
     if (typeof entityForm.wsResponseIdx === "object") {
-      if (entityForm.wsResponseIdx.hasOwnProperty('accesskey')) {
-        entityForm.wsfg.setValue(entityForm.wsResponseIdx.accesskey);
-      } else if (entityForm.wsResponseIdx.hasOwnProperty('secretkey')) {
-        entityForm.wsfg.setValue(entityForm.wsResponseIdx.secretkey);
+      if (entityForm.wsResponseIdx.hasOwnProperty('access_key')) {
+        entityForm.wsfg.setValue(entityForm.wsResponseIdx.access_key);
+      } else if (entityForm.wsResponseIdx.hasOwnProperty('secret_key')) {
+        entityForm.wsfg.setValue(entityForm.wsResponseIdx.secret_key);
+      } else if (entityForm.wsResponseIdx.hasOwnProperty('endpoint')) {
+        entityForm.wsfg.setValue(entityForm.wsResponseIdx.endpoint);
       }
     } else {
       entityForm.wsfg.setValue(entityForm.wsResponseIdx);
@@ -126,10 +137,12 @@ export class CloudCredentialsAmazonComponent {
     const formvalue = _.cloneDeep(entityForm.formGroup.value);
     if (typeof entityForm.wsResponseIdx === "object") {
       for (const flds in entityForm.wsResponseIdx) {
-        if (flds === 'accesskey') {
-          entityForm.formGroup.controls['accesskey'].setValue(entityForm.wsResponseIdx.accesskey);
-        } else if (flds === 'secretkey') {
-          entityForm.formGroup.controls['secretkey'].setValue(entityForm.wsResponseIdx.secretkey);
+        if (flds === 'access_key') {
+          entityForm.formGroup.controls['access_key'].setValue(entityForm.wsResponseIdx.access_key);
+        } else if (flds === 'secret_key') {
+          entityForm.formGroup.controls['secret_key'].setValue(entityForm.wsResponseIdx.secret_key);
+        } else if (flds === 'endpoint') {
+          entityForm.formGroup.controls['endpoint'].setValue(entityForm.wsResponseIdx.endpoint);
         }
       }
     }

@@ -8,6 +8,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { MaterialModule } from '../../appMaterial.module';
 import { MarkdownModule } from 'angular2-markdown';
 import { routing } from './system.routing';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { GeneralComponent } from './general/general.component';
 import { ConfigSaveComponent } from './general/config-save/config-save.component';
@@ -48,12 +49,13 @@ import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
+import { AlertConfigComponent } from './alert/alert.component';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
   ],
   declarations: [
     GeneralComponent,
@@ -94,6 +96,7 @@ import { AlertServiceComponent } from './alertservice/alert-service/alert-servic
     SupportComponent,
     EmailComponent,
     AlertServiceComponent,
+    AlertConfigComponent,
   ],
   providers: []
 })
