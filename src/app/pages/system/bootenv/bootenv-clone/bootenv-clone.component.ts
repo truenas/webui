@@ -33,8 +33,8 @@ export class BootEnvironmentCloneComponent {
           type: 'input',
           name: 'name',
           placeholder: T('Name'),
-          tooltip: T('Enter a name for the clone of this boot '
-                   + 'environment.'), 
+          tooltip: T('Enter a name for the clone of this boot\
+                      environment.'),
         },
         {
           type: 'input',
