@@ -60,10 +60,11 @@ export class CloudCredentialsGCSComponent {
       type : 'readfile',
       name : 'attributes',
       placeholder : T('JSON Service Account Key'),
-      tooltip : T('Browse to the location of the saved Google Cloud\
-       Storage key and select it. Refer to <a\
-       href="https://cloud.google.com/storage/docs/" target="_blank">\
-       Gcloud documentation</a> for more information.'),
+      tooltip : T('Click <i>Browse</i> to select a saved Google Cloud\
+                   Storage key. See the <a\
+                   href="https://cloud.google.com/storage/docs/"\
+                   target="_blank">Gcloud documentation</a> for more\
+                   information.'),
       validation : [ Validators.required ]
     },
   ];
@@ -85,7 +86,7 @@ export class CloudCredentialsGCSComponent {
       this.queryPayload.push(parseInt(params['pk'],0));
       this.pk = [this.queryPayload];
       this.queryPk = parseInt(params['pk'],0);
-      
+
     });
   }
   }
@@ -101,7 +102,7 @@ export class CloudCredentialsGCSComponent {
     entityForm.formGroup.controls['attributes'].valueChanges.subscribe((value)=>{
       entityForm.formGroup.controls['preview'].setValue(value);
     });
-  
+
     entityForm.submitFunction = this.submitFunction;
   }
   submitFunction(){
@@ -123,10 +124,10 @@ export class CloudCredentialsGCSComponent {
   }
   catch(err) {
     alert("Invalid JSON")
-    
+
   }
 
-  
+
 
   }
   dataHandler(entityForm: any){

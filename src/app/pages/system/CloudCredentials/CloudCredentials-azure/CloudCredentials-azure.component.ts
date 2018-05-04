@@ -45,7 +45,7 @@ export class CloudCredentialsAzureComponent {
     type : 'input',
     name : 'name',
     placeholder : T('Name'),
-    tooltip : T('Enter a descriptive name for the cloud credential.'),
+    tooltip : T('Enter a descriptive name.'),
     required: true,
     validation : [ Validators.required ]
   },
@@ -61,9 +61,10 @@ export class CloudCredentialsAzureComponent {
     type : 'textarea',
     name : 'account_key',
     placeholder :  T('Account Key'),
-    tooltip : T('Paste the Azure Storage account key. Refer to the\
-     <a href="https://docs.microsoft.com/en-us/azure/storage/"\
-     target="_blank">Azure Storage Documentation</a> for more information.'),
+    tooltip : T('Paste the Azure Storage account key. See the <a \
+                 href="https://docs.microsoft.com/en-us/azure/storage/"\
+                 target="_blank">Azure Storage Documentation</a> for\
+                 more information.'),
      required: true,
      validation : [ Validators.required ]
   },
@@ -105,7 +106,7 @@ export class CloudCredentialsAzureComponent {
     else {
       return this.ws.call('backup.credential.update', [this.pk, payload]);
     }
-    
+
 
   }
   dataHandler(entityForm: any){

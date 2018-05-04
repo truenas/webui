@@ -53,9 +53,10 @@ export class CloudCredentialsB2Component {
     type : 'textarea',
     name : 'accesskey',
     placeholder :  T('Access Key'),
-    tooltip : T('Paste the account access key. For more information refer\
-     to the <a href="https://www.backblaze.com/help.html" target="_blank">\
-     BACKBLAZE help</a> page.'),
+    tooltip : T('Paste the account access key. See the <a\
+                 href="https://www.backblaze.com/help.html"\
+                 target="_blank">BACKBLAZE help</a> page for more\
+                 information.'),
      required: true,
      validation : [ Validators.required ]
   },
@@ -63,7 +64,7 @@ export class CloudCredentialsB2Component {
     type : 'textarea',
     name : 'secretkey',
     placeholder : T('Secret Key'),
-    tooltip : T('Enter the secret key generated.'),
+    tooltip : T('Enter the secret key.'),
     required: true,
     validation : [ Validators.required ]
   },
@@ -105,7 +106,7 @@ export class CloudCredentialsB2Component {
     else {
       return this.ws.call('backup.credential.update', [this.pk, payload]);
     }
-    
+
 
   }
   dataHandler(entityForm: any){

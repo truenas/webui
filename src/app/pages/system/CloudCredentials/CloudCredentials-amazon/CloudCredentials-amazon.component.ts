@@ -52,11 +52,11 @@ export class CloudCredentialsAmazonComponent {
       type: 'textarea',
       name: 'access_key',
       placeholder: T('Access Key'),
-      tooltip: T('Paste the Amazon account access key. This can be found\
-       on the <a href="https://aws.amazon.com/" target="_blank">\
-       Amazon AWS</a> website by clicking on <b>My account</b>, then\
-       <b>Security Credentials</b> and\
-       <b>Access Keys (Access Key ID and Secret Access Key)</b>.'),
+      tooltip: T('Paste the Amazon account access key. This is found\
+                  on <a href="https://aws.amazon.com/"\
+                  target="_blank">Amazon AWS</a> by navigating <b>My\
+                  account -> Security Credentials -> Access Keys\
+                  (Access Key ID and Secret Access Key)</b>.'),
        required: true,
        validation : [ Validators.required ]
     },
@@ -64,10 +64,9 @@ export class CloudCredentialsAmazonComponent {
       type: 'textarea',
       name: 'secret_key',
       placeholder: T('Secret Key'),
-      tooltip: T('After pasting the Access Key value to the FreeNAS Cloud\
-       Credential Access Key field, enter the <b>Secret Key</b> value saved\
-       when the pair was created. If the Secret Key value is not known, a new\
-       key pair can be created on the same Amazon screen.'),
+      tooltip: T('After pasting the Access Key, enter the saved\
+                  <b>Secret Key</b>. If the Secret Key is not known, a\
+                  new key pair can be created on the same AWS screen.'),
        required: true,
        validation : [ Validators.required ]
     },
@@ -75,6 +74,7 @@ export class CloudCredentialsAmazonComponent {
       type: 'input',
       name: 'endpoint',
       placeholder: T('Endpoint URL'),
+      tooltip: T('Enter the entry point URL for the web service.'),
     },
   ];
 
