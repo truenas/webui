@@ -81,30 +81,30 @@ export class EmailComponent implements OnDestroy {
       type : 'input',
       name : 'em_fromemail',
       placeholder : T('From E-mail'),
-      tooltip : T('The envelope <b>From</b> address shown in the email. '
-                + 'This is set to assist with filtering mail on the '
-                + 'receiving system.'),
+      tooltip : T('The envelope <b>From</b> address shown in the email.\
+                   This is set to assist with filtering mail on the\
+                   receiving system.'),
     },
     {
       type : 'input',
       name : 'em_outgoingserver',
       placeholder : T('Outgoing Mail Server'),
-      tooltip : T('Hostname or IP address of SMTP server to use for '
-                + 'sending this email.'),
+      tooltip : T('Hostname or IP address of SMTP server to use for\
+                   sending this email.'),
     },
     {
       type : 'input',
       name : 'em_port',
       placeholder : T('Mail Server Port'),
-      tooltip : T('SMTP port number. Typically <i>25,465</i> '
-                + '(secure SMTP), or <i>587</i> (submission).'),
+      tooltip : T('SMTP port number. Typically <i>25,465</i>\
+                   (secure SMTP), or <i>587</i> (submission).'),
     },
     {
       type : 'select',
       name : 'em_security',
       placeholder : T('Security'),
-      tooltip : T('Encryption type. Choices are <i>Plain, SSL</i>, or '
-                + '<i>TLS</i>.'),
+      tooltip : T('Encryption type. Choices are <i>Plain, SSL</i>, or\
+                   <i>TLS</i>.'),
       options : [
         {label : 'Plain', value : 'plain'},
         {label : 'SSL', value : 'ssl'},
@@ -115,18 +115,18 @@ export class EmailComponent implements OnDestroy {
       type : 'checkbox',
       name : 'em_smtp',
       placeholder : T('SMTP Authentication'),
-      tooltip : T('Enable/disable '
-                + '<a href="https://en.wikipedia.org/wiki/SMTP_Authentication" '
-                + 'target="_blank">SMTP AUTH</a> using PLAIN SASL. '
-                + 'Enter the required <b>Username</b> and '
-                + '<b>Password</b> if checked.'),
+      tooltip : T('Enable/disable\
+                   <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
+                   target="_blank">SMTP AUTH</a> using PLAIN SASL.\
+                   Enter the required <b>Username</b> and\
+                   <b>Password</b> if checked.'),
     },
     {
       type : 'input',
       name : 'em_user',
       placeholder : T('Username'),
-      tooltip : T('Enter the username if the SMTP server requires '
-                + 'authentication.'),
+      tooltip : T('Enter the username if the SMTP server requires\
+                   authentication.'),
       relation : [
         {
           action : 'DISABLE',
@@ -143,8 +143,8 @@ export class EmailComponent implements OnDestroy {
       type : 'input',
       name : 'em_pass1',
       placeholder : T('Password'),
-      tooltip : T('Enter the password if the SMTP server requires '
-                + 'authentication.'),
+      tooltip : T('Enter the password if the SMTP server requires\
+                   authentication.'),
       inputType : 'password',
       relation : [
         {
