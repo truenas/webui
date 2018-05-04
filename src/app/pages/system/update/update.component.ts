@@ -110,6 +110,7 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
+          this.loader.close();
           this.status = res.status;
           if (res.status == 'AVAILABLE') {
             this.packages = [];
@@ -155,9 +156,9 @@ export class UpdateComponent implements OnInit {
             }
           }
         },
-        (err) => { 
-          this.error = err.reason; 
+        (err) => {
           this.loader.close();
+          this.dialogService.errorReport(T("Error checking for updates"), err.reason, err.trace.formatted);
         }, 
         () => {
           this.loader.close();
