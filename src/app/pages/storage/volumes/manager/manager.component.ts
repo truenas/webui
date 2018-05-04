@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-manager',
@@ -288,6 +289,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks.push(disk);
      this.disks = [...this.disks];
      this.temp.push(disk);
+     this.disks = _.sortBy(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {
