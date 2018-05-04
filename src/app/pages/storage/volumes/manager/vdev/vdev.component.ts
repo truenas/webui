@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../../translate-marker';
-
+import * as _ from 'lodash';
 
 @Component({
   selector : 'app-vdev',
@@ -50,19 +50,7 @@ export class VdevComponent implements OnInit {
   addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
-    
-    // Sort disks by name as they are added to VDevs
-    function compare(a, b) {
-      let comparison;
-      if (a.devname > b.devname) {
-        comparison = 1;
-      } else if (a.name < b.name) {
-        comparison = -1;
-      }
-      return comparison;
-    }
-    this.disks = this.disks.sort(compare); 
-
+    this.disks = _.sortBy(this.disks, 'devname');
     this.guessVdevType();
     this.estimateSize();
   }

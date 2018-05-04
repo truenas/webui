@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-manager',
@@ -288,18 +289,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks.push(disk);
      this.disks = [...this.disks];
      this.temp.push(disk);
-
-    // Sort disks by name as they are removed from VDev & get added back to 'Available' 
-    function compare(a, b) {
-      let comparison;
-      if (a.devname > b.devname) {
-        comparison = 1;
-      } else if (a.name < b.name) {
-        comparison = -1;
-      }
-      return comparison;
-      }
-    this.disks = this.disks.sort(compare); 
+     this.disks = _.sortBy(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {
