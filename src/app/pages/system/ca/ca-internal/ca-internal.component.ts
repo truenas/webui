@@ -57,6 +57,9 @@ export class CertificateAuthorityInternalComponent {
         {label : '2048', value : 2048},
         {label : '4096', value : 4096},
       ],
+      value: 2048,
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'select',
@@ -71,6 +74,9 @@ export class CertificateAuthorityInternalComponent {
         {label : 'SHA384', value : 'SHA384'},
         {label : 'SHA512', value : 'SHA512'},
       ],
+      value: 'SHA256',
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -78,6 +84,8 @@ export class CertificateAuthorityInternalComponent {
       placeholder : T('Lifetime'),
       tooltip: T('The lifetime of the CA is specified in days.'),
       inputType: 'number',
+      required: true,
+      value: 3650,
       validation: [Validators.required, Validators.min(0)]
     },
     {
@@ -87,6 +95,8 @@ export class CertificateAuthorityInternalComponent {
       tooltip: T('Select the country for the organization.'),
       options : [
       ],
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -94,12 +104,16 @@ export class CertificateAuthorityInternalComponent {
       placeholder : T('State'),
       tooltip: T('Enter the state or province of the\
        organization.'),
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
       name : 'cert_city',
       placeholder : T('Locality'),
       tooltip: T('Enter the location of the organization.'),
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -107,6 +121,8 @@ export class CertificateAuthorityInternalComponent {
       placeholder : T('Organization'),
       tooltip: T('Enter the name of the company or\
        organization.'),
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
@@ -114,7 +130,8 @@ export class CertificateAuthorityInternalComponent {
       placeholder : T('Email'),
       tooltip: T('Enter the email address for the person\
        responsible for the CA.'),
-      validation : [ Validators.email ]
+      required: true,
+      validation : [ Validators.email, Validators.required ]
     },
     {
       type : 'input',
@@ -123,6 +140,8 @@ export class CertificateAuthorityInternalComponent {
       tooltip: T('Enter the fully-qualified hostname (FQDN) of the\
        system. This name **must** be unique within a certificate\
        chain.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'textarea',
