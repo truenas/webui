@@ -39,11 +39,16 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
         this.xterm.write(value);
         this.xterm.setOption('disableStdin', true);
       });
-      this.initializeTerminal();
+      this.initializeTerminal().then((res) => {
+        if (res) {
+          // excute 'top' command
+          this.xterm.send('top\n');
+        }
+      });
     });
   }
 
-ngOnDestroy() {
+  ngOnDestroy() {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
@@ -53,18 +58,19 @@ ngOnDestroy() {
   };
 
   initializeTerminal() {
-    this.xterm = new (<any>window).Terminal({ 
-      //'cursorBlink': true,
-      //'tabStopWidth': 4,
-      'cols': 80,
-      'rows': 25,
-      //'focus': true,
+    return new Promise((resolve, reject) => {
+      this.xterm = new (<any>window).Terminal({ 
+        //'cursorBlink': true,
+        //'tabStopWidth': 4,
+        'cols': 80,
+        'rows': 25,
+        //'focus': true,
+      });
+      this.xterm.open(this.container.nativeElement);
+      this.xterm.attach(this.ss);
+      this.xterm._initialized = true;
+      resolve(this.xterm._initialized);
     });
-    this.xterm.open(this.container.nativeElement);
-    this.xterm.attach(this.ss);
-    this.xterm._initialized = true;
-    // excute 'top' command
-    this.xterm.send('top\n');
   }
 
   initializeWebShell(res: string) {
