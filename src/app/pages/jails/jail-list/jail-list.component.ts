@@ -197,7 +197,7 @@ export class JailListComponent implements OnInit {
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => { row.state = 'up'; },
+              (res) => { row.state = 'up'; this.updateMultiAction([row]); },
               (res) => {
                 new EntityUtils().handleError(this, res);
               });
@@ -213,7 +213,7 @@ export class JailListComponent implements OnInit {
             if (res) {
               this.entityList.busy =
                 this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-                  (res) => { row.state = 'down'; },
+                  (res) => { row.state = 'down'; this.updateMultiAction([row]);},
                   (res) => {
                     new EntityUtils().handleError(this, res);
                   });
