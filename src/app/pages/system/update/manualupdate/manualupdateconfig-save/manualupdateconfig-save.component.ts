@@ -2,22 +2,22 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../../services/';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'general-config-save',
-  templateUrl: './config-save.component.html'
+  selector: 'app-manualupdate-save-config',
+  templateUrl: './manualupdateconfig-save.component.html'
 })
 
-export class ConfigSaveComponent {
+export class ManualUpdateConfigSaveComponent {
 
   public sub: Subscription;
   public secretseed = false;
-  public route_success: string[] = ['system', 'general'];
+  public route_success: string[] = ['system','update','manualupdate'];
   
   constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar, private _location: Location) {}
 

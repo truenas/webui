@@ -26,6 +26,8 @@ import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
+import { ManualUpdateComponent } from './update/manualupdate/';
+import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
@@ -74,6 +76,8 @@ import { AlertConfigComponent } from './alert/alert.component';
     TunableListComponent,
     TunableFormComponent,
     UpdateComponent,
+    ManualUpdateComponent,
+    ManualUpdateConfigSaveComponent,
     NTPServerListComponent,
     NTPServerAddComponent,
     NTPServerEditComponent,

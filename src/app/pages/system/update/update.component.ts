@@ -176,4 +176,7 @@ export class UpdateComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
+  ManualUpdate(){
+    this.router.navigate([this.router.url +'/manualupdate']);
+  }
 }

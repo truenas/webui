@@ -19,6 +19,8 @@ import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
+import { ManualUpdateComponent } from './update/manualupdate/';
+import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/'
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
@@ -135,9 +137,32 @@ export const routes: Routes = [
       ]
     }, {
       path: 'update',
-      component: UpdateComponent,
       data: { title: 'Update', breadcrumb: 'Update' },
-    }, {
+      children:[
+        {
+        path:'',
+        component: UpdateComponent,
+        data: { title: 'Update', breadcrumb: 'Update' },
+        },
+        {
+          path:'manualupdate',
+          data: {title:'ManualUpdate', breadcrumb: 'ManualUpdate'},
+          children:[
+            {
+              path:'',
+              component: ManualUpdateComponent,
+              data: { title: 'ManualUpdate', breadcrumb: 'ManualUpdate' },
+            },
+            {
+              path:'saveconfig',
+              component: ManualUpdateConfigSaveComponent,
+              data: {title:'Save Config', breadcrumb: 'config'}
+            }
+          ]
+        },
+      ]
+    },
+     {
       path: 'ntpservers',
       data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
       children: [{
