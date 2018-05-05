@@ -15,7 +15,6 @@ import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 
 
-
 interface DatasetFormData {
   name: string;
   comments: string;
@@ -23,8 +22,10 @@ interface DatasetFormData {
   compression: string;
   atime: string;
   share_type: string;
-  refquota: string;
-  quota: string;
+  refquota: number;
+  refquota_unit?: string;
+  quota: number;
+  quota_unit?: string;
   refreservation: string;
   reservation: string;
   deduplication: string;
@@ -35,7 +36,6 @@ interface DatasetFormData {
   recordsize: string;
   casesensitivity: string;
 };
-
 
 @Component({
   selector: 'app-dataset-form',
@@ -140,7 +140,29 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Quota for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.')
+ size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'select',
+      name: 'refquota_unit',
+      options: [ {
+        label: 'KiB',
+        value: 'K',
+      }, {
+        label: 'MiB',
+        value: 'M',
+      }, {
+        label: 'GiB',
+        value: 'G',
+      }],
+      value: 'G',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
@@ -148,7 +170,29 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.'
+ value applies to both this dataset and any child datasets. 0 == Unlimited.',
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'select',
+      name: 'quota_unit',
+      options: [ {
+        label: 'KiB',
+        value: 'K',
+      }, {
+        label: 'MiB',
+        value: 'M',
+      }, {
+        label: 'GiB',
+        value: 'G',
+      }],
+      value: 'G',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
@@ -268,7 +312,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   public advanced_field: Array<any> = [
     'refquota',
+    'refquota_unit',
     'quota',
+    'quota_unit',
     'refreservation',
     'reservation',
     'readonly',
@@ -294,7 +340,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
 
       
-    } 
+    }
+    // calculate and delete _unit
+    // delete data.refquota_unit;
+    // delete data.quota_unit;
 
     return data;
   }
@@ -312,6 +361,15 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
+
+  isCustActionVisible(actionId: string) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+      return false;
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
+      return false;
+    }
+    return true;
+  }
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
