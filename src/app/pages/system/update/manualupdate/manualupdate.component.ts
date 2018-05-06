@@ -30,9 +30,6 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
   providers : [ MessageService ]
 })
 export class ManualUpdateComponent {
-  // protected tempfilelocation;
-  // public filelocation;
-  // public filename;
   public formGroup: FormGroup;
   public route_success: string[] = ['system','update'];
   protected dialogRef: any;
@@ -61,7 +58,7 @@ export class ManualUpdateComponent {
       validation : [ ],
       fileLocation: '',
       message: this.messageService,
-      // acceptedFiles: '.tar'
+      acceptedFiles: '.tar'
     },
   ];
 
@@ -107,7 +104,7 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       entityForm.success = true;
-      entityForm.snackBar.open(T("system successfully imported"), T("Success"));
+      entityForm.snackBar.open(T("system successfully updated"), T("Success"));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
