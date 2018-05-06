@@ -11,6 +11,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
@@ -19,10 +20,14 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import {MessageService} from '../../../common/entity/entity-form/services/message.service';
+import { CoreService } from '../../../../core/services/core.service';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-manualupdate',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: `<entity-form [conf]="this"></entity-form>`,
+  providers : [ MessageService ]
 })
 export class ManualUpdateComponent {
   // protected tempfilelocation;
@@ -30,6 +35,7 @@ export class ManualUpdateComponent {
   // public filename;
   public formGroup: FormGroup;
   public route_success: string[] = ['system','update'];
+  protected dialogRef: any;
   public custActions: Array < any > = [{
     id: 'save_config',
     name: 'Save Config',
@@ -54,6 +60,8 @@ export class ManualUpdateComponent {
       tooltip: T(''),
       validation : [ ],
       fileLocation: '',
+      message: this.messageService,
+      // acceptedFiles: '.tar'
     },
   ];
 
@@ -63,11 +71,12 @@ export class ManualUpdateComponent {
     protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
-    protected _appRef: ApplicationRef
+    protected _appRef: ApplicationRef,
+    public messageService: MessageService,
+    protected dialog: MatDialog,
   ) {}
 
   preInit(entityForm: any) {
-    // this.tempfilelocation = _.find(this.fieldConfig, {'name' : 'filelocation'});
     this.ws.call('pool.query').subscribe((pools)=>{
       if(pools){
         pools.forEach(pool => {
@@ -79,19 +88,30 @@ export class ManualUpdateComponent {
           }
         });
       }
-
     })
   }
   afterInit(entityForm: any) {
-    // this.filelocation = entityForm.formGroup.controls['filelocation'];
-    // this.filename =  entityForm.formGroup.controls['filename'];
     entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((res)=>{
       _.find(this.fieldConfig,{name:'filename'}).fileLocation = res;
     });
-    entityForm.submitFunction = this.submitFunction;
+    this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+      entityForm.formGroup.controls['filename'].setValue(message);
+    });
+    entityForm.submitFunction = this.customSubmit;
   }
-  submitFunction(entityForm: any) {
-    console.log(entityForm);
+  customSubmit(entityForm: any) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Manual Update") }});
+    this.dialogRef.componentInstance.progressNumberType = "nopercent";
+    this.dialogRef.componentInstance.setDescription(T("Updating..."));
+    this.dialogRef.componentInstance.setCall('update.manual', [entityForm.filename]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      entityForm.success = true;
+      entityForm.snackBar.open(T("system successfully imported"), T("Success"));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res) => {
+      entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+    });
   }
 
 }

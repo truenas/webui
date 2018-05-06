@@ -19,7 +19,7 @@ export class ManualUpdateConfigSaveComponent {
   public secretseed = false;
   public route_success: string[] = ['system','update','manualupdate'];
   
-  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar, private _location: Location) {}
+  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar) {}
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action , {
@@ -33,6 +33,7 @@ export class ManualUpdateConfigSaveComponent {
         (res) => {
           this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
           window.open(res[1]);
+          this.router.navigate(new Array('').concat(this.route_success));
         },
         (err) => {
           this.openSnackBar("Please check your network connection", "Failed");
