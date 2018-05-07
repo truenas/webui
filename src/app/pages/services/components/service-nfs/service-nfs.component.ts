@@ -53,6 +53,7 @@ export class ServiceNFSComponent {
       name: 'nfs_srv_v4',
       placeholder: T('Enable NFSv4'),
       tooltip: T('NFSv3 is the default, check this box to switch to NFSv4.'),
+      value: false,
     },
     {
       type: 'checkbox',
@@ -62,13 +63,14 @@ export class ServiceNFSComponent {
        gray out <b>Support>16</b> groups which is incompatible; check this box if\
        NFSv4 ACL support is needed without requiring the client and the\
        server to sync users and groups.'),
-      relation: [{
+      relation: [
+      {
         action: 'DISABLE',
         when: [{
-          name: 'nfs_srv_16',
-          value: true,
+          name: 'nfs_srv_v4',
+          value: false,
         }]
-      }, ],
+      }],
     },
     {
       type: 'checkbox',
@@ -104,6 +106,17 @@ export class ServiceNFSComponent {
       tooltip: T('Check this box if any users are members of more than\
        16 groups (useful in AD environments); note that this assumes that\
        group membership has been configured correctly on the NFS server.'),
+      relation: [{
+        action: 'DISABLE',
+        connective: 'AND',
+        when: [{
+          name: 'nfs_srv_v4',
+          value: true,
+        }, {
+          name: 'nfs_srv_v4_v3owner',
+          value: true,
+        }]
+      }],
     },
     {
       type: 'checkbox',
@@ -132,6 +145,20 @@ export class ServiceNFSComponent {
       this.nfs_srv_bindip = _.find(this.fieldConfig, { name: 'nfs_srv_bindip' });
       for (let item of res) {
         this.nfs_srv_bindip.options.push({ label: item[0], value: item[1] });
+      }
+    });
+
+    entityForm.formGroup.controls['nfs_srv_16'].valueChanges.subscribe((res)=> {
+      if (entityForm.formGroup.controls['nfs_srv_v4'].value) {
+        if (res) {
+          if (entityForm.formGroup.controls['nfs_srv_v4_v3owner'].enabled) {
+            entityForm.formGroup.controls['nfs_srv_v4_v3owner'].disable();
+          }
+        } else {
+          if (entityForm.formGroup.controls['nfs_srv_v4_v3owner'].disabled) {
+            entityForm.formGroup.controls['nfs_srv_v4_v3owner'].enable();
+          }
+        }
       }
     });
   }
