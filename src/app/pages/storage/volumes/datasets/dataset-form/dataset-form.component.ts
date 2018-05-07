@@ -421,8 +421,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
-
-     console.log("dataset-form-component", wsResponse );
      const refquota = this.getFieldValueOrRaw(wsResponse.refquota);
      const quota = this.getFieldValueOrRaw(wsResponse.quota);
 
@@ -435,13 +433,13 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         compression: this.getFieldValueOrRaw(wsResponse.compression),
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-        quota: quota.substring(0, quota.length - 1),
-        quota_unit: quota.substr(-1, 1),
+        quota: quota ? quota.substring(0, quota.length - 1) : 0,
+        quota_unit: quota ? quota.substr(-1, 1) : quota,
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
         recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
-        refquota: refquota.substring(0, refquota.length - 1),
-        refquota_unit: refquota.substr(-1, 1),
+        refquota: refquota ? refquota.substring(0, refquota.length - 1) : 0,
+        refquota_unit: refquota ? refquota.substr(-1, 1) : refquota,
         refreservation: this.getFieldValueOrRaw(wsResponse.refreservation),
         reservation: this.getFieldValueOrRaw(wsResponse.reservation),
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
@@ -459,23 +457,30 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    console.log("editSubmit:body:", data);
+    if (data.quota == 0) {
+      delete data.quota;
+    }
+    if (data.refquota == 0) {
+      delete data.refquota;
+    }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    console.log("addSubmit:body:", data);
+    if (data.quota == 0) {
+      delete data.quota;
+    }
+    if (data.refquota == 0) {
+      delete data.refquota;
+    }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
   customSubmit(body) {
     this.loader.open();
-    console.log("body", body);
-
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
       this.loader.close();
       
       this.router.navigate(new Array('/').concat(
