@@ -40,8 +40,8 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_signedby',
       placeholder : T('Signing Certificate Authority'),
-      tooltip: T('Required; select the CA which was previously imported\
-       or created using <a href="http://doc.freenas.org/11/system.html#cas" target="_blank">CAs</a>.'),
+      tooltip: T('Select a previously imported CA or a CA created using\
+                  <a href="system/ca/internal" target="_blank">CAs</a>.'),
       options : [
         {label: '---', value: null}
       ]
@@ -50,9 +50,8 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'input',
       name : 'cert_name',
       placeholder : '†Identifier',
-      tooltip: T('Enter a descriptive name for the\
-       certificate using only alphanumeric, underscore\
-       (_), and dash (-) characters.'),
+      tooltip: T('Enter an alphanumeric name for the certificate.\
+                  Underscore (_), and dash (-) characters are allowed.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -60,8 +59,7 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_key_length',
       placeholder : T('Key Length'),
-      tooltip:T('For security reasons, a minimum of 2048\
-       is recommended.'),
+      tooltip:T('<i>2048</i> is the minimum recommended value.'),
       options : [
         {label : '1024', value : 1024},
         {label : '2048', value : 2048},
@@ -72,8 +70,8 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_digest_algorithm',
       placeholder : T('Digest Algorithm'),
-      tooltip: T('The default is acceptable unless your organization\
-       requires a different algorithm.'),
+      tooltip: T('Use the default value unless a different algorithm is\
+                  required.'),
       options : [
         {label : 'SHA1', value : 'SHA1'},
         {label : 'SHA224', value : 'SHA224'},
@@ -81,12 +79,13 @@ export class CertificateAuthorityIntermediateComponent {
         {label : 'SHA384', value : 'SHA384'},
         {label : 'SHA512', value : 'SHA512'},
       ],
+      value: 'SHA256',
     },
     {
       type : 'input',
       name : 'cert_lifetime',
       placeholder : T('Lifetime'),
-      tooltip: T('The lifetime of the CA is specified in days.'),
+      tooltip: T('Define the lifetime of the CA in days.'),
       inputType: 'number',
       validation: [Validators.required, Validators.min(0)]
     },
@@ -94,7 +93,7 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'select',
       name : 'cert_country',
       placeholder : T('Country'),
-      tooltip: T('Select the country for the organization.'),
+      tooltip: T('Associate a country with the <b>Organization</b>.'),
       options : [
         {label : 'US', value : 'US'},
         {label : 'CHINA', value : 'CN'},
@@ -105,28 +104,26 @@ export class CertificateAuthorityIntermediateComponent {
       type : 'input',
       name : 'cert_state',
       placeholder : T('State'),
-      tooltip: T('Required; enter the state or province of\
-       the organization.'),
+      tooltip: T('The state or province of the <b>Organization</b>.'),
     },
     {
       type : 'input',
       name : 'cert_city',
       placeholder : T('Locality'),
-      tooltip: T('Required; enter the location of the organization.'),
+      tooltip: T('The specific location of the <b>Organization</b>.'),
     },
     {
       type : 'input',
       name : 'cert_organization',
       placeholder : T('Organization'),
-      tooltip: T('Required; enter the name of the\
-       company or organization.'),
+      tooltip: T('Enter the name of the entity controlling this CA.'),
     },
     {
       type : 'input',
       name : 'cert_email',
       placeholder : T('Email'),
-      tooltip: T('Required; enter the email address for the person\
-       responsible for the CA.'),
+      tooltip: T('Enter an email address for the person responsible for\
+                  the CA.'),
       validation : [ Validators.email ]
     },
     {
@@ -134,14 +131,15 @@ export class CertificateAuthorityIntermediateComponent {
       name : 'cert_common',
       placeholder : T('Common Name'),
       tooltip: T('Enter the fully-qualified hostname (FQDN) of the\
-       system. This name **must** be unique within a certificate\
-       chain.'),
+                  system. This name must be unique within a\
+                  certificate chain.'),
     },
     {
       type : 'textarea',
       name : 'cert_san',
       placeholder: T('Subject Alternate Names'),
-      tooltip: T('Multi-domain support. Enter additional space separated domains.')
+      tooltip: T('Enter additional space-separated domains to enable\
+                  multi-domain support.')
     }
   ];
   private cert_signedby: any;
