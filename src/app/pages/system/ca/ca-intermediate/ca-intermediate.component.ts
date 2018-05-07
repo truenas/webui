@@ -152,7 +152,7 @@ export class CertificateAuthorityIntermediateComponent {
       this.cert_signedby = _.find(this.fieldConfig, {'name' : 'cert_signedby'});
       res.forEach((item) => {
         this.cert_signedby.options.push(
-            {label : item.cert_name, value : item.id});
+            {label : item.name, value : item.id});
       });
     });
     this.ws.call('notifier.choices', ['COUNTRY_CHOICES']).subscribe( (res) => {

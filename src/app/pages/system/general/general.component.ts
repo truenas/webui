@@ -208,14 +208,14 @@ export class GeneralComponent {
     this.entityForm = entityEdit;
     entityEdit.ws.call('certificate.query', [
         [
-          ['cert_CSR', '=', null]
+          ['CSR', '=', null]
         ]
       ])
       .subscribe((res) => {
         this.stg_guicertificate =
           _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
         res.forEach((item) => {
-          this.stg_guicertificate.options.push({ label: item.cert_name, value: item.id });
+          this.stg_guicertificate.options.push({ label: item.name, value: item.id });
         });
       });
 
