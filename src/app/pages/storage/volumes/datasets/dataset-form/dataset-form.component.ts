@@ -452,6 +452,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
        returnValue.recordsize = "" + ( 1024 * value ) + "K";
      }
 
+     if (quota || refquota) {
+       this.isBasicMode = false;
+     }
+
      return returnValue;
   }
 
