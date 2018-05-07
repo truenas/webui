@@ -11,7 +11,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef,MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
@@ -23,6 +23,7 @@ import { T } from '../../../../translate-marker';
 import {MessageService} from '../../../common/entity/entity-form/services/message.service';
 import { CoreService } from '../../../../core/services/core.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { updateLocale } from 'moment';
 
 @Component({
   selector: 'app-manualupdate',
@@ -71,6 +72,7 @@ export class ManualUpdateComponent {
     protected _appRef: ApplicationRef,
     public messageService: MessageService,
     protected dialog: MatDialog,
+    public snackBar: MatSnackBar,
   ) {}
 
   preInit(entityForm: any) {
@@ -88,8 +90,27 @@ export class ManualUpdateComponent {
     })
   }
   afterInit(entityForm: any) {
-    entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((res)=>{
-      _.find(this.fieldConfig,{name:'filename'}).fileLocation = res;
+    entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation)=>{
+      /* create temp filelocation */
+      if(filelocation === ":temp:"){
+        this.ws.call('notifier.destroy_upload_location').subscribe(destroy_upload_location=>{
+          if(!destroy_upload_location){
+            /* create temp filelocation  if destroy_upload_location => false */
+            this.ws.call('notifier.create_upload_location').subscribe((create_upload_location)=>{
+              this.ws.call('notifier.get_update_location').subscribe((get_update_location)=>{
+                 /* get temp filelocation  and set it to the fileLocation */
+                _.find(this.fieldConfig,{name:'filename'}).fileLocation = get_update_location;
+
+              })
+            })
+
+          };
+        });
+      } else {
+        this.ws.call('notifier.destroy_upload_location').subscribe(destroy_upload_location=>{
+          _.find(this.fieldConfig,{name:'filename'}).fileLocation = filelocation;
+        })
+      };
     });
     this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
       entityForm.formGroup.controls['filename'].setValue(message);
@@ -103,8 +124,9 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.setCall('update.manual', [entityForm.filename]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(false);
       entityForm.success = true;
-      entityForm.snackBar.open(T("system successfully updated"), T("Success"));
+      this.snackBar.open(T("system successfully updated"), T("Success"));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
