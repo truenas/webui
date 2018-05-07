@@ -518,16 +518,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data.quota == 0) {
-      delete data.quota;
+      data.quota = null;
     }
     if (data.refquota == 0) {
-      delete data.refquota;
+      data.refquota = null;
     }
     if (data.refreservation == 0) {
-      delete data.refreservation;
+      data.refreservation = null;
     }
     if (data.reservation == 0) {
-      delete data.reservation;
+      data.reservation = null;
     }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
