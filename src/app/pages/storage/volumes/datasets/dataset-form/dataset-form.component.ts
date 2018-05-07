@@ -324,6 +324,12 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     'exec',
   ];
 
+  protected byteMap: Object= {
+    'G': 1073741824,
+    'M': 1048576,
+    'K': 1024,
+  };
+
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
     if( this.isNew === false ) {
@@ -342,8 +348,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       
     }
     // calculate and delete _unit
-    // delete data.refquota_unit;
-    // delete data.quota_unit;
+    data.refquota = data.refquota * this.byteMap[data.refquota_unit];
+    data.quota = data.quota * this.byteMap[data.quota_unit];
+    delete data.refquota_unit;
+    delete data.quota_unit;
 
     return data;
   }
@@ -415,6 +423,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   resourceTransformIncomingRestData(wsResponse): any {
 
      console.log("dataset-form-component", wsResponse );
+     const refquota = this.getFieldValueOrRaw(wsResponse.refquota);
+     const quota = this.getFieldValueOrRaw(wsResponse.quota);
+
      const returnValue: DatasetFormData = {
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
@@ -424,11 +435,13 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         compression: this.getFieldValueOrRaw(wsResponse.compression),
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-        quota: this.getFieldValueOrRaw(wsResponse.quota),
+        quota: quota.substring(0, quota.length - 1),
+        quota_unit: quota.substr(-1, 1),
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
         recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
-        refquota: this.getFieldValueOrRaw(wsResponse.refquota),
+        refquota: refquota.substring(0, refquota.length - 1),
+        refquota_unit: refquota.substr(-1, 1),
         refreservation: this.getFieldValueOrRaw(wsResponse.refreservation),
         reservation: this.getFieldValueOrRaw(wsResponse.reservation),
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
