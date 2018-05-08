@@ -307,7 +307,7 @@ export class LdapComponent {
           _.find(this.fieldConfig, {name : 'ldap_certificate'});
       res.forEach((item) => {
         this.ldapCertificate.options.push(
-          {label : item.cert_name, value : item.id});
+          {label : item.name, value : item.id});
       });
     });    
 

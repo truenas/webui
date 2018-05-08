@@ -186,13 +186,11 @@ export class SMBFormComponent implements OnDestroy {
     return true;
   }
 
-  resourceTransformIncomingRestData(data: any) {
-    data['cifs_default_permissions'] = false;
-    return data;
-  }
-
   afterInit(entityForm: any) {
     this.cifs_default_permissions = entityForm.formGroup.controls['cifs_default_permissions'];
+    if (entityForm.isNew) {
+      this.cifs_default_permissions.setValue(true);
+    }
     this.cifs_default_permissions_subscription = this.cifs_default_permissions.valueChanges.subscribe((value) => {
       if (value === true) {
         this.dialog.confirm(T("Warning"), T("Setting default permissions will reset the permissions of this share and any others within its path."))
