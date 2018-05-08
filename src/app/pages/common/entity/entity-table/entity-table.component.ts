@@ -474,5 +474,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       return this.conf.columns = [];
     }
   }
+
+  checkLength() {
+    if (this.conf.columns.length === this.allColumns.length) {
+      return true;
+    }
+  }
   // End checkbox section -----------------------
 }
