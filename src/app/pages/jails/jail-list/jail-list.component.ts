@@ -46,6 +46,7 @@ export class JailListComponent implements OnInit {
       label: "Start",
       icon: "play_arrow",
       enable: true,
+      ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -69,6 +70,7 @@ export class JailListComponent implements OnInit {
       label: "Stop",
       icon: "stop",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         let dialog = {};
         this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
@@ -98,6 +100,7 @@ export class JailListComponent implements OnInit {
       label: "Update",
       icon: "update",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -117,6 +120,7 @@ export class JailListComponent implements OnInit {
       label: "Delete",
       icon: "delete",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }
