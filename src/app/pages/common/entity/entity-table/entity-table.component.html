@@ -23,7 +23,14 @@
 
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 5 ? true : false">
-  <h4>Available Columns</h4>
+  <h4>Available Columns (check all)
+    <mat-checkbox
+      type="checkbox"
+      [id]="check-all"
+      (change)="checkAll()"
+>
+    </mat-checkbox>
+  </h4>
   <ul>
     <li *ngFor="let col of allColumns">
       <div>
