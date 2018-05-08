@@ -13,6 +13,7 @@ import {
 } from '@angular/forms';
 import { MatDialog, MatDialogRef,MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 import { RestService, WebSocketService } from '../../../../services/';
@@ -23,6 +24,7 @@ import { T } from '../../../../translate-marker';
 import {MessageService} from '../../../common/entity/entity-form/services/message.service';
 import { CoreService } from '../../../../core/services/core.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { DialogService } from '../../../../services/dialog.service';
 import { updateLocale } from 'moment';
 
 @Component({
@@ -73,6 +75,8 @@ export class ManualUpdateComponent {
     public messageService: MessageService,
     protected dialog: MatDialog,
     public snackBar: MatSnackBar,
+    public translate: TranslateService,
+    private dialogService: DialogService,
   ) {}
 
   preInit(entityForm: any) {
@@ -124,9 +128,16 @@ export class ManualUpdateComponent {
     this.dialogRef.componentInstance.setCall('update.manual', [entityForm.filename]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialogRef.close(false);
       entityForm.success = true;
-      this.snackBar.open(T("system successfully updated"), T("Success"));
+      this.translate.get('Restart').subscribe((reboot: string) => {
+        this.translate.get('The update has been successfully applied, it is recommended that you reboot the machine now for the update to take effect. Do you wish to reboot?').subscribe((reboot_prompt: string) => {
+          this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+            if (reboot_res) {
+              this.router.navigate(['/others/reboot']);
+            }
+          });
+        });
+      });
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
