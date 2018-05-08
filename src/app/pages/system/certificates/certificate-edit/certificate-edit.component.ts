@@ -41,13 +41,13 @@ export class CertificateEditComponent {
       validation : [ Validators.required ]
     },
     {
-      type: 'input',
+      type: 'textarea',
       name: 'cert_certificate',
       placeholder: T('Certificate'),
       tooltip: T('Paste the contents of the certificate here.'),
     },
     {
-      type: 'input',
+      type: 'textarea',
       name: 'cert_privatekey',
       placeholder: T('Private Key'),
       tooltip: T('Paste the contents of the private key here.'),
