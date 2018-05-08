@@ -21,9 +21,9 @@ export class DatasetComponent implements OnInit{
     type: 'select',
     name: 'pool',
     placeholder: T('System Dataset Pool'),
-    tooltip: T('Select the ZFS volume (pool) to contain the system '
-             + 'dataset. Encrypted volumes are not displayed in the '
-             + 'drop down menu. '),
+    tooltip: T('Select the ZFS volume (pool) to contain the system\
+                dataset. Encrypted volumes are not displayed in the\
+                drop down menu. '),
     options: [
       {label: '---', value: null},
       { label: 'freenas-boot', value: 'freenas-boot' },
@@ -32,16 +32,16 @@ export class DatasetComponent implements OnInit{
       type: 'checkbox',
       name: 'syslog',
       placeholder: T('Syslog'),
-      tooltip : T('Stores the system log on the system '
-                + 'dataset when checked.')
+      tooltip : T('Stores the system log on the system\
+                   dataset when checked.')
     },{
       type: 'checkbox',
       name: 'rrd',
       placeholder: T('Reporting Database'),
-      tooltip : T('Stores the reporting information on the '
-                + 'system dataset when checked. The system will '
-                + 'automatically create a RAM disk to prevent reporting '
-                + 'information from filling up <b>/var</b> if unchecked '),
+      tooltip : T('Stores the reporting information on the\
+                   system dataset when checked. The system will\
+                   automatically create a RAM disk to prevent reporting\
+                   information from filling up <b>/var</b> if unchecked '),
     }];
 
   private pool: any;
