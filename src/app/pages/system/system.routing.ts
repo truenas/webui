@@ -33,6 +33,7 @@ import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CAFormComponent } from './ca/ca-form/';
 import { CertificateCSRComponent } from './certificates/certificate-csr/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
@@ -260,9 +261,9 @@ export const routes: Routes = [
         component: CertificateAuthorityAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, {
-        path: 'edit/:pk',
-        component: CertificateEditComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        path: 'sign/:pk',
+        component: CertificateAuthoritySignComponent,
+        data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
       }]
     }, {
       path: 'certificates',
