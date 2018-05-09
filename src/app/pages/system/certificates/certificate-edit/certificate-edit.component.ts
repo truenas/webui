@@ -35,8 +35,8 @@ export class CertificateEditComponent {
       type: 'input',
       name: 'cert_name',
       placeholder: T('Identifier'),
-       tooltip: T('Enter a descriptive name for the certificate using\
-        only alphanumeric, underscore (_), and dash (-) characters.'),
+       tooltip: T('Enter an alphanumeric name for the certificate.\
+                   Underscore (_), and dash (-) characters are allowed.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -44,13 +44,13 @@ export class CertificateEditComponent {
       type: 'input',
       name: 'cert_certificate',
       placeholder: T('Certificate'),
-      tooltip: T('Paste the contents of the certificate here.'),
+      tooltip: T('Enter or paste the contents of the certificate.'),
     },
     {
       type: 'input',
       name: 'cert_privatekey',
       placeholder: T('Private Key'),
-      tooltip: T('Paste the contents of the private key here.'),
+      tooltip: T('Enter or paste the contents of the private key.'),
     }
   ];
 
