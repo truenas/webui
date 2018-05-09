@@ -218,7 +218,7 @@ export class LdapComponent {
       type : 'checkbox',
       name : 'ldap_enable',
       placeholder : 'Enable',
-      tooltip: 'Uncheck to disable the configuration without deleteing it.'
+      tooltip: 'Uncheck to disable the configuration without deleting it.'
     },
     {
       type : 'input',
