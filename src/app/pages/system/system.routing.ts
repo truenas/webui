@@ -32,6 +32,7 @@ import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
+import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CAFormComponent } from './ca/ca-form/';
 import { CertificateCSRComponent } from './certificates/certificate-csr/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
@@ -244,14 +245,20 @@ export const routes: Routes = [
         path: 'import',
         component: CertificateAuthorityImportComponent,
         data: { title: 'Import', breadcrumb: 'Import' },
-      }, {
-        path: 'internal',
-        component: CertificateAuthorityInternalComponent,
-        data: { title: 'Internal', breadcrumb: 'Internal' },
-      }, {
-        path: 'intermediate',
-        component: CertificateAuthorityIntermediateComponent,
-        data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
+      }, 
+      // {
+      //   path: 'internal',
+      //   component: CertificateAuthorityInternalComponent,
+      //   data: { title: 'Internal', breadcrumb: 'Internal' },
+      // }, {
+      //   path: 'intermediate',
+      //   component: CertificateAuthorityIntermediateComponent,
+      //   data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
+      // }, 
+      {
+        path: 'add',
+        component: CertificateAuthorityAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
       }, {
         path: 'edit/:pk',
         component: CertificateEditComponent,

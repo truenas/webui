@@ -38,6 +38,7 @@ import { CertificateAuthorityImportComponent } from './ca/ca-import/';
 import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
 import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
+import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CAFormComponent } from './ca/ca-form/';
 import { CertificateCSRComponent } from './certificates/certificate-csr/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
@@ -85,6 +86,7 @@ import { AlertConfigComponent } from './alert/alert.component';
     CloudCredentialsListComponent,
     CAFormComponent,
     CertificateAuthorityListComponent,
+    CertificateAuthorityAddComponent,
     CertificateAuthorityImportComponent,
     CertificateAuthorityInternalComponent,
     CertificateAuthorityIntermediateComponent,
