@@ -453,14 +453,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
+        console.log(this.conf.columns);
         return c.name !== col.name; 
       });
     } else {
       this.conf.columns = [...this.conf.columns, col];
+      console.log(this.conf.columns.length);
     }
   }
 
   isChecked(col:any) {
+    console.log('is checked' + this.conf.columns);
     return this.conf.columns.find(c => {
       return c.name === col.name;
     }) !=undefined;
@@ -469,16 +472,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   checkAll() {
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
+      console.log(this.conf.columns);
       return this.conf.columns
     } else {
+      console.log(this.conf.columns);
       return this.conf.columns = [];
     }
   }
 
   checkLength() {
-    if (this.conf.columns.length === this.allColumns.length) {
-      return true;
-    }
+    return this.conf.columns.length === this.allColumns.length; 
   }
+
   // End checkbox section -----------------------
 }
