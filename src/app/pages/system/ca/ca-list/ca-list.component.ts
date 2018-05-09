@@ -73,7 +73,7 @@ export class CertificateAuthorityListComponent {
         id: "sign",
         label: T("Sign CSR"),
         onClick: (row) => {
-          // sign csr
+          this.router.navigate(new Array('').concat(["system", "ca", "sign", row.id]))
         }
       },
       {
