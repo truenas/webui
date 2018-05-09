@@ -18,6 +18,10 @@ export class SystemGeneralService {
 
   getCertificates() { return this.ws.call(this.certificateList); }
 
+  getUnsignedCertificates() {
+	return this.ws.call(this.certificateList, [[["signedby", "=", null]]]);
+  }
+
   getIPChoices() {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
   }
