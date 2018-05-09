@@ -9,10 +9,10 @@ import { RestService } from '../../../../services/';
 export class KerberosRealmsListComponent {
 
   public title = "Kerberos Realms";
-  protected resource_name: string = 'directoryservice/kerberosrealm';
-  protected route_add: string[] = ['directoryservice', 'kerberosrealms', 'add'];
+  protected resource_name: string = 'directoryservices/kerberosrealm';
+  protected route_add: string[] = ['directoryservices', 'kerberosrealms', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Realm";
-  protected route_edit: string[] = ['directoryservice', 'kerberosrealms', 'edit'];
+  protected route_edit: string[] = ['directoryservices', 'kerberosrealms', 'edit'];
 
   public columns: Array < any > = [
     { name: 'Realm', prop: 'krb_realm' },

@@ -18,8 +18,8 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 })
 export class IdmapComponent implements OnInit {
 
-  protected query_call = "directoryservice.idmap_";
-  public route_success: string[] = ['directoryservice'];
+  protected query_call = "directoryservices.idmap_";
+  public route_success: string[] = ['directoryservices'];
 
   public formGroup: any;
   public error: string;
@@ -481,7 +481,7 @@ export class IdmapComponent implements OnInit {
 
     // get default idmap range
     this.rest.get('services/cifs', {}).subscribe((res) => {
-      this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
+      this.ws.call('datastore.query', ['directoryservices.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
         this.defaultIdmap = idmap_res[0];
       });
     });

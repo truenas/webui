@@ -8,7 +8,7 @@ import { SystemGeneralService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { ActiveDirectoryComponent } from './activedirectory/';
-import { routing } from './directoryservice.routing';
+import { routing } from './directoryservices.routing';
 import { LdapComponent } from './ldap/';
 import { NISComponent } from './nis/';
 import { IdmapComponent } from './idmap';
@@ -35,4 +35,4 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
     KerberosKeytabsFormComponent,
   ],
   providers: [SystemGeneralService]
-}) export class DirectoryServiceModule {}
+}) export class DirectoryServicesModule {}

@@ -13,7 +13,7 @@ import { Validators } from '@angular/forms';
 })
 
 export class ActiveDirectoryComponent {
-  protected resource_name = 'directoryservice/activedirectory';
+  protected resource_name = 'directoryservices/activedirectory';
   protected isBasicMode = true;
   protected idmapBacked: any;
   protected ad_certificate: any;
@@ -39,7 +39,7 @@ export class ActiveDirectoryComponent {
       'id' : 'edit_idmap',
       'name' : 'Edit Idmap',
       function : () => {
-        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
+        this.router.navigate(new Array('').concat(['directoryservices','idmap', this.idmapBacked, 'activedirectory']));
       }
     },
     {
@@ -341,7 +341,7 @@ export class ActiveDirectoryComponent {
               private dialogservice: DialogService) {}
 
   afterInit(entityEdit: any) {
-    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
+    this.rest.get("directoryservices/kerberosrealm", {}).subscribe((res) => {
       this.ad_kerberos_realm = _.find(this.fieldConfig, {name : 'ad_kerberos_realm'});
       res.data.forEach((item) => {
         this.ad_kerberos_realm.options.push(
@@ -349,7 +349,7 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
+    this.rest.get("directoryservices/kerberosprincipal", {}).subscribe((res) => {
       this.ad_kerberos_principal = _.find(this.fieldConfig, {name : 'ad_kerberos_principal'});
       res.data.forEach((item) => {
         this.ad_kerberos_principal.options.push(

@@ -9,10 +9,10 @@ import { RestService } from '../../../../services/';
 export class KerberosKeytabsListComponent {
 
   public title = "Kerberos Keytabs";
-  protected resource_name: string = 'directoryservice/kerberoskeytab';
-  protected route_add: string[] = ['directoryservice', 'kerberoskeytabs', 'add'];
+  protected resource_name: string = 'directoryservices/kerberoskeytab';
+  protected route_add: string[] = ['directoryservices', 'kerberoskeytabs', 'add'];
   protected route_add_tooltip: string = "Add Kerberos Keytab";
-  protected route_edit: string[] = ['directoryservice', 'kerberoskeytabs', 'edit'];
+  protected route_edit: string[] = ['directoryservices', 'kerberoskeytabs', 'edit'];
   protected entityList: any;
 
   public columns: Array < any > = [

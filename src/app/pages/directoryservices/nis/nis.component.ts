@@ -20,7 +20,7 @@ import {
 })
 
 export class NISComponent {
-  protected resource_name =  'directoryservice/nis/';
+  protected resource_name =  'directoryservices/nis/';
   public custActions: Array<any> = [
     {
       'id' : 'ds_clearcache',

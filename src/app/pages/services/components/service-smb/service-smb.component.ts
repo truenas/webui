@@ -34,7 +34,7 @@ export class ServiceSMBComponent implements OnInit {
   public formGroup: any;
   public error: string;
   protected idmapID: any;
-  protected query_call = "directoryservice.idmap_";
+  protected query_call = "directoryservices.idmap_";
   protected idmap_type = 'tdb'
   protected targetDS = '5';
 
@@ -299,7 +299,7 @@ export class ServiceSMBComponent implements OnInit {
   afterInit(entityEdit: any) {
     this.rest.get('services/cifs', {}).subscribe((res) => {
       this.idmapID = res.id;
-      this.ws.call('datastore.query', ['directoryservice.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
+      this.ws.call('datastore.query', ['directoryservices.idmap_tdb', [["idmap_ds_type", "=", "5"], ["idmap_ds_id", "=", res.data['id']]]]).subscribe((idmap_res) => {
         this.defaultIdmap = idmap_res[0];
         entityEdit.formGroup.controls['idmap_tdb_range_high'].setValue(idmap_res[0].idmap_tdb_range_high);
         entityEdit.formGroup.controls['idmap_tdb_range_low'].setValue(idmap_res[0].idmap_tdb_range_low);
