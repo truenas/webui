@@ -19,7 +19,7 @@ export class SystemGeneralService {
   getCertificates() { return this.ws.call(this.certificateList); }
 
   getUnsignedCertificates() {
-	return this.ws.call(this.certificateList, [[["signedby", "=", null]]]);
+	  return this.ws.call(this.certificateList, [[["CSR", "!=", null]]]);
   }
 
   getIPChoices() {
