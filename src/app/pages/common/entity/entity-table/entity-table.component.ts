@@ -16,8 +16,8 @@ import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services';
-import { ErdService } from 'app/services/erd.service';
+import { DialogService } from '../../../../services';
+import { ErdService } from '../../../../services/erd.service';
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -60,8 +60,6 @@ export interface TableConfig {
   sorting: SortingConfig;
 }
 
-
-
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
@@ -86,7 +84,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public busy: Subscription;
   public columns: Array<any> = [];
   public allColumns: Array<any> = []; // Need this for the checkbox headings
-  
+  public userPrefColumns: string; // to set user-preferred cols in local storage
+
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
   public seenRows: any[] = [];
@@ -158,13 +157,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
       // Next section sets the checked/displayed columns
       this.conf.columns = [];
+      this.userPrefColumns = window.localStorage.getItem('myCols');
 
-      for (let item of this.allColumns) {
-        if (!item.hidden) {
-          this.conf.columns.push(item);
+      if (!this.userPrefColumns || this.userPrefColumns === '') {
+        for (let item of this.allColumns) {
+          if (!item.hidden) {
+            this.conf.columns.push(item);
+          }
+        }   
+      } else {
+        let tempArr = this.userPrefColumns.split(',');
+        for (let item of tempArr) {
+          this.conf.columns.push(this.allColumns[parseInt(item)]);
+          }
         }
-      }
-      // End of checked/display section ------------
+
+        // End of checked/display section ------------
   }
   
 
@@ -453,17 +461,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
-        console.log(this.conf.columns);
+        // console.log(this.conf.columns);
         return c.name !== col.name; 
       });
     } else {
       this.conf.columns = [...this.conf.columns, col];
-      console.log(this.conf.columns.length);
+      // console.log(this.conf.columns.length);
     }
   }
 
   isChecked(col:any) {
-    console.log('is checked' + this.conf.columns);
+    // console.log('is checked' + this.conf.columns);
     return this.conf.columns.find(c => {
       return c.name === col.name;
     }) !=undefined;
@@ -472,10 +480,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   checkAll() {
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
-      console.log(this.conf.columns);
+      // console.log(this.conf.columns);
       return this.conf.columns
     } else {
-      console.log(this.conf.columns);
+      // console.log(this.conf.columns);
       return this.conf.columns = [];
     }
   }
