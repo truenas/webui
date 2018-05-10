@@ -492,5 +492,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     return this.conf.columns.length === this.allColumns.length; 
   }
 
+  savePrefs() {
+    let myColumns = document.getElementsByClassName('colselect');
+    let myPrefs = [];
+    for (let i = 0; i < myColumns.length; i++) {
+      // console.log(myColumns[i].attributes[4].value);
+      if (myColumns[i].attributes[4].value === 'true' ) {
+        myPrefs.push(i);
+      }
+    }
+    // console.log(myPrefs.toString());
+    localStorage.setItem('myCols', myPrefs.toString())
+    // let x = document.getElementsByClassName('colselect')[11].attributes[4].value;
+    // console.log(x);
+  }
+
   // End checkbox section -----------------------
 }

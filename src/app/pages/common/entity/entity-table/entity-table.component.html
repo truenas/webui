@@ -37,6 +37,7 @@
       <div>
         <mat-checkbox
           type="checkbox"
+          class="colselect"
           [id]="col.name"
           (change)="toggle(col)"
           [checked]="isChecked(col)"></mat-checkbox>
@@ -44,6 +45,7 @@
       </div>
     </li>
   </ul>
+  <span (click)="savePrefs()">Save Prefs</span>
 </div>
 <!-- End checkbox ------------------------------ -->
 
