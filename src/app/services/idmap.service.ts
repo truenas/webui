@@ -10,8 +10,8 @@ import {WebSocketService} from './ws.service';
 
 @Injectable()
 export class IdmapService {
-  protected ad_idmap: string = 'directoryservices/idmap/ad';
-  protected adex_idmap: string = 'directoryservices/idmap/adex';
+  protected ad_idmap: string = 'directoryservice/idmap/ad';
+  protected adex_idmap: string = 'directoryservice/idmap/adex';
 
   constructor(protected rest: RestService) {};
 

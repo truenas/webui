@@ -20,7 +20,7 @@ import {  DialogService } from '../../../services/';
 })
 
 export class LdapComponent {
-  protected resource_name = 'directoryservices/ldap';
+  protected resource_name = 'directoryservice/ldap';
   protected isBasicMode = true;
   protected idmapBacked: any;
   protected ldap_kerberos_realm: any;
@@ -44,7 +44,7 @@ export class LdapComponent {
       id : 'edit_idmap',
       name : 'Edit Idmap',
       function : () => {
-        this.router.navigate(new Array('').concat(['directoryservices','idmap', this.idmapBacked, 'ldap']));
+        this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'ldap']));
       }
     },
     {
@@ -278,7 +278,7 @@ export class LdapComponent {
               private dialogservice: DialogService) {}
 
   afterInit(entityEdit: any) {
-    this.rest.get("directoryservices/kerberosrealm", {}).subscribe((res) => {
+    this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'ldap_kerberos_realm'});
       res.data.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
@@ -286,7 +286,7 @@ export class LdapComponent {
       });
     });
 
-    this.rest.get("directoryservices/kerberosprincipal", {}).subscribe((res) => {
+    this.rest.get("directoryservice/kerberosprincipal", {}).subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'ldap_kerberos_principal'});
       res.data.forEach((item) => {
         this.ldap_kerberos_principal.options.push(

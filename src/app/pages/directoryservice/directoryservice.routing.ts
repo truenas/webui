@@ -13,7 +13,7 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
 
 export const routes: Routes = [{
   path: '',
-  data: { title: 'Directory Services' },
+  data: { title: 'Directory Service' },
   children: [{
     path: 'ldap',
     component: LdapComponent,

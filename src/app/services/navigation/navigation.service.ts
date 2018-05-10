@@ -113,11 +113,11 @@ export class NavigationService {
       ]
     },
     {
-      name: T('Directory Services'),
+      name: T('Directory Service'),
       type: 'dropDown',
-      tooltip: T('Directory Services'),
+      tooltip: T('Directory Service'),
       icon: 'group_work',
-      state: 'directoryservices',
+      state: 'directoryservice',
       sub: [
         { name: T('Active Directory'), state: 'activedirectory' },
         { name: T('LDAP'), state: 'ldap' },

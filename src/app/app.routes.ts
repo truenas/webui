@@ -59,9 +59,9 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Services', breadcrumb: 'Services' }
       },
       {
-        path: 'directoryservices',
-        loadChildren: 'app/pages/directoryservices/directoryservices.module#DirectoryServicesModule',
-        data: { title: 'Directory Services', breadcrumb: 'Directory Services' }
+        path: 'directoryservice',
+        loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
+        data: { title: 'Directory Service', breadcrumb: 'Directory Service' }
       },
       {
         path: 'vm',

@@ -4,13 +4,13 @@ import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
-  selector: 'directoryservices-kerberossettings',
+  selector: 'directoryservice-kerberossettings',
   template: `<entity-form [conf]="this"></entity-form>`,
 })
 
 export class KerberosSettingsComponent {
 
-  protected resource_name: string = 'directoryservices/kerberossettings/';
+  protected resource_name: string = 'directoryservice/kerberossettings/';
 
   public fieldConfig: FieldConfig[] = [{
       type: 'textarea',

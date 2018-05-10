@@ -12,8 +12,8 @@ import { Validators } from '@angular/forms';
 })
 export class KerberosRealmsFormComponent {
 
-  protected route_success: string[] = ['directoryservices', 'kerberosrealms'];
-  protected resource_name = 'directoryservices/kerberosrealm';
+  protected route_success: string[] = ['directoryservice', 'kerberosrealms'];
+  protected resource_name = 'directoryservice/kerberosrealm';
   protected isEntity = true;
   protected isBasicMode = true;
 

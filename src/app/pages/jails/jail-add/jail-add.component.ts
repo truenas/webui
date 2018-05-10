@@ -741,7 +741,7 @@ export class JailAddComponent implements OnInit {
  //      type: 'checkbox',
  //      name: 'cputime',
  //      placeholder: T('cputime'),
- //      tooltip: T('Define the maximum amount of CPU time a jail process\
+ //      tooltip: T('Define the maximium amount of CPU time a jail process\
  // may consume. The kernel will terminate processes exceeding the defined\
  // limit.'),
  //    },

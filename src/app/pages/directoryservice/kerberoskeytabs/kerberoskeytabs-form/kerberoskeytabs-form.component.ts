@@ -12,8 +12,8 @@ import { Validators } from '@angular/forms';
 })
 export class KerberosKeytabsFormComponent {
 
-  protected route_success: string[] = ['directoryservices', 'kerberoskeytabs'];
-  protected resource_name = 'directoryservices/kerberoskeytab';
+  protected route_success: string[] = ['directoryservice', 'kerberoskeytabs'];
+  protected resource_name = 'directoryservice/kerberoskeytab';
   protected isEntity =  true;
 
   protected fieldConfig: FieldConfig[] = [{
