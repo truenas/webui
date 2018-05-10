@@ -25,7 +25,9 @@ import {MessageService} from '../../../common/entity/entity-form/services/messag
 import { CoreService } from '../../../../core/services/core.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogService } from '../../../../services/dialog.service';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { updateLocale } from 'moment';
+import { Http } from '@angular/http';
 
 @Component({
   selector: 'app-manualupdate',
@@ -36,6 +38,8 @@ export class ManualUpdateComponent {
   public formGroup: FormGroup;
   public route_success: string[] = ['system','update'];
   protected dialogRef: any;
+  public fileLocation: any;
+  public subs: any;
   public custActions: Array < any > = [{
     id: 'save_config',
     name: 'Save Config',
@@ -61,7 +65,10 @@ export class ManualUpdateComponent {
       validation : [ ],
       fileLocation: '',
       message: this.messageService,
-      acceptedFiles: '.tar'
+      acceptedFiles: '.tar',
+      updater: this.updater,
+      parent: this,
+      hideButton:true
     },
   ];
 
@@ -77,6 +84,8 @@ export class ManualUpdateComponent {
     public snackBar: MatSnackBar,
     public translate: TranslateService,
     private dialogService: DialogService,
+    private loader: AppLoaderService,
+    protected http: Http
   ) {}
 
   preInit(entityForm: any) {
@@ -95,25 +104,10 @@ export class ManualUpdateComponent {
   }
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation)=>{
-      /* create temp filelocation */
       if(filelocation === ":temp:"){
-        this.ws.call('notifier.destroy_upload_location').subscribe(destroy_upload_location=>{
-          if(!destroy_upload_location){
-            /* create temp filelocation  if destroy_upload_location => false */
-            this.ws.call('notifier.create_upload_location').subscribe((create_upload_location)=>{
-              this.ws.call('notifier.get_update_location').subscribe((get_update_location)=>{
-                 /* get temp filelocation  and set it to the fileLocation */
-                _.find(this.fieldConfig,{name:'filename'}).fileLocation = get_update_location;
-
-              })
-            })
-
-          };
-        });
+        _.find(this.fieldConfig,{name:'filename'}).fileLocation = null;
       } else {
-        this.ws.call('notifier.destroy_upload_location').subscribe(destroy_upload_location=>{
-          _.find(this.fieldConfig,{name:'filename'}).fileLocation = filelocation;
-        })
+        _.find(this.fieldConfig,{name:'filename'}).fileLocation = filelocation;
       };
     });
     this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
@@ -122,26 +116,35 @@ export class ManualUpdateComponent {
     entityForm.submitFunction = this.customSubmit;
   }
   customSubmit(entityForm: any) {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Manual Update") }});
-    this.dialogRef.componentInstance.progressNumberType = "nopercent";
-    this.dialogRef.componentInstance.setDescription(T("Updating..."));
-    this.dialogRef.componentInstance.setCall('update.manual', [entityForm.filename]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      entityForm.success = true;
+    this.loader.open();
+    this.subs.subscribe((data)=>{
+      this.loader.close();
       this.translate.get('Restart').subscribe((reboot: string) => {
         this.translate.get('The update has been successfully applied, it is recommended that you reboot the machine now for the update to take effect. Do you wish to reboot?').subscribe((reboot_prompt: string) => {
           this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
             if (reboot_res) {
               this.router.navigate(['/others/reboot']);
-            }
+            };
           });
-        });
-      });
-    });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
-    });
+        },)
+      })}
+    ,(error)=>{
+    this.loader.close();
+    this.dialogService.errorReport(error.status,error.statusText, error._body);
+  })
+}
+
+updater(file: any, parent: any){
+  const fileBrowser = file.fileInput.nativeElement;
+  if (fileBrowser.files && fileBrowser.files[0]) {
+    const formData: FormData = new FormData();
+    formData.append('data', JSON.stringify({
+      "method": "update.file",
+      "params": [{"destination":this.fileLocation}]
+    }));
+    formData.append('file', fileBrowser.files[0]);
+    parent.subs = parent.http.post(file.apiEndPoint, formData);
   }
+}
 
 }

@@ -39,6 +39,10 @@ export class FormUploadComponent {
     private dialog:DialogService, public snackBar: MatSnackBar, public translate: TranslateService) {}
 
   upload(location = "/tmp/") {
+    if(this.config.updater && this.config.parent ){
+      this.config.updater(this, this.config.parent);
+      return;
+    }
   this.loader.open();
   
   const fileBrowser = this.fileInput.nativeElement;
