@@ -54,7 +54,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       name : 'passphrase',
       label : T('Passphrase'),
       placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase'),
+      tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
       required: true
     }

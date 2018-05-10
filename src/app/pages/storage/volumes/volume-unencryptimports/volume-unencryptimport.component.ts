@@ -46,12 +46,13 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         type: 'upload',
         name: 'key',
         placeholder: T('Encryption Key File'),
-        tooltip: T('Encryption key used to decrypt pools to be imported.'),
+        tooltip: T('Upload the encryption key file used to decrypt the\
+                    pools to be imported.'),
         acceptedFiles: ',.key',
         fileLocation: '',
         validation: [Validators.required],
         required: true
-        
+
       },
       {
         type: 'input',
@@ -59,7 +60,7 @@ export class VolumeUnencryptImportListComponent implements Formconfiguration {
         name: 'passphrase',
         label: T('Passphrase'),
         placeholder: T('Passphrase'),
-        tooltip: T('Geli Passphrase'),
+        tooltip: T('Enter the GELI passphrase'),
         validation: [Validators.required],
         required: true
       }

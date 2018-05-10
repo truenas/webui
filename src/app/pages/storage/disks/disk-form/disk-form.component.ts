@@ -22,68 +22,65 @@ export class DiskFormComponent {
       type: 'input',
       name: 'disk_name',
       placeholder: T('Name'),
-      tooltip : T('Read-only value showing FreeBSD device name for disk.'),
+      tooltip : T('This is the FreeBSD device name for the disk.'),
       readonly: true
     },
     {
       type: 'input',
       name: 'disk_serial',
       placeholder: T('Serial'),
-      tooltip : T('Read-only value showing the serial numeber of the\
- disk.'),
+      tooltip : T('This is the serial number of the disk.'),
       readonly: true
     },
     {
       type: 'input',
       name: 'disk_description',
       placeholder: T('Description'),
-      tooltip : T('Optional.'),
+      tooltip : T('Enter any notes about this disk.'),
     },
     {
       type: 'select',
       name: 'disk_hddstandby',
       placeholder: T('HDD Standby'),
-      tooltip : T('Indicates the time of inactivity (in minutes) before\
- the drive enters standby mode in order to conserve energy. This <a\
- href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
- target="_blank">forum post</a> demonstrates how to determine\
- if a drive has spun down.'),
+      tooltip : T('Indicates the time of inactivity in minutes before\
+                   the drive enters standby mode. This <a\
+                   href="https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/"\
+                   target="_blank">forum post</a> demonstrates how to\
+                   determine if a drive has spun down.'),
       options: [],
     },
     {
       type: 'select',
       name: 'disk_advpowermgmt',
       placeholder: T('Advanced Power Management'),
-      tooltip : T('Default is <i>Disabled</i>. Can select a power\
- management profile from the menu.'),
+      tooltip : T('Select a power management profile from the menu.'),
       options: [],
     },
     {
       type: 'select',
       name: 'disk_acousticlevel',
       placeholder: T('Acoustic Level'),
-      tooltip : T('Default is <i>Disabled</i>. Can be modified for disks\
- that understand\
- <a href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
- target="_blank">AAM</a>.'),
+      tooltip : T('Modify for disks that understand <a\
+                   href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
+                   target="_blank">AAM</a>.'),
       options: [],
     },
     {
       type : 'checkbox',
       name : 'disk_togglesmart',
       placeholder : T('Enable S.M.A.R.T.'),
-      tooltip : T('Enabled by default if the disk supports S.M.A.R.T.\
- Unchecking this box will diable any configured\
- <a href="http://doc.freenas.org/11/tasks.html#s-m-a-r-t-tests"\
- target="_blank">S.M.A.R.T. Tests</a> for the disk.'),
+      tooltip : T('Set by default if the disk supports S.M.A.R.T.\
+                   Unset to disable any configured <a\
+                   href="http://doc.freenas.org/11/tasks.html#s-m-a-r-t-tests"\
+                   target="_blank">S.M.A.R.T. tests</a>.'),
     },
     {
       type: 'input',
       name: 'disk_smartoptions',
       placeholder: T('S.M.A.R.T. extra options'),
       tooltip : T('Additional <a\
- href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
- target="_blank">smartctl(8)</a> options.'),
+                   href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
+                   target="_blank">smartctl(8)</a> options.'),
     }
   ];
 

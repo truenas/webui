@@ -28,9 +28,11 @@ export class VdevComponent implements OnInit {
   public id: number;
   public size;
   public vdev_type_tooltip = T('Choose a <b>Stripe</b>, <b>Mirror</b>, or\
- <b>Raid-Z</b> configuration for the chosen disk layout. See the\
- <b>Storage/Volumes</b> section of the <a href="guide">Guide</a> for\
- more details.');
+                                <b>Raid-Z</b> configuration for the\
+                                chosen disk layout. See the\
+                                <b>Storage/Volumes</b> section of the <a\
+                                href="guide" target="_blank">Guide</a>\
+                                for more details.');
 
   constructor(public elementRef: ElementRef, public translate: TranslateService) {}
 

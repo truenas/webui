@@ -82,7 +82,7 @@ export class VolumeImportListComponent implements Formconfiguration {
     }, (res) => {
       this.loader.close();
 
-      
+
       if( res.error !== undefined ) {
         this.dialogService.errorReport(T("Error importing pool"), res.error.error_message, res.error.traceback);
       } else {

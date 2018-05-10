@@ -40,7 +40,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     passphrase: "",
     passphrase2: ""
   };
-  
+
   fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -52,7 +52,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       name : 'passphrase',
       label: T("passphrase"),
       placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase'),
+      tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
       required: true
     },{
@@ -61,7 +61,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       name : 'passphrase2',
       label : T('Passphrase2'),
       placeholder: T('Passphrase2 must match above'),
-      tooltip: T('Geli Passphrase must match above'),
+      tooltip: T('Confirm the GELI passphrase.'),
       validation: [Validators.required],
       required: true
     }
@@ -86,7 +86,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-  
+
   }
 
   customSubmit(value) {
@@ -104,5 +104,5 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       this.dialogService.errorReport(T("Error creating passphrase for pool"), res.message, res.stack);
     });
   }
-  
+
 }
