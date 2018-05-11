@@ -107,6 +107,7 @@ export class CertificateAuthorityAddComponent {
       tooltip: T('Select the country for the organization.'),
       options : [
       ],
+      value: 'US',
       required: true,
       validation: [Validators.required],
       isHidden: false,
@@ -244,7 +245,7 @@ export class CertificateAuthorityAddComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {
-    this.systemGeneralService.getCA().subscribe((res) => {
+    this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
       this.signedby = _.find(this.fieldConfig, {'name' : 'signedby'});
       res.forEach((item) => {
         this.signedby.options.push(
