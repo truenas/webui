@@ -7,6 +7,7 @@ import {Subscription} from 'rxjs';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component({
   selector : 'system-ca-add',
@@ -36,6 +37,7 @@ export class CertificateAuthorityAddComponent {
       options : [
         {label: 'Internal CA', value: 'CA_CREATE_INTERNAL'},
         {label: 'Intermediate CA', value: 'CA_CREATE_INTERMEDIATE'},
+        {label: 'Import CA', value: 'CA_CREATE_IMPORTED'},
       ],
       value: 'CA_CREATE_INTERNAL',
     },
@@ -49,6 +51,9 @@ export class CertificateAuthorityAddComponent {
         {label: '---', value: null}
       ],
       isHidden: true,
+      disabled: true,
+      required: true,
+      validation: [Validators.required]
     },
     {
       type : 'select',
@@ -63,7 +68,8 @@ export class CertificateAuthorityAddComponent {
       ],
       value: 2048,
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required],
+      isHidden: false,
     },
     {
       type : 'select',
@@ -80,7 +86,8 @@ export class CertificateAuthorityAddComponent {
       ],
       value: 'SHA256',
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -90,7 +97,8 @@ export class CertificateAuthorityAddComponent {
       inputType: 'number',
       required: true,
       value: 3650,
-      validation: [Validators.required, Validators.min(0)]
+      validation: [Validators.required, Validators.min(0)],
+      isHidden: false,
     },
     {
       type : 'select',
@@ -100,7 +108,8 @@ export class CertificateAuthorityAddComponent {
       options : [
       ],
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -109,7 +118,8 @@ export class CertificateAuthorityAddComponent {
       tooltip: T('Enter the state or province of the\
        organization.'),
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -117,7 +127,8 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Locality'),
       tooltip: T('Enter the location of the organization.'),
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -126,7 +137,8 @@ export class CertificateAuthorityAddComponent {
       tooltip: T('Enter the name of the company or\
        organization.'),
       required: true,
-      validation: [Validators.required]
+      validation: [Validators.required],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -135,7 +147,8 @@ export class CertificateAuthorityAddComponent {
       tooltip: T('Enter the email address for the person\
        responsible for the CA.'),
       required: true,
-      validation : [ Validators.email, Validators.required ]
+      validation : [ Validators.email, Validators.required ],
+      isHidden: false,
     },
     {
       type : 'input',
@@ -145,14 +158,82 @@ export class CertificateAuthorityAddComponent {
        system. This name **must** be unique within a certificate\
        chain.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      isHidden: false,
     },
     {
       type : 'textarea',
       name : 'san',
       placeholder: T('Subject Alternate Names'),
-      tooltip: T('Multi-domain support. Enter additional space separated domains.')
-    }
+      tooltip: T('Multi-domain support. Enter additional space separated domains.'),
+      isHidden: false,
+    },
+    {
+      type : 'textarea',
+      name : 'certificate',
+      placeholder : T('Certificate'),
+      tooltip : T('Mandatory. Paste in the certificate for the CA.'),
+      required: true,
+      validation : [ Validators.required ],
+      isHidden: true,
+    },
+    {
+      type : 'textarea',
+      name : 'privatekey',
+      placeholder : T('Private Key'),
+      tooltip : T('If there is a private key associated with the\
+       <b>Certificate</b>, paste it here.'),
+      isHidden: true,
+    },
+    {
+      type : 'input',
+      name : 'Passphrase',
+      placeholder : T('Passphrase'),
+      tooltip : T('If the <b>Private Key</b> is protected by a passphrase,\
+       enter it here and repeat it in the "Confirm Passphrase" field.'),
+      inputType : 'password',
+      validation : [ matchOtherValidator('Passphrase2') ],
+      isHidden: true,
+    },
+    {
+      type : 'input',
+      name : 'Passphrase2',
+      inputType : 'password',
+      placeholder : T('Confirm Passphrase'),
+      isHidden: true,
+    },
+  ];
+
+  private internalcaFields: Array<any> = [
+    'key_length',
+    'digest_algorithm',
+    'lifetime',
+    'country',
+    'state',
+    'city',
+    'organization',
+    'email',
+    'common',
+    'san',
+  ];
+  private intermediatecaFields: Array<any> = [
+    'signedby',
+    'key_length',
+    'digest_algorithm',
+    'lifetime',
+    'country',
+    'state',
+    'city',
+    'organization',
+    'email',
+    'common',
+    'san',
+  ];
+  private importcaFields: Array<any> = [
+    'certificate',
+    'privatekey',
+    'Passphrase',
+    'Passphrase2',
   ];
 
   private country: any;
@@ -182,14 +263,55 @@ export class CertificateAuthorityAddComponent {
   }
 
   afterInit(entity: any) {
+    for (let i in this.intermediatecaFields) {
+      this.hideField(this.intermediatecaFields[i], true, entity);
+    }
+    for (let i in this.importcaFields) {
+      this.hideField(this.importcaFields[i], true, entity);
+    }
+    for (let i in this.internalcaFields) {
+      this.hideField(this.internalcaFields[i], false, entity);
+    }
 
     entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
       if (res == 'CA_CREATE_INTERNAL') {
-        this.signedby.isHidden = true;
+        for (let i in this.intermediatecaFields) {
+          this.hideField(this.intermediatecaFields[i], true, entity);
+        }
+        for (let i in this.importcaFields) {
+          this.hideField(this.importcaFields[i], true, entity);
+        }
+        for (let i in this.internalcaFields) {
+          this.hideField(this.internalcaFields[i], false, entity);
+        }
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
-        this.signedby.isHidden = false;
+        for (let i in this.internalcaFields) {
+          this.hideField(this.internalcaFields[i], true, entity);
+        }
+        for (let i in this.importcaFields) {
+          this.hideField(this.importcaFields[i], true, entity);
+        }
+        for (let i in this.intermediatecaFields) {
+          this.hideField(this.intermediatecaFields[i], false, entity);
+        }
+      } else if (res == 'CA_CREATE_IMPORTED') {
+        for (let i in this.internalcaFields) {
+          this.hideField(this.internalcaFields[i], true, entity);
+        }
+        for (let i in this.intermediatecaFields) {
+          this.hideField(this.intermediatecaFields[i], true, entity);
+        }
+        for (let i in this.importcaFields) {
+          this.hideField(this.importcaFields[i], false, entity);
+        }
       }
     })
+  }
+
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target.isHidden = show;
+    entity.setDisabled(fieldName, show);
   }
 
   beforeSubmit(data: any) {
