@@ -31,6 +31,9 @@
       (change)="checkAll()"
     >
     </mat-checkbox>
+    <button mat-button (click)="savePrefs()">Save Prefs</button>
+    <button mat-button (click)="resetPrefs()">Reset Prefs</button>
+   
   </h4>
   <ul>
     <li *ngFor="let col of allColumns">
@@ -45,7 +48,6 @@
       </div>
     </li>
   </ul>
-  <span (click)="savePrefs()">Save Prefs</span>
 </div>
 <!-- End checkbox ------------------------------ -->
 

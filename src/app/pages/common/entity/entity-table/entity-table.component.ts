@@ -85,6 +85,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public columns: Array<any> = [];
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public userPrefColumns: string; // to set user-preferred cols in local storage
+  public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -158,6 +159,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       // Next section sets the checked/displayed columns
       this.conf.columns = [];
       this.userPrefColumns = window.localStorage.getItem('myCols');
+      
+      for (let i = 0; i < this.allColumns.length; i++) {
+        if (!this.allColumns[i].hidden) {
+          this.presetDisplayedCols.push(i);
+        }
+      } 
 
       if (!this.userPrefColumns || this.userPrefColumns === '') {
         for (let item of this.allColumns) {
@@ -169,13 +176,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         let tempArr = this.userPrefColumns.split(',');
         for (let item of tempArr) {
           this.conf.columns.push(this.allColumns[parseInt(item)]);
-          }
         }
+      }
 
         // End of checked/display section ------------
   }
   
-
   ngAfterViewInit(): void {
 
     this.erdService.attachResizeEventToElement("entity-table-component");
@@ -505,6 +511,19 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     localStorage.setItem('myCols', myPrefs.toString())
     // let x = document.getElementsByClassName('colselect')[11].attributes[4].value;
     // console.log(x);
+  }
+
+  resetPrefs() {
+    this.conf.columns = [];
+    for (let i = 0; i < this.allColumns.length; i++) {
+      if (this.presetDisplayedCols.includes(i)){
+        this.conf.columns.push(this.allColumns[i]);
+      }
+    } 
+    // console.log(this.allColumns[0]);
+    // console.log(this.isChecked(this.allColumns[0]));
+    // this.toggle(this.allColumns[0]);
+    // console.log(this.isChecked(this.allColumns[0]));
   }
 
   // End checkbox section -----------------------
