@@ -18,6 +18,8 @@ export class CertificateAuthorityListComponent {
   protected queryCall = "certificateauthority.query";
   protected wsDelete = "certificateauthority.delete";
   // protected route_edit: string[] = ['system', 'ca', 'edit'];
+  protected route_add: string[] = ['system', 'ca', 'add'];
+  protected route_add_tooltip: string = T('Create CA');
   protected route_success: string[] = [ 'system', 'ca' ];
 
   public busy: Subscription;
@@ -45,27 +47,6 @@ export class CertificateAuthorityListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-  }
-
-  getAddActions() {
-    let actions = [];
-    actions.push({
-      label: T("Import CA"),
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "ca", "import"]));
-      }
-    }, {
-      label: T("Create CA"),
-      icon: "add",
-      onClick: () => {
-        this.router.navigate(new Array('').concat(
-          ["system", "ca", "add"]));
-      }
-    });
-
-    return actions;
   }
 
   getActions(row) {
