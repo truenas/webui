@@ -28,13 +28,9 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CertificateAuthorityImportComponent } from './ca/ca-import/';
-import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
-import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
-import { CAFormComponent } from './ca/ca-form/';
 import { CertificateCSRComponent } from './certificates/certificate-csr/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateImportComponent } from './certificates/certificate-import/';
@@ -242,20 +238,7 @@ export const routes: Routes = [
         path: '',
         component: CertificateAuthorityListComponent,
         data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
-      }, {
-        path: 'import',
-        component: CertificateAuthorityImportComponent,
-        data: { title: 'Import', breadcrumb: 'Import' },
       }, 
-      // {
-      //   path: 'internal',
-      //   component: CertificateAuthorityInternalComponent,
-      //   data: { title: 'Internal', breadcrumb: 'Internal' },
-      // }, {
-      //   path: 'intermediate',
-      //   component: CertificateAuthorityIntermediateComponent,
-      //   data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
-      // }, 
       {
         path: 'add',
         component: CertificateAuthorityAddComponent,

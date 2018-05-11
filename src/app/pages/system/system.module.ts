@@ -34,13 +34,9 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CertificateAuthorityImportComponent } from './ca/ca-import/';
-import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
-import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
-import { CAFormComponent } from './ca/ca-form/';
 import { CertificateCSRComponent } from './certificates/certificate-csr/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateImportComponent } from './certificates/certificate-import/';
@@ -85,13 +81,9 @@ import { AlertConfigComponent } from './alert/alert.component';
     CloudCredentialsAzureComponent,
     CloudCredentialsB2Component,
     CloudCredentialsListComponent,
-    CAFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthoritySignComponent,
-    CertificateAuthorityImportComponent,
-    CertificateAuthorityInternalComponent,
-    CertificateAuthorityIntermediateComponent,
     CertificateListComponent,
     CertificateEditComponent,
     CertificateImportComponent,
