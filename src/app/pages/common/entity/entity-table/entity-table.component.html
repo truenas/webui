@@ -23,18 +23,17 @@
 
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 5 ? true : false">
-  <h4>Available Columns (check/uncheck all)
+  <div>
     <mat-checkbox
       type="checkbox"
       [id]="check-all"
       [checked]="checkLength()"
-      (change)="checkAll()"
-    >
+      (change)="checkAll()">
     </mat-checkbox>
-    <button mat-button (click)="savePrefs()">Save Prefs</button>
-    <button mat-button (click)="resetPrefs()">Reset Prefs</button>
-   
-  </h4>
+    Toggle Columns
+    <button mat-button matTooltip="Save your preferred view of columns" (click)="savePrefs()">Save Prefs</button>
+    <button mat-button matTooltip="Return to the standard view of columns" (click)="resetPrefs()">Reset Prefs</button>
+  </div>
   <ul>
     <li *ngFor="let col of allColumns">
       <div>

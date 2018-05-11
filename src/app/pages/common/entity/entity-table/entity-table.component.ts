@@ -83,9 +83,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
+
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public userPrefColumns: string; // to set user-preferred cols in local storage
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
+  public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -178,6 +180,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           this.conf.columns.push(this.allColumns[parseInt(item)]);
         }
       }
+      this.currentPreferredCols = this.conf.columns;
 
         // End of checked/display section ------------
   }
@@ -467,63 +470,57 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
-        // console.log(this.conf.columns);
         return c.name !== col.name; 
       });
     } else {
       this.conf.columns = [...this.conf.columns, col];
-      // console.log(this.conf.columns.length);
     }
   }
 
   isChecked(col:any) {
-    // console.log('is checked' + this.conf.columns);
     return this.conf.columns.find(c => {
       return c.name === col.name;
     }) !=undefined;
   }
 
+  // Toggle between all cols selected and the current stored preference
   checkAll() {
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
-      // console.log(this.conf.columns);
       return this.conf.columns
     } else {
-      // console.log(this.conf.columns);
-      return this.conf.columns = [];
+      return this.conf.columns = this.currentPreferredCols;
     }
   }
 
+  // Used by the select all checkbox to determine whether it should be checked
   checkLength() {
     return this.conf.columns.length === this.allColumns.length; 
   }
 
+  // Store the view of currently checked cols as the user's default view
   savePrefs() {
     let myColumns = document.getElementsByClassName('colselect');
     let myPrefs = [];
     for (let i = 0; i < myColumns.length; i++) {
-      // console.log(myColumns[i].attributes[4].value);
       if (myColumns[i].attributes[4].value === 'true' ) {
         myPrefs.push(i);
       }
     }
-    // console.log(myPrefs.toString());
+    this.currentPreferredCols = this.conf.columns;
     localStorage.setItem('myCols', myPrefs.toString())
-    // let x = document.getElementsByClassName('colselect')[11].attributes[4].value;
-    // console.log(x);
   }
 
+  // Reset the default view to "factory" settings specified when cols are created
   resetPrefs() {
     this.conf.columns = [];
     for (let i = 0; i < this.allColumns.length; i++) {
       if (this.presetDisplayedCols.includes(i)){
         this.conf.columns.push(this.allColumns[i]);
       }
+      this.currentPreferredCols = this.conf.columns;
+      localStorage.setItem('myCols', '');
     } 
-    // console.log(this.allColumns[0]);
-    // console.log(this.isChecked(this.allColumns[0]));
-    // this.toggle(this.allColumns[0]);
-    // console.log(this.isChecked(this.allColumns[0]));
   }
 
   // End checkbox section -----------------------
