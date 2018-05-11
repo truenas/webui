@@ -116,23 +116,10 @@ export class ManualUpdateComponent {
     entityForm.submitFunction = this.customSubmit;
   }
   customSubmit(entityForm: any) {
-    this.loader.open();
-    this.subs.subscribe((data)=>{
-      this.loader.close();
-      this.translate.get('Restart').subscribe((reboot: string) => {
-        this.translate.get('The update has been successfully applied, it is recommended that you reboot the machine now for the update to take effect. Do you wish to reboot?').subscribe((reboot_prompt: string) => {
-          this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
-            if (reboot_res) {
-              this.router.navigate(['/others/reboot']);
-            };
-          });
-        },)
-      })}
-    ,(error)=>{
-    this.loader.close();
-    this.dialogService.errorReport(error.status,error.statusText, error._body);
-  })
-}
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
+    this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+
+  }
 
 updater(file: any, parent: any){
   const fileBrowser = file.fileInput.nativeElement;
@@ -143,7 +130,7 @@ updater(file: any, parent: any){
       "params": [{"destination":this.fileLocation}]
     }));
     formData.append('file', fileBrowser.files[0]);
-    parent.subs = parent.http.post(file.apiEndPoint, formData);
+    parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
   }
 }
 
