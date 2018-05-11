@@ -35,7 +35,6 @@ export class CertificateAddComponent {
       name : 'create_type',
       placeholder : T('Type'),
       options : [
-        // {label: 'Certificate', value: 'CERTIFICATE_CREATE'},
         {label: 'Internal Certificate', value: 'CERTIFICATE_CREATE_INTERNAL'},
         {label: 'Certificate Signing Request', value: 'CERTIFICATE_CREATE_CSR'},
         {label: 'Import Certificate', value: 'CERTIFICATE_CREATE_IMPORTED'},
@@ -245,7 +244,7 @@ export class CertificateAddComponent {
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {
-    this.systemGeneralService.getCA().subscribe((res) => {
+    this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
       this.signedby = _.find(this.fieldConfig, {'name' : 'signedby'});
       res.forEach((item) => {
         this.signedby.options.push(
