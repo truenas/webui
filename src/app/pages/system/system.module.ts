@@ -42,6 +42,7 @@ import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { TranslateModule } from '@ngx-translate/core';
@@ -85,6 +86,7 @@ import { AlertConfigComponent } from './alert/alert.component';
     CertificateAuthorityAddComponent,
     CertificateAuthoritySignComponent,
     CertificateListComponent,
+    CertificateAddComponent,
     CertificateEditComponent,
     CertificateImportComponent,
     CertificateInternalComponent,

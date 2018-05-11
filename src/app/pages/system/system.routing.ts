@@ -36,6 +36,7 @@ import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateImportComponent } from './certificates/certificate-import/';
 import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
@@ -267,6 +268,10 @@ export const routes: Routes = [
         path: 'csr',
         component: CertificateCSRComponent,
         data: { title: 'CSR', breadcrumb: 'CSR' },
+      }, {
+        path: 'add',
+        component: CertificateAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
       }, {
         path: 'edit/:pk',
         component: CertificateEditComponent,
