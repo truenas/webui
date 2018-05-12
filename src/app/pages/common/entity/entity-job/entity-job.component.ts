@@ -139,6 +139,7 @@ export class EntityJobComponent implements OnInit {
         });
   }
   public wspost(path, options) {
+      console.log(options);
     this.http.post(path, options).subscribe(
         (res) => {
           this.job = res;

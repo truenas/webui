@@ -40,6 +40,7 @@ import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
 import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
+import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 
 
 @NgModule({
@@ -64,6 +65,7 @@ import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptim
     ZvolEditComponent,
     VolumeImportListComponent,
     VolumeUnencryptImportListComponent,
+    VolumeImportWizardComponent,
     SnapshotListComponent,
     SnapshotCloneComponent,
     SnapshotRollbackComponent,

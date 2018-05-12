@@ -107,18 +107,18 @@ export class VolumesListTableConfig implements InputTableConf {
       icon: "vertical_align_bottom",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "import_list"]));
+          ["storage", "pools", "import"]));
       }
     });
 
-    actions.push({
+    /*actions.push({
       label: T("Decrypt Exported Pools"),
       icon: "lock_open",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
           ["storage", "pools", "unencryptimport_list"]));
       }
-    });
+    });*/
 
 
     return actions;

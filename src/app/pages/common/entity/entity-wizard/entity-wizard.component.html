@@ -15,6 +15,9 @@
             <button id="goback_button" color="accent" *ngIf="i == 0 ? true : false" class="btn  btn-block btn-raised btn-lg btn-primary" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
             <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true" color="accent">{{"Back" | translate}}</button>
             <button mat-raised-button matStepperNext color="primary" >{{"Next" | translate}}</button>
+            <span *ngFor="let custBtn of conf.custActions">
+              <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+            </span>
           </mat-card-actions>
         </mat-step>
       </div>

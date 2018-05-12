@@ -25,6 +25,7 @@ import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunloc
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
 import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
+import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 
 export const routes: Routes = [
   {
@@ -68,7 +69,7 @@ export const routes: Routes = [
             data: { title: 'Extend Pool', breadcrumb: 'Extend Pool' }
           },
           {
-            path: 'import_list', component: VolumeImportListComponent,
+            path: 'import', component: VolumeImportWizardComponent,
             data: { title: 'Import Pool', breadcrumb: 'Import Pool' }
           },
           {
