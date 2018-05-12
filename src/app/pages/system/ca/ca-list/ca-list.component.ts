@@ -49,6 +49,15 @@ export class CertificateAuthorityListComponent {
     this.entityList = entityList;
   }
 
+  isActionVisible(actionId: string, row: any) {
+    if (actionId === 'export_certificate' && row.certificate === null) {
+      return false;
+    } else if (actionId === 'export_private_key' && row.privatekey === null) {
+      return false;
+    }
+    return true;
+  }
+
   getActions(row) {
     return [{
         id: "sign",
@@ -105,6 +114,14 @@ export class CertificateAuthorityListComponent {
         onClick: (row) => {
           this.entityList.doDelete(row.id);
         }
-      }]
-   }
+      }];
+  }
+
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.isObject(entityList.rows[i].issuer)) {
+        entityList.rows[i].issuer = entityList.rows[i].issuer.name;
+      }
+    }
+  }
 }
