@@ -18,7 +18,6 @@ export class CertificateListComponent {
   protected wsDelete = "certificate.delete";
   protected route_add: string[] = ['system', 'certificates', 'add'];
   protected route_add_tooltip: string = T('Create Certificate');
-  protected route_edit: string[] = ['system', 'certificates', 'edit'];
   protected route_success: string[] = [ 'system', 'certificates' ];
 
   protected entityList: any;
@@ -67,7 +66,7 @@ export class CertificateListComponent {
         id: "Edit",
         label: T("Edit"),
         onClick: (row) => {
-          // this.router.navigate(new Array('').concat(["system", "ca", "sign", row.id]))
+          this.router.navigate(new Array('').concat(["system", "certificates", "edit", row.id]))
         }
       },
       {
