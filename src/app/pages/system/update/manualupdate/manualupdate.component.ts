@@ -27,7 +27,6 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { DialogService } from '../../../../services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { updateLocale } from 'moment';
-import { Http } from '@angular/http';
 
 @Component({
   selector: 'app-manualupdate',
@@ -85,7 +84,6 @@ export class ManualUpdateComponent {
     public translate: TranslateService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
-    protected http: Http
   ) {}
 
   preInit(entityForm: any) {
@@ -116,8 +114,24 @@ export class ManualUpdateComponent {
     entityForm.submitFunction = this.customSubmit;
   }
   customSubmit(entityForm: any) {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Manual Update" }, disableClose: true });
     this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
+    this.dialogRef.componentInstance.success.subscribe((succ)=>{
+      this.dialogRef.close(false);
+      this.translate.get('Restart').subscribe((reboot: string) => {
+        this.translate.get('The update has been successfully applied, it is recommended that you reboot the machine now for the update to take effect. Do you wish to reboot?').subscribe((reboot_prompt: string) => {
+          this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+            if (reboot_res) {
+              this.router.navigate(['/others/reboot']);
+            }
+          });
+        });
+      });
+    })
+    this.dialogRef.componentInstance.failure.subscribe((failure)=>{
+      this.dialogRef.close(false);
+      this.dialogService.errorReport(failure.error,failure.state,failure.exception)
+    })
 
   }
 
