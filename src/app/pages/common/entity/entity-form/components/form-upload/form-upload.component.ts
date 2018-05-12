@@ -48,11 +48,11 @@ export class FormUploadComponent {
   const fileBrowser = this.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
     const formData: FormData = new FormData();
-    formData.append('file', fileBrowser.files[0]);
     formData.append('data', JSON.stringify({
       "method": "filesystem.put",
       "params": [location + '/' + fileBrowser.files[0].name, { "mode": "493" }]
     }));
+    formData.append('file', fileBrowser.files[0]);
 
     this.http.post(this.apiEndPoint, formData).subscribe(
       (data) => {

@@ -146,12 +146,12 @@ export const routes: Routes = [
         },
         {
           path:'manualupdate',
-          data: {title:'ManualUpdate', breadcrumb: 'ManualUpdate'},
+          data: {title:'Manual Update', breadcrumb: 'Manual Update'},
           children:[
             {
               path:'',
               component: ManualUpdateComponent,
-              data: { title: 'ManualUpdate', breadcrumb: 'ManualUpdate' },
+              data: { title: 'Manual Update', breadcrumb: 'Manual Update' },
             },
             {
               path:'saveconfig',
