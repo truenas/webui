@@ -88,6 +88,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public userPrefColumns: string; // to set user-preferred cols in local storage
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
+  public arePresetsStillCurrent: boolean;
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -169,12 +170,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       } 
 
       if (!this.userPrefColumns || this.userPrefColumns === '') {
+        this.arePresetsStillCurrent = true;
         for (let item of this.allColumns) {
           if (!item.hidden) {
             this.conf.columns.push(item);
           }
         }   
       } else {
+        this.arePresetsStillCurrent = false;
         let tempArr = this.userPrefColumns.split(',');
         for (let item of tempArr) {
           this.conf.columns.push(this.allColumns[parseInt(item)]);
@@ -467,6 +470,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   // Next section operates the checkboxes to show/hide columns 
   toggle(col) {
     const isChecked = this.isChecked(col);
+    this.anythingClicked = true;
+    this.arePresetsStillCurrent = false;
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
@@ -485,6 +490,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   // Toggle between all cols selected and the current stored preference
   checkAll() {
+    this.anythingClicked = true;
+    this.arePresetsStillCurrent = false;
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
       return this.conf.columns
@@ -508,7 +515,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       }
     }
     this.currentPreferredCols = this.conf.columns;
-    localStorage.setItem('myCols', myPrefs.toString())
+    localStorage.setItem('myCols', myPrefs.toString());
+    this.anythingClicked = false;
   }
 
   // Reset the default view to "factory" settings specified when cols are created
@@ -520,8 +528,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       }
       this.currentPreferredCols = this.conf.columns;
       localStorage.setItem('myCols', '');
+      this.anythingClicked = false;
+      this.arePresetsStillCurrent = true;
     } 
   }
+
+  anythingClicked: boolean = false;
 
   // End checkbox section -----------------------
 }
