@@ -27,6 +27,7 @@ import { T } from '../../../translate-marker';
   `
 })
 
+
 export class SupportComponent  {
   public username: any;
   public password: any;
@@ -42,6 +43,12 @@ export class SupportComponent  {
   public saveSubmitText = "Submit";
 
   public fieldConfig: FieldConfig[] = [
+    {
+      type: 'paragraph',
+      name: 'support_text',
+      paraText: new DOMParser().parseFromString("Before filing a bug report or feature request, search http://bugs.freenas.org to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new one. For enterprise-grade storage solutions and support, please visit http://www.ixsystems.com/storage/. <br><br> If you do not have an account, please register here.<a href= https://redmine.ixsystems.com/account/register </a>", 'text/html')   
+    },
+    
     {
       type : 'input',
       name : 'username',
@@ -108,6 +115,7 @@ export class SupportComponent  {
   
   afterInit(entityEdit: any) {
     this.category = _.find(this.fieldConfig, {name: "category"});
+    console.log(_.find(this.fieldConfig, {name: "support_text"}))
     if(this.category.options.length === 0){
       entityEdit.formGroup.controls['username'].valueChanges.subscribe((username)=>{
         entityEdit.formGroup.controls['password'].valueChanges.subscribe((password)=>{
