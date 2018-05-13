@@ -2,24 +2,24 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../../services/';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'general-config-save',
-  templateUrl: './config-save.component.html'
+  selector: 'app-manualupdate-save-config',
+  templateUrl: './manualupdateconfig-save.component.html'
 })
 
-export class ConfigSaveComponent {
+export class ManualUpdateConfigSaveComponent {
 
   public sub: Subscription;
   public secretseed = false;
-  public route_success: string[] = ['system', 'general'];
+  public route_success: string[] = ['system','update','manualupdate'];
   
-  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar, private _location: Location) {}
+  constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar) {}
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action , {
@@ -33,6 +33,7 @@ export class ConfigSaveComponent {
         (res) => {
           this.openSnackBar("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success");
           window.open(res[1]);
+          this.router.navigate(new Array('').concat(this.route_success));
         },
         (err) => {
           this.openSnackBar("Please check your network connection", "Failed");

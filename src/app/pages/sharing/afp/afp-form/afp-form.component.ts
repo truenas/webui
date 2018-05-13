@@ -28,7 +28,7 @@ export class AFPFormComponent implements OnDestroy {
       name: 'afp_path',
       placeholder: T('Path'),
       tooltip: T('Browse to the voume or dataset to share. Do not nest\
- addtional volumes, datasets, or symbolic links beneath this path\
+ additional volumes, datasets, or symbolic links beneath this path\
  because Netatalk does not fully support that.'),
       required: true,
       validation : [ Validators.required ]

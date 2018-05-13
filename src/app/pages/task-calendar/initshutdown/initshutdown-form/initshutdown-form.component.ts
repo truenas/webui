@@ -78,7 +78,7 @@ export class InitshutdownFormComponent {
     type: 'checkbox',
     name: 'ini_enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Uncheck to diable the task.'),
+    tooltip: T('Uncheck to disable the task.'),
     value: true,
   }];
 

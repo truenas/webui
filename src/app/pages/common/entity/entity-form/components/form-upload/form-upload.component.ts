@@ -39,16 +39,20 @@ export class FormUploadComponent {
     private dialog:DialogService, public snackBar: MatSnackBar, public translate: TranslateService) {}
 
   upload(location = "/tmp/") {
+    if(this.config.updater && this.config.parent ){
+      this.config.updater(this, this.config.parent);
+      return;
+    }
   this.loader.open();
   
   const fileBrowser = this.fileInput.nativeElement;
   if (fileBrowser.files && fileBrowser.files[0]) {
     const formData: FormData = new FormData();
-    formData.append('file', fileBrowser.files[0]);
     formData.append('data', JSON.stringify({
       "method": "filesystem.put",
       "params": [location + '/' + fileBrowser.files[0].name, { "mode": "493" }]
     }));
+    formData.append('file', fileBrowser.files[0]);
 
     this.http.post(this.apiEndPoint, formData).subscribe(
       (data) => {

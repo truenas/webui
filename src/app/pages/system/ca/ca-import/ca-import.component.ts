@@ -39,8 +39,8 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'cert_name',
       placeholder : T('Identifier'),
-      tooltip : T('Mandatory. Enter a descriptive name for the CA using\
-       only alphanumeric, underscore (_), and dash(-) characters.'),
+      tooltip : T('Enter a descriptive name for the CA. Underscore (_),\
+                   and dash (-) characters are allowed.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -48,21 +48,21 @@ export class CertificateAuthorityImportComponent {
       type : 'textarea',
       name : 'cert_certificate',
       placeholder : T('Certificate'),
-      tooltip : T('Mandatory. Paste in the certificate for the CA.'),
+      tooltip : T('Enter or paste the certificate for the CA.'),
     },
     {
       type : 'textarea',
       name : 'cert_privatekey',
       placeholder : T('Private Key'),
-      tooltip : T('If there is a private key associated with the\
-       <b>Certificate</b>, paste it here.'),
+      tooltip : T('Enter or paste a private key associated with the\
+                   <b>Certificate</b>.'),
     },
     {
       type : 'input',
       name : 'Passphrase',
       placeholder : T('Passphrase'),
-      tooltip : T('If the <b>Private Key</b> is protected by a passphrase,\
-       enter it here and repeat it in the "Confirm Passphrase" field.'),
+      tooltip : T('Enter a passphrase associated with the\
+                   <b>Private Key</b>.'),
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ]
     },
@@ -76,8 +76,7 @@ export class CertificateAuthorityImportComponent {
       type : 'input',
       name : 'cert_serial',
       placeholder : T('Serial'),
-      tooltip : T('Mandatory. Enter the serial number for the\
-       certificate.'),
+      tooltip : T('Enter the serial number for the certificate.'),
       required: true,
       validation : [ Validators.required ]
     },

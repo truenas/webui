@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { RestService, UserService, WebSocketService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-system-dataset',
@@ -19,10 +20,10 @@ export class DatasetComponent implements OnInit{
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'pool',
-    placeholder: 'System Dataset Pool',
-    tooltip: 'Select the ZFS volume (pool) to contain the system\
- dataset. Encrypted volumes are not displayed in the\
- <b>System dataset pool</b> drop-down menu.',
+    placeholder: T('System Dataset Pool'),
+    tooltip: T('Select the ZFS volume (pool) to contain the system\
+                dataset. Encrypted volumes are not displayed in the\
+                drop down menu. '),
     options: [
       {label: '---', value: null},
       { label: 'freenas-boot', value: 'freenas-boot' },
@@ -30,17 +31,17 @@ export class DatasetComponent implements OnInit{
   },{
       type: 'checkbox',
       name: 'syslog',
-      placeholder: 'Syslog',
-      tooltip : 'When checked, stores the system log on the system\
- dataset.'
+      placeholder: T('Syslog'),
+      tooltip : T('Stores the system log on the system\
+                   dataset when checked.')
     },{
       type: 'checkbox',
       name: 'rrd',
-      placeholder: 'Reporting Database',
-      tooltip : 'When checked, stores the reporting information on the\
- system dataset. Note if this box is unchecked, the system will\
- automatically create a RAM disk to prevent reporting information from\
- filling up <b>/var</b>.',
+      placeholder: T('Reporting Database'),
+      tooltip : T('Stores the reporting information on the\
+                   system dataset when checked. The system will\
+                   automatically create a RAM disk to prevent reporting\
+                   information from filling up <b>/var</b> if unchecked '),
     }];
 
   private pool: any;
