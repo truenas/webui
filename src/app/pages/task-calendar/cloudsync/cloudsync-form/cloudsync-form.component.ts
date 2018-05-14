@@ -351,7 +351,7 @@ export class CloudsyncFormComponent implements OnInit {
 
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
-        this.credential.options.push({ label: item.name, value: item.id });
+        this.credential.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
         this.credential_list.push(item);
       });
     });
