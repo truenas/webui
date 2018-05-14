@@ -85,8 +85,8 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
   }
 
   setPoolData(evt:CoreEvent){
-    console.log("******** ZPOOL DATA ********");
-    console.log(evt.data);
+    //DEBUG: console.log("******** ZPOOL DATA ********");
+    //DEBUG: console.log(evt.data);
     let result = [];
     for(let i in evt.data){
       let zvol = {
