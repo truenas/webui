@@ -61,7 +61,7 @@ export class NFSFormComponent {
       type: 'checkbox',
       name: 'nfs_ro',
       placeholder: T('Read Only'),
-      tooltip: T('Prohibit writing to the share.'),
+      tooltip: T('Set to prohibit writing to the share.'),
     },
     {
       type: 'checkbox',
