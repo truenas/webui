@@ -1,4 +1,6 @@
 import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
+import { DomSanitizer} from '@angular/platform-browser';
+
 import {
   AbstractControl,
   FormArray,
@@ -41,12 +43,15 @@ export class SupportComponent  {
   public entityEdit: any;
   public route_success: string[] = ['system','support'];
   public saveSubmitText = "Submit";
+  public registerUrl = " https://redmine.ixsystems.com/account/register"
+  
 
   public fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
       name: 'support_text',
-      paraText: new DOMParser().parseFromString("Before filing a bug report or feature request, search http://bugs.freenas.org to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new one. For enterprise-grade storage solutions and support, please visit http://www.ixsystems.com/storage/. <br><br> If you do not have an account, please register here.<a href= https://redmine.ixsystems.com/account/register </a>", 'text/html')   
+      paraText: this.sanitizer.bypassSecurityTrustHtml(
+        "Before filing a bug report or feature request, search http://bugs.freenas.org to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new one. For enterprise-grade storage solutions and support, please visit http://www.ixsystems.com/storage/. <br><br> If you do not have an account, please register at https://redmine.ixsystems.com/account/register")
     },
     
     {
@@ -110,7 +115,8 @@ export class SupportComponent  {
   ];
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
-              protected _appRef: ApplicationRef, protected dialog: MatDialog)
+              protected _appRef: ApplicationRef, protected dialog: MatDialog,
+              private sanitizer: DomSanitizer)
               {}
   
   afterInit(entityEdit: any) {
