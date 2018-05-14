@@ -88,7 +88,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public userPrefColumns: string; // to set user-preferred cols in local storage
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
-  public arePresetsStillCurrent: boolean;
+  public arePresetsStillCurrent: boolean; // stores whether we are using factory presets or user preferred ones
+  anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -532,8 +533,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.arePresetsStillCurrent = true;
     } 
   }
-
-  anythingClicked: boolean = false;
 
   // End checkbox section -----------------------
 }
