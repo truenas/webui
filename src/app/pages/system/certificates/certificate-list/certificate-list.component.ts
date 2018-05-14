@@ -1,9 +1,10 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import {Observable} from 'rxjs/Observable';
-import { RestService, WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
+import { MatSnackBar } from '@angular/material';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'certificate-list',
@@ -13,28 +14,24 @@ import { RestService, WebSocketService } from '../../../../services/';
 export class CertificateListComponent {
 
   public title = "Certificates";
-  protected resource_name: string = 'system/certificate';
-  protected route_delete: string[] = ['system', 'certificates', 'delete'];
-  protected route_edit: string[] = ['system', 'certificates', 'edit'];
+  protected queryCall = "certificate.query";
+  protected wsDelete = "certificate.delete";
+  protected route_add: string[] = ['system', 'certificates', 'add'];
+  protected route_add_tooltip: string = T('Create Certificate');
   protected route_success: string[] = [ 'system', 'certificates' ];
 
-  public busy: Subscription;
-  public sub: Subscription;
-
-  public gcl = this.getCertList().subscribe(result => console.log(result),error => console.log(error));
+  protected entityList: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) {
+    protected ws: WebSocketService, public snackBar: MatSnackBar) {
   }
 
   public columns: Array < any > = [
-    { prop: 'cert_name', name: 'Name' },
-    { prop: 'cert_issuer', name: 'Issuer' },
-    { prop: 'cert_type_internal', name: 'Internal' },
-    { prop: 'cert_lifetime', name: "Lifetime" },
-    { prop: 'cert_from', name: "From" },
-    { prop: 'cert_until', name: "Expires" },
+    { name: T('Name'), prop: 'name'},
+    { name: T('Issuer'), prop: 'issuer'},
+    { name: T('Distinguished Name'), prop: 'DN'},
+    { name: T('From'), prop: 'from'},
+    { name: T('Until'), prop: 'until'},
   ];
 
   public config: any = {
@@ -42,39 +39,84 @@ export class CertificateListComponent {
     sorting: { columns: this.columns },
   }
 
-  getAddActions() {
-    let actions = [];
-    actions.push({
-      label: "Import Certificate",
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "certificates", "import"]));
-      }
-    }, {
-      label: "Create Internal",
-      icon: "system_update_alt",
-      onClick: () => {
-        this.router.navigate(new Array('').concat(
-          ["system", "certificates", "internal"]));
-      }
-    }, {
-      label: "Create CSR",
-      icon: "vpn_lock",
-      onClick: () => {
-        this.router.navigate(new Array('').concat(
-          ["system", "certificates", "csr"]));
-      }
-    });
-
-    return actions;
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
-  preInit(entityList: any) {
-    this.sub = this.aroute.params.subscribe(params => {});
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.isObject(entityList.rows[i].issuer)) {
+        entityList.rows[i].issuer = entityList.rows[i].issuer.name;
+      }
+    }
   }
 
-  getCertList(): Observable<Array<any>> {
-    return this.rest.get(this.resource_name, {});
+  isActionVisible(actionId: string, row: any) {
+    if (actionId === 'export_certificate' && row.CSR !== null) {
+      return false;
+    } else if (actionId === 'export_private_key' && row.CSR !== null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  getActions(row) {
+    return [{
+        id: "Edit",
+        label: T("Edit"),
+        onClick: (row) => {
+          this.router.navigate(new Array('').concat(["system", "certificates", "edit", row.id]))
+        }
+      },
+      {
+        id: "export_certificate",
+        label: T("Export Certificate"),
+        onClick: (row) => {
+          this.ws.call('certificate.query', [[["id", "=", row.id]]]).subscribe((res) => {
+            if (res[0]) {
+              this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], res[0].name + '.crt']).subscribe(
+                (res) => {
+                  this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                    duration: 5000
+                  });
+                  window.open(res[1]);
+                },
+                (res) => {
+                  new EntityUtils().handleError(this, res);
+                }
+              );
+            }
+          })
+        }
+      },
+      {
+        id: "export_private_key",
+        label: T("Export Private Key"),
+        onClick: (row) => {
+          this.ws.call('certificate.query', [[["id", "=", row.id]]]).subscribe((res) => {
+            if (res[0]) {
+              this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], res[0].name + '.key']).subscribe(
+                (res) => {
+                  this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                    duration: 5000
+                  });
+                  window.open(res[1]);
+                },
+                (res) => {
+                  new EntityUtils().handleError(this, res);
+                }
+              );
+            }
+          })
+        }
+      },
+      {
+        id: "delete",
+        label: T("Delete"),
+        onClick: (row) => {
+          this.entityList.doDelete(row.id);
+        }
+      }];
   }
 }
