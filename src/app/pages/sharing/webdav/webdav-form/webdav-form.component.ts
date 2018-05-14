@@ -21,7 +21,7 @@ export class WebdavFormComponent {
         type : 'input',
         name : 'webdav_name',
         placeholder : T('Share Name'),
-        tooltip: T('Input a name for the share.'),
+        tooltip: T('Enter a name for the share.'),
         required: true,
         validation : [ Validators.required ]
       },
@@ -37,7 +37,7 @@ export class WebdavFormComponent {
         name : 'webdav_path',
         explorerType: 'directory',
         placeholder : T('Path'),
-        tooltip: T('Browse to the volume or dataset to share.'),
+        tooltip: T('Browse to the pool or dataset to share.'),
         required: true,
         validation : [ Validators.required ]
       },
@@ -45,14 +45,14 @@ export class WebdavFormComponent {
         type : 'checkbox',
         name : 'webdav_ro',
         placeholder : T('Read Only'),
-        tooltip: T('If checked, users cannot write to the share.')
+        tooltip: T('Set to prohibit users from writing to this share.')
       },
       {
         type : 'checkbox',
         name : 'webdav_perm',
         placeholder : T('Change User & Group Ownership'),
-        tooltip: T('If checked, automatically sets the contents of the\
- share to the <i>webdav</i> user and group.')
+        tooltip: T('Select to automatically set the contents of the\
+                    share to the <i>webdav</i> user and group.')
       },
     ];
 }
