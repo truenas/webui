@@ -39,10 +39,7 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
-import { CertificateCSRComponent } from './certificates/certificate-csr/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
-import { CertificateImportComponent } from './certificates/certificate-import/';
-import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
@@ -92,9 +89,6 @@ import { AlertConfigComponent } from './alert/alert.component';
     CertificateListComponent,
     CertificateAddComponent,
     CertificateEditComponent,
-    CertificateImportComponent,
-    CertificateInternalComponent,
-    CertificateCSRComponent,
     SupportComponent,
     EmailComponent,
     AlertServiceComponent,
