@@ -87,6 +87,7 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
   setPoolData(evt:CoreEvent){
     //DEBUG: console.log("******** ZPOOL DATA ********");
     //DEBUG: console.log(evt.data);
+    let result = [];
     for(let i in evt.data){
       let zvol = {
         avail: evt.data[i].avail,
@@ -104,11 +105,16 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
         vol_name:evt.data[i].vol_name
       }
 
-      this.volumes.push(zvol);
+      result.push(zvol);
     }
+    this.volumes = result.sort(function(a,b){
+    	var x = a.name.toLowerCase();
+        var y = b.name.toLowerCase();
+        if(x < y){ return -1}
+        if(x > y){ return 1}
+        return 0;
+    });
   }
-
-
 
   toggleShake(){
     if(this.shake){
