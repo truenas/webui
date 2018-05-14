@@ -21,7 +21,7 @@ export class KerberosRealmsFormComponent {
       type: 'input',
       name: 'krb_realm',
       placeholder: 'Realm',
-      tooltip: 'Mandatory. Name of the realm.',
+      tooltip: 'Enter the name of the realm.',
       required: true,
       validation : [ Validators.required ]
     },
@@ -29,19 +29,21 @@ export class KerberosRealmsFormComponent {
       type: 'input',
       name: 'krb_kdc',
       placeholder: 'KDC',
-      tooltip: 'Name of the Key Distribution Center.'
+      tooltip: 'Enter the name of the Key Distribution Center.'
     },
     {
       type: 'input',
       name: 'krb_admin_server',
       placeholder: 'Admin Server',
-      tooltip: 'Server where all changes to the database are performed.'
+      tooltip: 'Define the server where all changes to the database are\
+                performed.'
     },
     {
       type: 'input',
       name: 'krb_kpasswd_server',
       placeholder: 'Password Server',
-      tooltip: 'Server where all password changes are performed.'
+      tooltip: 'Define the server where all password changes are\
+                performed.'
     },
   ];
 
