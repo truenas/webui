@@ -14,28 +14,42 @@ import {
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
-
-import {RestService, WebSocketService} from '../../../../services/';
+import {
+  RestService,
+  SystemGeneralService,
+  WebSocketService
+} from '../../../../services/';
+import { T } from '../../../../translate-marker';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'system-certificate-csr',
-  template : `<entity-form [conf]="this"></entity-form>`
+  selector : 'system-certificate-intermediate',
+  template : `<entity-form [conf]="this"></entity-form>`,
+  providers : [ SystemGeneralService ]
 })
 
-export class CertificateCSRComponent {
+export class CertificateAuthorityIntermediateComponent {
 
-  protected resource_name: string = 'system/certificate/csr';
-  protected route_success: string[] = [ 'system', 'certificates' ];
+  protected resource_name: string = 'system/certificateauthority/intermediate';
+  protected route_success: string[] = [ 'system', 'ca' ];
   protected isEntity: boolean = true;
   protected fieldConfig: FieldConfig[] = [
     {
+      type : 'select',
+      name : 'cert_signedby',
+      placeholder : T('Signing Certificate Authority'),
+      tooltip: T('Select a previously imported CA or a CA created using\
+                  <a href="system/ca/internal" target="_blank">CAs</a>.'),
+      options : [
+        {label: '---', value: null}
+      ]
+    },
+    {
       type : 'input',
       name : 'cert_name',
-      placeholder : T('Identifier'),
+      placeholder : '†Identifier',
       tooltip: T('Enter an alphanumeric name for the certificate.\
                   Underscore (_), and dash (-) characters are allowed.'),
       required: true,
@@ -45,7 +59,7 @@ export class CertificateCSRComponent {
       type : 'select',
       name : 'cert_key_length',
       placeholder : T('Key Length'),
-      tooltip: T('<i>2048</i> is the minimum recommended value.'),
+      tooltip:T('<i>2048</i> is the minimum recommended value.'),
       options : [
         {label : '1024', value : 1024},
         {label : '2048', value : 2048},
@@ -65,14 +79,26 @@ export class CertificateCSRComponent {
         {label : 'SHA384', value : 'SHA384'},
         {label : 'SHA512', value : 'SHA512'},
       ],
-      value : 'SHA256',
+      value: 'SHA256',
+    },
+    {
+      type : 'input',
+      name : 'cert_lifetime',
+      placeholder : T('Lifetime'),
+      tooltip: T('Define the lifetime of the CA in days.'),
+      inputType: 'number',
+      validation: [Validators.required, Validators.min(0)]
     },
     {
       type : 'select',
       name : 'cert_country',
       placeholder : T('Country'),
       tooltip: T('Associate a country with the <b>Organization</b>.'),
-      options : [],
+      options : [
+        {label : 'US', value : 'US'},
+        {label : 'CHINA', value : 'CN'},
+        {label : 'RUSSIA', value : 'RU'},
+      ],
     },
     {
       type : 'input',
@@ -90,15 +116,14 @@ export class CertificateCSRComponent {
       type : 'input',
       name : 'cert_organization',
       placeholder : T('Organization'),
-      tooltip: T('Enter the name of the entity controlling this\
-                  certificate.'),
+      tooltip: T('Enter the name of the entity controlling this CA.'),
     },
     {
       type : 'input',
       name : 'cert_email',
       placeholder : T('Email'),
       tooltip: T('Enter an email address for the person responsible for\
-                  the CA'),
+                  the CA.'),
       validation : [ Validators.email ]
     },
     {
@@ -117,9 +142,17 @@ export class CertificateCSRComponent {
                   multi-domain support.')
     }
   ];
+  private cert_signedby: any;
   private cert_country: any;
 
-  afterInit(entityEdit: any) {
+  ngOnInit() {
+    this.systemGeneralService.getCA().subscribe((res) => {
+      this.cert_signedby = _.find(this.fieldConfig, {'name' : 'cert_signedby'});
+      res.forEach((item) => {
+        this.cert_signedby.options.push(
+            {label : item.name, value : item.id});
+      });
+    });
     this.ws.call('notifier.choices', ['COUNTRY_CHOICES']).subscribe( (res) => {
       // console.log(res);
       this.cert_country = _.find(this.fieldConfig, {'name' : 'cert_country'});
@@ -131,12 +164,8 @@ export class CertificateCSRComponent {
     });
   }
 
-  constructor(
-      protected router: Router,
-      protected route: ActivatedRoute,
-      protected rest: RestService,
-      protected ws: WebSocketService,
-      protected _injector: Injector,
-      protected _appRef: ApplicationRef
-  ) {}
+  constructor(protected router: Router, protected route: ActivatedRoute,
+              protected rest: RestService, protected ws: WebSocketService,
+              protected _injector: Injector, protected _appRef: ApplicationRef,
+              protected systemGeneralService: SystemGeneralService) {}
 }
