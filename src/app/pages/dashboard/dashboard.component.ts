@@ -114,7 +114,6 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
         if(x > y){ return 1}
         return 0;
     });
-    console.warn(this.volumes);
   }
 
   toggleShake(){
