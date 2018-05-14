@@ -10,12 +10,12 @@
     <!--<widget-storage-collection style="display:none;" #storageCollection fxFlex="90" [widgetSize]="medium" [widgetFlex]="100" [collectionLayout]="'row'"></widget-storage-collection>-->
       <ng-container  *ngFor="let volume of volumes; let i=index">
         <widget-pool [volumeData]="volumes[i]" style="max-width:928px;"  fxFlex.xl="48" fxFlex.lt-xl="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-pool>
-      </ng-container>
+        </ng-container>
     
 
     <widget-cpu-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-history>
     <widget-memory-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"configurable="false"></widget-memory-history>
-    <widget-load-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-load-history>
+      <widget-load-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-load-history>
 
 
     <!--<widget-notes-collection fxFlex="98" [widgetSize]="medium" [widgetFlex]="noteFlex" [collectionLayout]="'row'"></widget-notes-collection>-->
