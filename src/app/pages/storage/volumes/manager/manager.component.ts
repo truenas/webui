@@ -66,8 +66,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
  stick out in the logs.');
   public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  target="_blank">GELI</a> encryption is available for ZFS pools.\
- <b>WARNING: </b>Read the "Encryption" section (Section 8.1.1.1) of the\
- <a href="guide">Guide</a> before activating this option.');
+ <b>WARNING: </b>Read the <a href="..//docs/storage.html#encryption"\
+ target="_blank">Encryption section</a> of the guide before activating\
+ this option.');
   public suggested_layout_tooltip = T('Arranges available disks in a\
  system recommended formation.');
   
