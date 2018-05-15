@@ -16,7 +16,7 @@ import { Location } from '@angular/common';
 export class ConfigSaveComponent {
 
   public sub: Subscription;
-  public secretseed: boolean = false;
+  public secretseed = false;
   public route_success: string[] = ['system', 'general'];
   
   constructor(protected ws: WebSocketService, protected router: Router, public snackBar: MatSnackBar, private _location: Location) {}

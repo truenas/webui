@@ -151,6 +151,13 @@ export class VmTableComponent implements OnChanges{
     this.edit.emit(index);
   }
 
+  goToDevices(row){
+    let index = this.data.indexOf(row);
+    this.router.navigate(
+      new Array('').concat([ "vm", row.id, "devices", row.name ])
+    );
+  }
+
   deleteRow(row){
     let index = this.data.indexOf(row);
     console.log(index);

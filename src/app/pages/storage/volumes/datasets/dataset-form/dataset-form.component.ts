@@ -15,7 +15,6 @@ import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 
 
-
 interface DatasetFormData {
   name: string;
   comments: string;
@@ -23,10 +22,14 @@ interface DatasetFormData {
   compression: string;
   atime: string;
   share_type: string;
-  refquota: string;
-  quota: string;
-  refreservation: string;
-  reservation: string;
+  refquota: number;
+  refquota_unit?: string;
+  quota: number;
+  quota_unit?: string;
+  refreservation: number;
+  refreservation_unit?: string;
+  reservation: number;
+  reservation_unit?: string;
   deduplication: string;
   exec: string;
   readonly: string;
@@ -35,7 +38,6 @@ interface DatasetFormData {
   recordsize: string;
   casesensitivity: string;
 };
-
 
 @Component({
   selector: 'app-dataset-form',
@@ -140,7 +142,29 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Quota for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.')
+ size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'select',
+      name: 'refquota_unit',
+      options: [ {
+        label: 'KiB',
+        value: 'K',
+      }, {
+        label: 'MiB',
+        value: 'M',
+      }, {
+        label: 'GiB',
+        value: 'G',
+      }],
+      value: 'G',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
@@ -148,7 +172,29 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.'
+ value applies to both this dataset and any child datasets. 0 == Unlimited.',
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'select',
+      name: 'quota_unit',
+      options: [ {
+        label: 'KiB',
+        value: 'K',
+      }, {
+        label: 'MiB',
+        value: 'M',
+      }, {
+        label: 'GiB',
+        value: 'G',
+      }],
+      value: 'G',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
@@ -157,7 +203,29 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Reserved space for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space.  0 == Unlimited.')
+ which could take up all available free space.  0 == Unlimited.'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'select',
+      name: 'refreservation_unit',
+      options: [ {
+        label: 'KiB',
+        value: 'K',
+      }, {
+        label: 'MiB',
+        value: 'M',
+      }, {
+        label: 'GiB',
+        value: 'G',
+      }],
+      value: 'G',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
@@ -165,7 +233,29 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'reservation',
       placeholder: T('Reserved space for this dataset and all children'),
       tooltip: T('Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.')
+ value applies to both this dataset and any child datasets. 0 == Unlimited.'),
+      class: 'inline',
+      width: '70%',
+      value: 0,
+      min: 0,
+      validation: [Validators.min(0)]
+    },
+    {
+      type: 'select',
+      name: 'reservation_unit',
+      options: [ {
+        label: 'KiB',
+        value: 'K',
+      }, {
+        label: 'MiB',
+        value: 'M',
+      }, {
+        label: 'GiB',
+        value: 'G',
+      }],
+      value: 'G',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'select',
@@ -268,15 +358,25 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   public advanced_field: Array<any> = [
     'refquota',
+    'refquota_unit',
     'quota',
+    'quota_unit',
     'refreservation',
+    'refreservation_unit',
     'reservation',
+    'reservation_unit',
     'readonly',
     'snapdir',
     'copies',
     'recordsize',
     'exec',
   ];
+
+  protected byteMap: Object= {
+    'G': 1073741824,
+    'M': 1048576,
+    'K': 1024,
+  };
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
@@ -294,7 +394,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
 
       
-    } 
+    }
+    // calculate and delete _unit
+    data.refquota = data.refquota * this.byteMap[data.refquota_unit];
+    data.quota = data.quota * this.byteMap[data.quota_unit];
+    data.refreservation = data.refreservation * this.byteMap[data.refreservation_unit];
+    data.reservation = data.reservation * this.byteMap[data.reservation_unit];
+    delete data.refquota_unit;
+    delete data.quota_unit;
+    delete data.refreservation_unit;
+    delete data.reservation_unit;
 
     return data;
   }
@@ -312,6 +421,15 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       function: () => { this.isBasicMode = !this.isBasicMode; }
     }
   ];
+
+  isCustActionVisible(actionId: string) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+      return false;
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
+      return false;
+    }
+    return true;
+  }
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -355,8 +473,11 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
+     const refquota = this.getFieldValueOrRaw(wsResponse.refquota);
+     const quota = this.getFieldValueOrRaw(wsResponse.quota);
+     const refreservation = this.getFieldValueOrRaw(wsResponse.refreservation);
+     const reservation = this.getFieldValueOrRaw(wsResponse.reservation);
 
-     console.log("dataset-form-component", wsResponse );
      const returnValue: DatasetFormData = {
         name: this.getFieldValueOrRaw(wsResponse.name),
         atime: this.getFieldValueOrRaw(wsResponse.atime),
@@ -366,13 +487,17 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         compression: this.getFieldValueOrRaw(wsResponse.compression),
         copies: this.getFieldValueOrRaw(wsResponse.copies),
         deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-        quota: this.getFieldValueOrRaw(wsResponse.quota),
+        quota: quota ? quota.substring(0, quota.length - 1) : 0,
+        quota_unit: quota ? quota.substr(-1, 1) : quota,
         readonly: this.getFieldValueOrRaw(wsResponse.readonly),
         exec: this.getFieldValueOrRaw(wsResponse.exec),
         recordsize: this.getFieldValueOrRaw(wsResponse.recordsize),
-        refquota: this.getFieldValueOrRaw(wsResponse.refquota),
-        refreservation: this.getFieldValueOrRaw(wsResponse.refreservation),
-        reservation: this.getFieldValueOrRaw(wsResponse.reservation),
+        refquota: refquota ? refquota.substring(0, refquota.length - 1) : 0,
+        refquota_unit: refquota ? refquota.substr(-1, 1) : refquota,
+        refreservation: refreservation ? refreservation.substring(0, refreservation.length - 1) : 0,
+        refreservation_unit: refreservation ? refreservation.substr(-1, 1) : refreservation,
+        reservation: reservation ? reservation.substring(0, reservation.length - 1) : 0,
+        reservation_unit: reservation ? reservation.substr(-1, 1) : reservation,
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
@@ -383,28 +508,51 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
        returnValue.recordsize = "" + ( 1024 * value ) + "K";
      }
 
+     if (quota || refquota || refreservation || reservation) {
+       this.isBasicMode = false;
+     }
+
      return returnValue;
   }
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    console.log("editSubmit:body:", data);
+    if (data.quota == 0) {
+      data.quota = null;
+    }
+    if (data.refquota == 0) {
+      data.refquota = null;
+    }
+    if (data.refreservation == 0) {
+      data.refreservation = null;
+    }
+    if (data.reservation == 0) {
+      data.reservation = null;
+    }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    console.log("addSubmit:body:", data);
+    if (data.quota == 0) {
+      delete data.quota;
+    }
+    if (data.refquota == 0) {
+      delete data.refquota;
+    }
+    if (data.refreservation == 0) {
+      delete data.refreservation;
+    }
+    if (data.reservation == 0) {
+      delete data.reservation;
+    }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
   customSubmit(body) {
     this.loader.open();
-    console.log("body", body);
-
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
       this.loader.close();
       
       this.router.navigate(new Array('/').concat(

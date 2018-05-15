@@ -66,7 +66,7 @@ export class SigninComponent implements OnInit {
   }
 
   successLogin() {
-    this.ws.call('auth.generate_token', [60]).subscribe((result) => {
+    this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
 

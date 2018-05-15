@@ -36,8 +36,7 @@ export class TunableFormComponent {
       type: 'input',
       name: 'tun_var',
       placeholder: T('Variable'),
-      tooltip: T('Typically the name of the sysctl or driver to load,\
-       as indicated by its man page.'),
+      tooltip: T('The name of the sysctl or driver to load.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -45,10 +44,11 @@ export class TunableFormComponent {
       type: 'textarea',
       name: 'tun_value',
       placeholder: T('Value'),
-      tooltip: T('Set a <b>value</b> for the variable. Choose value\
-       carefully. Refer to the man page for the specific driver or the\
-       <a href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/" target="_blank">FreeBSD Handbook</a>\
-       for suggested values.'),
+      tooltip: T('Set a value for the variable. Refer to the man page\
+                  for the specific driver or the <a\
+                  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/"\
+                  target="_blank">FreeBSD Handbook</a> for suggested\
+                  values.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -56,12 +56,11 @@ export class TunableFormComponent {
       type: 'select',
       name: 'tun_type',
       placeholder: T('Type'),
-      tooltip: T('When a <b>Sysctl</b> is added or edited, the\
-       running kernel changes the variable to the value specified.\
-       Note a reboot is required when a <b>Loader</b> or <b>rc.conf</b>\
-       value is changed. Regardless of the type of tunable, changes\
-       persist at each boot and across upgrades unless the tunable\
-       is deleted or its <b>Enabled</b> checkbox is unchecked.'),
+      tooltip: T('Creating or editing a <i>Sysctl</i> immediately\
+                  updates the <b>Variable</b>. A reboot is required when\
+                  a <i>Loader</i> or <i>rc.conf</i> value changes.\
+                  A tunable remains at boot and across upgrades unless\
+                  it is deleted or <b>Enabled</b> is unset.'),
       options: [
         { label: 'Loader', value: 'loader' },
         { label: 'rc.conf', value: 'rc' },
@@ -72,14 +71,14 @@ export class TunableFormComponent {
       type: 'input',
       name: 'tun_comment',
       placeholder: T('Comment'),
-      tooltip: T('Optional, but a useful reminder for the reason\
-       behind adding this tunable.'),
+      tooltip: T('Optional. Enter a substantive description or\
+                  explanation of this tunable.'),
     },
     {
       type: 'checkbox',
       name: 'tun_enabled',
       placeholder: T('Enabled'),
-      tooltip: T('Uncheck to disable the tunable without deleting it.'),
+      tooltip: T('Unset to disable this tunable without deleting it.'),
     },
   ];
 

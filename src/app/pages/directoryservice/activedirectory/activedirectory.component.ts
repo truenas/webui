@@ -361,7 +361,7 @@ export class ActiveDirectoryComponent {
       this.ad_certificate = _.find(this.fieldConfig, {name : 'ad_certificate'});
       res.forEach((item) => {
         this.ad_certificate.options.push(
-            {label : item.cert_name, value : item.id});
+            {label : item.name, value : item.id});
       });
     });
 

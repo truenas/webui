@@ -127,10 +127,12 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
     this.systemGeneralService.getCertificates().subscribe((res) => {
       this.webdav_certssl =
           _.find(this.fieldConfig, {'name' : 'webdav_certssl'});
-      res.forEach((item) => {
-        this.webdav_certssl.options.push(
-            {label : item.cert_common, value : item.id});
-      });
+      if (res.length > 0) {
+        res.forEach((item) => {
+          this.webdav_certssl.options.push(
+              {label : item.name, value : item.id});
+        });
+      }
     });
   }
 

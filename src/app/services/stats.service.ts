@@ -174,8 +174,8 @@ export class StatsService {
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
-  private bufferSize:number = 10000;// milliseconds
-  private bufferSizeRealtime:number = 1000;// milliseconds
+  private bufferSize:number = 60000;// milliseconds
+  private bufferSizeRealtime:number = 15000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
 

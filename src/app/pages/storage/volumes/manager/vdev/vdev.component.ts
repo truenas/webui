@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../../translate-marker';
-
+import * as _ from 'lodash';
 
 @Component({
   selector : 'app-vdev',
@@ -27,7 +27,6 @@ export class VdevComponent implements OnInit {
   public selected: Array < any > = [];
   public id: number;
   public size;
-
   public vdev_type_tooltip = T('Choose a <b>Stripe</b>, <b>Mirror</b>, or\
  <b>Raid-Z</b> configuration for the chosen disk layout. See the\
  <b>Storage/Volumes</b> section of the <a href="guide">Guide</a> for\
@@ -51,6 +50,7 @@ export class VdevComponent implements OnInit {
   addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
+    this.disks = _.sortBy(this.disks, 'devname');
     this.guessVdevType();
     this.estimateSize();
   }
