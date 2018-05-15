@@ -19,6 +19,7 @@ export class MembersComponent implements OnInit {
     name: ''
   };
   users: any[] = [];
+  groupName= ""
 
 
   constructor(private loading: AppLoaderService,
@@ -39,7 +40,11 @@ export class MembersComponent implements OnInit {
     myFilter.push("id");
     myFilter.push("=");
     myFilter.push(this.group.id);
-    let group$ = this.ws.call('group.query', [[myFilter]]);
+    const group$ = this.ws.call('group.query', [[myFilter]]);
+
+    this.ws.call('group.query', [[myFilter]]).subscribe((groupInfo)=>{
+      this.groupName = groupInfo[0].group;
+    })
     group$.flatMap(group => {
       myFilter = [];
       myFilter.push("id");
@@ -55,9 +60,11 @@ export class MembersComponent implements OnInit {
 
   getMembers() {
     this.ws.call('user.query').subscribe(res => {
-      for (let usr of res) {
-        let idx = this.users.findIndex(x => usr.id === x.id);
-        if (idx === -1) this.members.push(usr);
+      for (const usr of res) {
+        const idx = this.users.findIndex(x => usr.id === x.id);
+        if (idx === -1) {
+          this.members.push(usr);
+        }
       }
     }, err => console.log(err));
   }
@@ -68,7 +75,7 @@ export class MembersComponent implements OnInit {
 
   updateUsers() {
     const users = this.selectedMembers.map(x => x.id);
-    let grp = this.ws.call('group.update', [this.group.id, {users}]);
+    const grp = this.ws.call('group.update', [this.group.id, {users}]);
     this.loading.open('Updating group members');
     grp.subscribe(res => {
       this.router.navigate(['/', 'account', 'groups']);
