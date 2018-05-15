@@ -51,15 +51,8 @@ export class DatasetFormComponent implements Formconfiguration {
   public route_success: string[] = ['storage', 'pools'];
   public isBasicMode = true;
   public pk: any;
-  
-
   public customFilter: any[] = [];
-
-  //public resource_name = "storage/volume";
-
   public queryCall = "pool.dataset.query";
-  //public addCall = "pool.dataset.create";
-  //public editCall = "pool.dataset.update";
   public isEntity = true;
   public isNew = false;
 
@@ -453,12 +446,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
 
   afterInit(entityForm: EntityFormComponent) {
+    if(!entityForm.isNew){
+      entityForm.setDisabled('casesensitivity',true);
+      entityForm.setDisabled('name',true);
+      _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+    }
 
   }
 
   preInit(entityForm: EntityFormComponent) {
     const paramMap: any = (<any>this.aroute.params).getValue();
-
     this.volid = paramMap['volid'];
 
     if (paramMap['pk'] !== undefined) {
@@ -466,7 +463,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
       const pk_parent = paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
-      this.fieldConfig.pop();
       this.customFilter = [[['id', '=', this.pk]]];
     }
     // add new dataset
