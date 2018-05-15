@@ -34,6 +34,7 @@ export class VolumeImportWizardComponent {
   summary_title = "Pool Import Summary";
   public subs: any;
   public saveSubmitText = T("Import");
+  public entityWizard: any;
 
   protected wizardConfig: Wizard[] = [{
       label: T('Create or Import pool'),
@@ -218,10 +219,16 @@ export class VolumeImportWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
+    this.entityWizard = entityWizard;
     this.is_new_subscription = 
     ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
       .valueChanges.subscribe((isNew) => {
       this.isNew = isNew;
+      if (isNew) {
+        this.entityWizard.customNextText = T("Create Pool")
+      } else {
+        this.entityWizard.customNextText = T("Next");
+      }
     });
 
     this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));

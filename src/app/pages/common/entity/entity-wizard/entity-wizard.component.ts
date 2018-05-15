@@ -31,6 +31,7 @@ export class EntityWizardComponent implements OnInit {
   public busy: Subscription;
 
   public saveSubmitText = T("Submit");
+  public customNextText = T("Next");
 
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
