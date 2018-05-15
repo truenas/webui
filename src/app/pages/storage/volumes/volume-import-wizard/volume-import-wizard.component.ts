@@ -33,6 +33,7 @@ export class VolumeImportWizardComponent {
   objectKeys = Object.keys;
   summary_title = "Pool Import Summary";
   public subs: any;
+  public saveSubmitText = T("Import");
 
   protected wizardConfig: Wizard[] = [{
       label: T('Create or Import pool'),
@@ -121,13 +122,13 @@ export class VolumeImportWizardComponent {
       ]
     },
     {
-      label: T('Import pool'),
+      label: T('Select pool to import'),
       fieldConfig: [
         {
             type: 'select',
             name: 'guid',
             placeholder: T('Pool'),
-            tooltip: T('Select a pool to import.'),
+            tooltip: T('Select the pool to import.'),
             options: [],
             validation : [ Validators.required ],
             required: true,
@@ -139,10 +140,7 @@ export class VolumeImportWizardComponent {
   updater(file: any, parent: any){
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      const formData: FormData = new FormData();
-
-      formData.append('file', fileBrowser.files[0]);
-      parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
+      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
     }
   }
 
@@ -172,7 +170,6 @@ export class VolumeImportWizardComponent {
   }
 
   customNext(stepper) {
-    console.log(this.encrypted.value);
     if (this.isNew) {
       this.router.navigate(new Array('/').concat(
         this.route_create));
@@ -187,7 +184,7 @@ export class VolumeImportWizardComponent {
     if (!this.subs) {
       this.dialogService.Info(T("Encryption Key Required"), T("You must select a key prior to decrypting your disks"));
     }
-    let formData = this.subs.formData;
+    const formData: FormData = new FormData();
     let params = [this.devices_fg.value];
     if (this.passphrase_fg.value != null) {
       params.push(this.passphrase_fg.value);
@@ -196,6 +193,8 @@ export class VolumeImportWizardComponent {
       "method": "disk.decrypt",
       "params": params
     }));
+    formData.append('file', this.subs.file);
+
     let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Decrypting Disks"}, disableClose: true});
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.subscribe(res=>{
@@ -260,15 +259,15 @@ export class VolumeImportWizardComponent {
 
   customSubmit(value) {
     if (value.encrypted) {
-      let formData = this.subs.formData;
+      const formData: FormData = new FormData();
       let params = {"guid": value.guid, 
                     "devices": value.devices, 
-                    "passphrase": value.passphrase };
-      console.log(params);
+                    "passphrase": value.passphrase ? value.passphrase: null };
       formData.append('data', JSON.stringify({
         "method": "pool.import_pool",
         "params": [params]
       }));
+      formData.append('file', this.subs.file);
       let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Importing Pool"}, disableClose: true});
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.subscribe(res=>{
@@ -278,7 +277,6 @@ export class VolumeImportWizardComponent {
       }),
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);
-        console.log(res);
         this.errorReport(res);
       });
     } else {
