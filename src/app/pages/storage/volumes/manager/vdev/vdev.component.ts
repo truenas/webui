@@ -46,13 +46,29 @@ export class VdevComponent implements OnInit {
   getTitle() {
     return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
+ // Working on a natural sorting method here and in addDisk
+  mySorter(myArray) {
+    let tempArr = [];
+    for (let item of myArray) {
+      tempArr.push(item.devname);
+    }
+    let myCollator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+    return tempArr.sort(myCollator.compare);
+  }
 
   addDisk(disk: any) {
+    // console.log(disk.devname)
     this.disks.push(disk);
     this.disks = [...this.disks];
-    this.disks = _.sortBy(this.disks, 'devname');
+    // this.disks = _.sortBy(this.disks, 'devname');
     this.guessVdevType();
     this.estimateSize();
+    let sortingArray = this.mySorter(this.disks);
+    // console.log(sortingArray);
+    // This part doesn't work...
+    this.disks = this.disks.sort((a, b) => {
+      return sortingArray.indexOf(a) - sortingArray.indexOf(b);
+    })
   }
 
   removeDisk(disk: any) {
