@@ -30,6 +30,7 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
+import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
@@ -211,6 +212,16 @@ export const routes: Routes = [
           path: '',
           component: CloudCredentialsListComponent,
           data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+        },
+        {
+          path: 'add',
+          component: CloudCredentialsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        },
+        {
+          path: 'edit/:pk',
+          component: CloudCredentialsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
         },
         {
           path: 'gcs',

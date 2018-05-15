@@ -36,6 +36,7 @@ import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials
 import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
 import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
+import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
@@ -83,6 +84,7 @@ import { AlertConfigComponent } from './alert/alert.component';
     CloudCredentialsAzureComponent,
     CloudCredentialsB2Component,
     CloudCredentialsListComponent,
+    CloudCredentialsFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityAddComponent,
     CertificateAuthoritySignComponent,
