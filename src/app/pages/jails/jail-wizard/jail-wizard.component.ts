@@ -37,7 +37,7 @@ export class JailWizardComponent {
  dashes (-), or underscores (_).'),
           validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
       },
-                    {
+        {
           type: 'select',
           name: 'release',
           required: true,
