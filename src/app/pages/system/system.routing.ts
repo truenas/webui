@@ -25,10 +25,6 @@ import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
-import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
-import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
-import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
-import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
@@ -222,46 +218,6 @@ export const routes: Routes = [
           path: 'edit/:pk',
           component: CloudCredentialsFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
-        },
-        {
-          path: 'gcs',
-          component: CloudCredentialsGCSComponent,
-          data: { title: 'Add GCS', breadcrumb: 'Add GCS' },
-        },
-        {
-          path: 'gcs/:pk',
-          component: CloudCredentialsGCSComponent,
-          data: { title: 'Edit GCS', breadcrumb: 'Edit GCS' },
-        },
-        {
-          path: 'amazon',
-          component: CloudCredentialsAmazonComponent,
-          data: { title: 'Add Amazon', breadcrumb: 'Add Amazon' },
-        },
-        {
-          path: 'amazon/:pk',
-          component: CloudCredentialsAmazonComponent,
-          data: { title: 'Edit Amazon', breadcrumb: 'Edit Amazon' },
-        },
-        {
-          path: 'azure',
-          component: CloudCredentialsAzureComponent,
-          data: { title: 'Add Azure', breadcrumb: 'Add Azure' },
-        },
-        {
-          path: 'azure/:pk',
-          component: CloudCredentialsAzureComponent,
-          data: { title: 'Edit Azure', breadcrumb: 'Edit Azure' },
-        },
-        {
-          path: 'b2',
-          component: CloudCredentialsB2Component,
-          data: { title: 'Add B2', breadcrumb: 'Add B2' },
-        },
-        {
-          path: 'b2/:pk',
-          component: CloudCredentialsB2Component,
-          data: { title: 'Edit B2', breadcrumb: 'Edit B2' },
         },
       ]
     },

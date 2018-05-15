@@ -31,10 +31,6 @@ import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdat
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
-import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
-import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
-import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
-import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
@@ -79,10 +75,6 @@ import { AlertConfigComponent } from './alert/alert.component';
     NTPServerAddComponent,
     NTPServerEditComponent,
     AlertServiceListComponent,
-    CloudCredentialsGCSComponent,
-    CloudCredentialsAmazonComponent,
-    CloudCredentialsAzureComponent,
-    CloudCredentialsB2Component,
     CloudCredentialsListComponent,
     CloudCredentialsFormComponent,
     CertificateAuthorityListComponent,
