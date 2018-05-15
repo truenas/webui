@@ -73,7 +73,7 @@ export class DiskFormComponent {
       name : 'disk_togglesmart',
       placeholder : T('Enable S.M.A.R.T.'),
       tooltip : T('Enabled by default if the disk supports S.M.A.R.T.\
- Unchecking this box will diable any configured\
+ Unchecking this box will disable any configured\
  <a href="http://doc.freenas.org/11/tasks.html#s-m-a-r-t-tests"\
  target="_blank">S.M.A.R.T. Tests</a> for the disk.'),
     },
