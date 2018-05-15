@@ -8,7 +8,7 @@ import {
   FormGroup, Validators,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 
 import {RestService, WebSocketService} from '../../../../../services/';
 import {
@@ -28,9 +28,9 @@ export class ZvolAddComponent {
   protected route_success: string[] = [ 'storage', 'pools' ];
   protected compression: any;
   protected advanced_field: Array<any> = [ 'blocksize' ];
-  protected isBasicMode: boolean = true;
-  protected isNew: boolean = true;
-  protected isEntity: boolean = true;
+  protected isBasicMode = true;
+  protected isNew = true;
+  protected isEntity = true;
 
   get resource_name(): string {
     return 'storage/volume/' + this.pk + '/zvols/';
@@ -114,9 +114,9 @@ export class ZvolAddComponent {
   ];
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
@@ -127,8 +127,8 @@ export class ZvolAddComponent {
               ) {}
 
   clean(value) {
-     let start = this.path.split('/').splice(1).join('/');
-     if (start != '') {
+     const start = this.path.split('/').splice(1).join('/');
+     if (start !== '') {
        return start + '/' + value;
      } else {
        return value;
