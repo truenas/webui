@@ -60,7 +60,8 @@ export class VolumesListTableConfig implements InputTableConf {
   public resource_name = 'storage/volume';
   public rowData: ZfsPoolData[] = [];
   protected dialogRef: any;
-  public route_add = ["storage", "pools", "import"]
+  public route_add = ["storage", "pools", "import"];
+  public route_add_tooltip = T("Create or Import Pool");
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
