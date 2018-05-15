@@ -11,8 +11,8 @@
         <div fxFlex="100" fxFlex.gt-xs="60">
         <div  *ngIf="data" class="data-container">
           <div *ngIf="!data.system_product"><h1>FreeNAS</h1></div>
-          <div *ngIf="data.system_product && manufacturer"><h2>{{data.system_product}}</h2></div>
-          <div  *ngIf="data.system_serial && manufacturer">
+          <div *ngIf="data.system_product && manufacturer == 'ixsystems' "><h2>{{data.system_product}}</h2></div>
+          <div  *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
             <div class="label bold"><strong>Serial Number:</strong> </div><p class="value">{{data.system_serial}}</p>
           </div>
           <div  *ngIf="data.license"><span class="label bold"><strong>License:</strong> </span>  <p class="value">{{data.license}}</p></div>
