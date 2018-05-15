@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
+import { Http } from '@angular/http';
 
 @Component({
   selector: 'entity-job',
@@ -11,22 +12,23 @@ import { TranslateService } from '@ngx-translate/core';
 export class EntityJobComponent implements OnInit {
 
   public job: any = {};
-  public progressTotalPercent: number = 0;
+  public progressTotalPercent = 0;
   public description: string;
   public method: string;
   public args: any[] = [];
 
-  public title: string = '';
-  public showCloseButton: boolean = true;
+  public title = '';
+  public showCloseButton = true;
   public jobId: Number;
   public progressNumberType;
+  
 
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() failure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
     private ws: WebSocketService, public rest: RestService,
-    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
 
   ngOnInit() {
     this.dialogRef.updateSize('25%', '20%');
@@ -40,7 +42,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  setCall(method: string, args ? : any[]) {
+  setCall(method: string, args ?: any[]) {
     this.method = method;
     if (args) {
       this.args = args;
@@ -58,7 +60,7 @@ export class EntityJobComponent implements OnInit {
       this.description = progress.description;
     }
     if (progress.percent) {
-      if (this.progressNumberType == 'nopercent') {
+      if (this.progressNumberType === 'nopercent') {
         this.progressTotalPercent = progress.percent * 100;
       }
       else {
@@ -84,7 +86,7 @@ export class EntityJobComponent implements OnInit {
         }
       });
     this.ws.subscribe("core.get_jobs").subscribe((res) => {
-      if (res.id == this.jobId) {
+      if (res.id === this.jobId) {
         this.jobUpdate(res);
       }
     });
@@ -95,9 +97,9 @@ export class EntityJobComponent implements OnInit {
     if (job.progress) {
       this.progress.emit(job.progress);
     }
-    if (job.state == 'SUCCESS') {
+    if (job.state === 'SUCCESS') {
       this.success.emit(this.job);
-    } else if (job.state == 'FAILED') {
+    } else if (job.state === 'FAILED') {
       this.failure.emit(this.job);
     }
   }
@@ -113,9 +115,9 @@ export class EntityJobComponent implements OnInit {
         },
         () => {},
         () => {
-          if (this.job.state == 'SUCCESS') {
+          if (this.job.state === 'SUCCESS') {
             this.success.emit(this.job);
-          } else if (this.job.state == 'FAILED') {
+          } else if (this.job.state === 'FAILED') {
             this.failure.emit(this.job);
           }
         });
@@ -125,7 +127,7 @@ export class EntityJobComponent implements OnInit {
     this.rest.post(path, options).subscribe(
         (res) => {
           this.job = res;
-          if (this.job.code == 202) {
+          if (this.job.code === 202) {
             this.setDescription(this.job.data);
             this.success.emit(this.job);
           } else {
@@ -135,5 +137,53 @@ export class EntityJobComponent implements OnInit {
         () => {},
         () => {
         });
+  }
+  public wspost(path, options) {
+    this.http.post(path, options).subscribe(
+        (res) => {
+          this.job = res;
+          if (this.job.statusText === "OK") {
+            this.jobId = JSON.parse(this.job._body).job_id;
+            this.wsshow();
+          } else {
+            this.wsshow();
+          }
+        },
+        () => {},
+        () => {
+        });
+  }
+  public wsshow() {
+    this.ws.call('core.get_jobs', [
+        [
+          ['id', '=', this.jobId]
+        ]
+      ])
+      .subscribe((res) => {
+        if (res.length > 0) {
+          this.wsjobUpdate(res[0]);
+        }
+      });
+    this.ws.subscribe("core.get_jobs").subscribe((res) => {
+      if (res.id === this.jobId) {
+        this.wsjobUpdate(res);
+      }
+    });
+  }
+
+  wsjobUpdate(job) {
+    this.job = job;
+    if (job.progress) {
+      this.progress.emit(job.progress);
+    }
+    if (job.fields && job.fields.state === 'RUNNING') {
+      this.progress.emit(this.job.fields.progress);
+    }
+    else if(job.fields && job.fields.state === 'SUCCESS'){
+      this.success.emit(this.job.fields);
+    }
+    else if (job.fields && job.fields.state === 'FAILED') {
+      this.failure.emit(this.job.fields);
+    }
   }
 }

@@ -30,6 +30,7 @@ import { FormTextareaComponent } from './entity-form/components/form-textarea/fo
 import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormDatepickerComponent } from './entity-form/components/form-datepicker/form-datepicker.component';
 import { FormColorpickerComponent } from './entity-form/components/form-colorpicker/form-colorpicker.component';
+import {FormParagraphComponent} from './entity-form/components/form-paragraph/form-paragraph.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -51,6 +52,7 @@ import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { CdkTableModule } from '@angular/cdk/table';
+
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
@@ -96,6 +98,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
+    FormParagraphComponent
   ],
   exports: [
     EntityDeleteComponent,
@@ -134,7 +137,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityJobComponent,
     FormSliderComponent,
     FormToggleButtonComponent,
-    FormTaskComponent
+    FormTaskComponent,
+    FormParagraphComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

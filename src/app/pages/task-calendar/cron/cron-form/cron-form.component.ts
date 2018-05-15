@@ -167,7 +167,7 @@ export class CronFormComponent implements OnInit {
   }, {
     type: 'checkbox',
     name: 'cron_stderr',
-    placeholder: T('Redirecr Stderr'),
+    placeholder: T('Redirect Stderr'),
     tooltip: T('Disables emailing errors to the <i>root</i> user account.'),
     value: false,
   }, {

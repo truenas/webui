@@ -279,7 +279,7 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_enabled',
         placeholder: T('Enabled'),
-        tooltip: T('Uncheck to disable the rsync task without deleteing it.\
+        tooltip: T('Uncheck to disable the rsync task without deleting it.\
          Note that when the <a href="http://doc.freenas.org/11/services.html#rsync"\
          target="_blank">Rsync</a> service is OFF, the rsync task continues to\
          look for the server unless this checkbox is unchecked.'),

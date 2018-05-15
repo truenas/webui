@@ -53,7 +53,7 @@ export class SmartListComponent {
       let months = entityList.rows[i].smarttest_month.split(',');
 
       if (_.isEqual(entityList.rows[i].smarttest_month, "*")) {
-        entityList.rows[i].smarttest_month = "Evey month";
+        entityList.rows[i].smarttest_month = "Every month";
       } else {
         this.taskService.getMonthChoices().subscribe((res) => {
           for (let i = 0; i < months.length; i++) {
@@ -66,7 +66,7 @@ export class SmartListComponent {
       let dayweeks_list: Array < string > = [];
       let dayweeks = entityList.rows[i].smarttest_dayweek.split(',');
       if (_.isEqual(entityList.rows[i].smarttest_dayweek, "*")) {
-        entityList.rows[i].smarttest_dayweek = "Eveyday";
+        entityList.rows[i].smarttest_dayweek = "Every day";
       } else {
         this.taskService.getWeekdayChoices().subscribe((res) => {
           for (let i = 0; i < dayweeks.length; i++) {
@@ -78,23 +78,23 @@ export class SmartListComponent {
 
       if (_.startsWith(entityList.rows[i].smarttest_daymonth, '*/')) {
         let N = Number(_.trim(entityList.rows[i].smarttest_daymonth, '*/'));
-        entityList.rows[i].smarttest_daymonth = "Evey " + N + " days";
+        entityList.rows[i].smarttest_daymonth = "Every " + N + " days";
       } else if (_.isEqual(entityList.rows[i].smarttest_daymonth, "*")) {
-        entityList.rows[i].smarttest_daymonth = "Eveyday";
+        entityList.rows[i].smarttest_daymonth = "Every day";
       }
 
       if (_.startsWith(entityList.rows[i].smarttest_minute, '*/')) {
         let N = Number(_.trim(entityList.rows[i].smarttest_minute, '*/'));
-        entityList.rows[i].smarttest_minute = "Evey " + N + " minutes";
+        entityList.rows[i].smarttest_minute = "Every " + N + " minutes";
       } else if (_.isEqual(entityList.rows[i].smarttest_minute, "*")) {
-        entityList.rows[i].smarttest_minute = "Evey minute";
+        entityList.rows[i].smarttest_minute = "Every minute";
       }
 
       if (_.startsWith(entityList.rows[i].smarttest_hour, '*/')) {
         let N = Number(_.trim(entityList.rows[i].smarttest_hour, '*/'));
-        entityList.rows[i].smarttest_hour = "Evey " + N + " hours";
+        entityList.rows[i].smarttest_hour = "Every " + N + " hours";
       } else if (_.isEqual(entityList.rows[i].smarttest_hour, "*")) {
-        entityList.rows[i].smarttest_hour = "Evey hour";
+        entityList.rows[i].smarttest_hour = "Every hour";
       }
     }
   }
