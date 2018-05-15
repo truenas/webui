@@ -121,12 +121,12 @@ export class DatasetFormComponent implements Formconfiguration {
       options: [
         { label: 'Inherit (lz4)', value: 'LZ4' },
         { label: 'off', value: 'OFF' },
-        { label: 'lz4', value: 'LZ4' ,},
-        { label: 'gzip-1', value: 'GZIP-1' },
-        { label: 'gzip-6', value: 'GZIP-6' },
-        { label: 'gzip-9', value: 'GZIP-9' },
-        { label: 'zle', value: 'ZLE' },
-        { label: 'lzjb', value: 'LZJB' }
+        { label: 'lz4 (recommended)', value: 'LZ4' ,},
+        { label: 'gzip (fastest)', value: 'GZIP-1' },
+        { label: 'gzip (default level, 6)', value: 'GZIP-6' },
+        { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+        { label: 'zle (runs of zeros)', value: 'ZLE' },
+        { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
       value: 'LZ4'
     },
@@ -300,8 +300,8 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
     },
     {
@@ -312,8 +312,8 @@ export class DatasetFormComponent implements Formconfiguration {
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
         { label: 'Inherit (off)', value: 'OFF' },
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
       value: 'OFF'
     },
