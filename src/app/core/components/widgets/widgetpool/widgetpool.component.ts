@@ -140,7 +140,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });*/
 
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       let data = evt.data.data.data;
       let temp: number;
       for(let i = data.length-1; i >= 0; i--){
