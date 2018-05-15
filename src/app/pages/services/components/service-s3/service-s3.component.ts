@@ -60,6 +60,7 @@ export class ServiceS3Component implements OnInit {
       name : 'access_key',
       placeholder : T('Access Key'),
       tooltip: T('Enter the S3 username.'),
+      required: true,
       validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required]
     },
     {
@@ -69,6 +70,7 @@ export class ServiceS3Component implements OnInit {
       tooltip: T('The password to be used by connecting S3 systems; must\
        be at least 8 but no more than 40 characters long.'),
       inputType : 'password',
+      required : true,
       validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required]
     },
     {
@@ -77,6 +79,7 @@ export class ServiceS3Component implements OnInit {
       placeholder : T('Confirm S3 Key'),
       tooltip: T('Re-enter the S3 password to confirm.'),
       inputType : 'password',
+      required: true,
       validation : [ matchOtherValidator('secret_key'), Validators.required ],
     },
     {
@@ -86,6 +89,7 @@ export class ServiceS3Component implements OnInit {
       name : 'storage_path',
       placeholder : T('Disk'),
       tooltip: T('S3 filesystem directory.'),
+      required: true,
       validation: [ Validators.required]
     },
     {
@@ -124,15 +128,19 @@ export class ServiceS3Component implements OnInit {
   afterInit(entityForm: any) {
     this.systemGeneralService.getCertificates().subscribe((res)=>{
       this.certificate = _.find(this.fieldConfig, {name:'certificate'});
-      res.forEach(element => {
-        this.certificate.options.push({label:element[1], value: element[0]})
-      });
+      if (res.length > 0) {
+        res.forEach(item => {
+          this.certificate.options.push({label:item.name, value: item.id});
+        });
+      }
     });
     this.systemGeneralService.getIPChoices().subscribe(res=>{
       this.ip_address = _.find(this.fieldConfig,{name:'bindip'});
-      res.forEach(element => {
-        this.ip_address.options.push({label:element[1], value: element[0]});
-      });
+      if (res.length > 0) {
+        res.forEach(element => {
+          this.ip_address.options.push({label:element[1], value: element[0]});
+        });
+      }
     });
     entityForm.ws.call('s3.config').subscribe((res)=>{
       entityForm.formGroup.controls['bindip'].setValue(res.bindip);

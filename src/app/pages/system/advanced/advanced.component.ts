@@ -31,13 +31,13 @@ export class AdvancedComponent implements OnInit {
     name: 'consolemenu',
     placeholder: T('Enable Console Menu'),
     tooltip: T('Uncheck this to add a login prompt to the system before\
- the console menu is shown.')
+                the console menu is shown.')
   }, {
     type: 'checkbox',
     name: 'serialconsole',
     placeholder: T('Enable Serial Console'),
-    tooltip: T('<b>Do not</b> check this box if the <b>serial port</b> is\
- disabled.')
+    tooltip: T('<b>Do not</b> set this if the <b>serial port</b>\
+                is disabled.')
   }, {
     type: 'select',
     name: 'serialport',
@@ -46,7 +46,7 @@ export class AdvancedComponent implements OnInit {
       { label: '---', value: null},
     ],
     tooltip: T('Select the serial port address in\
- hex.'),
+                hex.'),
     relation: [
     {
       action : 'DISABLE',
@@ -84,9 +84,9 @@ export class AdvancedComponent implements OnInit {
     placeholder: T('Swap size on each drive in GiB, affects new disks\
  only. Setting this to 0 disables swap creation completely (STRONGLY\
  DISCOURAGED).'),
-    tooltip: T('By default, all data disks are created with this amount of\
- swap. This setting does not affect log or cache devices as they are\
- created without swap.')
+    tooltip: T('By default, all data disks are created with this amount\
+                of swap. This setting does not affect log or cache\
+                devices as they are created without swap.')
   }, {
     type: 'checkbox',
     name: 'consolescreensaver',
@@ -97,86 +97,82 @@ export class AdvancedComponent implements OnInit {
     name: 'powerdaemon',
     placeholder: T('Enable Power Saving Daemon'),
     tooltip: T('<a\
- href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">powerd(8)</a> monitors the system state and sets the\
- CPU frequency accordingly.')
+                href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                target="_blank">powerd(8)</a> monitors the system state and sets the\
+                CPU frequency accordingly.')
   }, {
     type: 'checkbox',
     name: 'autotune',
     placeholder: T('Enable autotune'),
     tooltip: T('Enables the <b>autotune</b> script\
- which attempts to optimize the system depending on the installed\
- hardware. <b>Warning:</b> Autotuning should only be used as a temporary\
- measure and is not a permanent fix for system hardware issues. See\
- <b>Chapter 5.4.1: Autotune</b> in the <a href="ui/guide">Guide</a> for\
- more information.')
+                which attempts to optimize the system depending on the\
+                installed hardware. <b>Warning:</b> Autotuning is\
+                only used as a temporary measure and is not a\
+                permanent fix for system hardware issues. See\
+                <b>Chapter 5.4.1: Autotune</b> in the\
+                <a href="ui/guide">Guide</a> for more information.')
   }, {
     type: 'checkbox',
     name: 'debugkernel',
     placeholder: T('Enable Debug Kernel'),
-    tooltip: T('When checked, the next system boot uses a debug version of\
- the kernel.')
+    tooltip: T('When checked, the next system boot uses a debug version\
+                of the kernel.')
   }, {
     type: 'checkbox',
     name: 'consolemsg',
     placeholder: T('Show console messages'),
     tooltip: T('Display console messages in real time\
- at the bottom of the browser. Click the <b>Console</b> to bring up a\
- scrollable screen. Check the <b>Stop</b> refresh box in the scrollable\
- screen to pause updating and uncheck the box to continue to watch the\
- messages as they occur.')
+                at the bottom of the browser.')
   }, {
     type: 'textarea',
     name: 'motd',
     placeholder: T('MOTD Banner'),
-    tooltip: T('Write a message to be shown when a user logs in with SSH.')
+    tooltip: T('This message is shown when a user logs in with SSH.')
   }, {
     type: 'checkbox',
     name: 'traceback',
     placeholder: T('Show tracebacks in case of fatal error'),
     tooltip: T('Provides a pop-up window of diagnostic information if a\
- fatal error occurs.')
+                fatal error occurs.')
   }, {
     type: 'checkbox',
     name: 'advancedmode',
     placeholder: T('Show advanced fields by default'),
-    tooltip: T('Many GUI menus provide an\
- <b>Advanced Mode</b> button to access additional features. Enabling\
- this shows these features by default.')
+    tooltip: T('Enabling this shows additional features by default.')
   }, {
     type: 'checkbox',
     name: 'uploadcrash',
     placeholder: T('Enable automatic upload of kernel crash dumps and\
  daily telemetry'),
-    tooltip: T('Report kernel crash dumps and daily\
- performance measurements to iXsystems.')
+    tooltip: T('Report kernel crash dumps and daily performance\
+                measurements to iXsystems.')
   }, {
     type: 'select',
     name: 'periodic_notifyuser',
     placeholder: T('Periodic Notification User'),
     options: [],
     tooltip: T('Choose a user to receive security output emails. This\
- output runs nightly, but only sends an email when the system reboots or\
- encounters an error.')
+                output runs nightly, but only sends an email when the\
+                system reboots or encounters an error.')
   }, {
     type: 'input',
     name: 'graphite',
     placeholder: T('Remote Graphite Server Hostname'),
     tooltip: T('Enter the IP address or hostname of a remote server\
- running Graphite.')
+                running Graphite.')
   }, {
     type: 'checkbox',
     name: 'fqdn_syslog',
     placeholder: T('Use FQDN for logging'),
-    tooltip: T('Check to include the\
- Fully-Qualified Domain Name (FQDN) in logs to precisely identify\
- systems with similar hostnames.')
+    tooltip: T('Check to include the Fully-Qualified Domain Name (FQDN)\
+                in logs to precisely identify systems with similar\
+                hostnames.')
   }, {
     type: 'checkbox',
     name: 'cpu_in_percentage',
     placeholder: T('Report CPU usage in percentage'),
     tooltip: T('Check to display CPU usage as percentages in\
- <b>Reporting</b>.')
+                <b>Reporting</b>.')
   }];
 
   constructor(private rest: RestService,
