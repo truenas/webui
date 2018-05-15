@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
-
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-cloudcredentials-list',
@@ -12,10 +12,11 @@ export class CloudCredentialsListComponent {
 
   public title = "Cloud Credentials";
   protected queryCall = 'backup.credential.query';
-  protected route_edit: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
-  protected route_success: string[] = [ 'system', 'cloudcredentials', 'gcs' ];
-  protected entityList: any;
-  protected wsDelete = 'backup.credential.delete'
+  protected route_success: string[] = [ 'system', 'cloudcredentials' ];
+  protected route_add: string[] = ['system', 'cloudcredentials', 'add'];
+  protected route_add_tooltip: string = T('Add Cloud Credential');
+  protected route_edit: string[] = ['system', 'cloudcredentials', 'edit'];
+  protected wsDelete = 'backup.credential.delete';
 
   public columns: Array<any> = [
     {name : 'Account Name', prop : 'name'},
@@ -26,95 +27,28 @@ export class CloudCredentialsListComponent {
       sorting : {columns : this.columns},
     };
 
+  protected providerMap: Array<any> = [
+    {
+      label: 'Amazon AWS',
+      value: 'AMAZON',
+    }, {
+      label: 'Microsoft Azure',
+      value: 'AZURE',
+    }, {
+      label: 'Backblaze B2',
+      value: 'BACKBLAZE',
+    }, {
+      label: 'Google Cloud',
+      value: 'GCLOUD',
+    }
+  ];
   constructor(protected router: Router, protected aroute: ActivatedRoute,
      protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-afterInit(entityList: any) {
-      this.entityList = entityList;
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      entityList.rows[i].provider = _.find(this.providerMap, {value: entityList.rows[i].provider}).label;
     }
-
-  getAddActions() {
-    const actions = [];
-    actions.push({
-      label: "GCLOUD",
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "cloudcredentials", "gcs"]));
-      }
-    });
-    actions.push({
-      label: "AMAZON",
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "cloudcredentials", "amazon"]));
-      }
-    });
-    actions.push({
-      label: "BACKBLAZE",
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "cloudcredentials", "b2"]));
-      }
-    });
-    actions.push({
-      label: "AZURE",
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["system", "cloudcredentials", "azure"]));
-      }
-    });
-
-    return actions;
-  }
-  getActions(row) {
-    
-    const actions = [];
-    if(row.provider === "GCLOUD"){
-      actions.push({
-        label : "Edit",
-        onClick : (GCLOUD) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "gcs",row.id]));
-        }
-      });
-    }
-    if(row.provider === "AMAZON"){
-      actions.push({
-        label : "Edit",
-        onClick : (AMAZON) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "amazon",row.id]));
-        }
-      });
-    }
-    if(row.provider === "AZURE"){
-      actions.push({
-        label : "Edit",
-        onClick : (AZURE) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "azure",row.id]));
-        }
-      });
-    }
-    if(row.provider === "BACKBLAZE"){
-      actions.push({
-        label : "Edit",
-        onClick : (BACKBLAZE) => {
-          this.router.navigate(new Array('/').concat(["system", "cloudcredentials", "b2",row.id]));
-        }
-      });
-    }
-    if (!row.type) {
-      actions.push({
-        label : "Delete",
-        onClick : (Delete) => {
-          this.entityList.doDelete(row.id)
-          // this.router.navigate(new Array('/').concat(["system", "cloudcredentials", row.id, "delete"]));
-        }
-      });
-    }
-    return actions;
   }
 }
