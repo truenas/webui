@@ -40,9 +40,8 @@ export class VMWizardComponent {
           type: 'select',
           name: 'os',
           required: true,
-          placeholder: T('Guest Operating System.'),
-          tooltip: T('Select an operating system for the new Virtual\
- Machine.'),
+          placeholder: T('Guest Operating System'),
+          tooltip: T('Select the Virtual Machine (VM) operating system.'),
           options: [
             {label: 'Windows', value: 'windows'},
             {label: 'Linux', value: 'linux'},
@@ -53,29 +52,30 @@ export class VMWizardComponent {
       { type: 'input',
         name : 'name',
         placeholder : T('VM Name'),
-        tooltip : T('Type an alphanumeric name to identify the VM.'),
+        tooltip : T('Enter an alphanumeric name for the VM.'),
         validation : [ Validators.required ],
         required: true,
       },
       { type: 'select',
         name : 'bootloader',
         placeholder : T('Boot Method'),
-        tooltip : T('Select <i>UEFI</i> for newer operating systems, or\
- <i>UEFI-CSM</i> (Compatibility Support Mode) for older operating\
- systems that only understand BIOS booting.'),
+        tooltip : T('Select <i>UEFI</i> for newer operating systems or\
+                     <i>UEFI-CSM</i> (Compatibility Support Mode) for\
+                     older operating systems that only support BIOS\
+                     booting.'),
         options: []
       },
       { type: 'checkbox',
         name : 'autostart',
         placeholder : T('Start on Boot'),
-        tooltip : T('Start this VM when the system boots.'),
+        tooltip : T('Set to start this VM when the system boots.'),
         value: true
       },
       { type: 'checkbox',
       name : 'enable_vnc',
       placeholder : T('Enable VNC'),
       tooltip : T('Activate a Virtual Network Computing (VNC)\
- remote connection for a VM set to <i>UEFI</i> booting.'),
+                   remote connection for a VM set to <i>UEFI</i> booting.'),
       value: true
     }
       ]
@@ -89,11 +89,11 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 1,
           validation : [ Validators.required, Validators.min(1) ],
-          tooltip: T('Type the quantity of virtual CPUs allocated to the\
- VM, up to 16. Although these are virtual and not strictly related to\
- host processor cores, the CPU may limit the maximum number. The VM\
- operating system may also have operational or licensing restrictions on\
- the number of CPUs allowed.'),
+          tooltip: T('Enter a number of virtual CPUs to allocate to the\
+                      VM. The maximum is 16 unless the host CPU also\
+                      limits the maximum. The VM operating system can\
+                      also have operational or licensing restrictions on\
+                      the number of CPUs.'),
           required: true,
         },
         {
@@ -103,8 +103,7 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 128,
           validation : [ Validators.required, Validators.min(128)],
-          tooltip: T('Type the number of megabytes of system RAM to\
- allocate to the VM.'),
+          tooltip: T('Allocate a number of mebibytes of RAM to the VM.'),
         },
       ]
     },
@@ -114,9 +113,11 @@ export class VMWizardComponent {
         {
           type: 'radio',
           name: 'disk_radio',
-//           tooltip: 'Select <i>Yes</i> to create a new Zvol on an\
-//  existing datastore to be used as a virtual hard drive. Select <i>No</i>\
-//  to use an existing disk for the VM.',
+          tooltip: 'Select <i>Create new disk image</i> to create a new\
+                    Zvol on an existing datastore. This is used as a\
+                    virtual hard drive for the VM. Select <i>Use\
+                    existing disk image</i> to use an existing pool or\
+                    dataset for the VM.',
           options:[{label:T("Create new disk image"), value: true},
                    {label:T("Use existing disk image"), value: false}],
           value: true,
@@ -124,15 +125,16 @@ export class VMWizardComponent {
         {
           type: 'input',
           name: 'volsize',
-          placeholder : T('Define the size (in GiB) for the Zvol.'),
-          tooltip: T('Type a number of GiB to allocate to the new Zvol.'),
+          placeholder : T('Define the size (GiB) for the Zvol'),
+          tooltip: T('Allocate a number of Gibibytes of space for the\
+                      new Zvol.'),
           isHidden: false
         },
         {
           type: 'select',
           name: 'datastore',
-          placeholder : T('Select a datastore.'),
-          tooltip: T('Choose an existing datastore for the new Zvol.'),
+          placeholder : T('Select a datastore'),
+          tooltip: T('Select a datastore for the new Zvol.'),
           options: [],
           isHidden: false
         },
@@ -140,7 +142,7 @@ export class VMWizardComponent {
           type: 'explorer',
           name: 'hdd_path',
           placeholder: T('Select an existing disk'),
-          tooltip: T('Enter the path to a datastore on the existing disk.'),
+          tooltip: T('Browse to the desired datastore on the disk.'),
           explorerType: "zvol",
           initial: '/mnt',
           isHidden: true
@@ -153,11 +155,12 @@ export class VMWizardComponent {
         {
           name : 'NIC_type',
           placeholder : T('Adapter Type'),
-          tooltip : T('The default emulates an Intel E1000 (82545) Ethernet\
-     card for compatibility with most operating systems. If the operating\
-     system installed in the VM supports VirtIO paravirtualized network\
-     drivers, this can be changed to <i>VirtIO</i> to provide better\
-     performance.'),
+          tooltip : T('<i>Intel e82545 (e1000)</i> emulates the same\
+                       Intel ethernet card. This provides compatibility\
+                       with most operating systems. <i>VirtIO</i>\
+                       provides better performance when the operating\
+                       system installed in the VM supports VirtIO\
+                       paravirtualized network drivers.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ],
@@ -166,19 +169,17 @@ export class VMWizardComponent {
         {
           name : 'NIC_mac',
           placeholder : T('Mac Address'),
-          tooltip : T('By default, the VM receives an auto-generated random\
-     MAC address. To override the default with a custom value, enter the\
-     desired address into the field.'),
+          tooltip : T('Enter the desired address into the field to\
+                       override the randomized MAC address.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
         },
         {
           name : 'nic_attach',
-          placeholder : T('Nic to attach'),
-          tooltip : T('Can be used to specify which physical interface to\
-     associate with the VM if the system has multiple physical network\
-     cards.'),
+          placeholder : T('Attach NIC'),
+          tooltip : T('Select the physical interface to associate with\
+                       the VM.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ],
@@ -194,8 +195,7 @@ export class VMWizardComponent {
           name: 'iso_path',
           placeholder : T('Choose an installation media'),
           initial: '/mnt',
-          tooltip: T('Click <b>Browse</b> to select the path to the\
- installation media.'),
+          tooltip: T('Browse to the operating system installation file.'),
           validation : [ Validators.required ],
           required: true,
         },
@@ -203,7 +203,7 @@ export class VMWizardComponent {
           type: 'checkbox',
           name: 'upload_iso_checkbox',
           placeholder : T('Upload an ISO?'),
-          tooltip: T('Check to display upload options.'),
+          tooltip: T('Set to display upload options.'),
           value: false,
         },
         {
@@ -211,8 +211,7 @@ export class VMWizardComponent {
           name: 'upload_iso_path',
           placeholder : 'ISO save location',
           initial: '/mnt',
-          tooltip: T('Click <b>Browse</b> to select a location to store\
- the uploaded ISO.'),
+          tooltip: T('Designate a location to store the .iso file.'),
           explorerType: 'directory',
           isHidden: true,
           validation : [],
@@ -220,8 +219,8 @@ export class VMWizardComponent {
         {
           type: 'upload',
           name: 'upload_iso',
-          placeholder : '',
-          tooltip: '',
+          placeholder : 'ISO upload location',
+          tooltip: 'Browse to the .iso file and click <b>Upload</b>.',
           isHidden: true,
           acceptedFiles: ',.iso',
           fileLocation: '',
