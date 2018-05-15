@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -39,6 +39,7 @@ interface DatasetFormData {
   casesensitivity: string;
 };
 
+
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
@@ -48,7 +49,7 @@ export class DatasetFormComponent implements Formconfiguration {
   public volid: string;
   public sub: Subscription;
   public route_success: string[] = ['storage', 'pools'];
-  public isBasicMode: boolean = true;
+  public isBasicMode = true;
   public pk: any;
   
 
@@ -59,13 +60,26 @@ export class DatasetFormComponent implements Formconfiguration {
   public queryCall = "pool.dataset.query";
   //public addCall = "pool.dataset.create";
   //public editCall = "pool.dataset.update";
-  public isEntity: boolean = true;
-  public isNew: boolean = false;
+  public isEntity = true;
+  public isNew = false;
 
 
   public parent: string;
   public data: any;
   public parent_data: any;
+
+  public custActions: Array<any> = [
+    {
+      id: 'basic_mode',
+      name: T('Basic Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id: 'advanced_mode',
+      name: T('Advanced Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    }
+  ];
 
   
   public fieldConfig: FieldConfig[] = [
@@ -142,7 +156,7 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Quota for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'),
+ size and is suitable for user datasets to prevent users from hogging available space. 0 === Unlimited.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -172,7 +186,7 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.',
+ value applies to both this dataset and any child datasets. 0 === Unlimited.',
       class: 'inline',
       width: '70%',
       value: 0,
@@ -203,7 +217,7 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Reserved space for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space.  0 == Unlimited.'),
+ which could take up all available free space.  0 === Unlimited.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -233,7 +247,7 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'reservation',
       placeholder: T('Reserved space for this dataset and all children'),
       tooltip: T('Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.'),
+ value applies to both this dataset and any child datasets. 0 === Unlimited.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -409,18 +423,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
 
-  public custActions: Array<any> = [
-    {
-      id: 'basic_mode',
-      name: T('Basic Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      id: 'advanced_mode',
-      name: T('Advanced Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    }
-  ];
+
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -442,14 +445,14 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
   preInit(entityForm: EntityFormComponent) {
-    let paramMap: any = (<any>this.aroute.params).getValue();
+    const paramMap: any = (<any>this.aroute.params).getValue();
 
     this.volid = paramMap['volid'];
 
     if (paramMap['pk'] !== undefined) {
       this.pk = paramMap['pk'];
 
-      let pk_parent = paramMap['pk'].split('/');
+      const pk_parent = paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
       this.fieldConfig.pop();
       this.customFilter = [[['id', '=', this.pk]]];
@@ -504,7 +507,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
      // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
      if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
-       let value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+       const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
        returnValue.recordsize = "" + ( 1024 * value ) + "K";
      }
 
@@ -517,16 +520,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       data.quota = null;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       data.refquota = null;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       data.refreservation = null;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       data.reservation = null;
     }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
@@ -534,16 +537,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       delete data.quota;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       delete data.refquota;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       delete data.refreservation;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       delete data.reservation;
     }
     return this.ws.call('pool.dataset.create', [ data ]);
