@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
+import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { RequestOptions, Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
 
@@ -24,15 +25,33 @@ import { T } from '../../../../translate-marker';
 export class VolumeImportWizardComponent {
 
   public route_success: string[] = ['storage', 'pools'];
+  public route_create: string[] = ['storage', 'pools', 'manager'];
   public summary = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "Pool Import Summary";
-
+  public subs: any;
 
   protected wizardConfig: Wizard[] = [{
+      label: T('Create or Import pool'),
+      fieldConfig: [
+        {
+          type: 'radio',
+          name: 'is_new',
+          placeholder: T('Do you wish to create a new pool?'),
+          tooltip: T('Select yes to create a new pool\
+                      or no to import an existing pool.'),
+          options: [
+            {label: 'Yes: create a new pool', value: true},
+            {label: 'No: import an existing pool', value: false},
+          ],
+          value: false
+        },
+      ]
+    },
+    {
       label: T('Decrypt ZFS pool'),
       fieldConfig: [
         {
@@ -66,14 +85,15 @@ export class VolumeImportWizardComponent {
           }]
         },
         {
-          type: 'input',
-          inputType: 'file',
+          type: 'upload',
           name: 'key',
           placeholder: T('Encryption Key'),
-          required: true,
-          validation : [ Validators.required ],
           tooltip: T('Upload the encryption key needed to decrypt the disks.'),
-          fileType:"binary",
+          fileLocation: '',
+          message: this.messageService,
+          updater: this.updater,
+          parent: this,
+          hideButton:true,
           isHidden: true,
           relation: [{
             action: 'DISABLE',
@@ -116,51 +136,21 @@ export class VolumeImportWizardComponent {
     },
   ];
 
-  public custActions: Array<any> = [
-    {
-      id : 'decrypt_disks',
-      name: T('Decrypt Disks'),
-      function: () => {
-        const formData: FormData = new FormData();
-        let params = [this.devices_fg.value];
-        if (this.passphrase_fg.value != null) {
-          console.log("null");
-          params.push(this.passphrase_fg.value);
-        }
-        console.log(params);
-        formData.append('data', JSON.stringify({
-          "method": "disk.decrypt",
-          "params": params
-        }));
-        formData.append('file', this.key_fg.value);
-        let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Decrypting Disks"}});
-        dialogRef.componentInstance.wspost('/_upload?auth_token=' + this.ws.token, formData)
-        dialogRef.componentInstance.success.subscribe(res=>{
-          this.getImportableDisks();
-          this.snackBar.open("Disks have been decrypted", 'close', { duration: 5000 });
-        }),
-        dialogRef.componentInstance.failure.subscribe((res) => {
-          console.log(res);
-          //this.dialogService.errorReport(res.status, res.statusText, res._body);
-        });
-        /*this.loader.open();
-        this.http.post('/_upload?auth_token=' + this.ws.token, formData).subscribe(
-          (data) => {
-            if (data.statusText == "OK") {
-              let jobId = JSON.parse(data['_body']).job_id;
-            }
-          console.log(data);
-          this.loader.close();
-          this.getImportableDisks();
-          this.snackBar.open("Disks have been decrypted", 'close', { duration: 5000 });
-        }, (error) => {
-          console.log(error);
-          this.loader.close();
-          this.dialogService.errorReport(error.status, error.statusText, error._body);
-        });*/
-      }
-    }];
+  updater(file: any, parent: any){
+    const fileBrowser = file.fileInput.nativeElement;
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      const formData: FormData = new FormData();
 
+      formData.append('file', fileBrowser.files[0]);
+      parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
+    }
+  }
+
+  private disks_decrypted = false;
+  protected stepper;
+
+  protected isNew = false;
+  protected is_new_subscription;
   protected encrypted;
   protected encrypted_subscription;
   protected devices;
@@ -171,19 +161,52 @@ export class VolumeImportWizardComponent {
   protected passphrase_fg;
   protected guid;
   protected guid_subscription;
+  protected message_subscription;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService, 
     protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: Http, public snackBar: MatSnackBar) {
+    protected http: Http, public snackBar: MatSnackBar, 
+    public messageService: MessageService) {
 
   }
 
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'decrypt_disks' && !this.encrypted.value) {
-      return false
+  customNext(stepper) {
+    console.log(this.encrypted.value);
+    if (this.isNew) {
+      this.router.navigate(new Array('/').concat(
+        this.route_create));
+    } else if (this.encrypted.value && stepper._selectedIndex === 1) {
+      this.decryptDisks(stepper);
+    } else {
+      stepper.next();
     }
-    return true;
+  }
+
+  decryptDisks(stepper) {
+    if (!this.subs) {
+      this.dialogService.Info(T("Encryption Key Required"), T("You must select a key prior to decrypting your disks"));
+    }
+    let formData = this.subs.formData;
+    let params = [this.devices_fg.value];
+    if (this.passphrase_fg.value != null) {
+      params.push(this.passphrase_fg.value);
+    }
+    formData.append('data', JSON.stringify({
+      "method": "disk.decrypt",
+      "params": params
+    }));
+    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Decrypting Disks"}, disableClose: true});
+    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+    dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.close(false);
+      this.getImportableDisks();
+      stepper.next();
+    }),
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.close(false);
+      this.dialogService.errorReport(T("Error decrypting disks"), res.error, res.exception);
+    });
   }
 
   getImportableDisks() {
@@ -196,13 +219,19 @@ export class VolumeImportWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    this.encrypted = ( < FormGroup > entityWizard.formArray.get([0]).get('encrypted'));
-    this.devices = _.find(this.wizardConfig[0].fieldConfig, {'name': 'devices'});
-    this.devices_fg = ( < FormGroup > entityWizard.formArray.get([0]).get('devices'));
-    this.key = _.find(this.wizardConfig[0].fieldConfig, {'name': 'key'});
-    this.key_fg = ( < FormGroup > entityWizard.formArray.get([0]).get('key'));
-    this.passphrase = _.find(this.wizardConfig[0].fieldConfig, {'name': 'passphrase'});
-    this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([0]).get('passphrase'));
+    this.is_new_subscription = 
+    ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
+      .valueChanges.subscribe((isNew) => {
+      this.isNew = isNew;
+    });
+
+    this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
+    this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
+    this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
+    this.key = _.find(this.wizardConfig[1].fieldConfig, {'name': 'key'});
+    this.key_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('key'));
+    this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
+    this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
     this.encrypted_subscription = this.encrypted.valueChanges.subscribe((res) => {
       this.devices.isHidden = !res;
       this.key.isHidden = !res;
@@ -215,22 +244,45 @@ export class VolumeImportWizardComponent {
       }
     });
 
-    this.guid = _.find(this.wizardConfig[1].fieldConfig, {'name': 'guid'});
+    this.guid = _.find(this.wizardConfig[2].fieldConfig, {'name': 'guid'});
     this.getImportableDisks();
     this.guid_subscription = 
-    ( < FormGroup > entityWizard.formArray.get([1]).get('guid'))
+    ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
       this.summary[T('Pool to import')] = pool.label;
     });
-    
+
+    this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+      this.key_fg.setValue(message);
+    });
   }
 
   customSubmit(value) {
-    console.log(value);
-    this.loader.open();
     if (value.encrypted) {
+      let formData = this.subs.formData;
+      let params = {"guid": value.guid, 
+                    "devices": value.devices, 
+                    "passphrase": value.passphrase };
+      console.log(params);
+      formData.append('data', JSON.stringify({
+        "method": "pool.import_pool",
+        "params": [params]
+      }));
+      let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Importing Pool"}, disableClose: true});
+      dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
+      dialogRef.componentInstance.success.subscribe(res=>{
+        dialogRef.close(false);
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      }),
+      dialogRef.componentInstance.failure.subscribe((res) => {
+        dialogRef.close(false);
+        console.log(res);
+        this.errorReport(res);
+      });
     } else {
+      this.loader.open();
       this.ws.call('pool.import_pool', [{'guid':value.guid}]).subscribe((res) => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(
@@ -245,12 +297,20 @@ export class VolumeImportWizardComponent {
   }
 
   errorReport(res) {
-    this.dialogService.errorReport(T("Error importing pool"), res.reason, res.trace.formatted);
+    if (res.reason && res.trace) {
+      this.dialogService.errorReport(T("Error importing pool"), res.reason, res.trace.formatted);
+    } else if (res.error && res.exception) {
+      this.dialogService.errorReport(T("Error importing pool"), res.error, res.exception)
+    } else {
+      console.log(res);
+    }
   }
 
   ngOnDestroy() {
     this.encrypted_subscription.unsubscribe();
     this.guid_subscription.unsubscribe();
+    this.message_subscription.unsubscribe();
+    this.is_new_subscription.unsubscribe();
   }
 
 }

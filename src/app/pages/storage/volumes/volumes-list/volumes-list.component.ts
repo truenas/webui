@@ -60,6 +60,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public resource_name = 'storage/volume';
   public rowData: ZfsPoolData[] = [];
   protected dialogRef: any;
+  public route_add = ["storage", "pools", "import"]
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -91,38 +92,19 @@ export class VolumesListTableConfig implements InputTableConf {
 
   }
 
-  getAddActions() {
+  /*getAddActions() {
     const actions = [];
     actions.push({
-      label: T("Create Pool"),
+      label: T("Import or Create Pool"),
       icon: "add",
-      onClick: () => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "manager"]));
-      }
-    });
-
-    actions.push({
-      label: T("Import Pools"),
-      icon: "vertical_align_bottom",
       onClick: () => {
         this._router.navigate(new Array('/').concat(
           ["storage", "pools", "import"]));
       }
     });
 
-    /*actions.push({
-      label: T("Decrypt Exported Pools"),
-      icon: "lock_open",
-      onClick: () => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "unencryptimport_list"]));
-      }
-    });*/
-
-
     return actions;
-  }
+  }*/
 
   getEncryptedActions(rowData: any) {
     const actions = [];

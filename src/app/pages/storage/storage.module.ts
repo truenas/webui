@@ -41,6 +41,7 @@ import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddke
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
 import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
+import { MessageService } from '../common/entity/entity-form/services/message.service';
 
 
 @NgModule({
@@ -79,7 +80,7 @@ import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
     DiskFormComponent,
     DiskWipeComponent
   ],
-  providers : [UserService, StorageService]
+  providers : [UserService, StorageService, MessageService]
 })
 export class StorageModule {
 }
