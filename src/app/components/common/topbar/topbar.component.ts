@@ -258,4 +258,16 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
     });
   }
+
+  onGoToLegacy() {
+    this.translate.get('Switch to Legacy UI').subscribe((gotolegacy: string) => {
+      this.translate.get("Switch to Legacy UI?").subscribe((gotolegacy_prompt) => {
+        this.dialogService.confirm("Switch to Legacy UI", "Switch to Legacy UI?", true).subscribe((res) => {
+          if (res) {
+            this.router.navigate(['/legacy/']);
+          }
+        });
+      });
+    });
+  }
 }
