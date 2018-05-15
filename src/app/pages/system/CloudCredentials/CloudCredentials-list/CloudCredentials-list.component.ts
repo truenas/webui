@@ -27,8 +27,28 @@ export class CloudCredentialsListComponent {
       sorting : {columns : this.columns},
     };
 
+  protected providerMap: Array<any> = [
+    {
+      label: 'Amazon AWS',
+      value: 'AMAZON',
+    }, {
+      label: 'Microsoft Azure',
+      value: 'AZURE',
+    }, {
+      label: 'Backblaze B2',
+      value: 'BACKBLAZE',
+    }, {
+      label: 'Google Cloud',
+      value: 'GCLOUD',
+    }
+  ];
   constructor(protected router: Router, protected aroute: ActivatedRoute,
      protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      entityList.rows[i].provider = _.find(this.providerMap, {value: entityList.rows[i].provider}).label;
+    }
+  }
 }
