@@ -104,10 +104,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'STANDARD', value: 'STANDARD' },
-        { label: 'ALWAYS', value: 'ALWAYS' },
-        { label: 'DISABLED', value: 'DISABLED' }
+        { label: 'Inherit (standard)', value: 'STANDARD' },
+        { label: 'Standard', value: 'STANDARD' },
+        { label: 'Always', value: 'ALWAYS' },
+        { label: 'Disabled', value: 'DISABLED' }
       ],
+      value: 'STANDARD'
     },
     {
       type: 'select',
@@ -117,14 +119,16 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('For more information about the available compression algorithms,\
  refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
       options: [
-        { label: 'OFF', value: 'OFF' },
-        { label: 'LZ4', value: 'LZ4' },
-        { label: 'GZIP-1', value: 'GZIP-1' },
-        { label: 'GZIP-6', value: 'GZIP-6' },
-        { label: 'GZIP-9', value: 'GZIP-9' },
-        { label: 'ZLE', value: 'ZLE' },
-        { label: 'LZJB', value: 'LZJB' }
+        { label: 'Inherit (lz4)', value: 'LZ4' },
+        { label: 'off', value: 'OFF' },
+        { label: 'lz4', value: 'LZ4' ,},
+        { label: 'gzip-1', value: 'GZIP-1' },
+        { label: 'gzip-6', value: 'GZIP-6' },
+        { label: 'gzip-9', value: 'GZIP-9' },
+        { label: 'zle', value: 'ZLE' },
+        { label: 'lzjb', value: 'LZJB' }
       ],
+      value: 'LZ4'
     },
     {
       type: 'select',
@@ -134,9 +138,11 @@ export class DatasetFormComponent implements Formconfiguration {
  when they are read; setting this property to <b>Off</b> avoids producing log\
  traffic when reading files, and can result in significant performance gains.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (on)', value: 'ON' },
+        { label: 'on', value: 'ON' },
+        { label: 'off', value: 'OFF' }
       ],
+      value: 'ON'
     },
     {
       type: 'radio',
@@ -144,9 +150,10 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Share Type'),
       tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
                 type that matches the type of client accessing the volume/dataset.'),
-      options: [{label:'Unix', value: 'UNIX'},
-                {label:'Windows', value: 'WINDOWS'},
-                {label:'Mac', value: 'MAC'}],
+      options: [
+        {label:'Unix', value: 'UNIX'},
+        {label:'Windows', value: 'WINDOWS'},
+        {label:'Mac', value: 'MAC'}],
       value: 'UNIX'
     },
     {
@@ -279,10 +286,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'VERIFY', value: 'VERIFY' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'on', value: 'ON' },
+        { label: 'verify', value: 'VERIFY' },
+        { label: 'off', value: 'OFF' }
       ],
+      value: 'OFF'
     },
     {
       type: 'select',
@@ -302,9 +311,11 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
+        { label: 'Inherit (off)', value: 'OFF' },
         { label: 'ON', value: 'ON' },
         { label: 'OFF', value: 'OFF' }
       ],
+      value: 'OFF'
     },
     {
       type: 'select',
@@ -338,7 +349,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  adapts the record size dynamically to adapt to data, if the data has a fixed size\
  for example, a database, matching that size may result in better performance.'),
       options: [
-        { label: 'Inherit', value: null},
+        { label: 'Inherit', value: 'INHERIT'},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -352,6 +363,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '512K', value: '512K' },
         { label: '1024K', value: '1024K' }
       ],
+      value : 'INHERIT'
     },
     {
       type: 'select',
@@ -361,9 +373,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  case sensitive), <b>insensitive</b> (assumes filenames are not case sensitive), or\
  <b>mixed</b> (understands both types of filenames).'),
       options: [
-        { label: 'SENSITIVE', value: 'SENSITIVE' },
-        { label: 'INSENSITIVE', value: 'INSENSITIVE' },
-        { label: 'MIXED', value: 'MIXED' }
+        { label: 'Sensitive', value: 'SENSITIVE' },
+        { label: 'Insensitive', value: 'INSENSITIVE' },
+        { label: 'Mixed', value: 'MIXED' }
       ],
       value: 'SENSITIVE'
     }
@@ -549,6 +561,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     if (data.reservation === 0) {
       delete data.reservation;
     }
+    if (data.recordsize === 'INHERIT') {
+      delete(data.recordsize);
+    }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
@@ -562,9 +577,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         this.route_success));
     }, (res) => {
       this.loader.close();
-      //Handled in global error websocketservice
       this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
-      //console.log(T("Error saving dataset"), res.message, res.stack);
     });
   }
 
