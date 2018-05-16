@@ -44,7 +44,7 @@ interface DatasetFormData {
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
 })
-export class DatasetFormComponent implements Formconfiguration {
+export class DatasetFormComponent implements Formconfiguration{
 
   public volid: string;
   public sub: Subscription;
@@ -97,12 +97,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'Inherit (standard)', value: 'STANDARD' },
+        { label: 'Inherit (standard)', value: 'INHERIT' },
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
         { label: 'Disabled', value: 'DISABLED' }
       ],
-      value: 'STANDARD'
+      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -112,7 +112,7 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('For more information about the available compression algorithms,\
  refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
       options: [
-        { label: 'Inherit (lz4)', value: 'LZ4' },
+        { label: 'Inherit (lz4)', value: 'INHERIT' },
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
         { label: 'gzip (fastest)', value: 'GZIP-1' },
@@ -121,7 +121,7 @@ export class DatasetFormComponent implements Formconfiguration {
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
-      value: 'LZ4'
+      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -131,11 +131,11 @@ export class DatasetFormComponent implements Formconfiguration {
  when they are read; setting this property to <b>Off</b> avoids producing log\
  traffic when reading files, and can result in significant performance gains.'),
       options: [
-        { label: 'Inherit (on)', value: 'ON' },
+        { label: 'Inherit (on)', value: 'INHERIT' },
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
       ],
-      value: 'ON'
+      value: 'INHERIT'
     },
     {
       type: 'radio',
@@ -279,12 +279,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'Inherit (off)', value: 'INHERIT' },
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
         { label: 'off', value: 'OFF' }
       ],
-      value: 'OFF'
+      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -293,9 +293,11 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
+        { label: 'Inherit (off)', value: 'INHERIT' },
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
       ],
+      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -304,11 +306,11 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'Inherit (off)', value: 'INHERIT' },
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
       ],
-      value: 'OFF'
+      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -451,6 +453,22 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
+    this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((parent_dataset)=>{
+      _.find(this.fieldConfig, {name:'sync'}).options[0].label = `Inherits (${parent_dataset[0].sync.rawvalue})`
+      entityForm.formGroup.controls['sync'].setValue('INHERIT');
+
+      _.find(this.fieldConfig, {name:'compression'}).options[0].label = `Inherits (${parent_dataset[0].compression.rawvalue})`
+      entityForm.formGroup.controls['compression'].setValue('INHERIT');
+
+      _.find(this.fieldConfig, {name:'deduplication'}).options[0].label = `Inherits (${parent_dataset[0].deduplication.rawvalue})`
+      entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+
+      _.find(this.fieldConfig, {name:'exec'}).options[0].label = `Inherits (${parent_dataset[0].exec.rawvalue})`
+      entityForm.formGroup.controls['exec'].setValue('INHERIT');
+
+      _.find(this.fieldConfig, {name:'readonly'}).options[0].label = `Inherits (${parent_dataset[0].readonly.rawvalue})`
+      entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+    })
 
   }
 
@@ -559,6 +577,24 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     }
     if (data.recordsize === 'INHERIT') {
       delete(data.recordsize);
+    }
+    if (data.sync === 'INHERIT') {
+      delete(data.sync);
+    }
+    if (data.compression === 'INHERIT') {
+      delete(data.compression);
+    }
+    if (data.atime === 'INHERIT') {
+      delete(data.atime);
+    }
+    if (data.exec === 'INHERIT') {
+      delete(data.exec);
+    }
+    if (data.readonly === 'INHERIT') {
+      delete(data.readonly);
+    }
+    if (data.deduplication === 'INHERIT') {
+      delete(data.deduplication);
     }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
