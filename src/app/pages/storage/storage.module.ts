@@ -24,7 +24,6 @@ import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manage
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
 import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
-import { VolumeImportListComponent } from './volumes/volume-import/';
 import { routing } from './storage.routing';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add'
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
@@ -39,7 +38,8 @@ import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunloc
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
-import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
+import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
+import { MessageService } from '../common/entity/entity-form/services/message.service';
 
 
 @NgModule({
@@ -62,8 +62,7 @@ import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptim
     VolumeCreatekeyFormComponent,
     ZvolAddComponent,
     ZvolEditComponent,
-    VolumeImportListComponent,
-    VolumeUnencryptImportListComponent,
+    VolumeImportWizardComponent,
     SnapshotListComponent,
     SnapshotCloneComponent,
     SnapshotRollbackComponent,
@@ -77,7 +76,7 @@ import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptim
     DiskFormComponent,
     DiskWipeComponent
   ],
-  providers : [UserService, StorageService]
+  providers : [UserService, StorageService, MessageService]
 })
 export class StorageModule {
 }

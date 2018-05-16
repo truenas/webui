@@ -166,9 +166,9 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'select',
         name : 'repl_filesystem',
         placeholder : T('Pool/Dataset'),
-        tooltip : T('Choose an existing ZFS pool or dataset with an\
-         active periodic snapshot task on the source computer containing\
-         the snapshots to replicate.'),
+        tooltip : T('On the source computer with snapshots to replicate,\
+                     choose an existing ZFS pool or dataset with an\
+                     active periodic snapshot task.'),
         options : [],
         required: true,
         validation : Validators.required
@@ -178,9 +178,9 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_zfs',
         placeholder : T("Remote ZFS Pool/Dataset"),
         tooltip : T('Enter the ZFS pool/dataset on the remote or\
-         destination computer which will store snapshots.\
-         Example: Poolname/Datasetname, not the mountpoint or filesystem\
-         path.'),
+                     destination computer which will store snapshots.\
+                     Example: Poolname/Datasetname, not the mountpoint\
+                     or filesystem path.'),
         required: true,
         validation : Validators.required
       },
@@ -188,25 +188,24 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'checkbox',
         name : 'repl_userepl',
         placeholder : T('Recursively Replicate Child Dataset Snapshots'),
-        tooltip : T('Includes snapshots of datasets that are children of\
-         the main dataset.'),
+        tooltip : T('Include snapshots of child datasets from the\
+                     primary dataset.'),
         value : false
       },
       {
         type : 'checkbox',
         name : 'repl_followdelete',
         placeholder : T('Delete Stale Snapshots on Remote System'),
-        tooltip : T('Deletes previous snapshots from the remote or\
-         destination computer which are no longer present on the source\
-         computer.'),
+        tooltip : T('Delete snapshots from the remote system which are\
+                     also no longer present on the source computer.'),
         value : false
       },
       {
         type : 'select',
         name : 'repl_compression',
         placeholder : T('Replication Stream Compression'),
-        tooltip : T('Selecting a compression algorithm can reduce the size\
-         of the data being replicated.'),
+        tooltip : T('Select a compression algorithm to reduce the size\
+                     of the data being replicated.'),
         options : [
           {label : 'Off', value : 'off'},
           {label : 'lz4 (fastest)', value : 'lz4'},
@@ -219,7 +218,7 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_limit',
         placeholder : T('Limit (KB/s)'),
         tooltip : T('Limit replication speed to the specified value in\
-         kilobytes/second. The default <i>0</i> is unlimited.'),
+                     kilobytes/second. The default <i>0</i> is unlimited.'),
         inputType : 'number',
         value : 0,
         validation : [Validators.min(0)]
@@ -228,23 +227,24 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'select',
         name : 'repl_begin',
         placeholder : T('Begin Time'),
-        tooltip : T('Designate a time to begin replication.'),
+        tooltip : T('Define a time to start the replication task.'),
         options : this.times
       },
       {
         type : 'select',
         name : 'repl_end',
         placeholder : T('End Time'),
-        tooltip : T('Replication must start by this time. After starting,\
-         replication continues until it is finished.'),
+        tooltip : T('Define the point in time by which replication must\
+                     start. A started replication task continues until\
+                     it is finished.'),
         options : this.times
       },
       {
         type : 'checkbox',
         name : 'repl_enabled',
         placeholder : T('Enabled'),
-        tooltip : T('Enable or disable this replication task without\
-         deleting it.'),
+        tooltip : T('Unset to disable this replication task without\
+                     deleting it.'),
         value: true
       },
       {
@@ -252,7 +252,8 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_remote_mode',
         placeholder : T('Setup Mode'),
         tooltip : T('Choose the configuration mode for the remote.\
-         <i>Semi-automatic</i> only works with remote version 9.10.2 or later.'),
+                     <i>Semi-automatic</i> only works with remote\
+                     version 9.10.2 or later.'),
         options : [
           {label : 'Manual', value : 'MANUAL'},
           {label : 'Semi-Automatic', value : 'SEMIAUTOMATIC'}
@@ -263,8 +264,8 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'input',
         name : 'repl_remote_hostname',
         placeholder : T('Remote Hostname'),
-        tooltip : T('Type the IP address or DNS name of the remote\
-         computer to receive the replication data.'),
+        tooltip : T('Enter the IP address or DNS name of the remote\
+                     system to receive the replication data.'),
         required: true,
         validation: Validators.required
       },
@@ -272,8 +273,8 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'input',
         name : 'repl_remote_port',
         placeholder : T('Remote Port'),
-        tooltip : T('Input the port used by the SSH server on the remote\
-         or destination computer.'),
+        tooltip : T('Enter the port used by the SSH server on the remote\
+                     system.'),
         inputType : 'number',
         value : 22,
         validation : [Validators.min(0)],
@@ -283,10 +284,13 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'input',
         name : 'repl_remote_http_port',
         placeholder : T('Remote HTTP/HTTPS Port'),
-        tooltip : T('If <b>WebGUI HTTP -> HTTPS Redirect</b> is enabled in\
-         <b>System -> General</b> on the destination computer, set this field\
-         to the HTTPS port (usually 443). <b>Remote HTTPS</b> must also be\
-         enabled when creating the replication on the source computer.'),
+        tooltip : T('Set to the HTTPS port (usually 443) when <b>WebGUI\
+                     HTTP -> HTTPS Redirect</b> is enabled in <a\
+                     href="system/general"\
+                     target="_blank">System/General</a> on the\
+                     destination system. <b>Remote HTTPS</b> must also\
+                     be enabled when creating the replication on the\
+                     source system.'),
         inputType : 'number',
         value : 80,
         validation : [Validators.min(0)],
@@ -296,15 +300,15 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'checkbox',
         name : 'repl_remote_https',
         placeholder : T('Remote HTTPS'),
-        tooltip : T('Enable/disable secure connections'),
+        tooltip : T('Unset to disable secure connections.'),
         isHidden : true,
       },
       {
         type : 'input',
         name : 'repl_remote_token',
         placeholder : T('Remote Auth Token'),
-        tooltip : T('Paste the temporary token from the computer\
-         with the <b>Remote ZFS Pool/Dataset</b> here.'),
+        tooltip : T('Enter or paste the temporary token from the system\
+                     with the <b>Remote ZFS Pool/Dataset</b>.'),
         isHidden : true,
       },
       {
@@ -312,10 +316,10 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_remote_cipher',
         placeholder : T('Encryption Cipher'),
         tooltip : T('<i>Standard</i> provides the best security.\
-         <i>Fast</i> is less secure, but gives better transfer rates for\
-         devices with limited cryptographic speed. Choose <i>Disabled</i> for\
-         networks where the entire path between sources and destination\
-         computers is trusted.'),
+         <i>Fast</i> is less secure, but has better transfer rates for\
+         devices with limited cryptographic speed. <i>Disabled</i> is\
+         for networks where the entire path between sources and\
+         destinations is trusted.'),
         options : [
           {label : 'standard', value : 'standard'},
           {label : 'fast', value : 'fast'},
@@ -326,8 +330,8 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'checkbox',
         name : 'repl_remote_dedicateduser_enabled',
         placeholder : T('Dedicated User Enabled'),
-        tooltip : T('Allow a user account other than <i>root</i> to be\
-         used for replication.'),
+        tooltip : T('Set to allow a user account other than <i>root</i>\
+                     to be used for replication.'),
     },
       {
         type : 'select',
@@ -345,8 +349,8 @@ export class ReplicationFormComponent implements AfterViewInit {
         name : 'repl_remote_hostkey',
         placeholder : T('Remote Hostkey'),
         tooltip : T('Use <b>Scan SSH Key</b> to retrieve the public host\
-         key of the remote or destination computer and populate this field with\
-         that key.'),
+                     key of the remote system and enter or paste the key\
+                     here.'),
         customEventActionLabel : 'Scan SSH Key',
         customEventMethod : function(data) {
           theThis.customEventMethod(data);
@@ -428,12 +432,12 @@ export class ReplicationFormComponent implements AfterViewInit {
       this.loader.close();
       textAreaSSH.nativeElement.value = res;
       this.entityForm.formGroup.controls.repl_remote_hostkey.setValue(res);
-    
+
     }, (error)=>{
       this.loader.close();
     });
-  
-    
+
+
   }
 
   ngOnDestroy() {

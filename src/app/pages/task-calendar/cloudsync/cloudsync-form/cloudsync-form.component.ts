@@ -36,13 +36,15 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'description',
     placeholder: T('Description'),
-    tooltip: T('Optional.'),
+    tooltip: T('Enter a description for this task.'),
     required: true,
     validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'direction',
     placeholder: T('Direction'),
+    tooltip: T('<i>Push</i> sends data to the cloud storage. <i>Pull</i>\
+                takes data from the cloud storage.'),
     options: [
       { label: 'PULL', value: 'PULL' },
       { label: 'PUSH', value: 'PUSH' },
@@ -53,6 +55,8 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'credential',
     placeholder: T('Credential'),
+    tooltip: T('Choose the cloud storage provider from the list of\
+                existing Cloud credentials.'),
     options: [{
       label: '---', value: null
     }],
@@ -62,6 +66,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'bucket',
     placeholder: T('Bucket'),
+    tooltip: T('Select the S3 bucket to use.'),
     options: [{
       label: '---', value: null
     }],
@@ -70,11 +75,13 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'folder',
     placeholder: T('Folder'),
+    tooltip: T('Enter the name of the folder to sync to.'),
     isHidden: true,
   }, {
     type: 'select',
     name: 'encryption',
     placeholder: T('Server Side Encryption'),
+    tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
     options: [
       {label: "None", value: ""},
       {label: "AES-256", value: "AES256"},
@@ -87,14 +94,20 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'path',
     placeholder: T('Home Directory'),
     value: '/mnt',
-    tooltip: T('Browse to the name of an <b>existing</b> volume or\
-          dataset that the user will be assigned permission to access.'),
+    tooltip: T('Browse to the name of an <b>existing</b> pool or dataset\
+                the user will be assigned access permissions.'),
     required: true,
     validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'transfer_mode',
     placeholder: T('Transfer Mode'),
+    tooltip: T('<i>SYNC</i> keeps files identical between destination\
+                and source. Files removed from the source are also\
+                removed from the destination.<i>COPY</i> duplicates\
+                files from source to destination. Skips identical files.\
+                <i>MOVE</i> copies files from source to destination.\
+                Deletes files from the source after finishing the copy.'),
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
@@ -106,8 +119,8 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'repeat',
     placeholder: T('Quick Schedule'),
-    tooltip: T('Select a time frame for the job. Otherwise, do not select\
-     a time frame to customize the schedule.'),
+    tooltip: T('Choose how often to run the task. Choose the\
+                empty value to define a custom schedule.'),
     options: [
       { label: '----------', value: 'none' },
       { label: 'Hourly', value: 'hourly' },
@@ -120,28 +133,28 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'minute',
     placeholder: T('Minute'),
-    tooltip: T('The job occurs at the specified minutes.'),
+    tooltip: T('Define the minute to run the task.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'hour',
     placeholder: T('Hour'),
-    tooltip: T('The job occurs at the specified hours.'),
+    tooltip: T('Define the hour to run the task.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'daymonth',
     placeholder: T('Day of month'),
-    tooltip: T('The job occurs on the specified days each month.'),
+    tooltip: T('Define the day of the month to run the task.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'select',
     name: 'month',
     placeholder: T('Month'),
-    tooltip: T('The job occurs at the specified months.'),
+    tooltip: T('Define which months to run the task.'),
     multiple: true,
     options: [{
       label: 'January',
@@ -186,7 +199,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'dayweek',
     placeholder: T('Day of week'),
-    tooltip: T('The job occurs on the specified days.'),
+    tooltip: T('Choose which days of the week to run the test.'),
     multiple: true,
     options: [{
       label: 'Monday',
@@ -216,7 +229,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'checkbox',
     name: 'enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Uncheck to disable the job without deleting it.'),
+    tooltip: T('Unset to disable the task without deleting it.'),
     value: true,
   }];
 
@@ -351,7 +364,7 @@ export class CloudsyncFormComponent implements OnInit {
 
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
-        this.credential.options.push({ label: item.name, value: item.id });
+        this.credential.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
         this.credential_list.push(item);
       });
     });
@@ -542,7 +555,7 @@ export class CloudsyncFormComponent implements OnInit {
     attributes['bucket'] = value.bucket;
     attributes['folder'] = value.folder;
     payload['attributes'] = attributes;
-    
+
     this.loader.open();
     if (!this.pk) {
       console.log("create cloud sync");

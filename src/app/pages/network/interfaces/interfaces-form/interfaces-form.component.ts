@@ -29,8 +29,8 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_interface',
       placeholder : T('NIC'),
-      tooltip : T('The FreeBSD device name of the interface. This can not\
- be changed after creating the interface.'),
+      tooltip : T('Enter the FreeBSD device name of the interface. This\
+                   cannot change after creating the interface.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -38,7 +38,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_name',
       placeholder : T('Interface Name'),
-      tooltip : T('Description of interface.'),
+      tooltip : T('Enter a description of interface.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -47,14 +47,15 @@ export class InterfacesFormComponent implements OnDestroy {
       name : 'int_dhcp',
       placeholder : T('DHCP'),
       tooltip : T('Only one interface can be configured for <b>DHCP</b>.\
- Leave unchecked to create a static IPv4 or IPv6 configuration.')
+                   Leave unset to create a static IPv4 or IPv6\
+                   configuration.'),
     },
     {
       type : 'input',
       name : 'int_ipv4address',
       placeholder : T('IPv4 Address'),
       tooltip : T('Enter a static IP address in the format\
- <i>###.###.###.###</i> if <b>DHCP</b> is unchecked.'),
+                   <i>###.###.###.###</i> when <b>DHCP</b> is unset.'),
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -64,7 +65,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'select',
       name : 'int_v4netmaskbit',
       placeholder : T('IPv4 Netmask'),
-      tooltip : T('Enter a netmask if <b>DHCP</b> is unchecked.'),
+      tooltip : T('Enter a netmask when <b>DHCP</b> is unset.'),
       options : this.networkService.getV4Netmasks(),
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -74,17 +75,17 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'checkbox',
       name : 'int_ipv6auto',
       placeholder : T('Auto configure IPv6'),
-      tooltip : T('Check this to automatically configure the IPv6 address\
- with <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">rtsol(8)</a>. Only <i>one</i> interface can be\
- configured this way.')
+      tooltip : T('Set to automatically configure the IPv6 address with\
+                   <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                   target="_blank">rtsol(8)</a>. One interface can be\
+                   configured this way.')
     },
     {
       type : 'input',
       name : 'int_ipv6address',
       placeholder : T('IPv6 Address'),
-      tooltip : T('Enter a static IPv6 address if <b>DHCP</b> is unchecked.\
- Example address: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
+      tooltip : T('Enter a static IPv6 address when <b>DHCP</b> is unset.\
+                   Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -94,7 +95,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'select',
       name : 'int_v6netmaskbit',
       placeholder : T('IPv6 Prefix Length'),
-      tooltip : T('Match the prefix length used on the network.'),
+      tooltip : T('Set to the prefix length used on the network.'),
       options : this.networkService.getV6PrefixLength(),
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -104,9 +105,10 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_options',
       placeholder : T('Options'),
-      tooltip : T('Enter any additional parameters from <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">ifconfig(8)</a>. Separate multiple parameters with a space.'),
+      tooltip : T('Enter any more parameters from <a\
+                   href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                   target="_blank">ifconfig(8)</a>. Separate multiple\
+                   parameters with a space.'),
     },
     {
       type: 'array',
@@ -116,13 +118,14 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'alias_address',
         placeholder: T('IPv4 Address'),
         tooltip: T('Enter a static IP address in the format\
-        <i>###.###.###.###</i>'),
+                    <i>###.###.###.###</i>'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv4_regex) ]
       },
       {
         name: 'alias_netmaskbit',
         placeholder: T('IPv4 Netmask'),
+        tooltip : T('Enter a netmask when <b>DHCP</b> is unset.'),
         type: 'select',
         options : this.networkService.getV4Netmasks()
       },
@@ -130,6 +133,7 @@ export class InterfacesFormComponent implements OnDestroy {
         type: 'checkbox',
         name: 'delete',
         placeholder: T('Delete'),
+        tooltip: T('Set to delete this alias.'),
       }]
     },
     {
@@ -139,14 +143,15 @@ export class InterfacesFormComponent implements OnDestroy {
       formarray: [{
         name: 'alias_address',
         placeholder: T('IPv6 Address'),
-        tooltip: T('Enter a static IPv6 address, for example:\
-        <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
+        tooltip: T('Enter a static IPv6 address. Example:\
+                    <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
       {
         name: 'alias_netmaskbit',
         placeholder: T('IPv6 Prefix Length'),
+        tooltip : T('Set to the prefix length used on the network.'),
         type: 'select',
         options : this.networkService.getV6PrefixLength()
       },
@@ -154,6 +159,7 @@ export class InterfacesFormComponent implements OnDestroy {
         type: 'checkbox',
         name: 'delete',
         placeholder: T('Delete'),
+        tooltip: T('Set to delete this alias.'),
       }]
     },
   ];

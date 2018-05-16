@@ -174,13 +174,13 @@ export class StatsService {
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
-  private bufferSize:number = 10000;// milliseconds
-  private bufferSizeRealtime:number = 1000;// milliseconds
+  private bufferSize:number = 60000;// milliseconds
+  private bufferSizeRealtime:number = 15000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
 
   constructor(private core:CoreService, private api:ApiService) {
-    console.log("*** New Instance of Stats Service ***");
+    //DEBUG: .log("*** New Instance of Stats Service ***");
 
     this.core.emit({name:"StatsSourcesRequest"});
 
@@ -193,16 +193,16 @@ export class StatsService {
     });
 
     this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: .log(evt);
     });
 
     this.core.register({observerClass:this,eventName:"StatsSources"}).subscribe((evt:CoreEvent) => {
       //this.checkAvailability(evt.data);
       this.updateSources(evt.data);
       if(this.debug){
-        console.log("**** StatsSources ****");
-        console.log(evt.data);
-        console.warn(this.sources);
+        //DEBUG: .log("**** StatsSources ****");
+        //DEBUG: .log(evt.data);
+        //DEBUG: .warn(this.sources);
       }
       //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
       }); 
@@ -216,7 +216,7 @@ export class StatsService {
   startBroadcast(){
     this.started = true;
     if(this.debug){
-      console.log("Starting Broadcast...");
+      //DEBUG: .log("Starting Broadcast...");
     }
     
     this.broadcast(this.messages, this.bufferSize); 
@@ -226,13 +226,13 @@ export class StatsService {
   stopBroadcast(messageList?){
     this.started = false;
     if(this.debug){
-      console.log("Stopping Broadcast!");
+      //DEBUG: .log("Stopping Broadcast!");
     }
     if(messageList && messageList == this.messagesRealtime){
       clearInterval(this.broadcastRealtimeId);
     } else if(messageList && messageList == this.messages){
       clearInterval(this.broadcastId);
-      console.log(this.broadcastId);
+      //DEBUG: .log(this.broadcastId);
     } else {
       clearInterval(this.broadcastRealtimeId);
       clearInterval(this.broadcastId);
@@ -242,7 +242,7 @@ export class StatsService {
 
   broadcast(messages:CoreEvent[],buffer){
     if(messages.length == 0){
-      console.warn("Timer only runs when message list is not empty");
+      //DEBUG: .warn("Timer only runs when message list is not empty");
       return ;
     }
 
@@ -352,17 +352,17 @@ export class StatsService {
 
   jobExec(job){
     if(this.debug){
-      console.log("JOB STARTING...");
+      //DEBUG: .log("JOB STARTING...");
     }
     for(let i  = 0; i < job.length; i++){
       let message = job[i];
       if(this.debug){
-        console.log(message);
+        //DEBUG: .log(message);
       }
       this.core.emit(message);
     }
     if(this.debug){
-      console.log("JOB FINISHED")
+      //DEBUG: .log("JOB FINISHED")
     }
   }
 
@@ -496,8 +496,8 @@ export class StatsService {
 
   removeListener(obj:any){
     if(this.debug){
-      console.warn("REMOVING LISTENER")
-      console.log(obj);
+      //DEBUG: .warn("REMOVING LISTENER")
+      //DEBUG: .log(obj);
     }
     let messageList;
      // Remove from sources
@@ -516,7 +516,7 @@ export class StatsService {
      }
 
      if(messageList.length == 0){
-       console.log("REMOVE LISTENER METHOD STOPPING BROADCAST");
+       //DEBUG: .log("REMOVE LISTENER METHOD STOPPING BROADCAST");
        this.stopBroadcast(messageList);
      }
   }

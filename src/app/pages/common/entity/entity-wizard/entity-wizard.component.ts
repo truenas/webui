@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
 import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 import { FieldConfig } from '../../entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../entity/entity-form/services/entity-form.service';
@@ -28,6 +29,9 @@ export class EntityWizardComponent implements OnInit {
   public formGroup: FormGroup;
 
   public busy: Subscription;
+
+  public saveSubmitText = T("Submit");
+  public customNextText = T("Next");
 
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
@@ -60,6 +64,10 @@ export class EntityWizardComponent implements OnInit {
           this.setRelation(config, i);
         }
       }
+    }
+
+    if (this.conf.saveSubmitText) {
+      this.saveSubmitText = this.conf.saveSubmitText;
     }
 
     if (this.conf.afterInit) {

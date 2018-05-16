@@ -1,5 +1,5 @@
-<div class="widget widget-{{widgetSize}}">
-  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+<div class="widget">
+  <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
@@ -13,7 +13,7 @@
           <span>Configure</span>
         </button>
       </mat-menu>
-      <mat-card-content fxLayout="row" fxLayoutWrap fxLayoutAlign="center start" fxFlex="100">
+      <mat-card-content fxLayout="row" fxLayoutAlign="center start" fxFlex="100">
         <viewchartdonut fxFlex="30" #chartDonut [width]="chartSize" [height]="chartSize" style="display:none;"></viewchartdonut>
         <viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu [width]="chartSize" [height]="chartSize"></viewchartline>
       </mat-card-content>
