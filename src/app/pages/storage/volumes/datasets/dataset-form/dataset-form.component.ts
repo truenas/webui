@@ -97,12 +97,10 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
-        // { label: 'Inherit (standard)', value: 'INHERIT' },
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
         { label: 'Disabled', value: 'DISABLED' }
       ],
-      // value: 'INHERIT'
     },
     {
       type: 'select',
@@ -112,7 +110,6 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('For more information about the available compression algorithms,\
  refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
       options: [
-        // { label: 'Inherit (lz4)', value: 'INHERIT' },
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
         { label: 'gzip (fastest)', value: 'GZIP-1' },
@@ -121,7 +118,6 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
-      // value: 'INHERIT'
     },
     {
       type: 'select',
@@ -131,11 +127,9 @@ export class DatasetFormComponent implements Formconfiguration{
  when they are read; setting this property to <b>Off</b> avoids producing log\
  traffic when reading files, and can result in significant performance gains.'),
       options: [
-        // { label: 'Inherit (on)', value: 'INHERIT' },
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
       ],
-      // value: 'INHERIT'
     },
     {
       type: 'radio',
