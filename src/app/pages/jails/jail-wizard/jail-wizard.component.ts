@@ -36,8 +36,8 @@ export class JailWizardComponent {
           tooltip: T('Mandatory. Can only contain alphanumeric characters,\
  dashes (-), or underscores (_).'),
           validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
-      },
-                    {
+        },
+        {
           type: 'select',
           name: 'release',
           required: true,
