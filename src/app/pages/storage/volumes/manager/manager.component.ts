@@ -16,6 +16,7 @@ import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../../services/storage.service'
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 
@@ -83,7 +84,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
     public mdDialog: MatDialog,
-    public translate: TranslateService ) {
+    public translate: TranslateService,
+    public sorter: StorageService ) {
 
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
@@ -284,34 +286,11 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.openDialog();
   }
 
-   // Sorts array by disk names into 'natural' order
-   mySorter(myArray, key) {
-    let tempArr = [];
-    myArray.forEach((item) => {
-      tempArr.push(item.devname);
-    })
-    // The Intl Collator allows language-sensitive str comparison and can allow for numbers
-    let myCollator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-    // Sort devnames (only) into 'natural' order
-    let sorter = tempArr.sort(myCollator.compare);
-
-    // Takes the disk list and matches it to the sorted array of devnames only    
-    myArray.sort((a, b) => {
-      let A = a[key], B = b[key];
-      if (sorter.indexOf(A) > sorter.indexOf(B)) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-    return myArray
-  }
-
   addDisk(disk: any) {
      this.disks.push(disk);
      this.disks = [...this.disks];
      this.temp.push(disk);
-     this.disks = this.mySorter(this.disks, 'devname');
+     this.disks = this.sorter.mySorter(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {

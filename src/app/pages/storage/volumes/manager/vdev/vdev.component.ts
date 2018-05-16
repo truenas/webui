@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../../translate-marker';
+import { StorageService } from '../../../../../services/storage.service'
 
 @Component({
   selector : 'app-vdev',
@@ -31,7 +32,9 @@ export class VdevComponent implements OnInit {
  <b>Storage/Volumes</b> section of the <a href="guide">Guide</a> for\
  more details.');
 
-  constructor(public elementRef: ElementRef, public translate: TranslateService) {}
+  constructor(public elementRef: ElementRef, 
+    public translate: TranslateService, 
+    public sorter: StorageService) {}
 
   ngOnInit() {
     this.estimateSize();
@@ -46,35 +49,12 @@ export class VdevComponent implements OnInit {
     return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
- // Sorts array by disk names into 'natural' order
-  mySorter(myArray, key) {
-    let tempArr = [];
-    myArray.forEach((item) => {
-      tempArr.push(item.devname);
-    })
-    // The Intl Collator allows language-sensitive str comparison and can allow for numbers
-    let myCollator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-    // Sort devnames (only) into 'natural' order
-    let sorter = tempArr.sort(myCollator.compare);
-
-    // Takes the disk list and matches it to the sorted array of devnames only    
-    myArray.sort((a, b) => {
-      let A = a[key], B = b[key];
-      if (sorter.indexOf(A) > sorter.indexOf(B)) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-    return myArray
-  }
-
   addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
-    this.disks = this.mySorter(this.disks, 'devname');
+    this.disks = this.sorter.mySorter(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {
