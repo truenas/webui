@@ -33,7 +33,7 @@ export class StatusComponent implements OnInit {
 
   getStatusOfVolumeScrub(id) {
     this.is_ready = false;
-    this.ws.call('pool.query')
+    this.ws.call('pool.query', [[["id", "=", id]]])
       .subscribe(res => {
         let volume = res.find(x => x.id == id);
         if (volume) {
