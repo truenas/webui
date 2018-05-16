@@ -27,7 +27,7 @@ export class SMBFormComponent implements OnDestroy {
       explorerType: 'directory',
       name: 'cifs_path',
       placeholder: T('Path'),
-      tooltip: T('Select volume, dataset, or directory to share.'),
+      tooltip: T('Select pool, dataset, or directory to share.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -35,94 +35,102 @@ export class SMBFormComponent implements OnDestroy {
       type: 'input',
       name: 'cifs_name',
       placeholder: T('Name'),
-      tooltip: T('Mandatory. Name of share.')
+      tooltip: T('Mandatory. Enter a name for the share.')
     },
     {
       type: 'checkbox',
       name: 'cifs_home',
       placeholder: T('Use as home share'),
-      tooltip: T('Check this box if the share is meant to hold user home\
-      directories; only one share can be the homes share')
+      tooltip: T('Set to allow this share to hold user home\
+                  directories. Only one share can be\
+                  the homes share.')
     },
     {
       type: 'checkbox',
       name: 'cifs_default_permissions',
       placeholder: T('Default Permissions'),
-      tooltip: T('Sets the ACLs to allow read and write for owner or\
- group and read-only for others. Should only be unchecked when creating\
- a share on a system that already has custom ACLs set.'),
+      tooltip: T('When enabled, the ACLs grant read and write access for\
+                  owner or group and read-only for others.\
+                  <b>Only</b> leave unset if creating a share on a\
+                  system that already has custom\
+                  ACLs configured.'),
       value: false
     },
     {
       type: 'checkbox',
       name: 'cifs_ro',
       placeholder: T('Export Read Only'),
-      tooltip: T('Prohibits write')
+      tooltip: T('Set to prohibit writes to this share')
     },
     {
       type: 'checkbox',
       name: 'cifs_browsable',
       placeholder: T('Browsable to Network Clients'),
-      tooltip: T('When checked, users see the contents of <i>/homes</i>\
- (including other home directories of other users) and when  unchecked,\
- users see only their own home directory.')
+      tooltip: T('When set, users see the contents of <i>/homes</i>,\
+                  which includes the home directories of other users.\
+                  When unset, users only see their own\
+                  home directory.'),
     },
     {
       type: 'checkbox',
       name: 'cifs_recyclebin',
       placeholder: T('Export Recycle Bin'),
-      tooltip: T('Deleted files are moved to a hidden <b>.recycle</b> in\
- the root folder of the share. The <b>.recycle</b> directory can be\
- deleted to reclaim space and is automatically recreated when a file is\
- deleted.')
+      tooltip: T('When set, deleted files are moved to a hidden\
+                  <b>.recycle</b> in the root folder of the share.\
+                  The <b>.recycle</b> directory can be\
+                  deleted to reclaim space and is automatically\
+                  recreated when a file is deleted.')
     },
     {
       type: 'checkbox',
       name: 'cifs_showhiddenfiles',
       placeholder: T('Show Hidden Files'),
-      tooltip: T('If enabled, the Windows hidden attribute is not set\
- when filenames that begin with a dot (a Unix hidden file) are created.\
- Existing files are not affected.')
+      tooltip: T('Set to disable the Windows <i>hidden</i> attribute\
+                  on a new Unix hidden file. Unix hidden filenames start\
+                  with a dot: <b>.foo</b>.\
+                  Existing files are not affected.')
     },
     {
       type: 'checkbox',
       name: 'cifs_guestok',
       placeholder: T('Allow Guest Access'),
-      tooltip: T('If checked, a password is not required to connect to\
- the share. Connections with a bad password are rejected unless the\
- user account does not exist, in which case it is mapped to the guest\
- account and granted the permissions of the guest user defined in the\
- <a href="http://doc.freenas.org/11/services.html#smb" target="_blank">\
- SMB</a> service.')
+      tooltip: T('Set to allow access to this share without a password.\
+                  See <a\
+                  href="http://doc.freenas.org/11/services.html#smb"\
+                  target="_blank"> SMB</a> service for more information\
+                  about guest user permissions.')
     },
     {
       type: 'checkbox',
       name: 'cifs_guestonly',
       placeholder: T('Only Allow Guest Access'),
       tooltip: T('Requires <b>Allow guest access</b> to also be checked.\
- Forces guest access for all connections.')
+                  Forces guest access for all connections.')
     },
     {
       type: 'textarea',
       name: 'cifs_hostsallow',
       placeholder: T('Hosts Allow'),
-      tooltip: T('Comma-, space-, or tab-delimited list of allowed\
- hostnames or IP addresses.')
+      tooltip: T('Enter a list of allowed hostnames or IP addresses.\
+                  Separate entries with a comma, space, or tab.')
     },
     {
       type: 'textarea',
       name: 'cifs_hostsdeny',
       placeholder: T('Hosts Deny'),
-      tooltip: T('Comma-, space-, or tab-delimited list of denied\
- hostnames or IP addresses. Allowed hosts take precedence so can use\
- <i>ALL</i> in this field and specify allowed hosts in\
- <b>Hosts Allow</b>.')
+      tooltip: T('Enter a list of denied hostnames or IP addresses.\
+                  Separate entries with a comma, space, or tab.\
+                  Specify <i>ALL</i> and list any hosts from <b>Hosts Allow</b>\
+                  to have those hosts take precedence.')
     },
     {
       type: 'select',
       name: 'cifs_vfsobjects',
       placeholder: T('VFS Objects'),
-      tooltip: T('Adds virtual file system modules to enhance functionality.'),
+      tooltip: T('Adds virtual file system modules to enhance functionality.\
+                  <a href="https://doc.freenas.org/11/sharing.html#avail-vfs-modules-tab"\
+                  target="blank">Table 10.4.2</a>\
+                  summarizes the available modules.'),
       options: [],
       multiple: true,
     },
@@ -132,9 +140,9 @@ export class SMBFormComponent implements OnDestroy {
    //   name: 'cifs_',
    //   placeholder: 'Periodic Snapshot Task',
    //   tooltip: 'Used to configure directory shadow copies on a\
-   // per-share basis. Select the pre-configured periodic snapshot task to\
-   // use for the shadow copies of the share. Periodic snapshot must be\
-   // recursive.',
+   //             per-share basis. Select the pre-configured periodic\
+   //             snapshot task to use for the shadow copies of this share.\
+   //             Periodic snapshot must be recursive.'),
    //   options: []
    // },
     {
@@ -142,7 +150,7 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_auxsmbconf',
       placeholder: T('Auxiliary Parameters'),
       tooltip: T('Additional <b>smb5.conf</b> parameter not covered by\
- other option fields.'),
+                  other option fields.'),
     },
   ];
 
