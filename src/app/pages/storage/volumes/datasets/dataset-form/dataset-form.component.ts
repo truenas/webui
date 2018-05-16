@@ -97,12 +97,12 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'Inherit (standard)', value: 'INHERIT' },
+        // { label: 'Inherit (standard)', value: 'INHERIT' },
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
         { label: 'Disabled', value: 'DISABLED' }
       ],
-      value: 'INHERIT'
+      // value: 'INHERIT'
     },
     {
       type: 'select',
@@ -112,7 +112,7 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('For more information about the available compression algorithms,\
  refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
       options: [
-        { label: 'Inherit (lz4)', value: 'INHERIT' },
+        // { label: 'Inherit (lz4)', value: 'INHERIT' },
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
         { label: 'gzip (fastest)', value: 'GZIP-1' },
@@ -121,7 +121,7 @@ export class DatasetFormComponent implements Formconfiguration{
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
-      value: 'INHERIT'
+      // value: 'INHERIT'
     },
     {
       type: 'select',
@@ -131,11 +131,11 @@ export class DatasetFormComponent implements Formconfiguration{
  when they are read; setting this property to <b>Off</b> avoids producing log\
  traffic when reading files, and can result in significant performance gains.'),
       options: [
-        { label: 'Inherit (on)', value: 'INHERIT' },
+        // { label: 'Inherit (on)', value: 'INHERIT' },
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
       ],
-      value: 'INHERIT'
+      // value: 'INHERIT'
     },
     {
       type: 'radio',
@@ -279,12 +279,10 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'Inherit (off)', value: 'INHERIT' },
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
         { label: 'off', value: 'OFF' }
       ],
-      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -293,11 +291,9 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'Inherit (off)', value: 'INHERIT' },
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
       ],
-      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -306,11 +302,9 @@ export class DatasetFormComponent implements Formconfiguration{
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'Inherit (off)', value: 'INHERIT' },
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
       ],
-      value: 'INHERIT'
     },
     {
       type: 'select',
@@ -344,7 +338,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  adapts the record size dynamically to adapt to data, if the data has a fixed size\
  for example, a database, matching that size may result in better performance.'),
       options: [
-        { label: 'Inherit', value: 'INHERIT'},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -358,7 +351,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '512K', value: '512K' },
         { label: '1024K', value: '1024K' }
       ],
-      value : 'INHERIT'
     },
     {
       type: 'select',
@@ -453,22 +445,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       entityForm.setDisabled('name',true);
       _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
     }
-    this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((parent_dataset)=>{
-      _.find(this.fieldConfig, {name:'sync'}).options[0].label = `Inherits (${parent_dataset[0].sync.rawvalue})`
-      entityForm.formGroup.controls['sync'].setValue('INHERIT');
-
-      _.find(this.fieldConfig, {name:'compression'}).options[0].label = `Inherits (${parent_dataset[0].compression.rawvalue})`
-      entityForm.formGroup.controls['compression'].setValue('INHERIT');
-
-      _.find(this.fieldConfig, {name:'deduplication'}).options[0].label = `Inherits (${parent_dataset[0].deduplication.rawvalue})`
-      entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-
-      _.find(this.fieldConfig, {name:'exec'}).options[0].label = `Inherits (${parent_dataset[0].exec.rawvalue})`
-      entityForm.formGroup.controls['exec'].setValue('INHERIT');
-
-      _.find(this.fieldConfig, {name:'readonly'}).options[0].label = `Inherits (${parent_dataset[0].readonly.rawvalue})`
-      entityForm.formGroup.controls['readonly'].setValue('INHERIT');
-    })
 
   }
 
@@ -490,8 +466,45 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.isNew = true;
       this.fieldConfig[0].readonly = false;
     }
+    if(this.parent){
+      this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
 
+        const sync = _.find(this.fieldConfig, {name:'sync'});
+        const sync_inherit = [{label:`Inherits (${parent_dataset[0].sync.rawvalue})`, value: parent_dataset[0].sync.rawvalue}];
+        sync.options = sync_inherit.concat(sync.options);
 
+        const compression = _.find(this.fieldConfig, {name:'compression'});
+        const compression_inherit = [{label:`Inherits (${parent_dataset[0].compression.rawvalue})`, value: parent_dataset[0].compression.rawvalue}];
+        compression.options = compression_inherit.concat(compression.options);        
+        
+        const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
+        const deduplication_inherit = [{label:`Inherits (${parent_dataset[0].deduplication.rawvalue})`, value: parent_dataset[0].deduplication.rawvalue}];
+        deduplication.options = deduplication_inherit.concat(deduplication.options);
+
+        const exec = _.find(this.fieldConfig, {name:'exec'});
+        const exec_inherit = [{label:`Inherits (${parent_dataset[0].exec.rawvalue})`, value: parent_dataset[0].exec.rawvalue}];
+        exec.options = exec_inherit.concat(exec.options);
+        
+        const readonly = _.find(this.fieldConfig, {name:'readonly'});
+        const readonly_inherit = [{label:`Inherits (${parent_dataset[0].readonly.rawvalue})`, value: parent_dataset[0].readonly.rawvalue}];
+        readonly.options = readonly_inherit.concat(readonly.options);
+
+        const atime = _.find(this.fieldConfig, {name:'atime'});
+        const atime_inherit = [{label:`Inherits (${parent_dataset[0].atime.rawvalue})`, value: parent_dataset[0].atime.rawvalue}];
+        atime.options = atime_inherit.concat(atime.options);
+
+        if(this.isNew){
+          entityForm.formGroup.controls['sync'].setValue(parent_dataset[0].sync.rawvalue);
+          entityForm.formGroup.controls['compression'].setValue(parent_dataset[0].compression.compression);
+          entityForm.formGroup.controls['deduplication'].setValue(parent_dataset[0].compression.deduplication);
+          entityForm.formGroup.controls['exec'].setValue(parent_dataset[0].compression.exec);
+          entityForm.formGroup.controls['readonly'].setValue(parent_dataset[0].compression.readonly);
+          entityForm.formGroup.controls['atime'].setValue(parent_dataset[0].atime.readonly);
+        }
+      });
+
+    }
+   
   }
 
   getFieldValueOrRaw(field): any {
