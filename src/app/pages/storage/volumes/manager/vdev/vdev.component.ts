@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../../translate-marker';
-import * as _ from 'lodash';
 
 @Component({
   selector : 'app-vdev',
@@ -46,29 +45,36 @@ export class VdevComponent implements OnInit {
   getTitle() {
     return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
- // Working on a natural sorting method here and in addDisk
-  mySorter(myArray) {
+
+ // Sorts array by disk names into 'natural' order
+  mySorter(myArray, key) {
     let tempArr = [];
-    for (let item of myArray) {
+    myArray.forEach((item) => {
       tempArr.push(item.devname);
-    }
+    })
+    // The Intl Collator allows language-sensitive str comparison and can allow for numbers
     let myCollator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-    return tempArr.sort(myCollator.compare);
+    // Sort devnames (only) into 'natural' order
+    let sorter = tempArr.sort(myCollator.compare);
+
+    // Takes the disk list and matches it to the sorted array of devnames only    
+    myArray.sort((a, b) => {
+      let A = a[key], B = b[key];
+      if (sorter.indexOf(A) > sorter.indexOf(B)) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    return myArray
   }
 
   addDisk(disk: any) {
-    // console.log(disk.devname)
     this.disks.push(disk);
     this.disks = [...this.disks];
-    // this.disks = _.sortBy(this.disks, 'devname');
     this.guessVdevType();
     this.estimateSize();
-    let sortingArray = this.mySorter(this.disks);
-    // console.log(sortingArray);
-    // This part doesn't work...
-    this.disks = this.disks.sort((a, b) => {
-      return sortingArray.indexOf(a) - sortingArray.indexOf(b);
-    })
+    this.disks = this.mySorter(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {
