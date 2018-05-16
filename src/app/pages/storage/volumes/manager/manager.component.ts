@@ -312,7 +312,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks = [...this.disks];
      this.temp.push(disk);
      this.disks = this.mySorter(this.disks, 'devname');
-    //  this.disks = _.sortBy(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {
