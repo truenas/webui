@@ -43,7 +43,7 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Mandatory. Can only contain letters, numbers, dashes,\
  or the underscore character.'),
       required: true,
-        validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
+      validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
     },
     {
       type: 'select',
