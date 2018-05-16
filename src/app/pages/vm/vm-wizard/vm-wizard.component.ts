@@ -15,6 +15,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { MatDialog } from '@angular/material';
 import { validateBasis } from '@angular/flex-layout';
 import { T } from '../../../translate-marker';
+import { DialogService } from '../../../services/dialog.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class VMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "VM Summary";
+  
 
   protected wizardConfig: Wizard[] = [{
       label: T('Operating System'),
@@ -242,7 +244,8 @@ export class VMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    public messageService: MessageService,private router: Router) {
+    public messageService: MessageService,private router: Router, 
+    private dialogService: DialogService) {
 
   }
 
@@ -407,6 +410,7 @@ async customSubmit(value) {
         });
       },(error) => {
         this.loader.close();
+        this.dialogService.errorReport(T("Error creating VM"), error.reason, error.trace.formatted);
       });
     }
 
