@@ -44,7 +44,8 @@ export class JailWizardComponent {
           required: true,
           placeholder: T('Release'),
           tooltip: T('Select the FreeBSD release to use as the jail \
-                      operating system.'),
+                      operating system. <br>\
+                      Releases already downloaded display <b>(fetched)</b>'),
           options: [],
         },
       ]
