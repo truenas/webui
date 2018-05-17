@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from "../../../../services/ws.service";
 import { ActivatedRoute, Params } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from '../../../common/entity/utils';
 
 interface poolDiskInfo {
   id: number,
@@ -44,7 +45,7 @@ export class VolumeStatusComponent implements OnInit {
           }
         },
         (err) => {
-          console.log(err);
+          new EntityUtils().handleError(this, err);
         });
     });
   }
