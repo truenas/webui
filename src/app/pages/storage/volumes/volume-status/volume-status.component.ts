@@ -61,15 +61,15 @@ export class VolumeStatusComponent implements OnInit {
       stats = data.stats;
     }
 
-    // use path as the name till we can get name from ws call
-    if (!data.name) {
-      data.name = data.path;
+    // use path as the device name if the device name is null
+    if (!data.device || data.device == null) {
+      data.device = data.path;
     }
 
     const item: poolDiskInfo = {
       id: id,
       parentId: parentId,
-      name: data.name,
+      name: data.name ? data.name : data.device,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
