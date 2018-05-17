@@ -42,11 +42,18 @@ export class StorageService {
   downloadFile(filename, contents, mime_type){
     mime_type = mime_type || "text/plain";
 
-    console.log(contents);
+    let byteCharacters = atob(contents);
 
-    var blob = new Blob([contents], {type: mime_type});
+    let byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
 
-    var dlink = document.createElement('a');
+    let byteArray = new Uint8Array(byteNumbers);
+
+    let blob = new Blob([byteArray], {type: mime_type});
+
+    let dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
     dlink.href =  window.URL.createObjectURL(blob);
