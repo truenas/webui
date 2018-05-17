@@ -38,9 +38,9 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       type : 'select',
       name : 'webdav_protocol',
       placeholder : T('Protocol'),
-      tooltip : T('Choose <i>HTTP</i> to keep the connection always\
-       unencrypted, <i>HTTPS</i> keeps the connection encrypted, or select\
-       <i>HTTP+HTTPS</i> to allow both types of connections.'),
+      tooltip : T('<i>HTTP</i> will keep the connection unencrypted.\
+                   <i>HTTPS</i> encrypts the connection.\
+                   <i>HTTP+HTTPS</i> allows both types of connections.'),
       options : [
         {label : 'HTTP', value : 'http'},
         {label : 'HTTPS', value : 'https'},
@@ -51,25 +51,25 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       type : 'input',
       name : 'webdav_tcpport',
       placeholder : T('HTTP Port'),
-      tooltip : T('Specify the port for unencrypted connections. The\
-       default port <i>8080</i> is recommended. Do not use a port number\
-       already in use by another service.'),
+      tooltip : T('Specify a port for unencrypted connections. The\
+                   default port <i>8080</i> is recommended. Do not reuse\
+                   a port.'),
     },
     {
       type : 'input',
       name : 'webdav_tcpportssl',
       placeholder : T('HTTPS Port'),
-      tooltip : T('Specify the port for encrypted connections. The\
-       default port <i>8081</i> is recommended. Do not use a port number\
-       already in use by another service.'),
+      tooltip : T('Specify a port for encrypted connections. The\
+                   default port <i>8081</i> is recommended. Do not reuse\
+                   a port.'),
     },
     {
       type : 'select',
       name : 'webdav_certssl',
       placeholder : T('Webdav SSL Certificate'),
-      tooltip : T('Select the SSL certificate to use for encrypted\
-       connections. Navigate to the <b>System -> Certificates</b> page to\
-       create a certificate.'),
+      tooltip : T('Select the <a href="..//docs/system.html#certificates"\
+                   target="_blank">SSL certificate</a> to use for\
+                   encrypted connections.'),
       options: [
         {label: '---', value: null}
       ]
@@ -79,7 +79,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       name : 'webdav_htauth',
       placeholder : T('HTTP Authentication'),
       tooltip : T('<i>Basic Authentication</i> is unencrypted.\
-       <i>Digest Authentication</i> is encrypted.'),
+                   <i>Digest Authentication</i> is encrypted.'),
       options : [
         {label : 'No Authentication', value: 'none'},
         {label : 'Basic Authentication', value : 'basic'},
@@ -90,9 +90,10 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       type : 'input',
       name : 'webdav_password',
       placeholder : T('Webdav Password'),
-      tooltip : T('The default is <i>davtest</i>. It is recommended to\
-       change the password as the default is a known value.'),
+      tooltip : T('The default of <i>davtest</i> is recommended to\
+                   change. <i>davtest</i> is a known value.'),
       inputType : 'password',
+      value : 'davtest',
       validation : [ matchOtherValidator('webdav_password2') ]
     },
     {
@@ -154,7 +155,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       this.handleProtocol(value);
     });
     this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.subscribe((value) => {
-      this.handleAuth(value); 
+      this.handleAuth(value);
     });
   }
 
