@@ -54,7 +54,7 @@ export class DisksListConfig implements InputTableConf {
     { name: 'Acoustic Level', prop: 'disk_acousticlevel' },
     { name: 'Enable S.M.A.R.T.', prop: 'disk_togglesmart' },
     { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions' },
-    { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' }
+    // { name: 'Enclosure Slot', prop: 'disk_enclosure_slot' }
   ];
   public config: any = {
     paging: true,

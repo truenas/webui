@@ -29,21 +29,20 @@ export class CronFormComponent implements OnInit {
     type: 'input',
     name: 'cron_description',
     placeholder: T('Description'),
-    tooltip: T('Optional.'),
+    tooltip: T('Optional. Describe the new task.'),
   }, {
     type: 'input',
     name: 'cron_command',
     placeholder: T('Command'),
     required: true,
     validation : [ Validators.required ],
-    tooltip: T('The <b>full path</b> to the command or script to be run.\
-     If it is a script, test it at the command line to ensure it works.'),
+    tooltip: T('Enter the full path to the command or script to be run.'),
   }, {
     type: 'select',
     name: 'cron_user',
     placeholder: T('Run As User'),
-    tooltip: T('Make sure the selected user has permission to run the\
-     specified command or script.'),
+    tooltip: T('Choose a user account to run the <b>Command</b>. The\
+                user must have permission to run the <b>Command</b>.'),
     options: [],
     required: true,
     validation : [ Validators.required ],
@@ -51,8 +50,8 @@ export class CronFormComponent implements OnInit {
     type: 'select',
     name: 'cron_repeat',
     placeholder: T('Quick Schedule'),
-    tooltip: T('Select a time frame for the job. Otherwise, do not select\
-     a time frame to customize the schedule.'),
+    tooltip: T('Choose how often to run the cron job. Choose the empty\
+                value to define a custom schedule.'),
     options: [
       { label: '----------', value: 'none' },
       { label: 'Hourly', value: 'hourly' },
@@ -65,28 +64,28 @@ export class CronFormComponent implements OnInit {
     type: 'input',
     name: 'cron_minute',
     placeholder: T('Minute'),
-    tooltip: T('The cron job occurs at the specified minutes.'),
+    tooltip: T('Define the minute of the hour to run the cron job.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'cron_hour',
     placeholder: T('Hour'),
-    tooltip: T('The cron job occurs at the specified hours.'),
+    tooltip: T('Define the hour to run the cron job.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'cron_daymonth',
     placeholder: T('Day of month'),
-    tooltip: T('The cron job occurs on the specified days each month.'),
+    tooltip: T('Define the day of the month to run the cron job.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'select',
     name: 'cron_month',
     placeholder: T('Month'),
-    tooltip: T('The cron job occurs at the specified months.'),
+    tooltip: T('Define which months to run the cron job.'),
     multiple: true,
     options: [{
       label: 'January',
@@ -131,7 +130,7 @@ export class CronFormComponent implements OnInit {
     type: 'select',
     name: 'cron_dayweek',
     placeholder: T('Day of week'),
-    tooltip: T('The cron job occurs on the specified days.'),
+    tooltip: T('Choose which days of the week to run the cron job.'),
     multiple: true,
     options: [{
       label: 'Monday',
@@ -160,21 +159,22 @@ export class CronFormComponent implements OnInit {
   }, {
     type: 'checkbox',
     name: 'cron_stdout',
-    placeholder: T('Redirect Stdout'),
-    tooltip: T('Disables emailing standard output to the <i>root</i> user\
-     account.'),
+    placeholder: T('Redirect Standard Output'),
+    tooltip: T('Set to disable emailing standard output (stdout) to the\
+                <i>root</i> user account.'),
     value: true,
   }, {
     type: 'checkbox',
     name: 'cron_stderr',
-    placeholder: T('Redirect Stderr'),
-    tooltip: T('Disables emailing errors to the <i>root</i> user account.'),
+    placeholder: T('Redirect Errors'),
+    tooltip: T('Set to disable emailing errors (stderr) to the\
+                <i>root</i> user account.'),
     value: false,
   }, {
     type: 'checkbox',
     name: 'cron_enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Uncheck to disable the cron job without deleting it.'),
+    tooltip: T('Unset to disable the cron job without deleting it.'),
     value: true,
   }];
 

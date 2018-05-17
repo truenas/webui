@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -39,6 +39,7 @@ interface DatasetFormData {
   casesensitivity: string;
 };
 
+
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
@@ -48,24 +49,31 @@ export class DatasetFormComponent implements Formconfiguration {
   public volid: string;
   public sub: Subscription;
   public route_success: string[] = ['storage', 'pools'];
-  public isBasicMode: boolean = true;
+  public isBasicMode = true;
   public pk: any;
-
-
   public customFilter: any[] = [];
-
-  //public resource_name = "storage/volume";
-
   public queryCall = "pool.dataset.query";
-  //public addCall = "pool.dataset.create";
-  //public editCall = "pool.dataset.update";
-  public isEntity: boolean = true;
-  public isNew: boolean = false;
+  public isEntity = true;
+  public isNew = false;
 
 
   public parent: string;
   public data: any;
   public parent_data: any;
+
+
+  public custActions: Array<any> = [
+    {
+      id: 'basic_mode',
+      name: T('Basic Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id: 'advanced_mode',
+      name: T('Advanced Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    }
+  ];
 
 
   public fieldConfig: FieldConfig[] = [
@@ -90,10 +98,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read about <a href="guide" target="_blank">sync</a>\
                   before making any changes.'),
       options: [
-        { label: 'STANDARD', value: 'STANDARD' },
-        { label: 'ALWAYS', value: 'ALWAYS' },
-        { label: 'DISABLED', value: 'DISABLED' }
+        { label: 'Inherit (standard)', value: 'STANDARD' },
+        { label: 'Standard', value: 'STANDARD' },
+        { label: 'Always', value: 'ALWAYS' },
+        { label: 'Disabled', value: 'DISABLED' }
       ],
+      value: 'STANDARD'
     },
     {
       type: 'select',
@@ -104,14 +114,16 @@ export class DatasetFormComponent implements Formconfiguration {
                   href="guide" target="_blank">available compression\
                   algorithms</a>.'),
       options: [
-        { label: 'OFF', value: 'OFF' },
-        { label: 'LZ4', value: 'LZ4' },
-        { label: 'GZIP-1', value: 'GZIP-1' },
-        { label: 'GZIP-6', value: 'GZIP-6' },
-        { label: 'GZIP-9', value: 'GZIP-9' },
-        { label: 'ZLE', value: 'ZLE' },
-        { label: 'LZJB', value: 'LZJB' }
+        { label: 'Inherit (lz4)', value: 'LZ4' },
+        { label: 'off', value: 'OFF' },
+        { label: 'lz4 (recommended)', value: 'LZ4' ,},
+        { label: 'gzip (fastest)', value: 'GZIP-1' },
+        { label: 'gzip (default level, 6)', value: 'GZIP-6' },
+        { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+        { label: 'zle (runs of zeros)', value: 'ZLE' },
+        { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
+      value: 'LZ4'
     },
     {
       type: 'select',
@@ -122,9 +134,11 @@ export class DatasetFormComponent implements Formconfiguration {
                   producing log traffic when reading files. This can\
                   result in significant performance gains.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (on)', value: 'ON' },
+        { label: 'on', value: 'ON' },
+        { label: 'off', value: 'OFF' }
       ],
+      value: 'ON'
     },
     {
       type: 'radio',
@@ -267,10 +281,12 @@ export class DatasetFormComponent implements Formconfiguration {
                   target="_blank">Deduplication</a> before making\
                   changes to this setting.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'VERIFY', value: 'VERIFY' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'on', value: 'ON' },
+        { label: 'verify', value: 'VERIFY' },
+        { label: 'off', value: 'OFF' }
       ],
+      value: 'OFF'
     },
     {
       type: 'select',
@@ -278,8 +294,8 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Exec'),
       tooltip: T('Choose <b>On</b> or <b>Off</b>.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
     },
     {
@@ -288,9 +304,11 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Read-only'),
       tooltip: T('Choose if the dataset can be modified.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
+      value: 'OFF'
     },
     {
       type: 'select',
@@ -322,7 +340,7 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Matching the fixed size of data, as in a database, may\
                   result in better performance.'),
       options: [
-        { label: 'Inherit', value: null},
+        { label: 'Inherit', value: 'INHERIT'},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -336,6 +354,7 @@ export class DatasetFormComponent implements Formconfiguration {
         { label: '512K', value: '512K' },
         { label: '1024K', value: '1024K' }
       ],
+      value : 'INHERIT'
     },
     {
       type: 'select',
@@ -346,9 +365,9 @@ export class DatasetFormComponent implements Formconfiguration {
                   sensitive. <i>Mixed</b> understands both types of\
                   filenames.'),
       options: [
-        { label: 'SENSITIVE', value: 'SENSITIVE' },
-        { label: 'INSENSITIVE', value: 'INSENSITIVE' },
-        { label: 'MIXED', value: 'MIXED' }
+        { label: 'Sensitive', value: 'SENSITIVE' },
+        { label: 'Insensitive', value: 'INSENSITIVE' },
+        { label: 'Mixed', value: 'MIXED' }
       ],
       value: 'SENSITIVE'
     }
@@ -408,18 +427,7 @@ export class DatasetFormComponent implements Formconfiguration {
   }
 
 
-  public custActions: Array<any> = [
-    {
-      id: 'basic_mode',
-      name: T('Basic Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      id: 'advanced_mode',
-      name: T('Advanced Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    }
-  ];
+
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -437,20 +445,23 @@ export class DatasetFormComponent implements Formconfiguration {
 
 
   afterInit(entityForm: EntityFormComponent) {
+    if(!entityForm.isNew){
+      entityForm.setDisabled('casesensitivity',true);
+      entityForm.setDisabled('name',true);
+      _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+    }
 
   }
 
   preInit(entityForm: EntityFormComponent) {
-    let paramMap: any = (<any>this.aroute.params).getValue();
-
+    const paramMap: any = (<any>this.aroute.params).getValue();
     this.volid = paramMap['volid'];
 
     if (paramMap['pk'] !== undefined) {
       this.pk = paramMap['pk'];
 
-      let pk_parent = paramMap['pk'].split('/');
+      const pk_parent = paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
-      this.fieldConfig.pop();
       this.customFilter = [[['id', '=', this.pk]]];
     }
     // add new dataset
@@ -503,7 +514,7 @@ export class DatasetFormComponent implements Formconfiguration {
 
      // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
      if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
-       let value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+       const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
        returnValue.recordsize = "" + ( 1024 * value ) + "K";
      }
 
@@ -516,16 +527,16 @@ export class DatasetFormComponent implements Formconfiguration {
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       data.quota = null;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       data.refquota = null;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       data.refreservation = null;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       data.reservation = null;
     }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
@@ -533,17 +544,20 @@ export class DatasetFormComponent implements Formconfiguration {
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       delete data.quota;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       delete data.refquota;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       delete data.refreservation;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       delete data.reservation;
+    }
+    if (data.recordsize === 'INHERIT') {
+      delete(data.recordsize);
     }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
@@ -558,9 +572,7 @@ export class DatasetFormComponent implements Formconfiguration {
         this.route_success));
     }, (res) => {
       this.loader.close();
-      //Handled in global error websocketservice
       this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
-      //console.log(T("Error saving dataset"), res.message, res.stack);
     });
   }
 

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../../translate-marker';
-import * as _ from 'lodash';
+import { StorageService } from '../../../../../services/storage.service'
 
 @Component({
   selector : 'app-vdev',
@@ -34,7 +34,9 @@ export class VdevComponent implements OnInit {
                                 href="guide" target="_blank">Guide</a>\
                                 for more details.');
 
-  constructor(public elementRef: ElementRef, public translate: TranslateService) {}
+  constructor(public elementRef: ElementRef, 
+    public translate: TranslateService, 
+    public sorter: StorageService) {}
 
   ngOnInit() {
     this.estimateSize();
@@ -52,9 +54,9 @@ export class VdevComponent implements OnInit {
   addDisk(disk: any) {
     this.disks.push(disk);
     this.disks = [...this.disks];
-    this.disks = _.sortBy(this.disks, 'devname');
     this.guessVdevType();
     this.estimateSize();
+    this.disks = this.sorter.mySorter(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {

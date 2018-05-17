@@ -1,5 +1,5 @@
 <div class="widget widget-{{widgetSize}}" ngClass.xs="double-height xs">
-  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+  <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
@@ -11,8 +11,8 @@
         <div fxFlex="100" fxFlex.gt-xs="60">
         <div  *ngIf="data" class="data-container">
           <div *ngIf="!data.system_product"><h1>FreeNAS</h1></div>
-          <div *ngIf="data.system_product && manufacturer == 'iX Systems'"><h2>{{data.system_product}}</h2></div>
-          <div  *ngIf="data.system_serial && manufacturer == 'iX Systems'">
+          <div *ngIf="data.system_product && manufacturer == 'ixsystems' "><h2>{{data.system_product}}</h2></div>
+          <div  *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
             <div class="label bold"><strong>Serial Number:</strong> </div><p class="value">{{data.system_serial}}</p>
           </div>
           <div  *ngIf="data.license"><span class="label bold"><strong>License:</strong> </span>  <p class="value">{{data.license}}</p></div>

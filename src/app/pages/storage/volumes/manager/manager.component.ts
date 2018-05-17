@@ -16,9 +16,9 @@ import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { StorageService } from '../../../../services/storage.service'
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-manager',
@@ -90,7 +90,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
     private loader:AppLoaderService,
     protected route: ActivatedRoute,
     public mdDialog: MatDialog,
-    public translate: TranslateService ) {
+    public translate: TranslateService,
+    public sorter: StorageService ) {
 
     dragulaService.setOptions('pool-vdev', {
       accepts: (el, target, source, sibling) => { return true; },
@@ -299,7 +300,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks.push(disk);
      this.disks = [...this.disks];
      this.temp.push(disk);
-     this.disks = _.sortBy(this.disks, 'devname');
+     this.disks = this.sorter.mySorter(this.disks, 'devname');
   }
 
   removeDisk(disk: any) {

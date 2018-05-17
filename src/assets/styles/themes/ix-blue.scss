@@ -436,7 +436,7 @@ entity-form .form-card.mat-card{
 .mat-checkbox-inner-container{
   width:16px;
   height:16px;
-  margin-bottom:4px;
+  margin:4px;
   overflow: visible;
 }
 .mat-checkbox-ripple{
@@ -523,6 +523,16 @@ entity-form .form-card.mat-card{
   top: -90px;
 }
 
+// .checkboxCellJails {
+//   height: 30px;
+//   position: relative;
+// }
+
+.headerCheckboxCellManager, .headerCheckboxCellVDev {
+  position: relative;
+  top: 6px;
+  left: 8px;
+}
 
   
   

@@ -13,7 +13,6 @@ import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add/';
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
-import { VolumeImportListComponent } from './volumes/volume-import/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
@@ -24,7 +23,7 @@ import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
-import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
+import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 
 export const routes: Routes = [
   {
@@ -68,12 +67,8 @@ export const routes: Routes = [
             data: { title: 'Extend Pool', breadcrumb: 'Extend Pool' }
           },
           {
-            path: 'import_list', component: VolumeImportListComponent,
+            path: 'import', component: VolumeImportWizardComponent,
             data: { title: 'Import Pool', breadcrumb: 'Import Pool' }
-          },
-          {
-            path: 'unencryptimport_list', component: VolumeUnencryptImportListComponent,
-            data: { title: 'UnEncrypt Pool', breadcrumb: 'UnEncrypt Pool' }
           },
           {
             path: 'status/:pk', component: StatusComponent,
