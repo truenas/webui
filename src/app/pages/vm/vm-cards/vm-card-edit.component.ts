@@ -29,18 +29,18 @@ export class VmCardEditComponent implements OnChanges {
         name:'Config',
         class:'config',
         config:[
-          { 
-            type: 'input', 
-            name: 'name', 
+          {
+            type: 'input',
+            name: 'name',
             width:'100%',
             placeholder: 'Name',
-            tooltip: 'Enter a name to identify the VM.',
+            tooltip: 'Enter a name for the VM.',
           },
-          { type: 'input', 
-            name : 'description', 
+          { type: 'input',
+            name : 'description',
             width:'100%',
             placeholder : 'Description',
-            tooltip: 'Enter a short description of the VM or its purpose.',
+            tooltip: 'Describe the VM or its purpose.',
           }
         ]
       },
@@ -48,21 +48,22 @@ export class VmCardEditComponent implements OnChanges {
         name:'Boot Options',
         class:'boot-options',
         config:[
-          { 
-            type: 'checkbox', 
-            name: 'autostart', 
+          {
+            type: 'checkbox',
+            name: 'autostart',
             width:'50%',
-            placeholder: 'Start on Boot', 
-            tooltip: 'When checked, start the VM automatically on boot.',
+            placeholder: 'Start on Boot',
+            tooltip: 'Set to start the VM automatically on boot.',
             class:'inline'},
-          { 
-            type: 'select', 
+          {
+            type: 'select',
             name: 'bootloader',
             width:'50%',
             placeholder: 'Boot Loader Type',
-            tooltip: 'Select <b>UEFI</b> for newer operating systems, or <b>UEFI-CSM</b>\
-            (Compatibility Support Mode) for older operating systems that only\
-            understand BIOS booting.',
+            tooltip: 'Select <b>UEFI</b> for newer operating systems, or\
+                      <b>UEFI-CSM</b> (Compatibility Support Mode) for\
+                      older operating systems that only support BIOS\
+                      booting.',
             options: [] , class:'inline'}
         ]
       },
@@ -70,23 +71,24 @@ export class VmCardEditComponent implements OnChanges {
         name:'Resources',
         class:'resources',
         config:[
-          { 
-            type: 'input', 
+          {
+            type: 'input',
             name: 'vcpus',
             width:'40%',
             placeholder : 'Virtual CPUs',
-            tooltip: 'Select the number of virtual CPUs allocated to the VM.\
-            The maximum is 16, although the host CPU might limit the maximum number.\
-            The operating system used in the VM might also have operational or licensing\
-            restrictions on the number of CPUs allowed.',
+            tooltip: 'Enter a number of virtual CPUs to allocate to the\
+                      VM. The maximum is 16 unless the host CPU also\
+                      limits the maximum. The VM operating system can\
+                      also have operational or licensing restrictions on\
+                      the number of CPUs.',
 
             class:'inline'},
-          { 
-            type: 'input', 
-            name: 'memory', 
+          {
+            type: 'input',
+            name: 'memory',
             width:'60%',
-            placeholder: 'Memory Size (MiB)', 
-            tooltip: 'Select the megabytes of RAM allocated to the VM.',
+            placeholder: 'Memory Size (MiB)',
+            tooltip: 'Allocate a number of mebibytes of RAM to the VM.',
             class:'inline'}
         ]
       }
