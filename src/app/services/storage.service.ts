@@ -38,4 +38,27 @@ export class StorageService {
   });
   return myArray
   }
+
+  downloadFile(filename, contents, mime_type){
+    mime_type = mime_type || "text/plain";
+
+    console.log(contents);
+
+    var blob = new Blob([contents], {type: mime_type});
+
+    var dlink = document.createElement('a');
+    document.body.appendChild(dlink);
+    dlink.download = filename;
+    dlink.href =  window.URL.createObjectURL(blob);
+    dlink.onclick = function(e) {
+        // revokeObjectURL needs a delay to work properly
+        var that = this;
+        setTimeout(function() {
+            window.URL.revokeObjectURL(that['href']);
+        }, 1500);
+    };
+
+    dlink.click();
+    dlink.remove();
+  }
 }
