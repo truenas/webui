@@ -78,33 +78,61 @@ export class VolumeStatusComponent implements OnInit {
     this.topology.push(item);
   }
 
-  dataHandler(pool: any) {
-    this.parseResponse(1, pool, 0);
-    if (pool.topology.data) {
-      for (let i in pool.topology.data) {
+  parseTopology(data, parentRow: any) {
+    let parentId = 1;
+    let namePostfix: boolean = false;
+    if ( parentRow && parentRow != 'data' && data.length > 0) {
+      parentId = this.topology.length + 1;
+      this.topology.push(
+        {
+          id: this.topology.length + 1,
+          parentId: 1,
+          name: parentRow,
+          read: '',
+          write: '',
+          checksum: '',
+          status: '',
+        });
+      this.expandRows.push(parentId);
+    }
+    if (data.length > 1) {
+      namePostfix = true;
+    }
+    for (let i in data) {
+      if (data[i].type != 'DISK') {
         let rowId = this.topology.length + 1;
         this.expandRows.push(rowId);
         this.topology.push(
           {
             id: rowId,
-            parentId: 1,
-            name: pool.topology.data[i].type + '-' + i,
-            read: pool.topology.data[i].stats.read_errors,
-            write: pool.topology.data[i].stats.write_errors,
-            checksum: pool.topology.data[i].stats.write_errors,
-            status: pool.topology.data[i].status,
-          });
-
-        if (pool.topology.data[i].children) {
-          for (let j in pool.topology.data[i].children) {
-            this.parseResponse(this.topology.length + 1, pool.topology.data[i].children[j], rowId);
+            parentId: parentId,
+            name: namePostfix ? data[i].type + '-' + i : data[i].type,
+            read: data[i].stats.read_errors,
+            write: data[i].stats.write_errors,
+            checksum: data[i].stats.write_errors,
+            status: data[i].status,
           }
-        }
-        if (pool.topology.data[i].path != null) {
-            this.parseResponse(this.topology.length + 1, pool.topology.data[i], rowId);
+        );
+        parentId = rowId;
+      }
+      if (data[i].children) {
+        for (let j in data[i].children) {
+          this.parseResponse(this.topology.length + 1, data[i].children[j], parentId);
         }
       }
+      if (data[i].path != null) {
+          this.parseResponse(this.topology.length + 1, data[i], parentId);
+      }
     }
+  }
+
+  dataHandler(pool: any) {
+    this.parseResponse(1, pool, 0);
+    this.parseTopology(pool.topology.data, 'data');
+    this.parseTopology(pool.topology.log, 'logs');
+    this.parseTopology(pool.topology.cache, 'cache');
+    this.parseTopology(pool.topology.spare, 'spares');
+
   }
 
   getReadableDate(data: any) {
