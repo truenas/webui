@@ -392,6 +392,7 @@ async customSubmit(value) {
         this.loader.close();
         this.router.navigate(['/vm']);
     },(error) => {
+      this.loader.close();
       this.dialogService.errorReport(T("Error creating VM"), error.reason, error.trace.formatted);
     });
 
