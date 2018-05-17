@@ -16,17 +16,20 @@ export class KerberosSettingsComponent {
       type: 'textarea',
       name: 'ks_appdefaults_aux',
       placeholder: 'Appdefaults Auxiliary Parameters',
-      tooltip: 'Contains settings used by some Kerberos applications.\
- The available settings and their syntax are listed in the\
- <a href="http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#appdefaults" target="_blank"> [appdefaults] section of krb.conf(5).</a>',
+      tooltip: 'Define any additional settings for use by some Kerberos\
+                applications. The available settings and syntax is\
+                listed in the <a\
+                href="http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#appdefaults"\
+                target="_blank">appdefaults section of krb.conf(5).</a>.',
     },
     {
       type: 'textarea',
       name: 'ks_libdefaults_aux',
       placeholder: 'Libdefaults Auxiliary Parameters',
-      tooltip: 'Contains settings used by the Kerberos library.\
- The available settings and their syntax are listed in the\
-<a href="http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#libdefaults" target="_blank"> [libdefaults] section of krb.conf(5).</a>',
+      tooltip: 'Define any settings used by the Kerberos library. The\
+                available settings and their syntax are listed in the\
+                <a href="http://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html#libdefaults"\
+                target="_blank">libdefaults section of krb.conf(5).</a>.',
 
     }
   ];

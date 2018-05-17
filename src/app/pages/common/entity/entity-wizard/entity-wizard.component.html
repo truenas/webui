@@ -1,7 +1,7 @@
 <!-- <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template> -->
 <mat-card>
   <form [formGroup]="formGroup" #entityForm="ngForm">
-    <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray">
+    <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray" #stepper>
       <div *ngFor="let step of conf.wizardConfig; let i = index">
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
           <ng-template matStepLabel>{{step.label | translate}}</ng-template>
@@ -14,7 +14,11 @@
           <mat-card-actions class="wizard-action">
             <button id="goback_button" color="accent" *ngIf="i == 0 ? true : false" class="btn  btn-block btn-raised btn-lg btn-primary" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
             <button mat-raised-button matStepperPrevious *ngIf="i == 0 ? false : true" color="accent">{{"Back" | translate}}</button>
-            <button mat-raised-button matStepperNext color="primary" >{{"Next" | translate}}</button>
+            <button *ngIf="!conf.customNext" mat-raised-button matStepperNext color="primary" >{{"Next" | translate}}</button>
+            <button *ngIf="conf.customNext" (click)="conf.customNext(stepper)" mat-raised-button color="primary">{{customNextText | translate}}</button>
+            <span *ngFor="let custBtn of conf.custActions">
+              <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+            </span>
           </mat-card-actions>
         </mat-step>
       </div>
@@ -29,7 +33,7 @@
         {{"Confirm your information" | translate}}
         <mat-card-actions class="wizard-action">
           <button mat-raised-button matStepperPrevious color="accent">{{"Back" | translate}}</button>
-          <button mat-raised-button color="primary" (click)="onSubmit()">{{"Submit" | translate}}</button>
+          <button mat-raised-button color="primary" (click)="onSubmit()">{{saveSubmitText | translate}}</button>
         </mat-card-actions>
       </mat-step>
     </mat-horizontal-stepper>

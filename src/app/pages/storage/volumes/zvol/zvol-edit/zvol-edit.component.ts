@@ -10,7 +10,7 @@ import {
 import {ActivatedRoute, Router} from '@angular/router';
 
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 
 import {RestService, WebSocketService} from '../../../../../services/';
 import {EntityUtils} from '../../../../common/entity/utils';
