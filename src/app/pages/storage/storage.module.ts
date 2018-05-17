@@ -24,6 +24,7 @@ import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manage
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
 import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
+import { VolumeStatusComponent } from './volumes/volume-status';
 import { routing } from './storage.routing';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add'
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
@@ -40,7 +41,6 @@ import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddke
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
-
 
 @NgModule({
   imports : [
@@ -73,6 +73,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     VMwareSnapshotListComponent,
     StatusComponent,
     DisksListComponent,
+    VolumeStatusComponent,
     DiskFormComponent,
     DiskWipeComponent
   ],

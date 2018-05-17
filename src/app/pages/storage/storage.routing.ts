@@ -24,6 +24,7 @@ import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunloc
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
+import { VolumeStatusComponent } from './volumes/volume-status';
 
 export const routes: Routes = [
   {
@@ -70,8 +71,12 @@ export const routes: Routes = [
             path: 'import', component: VolumeImportWizardComponent,
             data: { title: 'Import Pool', breadcrumb: 'Import Pool' }
           },
+          // {
+          //   path: 'status/:pk', component: StatusComponent,
+          //   data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
+          // },
           {
-            path: 'status/:pk', component: StatusComponent,
+            path: 'status/:pk', component: VolumeStatusComponent,
             data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
           },
           {
