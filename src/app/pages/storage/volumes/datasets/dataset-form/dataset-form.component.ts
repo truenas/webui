@@ -44,7 +44,7 @@ interface DatasetFormData {
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
 })
-export class DatasetFormComponent implements Formconfiguration {
+export class DatasetFormComponent implements Formconfiguration{
 
   public volid: string;
   public sub: Subscription;
@@ -55,6 +55,7 @@ export class DatasetFormComponent implements Formconfiguration {
   public queryCall = "pool.dataset.query";
   public isEntity = true;
   public isNew = false;
+  public parent_dataset: any;
 
 
   public parent: string;
@@ -97,12 +98,10 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'Inherit (standard)', value: 'STANDARD' },
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
         { label: 'Disabled', value: 'DISABLED' }
       ],
-      value: 'STANDARD'
     },
     {
       type: 'select',
@@ -112,7 +111,6 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('For more information about the available compression algorithms,\
  refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
       options: [
-        { label: 'Inherit (lz4)', value: 'LZ4' },
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
         { label: 'gzip (fastest)', value: 'GZIP-1' },
@@ -121,7 +119,6 @@ export class DatasetFormComponent implements Formconfiguration {
         { label: 'zle (runs of zeros)', value: 'ZLE' },
         { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
-      value: 'LZ4'
     },
     {
       type: 'select',
@@ -131,11 +128,9 @@ export class DatasetFormComponent implements Formconfiguration {
  when they are read; setting this property to <b>Off</b> avoids producing log\
  traffic when reading files, and can result in significant performance gains.'),
       options: [
-        { label: 'Inherit (on)', value: 'ON' },
         { label: 'on', value: 'ON' },
         { label: 'off', value: 'OFF' }
       ],
-      value: 'ON'
     },
     {
       type: 'radio',
@@ -279,12 +274,10 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'Inherit (off)', value: 'OFF' },
         { label: 'on', value: 'ON' },
         { label: 'verify', value: 'VERIFY' },
         { label: 'off', value: 'OFF' }
       ],
-      value: 'OFF'
     },
     {
       type: 'select',
@@ -304,11 +297,9 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'Inherit (off)', value: 'OFF' },
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }
       ],
-      value: 'OFF'
     },
     {
       type: 'select',
@@ -342,7 +333,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  adapts the record size dynamically to adapt to data, if the data has a fixed size\
  for example, a database, matching that size may result in better performance.'),
       options: [
-        { label: 'Inherit', value: 'INHERIT'},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -356,7 +346,6 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '512K', value: '512K' },
         { label: '1024K', value: '1024K' }
       ],
-      value : 'INHERIT'
     },
     {
       type: 'select',
@@ -455,6 +444,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
   preInit(entityForm: EntityFormComponent) {
+
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.volid = paramMap['volid'];
 
@@ -472,8 +462,144 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.isNew = true;
       this.fieldConfig[0].readonly = false;
     }
+    if(this.parent){
+      this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+      if(this.isNew){
+        const sync = _.find(this.fieldConfig, {name:'sync'});
+        const compression = _.find(this.fieldConfig, {name:'compression'});
+        const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
+        const exec = _.find(this.fieldConfig, {name:'exec'});
+        const readonly = _.find(this.fieldConfig, {name:'readonly'});
+        const atime = _.find(this.fieldConfig, {name:'atime'});
+        const recordsize = _.find(this.fieldConfig, {name:'recordsize'});
+        const sync_inherit = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+        const compression_inherit = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+        const deduplication_inherit = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+        const exec_inherit = [{label:`Inherits (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT'}];
+        const readonly_inherit = [{label:`Inherits (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
+        const atime_inherit = [{label:`Inherits (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
+        const recordsize_inherit = [{label:`Inherits (${pk_dataset[0].recordsize.value})`, value: 'INHERIT'}];
 
 
+        sync.options = sync_inherit.concat(sync.options);   
+        compression.options = compression_inherit.concat(compression.options);        
+        deduplication.options = deduplication_inherit.concat(deduplication.options);
+        exec.options = exec_inherit.concat(exec.options);
+        readonly.options = readonly_inherit.concat(readonly.options);
+        atime.options = atime_inherit.concat(atime.options);
+        recordsize.options = recordsize_inherit.concat(recordsize.options);
+
+
+        entityForm.formGroup.controls['sync'].setValue('INHERIT');
+        entityForm.formGroup.controls['compression'].setValue('INHERIT');
+        entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+        entityForm.formGroup.controls['exec'].setValue('INHERIT');
+        entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+        entityForm.formGroup.controls['atime'].setValue('INHERIT');
+        entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
+        }
+        else {
+          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
+            this.parent_dataset = parent_dataset[0];
+            const edit_sync = _.find(this.fieldConfig, {name:'sync'});
+            const edit_compression = _.find(this.fieldConfig, {name:'compression'});
+            const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
+            const edit_exec = _.find(this.fieldConfig, {name:'exec'});
+            const edit_readonly = _.find(this.fieldConfig, {name:'readonly'});
+            const edit_atime = _.find(this.fieldConfig, {name:'atime'});
+            const edit_recordsize = _.find(this.fieldConfig, {name:'recordsize'});
+            let edit_sync_collection = [{label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
+            let edit_compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
+            let edit_deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
+            let edit_exec_collection = [{label:pk_dataset[0].exec.value, value: pk_dataset[0].exec.value}];
+            let edit_readonly_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
+            let edit_atime_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
+            let edit_recordsize_collection = [{label:pk_dataset[0].recordsize.value, value: pk_dataset[0].recordsize.value}];
+  
+            if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_sync_collection = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: pk_dataset[0].sync.value}];
+            }
+            else{
+              edit_sync_collection = [{label:`Inherits (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
+  
+            }
+  
+            edit_sync.options = edit_sync_collection.concat(edit_sync.options);
+  
+            if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
+              edit_compression_collection = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: pk_dataset[0].compression.value}];
+            }
+            else {
+              edit_compression_collection = [{label:`Inherits (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
+            }
+  
+            edit_compression.options = edit_compression_collection.concat(edit_compression.options);
+  
+            if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_deduplication_collection = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: pk_dataset[0].deduplication.value}];
+            }
+            else {
+              edit_deduplication_collection = [{label:`Inherits (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
+            }
+            edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
+  
+            if (pk_dataset[0].exec.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_exec_collection = [{label:`Inherits (${pk_dataset[0].exec.rawvalue})`, value: pk_dataset[0].exec.value}];
+              
+            }
+            else {
+  
+              edit_exec_collection = [{label:`Inherits (${this.parent_dataset.exec.value})`, value: 'INHERIT'}];
+            }
+            edit_exec.options = edit_exec_collection.concat(edit_exec.options);
+  
+            if (pk_dataset[0].readonly.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_readonly_collection = [{label:`Inherits (${pk_dataset[0].readonly.rawvalue})`, value: pk_dataset[0].readonly.value}];
+              
+            }
+            else {
+              edit_readonly_collection = [{label:`Inherits (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
+            }
+            edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
+  
+            if (pk_dataset[0].atime.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_atime_collection = [{label:`Inherits (${pk_dataset[0].atime.rawvalue})`, value: pk_dataset[0].atime.value}];
+              
+            } else {
+              edit_atime_collection = [{label:`Inherits (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
+  
+            }
+            edit_atime.options = edit_atime_collection.concat(edit_atime.options);
+  
+            if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
+              
+            } else {
+              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.rawvalue})`, value: 'INHERIT'}];
+            }
+            edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
+            entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
+            if (pk_dataset[0].compression.value === 'GZIP') {
+              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value+'-6');
+            }
+            else{
+              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+  
+            }
+            
+            entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
+            entityForm.formGroup.controls['exec'].setValue(pk_dataset[0].exec.  value);
+            entityForm.formGroup.controls['readonly'].setValue(pk_dataset[0].readonly.value);
+            entityForm.formGroup.controls['atime'].setValue(pk_dataset[0].atime.value);
+            entityForm.formGroup.controls['recordsize'].setValue(pk_dataset[0].recordsize.value);
+            this.parent_dataset = parent_dataset[0];
+          })
+          
+        }
+      });
+
+    }
+   
   }
 
   getFieldValueOrRaw(field): any {
@@ -559,6 +685,24 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
     }
     if (data.recordsize === 'INHERIT') {
       delete(data.recordsize);
+    }
+    if (data.sync === 'INHERIT') {
+      delete(data.sync);
+    }
+    if (data.compression === 'INHERIT') {
+      delete(data.compression);
+    }
+    if (data.atime === 'INHERIT') {
+      delete(data.atime);
+    }
+    if (data.exec === 'INHERIT') {
+      delete(data.exec);
+    }
+    if (data.readonly === 'INHERIT') {
+      delete(data.readonly);
+    }
+    if (data.deduplication === 'INHERIT') {
+      delete(data.deduplication);
     }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
