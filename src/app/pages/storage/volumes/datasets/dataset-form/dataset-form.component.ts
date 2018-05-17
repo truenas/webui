@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -39,6 +39,7 @@ interface DatasetFormData {
   casesensitivity: string;
 };
 
+
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
@@ -48,24 +49,30 @@ export class DatasetFormComponent implements Formconfiguration {
   public volid: string;
   public sub: Subscription;
   public route_success: string[] = ['storage', 'pools'];
-  public isBasicMode: boolean = true;
+  public isBasicMode = true;
   public pk: any;
-  
-
   public customFilter: any[] = [];
-
-  //public resource_name = "storage/volume";
-
   public queryCall = "pool.dataset.query";
-  //public addCall = "pool.dataset.create";
-  //public editCall = "pool.dataset.update";
-  public isEntity: boolean = true;
-  public isNew: boolean = false;
+  public isEntity = true;
+  public isNew = false;
 
 
   public parent: string;
   public data: any;
   public parent_data: any;
+
+  public custActions: Array<any> = [
+    {
+      id: 'basic_mode',
+      name: T('Basic Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id: 'advanced_mode',
+      name: T('Advanced Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    }
+  ];
 
   
   public fieldConfig: FieldConfig[] = [
@@ -90,10 +97,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'STANDARD', value: 'STANDARD' },
-        { label: 'ALWAYS', value: 'ALWAYS' },
-        { label: 'DISABLED', value: 'DISABLED' }
+        { label: 'Inherit (standard)', value: 'STANDARD' },
+        { label: 'Standard', value: 'STANDARD' },
+        { label: 'Always', value: 'ALWAYS' },
+        { label: 'Disabled', value: 'DISABLED' }
       ],
+      value: 'STANDARD'
     },
     {
       type: 'select',
@@ -103,14 +112,16 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('For more information about the available compression algorithms,\
  refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
       options: [
-        { label: 'OFF', value: 'OFF' },
-        { label: 'LZ4', value: 'LZ4' },
-        { label: 'GZIP-1', value: 'GZIP-1' },
-        { label: 'GZIP-6', value: 'GZIP-6' },
-        { label: 'GZIP-9', value: 'GZIP-9' },
-        { label: 'ZLE', value: 'ZLE' },
-        { label: 'LZJB', value: 'LZJB' }
+        { label: 'Inherit (lz4)', value: 'LZ4' },
+        { label: 'off', value: 'OFF' },
+        { label: 'lz4 (recommended)', value: 'LZ4' ,},
+        { label: 'gzip (fastest)', value: 'GZIP-1' },
+        { label: 'gzip (default level, 6)', value: 'GZIP-6' },
+        { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+        { label: 'zle (runs of zeros)', value: 'ZLE' },
+        { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
+      value: 'LZ4'
     },
     {
       type: 'select',
@@ -120,9 +131,11 @@ export class DatasetFormComponent implements Formconfiguration {
  when they are read; setting this property to <b>Off</b> avoids producing log\
  traffic when reading files, and can result in significant performance gains.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (on)', value: 'ON' },
+        { label: 'on', value: 'ON' },
+        { label: 'off', value: 'OFF' }
       ],
+      value: 'ON'
     },
     {
       type: 'radio',
@@ -130,9 +143,10 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Share Type'),
       tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
                 type that matches the type of client accessing the volume/dataset.'),
-      options: [{label:'Unix', value: 'UNIX'},
-                {label:'Windows', value: 'WINDOWS'},
-                {label:'Mac', value: 'MAC'}],
+      options: [
+        {label:'Unix', value: 'UNIX'},
+        {label:'Windows', value: 'WINDOWS'},
+        {label:'Mac', value: 'MAC'}],
       value: 'UNIX'
     },
     {
@@ -142,7 +156,7 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Quota for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
  quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'),
+ size and is suitable for user datasets to prevent users from hogging available space. 0 === Unlimited.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -172,7 +186,7 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
       tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.',
+ value applies to both this dataset and any child datasets. 0 === Unlimited.',
       class: 'inline',
       width: '70%',
       value: 0,
@@ -203,7 +217,7 @@ export class DatasetFormComponent implements Formconfiguration {
       placeholder: T('Reserved space for this dataset'),
       tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
  unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space.  0 == Unlimited.'),
+ which could take up all available free space.  0 === Unlimited.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -233,7 +247,7 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'reservation',
       placeholder: T('Reserved space for this dataset and all children'),
       tooltip: T('Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.'),
+ value applies to both this dataset and any child datasets. 0 === Unlimited.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -265,10 +279,12 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
  before making a change to this setting.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'VERIFY', value: 'VERIFY' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'on', value: 'ON' },
+        { label: 'verify', value: 'VERIFY' },
+        { label: 'off', value: 'OFF' }
       ],
+      value: 'OFF'
     },
     {
       type: 'select',
@@ -277,8 +293,8 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
     },
     {
@@ -288,9 +304,11 @@ export class DatasetFormComponent implements Formconfiguration {
       tooltip: T('Only available in <b>Advanced Mode</b>;\
  choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'Inherit (off)', value: 'OFF' },
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
+      value: 'OFF'
     },
     {
       type: 'select',
@@ -324,7 +342,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  adapts the record size dynamically to adapt to data, if the data has a fixed size\
  for example, a database, matching that size may result in better performance.'),
       options: [
-        { label: 'Inherit', value: null},
+        { label: 'Inherit', value: 'INHERIT'},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -338,6 +356,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         { label: '512K', value: '512K' },
         { label: '1024K', value: '1024K' }
       ],
+      value : 'INHERIT'
     },
     {
       type: 'select',
@@ -347,9 +366,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
  case sensitive), <b>insensitive</b> (assumes filenames are not case sensitive), or\
  <b>mixed</b> (understands both types of filenames).'),
       options: [
-        { label: 'SENSITIVE', value: 'SENSITIVE' },
-        { label: 'INSENSITIVE', value: 'INSENSITIVE' },
-        { label: 'MIXED', value: 'MIXED' }
+        { label: 'Sensitive', value: 'SENSITIVE' },
+        { label: 'Insensitive', value: 'INSENSITIVE' },
+        { label: 'Mixed', value: 'MIXED' }
       ],
       value: 'SENSITIVE'
     }
@@ -409,18 +428,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
 
-  public custActions: Array<any> = [
-    {
-      id: 'basic_mode',
-      name: T('Basic Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      id: 'advanced_mode',
-      name: T('Advanced Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    }
-  ];
+
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -438,20 +446,23 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
 
   afterInit(entityForm: EntityFormComponent) {
+    if(!entityForm.isNew){
+      entityForm.setDisabled('casesensitivity',true);
+      entityForm.setDisabled('name',true);
+      _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+    }
 
   }
 
   preInit(entityForm: EntityFormComponent) {
-    let paramMap: any = (<any>this.aroute.params).getValue();
-
+    const paramMap: any = (<any>this.aroute.params).getValue();
     this.volid = paramMap['volid'];
 
     if (paramMap['pk'] !== undefined) {
       this.pk = paramMap['pk'];
 
-      let pk_parent = paramMap['pk'].split('/');
+      const pk_parent = paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
-      this.fieldConfig.pop();
       this.customFilter = [[['id', '=', this.pk]]];
     }
     // add new dataset
@@ -504,7 +515,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
      // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
      if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
-       let value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+       const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
        returnValue.recordsize = "" + ( 1024 * value ) + "K";
      }
 
@@ -517,16 +528,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       data.quota = null;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       data.refquota = null;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       data.refreservation = null;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       data.reservation = null;
     }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
@@ -534,17 +545,20 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       delete data.quota;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       delete data.refquota;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       delete data.refreservation;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       delete data.reservation;
+    }
+    if (data.recordsize === 'INHERIT') {
+      delete(data.recordsize);
     }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
@@ -559,9 +573,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
         this.route_success));
     }, (res) => {
       this.loader.close();
-      //Handled in global error websocketservice
       this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
-      //console.log(T("Error saving dataset"), res.message, res.stack);
     });
   }
 

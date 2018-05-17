@@ -5,5 +5,12 @@
         "changeOrigin": true,
         "pathRewrite": {"^/api" : "http://$SERVER$/api"},
         "loglevel": "debug"
+    },
+    "/_upload": {
+        "target": "http://$SERVER$",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {"^/_upload" : "http://$SERVER$/_upload"},
+        "loglevel": "debug"
     }
 }

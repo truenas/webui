@@ -85,11 +85,10 @@ export class AFPFormComponent implements OnDestroy {
       placeholder: T('Time Machine'),
       tooltip: T('Set to advertise FreeNAS as a Time\
                   Machine disk so it can be found by Macs.\
-                  Note that when multiple Macs share the same pool,\
-                  low disk-space issues can occur on the Mac.\
-                  Enabling <b>Time Machine</b> on multiple\
-                  shares is not recommended as it can result in\
-                  intermittently failed backups.')
+                  Setting multiple shares for <b>Time Machine</b> use\
+                  is not recommended. When multiple Macs share the\
+                  same pool, low disk space issues and intermittently\
+                  failed backups can occur.'),
     },
     {
       type: 'input',
