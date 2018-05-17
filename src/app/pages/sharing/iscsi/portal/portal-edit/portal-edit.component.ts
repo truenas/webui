@@ -92,7 +92,7 @@ export class PortalEditComponent {
           name : "port",
           placeholder : T('Port'),
           tooltip: T('TCP port used to access the iSCSI target.\
-          Default is <i>3260</i>.'),
+                      Default is <i>3260</i>.'),
           value : '3260',
           required: true,
           validation: [ Validators.required ],
