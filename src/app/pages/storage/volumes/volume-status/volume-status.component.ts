@@ -16,7 +16,7 @@ interface poolDiskInfo {
 @Component({
   selector: 'volume-status',
   templateUrl: './volume-status.component.html',
-  styleUrls: ['./volume-status.component.css'],
+  styleUrls: ['./volume-status.component.css']
 })
 export class VolumeStatusComponent implements OnInit {
 
@@ -42,7 +42,6 @@ export class VolumeStatusComponent implements OnInit {
             this.poolScan = res[0].scan;
             this.dataHandler(res[0]);
           }
-          console.log(res[0]);
         },
         (err) => {
           console.log(err);
@@ -105,10 +104,12 @@ export class VolumeStatusComponent implements OnInit {
         }
       }
     }
-    console.log(this.topology);
   }
 
   getReadableDate(data: any) {
-    return new Date(data.$date);
+    if (data != null) {
+      return new Date(data.$date);
+    }
+    return;
   }
 }
