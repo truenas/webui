@@ -17,6 +17,7 @@ import { EntityFormService } from '../../common/entity/entity-form/services/enti
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogService } from '../../../services/dialog.service';
+import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector: 'jail-add',
@@ -42,7 +43,7 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Mandatory. Can only contain letters, numbers, dashes,\
  or the underscore character.'),
       required: true,
-      validation: [ Validators.required ],
+      validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
     },
     {
       type: 'select',

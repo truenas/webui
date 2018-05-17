@@ -17,14 +17,15 @@
         (select)='onSelect($event)'>
         <ngx-datatable-column [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
             <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-              <div class="headerCheckboxCell">
-                <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+              <div>
+                <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)">&nbsp;</mat-checkbox>
+                            <!-- &nbsp character needed to fix checkbox alignment on mozila-->
               </div>
             </ng-template>
     
             <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-              <div class="checkboxCell">
-                <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+              <div>
+                <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
               </div>
             </ng-template>
           </ngx-datatable-column>
