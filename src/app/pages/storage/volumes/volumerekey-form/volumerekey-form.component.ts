@@ -44,15 +44,13 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     {
       type : 'input',
       name : 'name',
-      label : T('Name'),
       isHidden: true
     },{
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
-      label : T('Passphrase'),
-      placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase'),
+      placeholder: T('Root password'),
+      tooltip: T('Root password'),
       validation: [Validators.required],
       required: true
     }
@@ -92,7 +90,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
         this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error re-keying pool"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);
     });
   }
   

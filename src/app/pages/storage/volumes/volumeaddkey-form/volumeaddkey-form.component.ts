@@ -12,9 +12,10 @@ import {
   Validators
 } from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 import * as _ from 'lodash';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService, StorageService} from '../../../../services/';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -24,12 +25,12 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'app-volumeunlock-form',
+  selector : 'app-addkey-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class VolumeAddkeyFormComponent implements Formconfiguration {
 
-  saveSubmitText = T("Add Key");
+  saveSubmitText = T("Add Recovery Key");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'pools'];
@@ -44,17 +45,15 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     {
       type : 'input',
       name : 'name',
-      label : T('name'),
       isHidden: true,
       validation: [Validators.required],
       required: true
     },{
       type : 'input',
       inputType: 'password',
-      name : 'passphrase',
-      label : T('Passphrase'),
-      placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase'),
+      name : 'password',
+      placeholder: T('Root password'),
+      tooltip: T('Root password'),
       validation: [Validators.required],
       required: true
     }
@@ -73,7 +72,9 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       protected _injector: Injector,
       protected _appRef: ApplicationRef,
       protected dialogService: DialogService,
-      protected loader: AppLoaderService
+      protected loader: AppLoaderService,
+      protected storage: StorageService,
+      protected snackBar: MatSnackBar
   ) {
 
   }
@@ -84,16 +85,26 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
 
   customSubmit(value) {
     this.loader.open();
-
-    return this.rest.post(this.resource_name + "/" + value.name + "/addkey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
-      this.loader.close();
-      this.dialogService.Info(T("Add key to pool"), T("Successfully added key to pool ") + value.name);
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
+    this.ws.call('auth.check_user', ['root', value.password]).subscribe(res => {
+      if (res) {
+        this.rest.post(this.resource_name + "/" + value.name + "/recoverykey/", {}).subscribe((restPostResp) => {
+          this.loader.close();
+          this.snackBar.open(T("Successfully added recovery key to pool ") + value.name, 'close', { duration: 5000 });
+          this.storage.downloadFile('geli.key', restPostResp.data.content, 'application/octet-stream');
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        }, (res) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error adding recovery key to pool"), res.error.error_message, res.error.traceback);
+        });
+      }
+      else {
+        this.loader.close();
+        this.dialogService.Info(T("Invalid password"), T("Invalid password, please try again"));
+      }
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error adding key to pool"), res.message, res.stack);
+      this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
   
