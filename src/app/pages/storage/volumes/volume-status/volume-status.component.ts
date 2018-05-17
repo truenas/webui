@@ -99,6 +99,7 @@ export class VolumeStatusComponent implements OnInit {
       namePostfix = true;
     }
     for (let i in data) {
+      let subParentId = parentId;
       if (data[i].type != 'DISK') {
         let rowId = this.topology.length + 1;
         this.expandRows.push(rowId);
@@ -113,15 +114,15 @@ export class VolumeStatusComponent implements OnInit {
             status: data[i].status,
           }
         );
-        parentId = rowId;
+        subParentId = rowId;
       }
       if (data[i].children) {
         for (let j in data[i].children) {
-          this.parseResponse(this.topology.length + 1, data[i].children[j], parentId);
+          this.parseResponse(this.topology.length + 1, data[i].children[j], subParentId);
         }
       }
       if (data[i].path != null) {
-          this.parseResponse(this.topology.length + 1, data[i], parentId);
+          this.parseResponse(this.topology.length + 1, data[i], subParentId);
       }
     }
   }
