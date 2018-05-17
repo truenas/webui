@@ -17,7 +17,6 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
-import { StatusComponent } from './volumes/status/status.component';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
@@ -71,7 +70,6 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DatasetPermissionsComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
-    StatusComponent,
     DisksListComponent,
     VolumeStatusComponent,
     DiskFormComponent,

@@ -16,7 +16,6 @@ import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { StatusComponent } from './volumes/status/status.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
@@ -71,10 +70,6 @@ export const routes: Routes = [
             path: 'import', component: VolumeImportWizardComponent,
             data: { title: 'Import Pool', breadcrumb: 'Import Pool' }
           },
-          // {
-          //   path: 'status/:pk', component: StatusComponent,
-          //   data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
-          // },
           {
             path: 'status/:pk', component: VolumeStatusComponent,
             data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
