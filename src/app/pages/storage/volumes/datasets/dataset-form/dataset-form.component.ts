@@ -55,6 +55,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public queryCall = "pool.dataset.query";
   public isEntity = true;
   public isNew = false;
+  public parent_ds_array: any;
 
 
   public parent: string;
@@ -442,7 +443,8 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  async preInit(entityForm: EntityFormComponent) {
+
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.volid = paramMap['volid'];
 
@@ -461,39 +463,133 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.fieldConfig[0].readonly = false;
     }
     if(this.parent){
-      this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
+      await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
+        this.parent_ds_array = res[0];
+  
+      })
 
+      this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((parent_dataset)=>{
+      if(this.isNew){
         const sync = _.find(this.fieldConfig, {name:'sync'});
-        const sync_inherit = [{label:`Inherits (${parent_dataset[0].sync.rawvalue})`, value: parent_dataset[0].sync.rawvalue}];
-        sync.options = sync_inherit.concat(sync.options);
-
         const compression = _.find(this.fieldConfig, {name:'compression'});
-        const compression_inherit = [{label:`Inherits (${parent_dataset[0].compression.rawvalue})`, value: parent_dataset[0].compression.rawvalue}];
-        compression.options = compression_inherit.concat(compression.options);        
-        
         const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
-        const deduplication_inherit = [{label:`Inherits (${parent_dataset[0].deduplication.rawvalue})`, value: parent_dataset[0].deduplication.rawvalue}];
-        deduplication.options = deduplication_inherit.concat(deduplication.options);
-
         const exec = _.find(this.fieldConfig, {name:'exec'});
-        const exec_inherit = [{label:`Inherits (${parent_dataset[0].exec.rawvalue})`, value: parent_dataset[0].exec.rawvalue}];
-        exec.options = exec_inherit.concat(exec.options);
-        
         const readonly = _.find(this.fieldConfig, {name:'readonly'});
-        const readonly_inherit = [{label:`Inherits (${parent_dataset[0].readonly.rawvalue})`, value: parent_dataset[0].readonly.rawvalue}];
-        readonly.options = readonly_inherit.concat(readonly.options);
-
         const atime = _.find(this.fieldConfig, {name:'atime'});
-        const atime_inherit = [{label:`Inherits (${parent_dataset[0].atime.rawvalue})`, value: parent_dataset[0].atime.rawvalue}];
-        atime.options = atime_inherit.concat(atime.options);
+        const recordsize = _.find(this.fieldConfig, {name:'recordsize'});
+        const sync_inherit = [{label:`Inherits (${parent_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+        const compression_inherit = [{label:`Inherits (${parent_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+        const deduplication_inherit = [{label:`Inherits (${parent_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+        const exec_inherit = [{label:`Inherits (${parent_dataset[0].exec.rawvalue})`, value: 'INHERIT'}];
+        const readonly_inherit = [{label:`Inherits (${parent_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
+        const atime_inherit = [{label:`Inherits (${parent_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
+        const recordsize_inherit = [{label:`Inherits (${parent_dataset[0].recordsize.value})`, value: 'INHERIT'}];
 
-        if(this.isNew){
-          entityForm.formGroup.controls['sync'].setValue(parent_dataset[0].sync.rawvalue);
-          entityForm.formGroup.controls['compression'].setValue(parent_dataset[0].compression.compression);
-          entityForm.formGroup.controls['deduplication'].setValue(parent_dataset[0].compression.deduplication);
-          entityForm.formGroup.controls['exec'].setValue(parent_dataset[0].compression.exec);
-          entityForm.formGroup.controls['readonly'].setValue(parent_dataset[0].compression.readonly);
-          entityForm.formGroup.controls['atime'].setValue(parent_dataset[0].atime.readonly);
+
+        sync.options = sync_inherit.concat(sync.options);   
+        compression.options = compression_inherit.concat(compression.options);        
+        deduplication.options = deduplication_inherit.concat(deduplication.options);
+        exec.options = exec_inherit.concat(exec.options);
+        readonly.options = readonly_inherit.concat(readonly.options);
+        atime.options = atime_inherit.concat(atime.options);
+        recordsize.options = recordsize_inherit.concat(recordsize.options);
+
+
+        entityForm.formGroup.controls['sync'].setValue('INHERIT');
+        entityForm.formGroup.controls['compression'].setValue('INHERIT');
+        entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+        entityForm.formGroup.controls['exec'].setValue('INHERIT');
+        entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+        entityForm.formGroup.controls['atime'].setValue('INHERIT');
+        entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
+        }
+        else {
+          const edit_sync = _.find(this.fieldConfig, {name:'sync'});
+          const edit_compression = _.find(this.fieldConfig, {name:'compression'});
+          const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
+          const edit_exec = _.find(this.fieldConfig, {name:'exec'});
+          const edit_readonly = _.find(this.fieldConfig, {name:'readonly'});
+          const edit_atime = _.find(this.fieldConfig, {name:'atime'});
+          const edit_recordsize = _.find(this.fieldConfig, {name:'recordsize'});
+          let edit_sync_collection = [{label: parent_dataset[0].sync.value, value: parent_dataset[0].sync.value}];
+          let edit_compression_collection = [{label:parent_dataset[0].compression.value, value: parent_dataset[0].compression.value}];
+          let edit_deduplication_collection = [{label:parent_dataset[0].deduplication.value, value: parent_dataset[0].deduplication.value}];
+          let edit_exec_collection = [{label:parent_dataset[0].exec.value, value: parent_dataset[0].exec.value}];
+          let edit_readonly_collection = [{label:parent_dataset[0].readonly.value, value: parent_dataset[0].readonly.value}];
+          let edit_atime_collection = [{label:parent_dataset[0].readonly.value, value: parent_dataset[0].readonly.value}];
+          let edit_recordsize_collection = [{label:parent_dataset[0].recordsize.value, value: parent_dataset[0].recordsize.value}];
+
+          if (parent_dataset[0].sync.source === "INHERITED"){
+            edit_sync_collection = [{label:`Inherits (${parent_dataset[0].sync.rawvalue})`, value: parent_dataset[0].sync.value}];
+          }
+          else{
+            edit_sync_collection = [{label:`Inherits (${this.parent_ds_array.sync.rawvalue})`, value: 'INHERIT'}];
+
+          }
+
+          edit_sync.options = edit_sync_collection.concat(edit_sync.options);
+
+          if (parent_dataset[0].compression.source === "INHERITED"){
+            edit_compression_collection = [{label:`Inherits (${parent_dataset[0].compression.rawvalue})`, value: parent_dataset[0].compression.value}];
+          }
+          else {
+            edit_compression_collection = [{label:`Inherits (${this.parent_ds_array.compression.rawvalue})`, value: 'INHERIT'}];
+          }
+
+          edit_compression.options = edit_compression_collection.concat(edit_compression.options);
+
+          if (parent_dataset[0].deduplication.source === "INHERITED"){
+            edit_deduplication_collection = [{label:`Inherits (${parent_dataset[0].deduplication.rawvalue})`, value: parent_dataset[0].deduplication.value}];
+          }
+          else {
+            edit_deduplication_collection = [{label:`Inherits (${this.parent_ds_array.deduplication.rawvalue})`, value: 'INHERIT'}];
+          }
+          edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
+
+          if (parent_dataset[0].exec.source === "INHERITED"){
+            edit_exec_collection = [{label:`Inherits (${parent_dataset[0].exec.rawvalue})`, value: parent_dataset[0].exec.value}];
+            
+          }
+          else {
+
+            edit_exec_collection = [{label:`Inherits (${this.parent_ds_array.exec.value})`, value: 'INHERIT'}];
+          }
+          edit_exec.options = edit_exec_collection.concat(edit_exec.options);
+
+          if (parent_dataset[0].readonly.source === "INHERITED"){
+            edit_readonly_collection = [{label:`Inherits (${parent_dataset[0].readonly.rawvalue})`, value: parent_dataset[0].readonly.value}];
+            
+          }
+          else {
+            edit_readonly_collection = [{label:`Inherits (${this.parent_ds_array.readonly.rawvalue})`, value: 'INHERIT'}];
+          }
+          edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
+
+          if (parent_dataset[0].atime.source === "INHERITED"){
+            edit_atime_collection = [{label:`Inherits (${parent_dataset[0].atime.rawvalue})`, value: parent_dataset[0].atime.value}];
+            
+          } else {
+            edit_atime_collection = [{label:`Inherits (${this.parent_ds_array.atime.rawvalue})`, value: 'INHERIT'}];
+
+          }
+          edit_atime.options = edit_atime_collection.concat(edit_atime.options);
+
+          if (parent_dataset[0].recordsize.source === "INHERITED"){
+            edit_recordsize_collection = [{label:`Inherits (${parent_dataset[0].recordsize.rawvalue})`, value: parent_dataset[0].recordsize.value}];
+            
+          } else {
+            edit_recordsize_collection = [{label:`Inherits (${this.parent_ds_array.recordsize.rawvalue})`, value: 'INHERIT'}];
+          }
+          edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
+
+          entityForm.formGroup.controls['sync'].setValue(parent_dataset[0].sync.value);
+          entityForm.formGroup.controls['compression'].setValue(parent_dataset[0].compression.value);
+          entityForm.formGroup.controls['deduplication'].setValue(parent_dataset[0].deduplication.value);
+          entityForm.formGroup.controls['exec'].setValue(parent_dataset[0].exec.  value);
+          entityForm.formGroup.controls['readonly'].setValue(parent_dataset[0].readonly.value);
+          entityForm.formGroup.controls['atime'].setValue(parent_dataset[0].atime.value);
+          entityForm.formGroup.controls['recordsize'].setValue(parent_dataset[0].recordsize.value);
+          
         }
       });
 
