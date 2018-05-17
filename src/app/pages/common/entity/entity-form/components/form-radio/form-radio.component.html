@@ -5,7 +5,8 @@
   </div>
   <mat-radio-group [formControlName]="config.name">
     <mat-radio-button *ngFor="let option of config.options" [value]="option.value" >
-      {{ option.label | translate }}
+      {{ option.label | translate }} 
+      <tooltip *ngIf="option.tooltip" [message]="option.tooltip"></tooltip>
     </mat-radio-button>
   </mat-radio-group>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
