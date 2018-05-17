@@ -90,7 +90,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
         this.rest.post(this.resource_name + "/" + value.name + "/recoverykey/", {}).subscribe((restPostResp) => {
           this.loader.close();
           this.snackBar.open(T("Successfully added recovery key to pool ") + value.name, 'close', { duration: 5000 });
-          this.storage.downloadFile('geli.key', restPostResp.data.content, 'application/octet-stream');
+          this.storage.downloadFile('geli_recovery.key', restPostResp.data.content, 'application/octet-stream');
           this.router.navigate(new Array('/').concat(
             this.route_success));
         }, (res) => {
