@@ -36,7 +36,7 @@ export class JailWizardComponent {
           tooltip: T('A Jail Name can only contain alphanumeric \
                       characters (Aa-Zz 0-9), dashes (-), or \
                       underscores (_).'),
-          validation: [ Validators.required ],
+          validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
         },
         {
           type: 'select',
