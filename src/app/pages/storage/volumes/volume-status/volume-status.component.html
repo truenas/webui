@@ -1,0 +1,24 @@
+<div class="material mat-card mat-card-table">
+  <div class="mat-toolbar mat-card-toolbar">
+    <div class="mat-card-title-text">
+      {{"Scrub Status" | translate}}
+    </div>
+  </div>
+  <div>
+    <mat-list *ngIf="poolScan">
+      <mat-list-item>Status: {{poolScan.state}}</mat-list-item>
+      <mat-list-item>Errors: {{poolScan.errors}}</mat-list-item>
+      <mat-list-item>Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
+    </mat-list>
+  </div>
+  <div class="padding-16">
+    <dx-tree-list id='pool' [dataSource]="topology" [columnAutoWidth]="true" [expandedRowKeys]="expandRows">
+      <dxo-selection mode="single"></dxo-selection>
+      <dxi-column dataField="name" [width]="300"></dxi-column>
+      <dxi-column dataField="read"></dxi-column>
+      <dxi-column dataField="write"></dxi-column>
+      <dxi-column dataField="checksum"></dxi-column>
+      <dxi-column dataField="status"></dxi-column>
+    </dx-tree-list>
+  </div>
+</div>
