@@ -582,7 +582,14 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
           }
           edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
           entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
-          entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+          if (pk_dataset[0].compression.value === 'GZIP') {
+            entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value+'-6');
+          }
+          else{
+            entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+
+          }
+          
           entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
           entityForm.formGroup.controls['exec'].setValue(pk_dataset[0].exec.  value);
           entityForm.formGroup.controls['readonly'].setValue(pk_dataset[0].readonly.value);
