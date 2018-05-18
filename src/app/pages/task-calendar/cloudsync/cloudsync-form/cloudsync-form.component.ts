@@ -286,6 +286,8 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
   protected cloudcredential_query = 'backup.credential.query';
 
+  protected validCredential: boolean = false;
+
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
@@ -364,6 +366,7 @@ export class CloudsyncFormComponent implements OnInit {
                     this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName });
                   });
                 }
+                this.validCredential = true;
               },
               (res) => {
                 this.loader.close();
@@ -375,6 +378,7 @@ export class CloudsyncFormComponent implements OnInit {
                 } else {
                   this.credential.errors = "Invalid Credential!";
                 }
+                this.validCredential = false;
               }
             );
           }
@@ -382,6 +386,7 @@ export class CloudsyncFormComponent implements OnInit {
       } else {
         this.bucket_field.isHidden = true;
         this.folder_field.isHidden = true;
+        this.validCredential = false;
       }
     })
 
