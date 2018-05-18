@@ -23,7 +23,7 @@ export class VolumeStatusComponent implements OnInit {
 
   public poolScan: any;
   public topology: Array<poolDiskInfo> = [];
-  protected pk: any;
+  protected pk: number;
   public expandRows: Array<number> = [1];
 
   constructor(protected aroute: ActivatedRoute,
@@ -32,7 +32,7 @@ export class VolumeStatusComponent implements OnInit {
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
-      this.pk = params['pk'];
+      this.pk = parseInt(params['pk']);
       this.ws.call('pool.query', [
         [
           ["id", "=", this.pk]
