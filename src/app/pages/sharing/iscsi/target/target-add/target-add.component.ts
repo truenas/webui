@@ -38,8 +38,8 @@ export class TargetAddComponent implements OnInit {
       type: 'input',
       name : 'iscsi_target_name',
       placeholder : T('Target Name'),
-      tooltip: T('Required value. Base name will be appended\
- automatically if it does not start with <i>iqn</i>.'),
+      tooltip: T('Required value. Base name is appended\
+                  if it does not start with <i>iqn</i>.'),
       required: true,
       validation: [Validators.required],
     },
@@ -59,7 +59,7 @@ export class TargetAddComponent implements OnInit {
             name : 'iscsi_target_portalgroup',
             placeholder : T('Portal Group ID'),
             tooltip: T('Leave empty or select number of existing portal\
- to use.'),
+                        to use.'),
             value : '',
             options: [],
             required: true,
@@ -70,7 +70,7 @@ export class TargetAddComponent implements OnInit {
             name : 'iscsi_target_initiatorgroup',
             placeholder : T('Initiator Group ID'),
             tooltip: T('Select which existing initiator group has access\
- to the target.'),
+                        to the target.'),
             value : '',
             options: [],
           },
@@ -79,7 +79,7 @@ export class TargetAddComponent implements OnInit {
             name : 'iscsi_target_authtype',
             placeholder : T('Auth Method'),
             tooltip: T('Choices are <i>None, Auto, CHAP,</i> or\
- <i>Mutual CHAP</i>.'),
+                        <i>Mutual CHAP</i>.'),
             value : 'None',
             options : [
               {
@@ -101,7 +101,7 @@ export class TargetAddComponent implements OnInit {
             name : 'iscsi_target_authgroup',
             placeholder : T('Authentication Group number'),
             tooltip: T('<i>None</i> or integer representing number of\
- existing authorized access.'),
+                       existing authorized access.'),
             value : '',
             options: [],
           },
