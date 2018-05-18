@@ -108,9 +108,10 @@ export class AdvancedComponent implements OnInit {
                 which attempts to optimize the system depending on the\
                 installed hardware. <b>Warning:</b> Autotuning is\
                 only used as a temporary measure and is not a\
-                permanent fix for system hardware issues. See\
-                <b>Chapter 5.4.1: Autotune</b> in the\
-                <a href="ui/guide">Guide</a> for more information.')
+                permanent fix for system hardware issues. See the\
+                <a href="..//docs/system.html#autotune"\
+                target="_blank">Autotune section</a> of the guide for\
+                more information.')
   }, {
     type: 'checkbox',
     name: 'debugkernel',
