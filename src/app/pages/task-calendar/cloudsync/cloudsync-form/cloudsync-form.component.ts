@@ -58,18 +58,21 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: T('Choose the cloud storage provider from the list of\
                 existing Cloud credentials.'),
     options: [{
-      label: '---', value: null
+      label: '----------', value: null
     }],
     required: true,
-    validation : [ Validators.required ]
+    validation : [ Validators.required ],
+    hasErrors: false,
+    errors: '',
   }, {
     type: 'select',
     name: 'bucket',
     placeholder: T('Bucket'),
     tooltip: T('Select the S3 bucket to use.'),
     options: [{
-      label: '---', value: null
+      label: '----------', value: ''
     }],
+    value: '',
     isHidden: true,
   }, {
     type: 'input',
@@ -289,46 +292,15 @@ export class CloudsyncFormComponent implements OnInit {
     return this.ws.call('backup.azure.get_buckets', [credential.id]);
   }
 
-  checkProvider(credential){
+  checkCCProvider(credential) {
     if (credential.provider == "AMAZON") {
-      // code...goamazon
-      this.getAmazonCredential(credential).subscribe(res => {
-        _.find(this.fieldConfig, {'name': 'encryption'}).isHidden = false;
-        if (res) {
-          this.bucket_field.options = [];
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item.name, value: item.name});
-          });
-        }
-      });
-    }else if (credential.provider == "BACKBLAZE") {
-      this.getB2Credential(credential).subscribe(res => {
-        if (res) {
-          this.bucket_field.options = [];
-          this.formGroup.controls['folder'].setValue('cloud');
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName});
-          });
-        }
-      });
-    }else if (credential.provider == "GCLOUD") {
-      this.getGcloudCredential(credential).subscribe(res => {
-        if (res) {
-          this.bucket_field.options = [];
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item.name, value: item.name});
-          });
-        }
-      });
-    }else if (credential.provider == "AZURE") {
-      this.getAzureCredential(credential).subscribe(res => {
-        if (res) {
-          this.bucket_field.options = [];
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item, value: item});
-          });
-        }
-      });
+      return this.getAmazonCredential(credential);
+    } else if (credential.provider == "BACKBLAZE") {
+      return this.getB2Credential(credential);
+    } else if (credential.provider == "GCLOUD") {
+      return this.getGcloudCredential(credential)
+    } else if (credential.provider == "AZURE") {
+      return this.getGcloudCredential(credential);
     }
   }
 
@@ -347,19 +319,43 @@ export class CloudsyncFormComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     this.formGroup.controls['credential'].valueChanges.subscribe((res)=>{
-      console.log("credential value changed: ",res);
+      this.credential.hasErrors = false;
+      this.credential.errors = '';
+
       if (res!=null) {
-        _.find(this.fieldConfig, {'name': 'bucket'}).isHidden = false;
-        _.find(this.fieldConfig, {'name': 'folder'}).isHidden = false;
         this.credential_list.forEach((item)=>{
           if (item.id == res) {
             this.selectedCredential = item;
-            this.checkProvider(this.selectedCredential);
+            this.loader.open();
+            this.checkCCProvider(this.selectedCredential).subscribe(
+              (res) => {
+                this.loader.close();
+                this.bucket_field.isHidden = false;
+                this.folder_field.isHidden = false;
+                if (res) {
+                  res.forEach((item) => {
+                    this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName });
+                  });
+                }
+              },
+              (res) => {
+                this.loader.close();
+                this.bucket_field.isHidden = true;
+                this.folder_field.isHidden = true;
+                this.credential.hasErrors = true;
+                if(res.reason) {
+                  this.credential.errors = res.reason;
+                } else {
+                  this.credential.errors = "Invalid Credential!";
+                }
+              }
+            );
           }
         });
+      } else {
+        this.bucket_field.isHidden = true;
+        this.folder_field.isHidden = true;
       }
-      //get cloud credential provider by id,
-      //show bucket, folder filed
     })
 
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
