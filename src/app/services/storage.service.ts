@@ -38,4 +38,34 @@ export class StorageService {
   });
   return myArray
   }
+
+  downloadFile(filename, contents, mime_type){
+    mime_type = mime_type || "text/plain";
+
+    let byteCharacters = atob(contents);
+
+    let byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    let byteArray = new Uint8Array(byteNumbers);
+
+    let blob = new Blob([byteArray], {type: mime_type});
+
+    let dlink = document.createElement('a');
+    document.body.appendChild(dlink);
+    dlink.download = filename;
+    dlink.href =  window.URL.createObjectURL(blob);
+    dlink.onclick = function(e) {
+        // revokeObjectURL needs a delay to work properly
+        var that = this;
+        setTimeout(function() {
+            window.URL.revokeObjectURL(that['href']);
+        }, 1500);
+    };
+
+    dlink.click();
+    dlink.remove();
+  }
 }
