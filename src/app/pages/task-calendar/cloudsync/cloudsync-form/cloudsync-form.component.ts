@@ -118,7 +118,34 @@ export class CloudsyncFormComponent implements OnInit {
     ],
     required: true,
     validation : [ Validators.required ]
-  }, {
+  }, 
+  {
+    type: 'checkbox',
+    name: 'encryption',
+    placeholder: T('Remote encryption'),
+    value: false,
+  },
+  {
+    type: 'checkbox',
+    name: 'filename_encryption',
+    placeholder: T('Filename encryption'),
+    value: true,
+    isHidden: true,
+  },
+  {
+    type: 'input',
+    name: 'encryption_password',
+    placeholder: T('Encryption password'),
+    isHidden: true,
+  },
+  {
+    type: 'input',
+    name: 'encryption_salt',
+    placeholder: T('Encryption salt'),
+    isHidden: true,
+  },
+
+  {
     type: 'select',
     name: 'repeat',
     placeholder: T('Quick Schedule'),
@@ -446,7 +473,6 @@ export class CloudsyncFormComponent implements OnInit {
       this.ws.call('backup.query', [this.pk]).subscribe((res) => {
         if (res) {
           this.data = res[0];
-          console.log("query data: ", this.data);
           for (let i in this.data) {
             let fg = this.formGroup.controls[i];
             if (fg) {
@@ -513,9 +539,13 @@ export class CloudsyncFormComponent implements OnInit {
     event.stopPropagation();
     this.error = null;
     let value = _.cloneDeep(this.formGroup.value);
-    const auxPayLoad = []
     let attributes = {};
-    const payload = {};
+
+    attributes['bucket'] = value.bucket;
+    delete value.bucket;
+    attributes['folder'] = value.folder;
+    delete value.folder;
+    value['attributes'] = attributes;
 
     if (value['repeat'] == 'hourly') {
       value['dayweek'] = '*';
@@ -533,46 +563,38 @@ export class CloudsyncFormComponent implements OnInit {
       value['dayweek'] = '*';
       value['month'] = '*';
     }
+    delete value.repeat;
 
-    payload['description'] = value.description;
-    payload['direction'] = value.direction;
-    payload['transfer_mode'] = value.transfer_mode;
-    payload['path'] = value.path;
-    payload['credential'] = parseInt(value.credential);
-    if (value.encryption) {
-      console.log(value.encryption);
+    if (_.isArray(value.dayweek)) {
+      value['dayweek'] = value.dayweek.join(",");
     }
-    payload['minute'] = value.minute;
-    payload['hour'] = value.hour;
-    payload['daymonth'] = value.daymonth;
-    payload['dayweek'] = value.dayweek.join(",");
-    payload['month'] = value.month.join(",");
-    payload['enabled'] = value.enabled;
-    attributes['bucket'] = value.bucket;
-    attributes['folder'] = value.folder;
-    payload['attributes'] = attributes;
+    if (_.isArray(value.month)) {
+      value['month'] = value.month.join(",");
+    }
 
-    this.loader.open();
+    value['credential'] = parseInt(value.credential);
+
     if (!this.pk) {
-      console.log("create cloud sync");
-      auxPayLoad.push(payload)
-      this.ws.call('backup.create', auxPayLoad).subscribe((res)=>{
+      this.loader.open();
+      this.ws.call('backup.create', [value]).subscribe((res)=>{
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        console.log("error: ", err);
         this.dialog.errorReport('Error', err.reason, err.trace.formatted);
       });
     } else {
-      this.loader.close();
-      this.ws.job('backup.update', [parseInt(this.pid), payload]).subscribe((res)=>{
+      this.loader.open();
+      this.ws.call('backup.update', [parseInt(this.pid), value]).subscribe(
+        (res)=>{
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (err)=>{
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      }, (err)=>{
-        console.log("error: ", err);
         this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-      });
+        }
+      );
     }
   }
 }
