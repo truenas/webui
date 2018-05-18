@@ -63,7 +63,7 @@ export class SnapshotListComponent {
   }];
 
   public columns: Array < any > = [
-    { name: 'Volumne/Dataset', prop: 'task_filesystem' },
+    { name: 'Pool/Dataset', prop: 'task_filesystem' },
     { name: 'Recursive', prop: 'task_recursive' },
     { name: 'When', prop: 'when' },
     { name: 'Frequency', prop: 'frequency' },
