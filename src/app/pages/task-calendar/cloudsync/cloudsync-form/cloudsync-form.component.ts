@@ -385,6 +385,18 @@ export class CloudsyncFormComponent implements OnInit {
       }
     })
 
+    this.formGroup.controls['encryption'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.hideField('filename_encryption', false);
+        this.hideField('encryption_password', false);
+        this.hideField('encryption_salt', false);
+      } else {
+        this.hideField('filename_encryption', true);
+        this.hideField('encryption_password', true);
+        this.hideField('encryption_salt', true);
+      }
+    });
+
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
         this.credential.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
@@ -596,5 +608,26 @@ export class CloudsyncFormComponent implements OnInit {
         }
       );
     }
+  }
+
+  hideField(fieldName: any, show: boolean) {
+    let target = _.find(this.fieldConfig, { 'name': fieldName });
+    target.isHidden = show;
+    this.setDisabled(fieldName, show);
+  }
+
+  setDisabled(name: string, disable: boolean, status ? : string) {
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
+
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+      }
+      return item;
+    });
   }
 }
