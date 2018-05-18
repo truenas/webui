@@ -100,8 +100,8 @@ export class TargetAddComponent implements OnInit {
             type: 'select',
             name : 'iscsi_target_authgroup',
             placeholder : T('Authentication Group number'),
-            tooltip: T('<i>None</i> or integer representing number of\
-                       existing authorized access.'),
+            tooltip: T('Select <i>None</i> or an integer. This value\
+                        represents the number of existing authorized accesses.'),
             value : '',
             options: [],
           },
