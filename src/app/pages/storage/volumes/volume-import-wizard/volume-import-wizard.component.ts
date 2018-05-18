@@ -42,29 +42,33 @@ export class VolumeImportWizardComponent {
         {
           type: 'radio',
           name: 'is_new',
-          placeholder: T('Do you wish to create a new pool?'),
-          tooltip: T('Select yes to create a new pool\
-                      or no to import an existing pool.'),
+          placeholder: T('Create a pool:'),
           options: [
-            {label: 'Yes: create a new pool', value: true},
-            {label: 'No: import an existing pool', value: false},
+            {label: 'Create new pool',
+             tooltip: 'Create a new, empty pool.',
+             value: true},
+            {label: 'Import an existing pool',
+             tooltip: 'Import a pool that exists but is not connected.',
+             value: false},
           ],
-          value: false
+          value: true
         },
       ]
     },
     {
-      label: T('Decrypt ZFS pool'),
+      label: T('Decrypt pool'),
       fieldConfig: [
         {
           type: 'radio',
           name: 'encrypted',
-          placeholder: T('Are you importing an encrypted ZFS pool?'),
-          tooltip: T('Select yes to decrypt the disks prior to importing\
-                      or no to skip to import.'),
+          placeholder: T('Is the pool encrypted?'),
           options: [
-            {label: 'Yes: decrypt the disks', value: true},
-            {label: 'No: skip to import', value: false},
+            {label: 'No, continue with import',
+             tooltip: 'Unencrypted pools can be imported directly.',
+             value: false},
+            {label: 'Yes, decrypt the disks',
+             tooltip: 'Encrypted pool disks must be decrypted prior to import.',
+             value: true}
           ],
           value: false
         },
@@ -74,7 +78,7 @@ export class VolumeImportWizardComponent {
           name: 'devices',
           placeholder: T('Disks'),
           validation : [ Validators.required ],
-          tooltip: T('Select the disks to be decrypt.'),
+          tooltip: T('Select the disks to be decrypted.'),
           required: true,
           isHidden: true,
           options: [],
@@ -220,6 +224,7 @@ export class VolumeImportWizardComponent {
 
   afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
+    this.entityWizard.customNextText = T("Create Pool")
     this.is_new_subscription = 
     ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
       .valueChanges.subscribe((isNew) => {
