@@ -1,0 +1,159 @@
+<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+  <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
+  <mat-input-container class="full-width"[formControlName]="config.name">
+    <input matInput [placeholder]="config.placeholder" [(value)]="colorProxy" (input)="colorProxy=$event.target.value">
+    <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+  </mat-input-container>
+
+  <div  class="mat-card advanced-date-picker">
+    <div class="mat-calendar-content">
+      <h4 class="preview-label">Generated Schedule</h4>
+      <mat-divider></mat-divider>
+      <mat-month-view></mat-month-view>
+      <mat-divider></mat-divider>
+      <h4 class="preview-label">Generated Cron</h4>
+      <code>{{crontab}}</code>
+    </div>
+    <!--<mat-calendar></mat-calendar>-->
+    <!-- MAT-MONTH EXAMPLE:
+      <mat-month-view
+      *ngSwitchCase="'month'"
+      [(activeDate)]="activeDate"
+      [selected]="selected"
+      [dateFilter]="dateFilter"
+      [maxDate]="maxDate"
+      [minDate]="minDate"
+      (selectedChange)="_dateSelected($event)"
+      (_userSelection)="_userSelected()">
+      </mat-month-view>-->
+
+      <div class="cron-fields">
+
+        <section style="text-align:left;">
+          <h4 class="preview-label">Presets</h4>
+          <!--<strong class="preset-label">Presets</strong>-->
+          <mat-form-field>
+            <mat-select placeholder="Choose a preset" [(value)]="preset">
+              <!--<mat-option *ngFor="let preset of presets" [value]="preset.value">
+                {{ preset.label }}
+                </mat-option>-->
+                <mat-option>Hourly</mat-option>
+                <mat-option>Daily</mat-option>
+                <mat-option>Weekly</mat-option>
+                <mat-option>Monthly</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+        <mat-divider></mat-divider>
+
+        <section style="text-align:left;" class="m-h-d">
+          <h4 class="preview-label">Seconds/Minutes/Hours/Days</h4>
+          <mat-form-field style="width:80px;">
+            <input matInput placeholder="Seconds">
+          </mat-form-field>
+          <mat-form-field style="width:80px;">
+            <input matInput placeholder="Minutes">
+          </mat-form-field>
+          <mat-form-field style="width:80px;">
+            <input matInput placeholder="Hours">
+          </mat-form-field>
+          <mat-form-field style="width:80px;">
+            <input matInput placeholder="Days">
+          </mat-form-field>
+        </section>
+        <mat-divider></mat-divider>
+
+        <!-- Toggle Button Group -->
+        <!--<mat-button-toggle-group #group="matButtonToggleGroup">
+          <mat-button-toggle value="left">Minute</mat-button-toggle>
+          <mat-button-toggle value="center">Hour</mat-button-toggle>
+          <mat-button-toggle value="right">Day</mat-button-toggle>
+          <mat-button-toggle value="justify">Month</mat-button-toggle>
+          <mat-button-toggle value="left">WeekDay</mat-button-toggle>
+          </mat-button-toggle-group>-->
+
+          <!-- Months-->
+          <section>
+            <h4 class="preview-label">Months</h4>
+            <table class="months jan-jun">
+              <tbody>
+                <tr>
+                  <!--<td>All</td>-->
+                  <td>Jan</td>
+                  <td>Feb</td>
+                  <td>Mar</td>
+                  <td>Apr</td>
+                  <td>May</td>
+                  <td>Jun</td>
+                </tr>
+                <tr>
+                  <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="months jul-dec">
+              <tbody>
+                <tr>
+                  <!--<td>All</td>-->
+                  <td>Jul</td>
+                  <td>Aug</td>
+                  <td>Sep</td>
+                  <td>Oct</td>
+                  <td>Nov</td>
+                  <td>Dec</td>
+                </tr>
+                <tr>
+                  <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                  <td><mat-checkbox class="month"></mat-checkbox></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <mat-divider></mat-divider>
+
+          <!-- Days of Week-->
+          <section>
+            <h4 class="preview-label">Days of Week</h4>
+            <table class="days-of-week">
+              <tbody>
+                <tr>
+                  <!--<td>All</td>-->
+                  <td>S</td>
+                  <td>M</td>
+                  <td>T</td>
+                  <td>W</td>
+                  <td>T</td>
+                  <td>F</td>
+                  <td>S</td>
+                </tr>
+                <tr>
+                  <!--<td><mat-checkbox class="weekday"></mat-checkbox></td>-->
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox class="weekday"></mat-checkbox></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+      </div>
+  </div>
+  <!--</mat-input-container>-->
+  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+</div>

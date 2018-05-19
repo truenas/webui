@@ -32,7 +32,6 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   private _globalPreview:boolean = false;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
-
   customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
   protected isEntity: boolean = true; // was true
 
@@ -163,6 +162,16 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           required:true,
           options:this.colorOptions,
           tooltip: "Choose which color from the palette will be the theme's accent color",
+          class:'inline'
+        },
+        { 
+          type: 'scheduler', 
+          name: 'cron', 
+          width:'100%',
+          placeholder: 'Scheduler a Task', 
+          required:true,
+          //options:this.colorOptions,
+          tooltip: "Choose a schedule or hit custom to create an advanced schedule",
           class:'inline'
         },
       ]

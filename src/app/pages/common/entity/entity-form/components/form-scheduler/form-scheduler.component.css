@@ -1,0 +1,135 @@
+.advanced-date-picker.mat-card{
+  position:fixed;
+  top:200px;
+  z-index:2;
+  width:620px;
+  padding:0 0 0 300px;
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);
+  display: block;
+  border-radius: 2px;
+}
+
+.advanced-date-picker.mat-card h4.preview-label{
+  /*border-bottom:solid 1px var(--bg1);*/
+  padding:16px 16px 13px;
+  text-align:left;
+}
+
+.advanced-date-picker.mat-card .cron-fields h4.preview-label{
+  padding:0;
+}
+
+.mat-calendar-content{
+  width:300px; /* Width of calendar preview*/
+  position:absolute;
+  left:0;
+  top:0;
+}
+
+.mat-calendar-content code{
+  margin-left:24px;
+  width:252px;
+}
+
+:host ::ng-deep .mat-calendar-body-label,
+:host ::ng-deep .mat-calendar-body-cell-content{
+  color:var(--fg2);
+}
+
+.cron-fields{
+  width:320px;
+  min-height:100%;
+  /*position:absolute;
+  top:0;
+  right:0;*/
+  background-color:var(--primary);
+  color:var(--alt-bg1);
+  text-align:center;
+  padding:0;
+}
+
+:host ::ng-deep .cron-fields .mat-checkbox-frame{
+  border-color:var(--alt-bg1);
+}
+
+:host ::ng-deep .cron-fields .mat-form-field-label,
+/*:host ::ng-deep .cron-fields .mat-focused .mat-form-field-label,*/
+:host ::ng-deep .cron-fields label.mat-form-field-placeholder,
+:host ::ng-deep .cron-fields .mat-input-infix,
+.cron-fields .mat-form-field-should-float.mat-focused label{
+  color:var(--alt-bg1) !important;
+}
+
+:host ::ng-deep .mat-form-field-underline,
+:host ::ng-deep .mat-focused .mat-form-field-underline,
+:host ::ng-deep .mat-form-field-underline .mat-form-field-ripple{
+  background-color:var(--alt-bg1);
+}
+
+.cron-fields section{
+  padding:16px;
+}
+
+.cron-fields section:first-child{
+  margin-bottom:0px;
+}
+.cron-fields section:last-child{
+  padding-bottom:24px;
+}
+
+.cron-fields mat-divider{
+  position:relative;
+}
+
+.cron-fields table.months,
+.cron-fields table.days-of-week{
+  margin:0 auto;
+}
+
+.cron-fields table td{
+  padding:4px 8px 0px;
+  min-width:24px;
+}
+
+.cron-fields table td .month,
+.cron-fields table td .weekday{
+  margin-top:4px;
+}
+
+ /*Button Toggle Group*/
+.cron-fields mat-button-toggle-group{
+  margin:16px 0;
+}
+.cron-fields mat-button-toggle{
+  font-size:12px;
+  padding:7px;
+}
+
+.cron-fields section.m-h-d mat-form-field{
+  display:inline-block;
+  margin-right:24px;
+}
+
+:host ::ng-deep .cron-fields .mat-button-toggle-label-content{
+  line-height:unset;
+  padding:unset;
+}
+
+:host ::ng-deep .mat-calendar-table{
+  width:100%;
+  background-color: var(--bg2);
+  color: var(--fg2);
+}
+
+:host ::ng-deep thead.mat-calendar-table-header{
+  display:none;
+}
+
+:host ::ng-deep .mat-calendar-table-header tr{
+  /*border-bottom:solid 1px var(--bg1);*/
+  padding:4px;
+}
+:host ::ng-deep .mat-calendar-table-header th{
+  text-align: center;
+  padding: 8px 0;
+}

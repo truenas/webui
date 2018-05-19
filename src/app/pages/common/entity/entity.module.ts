@@ -30,7 +30,8 @@ import { FormTextareaComponent } from './entity-form/components/form-textarea/fo
 import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormDatepickerComponent } from './entity-form/components/form-datepicker/form-datepicker.component';
 import { FormColorpickerComponent } from './entity-form/components/form-colorpicker/form-colorpicker.component';
-import {FormParagraphComponent} from './entity-form/components/form-paragraph/form-paragraph.component';
+import { FormParagraphComponent } from './entity-form/components/form-paragraph/form-paragraph.component';
+import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -82,6 +83,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
+    FormSchedulerComponent,
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
@@ -127,6 +129,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
+    FormSchedulerComponent,
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,
