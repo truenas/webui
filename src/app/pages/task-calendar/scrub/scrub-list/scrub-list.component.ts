@@ -22,7 +22,7 @@ export class ScrubListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Volume', prop: 'scrub_volume' },
+    { name: 'Pool', prop: 'scrub_volume' },
     { name: 'Threshold days', prop: 'scrub_threshold' },
     { name: 'Description', prop: 'scrub_description' },
     { name: 'Minute', prop: 'scrub_minute' },
@@ -61,13 +61,13 @@ export class ScrubListComponent {
           for (let i = 0; i < months.length; i++) {
             month_list.push(res[Number(months[i]) - 1][1]);
           }
-          entityList.rows[i].scrub_month = _.join(month_list, ', ');         
+          entityList.rows[i].scrub_month = _.join(month_list, ', ');
         });
       }
 
       let dayweeks_list: Array < string > = [];
       let dayweeks = entityList.rows[i].scrub_dayweek.split(',');
-      
+
       if (_.isEqual(entityList.rows[i].scrub_dayweek, "*")) {
         entityList.rows[i].scrub_dayweek = "Every day";
       } else {
