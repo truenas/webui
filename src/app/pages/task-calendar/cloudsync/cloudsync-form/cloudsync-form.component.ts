@@ -74,12 +74,18 @@ export class CloudsyncFormComponent implements OnInit {
     }],
     value: '',
     isHidden: true,
+    required: true,
+    disabled: true,
+    validation : [ Validators.required ],
   }, {
     type: 'input',
     name: 'folder',
     placeholder: T('Folder'),
     tooltip: T('Enter the name of the folder to sync to.'),
     isHidden: true,
+    required: true,
+    disabled: true,
+    validation : [ Validators.required ],
   }, {
     type: 'select',
     name: 'encryption',
@@ -361,12 +367,15 @@ export class CloudsyncFormComponent implements OnInit {
                 this.loader.close();
                 this.bucket_field.isHidden = false;
                 this.folder_field.isHidden = false;
+                this.bucket_field.options = [{label: '----------', value: ''}];
                 if (res) {
                   res.forEach((item) => {
                     this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName });
                   });
                 }
                 this.validCredential = true;
+                this.setDisabled('bucket', false);
+                this.setDisabled('folder', false);
               },
               (res) => {
                 this.loader.close();
@@ -379,6 +388,8 @@ export class CloudsyncFormComponent implements OnInit {
                   this.credential.errors = "Invalid Credential!";
                 }
                 this.validCredential = false;
+                this.setDisabled('bucket', true);
+                this.setDisabled('folder', true);
               }
             );
           }
