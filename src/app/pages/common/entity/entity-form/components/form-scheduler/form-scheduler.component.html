@@ -32,7 +32,7 @@
         <section style="text-align:left;">
           <h4 class="preview-label">Presets</h4>
           <!--<strong class="preset-label">Presets</strong>-->
-          <mat-form-field>
+          <mat-form-field class="cron-presets">
             <mat-select placeholder="Choose a preset" [(value)]="preset">
               <!--<mat-option *ngFor="let preset of presets" [value]="preset.value">
                 {{ preset.label }}
@@ -48,16 +48,16 @@
 
         <section style="text-align:left;" class="m-h-d">
           <h4 class="preview-label">Seconds/Minutes/Hours/Days</h4>
-          <mat-form-field style="width:80px;">
+          <mat-form-field >
             <input matInput placeholder="Seconds">
           </mat-form-field>
-          <mat-form-field style="width:80px;">
+          <mat-form-field>
             <input matInput placeholder="Minutes">
           </mat-form-field>
-          <mat-form-field style="width:80px;">
+          <mat-form-field>
             <input matInput placeholder="Hours">
           </mat-form-field>
-          <mat-form-field style="width:80px;">
+          <mat-form-field>
             <input matInput placeholder="Days">
           </mat-form-field>
         </section>

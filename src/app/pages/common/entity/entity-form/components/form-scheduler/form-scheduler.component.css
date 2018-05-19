@@ -89,6 +89,7 @@
 .cron-fields table td{
   padding:4px 8px 0px;
   min-width:24px;
+  width:40px;
 }
 
 .cron-fields table td .month,
@@ -105,9 +106,16 @@
   padding:7px;
 }
 
+mat-form-field.cron-presets{
+  width:calc(240px + 24px );
+  margin-left:16px;
+  display:block;
+}
+
 .cron-fields section.m-h-d mat-form-field{
   display:inline-block;
-  margin-right:24px;
+  margin-left:16px;
+  width:120px;
 }
 
 :host ::ng-deep .cron-fields .mat-button-toggle-label-content{
