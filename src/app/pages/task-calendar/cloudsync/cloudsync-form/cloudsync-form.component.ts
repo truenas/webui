@@ -530,8 +530,9 @@ export class CloudsyncFormComponent implements OnInit {
           if (this.data.credential) {
             this.formGroup.controls['credential'].setValue(this.data.credential.id);
           }
-          if(this.data.attrbutes) {
-            this.formGroup.controls['folder'].setValue(this.data.attrbutes.folder);
+          if(this.data.attributes) {
+            this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+            this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
           }
 
           if (_.isEqual(this.formGroup.controls['month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
