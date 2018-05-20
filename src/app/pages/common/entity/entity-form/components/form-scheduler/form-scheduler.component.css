@@ -31,6 +31,22 @@
   width:252px;
 }
 
+ul.schedule-list{
+    margin-top: 16px;
+    list-style-type: none;
+    max-height: 242px;
+    overflow-y: auto;
+}
+
+ul.schedule-list li{
+  margin-left:16px;
+  padding:4px 12px;
+}
+
+ul.schedule-list li:nth-child(odd){
+  background-color:rgba(0,0,0,0.1);
+}
+
 :host ::ng-deep .mat-calendar-body-label,
 :host ::ng-deep .mat-calendar-body-cell-content{
   color:var(--fg2);
@@ -97,7 +113,7 @@
   margin-top:4px;
 }
 
- /*Button Toggle Group*/
+/*Button Toggle Group*/
 .cron-fields mat-button-toggle-group{
   margin:16px 0;
 }
@@ -140,4 +156,11 @@ mat-form-field.cron-presets{
 :host ::ng-deep .mat-calendar-table-header th{
   text-align: center;
   padding: 8px 0;
+}
+:host ::ng-deep .mat-calendar-body td.mat-calendar-body-cell.mat-calendar-body-active .mat-calendar-body-cell-content{
+  background: var(--bg1);
+  border-radius: 50%; 
+}
+:host ::ng-deep .mat-calendar-body-today{
+  border-color:var(--green);
 }
