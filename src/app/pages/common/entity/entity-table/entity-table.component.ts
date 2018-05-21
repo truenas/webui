@@ -120,13 +120,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
-        this.allColumns.push(column);
+        this.allColumns.push(column); // Make array of optionally-displayed cols
       } else {
-        this.alwaysDisplayedCols.push(column);
+        this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
-      
-      // let myAllCols = this.allColumns;
-      // console.log(myAllCols.shift());
     });
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
