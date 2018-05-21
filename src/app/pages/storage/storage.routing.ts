@@ -73,7 +73,7 @@ export const routes: Routes = [
           },
           {
             path: 'status/:pk', component: VolumeStatusComponent,
-            data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
+            data: { title: 'Pool Status', breadcrumb: 'Pool Status' }
           },
           {
             path: 'detachvolume/:pk', component: VolumeDeleteComponent,
