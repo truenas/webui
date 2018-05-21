@@ -33,9 +33,10 @@ export class ServiceDDNSComponent {
       type : 'select',
       name : 'provider',
       placeholder : T('Provider'),
-      tooltip: T('Several providers are supported. If your provider is\
-       not listed, select <i>Custom Provider</i> and enter the information in\
-       the <i>Custom Server</i> and <i>Custom Path</i> fields.'),
+      tooltip: T('Several providers are supported. If a provider is\
+                  not listed, select <i>Custom Provider</i> and\
+                  enter the information in the <i>Custom Server</i>\
+                  and <i>Custom Path</i> fields.'),
       options : [
         {label :'dyndns@3322.org',  value :'3322.org'},
         {label :'default@changeip.com',  value :'changeip.com'},
@@ -83,39 +84,43 @@ export class ServiceDDNSComponent {
       name : 'checkip_server',
       placeholder : T('CheckIP Server'),
       tooltip: T('Enter the name and port of the server that reports the\
-       external IP address in the format <i>server.name.org:port</i>.'),
+                  external IP address. Example: <b>server.name.org:port</b>.'),
     },
     {
       type : 'input',
       name : 'checkip_path',
       placeholder : T('CheckIP Path'),
-      tooltip: T('Enter the path requested by the <b>CheckIP Server</b> to determine the user IP address.'),
+      tooltip: T('Enter the path requested by the <b>CheckIP Server</b>\
+                  to determine the user IP address.'),
     },
     {
       type : 'checkbox',
       name : 'ssl',
       placeholder : T('SSL'),
-      tooltip: T('Set to use HTTPS for the connection to the server that updates the DNS record.'),
+      tooltip: T('Set to use HTTPS for the connection to the server\
+                  that updates the DNS record.'),
     },
     {
       type : 'input',
       name : 'domain',
       placeholder : T('Domain name'),
-      tooltip: T('Enter a fully qualified domain name. Example: <i>yourname.dyndns.org</i>'),
+      tooltip: T('Enter a fully qualified domain name.\
+                  Example: <b>yourname.dyndns.org</b>'),
     },
     {
       type : 'input',
       name : 'username',
       placeholder : T('Username'),
-      tooltip: T('Username used to log on to the provider and update the record.'),
+      tooltip: T('Enter the username used to log in to the provider\
+                  and update the record.'),
       required: true
     },
     {
       type : 'input',
       name : 'password',
       placeholder : T('Password'),
-      tooltip: T('Password used to log on to the provider and update the\
-       record.'),
+      tooltip: T('Enter the password used to log in to the provider\
+                  and update the record.'),
       inputType : 'password',
       validation :
           [ Validators.minLength(8), matchOtherValidator('password2'), Validators.required ],
