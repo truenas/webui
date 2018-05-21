@@ -12,6 +12,7 @@ interface poolDiskInfo {
   write: any,
   checksum: any,
   status: any,
+  actions?: any,
 }
 
 @Component({
@@ -50,7 +51,7 @@ export class VolumeStatusComponent implements OnInit {
     });
   }
 
-  parseResponse(id: any, data: any, parentId: any) {
+  parseResponse(id: any, data: any, parentId: any, category?: any) {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -75,6 +76,56 @@ export class VolumeStatusComponent implements OnInit {
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
     };
+
+    // add actions
+    if (data.type && data.type == 'DISK') {
+      item.actions = [{
+        label: "Edit",
+        onClick: (row) => {
+          console.log("edit", row);
+        }
+      }];
+      if (category) {
+        if (category == "data") {
+          item.actions.push({
+            label: "Offline",
+            onClick: (row) => {
+              console.log("offline", row);
+            }
+          }, {
+            label: "Replace",
+            onClick: (row) => {
+              console.log("replace", row);
+            }
+          });
+        } else if (category == "cache" || category == "logs") {
+          item.actions.push({
+            label: "Offline",
+            onClick: (row) => {
+              console.log("offline", row);
+            }
+          }, {
+            label: "Replace",
+            onClick: (row) => {
+              console.log("replace", row);
+            }
+          }, {
+            label: "Remove",
+            onClick: (row) => {
+              console.log("remove", row);
+            }
+          });
+        } else if (category == "spares") {
+          item.actions.push({
+            label: "Remove",
+            onClick: (row) => {
+              console.log("remove", row);
+            }
+          });
+        }
+      }
+    }
+
     this.topology.push(item);
   }
 
@@ -118,11 +169,11 @@ export class VolumeStatusComponent implements OnInit {
       }
       if (data[i].children) {
         for (let j in data[i].children) {
-          this.parseResponse(this.topology.length + 1, data[i].children[j], subParentId);
+          this.parseResponse(this.topology.length + 1, data[i].children[j], subParentId, parentRow);
         }
       }
       if (data[i].path != null) {
-          this.parseResponse(this.topology.length + 1, data[i], subParentId);
+          this.parseResponse(this.topology.length + 1, data[i], subParentId, parentRow);
       }
     }
   }
