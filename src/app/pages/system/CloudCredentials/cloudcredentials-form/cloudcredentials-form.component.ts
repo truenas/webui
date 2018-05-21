@@ -20,13 +20,13 @@ export class CloudCredentialsFormComponent {
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
-  
+
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
       placeholder: T('Name'),
-      // tooltip: T('Enter the Amazon Web Service account name.'),
+      tooltip: T('Enter a name for the new credential.'),
       required: true,
       validation: [Validators.required],
     },
@@ -55,11 +55,11 @@ export class CloudCredentialsFormComponent {
       type: 'textarea',
       name: 'access_key',
       placeholder: T('Access Key'),
-      tooltip: T('Paste the Amazon account access key. This can be found\
-       on the <a href="https://aws.amazon.com/" target="_blank">\
-       Amazon AWS</a> website by clicking on <b>My account</b>, then\
-       <b>Security Credentials</b> and\
-       <b>Access Keys (Access Key ID and Secret Access Key)</b>.'),
+      tooltip: T('Paste the Amazon account access key. This is found\
+                  on <a href="https://aws.amazon.com/"\
+                  target="_blank">Amazon AWS</a> by navigating <b>My\
+                  account -> Security Credentials -> Access Keys\
+                  (Access Key ID and Secret Access Key)</b>.'),
       required: true,
       validation: [Validators.required],
       isHidden: false,
@@ -68,10 +68,10 @@ export class CloudCredentialsFormComponent {
       type: 'textarea',
       name: 'secret_key',
       placeholder: T('Secret Key'),
-      tooltip: T('After pasting the Access Key value to the FreeNAS Cloud\
-       Credential Access Key field, enter the <b>Secret Key</b> value saved\
-       when the pair was created. If the Secret Key value is not known, a new\
-       key pair can be created on the same Amazon screen.'),
+      tooltip: T('Enter or paste the saved <b>Secret Key</b>. Create a\
+                  new key pair on the same AWS screen where the\
+                  <b>Access Key</b> is generated if the Secret Key\
+                  cannot be found or remembered.'),
       required: true,
       validation: [Validators.required],
       isHidden: false,
@@ -80,13 +80,16 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'endpoint',
       placeholder: T('Endpoint URL'),
+      tooltip: T('Enter the entry point URL for the web service.'),
       isHidden: false,
     },
     {
       type : 'input',
       name : 'account_name',
       placeholder : T('Account Name'),
-      tooltip : T('Enter the Azure Storage account name.'),
+      tooltip : T('Enter the <a\
+                   href="https://docs.microsoft.com/en-us/azure/storage/"\
+                   target="_blank">Azure Storage</a> account name.'),
       required: true,
       validation : [ Validators.required ],
       isHidden: true,
@@ -95,9 +98,9 @@ export class CloudCredentialsFormComponent {
       type : 'textarea',
       name : 'account_key',
       placeholder :  T('Account Key'),
-      tooltip : T('Paste the Azure Storage account key. Refer to the\
-       <a href="https://docs.microsoft.com/en-us/azure/storage/"\
-       target="_blank">Azure Storage Documentation</a> for more information.'),
+      tooltip : T('Enter or paste the <a\
+                   href="https://docs.microsoft.com/en-us/azure/storage/"\
+                   target="_blank">Azure Storage</a> account key.'),
        required: true,
        validation : [ Validators.required ],
        isHidden: true,
@@ -106,9 +109,10 @@ export class CloudCredentialsFormComponent {
       type : 'textarea',
       name : 'accesskey',
       placeholder :  T('Access Key'),
-      tooltip : T('Paste the account access key. For more information refer\
-       to the <a href="https://www.backblaze.com/help.html" target="_blank">\
-       BACKBLAZE help</a> page.'),
+      tooltip : T('Enter or paste the account access key. See the <a\
+                   href="https://www.backblaze.com/help.html"\
+                   target="_blank">BACKBLAZE help page</a> for more\
+                   information.'),
        required: true,
        validation : [ Validators.required ],
        isHidden: true,
@@ -117,7 +121,8 @@ export class CloudCredentialsFormComponent {
       type : 'textarea',
       name : 'secretkey',
       placeholder : T('Secret Key'),
-      tooltip : T('Enter the secret key generated.'),
+      tooltip : T('Enter the secret key generated with the <b>Access\
+                   Key</b>.'),
       required: true,
       validation : [ Validators.required ],
       isHidden: true,
@@ -126,6 +131,7 @@ export class CloudCredentialsFormComponent {
       type : 'textarea',
       name : 'preview',
       placeholder : T('Preview JSON Service Account Key'),
+      tooltip: T('Read-only display of the selected Key file.'),
       disabled: true,
       isHidden: true,
       readonly: true,
@@ -134,10 +140,9 @@ export class CloudCredentialsFormComponent {
       type : 'readfile',
       name : 'keyfile',
       placeholder : T('JSON Service Account Key'),
-      tooltip : T('Browse to the location of the saved Google Cloud\
-       Storage key and select it. Refer to <a\
-       href="https://cloud.google.com/storage/docs/" target="_blank">\
-       Gcloud documentation</a> for more information.'),
+      tooltip : T('Click <i>Browse</i> to select a saved <a\
+                   href="https://cloud.google.com/storage/docs/"\
+                   target="_blank">Google Cloud Storage</a> key.'),
       validation : [ Validators.required ],
       isHidden: true,
     },
