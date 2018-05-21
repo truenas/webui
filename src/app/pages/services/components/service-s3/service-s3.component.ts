@@ -42,8 +42,10 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'bindip',
       placeholder : T('IP Address'),
-      tooltip: T('The IP address on which to run the S3 service; 0.0.0.0\
-       sets the server to listen on all addresses.'),
+      tooltip: T('Enter the IP address which runs the <a\
+                  href="..//docs/services.html#s3" target="_blank">S3\
+                  service</a>. <i>0.0.0.0</i> tells the server to listen\
+                  on all addresses.'),
       options : [
         {label:'0.0.0.0', value: '0.0.0.0'}
       ]
@@ -52,7 +54,7 @@ export class ServiceS3Component implements OnInit {
       type : 'input',
       name : 'bindport',
       placeholder : T('Port'),
-      tooltip: T('TCP port on which to provide the S3 service (default 9000).'),
+      tooltip: T('Enter the TCP port which provides the S3 service.'),
       value: '9000'
     },
     {
@@ -67,8 +69,8 @@ export class ServiceS3Component implements OnInit {
       type : 'input',
       name : 'secret_key',
       placeholder : T('Secret Key'),
-      tooltip: T('The password to be used by connecting S3 systems; must\
-       be at least 8 but no more than 40 characters long.'),
+      tooltip: T('Enter the password that must be used by connecting S3\
+                  systems.'),
       inputType : 'password',
       required : true,
       validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required]
@@ -76,8 +78,7 @@ export class ServiceS3Component implements OnInit {
     {
       type : 'input',
       name : 'secret_key2',
-      placeholder : T('Confirm S3 Key'),
-      tooltip: T('Re-enter the S3 password to confirm.'),
+      placeholder : T('Confirm Secret Key'),
       inputType : 'password',
       required: true,
       validation : [ matchOtherValidator('secret_key'), Validators.required ],
@@ -88,7 +89,7 @@ export class ServiceS3Component implements OnInit {
       explorerType: 'directory',
       name : 'storage_path',
       placeholder : T('Disk'),
-      tooltip: T('S3 filesystem directory.'),
+      tooltip: T('Browse to the directory for the S3 filesystem.'),
       required: true,
       validation: [ Validators.required]
     },
@@ -96,7 +97,7 @@ export class ServiceS3Component implements OnInit {
       type : 'checkbox',
       name : 'browser',
       placeholder : T('Enable Browser'),
-      tooltip: T('Enable the web user interface for the S3 service.'),
+      tooltip: T('Set to enable the S3 web user interface.'),
     },
 /*  This is to be enabled when the mode feature is finished and fully implemented for S3
     {
@@ -112,8 +113,9 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'certificate',
       placeholder : T('Certificate'),
-      tooltip : T('Add an SSL certificate to be used for secure S3\
-       connections. To create a certificate, use <b>System/Certificates</b>.'),
+      tooltip : T('Add an <a href="..//docs/system.html#certificates"\
+                   target="_blank">SSL certificate</a> to be used for\
+                   secure S3 connections.'),
       options : []
     },
   ];

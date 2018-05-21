@@ -17,13 +17,13 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
-import { StatusComponent } from './volumes/status/status.component';
 import {ImportDiskComponent} from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
 import { VolumeDeleteComponent } from './volumes/volume-delete/';
 import { VolumesListComponent } from './volumes/volumes-list/';
+import { VolumeStatusComponent } from './volumes/volume-status';
 import { routing } from './storage.routing';
 import { ZvolAddComponent } from './volumes/zvol/zvol-add'
 import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
@@ -40,7 +40,6 @@ import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddke
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
-
 
 @NgModule({
   imports : [
@@ -71,8 +70,8 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DatasetPermissionsComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
-    StatusComponent,
     DisksListComponent,
+    VolumeStatusComponent,
     DiskFormComponent,
     DiskWipeComponent
   ],

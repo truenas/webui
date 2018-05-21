@@ -39,8 +39,8 @@ export class ServiceSSHComponent implements OnInit {
       type : 'select',
       name : 'ssh_bindiface',
       placeholder : T('Bind Interfaces'),
-      tooltip: T('By default, SSH listens on all interfaces unless\
-       specific interfaces are chosen in the drop-down menu by checking the box.'),
+      tooltip: T('Select interfaces for SSH to listen on. Leave all\
+                  options unselected for SSH to listen on all interfaces.'),
       multiple : true,
       options : []
     },
@@ -48,51 +48,61 @@ export class ServiceSSHComponent implements OnInit {
       type : 'input',
       name : 'ssh_tcpport',
       placeholder : T('TCP Port'),
-      tooltip: 'Port to open for SSH connection requests; <i>22</i> by default.',
+      tooltip: 'Open a port for SSH connection requests.',
     },
     {
       type : 'checkbox',
       name : 'ssh_rootlogin',
-      placeholder : T('Login as Root with password'),
-      tooltip: T('<b>For security reasons, root logins are\
-        discouraged and disabled by default.</b> If enabled, password must be\
-        set for <i>root</i> user in <strong>Users</strong>.'),
+      placeholder : T('Login as Root with Password'),
+      tooltip: T('<b>Root logins are discouraged.</b> Set to allow root\
+                  logins. A password must be set for the <i>root</i>\
+                  user in <a href="..//docs/account.html#users"\
+                  target="_blank">Users</a>.'),
     },
     {
       type : 'checkbox',
       name : 'ssh_passwordauth',
       placeholder : T('Allow Password Authentication'),
-      tooltip: T('If unchecked, key-based authentication for all\
-       users is needed; requires <a href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html" target="_blank">additional setup</a>\
-       on both the SSH client and server.'),
+      tooltip: T('Unset to require key-based authentication for\
+                  all users. This requires <a\
+                  href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html"\
+                  target="_blank">additional setup</a> on both the SSH\
+                  client and server.'),
     },
     {
       type : 'checkbox',
       name : 'ssh_kerberosauth',
       placeholder : T('Allow Kerberos Authentication'),
-      tooltip: T('Before checking this box, ensure <a href="http://doc.freenas.org/11/directoryservice.html#kerberos-realms" target="_blank">Kerberos Realms<a>\
-       and <a href="http://doc.freenas.org/11/directoryservice.html#kerberos-keytabs" target="_blank">Kerberos Keytabs</a>\
-       have been configured and that the FreeNAS® system can communicate with the KDC.'),
+      tooltip: T('Ensure <a\
+                  href="..//docs/directoryservice.html#kerberos-realms"\
+                  target="_blank">Kerberos Realms</a> and <a\
+                  href="..//docs/directoryservice.html#kerberos-keytabs"\
+                  target="_blank">Kerberos Keytabs</a> are configured\
+                  and the system can communicate with the Kerberos\
+                  Domain Controller before setting.'),
     },
     {
       type : 'checkbox',
       name : 'ssh_tcpfwd',
       placeholder : T('Allow TCP Port Forwarding'),
-      tooltip: T('Allows users to bypass firewall restrictions using\
-       SSH’s port <a href="https://www.symantec.com/connect/articles/ssh-port-forwarding" target="_blank">forwarding feature</a>.'),
+      tooltip: T('Set to allow users to bypass firewall restrictions\
+                  using the SSH port <a\
+                  href="https://www.symantec.com/connect/articles/ssh-port-forwarding"\
+                  target="_blank">forwarding feature</a>.'),
     },
     {
       type : 'checkbox',
       name : 'ssh_compression',
       placeholder : T('Compress Connections'),
-      tooltip: T('May reduce latency over slow networks.'),
+      tooltip: T('Set to attempt to reduce latency over slow networks.'),
     },
     {
       type : 'select',
       name : 'ssh_sftp_log_level',
       placeholder : T('SFTP Log Level'),
-      tooltip: T('Select the <a href="https://www.freebsd.org/cgi/man.cgi?query=syslog" target="_blank">syslog(3)</a>\
-       level of the SFTP server.'),
+      tooltip: T('Select the <a\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=syslog"\
+                  target="_blank">syslog(3)</a> level of the SFTP server.'),
       options : [
         {label : '', value : ''},
         {label : 'Quiet', value : 'QUIET'},
@@ -109,8 +119,10 @@ export class ServiceSSHComponent implements OnInit {
       type : 'select',
       name : 'ssh_sftp_log_facility',
       placeholder : T('SFTP Log Facility'),
-      tooltip: T('Select the <a href="https://www.freebsd.org/cgi/man.cgi?query=syslog" target="_blank">syslog(3)</a>\
-       facility of the SFTP server.'),
+      tooltip: T('Select the <a\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=syslog"\
+                  target="_blank">syslog(3)</a> facility of the SFTP\
+                  server.'),
       options : [
         {label : '', value : ''},
         {label : 'Daemon', value : 'DAEMON'},
@@ -130,9 +142,12 @@ export class ServiceSSHComponent implements OnInit {
       type : 'textarea',
       name : 'ssh_options',
       placeholder : T('Extra options'),
-      tooltip: T('Additional <a href="https://www.freebsd.org/cgi/man.cgi?query=sshd_config" target="_blank">sshd_config(5)</a>\
-       options not covered in this screen, one per line; these options are\
-       case-sensitive and misspellings may prevent the SSH service from starting.'),
+      tooltip: T('Add any more <a\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=sshd_config"\
+                  target="_blank">sshd_config(5)</a> options not covered\
+                  in this screen. Enter one option per line. These\
+                  options are case-sensitive. Misspellings can prevent\
+                  the SSH service from starting.'),
     },
   ];
   protected advanced_field: Array<any> = [

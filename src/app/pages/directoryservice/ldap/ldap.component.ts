@@ -136,7 +136,8 @@ export class LdapComponent {
       type : 'select',
       name : 'ldap_kerberos_realm',
       placeholder : 'Kerberos Realm',
-      tooltip: 'Select the realm created in <a href="guide"\
+      tooltip: 'Select the realm created using the instructions in <a\
+                href="..//docs/directoryservice.html#kerberos-realms"\
                 target="_blank">Kerberos Realms</a>.',
       options : []
     },
@@ -145,8 +146,9 @@ export class LdapComponent {
       name : 'ldap_kerberos_principal',
       placeholder : 'Kerberos Principal',
       tooltip: 'Select the location of the principal in the keytab\
-                created in <a href="guide" target="_blank">Kerberos\
-                Keytabs</a>.',
+                created as described in <a\
+                href="..//docs/directoryservice.html#kerberos-keytabs"\
+                target="_blank">Kerberos Keytabs</a>.',
       options : []
     },
     {
