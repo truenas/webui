@@ -109,7 +109,7 @@ export class DatasetFormComponent implements Formconfiguration{
       placeholder: T('Compression level')
       ,
       tooltip: T('For more information about the available compression algorithms,\
- refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
+ refer to the <a href="..//docs/storage.html#compression" target="_blank">Compression section</a> of the guide.'),
       options: [
         { label: 'off', value: 'OFF' },
         { label: 'lz4 (recommended)', value: 'LZ4' ,},
@@ -284,7 +284,7 @@ export class DatasetFormComponent implements Formconfiguration{
       name: 'exec',
       placeholder: T('Exec'),
       tooltip: T('Only available in <b>Advanced Mode</b>;\
- choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
+ choices are <b>Inherit (on)</b>, <b>On</b>, or <b>Off</b>.'),
       options: [
         { label: 'On', value: 'ON' },
         { label: 'Off', value: 'OFF' }

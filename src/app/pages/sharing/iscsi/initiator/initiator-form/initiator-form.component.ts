@@ -21,7 +21,7 @@ export class InitiatorFormComponent {
       name : 'iscsi_target_initiator_initiators',
       placeholder : T('Initiators'),
       tooltip: T('Use <i>ALL</i> keyword or a list of initiator hostnames\
- separated by spaces.'),
+                  separated by spaces.'),
       value : 'ALL',
       inputType : 'textarea',
       required: true,
@@ -31,8 +31,8 @@ export class InitiatorFormComponent {
       type : 'input',
       name : 'iscsi_target_initiator_auth_network',
       placeholder : T('Authorized Network'),
-      tooltip: T('Use <i>ALL</i> keyword or a network address with CIDR\
- mask such as <i>192.168.2.0/24</i>.'),
+      tooltip: T('Use <i>ALL</i> keyword or a network address with a CIDR\
+                  mask such as <i>192.168.2.0/24</i>.'),
       value : 'ALL',
       inputType : 'textarea',
       required: true,

@@ -4,6 +4,7 @@ import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import {WebSocketService} from '../../../services/ws.service';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector: 'app-signin',
@@ -23,7 +24,8 @@ export class SigninComponent implements OnInit {
     password: ''
   }
   constructor(private ws: WebSocketService, private router: Router, 
-    private snackBar: MatSnackBar, public translate: TranslateService) {
+    private snackBar: MatSnackBar, public translate: TranslateService,
+    private dialogService: DialogService) {
     this.ws = ws;
     this.ws.call('system.is_freenas').subscribe((res)=>{
       this.logo_ready = true;
@@ -85,7 +87,6 @@ export class SigninComponent implements OnInit {
     this.failed = true;
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
-    this.signinData.username = '';
     let message = '';
     if (this.ws.token === null) {
       message = 'Username or Password is incorrect';
@@ -96,6 +97,18 @@ export class SigninComponent implements OnInit {
     this.translate.get('Ok').subscribe((ok: string) => {
       this.translate.get(message).subscribe((res: string) => {
         this.snackBar.open(res, ok, {duration: 4000});
+      });
+    });
+  }
+
+  onGoToLegacy() {
+    this.translate.get('Switch to Legacy UI').subscribe((gotolegacy: string) => {
+      this.translate.get("Switch to Legacy UI?").subscribe((gotolegacy_prompt) => {
+        this.dialogService.confirm("Switch to Legacy UI", "Switch to Legacy UI?", true).subscribe((res) => {
+          if (res) {
+            window.location.href = '/legacy/';
+          }
+        });
       });
     });
   }

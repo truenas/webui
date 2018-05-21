@@ -112,7 +112,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
     if (rowData.vol_encrypt === 2) {
 
-      if (rowData.status !== "LOCKED") {
+      if (rowData.is_decrypted) {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
@@ -132,9 +132,7 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
 
-      }
-
-      if (rowData.status === "LOCKED") {
+      } else  {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {

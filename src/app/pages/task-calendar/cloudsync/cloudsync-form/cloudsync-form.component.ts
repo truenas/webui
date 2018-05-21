@@ -58,25 +58,34 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: T('Choose the cloud storage provider from the list of\
                 existing Cloud credentials.'),
     options: [{
-      label: '---', value: null
+      label: '----------', value: null
     }],
     required: true,
-    validation : [ Validators.required ]
+    validation : [ Validators.required ],
+    hasErrors: false,
+    errors: '',
   }, {
     type: 'select',
     name: 'bucket',
     placeholder: T('Bucket'),
     tooltip: T('Select the S3 bucket to use.'),
     options: [{
-      label: '---', value: null
+      label: '----------', value: ''
     }],
+    value: '',
     isHidden: true,
+    required: true,
+    disabled: true,
+    validation : [ Validators.required ],
   }, {
     type: 'input',
     name: 'folder',
     placeholder: T('Folder'),
     tooltip: T('Enter the name of the folder to sync to.'),
     isHidden: true,
+    required: true,
+    disabled: true,
+    validation : [ Validators.required ],
   }, {
     type: 'select',
     name: 'encryption',
@@ -115,7 +124,34 @@ export class CloudsyncFormComponent implements OnInit {
     ],
     required: true,
     validation : [ Validators.required ]
-  }, {
+  }, 
+  {
+    type: 'checkbox',
+    name: 'encryption',
+    placeholder: T('Remote encryption'),
+    value: false,
+  },
+  {
+    type: 'checkbox',
+    name: 'filename_encryption',
+    placeholder: T('Filename encryption'),
+    value: true,
+    isHidden: true,
+  },
+  {
+    type: 'input',
+    name: 'encryption_password',
+    placeholder: T('Encryption password'),
+    isHidden: true,
+  },
+  {
+    type: 'input',
+    name: 'encryption_salt',
+    placeholder: T('Encryption salt'),
+    isHidden: true,
+  },
+
+  {
     type: 'select',
     name: 'repeat',
     placeholder: T('Quick Schedule'),
@@ -256,6 +292,8 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
   protected cloudcredential_query = 'backup.credential.query';
 
+  public validCredential: boolean = false;
+
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
@@ -289,46 +327,15 @@ export class CloudsyncFormComponent implements OnInit {
     return this.ws.call('backup.azure.get_buckets', [credential.id]);
   }
 
-  checkProvider(credential){
+  checkCCProvider(credential) {
     if (credential.provider == "AMAZON") {
-      // code...goamazon
-      this.getAmazonCredential(credential).subscribe(res => {
-        _.find(this.fieldConfig, {'name': 'encryption'}).isHidden = false;
-        if (res) {
-          this.bucket_field.options = [];
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item.name, value: item.name});
-          });
-        }
-      });
-    }else if (credential.provider == "BACKBLAZE") {
-      this.getB2Credential(credential).subscribe(res => {
-        if (res) {
-          this.bucket_field.options = [];
-          this.formGroup.controls['folder'].setValue('cloud');
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName});
-          });
-        }
-      });
-    }else if (credential.provider == "GCLOUD") {
-      this.getGcloudCredential(credential).subscribe(res => {
-        if (res) {
-          this.bucket_field.options = [];
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item.name, value: item.name});
-          });
-        }
-      });
-    }else if (credential.provider == "AZURE") {
-      this.getAzureCredential(credential).subscribe(res => {
-        if (res) {
-          this.bucket_field.options = [];
-          res.forEach((item) => {
-            this.bucket_field.options.push({ label: item, value: item});
-          });
-        }
-      });
+      return this.getAmazonCredential(credential);
+    } else if (credential.provider == "BACKBLAZE") {
+      return this.getB2Credential(credential);
+    } else if (credential.provider == "GCLOUD") {
+      return this.getGcloudCredential(credential)
+    } else if (credential.provider == "AZURE") {
+      return this.getGcloudCredential(credential);
     }
   }
 
@@ -347,20 +354,64 @@ export class CloudsyncFormComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     this.formGroup.controls['credential'].valueChanges.subscribe((res)=>{
-      console.log("credential value changed: ",res);
+      this.credential.hasErrors = false;
+      this.credential.errors = '';
+
       if (res!=null) {
-        _.find(this.fieldConfig, {'name': 'bucket'}).isHidden = false;
-        _.find(this.fieldConfig, {'name': 'folder'}).isHidden = false;
         this.credential_list.forEach((item)=>{
           if (item.id == res) {
             this.selectedCredential = item;
-            this.checkProvider(this.selectedCredential);
+            this.loader.open();
+            this.checkCCProvider(this.selectedCredential).subscribe(
+              (res) => {
+                this.loader.close();
+                this.bucket_field.isHidden = false;
+                this.folder_field.isHidden = false;
+                this.bucket_field.options = [{label: '----------', value: ''}];
+                if (res) {
+                  res.forEach((item) => {
+                    this.bucket_field.options.push({ label: item.bucketName, value: item.bucketName });
+                  });
+                }
+                this.validCredential = true;
+                this.setDisabled('bucket', false);
+                this.setDisabled('folder', false);
+              },
+              (res) => {
+                this.loader.close();
+                this.bucket_field.isHidden = true;
+                this.folder_field.isHidden = true;
+                this.credential.hasErrors = true;
+                if(res.reason) {
+                  this.credential.errors = res.reason;
+                } else {
+                  this.credential.errors = "Invalid Credential!";
+                }
+                this.validCredential = false;
+                this.setDisabled('bucket', true);
+                this.setDisabled('folder', true);
+              }
+            );
           }
         });
+      } else {
+        this.bucket_field.isHidden = true;
+        this.folder_field.isHidden = true;
+        this.validCredential = false;
       }
-      //get cloud credential provider by id,
-      //show bucket, folder filed
     })
+
+    this.formGroup.controls['encryption'].valueChanges.subscribe((res) => {
+      if (res) {
+        this.hideField('filename_encryption', false);
+        this.hideField('encryption_password', false);
+        this.hideField('encryption_salt', false);
+      } else {
+        this.hideField('filename_encryption', true);
+        this.hideField('encryption_password', true);
+        this.hideField('encryption_salt', true);
+      }
+    });
 
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
@@ -450,7 +501,6 @@ export class CloudsyncFormComponent implements OnInit {
       this.ws.call('backup.query', [this.pk]).subscribe((res) => {
         if (res) {
           this.data = res[0];
-          console.log("query data: ", this.data);
           for (let i in this.data) {
             let fg = this.formGroup.controls[i];
             if (fg) {
@@ -480,8 +530,9 @@ export class CloudsyncFormComponent implements OnInit {
           if (this.data.credential) {
             this.formGroup.controls['credential'].setValue(this.data.credential.id);
           }
-          if(this.data.attrbutes) {
-            this.formGroup.controls['folder'].setValue(this.data.attrbutes.folder);
+          if(this.data.attributes) {
+            this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+            this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
           }
 
           if (_.isEqual(this.formGroup.controls['month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
@@ -517,9 +568,13 @@ export class CloudsyncFormComponent implements OnInit {
     event.stopPropagation();
     this.error = null;
     let value = _.cloneDeep(this.formGroup.value);
-    const auxPayLoad = []
     let attributes = {};
-    const payload = {};
+
+    attributes['bucket'] = value.bucket;
+    delete value.bucket;
+    attributes['folder'] = value.folder;
+    delete value.folder;
+    value['attributes'] = attributes;
 
     if (value['repeat'] == 'hourly') {
       value['dayweek'] = '*';
@@ -537,46 +592,59 @@ export class CloudsyncFormComponent implements OnInit {
       value['dayweek'] = '*';
       value['month'] = '*';
     }
+    delete value.repeat;
 
-    payload['description'] = value.description;
-    payload['direction'] = value.direction;
-    payload['transfer_mode'] = value.transfer_mode;
-    payload['path'] = value.path;
-    payload['credential'] = parseInt(value.credential);
-    if (value.encryption) {
-      console.log(value.encryption);
+    if (_.isArray(value.dayweek)) {
+      value['dayweek'] = value.dayweek.join(",");
     }
-    payload['minute'] = value.minute;
-    payload['hour'] = value.hour;
-    payload['daymonth'] = value.daymonth;
-    payload['dayweek'] = value.dayweek.join(",");
-    payload['month'] = value.month.join(",");
-    payload['enabled'] = value.enabled;
-    attributes['bucket'] = value.bucket;
-    attributes['folder'] = value.folder;
-    payload['attributes'] = attributes;
+    if (_.isArray(value.month)) {
+      value['month'] = value.month.join(",");
+    }
 
-    this.loader.open();
+    value['credential'] = parseInt(value.credential);
+
     if (!this.pk) {
-      console.log("create cloud sync");
-      auxPayLoad.push(payload)
-      this.ws.call('backup.create', auxPayLoad).subscribe((res)=>{
+      this.loader.open();
+      this.ws.call('backup.create', [value]).subscribe((res)=>{
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
-        console.log("error: ", err);
         this.dialog.errorReport('Error', err.reason, err.trace.formatted);
       });
     } else {
-      this.loader.close();
-      this.ws.job('backup.update', [parseInt(this.pid), payload]).subscribe((res)=>{
+      this.loader.open();
+      this.ws.call('backup.update', [parseInt(this.pid), value]).subscribe(
+        (res)=>{
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(this.route_success));
+        },
+        (err)=>{
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
-      }, (err)=>{
-        console.log("error: ", err);
         this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-      });
+        }
+      );
     }
+  }
+
+  hideField(fieldName: any, show: boolean) {
+    let target = _.find(this.fieldConfig, { 'name': fieldName });
+    target.isHidden = show;
+    this.setDisabled(fieldName, show);
+  }
+
+  setDisabled(name: string, disable: boolean, status ? : string) {
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
+
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+      }
+      return item;
+    });
   }
 }
