@@ -45,9 +45,11 @@ export class VolumeImportWizardComponent {
           placeholder: T('Create a pool:'),
           options: [
             {label: 'Create new pool',
+             name: 'create_new_pool_opt',
              tooltip: 'Create a new, empty pool.',
              value: true},
             {label: 'Import an existing pool',
+             name: 'import_pool_opt',
              tooltip: 'Import a pool that exists but is not connected.',
              value: false},
           ],
