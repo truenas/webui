@@ -223,14 +223,15 @@ export class VolumeImportWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
+    const createPoolText = T("Create Pool")
     this.entityWizard = entityWizard;
-    this.entityWizard.customNextText = T("Create Pool")
+    this.entityWizard.customNextText = createPoolText
     this.is_new_subscription = 
     ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
       .valueChanges.subscribe((isNew) => {
       this.isNew = isNew;
       if (isNew) {
-        this.entityWizard.customNextText = T("Create Pool")
+        this.entityWizard.customNextText = createPoolText
       } else {
         this.entityWizard.customNextText = T("Next");
       }
