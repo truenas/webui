@@ -87,7 +87,6 @@ export class SigninComponent implements OnInit {
     this.failed = true;
     this.progressBar.mode = 'determinate';
     this.signinData.password = '';
-    this.signinData.username = '';
     let message = '';
     if (this.ws.token === null) {
       message = 'Username or Password is incorrect';
