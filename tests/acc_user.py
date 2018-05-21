@@ -36,7 +36,7 @@ xpaths = {
         'submenuGroup': '//*[@id="1-0"]',
         'newUser': '//*[@id="username"]/mat-input-container/div/div[1]/div/input',
         'primaryGroupcheckbox': '//*[@id="group_create"]/mat-checkbox/label/div',
-        'primaryGroupdropdown': '//*[@id="group"]/mat-form-field/div/div[1]/div',
+        'primaryGroupdropdown': '//*[@id="group"]/mat-form-field/div/div[1]/div/mat-select/div/div[1]',
         'newUserName': '//*[@id="full_name"]/mat-input-container/div/div[1]/div/input',
         'newUserEmail': '//*[@id="email"]/mat-input-container/div/div[1]/div/input',
         'newUserPass': '//*[@id="password"]/mat-input-container/div/div[1]/div/input',
@@ -157,6 +157,7 @@ class create_user_test(unittest.TestCase):
             # Taking screenshot
             self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
@@ -197,6 +198,7 @@ class create_user_test(unittest.TestCase):
             # Taking screenshot
             self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
             self.error_check()
             # check if the the user list is loaded after addding a new user
         except Exception:
@@ -237,6 +239,7 @@ class create_user_test(unittest.TestCase):
             # Taking screenshot
             self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())

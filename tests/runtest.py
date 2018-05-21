@@ -46,7 +46,7 @@ if path.exists("/usr/local/etc/ixautomation.conf"):
     else:
         grid_server_ip = "127.0.0.1"
 else:
-    grid_server_ip = "127.0.0.1"
+    grid_server_ip = "10.20.21.200"
 
 sys.stdout.flush()
 

@@ -7,7 +7,7 @@ from os import getcwd
 # username for the machine
 username = "root"
 # password for the machine
-password = "testing"
+password = "abcd1234"
 # new user with create primary group check
 newusername = "userNAS"
 # new user full name
