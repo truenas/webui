@@ -85,11 +85,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public columns: Array<any> = [];
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public userPrefColumns: string; // to set user-preferred cols in local storage
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
   public arePresetsStillCurrent: boolean; // stores whether we are using factory presets or user preferred ones
-  anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+  public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -118,7 +119,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }   
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
-      this.allColumns.push(column);
+      if (!column.always_display) {
+        this.allColumns.push(column);
+      } else {
+        this.alwaysDisplayedCols.push(column);
+      }
+      
+      // let myAllCols = this.allColumns;
+      // console.log(myAllCols.shift());
     });
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
