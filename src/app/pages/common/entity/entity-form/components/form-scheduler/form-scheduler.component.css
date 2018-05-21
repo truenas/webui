@@ -162,5 +162,5 @@ mat-form-field.cron-presets{
   border-radius: 50%; 
 }
 :host ::ng-deep .mat-calendar-body-today{
-  border-color:var(--green);
+  border-color:var(--green) !important;
 }
