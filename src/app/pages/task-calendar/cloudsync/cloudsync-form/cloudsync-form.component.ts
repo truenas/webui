@@ -292,7 +292,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
   protected cloudcredential_query = 'backup.credential.query';
 
-  protected validCredential: boolean = false;
+  public validCredential: boolean = false;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
