@@ -350,7 +350,13 @@ export class ZvolFormComponent {
   
           
           entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
-          entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+          if (pk_dataset[0].compression.value === 'GZIP') {
+            entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value+'-6');
+          }
+          else{
+            entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+
+          }
           entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
           
         })
