@@ -572,10 +572,10 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
   
             if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
+              edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.value})`, value: pk_dataset[0].recordsize.value}];
               
             } else {
-              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.rawvalue})`, value: 'INHERIT'}];
+              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
             }
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
