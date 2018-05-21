@@ -152,7 +152,7 @@ export class VolumeImportWizardComponent {
   private disks_decrypted = false;
   protected stepper;
 
-  protected isNew = false;
+  protected isNew = true;
   protected is_new_subscription;
   protected encrypted;
   protected encrypted_subscription;
