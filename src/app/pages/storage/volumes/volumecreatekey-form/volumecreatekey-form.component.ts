@@ -24,7 +24,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'app-volumeunlock-form',
+  selector : 'app-createpassphrase-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class VolumeCreatekeyFormComponent implements Formconfiguration {
@@ -50,7 +50,6 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
-      label: T("passphrase"),
       placeholder: T('Passphrase'),
       tooltip: T('Enter the GELI passphrase.'),
       validation: [Validators.required],
@@ -59,8 +58,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       type : 'input',
       inputType: 'password',
       name : 'passphrase2',
-      label : T('Passphrase2'),
-      placeholder: T('Passphrase2 must match above'),
+      placeholder: T('Verify passphrase'),
       tooltip: T('Confirm the GELI passphrase.'),
       validation: [Validators.required],
       required: true
@@ -101,7 +99,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
         this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error creating passphrase for pool"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error creating passphrase for pool"), res.error.message, res.error.traceback);
     });
   }
 

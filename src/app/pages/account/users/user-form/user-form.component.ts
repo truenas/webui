@@ -43,11 +43,12 @@ export class UserFormComponent {
           type : 'input',
           name : 'username',
           placeholder : T('Username'),
-          tooltip : T('Maximum length is 16 characters, although using 8 or\
-          less is recommended for interoperability. Usernames cannot begin with\
-          a hyphen or contain a space, tab, or these characters:\
-          <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b> . A <b>$</b> can only be used\
-          as the last character.'),
+          tooltip : T('Enter an alphanumeric username of 8 characters\
+                      or less. Usernames cannot begin with a hyphen\
+                      (<b>-</b>) or contain a space, tab, or these\
+                      characters: <b>, : + & # %^ ( ) ! @ ~ * ? < > =</b>\
+                      . A <b>$</b> can only be used as the last\
+                      character.'),
           required: true,
           validation : [ Validators.required ]
         },
@@ -55,7 +56,7 @@ export class UserFormComponent {
           type : 'input',
           name : 'full_name',
           placeholder : T('Full Name'),
-          tooltip : T('Entering a name is required. Spaces are allowed.'),
+          tooltip : T('Spaces are allowed.'),
           required: true,
           validation : [ Validators.required ]
         },
@@ -63,14 +64,14 @@ export class UserFormComponent {
           type : 'input',
           name : 'email',
           placeholder : T('Email'),
-          tooltip : T('Associate an email address with the account'),
+          tooltip : T('Enter the email address of the new user.'),
         },
         {
           type : 'input',
           name : 'password',
           placeholder : T('Password'),
-          tooltip : T('Required unless <b>Disable password login</b> is\
-     checked. Passwords cannot contain a <b>?</b>.'),
+          tooltip : T('Required unless <b>Enable password login</b> is\
+                      <i>No</i>. Passwords cannot contain a <b>?</b>.'),
           inputType : 'password',
         },
         {
@@ -79,7 +80,6 @@ export class UserFormComponent {
           placeholder : T('Confirm Password'),
           inputType : 'password',
           validation : [ matchOtherValidator('password') ],
-    
         },
       ]
     },
@@ -96,19 +96,19 @@ export class UserFormComponent {
           type : 'input',
           name : 'uid',
           placeholder : T('User ID'),
-          tooltip : T('By convention, user accounts have an ID greater than\
-      1000 and system accounts have an ID equal to the default port number\
-      used by the service.'),
+          tooltip : T('User accounts have an ID greater than 1000 and\
+                      system accounts have an ID equal to the default\
+                      port number used by the service.'),
           required: true,
           validation : [ Validators.required ]
         },
         {
           type : 'checkbox',
           name : 'group_create',
-          placeholder : T('Create a new Primary Group for the user.'),
-          tooltip : T('By default, a primary group with the same name as the\
-     user is created. Uncheck this box to select a different primary group\
-     name.'),
+          placeholder : T('New Primary Group'),
+          tooltip : T('Create a new primary group with the same name as\
+                      the user. Uncheck to select an existing group for\
+                      the user.'),
           value : true,
           isHidden: false
         },
@@ -116,8 +116,8 @@ export class UserFormComponent {
           type : 'select',
           name : 'group',
           placeholder : T('Primary Group'),
-          tooltip : T('For security reasons, FreeBSD will not give a user\
-     <b>su</b> permissions if <i>wheel</i> is their primary group.'),
+          tooltip : T('New users are not given <b>su</b> permissions if\
+                      <i>wheel</i> is their primary group.'),
           options : [],
           relation : [
             {
@@ -133,7 +133,7 @@ export class UserFormComponent {
           type : 'select',
           name : 'groups',
           placeholder : T('Auxiliary Groups'),
-          tooltip : T('Add this user to more groups. Choose one or more groups from the dropdown list.'),
+          tooltip : T('Add this user to additional groups.'),
           options : [],
           multiple : true
         },
@@ -156,15 +156,16 @@ export class UserFormComponent {
           name: 'home',
           placeholder: T('Home Directory'),
           value: '/nonexistent',
-          tooltip : T('Browse to the name of an <b>existing</b> volume or\
-          dataset that the user will be assigned permission to access.'),
+          tooltip : T('Define an <b>existing</b> pool or dataset as\
+                      the user home directory and adjust the\
+                      permissions.'),
         },
         {
           type : 'permissions',
           name : 'home_mode',
-          placeholder : T('Home Directory Mode'),
+          placeholder : T('Home Directory Permissions'),
           tooltip : T('Sets default Unix permissions of the user home\
-     directory. Read-only for built-in users.'),
+                      directory. This is read-only for built-in users.'),
         },
       ]
     },
@@ -178,16 +179,17 @@ export class UserFormComponent {
           type : 'textarea',
           name : 'sshpubkey',
           placeholder : T('SSH Public Key'),
-          tooltip : T('Paste the <b>public</b> SSH key of the user for any\
-          key-based authentication. <b>Do not paste the private key!</b>'),
+          tooltip : T('Enter or paste the <b>public</b> SSH key of the\
+                      user for any key-based authentication. <b>Do not\
+                      paste the private key!</b>'),
         },
         {
           type : 'select',
           name : 'password_disabled',
           placeholder : T('Enable password login'),
           tooltip : T('Enable password logins and authentication to SMB\
-     shares. selecting <b>No</b> hides out <b>Lock user</b> and\
-     <b>Permit Sudo</b>, which are mutually exclusive.'),
+                      shares. Selecting <b>No</b> removes the <b>Lock\
+                      User</b> and <b>Permit Sudo</b> options.'),
           options : [
             {label:'Yes', value: false },
             {label:'No', value: true },
@@ -204,27 +206,26 @@ export class UserFormComponent {
         {
           type : 'checkbox',
           name : 'locked',
-          placeholder : T('Lock user'),
-          tooltip : T('Check this to prevent the user from logging in until\
-     the account is unlocked (this box is unchecked). Checking this box\
-     grays out <b>Disable password login</b> which is mutually exclusive.'),
+          placeholder : T('Lock User'),
+          tooltip : T('Disable logging in to this user account.'),
           isHidden: false
         },
         {
           type : 'checkbox',
           name : 'sudo',
           placeholder : T('Permit Sudo'),
-          tooltip : T('Check this to give members of the group permission to\
-     use <a href="https://www.sudo.ws/" target="_blank">sudo</a>.'),
+          tooltip : T('Give this user permission to use <a\
+                      href="https://www.sudo.ws/"\
+                      target="_blank">sudo</a>.'),
           isHidden: false
         },
-    
         {
           type : 'checkbox',
           name : 'microsoft_account',
           placeholder : T('Microsoft Account'),
-          tooltip : T('Check this if the user will be connecting from a\
-          Windows 8 or higher system.'),
+          tooltip : T('Set to allow additional username authentication\
+                      methods when the user is connecting from a\
+                      Windows 8 or newer operating system.'),
         },
       ]
     },
@@ -355,7 +356,7 @@ export class UserFormComponent {
     if (!entityForm.isNew){
       entityForm.submitFunction = this.submitFunction;
     }
-  
+
   }
 
   clean_uid(value) {

@@ -38,8 +38,10 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_interval',
       placeholder : T('Check Interval'),
-      tooltip: T('In minutes, how often <b>smartd</b> wakes up to check if\
-            any tests have been configured to run.'),
+      tooltip: T('Define a number of minutes for <a\
+                  href="https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                  target="_blank">smartd</a> to wake up and check if any\
+                  tests are configured to run.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -47,9 +49,8 @@ export class ServiceSMARTComponent {
       type : 'select',
       name : 'smart_powermode',
       placeholder : T('Power Mode'),
-      tooltip: T('Tests are not performed if the system enters the\
-       specified power mode; choices\
-       are: <i>Never</i>, <i>Sleep</i>, <i>Standby</i>, or <i>Idle</i>.'),
+      tooltip: T('Tests are not performed when the system enters the\
+                  selected power mode.'),
       options : [
         {label : 'Never', value : 'never'},
         {label : 'Sleep', value : 'sleep'},
@@ -63,9 +64,9 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_difference',
       placeholder : T('Difference'),
-      tooltip: T('Default of <i>0</i> disables this\
-       check, otherwise reports if the temperature of a drive has\
-       changed by N degrees Celsius since last report.'),
+      tooltip: T('Enter a number of degrees in Celsius. SMART reports if\
+                  the temperature of a drive has changed by N degrees\
+                  Celsius since the last report.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -73,9 +74,9 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_informational',
       placeholder : T('Informational'),
-      tooltip: T('default of 0 disables this check, otherwise will\
-       message with a log level of LOG_INFO if the temperature is higher\
-       than specified degrees in Celsius.'),
+      tooltip: T('Enter a threshold temperature in Celsius. SMART will\
+                  message with a log level of LOG_INFO if the\
+                  temperature is higher than the threshold.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -83,9 +84,9 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_critical',
       placeholder : T('Critical'),
-      tooltip: T('Default of 0 disables this check, otherwise will\
-       message with a log level of LOG_CRIT and send an email if the\
-       temperature is higher than specified degrees in Celsius.'),
+      tooltip: T('Enter a threshold temperature in Celsius. SMART will\
+                  message with a log level of LOG_CRIT and send an email\
+                  if the temperature is higher than the threshold.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -93,7 +94,9 @@ export class ServiceSMARTComponent {
       type : 'input',
       name : 'smart_email',
       placeholder : T('Email'),
-      tooltip: T('Email address of person or alias to receive S.M.A.R.T. alerts.'),
+      tooltip: T('Enter an email address to receive <a\
+                  href="http://10.231.3.10//docs/services.html#s-m-a-r-t"\
+                  target="_blank">S.M.A.R.T.</a> alerts.'),
     },
   ];
 

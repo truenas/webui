@@ -66,9 +66,9 @@ export class ZvolEditComponent {
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level:',
-      tooltip: 'Choose a compression algorithm. See the <a\
-                href="guide" target="_blank">Compression</a> section\
-                for full descriptions of each option.',
+      tooltip: 'Choose a <a\
+                href="..//docs/storage.html#compression">compression</a>\
+                algorithm.',
       options: [
         {label : 'Inherit', value : "inherit"},
         {label : 'Off', value : "off"},
@@ -86,8 +86,9 @@ export class ZvolEditComponent {
       placeholder: 'ZFS Deduplication:',
       tooltip : 'Activates the process for ZFS to transparently reuse\
                  a single copy of duplicated data to save space. See\
-                 the <a href="guide" target="_blank">Deduplication</a>\
-                 section for more details.',
+                 the <a href="//docs/storage.html#deduplication"\
+                 target="_blank">Deduplication section</a> of the\
+                 guide for more details.',
       options: [
         {label : 'Inherit (off)', value : "inherit"},
         {label : 'On', value : "on"},
