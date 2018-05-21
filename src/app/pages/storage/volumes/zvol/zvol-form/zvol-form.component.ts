@@ -283,7 +283,7 @@ export class ZvolFormComponent {
 
         this.ws.call('pool.dataset.query', [[["id","=",parent_dataset]]]).subscribe((parent_dataset_res)=>{
           this.custActions = null; 
-          name.isHidden=true;
+          entityForm.setDisabled('name',true);
           sparse.isHidden =true;
           volblocksize.isHidden =true;
           _.find(this.fieldConfig, {name:'sparse'}).isHidden=true;
