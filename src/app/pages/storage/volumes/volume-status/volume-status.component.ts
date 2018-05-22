@@ -39,23 +39,28 @@ export class VolumeStatusComponent implements OnInit {
     protected dialogService: DialogService,
     protected loader: AppLoaderService) {}
 
+  getData() {
+    this.ws.call('pool.query', [
+      [
+        ["id", "=", this.pk]
+      ]
+    ]).subscribe(
+      (res) => {
+        if (res[0]) {
+          this.poolScan = res[0].scan;
+          this.dataHandler(res[0]);
+        }
+      },
+      (err) => {
+        new EntityUtils().handleError(this, err);
+      }
+    );
+  }
+
   ngOnInit() {
     this.aroute.params.subscribe(params => {
       this.pk = parseInt(params['pk']);
-      this.ws.call('pool.query', [
-        [
-          ["id", "=", this.pk]
-        ]
-      ]).subscribe(
-        (res) => {
-          if (res[0]) {
-            this.poolScan = res[0].scan;
-            this.dataHandler(res[0]);
-          }
-        },
-        (err) => {
-          new EntityUtils().handleError(this, err);
-        });
+      this.getData();
     });
   }
 
@@ -96,66 +101,84 @@ export class VolumeStatusComponent implements OnInit {
             this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
             this.router.navigate(new Array('').concat(this.editDiskRoute));
           })
-        }
+        },
+        isHidden: false,
+      }, {
+        label: "Offline",
+        onClick: (row) => {
+          this.dialogService.confirm(
+            "Offline",
+            "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
+            ).subscribe((res) => {
+              console.log(res);
+              if (res) {
+                this.loader.open();
+                let value = { label: row.path };
+                this.rest.post('storage/volume/' + this.pk + '/offline/', {
+                  body: JSON.stringify(value)
+                }).subscribe(
+                  (res) => {
+                    this.getData();
+                    this.loader.close();
+                  },
+                  (res)=> {
+                    this.loader.close();
+                    this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
+                  }
+                );
+              }
+            })
+          console.log("offline", row);
+        },
+        isHidden: data.status == "OFFLINE" ? true : false,
+      }, {
+        label: "Online",
+        onClick: (row) => {
+          this.dialogService.confirm(
+            "Offline",
+            "Are your sure you want to online the disk " + _.split(row.name, 'p')[0],
+            ).subscribe((res) => {
+              console.log(res);
+              if (res) {
+                this.loader.open();
+                let value = { label: row.path };
+                this.rest.post('storage/volume/' + this.pk + '/online/', {
+                  body: JSON.stringify(value)
+                }).subscribe(
+                  (res) => {
+                    this.getData();
+                    this.loader.close();
+                  },
+                  (res)=> {
+                    this.loader.close();
+                    this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
+                  }
+                );
+              }
+            })
+          console.log("online", row);
+        },
+        isHidden: data.status == "ONLINE" ? true : false,
+      }, {
+        label: "Replace",
+        onClick: (row) => {
+          console.log("replace", row);
+        },
+        isHidden: false,
+      }, {
+        label: "Remove",
+        onClick: (row) => {
+          console.log("remove", row);
+        },
+        isHidden: false,
       }];
       if (category) {
         if (category == "data") {
-          item.actions.push({
-            label: "Offline",
-            onClick: (row) => {
-              this.dialogService.confirm(
-                "Offline",
-                "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
-                ).subscribe((res) => {
-                  console.log(res);
-                  if (res) {
-                    this.loader.open();
-                    let value = { label: row.path };
-                    this.rest.post('storage/volume/' + this.pk + '/offline/', {
-                      body: JSON.stringify(value)
-                    }).subscribe(
-                      (res) => {
-                        this.loader.close();
-                      },
-                      (res)=> {
-                        this.loader.close();
-                        this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
-                      }
-                    );
-                  }
-                })
-              console.log("offline", row);
-            }
-          }, {
-            label: "Replace",
-            onClick: (row) => {
-              console.log("replace", row);
-            }
-          });
-        } else if (category == "cache" || category == "logs") {
-          item.actions.push({
-            label: "Offline",
-            onClick: (row) => {
-              console.log("offline", row);
-            }
-          }, {
-            label: "Replace",
-            onClick: (row) => {
-              console.log("replace", row);
-            }
-          }, {
-            label: "Remove",
-            onClick: (row) => {
-              console.log("remove", row);
-            }
-          });
+          _.find(item.actions, {label: "Remove"}).isHidden = true;
         } else if (category == "spares") {
-          item.actions.push({
-            label: "Remove",
-            onClick: (row) => {
-              console.log("remove", row);
-            }
-          });
+          _.find(item.actions, {label: "Online"}).isHidden = true;
+          _.find(item.actions, {label: "Offline"}).isHidden = true;
+          _.find(item.actions, {label: "Replace"}).isHidden = true;
         }
       }
     }
@@ -213,6 +236,7 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   dataHandler(pool: any) {
+    this.topology = [];
     this.parseResponse(1, pool, 0);
     this.parseTopology(pool.topology.data, 'data');
     this.parseTopology(pool.topology.log, 'logs');
