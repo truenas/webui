@@ -69,7 +69,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
                                  target="_blank">GELI</a> encryption is\
                                  available for ZFS pools. <b>WARNING:</b>\
                                  Read the <a\
-                                 href="..//docs/storage.html#encryption"\
+                                 href="..//docs/storage.html#managing-encrypted-pools"\
                                  target="_blank">Encryption section</a>\
                                  of the guide before activating this\
                                  option.');
