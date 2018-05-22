@@ -26,7 +26,6 @@ import { VolumesListComponent } from './volumes/volumes-list/';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { routing } from './storage.routing';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form'
-import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DisksListComponent } from './disks/disks-list/';
@@ -60,7 +59,6 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,
     ZvolFormComponent,
-    ZvolEditComponent,
     VolumeImportWizardComponent,
     SnapshotListComponent,
     SnapshotCloneComponent,

@@ -12,7 +12,6 @@ import { ManagerComponent } from './volumes/manager/';
 import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
-import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
