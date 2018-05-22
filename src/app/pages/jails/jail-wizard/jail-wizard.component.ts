@@ -77,7 +77,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           type: 'input',
           name: 'ip4_addr',
           placeholder: T('IPv4 Address'),
-          tooltip: T('The IPv4 address for the jail to use.'),
+          tooltip: T('IPv4 address for the jail.'),
           validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
           relation: [{
             action: 'DISABLE',
@@ -95,7 +95,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
                       <br>Enter <b>none</b> to configure the jail with \
                       no IPv4 default route. <br>\
                       <b>A jail without a default route will not be \
-                      able to access the outside world.</b>'),
+                      able to access a network or the outside world.</b>'),
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -108,7 +108,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           type: 'input',
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
-          tooltip: T('The IPv6 address for the jail to use.'),
+          tooltip: T('IPv6 address for the jail.'),
           validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
         },
         {
@@ -119,7 +119,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
                   <br>Enter <b>none</b> to configure the jail with no \
                   IPv6 default route. <br>\
                   <b>A jail without a default route will not be able \
-                  to access the outside world.</b>'),
+                  to access a network or the outside world.</b>'),
         },
       ]
     },
