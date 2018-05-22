@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WebSocketService } from "../../../../services/ws.service";
+import { WebSocketService, RestService, AppLoaderService, DialogService } from "../../../../services";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -14,6 +14,7 @@ interface poolDiskInfo {
   checksum: any,
   status: any,
   actions?: any,
+  path?: any,
 }
 
 @Component({
@@ -32,8 +33,11 @@ export class VolumeStatusComponent implements OnInit {
 
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
+    protected rest: RestService,
     protected translate: TranslateService,
-    protected router: Router) {}
+    protected router: Router,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService) {}
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -79,6 +83,7 @@ export class VolumeStatusComponent implements OnInit {
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
+      path: data.path,
     };
 
     // add actions
@@ -98,6 +103,23 @@ export class VolumeStatusComponent implements OnInit {
           item.actions.push({
             label: "Offline",
             onClick: (row) => {
+              this.dialogService.confirm(
+                "Offline",
+                "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
+                ).subscribe((res) => {
+                  console.log(res);
+                  if (res) {
+                    this.loader.open();
+                    let value = { label: row.path };
+                    this.rest.post('storage/volume/' + this.pk + '/offline/', {
+                      body: JSON.stringify(value)
+                    }).subscribe(
+                      (res) => {
+                        this.loader.close();
+                      }
+                    );
+                  }
+                })
               console.log("offline", row);
             }
           }, {
