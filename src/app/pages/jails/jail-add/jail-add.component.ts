@@ -164,8 +164,8 @@ export class JailAddComponent implements OnInit {
       name: 'boot',
       placeholder: T('Auto-start'),
       tooltip: T('Check to auto-start the jail at system boot time. \
-                  Jails are started and stopped based on <b>iocage \
-                  priority</b>. Set in the priority field under \
+                  Jails are started and stopped based on iocage \
+                  priority. Set in the <b>priority</b> field under \
                   <b>Custom Properties</b>.'),
     }
   ];
@@ -201,7 +201,7 @@ export class JailAddComponent implements OnInit {
       placeholder: T('exec.stop'),
       tooltip: T('Commands to run in the jail environment before the \
                   jail is removed and after <b>exec.prestop</b> \
-                  commands have completed. Example: \
+                  commands are complete. Example: \
                   <i>sh /etc/rc.shutdown</i>.'),
     },
     {
@@ -209,7 +209,7 @@ export class JailAddComponent implements OnInit {
       name: 'exec_prestart',
       placeholder: T('exec.prestart'),
       tooltip: T('Commands to run in the system environment before a \
-                  before a jail is created.'),
+                  jail is created.'),
     },
     {
       type: 'input',
@@ -251,9 +251,9 @@ export class JailAddComponent implements OnInit {
       name: 'exec_timeout',
       placeholder: T('exec.timeout'),
       tooltip: T('Maximum amount of time in seconds to wait for a \
-                  command to complete. If a command is still running \
-                  after the allotted time, the jail will not be \
-                  created or removed.'),
+                  command to complete. A jail cannot be created or \
+                  removed when a command is still running after the \
+                  allotted time.'),
     },
     {
       type: 'input',
