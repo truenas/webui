@@ -265,7 +265,7 @@ export class JailAddComponent implements OnInit {
                   have completed. When time is up the jail is removed, \
                   killing any remaining processes. When set to \
                   <i>0</i>, no SIGTERM is sent and the jail is \
-                  immediatley removed. The default timeout is 10 \
+                  immediately removed. The default timeout is 10 \
                   seconds.'),
     },
     {
@@ -281,8 +281,9 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'exec_system_jail_user',
       placeholder: T('exec.system_jail_user'),
-      tooltip: T('Set this boolean option to True to look for the \
-                  <b>exec.jail_user</b> in the system <a \
+      tooltip: T('Set this boolean option to <i>True</i> to look for \
+                  the <b>exec.jail_user</b> in the system \
+                  <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=passwd&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
                   target="_blank">passwd(5)</a> file <i>instead</i> of \
                   the jail passwd.'),
@@ -356,10 +357,9 @@ export class JailAddComponent implements OnInit {
       name: 'children_max',
       placeholder: T('children.max'),
       tooltip: T('Number of child jails allowed to be created by the \
-                  jail or other jails under this jail. The limit is \
-                  <i>0</i> by default indicating the jail is not \
-                  allowed to create child jails. Hierarchical Jails in \
-                  the <a \
+                  jail or other jails under this jail. A limit of \
+                  <i>0</i> restricts the jail from creating child \
+                  jails. Hierarchical Jails in the <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
                   target="_blank">JAIL(8)</a> man page explains the \
                   finer details.'),
@@ -517,8 +517,8 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Set to allow privileged users inside the jail to \
                   mount and unmount the devfs file system. This \
                   permission is only effective when <b>allow_mount</b> \
-                  and <b>enforce_statfs</b> are set to a value lower \
-                  than <i>2</i>.'),
+                  is set and <b>enforce_statfs</b> is set to a value \
+                  lower than <i>2</i>.'),
     },
     {
       type: 'checkbox',
@@ -527,8 +527,8 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Set to allow privileged users inside the jail to \
                   mount and unmount the nullfs file system. This \
                   permission is only effective when <b>allow_mount</b> \
-                  and <b>enforce_statfs</b> are set to a value lower \
-                  than <i>2</i>.'),
+                  is set and and <b>enforce_statfs</b> is set to a \
+                  value lower than <i>2</i>.'),
     },
     {
       type: 'checkbox',
@@ -537,8 +537,8 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Set to allow privileged users inside the jail to \
                   mount and unmount the procfs file system. This \
                   permission is only effective when <b>allow_mount</b> \
-                  and <b>enforce_statfs</b> are set to a value lower \
-                  than <i>2</i>.'),
+                  is set and <b>enforce_statfs</b> is set to a value \
+                  lower than <i>2</i>.'),
     },
     {
       type: 'checkbox',
@@ -547,8 +547,8 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Set to allow privileged users inside the jail to \
                   mount and unmount the tmpfs file system. This \
                   permission is only effective when <b>allow_mount</b> \
-                  and <b>enforce_statfs</b> are set to a value lower \
-                  than <i>2</i>.'),
+                  is set and <b>enforce_statfs</b> is set to a value \
+                  lower than <i>2</i>.'),
     },
     {
       type: 'checkbox',
@@ -557,8 +557,8 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Set to allow privileged users inside the jail to \
                   mount and unmount the ZFS file system. This \
                   permission is only effective when <b>allow_mount</b> \
-                  and <b>enforce_statfs</b> are set to a value lower \
-                  than <i>2</i>. The <a \
+                  is set and <b>enforce_statfs</b> is set to a value \
+                  lower than <i>2</i>. The <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=zfs&sektion=8&apropos=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
                   target="_blank">ZFS(8)</a> man page has information \
                   on how to configure \
