@@ -113,7 +113,7 @@ ip-address[/netmask]</b>.<br>\
                  <br>Enter <b>none</b> to configure the jail with \
                  no IPv4 default route. <br>\
                  <b>A jail without a default route will not be \
-                 able to access the outside world without additional \
+                 able to access the network without additional \
                  configuration.</b>'),
       relation: [{
         action: 'DISABLE',
@@ -146,7 +146,7 @@ target="_blank">VNET(9)</a> and shared IP jails. <br>Single interface \
                  <br>Enter <b>none</b> to configure the jail with \
                  no IPv4 default route. <br>\
                  <b>A jail without a default route will not be \
-                 able to access the outside world without additional \
+                 able to access the network without additional \
                  configuration.'),
     },
     {
@@ -209,8 +209,8 @@ target="_blank">JAIL(8)</a> describes <b>exec.start</b> usage.'),
       name: 'exec_poststart',
       placeholder: T('exec.poststart'),
       tooltip: T('Commands to run in the system environment after a \
-                 jail is created and after any <b>exec.start</b> \
-                 commands are finished.'),
+                 jail is created and any <b>exec.start</b> commands \
+                 are finished.'),
     },
     {
       type: 'input',
@@ -609,7 +609,7 @@ target="_blank">FIB </a> \
       type: 'checkbox',
       name: 'ip4_saddrsel',
       placeholder: T('ip4.saddrsel'),
-      tooltip: T('Only availabled when the jail is not configured to \
+      tooltip: T('Only available when the jail is not configured to \
                  use VNET. Disables IPv4 source address selection for \
                  the jail in favor of the primary IPv4 address of the \
                   jail.'),
@@ -638,7 +638,7 @@ target="_blank">FIB </a> \
       type: 'checkbox',
       name: 'ip6_saddrsel',
       placeholder: T('ip6_saddrsel'),
-      tooltip: T('Only availabled when the jail is not configured to \
+      tooltip: T('Only available when the jail is not configured to \
                  use VNET. Disables IPv6 source address selection for \
                  the jail in favor of the primary IPv6 address of the \
                  jail.'),
