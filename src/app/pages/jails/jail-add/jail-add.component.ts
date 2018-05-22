@@ -67,10 +67,11 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'vnet',
-      placeholder: T('VirtIO Virtual Networking'),
+      placeholder: T('VNET'),
       tooltip: T('Set to use <a \
-                  href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                  target="_blank">VirtIO(4)</a> to emulate network devices for the jail. \
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
+                  target="_blank">VNET(9)</a> to emulate network \
+                  devices for the jail. \
                   A fully virtualized per-jail network stack will be \
                   installed.'),
     },
