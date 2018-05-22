@@ -225,6 +225,7 @@ export class ZvolFormComponent {
         delete data.force;
         delete data.sparse;
     } else {
+      delete data.force;
       data.name = this.parent + "/" + data.name;
     }
 
