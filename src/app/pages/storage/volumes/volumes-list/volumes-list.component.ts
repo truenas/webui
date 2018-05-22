@@ -62,6 +62,7 @@ export class VolumesListTableConfig implements InputTableConf {
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
+  route_success: string[] = ['storage', 'pools'];
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -218,9 +219,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
-          
-
-          this.dialogService.confirm(
+          const ds = this.dialogService.confirm(
             T("Detach Pool: " + row1.name), 
             T("You are about to detach '" +  row1.name + "'. WARNING! \
             Detaching a pool makes the data unavailable. If your pool is encrypted, and you do not have a \
@@ -228,15 +227,27 @@ export class VolumesListTableConfig implements InputTableConf {
             for encrypted pools, take a moment to download and safely store your recovery key."), 
             false, T("Detach"),
             true,
-            T('Destroy data on this pool (' + row1.name + ')?'),
-            'user.delete',
-            ).subscribe((res) => {
-                if (res) {
-                  this._router.navigate(new Array('/').concat (
-                    ["storage", "pools", "detachvolume", row1.id]));
-                }
+            T('Destroy data on this pool (' + row1.name + ')?')
+            
+          );
+          ds.afterClosed().subscribe((status) => {
+            console.log(row1);
+            if (status) {
+              return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                console.log("restPostResp", restPostResp);
+                this.loader.close();
+                this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
+        
+                this._router.navigate(new Array('/').concat(
+                  this.route_success));
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
               });
-       
+            }
+            
+          })
+          
         }
       });
       
