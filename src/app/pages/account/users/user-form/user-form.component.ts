@@ -106,8 +106,8 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'group_create',
           placeholder : T('New Primary Group'),
-          tooltip : T('Create a new primary group with the same name as\
-                      the user. Uncheck to select an existing group for\
+          tooltip : T('Set to create a new primary group with the same name as\
+                      the user. Unset to select an existing group for\
                       the user.'),
           value : true,
           isHidden: false
@@ -181,7 +181,7 @@ export class UserFormComponent {
           placeholder : T('SSH Public Key'),
           tooltip : T('Enter or paste the <b>public</b> SSH key of the\
                       user for any key-based authentication. <b>Do not\
-                      paste the private key!</b>'),
+                      paste the private key.</b>'),
         },
         {
           type : 'select',
@@ -207,7 +207,7 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'locked',
           placeholder : T('Lock User'),
-          tooltip : T('Disable logging in to this user account.'),
+          tooltip : T('Set to disable logging in to this user account.'),
           isHidden: false
         },
         {
