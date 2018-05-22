@@ -116,6 +116,10 @@ export class VolumeStatusComponent implements OnInit {
                     }).subscribe(
                       (res) => {
                         this.loader.close();
+                      },
+                      (res)=> {
+                        this.loader.close();
+                        this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
                       }
                     );
                   }
