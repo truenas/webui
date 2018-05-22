@@ -62,7 +62,6 @@ export class VolumesListTableConfig implements InputTableConf {
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
-  route_success: string[] = ['storage', 'pools'];
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -93,6 +92,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
   }
+  
+  
 
   /*getAddActions() {
     const actions = [];
@@ -231,17 +232,14 @@ export class VolumesListTableConfig implements InputTableConf {
             
           );
           ds.afterClosed().subscribe((status) => {
-            console.log(row1);
+            this.loader.open();
             if (status) {
               return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                console.log("restPostResp", restPostResp);
-                this.loader.close();
                 this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
-        
-                this._router.navigate(new Array('/').concat(
-                  this.route_success));
-              }, (res) => {
+                // this._router.navigate(new Array('/').concat(
+                //   ["storage", "pools"]));
                 this.loader.close();
+              }, (res) => {
                 this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
               });
             }
