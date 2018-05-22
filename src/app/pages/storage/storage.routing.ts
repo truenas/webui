@@ -154,6 +154,10 @@ export const routes: Routes = [
             data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' }
           },
           {
+            path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,
+            data: { title: 'Edit Pool Disk', breadcrumb: 'Edit Pool Disk' }
+          },
+          {
             path: 'wipe/:pk', component: DiskWipeComponent,
             data: { title: 'Wipe Disk', breadcrumb: 'Wipe Disk' }
           }
