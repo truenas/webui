@@ -99,7 +99,7 @@ target="_blank">VNET(9)</a> and shared IP jails. <br>Single interface \
                  Example: <b>vnet2|192.168.0.15/24</b> <br>\
                  Multiple interface format: \
                  <b>[interface|]ip-address[/netmask],[interface|]\
-ip-address[/netmask]</b>.<br>\
+                 ip-address[/netmask]</b>.<br>\
                  Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>'),
       relation: [{
       action: 'DISABLE',
@@ -214,70 +214,70 @@ target="_blank">JAIL(8)</a> describes <b>exec.start</b> usage.'),
       placeholder: T('exec.poststart'),
       tooltip: T('Commands to run in the system environment after a \
                  jail is created and any <b>exec.start</b> commands are \
-finished.'),
+                 finished.'),
     },
       {
         type: 'input',
         name: 'exec_prestop',
         placeholder: T('exec.prestop'),
         tooltip: T('Commands to run in the system environment before a \
-jail is removed.'),
+                   jail is removed.'),
     },
       {
         type: 'input',
         name: 'exec_poststop',
         placeholder: T('exec.poststop'),
         tooltip: T('Commands to run in the system environment after a jail\
-is removed.'),
+                   is removed.'),
     },
       {
         type: 'checkbox',
         name: 'exec_clean',
         placeholder: T('exec.clean'),
         tooltip: T('Run commands in a clean environment. The current\
-environment is discarded except for $HOME, $SHELL, \
-$TERM, and $USER. <br>\
-$HOME and $SHELL are set to the target login. $USER is \
-set to the target login. $TERM is imported from the \
-current environment. The environment variables from the \
-login class capability database for the target login \
-are also set.'),
+                    environment is discarded except for $HOME, $SHELL, \
+                    $TERM, and $USER. <br>\
+                    $HOME and $SHELL are set to the target login. $USER is \
+                    set to the target login. $TERM is imported from the \
+                    current environment. The environment variables from the \
+                    login class capability database for the target login \
+                    are also set.'),
     },
       {
         type: 'input',
         name: 'exec_timeout',
         placeholder: T('exec.timeout'),
         tooltip: T('Maximum amount of time in seconds to wait for a \
-command to complete. If a command is still running \
-after the allotted time, the jail will not be \
-created or removed.'),
+                   command to complete. If a command is still running \
+                   after the allotted time, the jail will not be \
+                   created or removed.'),
     },
       {
         type: 'input',
         name: 'stop_timeout',
         placeholder: T('stop.timeout'),
         tooltip: T('Maximum amount of time in seconds to wait for jail \
-processes to exit after sending a SIGTERM signal. The \
-timeout starts after <b>exec.stop</b> commands have \
-completed. When time is up the jail is removed, killing \
-any remaining processes. When set to <i>0</i>, no \
-SIGTERM is sent and the jail is immediatley removed. \
-The default timeout is 10 seconds.'),
+                   processes to exit after sending a SIGTERM signal. The \
+                   timeout starts after <b>exec.stop</b> commands have \
+                   completed. When time is up the jail is removed, killing \
+                   any remaining processes. When set to <i>0</i>, no \
+                   SIGTERM is sent and the jail is immediatley removed. \
+                   The default timeout is 10 seconds.'),
     },
       {
         type: 'input',
         name: 'exec_jail_user',
         placeholder: T('exec.jail_user'),
         tooltip: T('The user to run commands as in the jail environment. \
-The default is to run commands as the current user. \
-Set to a valid username to run commands as that user.'),
+                   The default is to run commands as the current user. \
+                   Set to a valid username to run commands as that user.'),
     },
       {
         type: 'input',
         name: 'exec_system_jail_user',
         placeholder: T('exec.system_jail_user'),
         tooltip: T('Set this boolean option to True to look for the \
-<b>exec.jail_user</b> in the system <a \
+                   <b>exec.jail_user</b> in the system <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=passwd&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">passwd(5)</a> file <i>instead</i> of the jail passwd.'),
     },
@@ -286,8 +286,8 @@ target="_blank">passwd(5)</a> file <i>instead</i> of the jail passwd.'),
         name: 'exec_system_user',
         placeholder: T('exec.system_user'),
         tooltip: T('The user to run commands as in the system environment. \
-The default is to run commands as the current user. \
-Set to a valid username to run commands as that user.'),
+                   The default is to run commands as the current user. \
+                   Set to a valid username to run commands as that user.'),
     },
       {
         type: 'checkbox',
@@ -296,9 +296,9 @@ Set to a valid username to run commands as that user.'),
         tooltip: T('Mount a <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=devfs&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">devfs(5)</a> filesystem on the <i>chrooted /dev \
-directory</i> and apply the ruleset in the \
-<b>devfs_ruleset</b> parameter to restrict the \
-devices visible inside the jail.'),
+                   directory</i> and apply the ruleset in the \
+                   <b>devfs_ruleset</b> parameter to restrict the \
+                   devices visible inside the jail.'),
 
     },
       {
@@ -308,7 +308,7 @@ devices visible inside the jail.'),
         tooltip: T('Mount an <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=fdescfs&sektion=5&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">fdescfs(5)</a> filesystem in the jail <i>/dev/fd</i>\
-directory.'),
+                   directory.'),
     },
       {
         //"enforce_statfs": ("0", "1", "2"),
@@ -316,8 +316,8 @@ directory.'),
         name: 'enforce_statfs',
         placeholder: T('enforce_statfs'),
         tooltip: T('Determine which information processes in a jail are \
-able to obtain about mount points. The behavior of \
-multiple syscalls is affected. <a \
+                   able to obtain about mount points. The behavior of \
+                   multiple syscalls is affected. <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">statfs(2)</a>, <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
@@ -326,12 +326,12 @@ href="https://www.freebsd.org/cgi/man.cgi?query=getfsstat&manpath=FreeBSD+11.1-R
 target="_blank">getfsstat(2)</a>, <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=fhstatfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">fhstatfs(2)</a>, and other similar compatibility syscalls. \
-<br>Set to <i>0</i>: All mount points are available \
-without restriction. <br>\
-Set to <i>1</i>: Only mount points below the jail \
-chroot directory are available. <br>\
-Set to <i>2</i> (default): Only mounts point where the \
-jail chroot directory is located are available.'),
+                   <br>Set to <i>0</i>: All mount points are available \
+                   without restriction. <br>\
+                   Set to <i>1</i>: Only mount points below the jail \
+                   chroot directory are available. <br>\
+                   Set to <i>2</i> (default): Only mounts point where the \
+                   jail chroot directory is located are available.'),
         options: [{
             label: '0',
             value: '0',
@@ -348,9 +348,9 @@ jail chroot directory is located are available.'),
         name: 'children_max',
         placeholder: T('children.max'),
         tooltip: T('Number of child jails allowed to be created by the \
-jail or other jails under this jail. The limit is \
-<i>0</i> by default indicating the jail is not allowed \
-to create child jails. Hierarchical Jails in the <a \
+                   jail or other jails under this jail. The limit is \
+                   <i>0</i> by default indicating the jail is not allowed \
+                   to create child jails. Hierarchical Jails in the <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=jail&apropos=0&sektion=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">JAIL(8)</a> man page explains the finer details.'),
     }, {
@@ -360,7 +360,7 @@ target="_blank">JAIL(8)</a> man page explains the finer details.'),
         tooltip: T('Flags to pass to <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=login&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">LOGIN(1)</a> when logging in to the jail using the \
-<b>console</b> function.'),
+                   <b>console</b> function.'),
     },
       {
         type: 'input',
@@ -369,26 +369,26 @@ target="_blank">LOGIN(1)</a> when logging in to the jail using the \
         tooltip: T('The value of the jail <a \
 href="https://www.freebsd.org/doc/faq/security.html#idp60202568"\
 target=_blank">securelevel</a> sysctl. A jail never has a lower \
-securelevel than the host system. Setting this \
-parameter allows a higher securelevel. If the host \
-system securelevel is changed, jail securelevel will be \
-at least as secure. <br>\
-Securelevel options are <i>3</i>, <i>2</i>, <i>1</i>, \
-<i>0</i>, and <i>-1</i>.'),
+                   securelevel than the host system. Setting this \
+                   parameter allows a higher securelevel. If the host \
+                   system securelevel is changed, jail securelevel will be \
+                   at least as secure. <br>\
+                   Securelevel options are <i>3</i>, <i>2</i>, <i>1</i>, \
+                   <i>0</i>, and <i>-1</i>.'),
     },
       {
         type: 'select',
         name: 'sysvmsg',
         placeholder: T('sysvmsg'),
         tooltip: T('Allow or deny access to SYSV IPC message primitives. \
-<br> <b>Inherit</b>: All IPC objects on the system are \
-visible to the jail. <br>\
-<b>New</b>: Only objects the jail creates using the \
-private key namespace are visible. The system and \
-parent jails have access to the jail objects but \
-<i>not</i> private keys. <br>\
-<b>Disable</b>: The jail cannot perform any <b>sysvmsg</b> \
-related system calls.'),
+                   <br> <b>Inherit</b>: All IPC objects on the system are \
+                   visible to the jail. <br>\
+                   <b>New</b>: Only objects the jail creates using the \
+                   private key namespace are visible. The system and \
+                   parent jails have access to the jail objects but \
+                   <i>not</i> private keys. <br>\
+                   <b>Disable</b>: The jail cannot perform any <b>sysvmsg</b> \
+                   related system calls.'),
         options: [{
             label: 'Inherit',
             value: 'inherit',
@@ -405,14 +405,14 @@ related system calls.'),
         name: 'sysvsem',
         placeholder: T('sysvsem'),
         tooltip: T('Allow or deny access to SYSV IPC semaphore primitives. \
-<br> <b>Inherit</b>: All IPC objects on the system are \
-visible to the jail. <br>\
-<b>New</b>: Only objects the jail creates using the \
-private key namespace are visible. The system and \
-parent jails have access to the jail objects but \
-<i>not</i> private keys. <br>\
-<b>Disable</b>: The jail cannot perform any <b>sysvmem</b> \
-related system calls.'),
+                   <br> <b>Inherit</b>: All IPC objects on the system are \
+                   visible to the jail. <br>\
+                   <b>New</b>: Only objects the jail creates using the \
+                   private key namespace are visible. The system and \
+                   parent jails have access to the jail objects but \
+                   <i>not</i> private keys. <br>\
+                   <b>Disable</b>: The jail cannot perform any <b>sysvmem</b> \
+                   related system calls.'),
         options: [{
             label: 'Inherit',
             value: 'inherit',
@@ -429,15 +429,15 @@ related system calls.'),
         name: 'sysvshm',
         placeholder: T('sysvshm'),
         tooltip: T('Allow or deny access to SYSV IPC shared memory \
-primitives. <br>\
-<b>Inherit</b>: All IPC objects on the system are \
-visible to the jail. <br>\
-<b>New</b>: Only objects the jail creates using the \
-private key namespace are visible. The system and \
-parent jails have access to the jail objects but \
-<i>not</i> private keys. <br>\
-<b>Disable</b>: The jail cannot perform any <b>sysvshm</b> \
-related system calls.'),
+                   primitives. <br>\
+                   <b>Inherit</b>: All IPC objects on the system are \
+                   visible to the jail. <br>\
+                   <b>New</b>: Only objects the jail creates using the \
+                   private key namespace are visible. The system and \
+                   parent jails have access to the jail objects but \
+                   <i>not</i> private keys. <br>\
+                   <b>Disable</b>: The jail cannot perform any <b>sysvshm</b> \
+                   related system calls.'),
         options: [{
             label: 'Inherit',
             value: 'inherit',
@@ -464,11 +464,11 @@ target="_blank">sethostname(3)</a>.'),
         name: 'allow_sysvipc',
         placeholder: T('*allow.sysvipc'),
         tooltip: T('Choose if a process in the jail has access to System \
-V IPC primitives. Equivalent to setting sysvmsg, \
-sysvsem, and sysvshm to <b>Inherit</b>. \
-<b>*Deprecated in FreeBSD 11.0 and later!</b><br> \
-Use <b>sysvmsg</b>, <b>sysvsem</b>, and <b>sysvshm</b> \
-instead.'),
+                   V IPC primitives. Equivalent to setting sysvmsg, \
+                   sysvsem, and sysvshm to <b>Inherit</b>. \
+                   <b>*Deprecated in FreeBSD 11.0 and later!</b><br> \
+                   Use <b>sysvmsg</b>, <b>sysvsem</b>, and <b>sysvshm</b> \
+                   instead.'),
     },
       {
         type: 'checkbox',
@@ -479,95 +479,95 @@ href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEAS
 target="_blank">ping(8)</a> and <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=traceroute&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">traceroute(8)</a> to operate inside the jail. When \
-checked, source IP addresses are enforced to comply \
-with the IP addresses bound to the jail, ignoring the \
-IP_HDRINCL flag on the socket.'),
+                   checked, source IP addresses are enforced to comply \
+                   with the IP addresses bound to the jail, ignoring the \
+                   IP_HDRINCL flag on the socket.'),
     },
       {
         type: 'checkbox',
         name: 'allow_chflags',
         placeholder: T('allow.chflags'),
         tooltip: T('Set to treat jail users as privileged and allow the \
-manipulation of system file flags. <b>securelevel</b> \
-constraints are still enforced.'),
+                   manipulation of system file flags. <b>securelevel</b> \
+                   constraints are still enforced.'),
     },
       {
         type: 'checkbox',
         name: 'allow_mount',
         placeholder: T('allow.mount'),
         tooltip: T('Set to allow privileged users inside the jail to mount \
-and unmount filesystem types marked as jail-friendly.'),
+                   and unmount filesystem types marked as jail-friendly.'),
     },
       {
         type: 'checkbox',
         name: 'allow_mount_devfs',
         placeholder: T('allow.mount.devfs'),
         tooltip: T('Set to allow privileged users inside the jail to mount \
-and unmount the devfs file system. This permission is \
-only effective when <b>allow_mount</b> and \
-<b>enforce_statfs</b> are set to a value lower than \
-<i>2</i>.'),
+                   and unmount the devfs file system. This permission is \
+                   only effective when <b>allow_mount</b> and \
+                   <b>enforce_statfs</b> are set to a value lower than \
+                   <i>2</i>.'),
     },
       {
         type: 'checkbox',
         name: 'allow_mount_nullfs',
         placeholder: T('allow.mount.nullfs'),
         tooltip: T('Set to allow privileged users inside the jail to mount \
-and unmount the nullfs file system. This permission is \
-only effective when <b>allow_mount</b> and \
-<b>enforce_statfs</b> are set to a value lower than \
-<i>2</i>.'),
+                   and unmount the nullfs file system. This permission is \
+                   only effective when <b>allow_mount</b> and \
+                   <b>enforce_statfs</b> are set to a value lower than \
+                   <i>2</i>.'),
     },
       {
         type: 'checkbox',
         name: 'allow_mount_procfs',
         placeholder: T('allow.mount.procfs'),
         tooltip: T('Set to allow privileged users inside the jail to mount \
-and unmount the procfs file system. This permission is \
-only effective when <b>allow_mount</b> and \
-<b>enforce_statfs</b> are set to a value lower than \
-<i>2</i>.'),
+                   and unmount the procfs file system. This permission is \
+                   only effective when <b>allow_mount</b> and \
+                   <b>enforce_statfs</b> are set to a value lower than \
+                   <i>2</i>.'),
     },
       {
         type: 'checkbox',
         name: 'allow_mount_tmpfs',
         placeholder: T('allow.mount.tmpfs'),
         tooltip: T('Set to allow privileged users inside the jail to mount \
-and unmount the tmpfs file system. This permission is \
-only effective when <b>allow_mount</b> and \
-<b>enforce_statfs</b> are set to a value lower than \
-<i>2</i>.'),
+                   and unmount the tmpfs file system. This permission is \
+                   only effective when <b>allow_mount</b> and \
+                   <b>enforce_statfs</b> are set to a value lower than \
+                   <i>2</i>.'),
     },
       {
         type: 'checkbox',
         name: 'allow_mount_zfs',
         placeholder: T('allow.mount.zfs'),
         tooltip: T('Set to allow privileged users inside the jail to mount \
-and unmount the ZFS file system. This permission is \
-only effective when <b>allow_mount</b> and \
-<b>enforce_statfs</b> are set to a value lower than \
-<i>2</i>. The <a \
+                   and unmount the ZFS file system. This permission is \
+                   only effective when <b>allow_mount</b> and \
+                   <b>enforce_statfs</b> are set to a value lower than \
+                   <i>2</i>. The <a \
 href="https://www.freebsd.org/cgi/man.cgi?query=zfs&sektion=8&apropos=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
 target="_blank">ZFS(8)</a> man page has information on how to configure \
-the ZFS filesystem to operate from within a jail.'),
+                   the ZFS filesystem to operate from within a jail.'),
     },
       {
         type: 'checkbox',
         name: 'allow_quotas',
         placeholder: T('allow.quotas'),
         tooltip: T('Set to allow the jail root to administer quotas on \
-jail filesystems. This includes filesystems the jail \
-may share with other jails or with non-jailed parts \
-of the system.'),
+                   jail filesystems. This includes filesystems the jail \
+                   may share with other jails or with non-jailed parts \
+                   of the system.'),
     },
       {
         type: 'checkbox',
         name: 'allow_socket_af',
         placeholder: T('allow.socket_af'),
         tooltip: T('Set to allow access to other protocol stacks beyond \
-IPv4, IPv6, local (UNIX), and route. <br>\
-<b>Warning:</b> jail functionality may not exist for \
-other protocal stacks.'),
+                   IPv4, IPv6, local (UNIX), and route. <br>\
+                   <b>Warning:</b> jail functionality may not exist for \
+                   other protocal stacks.'),
     }
   ];
   public networkfieldConfig: FieldConfig[] = [
@@ -614,9 +614,9 @@ target="_blank">FIB </a> \
       name: 'ip4_saddrsel',
       placeholder: T('ip4.saddrsel'),
       tooltip: T('Only available when the jail is not configured to \
-use VNET. Disables IPv4 source address selection for \
-the jail in favor of the primary IPv4 address of the \
-                  jail.'),
+                 use VNET. Disables IPv4 source address selection for \
+                 the jail in favor of the primary IPv4 address of the \
+                 jail.'),
     },
     {
       type: 'select',
@@ -643,19 +643,19 @@ the jail in favor of the primary IPv4 address of the \
       name: 'ip6_saddrsel',
       placeholder: T('ip6_saddrsel'),
       tooltip: T('Only available when the jail is not configured to \
-use VNET. Disables IPv6 source address selection for \
-the jail in favor of the primary IPv6 address of the \
-jail.'),
+                 use VNET. Disables IPv6 source address selection for \
+                 the jail in favor of the primary IPv6 address of the \
+                 jail.'),
     },
       {
         type: 'select',
         name: 'ip6',
         placeholder: T('ip6'),
         tooltip: T('Control the availability of IPv6 addresses. <br>\
-<b>Inherit</b>: Allow unrestricted access to all \
-system addresses. \
-<b>New</b> Restrict addresses with <b>ip6_addr</b>. \
-<b>Disable</b> Stop the jail from using IPv4 entirely.'),
+                 <b>Inherit</b>: Allow unrestricted access to all \
+                 system addresses. \
+                 <b>New</b> Restrict addresses with <b>ip6_addr</b>. \
+                 <b>Disable</b> Stop the jail from using IPv4 entirely.'),
         options: [{
             label: 'Inherit',
             value: 'inherit',
@@ -672,25 +672,25 @@ system addresses. \
         name: 'resolver',
         placeholder: T('resolver'),
         tooltip: T('Add lines to the jail <b>resolv.conf</b>. \
-<b>Example:</b> <i>nameserver IP;search domain.local</i>. \
-Fields must be delimited with a semicolon (;), which \
-are translated as new lines in <b>resolv.conf</b>. \
-Enter <i>none</i> to inherit <b>resolv.conf</b> from \
-the host.'),
+                   <b>Example:</b> <i>nameserver IP;search domain.local</i>. \
+                   Fields must be delimited with a semicolon (;), which \
+                   are translated as new lines in <b>resolv.conf</b>. \
+                   Enter <i>none</i> to inherit <b>resolv.conf</b> from \
+                   the host.'),
     },
       {
         type: 'input',
         name: 'mac_prefix',
         placeholder: T('mac_prefix'),
         tooltip: T('Optional. Enter a valid MAC address vendor prefix. \
-<b>Example:</b> <i>E4F4C6</i>'),
+                   <b>Example:</b> <i>E4F4C6</i>'),
     },
       {
         type: 'input',
         name: 'vnet0_mac',
         placeholder: T('vnet0_mac'),
         tooltip: T('Optional. Enter a valid MAC address for the VNET0 \
-interface.'),
+                   interface.'),
     },
       {
         type: 'input',
