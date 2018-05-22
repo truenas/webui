@@ -66,9 +66,9 @@ export class JailWizardComponent {
           placeholder: T('VirtIO Virtual Networking'),
           tooltip: T('Use VirtIO to emulate network devices for the \
                       jail. <br> \
-                      See <a href="https://www.freebsd.org/cgi/man.cgi?\
-query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports"target="_blank">\
-                      VIRTIO(4)</a> for more details.'),
+                      See <a \
+href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports\
+"target="_blank">VIRTIO(4)</a> for more details.'),
           required: false,
           hasErrors: false,
           errors: '',
