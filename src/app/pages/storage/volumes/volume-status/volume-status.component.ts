@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from "../../../../services/ws.service";
-import { ActivatedRoute, Params } from "@angular/router";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
+import * as _ from 'lodash';
 
 interface poolDiskInfo {
   id: number,
@@ -27,9 +28,12 @@ export class VolumeStatusComponent implements OnInit {
   protected pk: number;
   public expandRows: Array<number> = [1];
 
+  protected editDiskRoute: any = ["storage", "disks", "pool"];
+
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
-    protected translate: TranslateService) {}
+    protected translate: TranslateService,
+    protected router: Router) {}
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -82,7 +86,11 @@ export class VolumeStatusComponent implements OnInit {
       item.actions = [{
         label: "Edit",
         onClick: (row) => {
-          console.log("edit", row);
+          const diskName = _.split(row.name, 'p')[0];
+          this.ws.call('disk.query', [[["name", "=", diskName]]]).subscribe((res) => {
+            this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
+            this.router.navigate(new Array('').concat(this.editDiskRoute));
+          })
         }
       }];
       if (category) {
