@@ -23,7 +23,7 @@ export class SigninComponent implements OnInit {
     username: '',
     password: ''
   }
-  constructor(private ws: WebSocketService, private router: Router, 
+  constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
     private dialogService: DialogService) {
     this.ws = ws;
@@ -102,9 +102,9 @@ export class SigninComponent implements OnInit {
   }
 
   onGoToLegacy() {
-    this.translate.get('Switch to Legacy UI').subscribe((gotolegacy: string) => {
-      this.translate.get("Switch to Legacy UI?").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI", "Switch to Legacy UI?", true).subscribe((res) => {
+    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
+      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
+        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true).subscribe((res) => {
           if (res) {
             window.location.href = '/legacy/';
           }
