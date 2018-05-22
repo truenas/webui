@@ -111,7 +111,7 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'defaultrouter',
-      placeholder: T('Default IPv4 Router'),
+      placeholder: T('Default IPv4 Route'),
       tooltip: T('A valid IPv4 address to use as the default route. \
                   <br>Enter <b>none</b> to configure the jail with \
                   no IPv4 default route. <br>\
@@ -145,7 +145,7 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'defaultrouter6',
-      placeholder: T('Default IPv6 Router'),
+      placeholder: T('Default IPv6 Route'),
       tooltip: T('A valid IPv6 address to use as the default route. \
                   <br>Enter <b>none</b> to configure the jail with \
                   no IPv4 default route. <br>\
