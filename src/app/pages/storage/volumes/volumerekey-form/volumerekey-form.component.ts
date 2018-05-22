@@ -29,7 +29,7 @@ import { T } from '../../../../translate-marker';
 })
 export class VolumeRekeyFormComponent  implements Formconfiguration {
 
-  saveSubmitText = T("Re-key Pool"); 
+  saveSubmitText = T("Re-key Pool");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'pools'];
@@ -39,7 +39,7 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
     name: "",
     passphrase: ""
   };
-  
+
   fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -49,8 +49,9 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       type : 'input',
       inputType: 'password',
       name : 'passphrase',
+      label : T('Passphrase'),
       placeholder: T('Root password'),
-      tooltip: T('Root password'),
+      tooltip: T('Enter the root password to authorize this operation.'),
       validation: [Validators.required],
       required: true
     }
@@ -75,12 +76,12 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-  
+
   }
 
   customSubmit(value) {
     this.loader.open();
-    
+
     return this.rest.post(this.resource_name + "/" + value.name + "/rekey/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
@@ -93,5 +94,5 @@ export class VolumeRekeyFormComponent  implements Formconfiguration {
       this.dialogService.errorReport(T("Error re-keying pool"), res.error, res.trace.formatted);
     });
   }
-  
+
 }

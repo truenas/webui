@@ -40,7 +40,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     name: "",
     passphrase: ""
   };
-  
+
   fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -53,7 +53,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       inputType: 'password',
       name : 'password',
       placeholder: T('Root password'),
-      tooltip: T('Root password'),
+      tooltip: T('Enter the root password to authorize this operation.'),
       validation: [Validators.required],
       required: true
     }
@@ -80,7 +80,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-  
+
   }
 
   customSubmit(value) {
@@ -107,5 +107,5 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
-  
+
 }

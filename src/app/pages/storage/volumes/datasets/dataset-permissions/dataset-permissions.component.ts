@@ -55,8 +55,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
       type: 'radio',
       name: 'mp_acl',
       placeholder: T('ACL Type'),
-      tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
-                type that matches the type of client accessing the volume/dataset.'),
+      tooltip: T('Select the type that matches the type of client\
+                  accessing the pool/dataset.'),
       options: [{label:'Unix', value: 'unix'},
                 {label:'Windows', value: 'windows'},
                 {label:'Mac', value: 'mac'}],
@@ -65,47 +65,46 @@ export class DatasetPermissionsComponent implements OnDestroy {
       type: 'checkbox',
       name: 'mp_user_en',
       placeholder: T('Apply User'),
-      tooltip: T('Check this box to apply changes to the user'),
+      tooltip: T('Set to apply changes to the user.'),
       value: true
     },
     {
       type: 'combobox',
       name: 'mp_user',
       placeholder: T('User'),
-      tooltip: T('Select the user to control the volume/dataset.\
- Note that users manually created or imported from a directory service will\
- appear in the drop-down menu.'),
+      tooltip: T('Select the user to control the pool/dataset. Users\
+                  manually created or imported from a directory service\
+                  will appear in the drop-down menu.'),
       options: [],
     },
     {
       type: 'checkbox',
       name: 'mp_group_en',
       placeholder: T('Apply Group'),
-      tooltip: T('Check this box to apply changes to the group'),
+      tooltip: T('Set to apply changes to the group'),
       value: true
     },
     {
       type: 'combobox',
       name: 'mp_group',
       placeholder: T('Group'),
-      tooltip: T('Select the group to control the volume/dataset.\
- Note that groups manually created or imported from a directory service will\
- appear in the drop-down menu.'),
+      tooltip: T('Select the group to control the pool/dataset. Groups\
+                  manually created or imported from a directory service\
+                  will appear in the drop-down menu.'),
       options: [],
     },
     {
       type: 'checkbox',
       name: 'mp_mode_en',
       placeholder: T('Apply Mode'),
-      tooltip: T('Check this box to apply changes to the mode'),
+      tooltip: T('Set to apply changes to the mode'),
       value: true
     },
     {
       type: 'permissions',
       name: 'mp_mode',
       placeholder: T('Mode'),
-      tooltip: T('Only applies to Unix or Mac permission types.\
- Note that the mode cannot be changed when Windows is selected.'),
+      tooltip: T('Only applies to Unix or Mac permission types.'),
       isHidden: false
     },
     {
@@ -113,7 +112,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       name: 'mp_recursive',
       placeholder: T('Apply permissions recursively'),
       tooltip: T('Apply permissions recursively to all directories\
-  and files within the current dataset'),
+                  and files within the current dataset'),
       value: false
     }
   ];

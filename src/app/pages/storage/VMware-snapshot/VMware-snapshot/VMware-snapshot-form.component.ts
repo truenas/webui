@@ -39,8 +39,9 @@ export class VMwareSnapshotFormComponent {
       type: 'input',
       name: 'hostname',
       placeholder: T('Hostname'),
-      tooltip: T('IP address or hostname of VMware host; when clustering\
- this is the vCenter server for the cluster.'),
+      tooltip: T('Enter the IP address or hostname of the VMware host.\
+                  When clustering, this is the vCenter server for the\
+                  cluster.'),
       validation: [Validators.required],
       required: true
     },
@@ -48,8 +49,8 @@ export class VMwareSnapshotFormComponent {
       type: 'input',
       name: 'username',
       placeholder: T('Username'),
-      tooltip: T('User on VMware host with permission to snapshot virtual\
- machines.'),
+      tooltip: T('Enter the user on the VMware host with permission to\
+                  snapshot virtual machines.'),
       validation: [Validators.required],
       required: true
     },
@@ -57,7 +58,7 @@ export class VMwareSnapshotFormComponent {
       type: 'input',
       name: 'password',
       placeholder: T('Password'),
-      tooltip: T('Password associated with <b>Username</b>.'),
+      tooltip: T('Enter the password associated with <b>Username</b>.'),
       inputType: 'password',
       validation: [Validators.required],
       required: true
@@ -66,7 +67,7 @@ export class VMwareSnapshotFormComponent {
       type: 'explorer',
       name: 'filesystem',
       placeholder: T('ZFS Filesystem'),
-      tooltip: T('The filesystem to snapshot.'),
+      tooltip: T('Enter the filesystem to snapshot.'),
       explorerType: "zvol",
       initial: '/mnt',
       validation: [Validators.required],
@@ -77,8 +78,8 @@ export class VMwareSnapshotFormComponent {
       name: 'datastore',
       placeholder: T('Datastore'),
       tooltip: T('After entering the <b>Hostname, Username</b>, and\
- <b>Password</b>, click <b>Fetch Datastores</b> to populate the menu and\
- select the datastore with which to synchornize.'),
+                  <b>Password</b>, click <b>Fetch Datastores</b> and\
+                  select the datastore to be synchronized.'),
       validation: [Validators.required],
       required: true
     },
