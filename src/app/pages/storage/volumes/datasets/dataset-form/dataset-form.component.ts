@@ -571,13 +571,8 @@ export class DatasetFormComponent implements Formconfiguration{
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
             if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-<<<<<<< HEAD
-              edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.value})`, value: pk_dataset[0].recordsize.value}];
-              
-=======
               edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
 
->>>>>>> origin/master
             } else {
               edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
             }
