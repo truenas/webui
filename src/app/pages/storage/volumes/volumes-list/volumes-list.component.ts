@@ -218,8 +218,17 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "detachvolume", row1.id]));
+          this.dialogService.confirm(T("Detach Pool: " + row1.name), T("You are about to detach '" +  row1.name + "'. WARNING! \
+              Detaching a pool makes the data unavailable. If your pool is encrypted, and you do not have a \
+              passphrase, your data will be permanently unrecoverable! Be sure that you understand the risks, and \
+              for encrypted pools, take a moment to download and safely store your recovery key")).subscribe((res) => {
+            if (res) {
+              console.log(row1);
+              this._router.navigate(new Array('/').concat(
+                ["storage", "pools", "detachvolume", row1.id]));
+            }
+          });          
+          
         }
       });
       actions.push({
