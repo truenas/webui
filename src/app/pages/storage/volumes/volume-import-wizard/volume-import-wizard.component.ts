@@ -80,7 +80,7 @@ export class VolumeImportWizardComponent {
           name: 'devices',
           placeholder: T('Disks'),
           validation : [ Validators.required ],
-          tooltip: T('Select the disks to be decrypted.'),
+          tooltip: T('Select the disks to decrypt.'),
           required: true,
           isHidden: true,
           options: [],
@@ -96,7 +96,9 @@ export class VolumeImportWizardComponent {
           type: 'upload',
           name: 'key',
           placeholder: T('Encryption Key'),
-          tooltip: T('Upload the encryption key needed to decrypt the disks.'),
+          tooltip: T('Click <b>Browse</b> to select an encryption key to\
+                      upload. This allows the system to decrypt the\
+                      disks.'),
           fileLocation: '',
           message: this.messageService,
           updater: this.updater,
@@ -115,7 +117,7 @@ export class VolumeImportWizardComponent {
           type: 'input',
           name: 'passphrase',
           placeholder: T('Passphrase'),
-          tooltip: T('Enter the passphrase for decryption'),
+          tooltip: T('Enter the decryption passphrase.'),
           inputType: 'password',
           isHidden: true,
           relation: [{
@@ -135,7 +137,7 @@ export class VolumeImportWizardComponent {
             type: 'select',
             name: 'guid',
             placeholder: T('Pool'),
-            tooltip: T('Select the pool to import.'),
+            tooltip: T('Select a pool to import.'),
             options: [],
             validation : [ Validators.required ],
             required: true,
@@ -169,9 +171,9 @@ export class VolumeImportWizardComponent {
   protected message_subscription;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
-    private router: Router, protected loader: AppLoaderService, 
+    private router: Router, protected loader: AppLoaderService,
     protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: Http, public snackBar: MatSnackBar, 
+    protected http: Http, public snackBar: MatSnackBar,
     public messageService: MessageService) {
 
   }
@@ -260,7 +262,7 @@ export class VolumeImportWizardComponent {
 
     this.guid = _.find(this.wizardConfig[2].fieldConfig, {'name': 'guid'});
     this.getImportableDisks();
-    this.guid_subscription = 
+    this.guid_subscription =
     ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
@@ -275,8 +277,8 @@ export class VolumeImportWizardComponent {
   customSubmit(value) {
     if (value.encrypted) {
       const formData: FormData = new FormData();
-      let params = {"guid": value.guid, 
-                    "devices": value.devices, 
+      let params = {"guid": value.guid,
+                    "devices": value.devices,
                     "passphrase": value.passphrase ? value.passphrase: null };
       formData.append('data', JSON.stringify({
         "method": "pool.import_pool",

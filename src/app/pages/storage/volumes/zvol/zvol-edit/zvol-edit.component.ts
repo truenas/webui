@@ -52,8 +52,8 @@ export class ZvolEditComponent {
       type: 'input',
       name : 'name',
       placeholder : 'zvol name:',
-      tooltip: 'Keep the <b>zvol name</b> short. Using a <b>zvol name</b>\
- longer than 63 characters can prevent accessing the zvol as a device.',
+      tooltip: 'Entering a name longer than 63 characters can prevent\
+                accessing the zvol as a device.',
       readonly: true
     },
     {
@@ -66,9 +66,9 @@ export class ZvolEditComponent {
       type: 'select',
       name: 'compression',
       placeholder: 'Compression level:',
-      tooltip: 'Choose a compression algorithm. The <a\
-                href="..//docs/storage.html#compression">Compression\
-                section</a> of the guide fully describes each option.',
+      tooltip: 'Choose a <a\
+                href="..//docs/storage.html#compression">compression</a>\
+                algorithm.',
       options: [
         {label : 'Inherit', value : "inherit"},
         {label : 'Off', value : "off"},
@@ -100,15 +100,16 @@ export class ZvolEditComponent {
       type: 'input',
       name: 'volsize',
       placeholder: 'Size for this zvol:',
-      tooltip : 'Specify a size and value such as <i>10 GiB</i>.',
+      tooltip : 'Specify a number and unit to define the zvol size.\
+                   Example: <i>10 GiB</i>.',
     },
     {
       type: 'checkbox',
       name : 'force',
       placeholder: 'Force size:',
-      tooltip : 'By default, the system does not allow a zvol to be\
- created that brings the pool to over 80% capacity. Check this box to\
- force the creation of the zvol (<b>NOT Recommended</b>).',
+      tooltip : 'FreeNAS will not create a zvol that brings the pool\
+                 to over 80% capacity. Set to force the creation of\
+                 the zvol (<b>NOT Recommended</b>).',
     }
   ];
 

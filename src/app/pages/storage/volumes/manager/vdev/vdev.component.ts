@@ -34,8 +34,8 @@ export class VdevComponent implements OnInit {
                                 target="_blank">Pool Manager</a> section\
                                 of the guide for more details.');
 
-  constructor(public elementRef: ElementRef, 
-    public translate: TranslateService, 
+  constructor(public elementRef: ElementRef,
+    public translate: TranslateService,
     public sorter: StorageService) {}
 
   ngOnInit() {
