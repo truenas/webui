@@ -31,7 +31,7 @@ export class UserFormComponent {
   protected isEntity  = true;
   protected isNew: boolean;
 
-  public fieldSetDisplay:string = 'default';//default | carousel | stepper
+  public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
@@ -297,7 +297,7 @@ export class UserFormComponent {
     const filter = [];
     filter.push("id");
     filter.push("=");
-    filter.push(entityForm.pk);
+    filter.push(parseInt(entityForm.pk,10));
     this.ws.call('user.query',[[filter]]).subscribe((res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {
