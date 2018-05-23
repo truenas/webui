@@ -819,7 +819,7 @@ export class JailEditComponent implements OnInit {
 // Spoke to Lola. Lines below starting here down to the "wallclock"
 // tooltip are commented out in jail-add.component, and are also
 // commented out of the HTML for the jail-edit page. Adding this comment
-// to clairify why these aren't reviewed currently.
+// to clarify why these aren't reviewed currently.
 
     {
       type: 'input',
