@@ -570,7 +570,7 @@ export class JailAddComponent implements OnInit {
       placeholder: T('allow.quotas'),
       tooltip: T('Set to allow the jail root to administer quotas on \
                   jail filesystems. This includes filesystems the \
-                  jail may share with other jails or with non-jailed \
+                  jail shares with other jails or with non-jailed \
                   parts of the system.'),
     },
     {
@@ -579,8 +579,8 @@ export class JailAddComponent implements OnInit {
       placeholder: T('allow.socket_af'),
       tooltip: T('Set to allow access to other protocol stacks beyond \
                   IPv4, IPv6, local (UNIX), and route. <br>\
-                  <b>Warning:</b> jail functionality may not exist \
-                  for other protocal stacks.'),
+                  <b>Warning:</b> jail functionality does not exist \
+                  for all protocal stacks.'),
     }
   ];
   public networkfieldConfig: FieldConfig[] = [
@@ -689,7 +689,7 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Add lines to the jail <b>resolv.conf</b>. \
                   <b>Example:</b> <i>nameserver IP;search domain.\
                   local</i>. Fields must be delimited with a semicolon \
-                  (;), which are translated as new lines in \
+                  (;), This is translated as new lines in \
                   <b>resolv.conf</b>. Enter <i>none</i> to inherit \
                   <b>resolv.conf</b> from the host.'),
     },
@@ -697,35 +697,35 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'mac_prefix',
       placeholder: T('mac_prefix'),
-      tooltip: T('Optional. Enter a valid MAC address vendor prefix. \
+      tooltip: T('Enter a valid MAC address vendor prefix. \
                   <b>Example:</b> <i>E4F4C6</i>'),
     },
     {
       type: 'input',
       name: 'vnet0_mac',
       placeholder: T('vnet0_mac'),
-      tooltip: T('Optional. Enter a valid MAC address for the VNET0 \
+      tooltip: T('Enter a valid MAC address for the VNET0 \
                   interface.'),
     },
     {
       type: 'input',
       name: 'vnet1_mac',
       placeholder: T('vnet1_mac'),
-      tooltip: T('Optional. Enter a valid MAC address for the VNET1 \
+      tooltip: T('Enter a valid MAC address for the VNET1 \
                   interface.'),
     },
     {
       type: 'input',
       name: 'vnet2_mac',
       placeholder: T('vnet2_mac'),
-      tooltip: T('Optional. Enter a valid MAC address for the VNET2 \
+      tooltip: T('Enter a valid MAC address for the VNET2 \
                   interface.'),
     },
     {
       type: 'input',
       name: 'vnet3_mac',
       placeholder: T('vnet3_mac'),
-      tooltip: T('Optional. Enter a valid MAC address for the VNET3 \
+      tooltip: T('Enter a valid MAC address for the VNET3 \
                   interface.'),
     },
   ];
@@ -750,7 +750,7 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'hostid',
       placeholder: T('hostid'),
-      tooltip: T('A new a jail hostid, if desired. \
+      tooltip: T('A new jail hostid, if desired. \
                   <br><b>Example hostid:</b> \
                   <i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>.'),
     },
