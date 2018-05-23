@@ -663,7 +663,7 @@ export class JailAddComponent implements OnInit {
       tooltip: T('Control the availability of IPv6 addresses. <br>\
                   <b>Inherit</b>: Allow unrestricted access to all \
                   system addresses. <br>\
-                  <b>New</b>; Restrict addresses with <b>ip6_addr</b>. \
+                  <b>New</b>: Restrict addresses with <b>ip6_addr</b>. \
                   <br><b>Disable</b>: Stop the jail from using IPv4 \
                   entirely.'),
       options: [{
