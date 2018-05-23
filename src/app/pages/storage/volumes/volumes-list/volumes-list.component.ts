@@ -51,6 +51,7 @@ export interface ZfsPoolData {
   dataset_data?: any;
   actions?: any[];
   comments?: string;
+  compressionRatio: string;
   volumesListTableConfig?: VolumesListTableConfig;
 
 }
@@ -134,7 +135,7 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
 
-      } else  {
+      } else {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
@@ -367,7 +368,7 @@ export class VolumesListTableConfig implements InputTableConf {
             if (confirmed === true) {
               this.loader.open();
 
-                this.ws.call('pool.dataset.delete',[row1.path]).subscribe((wsResp) => {
+              this.ws.call('pool.dataset.delete', [row1.path]).subscribe((wsResp) => {
                 this.loader.close();
                 this.parentVolumesListComponent.repaintMe();
 
@@ -396,18 +397,17 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
-    
+
     data = new EntityUtils().flattenData(data);
     const dataset_data2 = this.datasetData;
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
-    for (let i = 0; i < data.length; i++) {
+    for (let i in data) { // 16 loops right now (DELETE ME)
+
       const dataObj = data[i];
-      // console.log(dataObj);
-      
+
       dataObj.nodePath = dataObj.mountpoint;
 
       if (typeof (dataObj.nodePath) === "undefined" && typeof (dataObj.path) !== "undefined") {
@@ -427,7 +427,6 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.parentPath = "0";
       }
 
-
       try {
         dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
       } catch (error) {
@@ -444,64 +443,33 @@ export class VolumesListTableConfig implements InputTableConf {
       dataObj.readonly = "";
       dataObj.dedup = "";
       dataObj.comments = "";
-      dataObj.compression_ratio = "Coming soon...";
-      // console.log(dataset_data2);
+      dataObj.compressionRatio = "";
 
-      // console.log(dataObj.name,
-      //   'dedup ' + dataObj.dedup, 
-      //   'compression ' + dataObj.compression.value, 
-      //   'read only? ' + dataObj.readonly.value, 
-      //   'mntpoint ' + dataObj.mountpoint,
-      //   'comments ' + dataObj.comments);
-
-      // console.log('dataObj = ' + dataObj);
-      // console.log(this.datasetData);
-
-      // if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
-        
-      for (let k  in dataset_data2) {
-        console.log(dataset_data2);
+      for (let k in dataset_data2) { // About 15 itmes, and we are already in a for/loop (DELETE ME) 
 
         if (dataset_data2[k].mountpoint === dataObj.nodePath) {
-          dataset_data2[k].compression.source !== "INHERITED" 
-            ? dataObj.compression = (dataset_data2[k].compression.value) 
-            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.value + ")");
 
-          dataset_data2[k].readonly.source !== "INHERITED" 
-            ? dataObj.readonly = (dataset_data2[k].readonly.value) 
-            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.value + ")");
+          dataset_data2[k].compression.source !== "INHERITED"
+            ? dataObj.compression = (dataset_data2[k].compression.parsed)
+            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
 
-           dataset_data2[k].deduplication.source !== "INHERITED" 
-            ? dataObj.dedup = (dataset_data2[k].deduplication.value) 
-            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.value + ")");
+          dataset_data2[k].readonly.source !== "INHERITED"
+            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
 
-          dataset_data2[k].comments.source !== "INHERITED" 
-            ? dataObj.comments = (dataset_data2[k].comments.value) 
+          dataset_data2[k].deduplication.source !== "INHERITED"
+            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+
+          dataset_data2[k].comments.source !== "INHERITED"
+            ? dataObj.comments = (dataset_data2[k].comments.parsed)
             : dataObj.comments = ("");
-        
-          }
 
+          dataObj.compressionRatio = "?.??x";
 
-      //   if (dataset_data2[k].mountpoint === dataObj.nodePath) {
-      //     if (dataset_data2[k].compression.source !== "INHERITED") {
-      //       console.log(dataset_data2[k].compression.source)
-      //       // dataObj.compression = dataset_data2[k].compression.value;
-      //       // dataObj.readonly = dataset_data2[k].readonly.value;
-      //       // dataObj.dedup = dataset_data2[k].deduplication.value;
-      //       // dataObj.comments = dataset_data2[k].comments.value;
-      //     } else {
-      //       console.log('no');
-      //         // dataObj.compression = "Inherits (" + dataset_data2[k].compression.value + ")";
-      //         // dataObj.readonly = "Inherits (" + dataset_data2[k].readonly.value + ")";
-      //         // dataObj.dedup = "Inherits (" + dataset_data2[k].deduplication.value + ")";
-      //         // dataObj.comments = "";
-      //     }
-      //   }
+        }
+
       }
-      // dataObj.comments = dataObj.comments;
-      // console.log(dataObj.name, dataObj.usedStr, dataObj.mountpoint, dataObj._level);
-      // // console.log(dataObj)
-
 
       dataObj.actions = this.getActions(dataObj);
 
@@ -565,11 +533,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         res.data.forEach((volume: ZfsPoolData) => {
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
           volume.type = 'zpool';
-          // console.log(datasetData[0].name,
-          //   'dedup ' + datasetData[0].deduplication.value, 
-          //   'compression ' + datasetData[0].compression.value, 
-          //   'read only? ' + datasetData[0].readonly.value, 
-          //   'mntpoint ' + datasetData[0].mountpoint);
 
           try {
             volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });

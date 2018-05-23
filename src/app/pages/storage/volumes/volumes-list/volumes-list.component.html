@@ -80,10 +80,10 @@
               </div>
             </div>
 
-            <dxi-column dataField='compression Ratio' [width]="Compression" cellTemplate="cellTemplatecompression"></dxi-column>
-            <div *dxTemplate="let rowData of 'cellTemplatecompression'">
-              <div class="panel_container" id="row_compression_{{rowData.data.name}}">
-                {{rowData.data.compression}}
+            <dxi-column dataField='compression Ratio' [width]="Compression" cellTemplate="cellTemplatecompressionratio"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatecompressionratio'">
+              <div class="panel_container" id="row_compression_ratio_{{rowData.data.name}}">
+                {{rowData.data.compressionRatio}}
               </div>
             </div>
             
