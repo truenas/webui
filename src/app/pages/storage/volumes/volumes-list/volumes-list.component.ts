@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { SSL_OP_NO_COMPRESSION } from 'constants';
 
 
 
@@ -443,31 +444,64 @@ export class VolumesListTableConfig implements InputTableConf {
       dataObj.readonly = "";
       dataObj.dedup = "";
       dataObj.comments = "";
+      dataObj.compression_ratio = "Coming soon...";
+      // console.log(dataset_data2);
 
-      console.log(this.datasetData[0].name,
-        'dedup ' + this.datasetData[0].deduplication.value, 
-        'compression ' + this.datasetData[0].compression.value, 
-        'read only? ' + this.datasetData[0].readonly.value, 
-        'mntpoint ' + this.datasetData[0].mountpoint,
-        'comments ' + this.datasetData[0].comments.value);
+      // console.log(dataObj.name,
+      //   'dedup ' + dataObj.dedup, 
+      //   'compression ' + dataObj.compression.value, 
+      //   'read only? ' + dataObj.readonly.value, 
+      //   'mntpoint ' + dataObj.mountpoint,
+      //   'comments ' + dataObj.comments);
 
       // console.log('dataObj = ' + dataObj);
-      console.log(this.datasetData);
+      // console.log(this.datasetData);
 
       // if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
-        // console.log('ok 1');
-        for (let k  in dataset_data2) {
-          console.log(dataObj.nodePath);
-          if (dataset_data2[k].mountpoint === dataObj.nodePath) {
-            // console.log('okay 2');
-            dataObj.compression = dataset_data2[k].compression.value;
-            dataObj.readonly = dataset_data2[k].readonly.value;
-            dataObj.dedup = dataset_data2[k].deduplication.value;
-            dataObj.comments = dataset_data2[k].comments.value;
-          // }
+        
+      for (let k  in dataset_data2) {
+        console.log(dataset_data2);
 
-        }
+        if (dataset_data2[k].mountpoint === dataObj.nodePath) {
+          dataset_data2[k].compression.source !== "INHERITED" 
+            ? dataObj.compression = (dataset_data2[k].compression.value) 
+            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.value + ")");
+
+          dataset_data2[k].readonly.source !== "INHERITED" 
+            ? dataObj.readonly = (dataset_data2[k].readonly.value) 
+            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.value + ")");
+
+           dataset_data2[k].deduplication.source !== "INHERITED" 
+            ? dataObj.dedup = (dataset_data2[k].deduplication.value) 
+            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.value + ")");
+
+          dataset_data2[k].comments.source !== "INHERITED" 
+            ? dataObj.comments = (dataset_data2[k].comments.value) 
+            : dataObj.comments = ("");
+        
+          }
+
+
+      //   if (dataset_data2[k].mountpoint === dataObj.nodePath) {
+      //     if (dataset_data2[k].compression.source !== "INHERITED") {
+      //       console.log(dataset_data2[k].compression.source)
+      //       // dataObj.compression = dataset_data2[k].compression.value;
+      //       // dataObj.readonly = dataset_data2[k].readonly.value;
+      //       // dataObj.dedup = dataset_data2[k].deduplication.value;
+      //       // dataObj.comments = dataset_data2[k].comments.value;
+      //     } else {
+      //       console.log('no');
+      //         // dataObj.compression = "Inherits (" + dataset_data2[k].compression.value + ")";
+      //         // dataObj.readonly = "Inherits (" + dataset_data2[k].readonly.value + ")";
+      //         // dataObj.dedup = "Inherits (" + dataset_data2[k].deduplication.value + ")";
+      //         // dataObj.comments = "";
+      //     }
+      //   }
       }
+      // dataObj.comments = dataObj.comments;
+      // console.log(dataObj.name, dataObj.usedStr, dataObj.mountpoint, dataObj._level);
+      // // console.log(dataObj)
+
 
       dataObj.actions = this.getActions(dataObj);
 
