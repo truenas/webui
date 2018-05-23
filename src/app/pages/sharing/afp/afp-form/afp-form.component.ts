@@ -13,9 +13,9 @@ import { T } from '../../../../translate-marker';
 export class AFPFormComponent implements OnDestroy {
 
   protected route_success: string[] = [ 'sharing', 'afp' ];
-  protected resource_name: string = 'sharing/afp/';
-  protected isEntity: boolean = true;
-  protected isBasicMode: boolean = true;
+  protected resource_name  = 'sharing/afp/';
+  protected isEntity = true;
+  protected isBasicMode = true;
   public afp_timemachine: any;
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
@@ -212,9 +212,9 @@ export class AFPFormComponent implements OnDestroy {
   constructor(protected router: Router) {}
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
