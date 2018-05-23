@@ -21,16 +21,16 @@ export class CconfigureRYSNCComponent {
       type : 'input',
       name : 'rsyncd_port',
       placeholder :T( 'TCP Port'),
-      tooltip: T('Port for <b>rsyncd</b> to listen on. Default is\
-       <i>873</i>.'),
+      tooltip: T('<b>rsyncd</b> listens on this port.'),
+      value: '873',
     },
     {
       type : 'textarea',
       name : 'rsyncd_auxiliary',
       placeholder : T('Auxiliary parameters'),
-      tooltip: T('Additional parameter from\
-       <a href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
-       target="_blank">rsyncd.conf(5)</a>.'),
+      tooltip: T('Enter any additional parameters from <a\
+                  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
+                  target="_blank">rsyncd.conf(5)</a>.'),
     },
   ]
 

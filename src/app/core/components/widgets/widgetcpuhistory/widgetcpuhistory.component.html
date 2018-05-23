@@ -1,5 +1,5 @@
-<div class="widget widget-{{widgetSize}}">
-  <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
+<div class="widget">
+  <div class="card-container  front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
@@ -12,20 +12,15 @@
       </mat-card-content>
       <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
+    <ng-template *ngIf="configurable">
     <mat-card class="back">
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
-        <!--<form (ngSubmit)="setPreferences(f)" #f="ngForm" id="preferences" *ngIf="chartCpu.legend.length > 0">
-          <ng-container *ngFor="let legend of chartCpu.legend; let i=index">
-            <mat-checkbox ngModel name="{{chartCpu.legend[i].name}}">
-              {{chartCpu.legend[i].name}}
-            </mat-checkbox><br>
-            </ng-container>
-            </form>-->
       </mat-card-content>
       <div class="widget-footer">
         <button mat-raised-button color="accent" (click)="toggleConfig()">Cancel</button>
         <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">Save</button>
       </div>
     </mat-card>
+    </ng-template>
   </div>
 </div>

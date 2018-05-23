@@ -80,30 +80,29 @@ export class IPMIComponent {
       inputType: 'password',
       name : 'password',
       placeholder : T('Password'),
-      tooltip : T('Type the password used to connect to the IPMI\
- interface from a web browser.'),
+      tooltip : T('Enter the password used to connect to the IPMI\
+                   interface from a web browser.'),
 
     },
     {
       type : 'input',
       name : 'conf_password',
       inputType: 'password',
-      placeholder : T('Password Confirmation'),
+      placeholder : T('Confirm Password'),
       validation : [ matchOtherValidator('password') ]
     },
     {
       type : 'checkbox',
       name : 'dhcp',
       placeholder : T('DHCP'),
-      tooltip : T('If this is unchecked, the <b>IPv4</b> fields must be\
- set.'),
+      tooltip : T('Unset to manually configure <b>IPv4</b>.'),
     },
     {
       type : 'input',
       name : 'ipaddress',
       placeholder : T('IPv4 Address'),
       tooltip : T('Enter the IP address used to connect to the IPMI web\
- interface'),
+                   interface'),
     },
     {
       type : 'input',
@@ -116,14 +115,15 @@ export class IPMIComponent {
       name : 'gateway',
       placeholder : T('IPv4 Default Gateway'),
       tooltip : T('Enter the default gateway associated with the IP\
- address.'),
+                   address.'),
     },
     {
       type : 'input',
       name : 'vlan',
       placeholder : T('VLAN ID'),
       tooltip : T('Enter the VLAN identifier if the IPMI out-of-band\
- management interface is not on the same VLAN as management networking.'),
+                   management interface is not on the same VLAN as\
+                   management networking.'),
       inputType: 'number',
     },
   ];
@@ -162,13 +162,13 @@ export class IPMIComponent {
       payload['netmask'] = formvalue.netmask;
       payload['vlan'] = formvalue.vlan;
       return this.ws.call('ipmi.update', [ this.conf.selectedValue, payload ]);
-      
+
     }
     switchChannel(){
       const myFilter = [];
       myFilter.push("id")
       myFilter.push("=")
-      myFilter.push(this.selectedValue) 
+      myFilter.push(this.selectedValue)
       this.loadData([[myFilter]]);
     }
 
@@ -183,6 +183,6 @@ export class IPMIComponent {
           this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
         }
       });
-      
+
     }
 }

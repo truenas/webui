@@ -27,8 +27,8 @@ export class ScrubFormComponent {
   public fieldConfig: FieldConfig[] = [{
       type: 'select',
       name: 'scrub_volume',
-      placeholder: T('Volume'),
-      tooltip : T('Volume to be scrubbed.'),
+      placeholder: T('Pool'),
+      tooltip : T('Choose a pool to scrub.'),
       options: [],
       required: true,
       validation : [ Validators.required ],
@@ -37,6 +37,11 @@ export class ScrubFormComponent {
       inputType: 'number',
       name: 'scrub_threshold',
       placeholder: T('Threshold days'),
+      tooltip: T('Define the number of days to prevent a scrub from\
+                  running after the last has completed. This ignores any\
+                  other calendar schedule. The default is a multiple of\
+                  7 to ensure the scrub always occurs on the same\
+                  weekday.'),
       value: 35,
       min: 0,
       required: true,
@@ -45,13 +50,13 @@ export class ScrubFormComponent {
       type: 'input',
       name: 'scrub_description',
       placeholder: T('Description'),
-      tooltip : T('Optional text description of scrub.'),
+      tooltip : T('Describe the scrub task.'),
     }, {
       type: 'select',
       name: 'scrub_repeat',
       placeholder: T('Quick Schedule'),
-      tooltip: T('Select a time frame for the job. Otherwise, do not select\
-       a time frame to customize the schedule.'),
+      tooltip: T('Choose how often to run the task. Choose the\
+                  empty value to define a custom schedule.'),
       options: [
         { label: '----------', value: 'none' },
         { label: 'Hourly', value: 'hourly' },
@@ -64,34 +69,28 @@ export class ScrubFormComponent {
       type: 'input',
       name: 'scrub_minute',
       placeholder: T('Minute'),
-      // tooltip : T('If the slider is used, a scrub occurs every N minutes.\
-      //  If specific minutes are chosen, a scrub runs only at the selected\
-      //  minute values'),
+      tooltip : T('Define the minute to run the task.'),
       value: '*',
       isHidden: false,
     }, {
       type: 'input',
       name: 'scrub_hour',
       placeholder: T('Hour'),
-      // tooltip : T('If the slider is used, a scrub occurs every N hours.\
-      //  If specific hours are chosen, a scrub runs only at the selected hour\
-      //  values'),
+      tooltip : T('Define the hour to run the task.'),
       value: '*',
       isHidden: false,
     }, {
       type: 'input',
       name: 'scrub_daymonth',
       placeholder: T('Day of month'),
-      tooltip : T('If the slider is used, a scrub occurs every N days. If\
-       specific days of the month are chosen, a scrub runs only on the\
-       selected days of the selected months.'),
+      tooltip : T('Define the day of the month to run the task.'),
       value: '*',
       isHidden: false,
     }, {
       type: 'select',
       name: 'scrub_month',
       placeholder: T('Month'),
-      tooltip : T('A scrub occurs on the selected months.'),
+      tooltip : T('Define which months to run the task.'),
       multiple: true,
       options: [{
         label: 'January',
@@ -136,12 +135,8 @@ export class ScrubFormComponent {
       type: 'select',
       name: 'scrub_dayweek',
       placeholder: T('Day of week'),
-      tooltip : T('A scrub occurs on the selected days. The default is\
-       Sunday to least impact users. Note that this field and the\
-       <b>Day of Month</b> field are <b>OR</b>ed together. For example\
-       setting <b>Day of Month</b> to <i>01,15</i> and <b>Day of week</b> to\
-       <i>Thursday</i> will cause scrubs to run on the 1st and 15th days of\
-       the month, but also on any Thursday,'),
+      tooltip : T('Choose which days of the week to run the test. The\
+                   default is Sunday to minimize user impact.'),
       multiple: true,
       options: [{
         label: 'Monday',
@@ -171,8 +166,8 @@ export class ScrubFormComponent {
       type: 'checkbox',
       name: 'scrub_enabled',
       placeholder: T('Enabled'),
-      tooltip : T('Uncheck to disable the scheduled scrub without\
-       deleting it.'),
+      tooltip : T('Unset to disable the scheduled scrub without\
+                   deleting it.'),
       value: true,
     }
   ];
@@ -193,6 +188,6 @@ export class ScrubFormComponent {
       res.data.forEach((item) => {
         this.volume_field.options.push({ label: item.vol_name, value: item.id });
       });
-    });    
+    });
   }
 }

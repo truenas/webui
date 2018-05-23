@@ -35,7 +35,7 @@ export class SnapshotCloneComponent {
 
   public fieldConfig: FieldConfig[];
 
-  get custom_add_query(): string { 
+  get custom_add_query(): string {
     return this.resource_name + '/' + this.pk + '/clone/'
   }
 
@@ -48,7 +48,7 @@ export class SnapshotCloneComponent {
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
-      this.fieldConfig = 
+      this.fieldConfig =
         [
           {
             type: 'input',

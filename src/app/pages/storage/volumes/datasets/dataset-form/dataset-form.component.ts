@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../../services/';
@@ -39,41 +39,50 @@ interface DatasetFormData {
   casesensitivity: string;
 };
 
+
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>'
 })
-export class DatasetFormComponent implements Formconfiguration {
+export class DatasetFormComponent implements Formconfiguration{
 
   public volid: string;
   public sub: Subscription;
   public route_success: string[] = ['storage', 'pools'];
-  public isBasicMode: boolean = true;
+  public isBasicMode = true;
   public pk: any;
-  
-
   public customFilter: any[] = [];
-
-  //public resource_name = "storage/volume";
-
   public queryCall = "pool.dataset.query";
-  //public addCall = "pool.dataset.create";
-  //public editCall = "pool.dataset.update";
-  public isEntity: boolean = true;
-  public isNew: boolean = false;
+  public isEntity = true;
+  public isNew = false;
+  public parent_dataset: any;
 
 
   public parent: string;
   public data: any;
   public parent_data: any;
 
-  
+
+  public custActions: Array<any> = [
+    {
+      id: 'basic_mode',
+      name: T('Basic Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      id: 'advanced_mode',
+      name: T('Advanced Mode'),
+      function: () => { this.isBasicMode = !this.isBasicMode; }
+    }
+  ];
+
+
   public fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
       placeholder: T('Name'),
-      tooltip: T('Mandatory; enter a unique name for the dataset.'),
+      tooltip: T('Enter a unique name for the dataset.'),
       readonly: true,
       validation: [Validators.required]
     },
@@ -81,55 +90,57 @@ export class DatasetFormComponent implements Formconfiguration {
       type: 'input',
       name: 'comments',
       placeholder: T('Comments'),
-      tooltip: T('Enter comments or notes about this dataset here.'),
+      tooltip: T('Enter any notes about this dataset.'),
     },
     {
       type: 'select',
       name: 'sync',
       placeholder: T('Sync'),
-      tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#sync" target="none">sync</a>\
- before making a change to this setting.'),
+      tooltip: T('Read about <a href="guide" target="_blank">sync</a>\
+                  before making any changes.'),
       options: [
-        { label: 'STANDARD', value: 'STANDARD' },
-        { label: 'ALWAYS', value: 'ALWAYS' },
-        { label: 'DISABLED', value: 'DISABLED' }
+        { label: 'Standard', value: 'STANDARD' },
+        { label: 'Always', value: 'ALWAYS' },
+        { label: 'Disabled', value: 'DISABLED' }
       ],
     },
     {
       type: 'select',
       name: 'compression',
-      placeholder: T('Compression level')
-      ,
-      tooltip: T('For more information about the available compression algorithms,\
- refer to the <a href="http://doc.freenas.org/11/storage.html#compression" target="_blank">FreeNAS User Guide</a>.'),
+      placeholder: T('Compression level'),
+      tooltip: T('For more information about the available compression\
+                  algorithms, refer to the <a\
+                  href="..//docs/storage.html#compression"\
+                  target="_blank">Compression section</a> of the guide.'),
       options: [
-        { label: 'OFF', value: 'OFF' },
-        { label: 'LZ4', value: 'LZ4' },
-        { label: 'GZIP-1', value: 'GZIP-1' },
-        { label: 'GZIP-6', value: 'GZIP-6' },
-        { label: 'GZIP-9', value: 'GZIP-9' },
-        { label: 'ZLE', value: 'ZLE' },
-        { label: 'LZJB', value: 'LZJB' }
+        { label: 'off', value: 'OFF' },
+        { label: 'lz4 (recommended)', value: 'LZ4' ,},
+        { label: 'gzip (fastest)', value: 'GZIP-1' },
+        { label: 'gzip (default level, 6)', value: 'GZIP-6' },
+        { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+        { label: 'zle (runs of zeros)', value: 'ZLE' },
+        { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
       ],
     },
     {
       type: 'select',
       name: 'atime',
       placeholder: T('Enable atime'),
-      tooltip: T('Controls whether the access time for files is updated\
- when they are read; setting this property to <b>Off</b> avoids producing log\
- traffic when reading files, and can result in significant performance gains.'),
+      tooltip: T('Choose <i>ON</i> to update the access time for files\
+                  when they are read. Choose <b>Off</b> to prevent\
+                  producing log traffic when reading files. This can\
+                  result in significant performance gains.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'on', value: 'ON' },
+        { label: 'off', value: 'OFF' }
       ],
     },
     {
       type: 'radio',
       name: 'share_type',
       placeholder: T('Share Type'),
-      tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
-                type that matches the type of client accessing the volume/dataset.'),
+      tooltip: T('Choose the type that matches the type of client\
+                  accessing the pool/dataset.'),
       options: [{label:'Unix', value: 'UNIX'},
                 {label:'Windows', value: 'WINDOWS'},
                 {label:'Mac', value: 'MAC'}],
@@ -140,9 +151,8 @@ export class DatasetFormComponent implements Formconfiguration {
       inputType: 'number',
       name: 'refquota',
       placeholder: T('Quota for this dataset'),
-      tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> disables\
- quotas; specifying a value means to use no more than the specified\
- size and is suitable for user datasets to prevent users from hogging available space. 0 == Unlimited.'),
+      tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
+                  space for this dataset.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -171,8 +181,8 @@ export class DatasetFormComponent implements Formconfiguration {
       inputType: 'number',
       name: 'quota',
       placeholder: 'Quota for this dataset and all children',
-      tooltip: 'Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.',
+      tooltip: 'Define a maximum size for both the dataset and any child\
+                datasets. Enter <i>0</i> to remove the quota.',
       class: 'inline',
       width: '70%',
       value: 0,
@@ -201,9 +211,9 @@ export class DatasetFormComponent implements Formconfiguration {
       inputType: 'number',
       name: 'refreservation',
       placeholder: T('Reserved space for this dataset'),
-      tooltip: T('Only available in <b>Advanced Mode</b>; default of <i>0</i> is\
- unlimited; specifying a value is suitable for datasets containing logs\
- which could take up all available free space.  0 == Unlimited.'),
+      tooltip: T('<i>0</i> is unlimited. Reserve additional space for\
+                  datasets containing logs which could take up all\
+                  available free space.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -232,8 +242,8 @@ export class DatasetFormComponent implements Formconfiguration {
       inputType: 'number',
       name: 'reservation',
       placeholder: T('Reserved space for this dataset and all children'),
-      tooltip: T('Only available in <b>Advanced Mode</b>; a specified\
- value applies to both this dataset and any child datasets. 0 == Unlimited.'),
+      tooltip: T('<i>0</i> is unlimited. A specified value applies to\
+                  both this dataset and any child datasets.'),
       class: 'inline',
       width: '70%',
       value: 0,
@@ -262,42 +272,41 @@ export class DatasetFormComponent implements Formconfiguration {
       name: 'deduplication',
       label: T('ZFS deplication'),
       placeholder: T('ZFS Deduplication'),
-      tooltip: T('Read the section on <a href="http://doc.freenas.org/11/storage.html#deduplication" target="none">Deduplication</a>\
- before making a change to this setting.'),
+      tooltip: T('Read about <a href="guide"\
+                  target="_blank">Deduplication</a> before making\
+                  changes to this setting.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'VERIFY', value: 'VERIFY' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'on', value: 'ON' },
+        { label: 'verify', value: 'VERIFY' },
+        { label: 'off', value: 'OFF' }
       ],
     },
     {
       type: 'select',
       name: 'exec',
       placeholder: T('Exec'),
-      tooltip: T('Only available in <b>Advanced Mode</b>;\
- choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
+      tooltip: T('Choose <b>On</b> or <b>Off</b>.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
     },
     {
       type: 'select',
       name: 'readonly',
       placeholder: T('Read-only'),
-      tooltip: T('Only available in <b>Advanced Mode</b>;\
- choices are <b>Inherit (off)</b>, <b>On</b>, or <b>Off</b>.'),
+      tooltip: T('Choose if the dataset can be modified.'),
       options: [
-        { label: 'ON', value: 'ON' },
-        { label: 'OFF', value: 'OFF' }
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' }
       ],
     },
     {
       type: 'select',
       name: 'snapdir',
       placeholder: T('Snapshot directory'),
-      tooltip: T('Only available in <b>Advanced Mode</b>;\
-makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dataset.'),
+      tooltip: T('Choose if the .zfs snapshot directory is <b>Visible</b>\
+                  or <b>Invisible</b> on this dataset.'),
       options: [
         { label: 'Visible', value: 'VISIBLE' },
         { label: 'Invisible', value: 'HIDDEN' },
@@ -307,8 +316,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       type: 'select',
       name: 'copies',
       placeholder: T('Copies'),
-      tooltip: T('Only available in <b>Advanced Mode</b>;\
- sets the number of data copies on this dataset.'),
+      tooltip: T('Set the number of data copies on this dataset.'),
       options: [
         { label: '1', value: '1' },
         { label: '2', value: '2' },
@@ -320,11 +328,9 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       type: 'select',
       name: 'recordsize',
       placeholder: T('Record Size'),
-      tooltip: T('Only available in <b>Advanced Mode</b>; while ZFS automatically\
- adapts the record size dynamically to adapt to data, if the data has a fixed size\
- for example, a database, matching that size may result in better performance.'),
+      tooltip: T('Matching the fixed size of data, as in a database, may\
+                  result in better performance.'),
       options: [
-        { label: 'Inherit', value: null},
         { label: '512', value: '512' },
         { label: '1K', value: '1K' },
         { label: '2K', value: '2K' },
@@ -343,13 +349,14 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       type: 'select',
       name: 'casesensitivity',
       placeholder: T('Case Sensitivity'),
-      tooltip: T('Choices are: <b>sensitive</b> (default, assumes filenames are\
- case sensitive), <b>insensitive</b> (assumes filenames are not case sensitive), or\
- <b>mixed</b> (understands both types of filenames).'),
+      tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\
+                  <i>Insensitive</i> assumes filenames are not case\
+                  sensitive. <i>Mixed</b> understands both types of\
+                  filenames.'),
       options: [
-        { label: 'SENSITIVE', value: 'SENSITIVE' },
-        { label: 'INSENSITIVE', value: 'INSENSITIVE' },
-        { label: 'MIXED', value: 'MIXED' }
+        { label: 'Sensitive', value: 'SENSITIVE' },
+        { label: 'Insensitive', value: 'INSENSITIVE' },
+        { label: 'Mixed', value: 'MIXED' }
       ],
       value: 'SENSITIVE'
     }
@@ -393,7 +400,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       data.reservation = null;
       data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
 
-      
+
     }
     // calculate and delete _unit
     data.refquota = data.refquota * this.byteMap[data.refquota_unit];
@@ -409,18 +416,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
   }
 
 
-  public custActions: Array<any> = [
-    {
-      id: 'basic_mode',
-      name: T('Basic Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      id: 'advanced_mode',
-      name: T('Advanced Mode'),
-      function: () => { this.isBasicMode = !this.isBasicMode; }
-    }
-  ];
+
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -438,20 +434,24 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
 
   afterInit(entityForm: EntityFormComponent) {
+    if(!entityForm.isNew){
+      entityForm.setDisabled('casesensitivity',true);
+      entityForm.setDisabled('name',true);
+      _.find(this.fieldConfig, {name:'name'}).tooltip = "Dataset name (read-only)."
+    }
 
   }
 
   preInit(entityForm: EntityFormComponent) {
-    let paramMap: any = (<any>this.aroute.params).getValue();
 
+    const paramMap: any = (<any>this.aroute.params).getValue();
     this.volid = paramMap['volid'];
 
     if (paramMap['pk'] !== undefined) {
       this.pk = paramMap['pk'];
 
-      let pk_parent = paramMap['pk'].split('/');
+      const pk_parent = paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
-      this.fieldConfig.pop();
       this.customFilter = [[['id', '=', this.pk]]];
     }
     // add new dataset
@@ -461,7 +461,143 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
       this.isNew = true;
       this.fieldConfig[0].readonly = false;
     }
+    if(this.parent){
+      this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]]).subscribe((pk_dataset)=>{
+      if(this.isNew){
+        const sync = _.find(this.fieldConfig, {name:'sync'});
+        const compression = _.find(this.fieldConfig, {name:'compression'});
+        const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
+        const exec = _.find(this.fieldConfig, {name:'exec'});
+        const readonly = _.find(this.fieldConfig, {name:'readonly'});
+        const atime = _.find(this.fieldConfig, {name:'atime'});
+        const recordsize = _.find(this.fieldConfig, {name:'recordsize'});
+        const sync_inherit = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+        const compression_inherit = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+        const deduplication_inherit = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+        const exec_inherit = [{label:`Inherits (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT'}];
+        const readonly_inherit = [{label:`Inherits (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
+        const atime_inherit = [{label:`Inherits (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
+        const recordsize_inherit = [{label:`Inherits (${pk_dataset[0].recordsize.value})`, value: 'INHERIT'}];
 
+
+        sync.options = sync_inherit.concat(sync.options);
+        compression.options = compression_inherit.concat(compression.options);        
+        deduplication.options = deduplication_inherit.concat(deduplication.options);
+        exec.options = exec_inherit.concat(exec.options);
+        readonly.options = readonly_inherit.concat(readonly.options);
+        atime.options = atime_inherit.concat(atime.options);
+        recordsize.options = recordsize_inherit.concat(recordsize.options);
+
+
+        entityForm.formGroup.controls['sync'].setValue('INHERIT');
+        entityForm.formGroup.controls['compression'].setValue('INHERIT');
+        entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+        entityForm.formGroup.controls['exec'].setValue('INHERIT');
+        entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+        entityForm.formGroup.controls['atime'].setValue('INHERIT');
+        entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
+        }
+        else {
+          this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((parent_dataset)=>{
+            this.parent_dataset = parent_dataset[0];
+            const edit_sync = _.find(this.fieldConfig, {name:'sync'});
+            const edit_compression = _.find(this.fieldConfig, {name:'compression'});
+            const edit_deduplication = _.find(this.fieldConfig, {name:'deduplication'});
+            const edit_exec = _.find(this.fieldConfig, {name:'exec'});
+            const edit_readonly = _.find(this.fieldConfig, {name:'readonly'});
+            const edit_atime = _.find(this.fieldConfig, {name:'atime'});
+            const edit_recordsize = _.find(this.fieldConfig, {name:'recordsize'});
+            let edit_sync_collection = [{label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
+            let edit_compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
+            let edit_deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
+            let edit_exec_collection = [{label:pk_dataset[0].exec.value, value: pk_dataset[0].exec.value}];
+            let edit_readonly_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
+            let edit_atime_collection = [{label:pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value}];
+            let edit_recordsize_collection = [{label:pk_dataset[0].recordsize.value, value: pk_dataset[0].recordsize.value}];
+
+            if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_sync_collection = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: pk_dataset[0].sync.value}];
+            }
+            else{
+              edit_sync_collection = [{label:`Inherits (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
+
+            }
+
+            edit_sync.options = edit_sync_collection.concat(edit_sync.options);
+
+            if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
+              edit_compression_collection = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: pk_dataset[0].compression.value}];
+            }
+            else {
+              edit_compression_collection = [{label:`Inherits (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
+            }
+
+            edit_compression.options = edit_compression_collection.concat(edit_compression.options);
+
+            if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_deduplication_collection = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: pk_dataset[0].deduplication.value}];
+            }
+            else {
+              edit_deduplication_collection = [{label:`Inherits (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
+            }
+            edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
+
+            if (pk_dataset[0].exec.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_exec_collection = [{label:`Inherits (${pk_dataset[0].exec.rawvalue})`, value: pk_dataset[0].exec.value}];
+
+            }
+            else {
+
+              edit_exec_collection = [{label:`Inherits (${this.parent_dataset.exec.value})`, value: 'INHERIT'}];
+            }
+            edit_exec.options = edit_exec_collection.concat(edit_exec.options);
+
+            if (pk_dataset[0].readonly.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_readonly_collection = [{label:`Inherits (${pk_dataset[0].readonly.rawvalue})`, value: pk_dataset[0].readonly.value}];
+
+            }
+            else {
+              edit_readonly_collection = [{label:`Inherits (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
+            }
+            edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
+
+            if (pk_dataset[0].atime.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_atime_collection = [{label:`Inherits (${pk_dataset[0].atime.rawvalue})`, value: pk_dataset[0].atime.value}];
+
+            } else {
+              edit_atime_collection = [{label:`Inherits (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
+
+            }
+            edit_atime.options = edit_atime_collection.concat(edit_atime.options);
+
+            if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
+              edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
+
+            } else {
+              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
+            }
+            edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
+            entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
+            if (pk_dataset[0].compression.value === 'GZIP') {
+              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value+'-6');
+            }
+            else{
+              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+
+            }
+
+            entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
+            entityForm.formGroup.controls['exec'].setValue(pk_dataset[0].exec.  value);
+            entityForm.formGroup.controls['readonly'].setValue(pk_dataset[0].readonly.value);
+            entityForm.formGroup.controls['atime'].setValue(pk_dataset[0].atime.value);
+            entityForm.formGroup.controls['recordsize'].setValue(pk_dataset[0].recordsize.value);
+            this.parent_dataset = parent_dataset[0];
+          })
+
+        }
+      });
+
+    }
 
   }
 
@@ -504,7 +640,7 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
      // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
      if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
-       let value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+       const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
        returnValue.recordsize = "" + ( 1024 * value ) + "K";
      }
 
@@ -517,16 +653,16 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       data.quota = null;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       data.refquota = null;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       data.refreservation = null;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       data.reservation = null;
     }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
@@ -534,17 +670,38 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
-    if (data.quota == 0) {
+    if (data.quota === 0) {
       delete data.quota;
     }
-    if (data.refquota == 0) {
+    if (data.refquota === 0) {
       delete data.refquota;
     }
-    if (data.refreservation == 0) {
+    if (data.refreservation === 0) {
       delete data.refreservation;
     }
-    if (data.reservation == 0) {
+    if (data.reservation === 0) {
       delete data.reservation;
+    }
+    if (data.recordsize === 'INHERIT') {
+      delete(data.recordsize);
+    }
+    if (data.sync === 'INHERIT') {
+      delete(data.sync);
+    }
+    if (data.compression === 'INHERIT') {
+      delete(data.compression);
+    }
+    if (data.atime === 'INHERIT') {
+      delete(data.atime);
+    }
+    if (data.exec === 'INHERIT') {
+      delete(data.exec);
+    }
+    if (data.readonly === 'INHERIT') {
+      delete(data.readonly);
+    }
+    if (data.deduplication === 'INHERIT') {
+      delete(data.deduplication);
     }
     return this.ws.call('pool.dataset.create', [ data ]);
   }
@@ -554,14 +711,12 @@ makes the .zfs snapshot directory <b>Visible</b> or <b>Invisible</b> on this dat
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       this.loader.close();
-      
+
       this.router.navigate(new Array('/').concat(
         this.route_success));
     }, (res) => {
       this.loader.close();
-      //Handled in global error websocketservice
       this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
-      //console.log(T("Error saving dataset"), res.message, res.stack);
     });
   }
 

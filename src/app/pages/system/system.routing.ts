@@ -25,21 +25,14 @@ import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
-import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
-import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
-import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
-import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CertificateAuthorityImportComponent } from './ca/ca-import/';
-import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
-import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
+import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
-import { CAFormComponent } from './ca/ca-form/';
-import { CertificateCSRComponent } from './certificates/certificate-csr/';
+import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
-import { CertificateImportComponent } from './certificates/certificate-import/';
-import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
@@ -217,44 +210,14 @@ export const routes: Routes = [
           data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
         },
         {
-          path: 'gcs',
-          component: CloudCredentialsGCSComponent,
-          data: { title: 'Add GCS', breadcrumb: 'Add GCS' },
+          path: 'add',
+          component: CloudCredentialsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
         },
         {
-          path: 'gcs/:pk',
-          component: CloudCredentialsGCSComponent,
-          data: { title: 'Edit GCS', breadcrumb: 'Edit GCS' },
-        },
-        {
-          path: 'amazon',
-          component: CloudCredentialsAmazonComponent,
-          data: { title: 'Add Amazon', breadcrumb: 'Add Amazon' },
-        },
-        {
-          path: 'amazon/:pk',
-          component: CloudCredentialsAmazonComponent,
-          data: { title: 'Edit Amazon', breadcrumb: 'Edit Amazon' },
-        },
-        {
-          path: 'azure',
-          component: CloudCredentialsAzureComponent,
-          data: { title: 'Add Azure', breadcrumb: 'Add Azure' },
-        },
-        {
-          path: 'azure/:pk',
-          component: CloudCredentialsAzureComponent,
-          data: { title: 'Edit Azure', breadcrumb: 'Edit Azure' },
-        },
-        {
-          path: 'b2',
-          component: CloudCredentialsB2Component,
-          data: { title: 'Add B2', breadcrumb: 'Add B2' },
-        },
-        {
-          path: 'b2/:pk',
-          component: CloudCredentialsB2Component,
-          data: { title: 'Edit B2', breadcrumb: 'Edit B2' },
+          path: 'edit/:pk',
+          component: CloudCredentialsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
         },
       ]
     },
@@ -265,22 +228,15 @@ export const routes: Routes = [
         path: '',
         component: CertificateAuthorityListComponent,
         data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
+      }, 
+      {
+        path: 'add',
+        component: CertificateAuthorityAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
       }, {
-        path: 'import',
-        component: CertificateAuthorityImportComponent,
-        data: { title: 'Import', breadcrumb: 'Import' },
-      }, {
-        path: 'internal',
-        component: CertificateAuthorityInternalComponent,
-        data: { title: 'Internal', breadcrumb: 'Internal' },
-      }, {
-        path: 'intermediate',
-        component: CertificateAuthorityIntermediateComponent,
-        data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
-      }, {
-        path: 'edit/:pk',
-        component: CertificateEditComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        path: 'sign/:pk',
+        component: CertificateAuthoritySignComponent,
+        data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
       }]
     }, {
       path: 'certificates',
@@ -290,17 +246,9 @@ export const routes: Routes = [
         component: CertificateListComponent,
         data: { title: 'Certificates', breadcrumb: 'Certificates' },
       }, {
-        path: 'import',
-        component: CertificateImportComponent,
-        data: { title: 'Import', breadcrumb: 'Import' },
-      }, {
-        path: 'internal',
-        component: CertificateInternalComponent,
-        data: { title: 'Internal', breadcrumb: 'Internal' },
-      }, {
-        path: 'csr',
-        component: CertificateCSRComponent,
-        data: { title: 'CSR', breadcrumb: 'CSR' },
+        path: 'add',
+        component: CertificateAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
       }, {
         path: 'edit/:pk',
         component: CertificateEditComponent,

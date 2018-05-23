@@ -26,8 +26,8 @@ export class InitshutdownFormComponent {
     type: 'select',
     name: 'ini_type',
     placeholder: T('Type'),
-    tooltip: T('Select <i>Command</i> (for an executable) or\
-     <i>Script</i> (for an executable script)'),
+    tooltip: T('Select <i>Command</i> for an executable or\
+                <i>Script</i> for an executable script.'),
     options: [{
       label: 'Command',
       value: 'command',
@@ -40,7 +40,7 @@ export class InitshutdownFormComponent {
     type: 'input',
     name: 'ini_command',
     placeholder: T('Command'),
-    tooltip: T('Enter the command plus any desired options.'),
+    tooltip: T('Enter the command and any options.'),
     required: true,
     validation : [ Validators.required ],
   }, {
@@ -49,15 +49,16 @@ export class InitshutdownFormComponent {
     name: 'ini_script',
     placeholder: T('Script'),
     explorerType: 'file',
-    tooltip: T('Enter the location of the script.'),
+    tooltip: T('Browse to the script location.'),
   }, {
     type: 'select',
     name: 'ini_when',
     placeholder: T('When'),
-    tooltip: T('Select when the command/script runs. Choices are\
-     <i>Pre Init</i> (very early in boot process before filesystems are\
-     mounted), <i>Post Init</i> (towards end of boot process before FreeNAS\
-     services are started), or <i>Shutdown</i>.'),
+    tooltip: T('Select when the command or script runs. <i>Pre Init</i>\
+                is very early in the boot process before mounting\
+                filesystems, <i>Post Init</i> is towards the end of the\
+                boot process before FreeNAS services start, or at\
+                <i>Shutdown</i>.'),
     options: [{
       label: '---------',
       value: '',
@@ -78,7 +79,7 @@ export class InitshutdownFormComponent {
     type: 'checkbox',
     name: 'ini_enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Uncheck to disable the task.'),
+    tooltip: T('Unset to diable the task without deleting it.'),
     value: true,
   }];
 

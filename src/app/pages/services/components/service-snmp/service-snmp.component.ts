@@ -39,7 +39,7 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'location',
       placeholder : T('Location'),
-      tooltip: T('Optional description of the location of the system.'),
+      tooltip: T('Enter the location of the system.'),
       label : 'Location',
       validation : [ Validators.required ]
     },
@@ -47,34 +47,36 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'contact',
       placeholder : T('Contact'),
-      tooltip: T('Email address of administrator.'),
+      tooltip: T('Enter an email address to receive messages from the\
+                  <a href="..//docs/services.html#snmp"\
+                  target="_blank">SNMP service</a>.'),
       validation: [Validators.required, Validators.email]
     },
     {
       type : 'input',
       name : 'community',
       placeholder : T('Community'),
-      tooltip: T('Default is <i>public</i> and <b>should be changed for\
-       security reasons</b>. This can only contain alphanumeric characters,\
-       underscores, dashes, periods, and spaces. This value can be left empty\
-       for <i>SNMPv3</i> networks.'),
+      tooltip: T('Change from <i>public</i to increase system security.\
+                  Can only contain alphanumeric characters, underscores,\
+                  dashes, periods, and spaces. This can be left empty\
+                  for <i>SNMPv3</i> networks.'),
     },
     {
       type : 'checkbox',
       name : 'v3',
       placeholder : T('SNMP v3 Support'),
-      tooltip: T('Check this box to enable support for SNMP version 3.'),
+      tooltip: T('Set to to enable support for <a\
+                  href="https://tools.ietf.org/html/rfc3410"\
+                  target="_blank">SNMP version 3</a>. See <a\
+                  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
+                  target="_blank">snmpd.conf(5)</a> for configuration\
+                  details.'),
     },
     {
       type : 'input',
       name : 'v3_username',
       placeholder : T('Username'),
-      tooltip: T('Only applies if <b>SNMP v3 Support</b> is checked.\
-       Specify the username to register with this service. Refer to <a\
-       href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
-       target="_blank">snmpd.conf(5)</a> for more details about configuration\
-       and the <b>Authentication Type</b>, <b>Password</b>,\
-       <b>Privacy Protocol</b>, and <b>Privacy Passphrase</b> fields.'),
+      tooltip: T('Enter a username to register with this service.'),
       relation : [ {
         action : 'DISABLE',
         when : [ {name : 'v3', value : false} ]
@@ -83,8 +85,8 @@ export class ServiceSNMPComponent {
     {
       type : 'select',
       name : 'v3_authtype',
-      label : 'Authentic Type',
-      tooltip: T('Only applies if <b>SNMP v3 Support</b> is checked.'),
+      label : 'Authentication',
+      tooltip: T('Choose an authentication method.'),
       options : [
         {label : '---', value : ""}, {label : 'MD5', value : 'MD5'},
         {label : 'SHA', value : 'SHA'}
@@ -98,9 +100,8 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'v3_password',
       inputType : 'password',
-      placeholder : T('password'),
-      tooltip: T('Only applies if <b>SNMP v3 Support</b> is checked.\
-       Specify and confirm a password of at least eight characters.'),
+      placeholder : T('Password'),
+      tooltip: T('Enter a password of at least eight characters.'),
       validation :
           [ Validators.minLength(8), matchOtherValidator('v3_password2') ],
       relation : [ {
@@ -112,8 +113,7 @@ export class ServiceSNMPComponent {
       type : 'input',
       name : 'v3_password2',
       inputType : 'password',
-      placeholder : T('Confirm password'),
-      tooltip: T('Re-enter <b>Password</b> to confirm.'),
+      placeholder : T('Confirm Password'),
       relation : [ {
         action : 'DISABLE',
         when : [ {name : 'v3', value : false} ]
@@ -123,8 +123,7 @@ export class ServiceSNMPComponent {
       type : 'select',
       name : 'v3_privproto',
       label : 'Privacy Protocol',
-      tooltip: T('Only applies if <b>SNMP v3 Support<b> is\
-       checked.'),
+      tooltip: T('Choose a privacy protocol.'),
       options : [
         {label : '---', value : null},
         {label : 'AES', value : 'AES'},
@@ -140,7 +139,8 @@ export class ServiceSNMPComponent {
       name : 'v3_privpassphrase',
       inputType : 'password',
       placeholder : T('Privacy Passphrase'),
-      tooltip: T('If not specified, <b>Password</b> is used.'),
+      tooltip: T('Enter a separate privacy passphrase. <b>Password</b>\
+                  is used when this is left empty.'),
       validation : [
         Validators.minLength(8), matchOtherValidator('v3_privpassphrase2')
       ],
@@ -154,7 +154,6 @@ export class ServiceSNMPComponent {
       name : 'v3_privpassphrase2',
       inputType : 'password',
       placeholder : T('Confirm Privacy Passphrase'),
-      tooltip: T('Re-enter <b>Privacy Passphrase</b> to confirm.'),
       relation : [ {
         action : 'DISABLE',
         when : [ {name : 'v3', value : false} ]
@@ -165,16 +164,17 @@ export class ServiceSNMPComponent {
       name : 'options',
       placeholder : T('Auxiliary Parameters'),
       tooltip: T('Enter any additional <a\
-       href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
-       target="_blank">snmpd.conf(5)</a> options, one per line.'),
+                  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
+                  target="_blank">snmpd.conf(5)</a> options. Add one\
+                  option for each line.'),
     },
     {
       type : 'select',
       name : 'loglevel',
       placeholder : T('Log Level'),
       tooltip : T('Choose how many log entries to create. Choices range\
-       from the least log entries (<b>Emergency</b>) to the most\
-       (<b>Debug</b>).'),
+                   from the least log entries (<i>Emergency</i>) to the\
+                   most (<i>Debug</i>).'),
       options : [
         {label : 'Emergency', value :0},
         {label : 'Alert', value :1},
