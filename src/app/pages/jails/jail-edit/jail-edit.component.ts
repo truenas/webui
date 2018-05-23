@@ -161,7 +161,7 @@ export class JailEditComponent implements OnInit {
       type: 'input',
       name: 'notes',
       placeholder: T('Note'),
-      tooltip: T('Store notes about the jail.'),
+      tooltip: T('Save notes about the jail.'),
     },
     {
       type: 'checkbox',
