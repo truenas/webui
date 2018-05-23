@@ -637,9 +637,9 @@ export class JailAddComponent implements OnInit {
       placeholder: T('ip4'),
       tooltip: T('Control the availability of IPv4 addresses. <br>\
                   <b>Inherit</b>: Allow unrestricted access to all \
-                  system addresses. \
-                  <b>New</b> Restrict addresses with <b>ip4_addr</b>. \
-                  <b>Disable</b> Stop the jail from using IPv4 \
+                  system addresses. <br>\
+                  <b>New</b>: Restrict addresses with <b>ip4_addr</b>. \
+                  <br><b>Disable</b>: Stop the jail from using IPv4 \
                   entirely.'),
       options: [{
         label: 'Inherit',
@@ -667,9 +667,9 @@ export class JailAddComponent implements OnInit {
       placeholder: T('ip6'),
       tooltip: T('Control the availability of IPv6 addresses. <br>\
                   <b>Inherit</b>: Allow unrestricted access to all \
-                  system addresses. \
-                  <b>New</b> Restrict addresses with <b>ip6_addr</b>. \
-                  <b>Disable</b> Stop the jail from using IPv4 \
+                  system addresses. <br>\
+                  <b>New</b>; Restrict addresses with <b>ip6_addr</b>. \
+                  <br><b>Disable</b>: Stop the jail from using IPv4 \
                   entirely.'),
       options: [{
         label: 'Inherit',
