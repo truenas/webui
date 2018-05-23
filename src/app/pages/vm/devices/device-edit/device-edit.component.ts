@@ -60,11 +60,11 @@ export class DeviceEditComponent implements OnInit {
   private RAW_boot: any;
   private RAW_rootpwd: any;
   private RAW_size: any;
- 
+
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
-  
+
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected ws: WebSocketService,
@@ -91,9 +91,9 @@ export class DeviceEditComponent implements OnInit {
           type : 'explorer',
           initial: '/mnt',
           name : 'CDROM_path',
-          placeholder : 'CDROM Path',
-          tooltip : 'Select the path to the CDROM. The image must be\
- present on an accessible portion of the FreeNAS storage.',
+          placeholder : 'CD-ROM Path',
+          tooltip : 'Browse to a CD-ROM file present on the system\
+                     storage.',
         },
       ];
     } else if (this.dtype === "NIC") {
@@ -101,11 +101,11 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'NIC_type',
           placeholder : 'Adapter Type:',
-          tooltip : 'The default emulates an Intel E1000 (82545) Ethernet\
- card for compatibility with most operating systems. If the operating\
- system installed in the VM supports VirtIO paravirtualized network\
- drivers, this can be changed to <i>VirtIO</i> to provide better\
- performance.',
+          tooltip : 'Emulating an <i>Intel e82545 (e1000)</i> ethernet\
+                     card has compatibility with most operating systems.\
+                     Change to <i>VirtIO</i> to provide better\
+                     performance on systems with VirtIO paravirtualized\
+                     network driver support.',
           type: 'select',
           options : [],
           required: true,
@@ -113,10 +113,12 @@ export class DeviceEditComponent implements OnInit {
         },
         {
           name : 'NIC_mac',
-          placeholder : 'Mac Address',
+          placeholder : 'MAC Address',
           tooltip : 'By default, the VM receives an auto-generated\
- random MAC address. To override the default with a custom value,\
- enter the desired address into the field.',
+                     random MAC address. Enter a custom address into the\
+                     field to override the default. Click <b>Generate\
+                     MAC Address</b> to add a new randomized address\
+                     into this field.',
           type: 'input',
           value : '',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
@@ -125,9 +127,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'nic_attach',
           placeholder : 'Nic to attach:',
-          tooltip : 'Can be used to specify which physical interface to\
- associate with the VM if the system has multiple physical network\
- cards.',
+          tooltip : 'Select a physical interface to associate with the\
+                     VM.',
           type: 'select',
           options : [],
           required: true,
@@ -138,25 +139,24 @@ export class DeviceEditComponent implements OnInit {
       this.fieldConfig = [
         {
           name : 'VNC_port',
-          placeholder : 'port',
+          placeholder : 'Port',
           tooltip : 'Can be set to <i>0</i>, left empty for FreeNAS to\
- assign a port when the VM is stared, or set to a fixed,preferred port\
- number.',
+                     assign a port when the VM is started, or set to a\
+                     fixed, preferred port number.',
           type : 'input',
           inputType: 'number'
         },
         {
           name : 'VNC_wait',
-          placeholder : 'wait on boot',
-          tooltip : 'When checked, VNC client should wait until the VM\
- has booted before attempting the connection.',
+          placeholder : 'Wait to boot',
+          tooltip : 'Set for the VNC client to wait until the VM has\
+                     booted before attempting the connection.',
           type: 'checkbox'
         },
         {
           name : 'VNC_resolution',
-          placeholder : 'Resolution:',
-          tooltip : 'Used to modify the default screen resolution used\
- by the VNC session.',
+          placeholder : 'Resolution',
+          tooltip : 'Select a screen resolution to use for VNC sessions.',
           type: 'select',
           options : [
             {label : '1920x1080', value : "1920x1080"},
@@ -170,24 +170,24 @@ export class DeviceEditComponent implements OnInit {
         },
         {
           name : 'vnc_bind',
-          placeholder : 'Bind:',
-          tooltip : 'By default, VNC binds to all available IP addresses\
- (<i>0.0.0.0). To specify the IP address to use, select it.',
+          placeholder : 'Bind',
+          tooltip : 'Select an IP address to use for VNC sessions.',
           type: 'select',
           options : [],
         },
         {
           name : 'vnc_password',
-          placeholder : 'password',
-          tooltip : 'Enter the VNC password to automatically pass the\
- VNC. Note that the password is limited to 8 characters.',
+          placeholder : 'Password',
+          tooltip : 'Enter a VNC password to automatically pass to the\
+                     VNC session. Passwords cannot be longer than 8\
+                     characters.',
           type : 'input',
           inputType : 'password',
         },
         {
           name : 'vnc_web',
-          placeholder : 'VNC web',
-          tooltip : 'When checked, uses the VNC web interface.',
+          placeholder : 'Web Interface',
+          tooltip : 'Set to enable connecting to the VNC web interface.',
           type: 'checkbox'
         },
       ];
@@ -195,10 +195,10 @@ export class DeviceEditComponent implements OnInit {
       this.fieldConfig = [
         {
           name : 'DISK_zvol',
-          placeholder : 'ZVol',
-          tooltip : 'After <a\
- href="http://doc.freenas.org/11/storage.html#create-zvol"\
- target="_blank">creating a zvol</a>, select it from the list.',
+          placeholder : 'Zvol',
+          tooltip : 'Browse to an existing <a\
+                     href="..//docs/storage.html#adding-zvols"\
+                     target="_blank">Zvol</a>.',
           type: 'explorer',
           explorerType: "zvol",
           initial: '/mnt',
@@ -208,10 +208,11 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'DISK_mode',
           placeholder : 'Mode',
-          tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
- software compatibility. <i>VirtIO</i> uses paravirtualized drivers and\
- can provide better performance, but requires the operating system\
- installed in the VM to support VirtIO disk devices.',
+          tooltip : '<i>AHCI</i> emulates an AHCI hard disk for better\
+                     software compatibility. <i>VirtIO</i> uses\
+                     paravirtualized drivers and can provide better\
+                     performance, but requires the operating system\
+                     installed in the VM to support VirtIO disk devices.',
           type: 'select',
           options : [
             {label : 'AHCI', value : 'AHCI'},
@@ -220,9 +221,9 @@ export class DeviceEditComponent implements OnInit {
         },
         {
           name : 'DISK_sectorsize',
-          placeholder : 'Disk sectorsize',
-          tooltip : 'If a specific sector size is required, enter the\
- number of bytes. The default of <i>0</i> leaves the sector size unset.',
+          placeholder : 'Disk sector size',
+          tooltip : 'Enter the sector size in bytes. The default <i>0</i>\
+                     leaves the sector size unset.',
           type: 'input',
         },
       ];
@@ -233,25 +234,27 @@ export class DeviceEditComponent implements OnInit {
           initial: '/mnt',
           name : 'RAW_path',
           placeholder : 'Raw File',
-          tooltip : 'Select the location of the RAW file being added.',
+          tooltip : 'Browse to a storage location and add the name of\
+                     the new raw file on the end of the path.',
           required: true,
           validation : [Validators.required]
         },
         {
           type : 'input',
           name : 'RAW_sectorsize',
-          placeholder : 'Disk sectorsize',
-          tooltip : 'If a specific sector size is required, enter the\
- number of bytes. The default of <i>0</i> leaves the sector size unset.',
+          placeholder : 'Disk sector size',
+          tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
+                     sector size unset.',
           inputType : 'number',
         },
         {
           name : 'RAW_mode',
           placeholder : 'Mode',
           tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
- software compatibility. <i>VirtIO</i> uses paravirtualized drivers and\
- can provide better performance, but requires the operating system\
- installed in the VM to support VirtIO disk devices.',
+                     software compatibility. <i>VirtIO</i> uses\
+                     paravirtualized drivers and can provide better\
+                     performance, but requires the operating system\
+                     installed in the VM to support VirtIO disk devices.',
           type: 'select',
           options : [
             {label : 'AHCI', value : 'AHCI'},
@@ -262,22 +265,23 @@ export class DeviceEditComponent implements OnInit {
           type : 'checkbox',
           name : 'RAW_boot',
           placeholder : 'Boot',
-          tooltip : '',
+          tooltip : 'Set to boot the VM from this device.',
           isHidden: true
         },
         {
           type : 'input',
           name : 'RAW_rootpwd',
           placeholder : 'password',
-          tooltip : '',
+          tooltip : 'Enter a password for the <i>rancher</i> user. This\
+                     is used to log in to the VM from the serial shell.',
           inputType : 'password',
           isHidden: true
         },
         {
           type : 'input',
           name : 'RAW_size',
-          placeholder : 'RAW filesize',
-          tooltip : '',
+          placeholder : 'Raw filesize',
+          tooltip : 'Define the size of the raw file in GiB.',
           inputType : 'number',
           isHidden: true
         },
@@ -364,13 +368,13 @@ export class DeviceEditComponent implements OnInit {
           this.RAW_rootpwd.isHidden = false
           this.RAW_size.isHidden = false
         }
-        
+
         this.setgetValues(device[0].attributes, rawfile_lookup_table);
         }
-      
+
     })
   }
-  
+
   setgetValues(data, lookupTable) {
     for (const i in data) {
       const fg = this.formGroup.controls[lookupTable[i]];
@@ -432,7 +436,7 @@ export class DeviceEditComponent implements OnInit {
         if (this.dtype  === 'DISK') {
             payload['dtype'] = 'DISK'
             payload['attributes'] = {
-                'type' : formvalue.DISK_mode, 
+                'type' : formvalue.DISK_mode,
                 'path' : formvalue.DISK_zvol,
               }
             }
@@ -452,7 +456,7 @@ export class DeviceEditComponent implements OnInit {
             if (formvalue.RAW_boot || formvalue.RAW_rootpwd || formvalue.RAW_size ){
               Object.assign(
                 payload['attributes'],
-                { "boot": formvalue.RAW_boot}, 
+                { "boot": formvalue.RAW_boot},
                 {"rootpwd" :formvalue.RAW_rootpwd},
                 {"size":formvalue.RAW_size}
                )
@@ -465,5 +469,5 @@ export class DeviceEditComponent implements OnInit {
 
             );
           }
- 
+
 }
