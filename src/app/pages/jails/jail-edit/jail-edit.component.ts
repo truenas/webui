@@ -167,7 +167,7 @@ export class JailEditComponent implements OnInit {
       type: 'checkbox',
       name: 'boot',
       placeholder: T('Auto-start'),
-      tooltip: T('Check to auto-start the jail at system boot time. \
+      tooltip: T('Set to auto-start the jail at system boot time. \
                   Jails are started and stopped based on iocage \
                   priority. Set in the <b>priority</b> field under \
                   <b>Custom Properties</b>.'),
@@ -779,7 +779,7 @@ export class JailEditComponent implements OnInit {
     //   type: 'checkbox',
     //   name: 'template',
     //   placeholder: T('template'),
-    //   tooltip: T('Check to set this jail as a template.'),
+    //   tooltip: T('Set to set this jail as a template.'),
     // },
     {
       type: 'checkbox',
