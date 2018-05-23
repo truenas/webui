@@ -296,6 +296,16 @@ class delete_test(unittest.TestCase):
                 driver.find_element_by_xpath('//*[contains(text(), "Delete")]').click()
                 print ("Delete button clicked")
                 driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/button[2]').click()
+
+                click_check =  driver.find_element_by_xpath(xpaths['submenu' + path])
+                for i in range(1, 10):
+                    if driver.element_to_be_clickable(By.XPATH, xpaths['submenu' + path]):
+                        time.sleep(1)
+                        print ("element clickable")
+                        break
+                    else:
+                        time.sleep(5)
+                        print ("waiting on element to be clickable")
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
 
