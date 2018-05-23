@@ -418,15 +418,16 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
-
+    
     data = new EntityUtils().flattenData(data);
+    const dataset_data2 = this.datasetData;
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
     for (let i = 0; i < data.length; i++) {
       const dataObj = data[i];
-      console.log(data);
-
+      // console.log(dataObj);
+      
       dataObj.nodePath = dataObj.mountpoint;
 
       if (typeof (dataObj.nodePath) === "undefined" && typeof (dataObj.path) !== "undefined") {
@@ -461,19 +462,30 @@ export class VolumesListTableConfig implements InputTableConf {
 
       dataObj.compression = "";
       dataObj.readonly = "";
-      dataObj.dedub = "";
+      dataObj.dedup = "";
       dataObj.comments = "";
 
-      if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
-        console.log('ok 1');
-        for (let k = 0; k < dataObj.dataset_data.data.length; k++) {
-          if (dataObj.dataset_data.data[k].name === dataObj.nodePath) {
-            console.log('okay 2');
-            dataObj.compression = dataObj.dataset_data.data[k].compression;
-            dataObj.readonly = dataObj.dataset_data.data[k].readonly;
-            dataObj.dedup = dataObj.dataset_data.data[k].dedup;
-            dataObj.comments = dataObj.dataset_data.data[k].comments;
-          }
+      console.log(this.datasetData[0].name,
+        'dedup ' + this.datasetData[0].deduplication.value, 
+        'compression ' + this.datasetData[0].compression.value, 
+        'read only? ' + this.datasetData[0].readonly.value, 
+        'mntpoint ' + this.datasetData[0].mountpoint,
+        'comments ' + this.datasetData[0].comments.value);
+
+      // console.log('dataObj = ' + dataObj);
+      console.log(this.datasetData);
+
+      // if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
+        // console.log('ok 1');
+        for (let k  in dataset_data2) {
+          console.log(dataObj.nodePath);
+          if (dataset_data2[k].mountpoint === dataObj.nodePath) {
+            // console.log('okay 2');
+            dataObj.compression = dataset_data2[k].compression.value;
+            dataObj.readonly = dataset_data2[k].readonly.value;
+            dataObj.dedup = dataset_data2[k].deduplication.value;
+            dataObj.comments = dataset_data2[k].comments.value;
+          // }
 
         }
       }
@@ -540,7 +552,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         res.data.forEach((volume: ZfsPoolData) => {
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
           volume.type = 'zpool';
-
+          // console.log(datasetData[0].name,
+          //   'dedup ' + datasetData[0].deduplication.value, 
+          //   'compression ' + datasetData[0].compression.value, 
+          //   'read only? ' + datasetData[0].readonly.value, 
+          //   'mntpoint ' + datasetData[0].mountpoint);
 
           try {
             volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
