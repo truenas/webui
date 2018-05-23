@@ -62,7 +62,7 @@ export class UserListComponent implements OnInit {
 
   ngOnInit() {
     const showTour = localStorage.getItem(this.router.url) || 'false';
-    if (showTour !== "true") {
+    if (showTour !== "false") {
       hopscotch.startTour(this.tour.startTour(this.router.url));
       localStorage.setItem(this.router.url, 'true');
     }
