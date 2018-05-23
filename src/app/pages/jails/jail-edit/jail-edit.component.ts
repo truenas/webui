@@ -276,10 +276,8 @@ export class JailEditComponent implements OnInit {
       type: 'input',
       name: 'exec_jail_user',
       placeholder: T('exec.jail_user'),
-      tooltip: T('The user to run commands as in the jail \
-                  environment. The default is to run commands as the \
-                  current user. Set to a valid username to run \
-                  commands as that user.'),
+      tooltip: T('Run commands in the jail as this user. By default, \
+                  commands are run as the current user.'),
     },
     {
       type: 'input',
@@ -296,11 +294,8 @@ export class JailEditComponent implements OnInit {
       type: 'input',
       name: 'exec_system_user',
       placeholder: T('exec.system_user'),
-      tooltip: T('The user to run commands as in the system \
-                  environment. \
-                  The default is to run commands as the current user. \
-                  Set to a valid username to run commands as that \
-                  user.'),
+      tooltip: T('Run commands in the jail as this user. By default, \
+                  commands are run as the current user.'),
     },
     {
       type: 'checkbox',
@@ -327,9 +322,9 @@ export class JailEditComponent implements OnInit {
       type: 'select',
       name: 'enforce_statfs',
       placeholder: T('enforce_statfs'),
-      tooltip: T('Determine which information processes in a jail are \
-                  able to obtain about mount points. The behavior of \
-                  multiple syscalls is affected. <a \
+      tooltip: T('Determine which information the processes in a jail \
+                  are able to obtain about mount points. The behavior \
+                  of multiple syscalls is affected. <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
                   target="_blank">statfs(2)</a>, <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=statfs&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
@@ -464,7 +459,7 @@ export class JailEditComponent implements OnInit {
       type: 'checkbox',
       name: 'allow_sysvipc',
       placeholder: T('*allow.sysvipc'),
-      tooltip: T('Choose if a process in the jail has access to \
+      tooltip: T('Choose whether a process in the jail has access to \
                   System V IPC primitives. Equivalent to setting \
                   sysvmsg, sysvsem, and sysvshm to <b>Inherit</b>. \
                   <b>*Deprecated in FreeBSD 11.0 and later!</b><br> \
@@ -475,12 +470,12 @@ export class JailEditComponent implements OnInit {
       type: 'checkbox',
       name: 'allow_raw_sockets',
       placeholder: T('allow.raw_sockets'),
-      tooltip: T('Set to allow utilities like <a \
+      tooltip: T('Set to allow raw sockets. Utilities like <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
                   target="_blank">ping(8)</a> and <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=traceroute&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                  target="_blank">traceroute(8)</a> to operate inside \
-                  the jail. When set, source IP addresses are enforced \
+                  target="_blank">traceroute(8)</a> require raw \
+                  sockets. When set, source IP addresses are enforced \
                   to comply with the IP addresses bound to the jail, \
                   ignoring the IP_HDRINCL flag on the socket.'),
     },
@@ -626,10 +621,11 @@ export class JailEditComponent implements OnInit {
       name: 'ip4',
       placeholder: T('ip4'),
       tooltip: T('Control the availability of IPv4 addresses. <br>\
-                 <b>Inherit</b>: Allow unrestricted access to all \
-                 system addresses. <br>\
-                 <b>New</b>: Restrict addresses with <b>ip4_addr</b>. \
-                 <br><b>Disable</b>: Stop the jail from using IPv4 entirely.'),
+                  <b>Inherit</b>: Allow unrestricted access to all \
+                  system addresses. <br>\
+                  <b>New</b>: Restrict addresses with <b>ip4_addr</b>. \
+                  <br><b>Disable</b>: Stop the jail from using IPv4 \
+                  entirely.'),
       options: [{
         label: 'Inherit',
         value: 'inherit',
@@ -656,9 +652,9 @@ export class JailEditComponent implements OnInit {
       placeholder: T('ip6'),
       tooltip: T('Control the availability of IPv6 addresses. <br>\
                   <b>Inherit</b>: Allow unrestricted access to all \
-                  system addresses. \
-                  <b>New</b> Restrict addresses with <b>ip6_addr</b>. \
-                  <b>Disable</b> Stop the jail from using IPv4 \
+                  system addresses. <br>\
+                  <b>New</b>: Restrict addresses with <b>ip6_addr</b>. \
+                  <br><b>Disable</b>: Stop the jail from using IPv4 \
                   entirely.'),
       options: [{
         label: 'Inherit',
