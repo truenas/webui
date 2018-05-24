@@ -59,7 +59,7 @@ export class ApiService {
         let cloneRes = Object.assign({},res);
         //cloneRes = {callArgs:callArgs ,data: res}
         if(res == 1){
-          core.emit({name:"UserDataRequest", data: [[[ "id", "=", "1" ]]] });
+          core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]] });
         }
         return cloneRes;
       }
