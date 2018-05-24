@@ -19,7 +19,7 @@ import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { SSL_OP_NO_COMPRESSION } from 'constants';
+// import { SSL_OP_NO_COMPRESSION } from 'constants';
 
 
 
@@ -465,8 +465,6 @@ export class VolumesListTableConfig implements InputTableConf {
             ? dataObj.comments = (dataset_data2[k].comments.parsed)
             : dataObj.comments = ("");
 
-          dataObj.compressionRatio = "?.??x";
-
         }
 
       }
@@ -475,7 +473,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       returnData.push(dataObj);
     }
-    // console.log(dataset_data2)
+
     return returnData;
   };
 
