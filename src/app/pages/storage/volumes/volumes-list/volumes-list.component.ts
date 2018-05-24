@@ -51,7 +51,7 @@ export interface ZfsPoolData {
   dataset_data?: any;
   actions?: any[];
   comments?: string;
-  compressionRatio: string;
+  compressionRatio?: any;
   volumesListTableConfig?: VolumesListTableConfig;
 
 }
@@ -475,7 +475,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       returnData.push(dataObj);
     }
-
+    // console.log(dataset_data2)
     return returnData;
   };
 
