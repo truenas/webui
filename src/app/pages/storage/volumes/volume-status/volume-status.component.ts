@@ -205,7 +205,26 @@ export class VolumeStatusComponent implements OnInit {
       }, {
         label: "Remove",
         onClick: (row) => {
-          console.log("remove", row);
+          this.dialogService.confirm(
+            "Offline",
+            "Are your sure you want to remove the disk " + _.split(row.name, 'p')[0],
+          ).subscribe((res) => {
+            if (res) {
+              this.loader.open();
+              let value = { label: row.path };
+              this.rest.post('storage/volume/' + this.pk + '/detach/', {
+              body: JSON.stringify(value)
+            }).subscribe(
+              (res) => {
+                this.getData();
+                this.loader.close();
+              },
+              (res)=> {
+                this.loader.close();
+                this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
+              }
+            )};
+          });
         },
         isHidden: false,
       }];
