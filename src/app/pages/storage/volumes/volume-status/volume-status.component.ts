@@ -3,7 +3,9 @@ import { WebSocketService, RestService, AppLoaderService, DialogService } from "
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 interface poolDiskInfo {
   id: number,
@@ -30,6 +32,24 @@ export class VolumeStatusComponent implements OnInit {
   public expandRows: Array<number> = [1];
 
   protected editDiskRoute: any = ["storage", "disks", "pool"];
+  protected replaceDiskRoute: any = ["storage", "disks", "pool"];
+
+  protected availableDisks: Array<any> = [];
+  protected replaceDiskFormFields: FieldConfig[] = [{
+    type : 'input',
+    name : 'label',
+    value: '',
+    isHidden: true,
+  }, {
+    type : 'select',
+    name : 'replace_disk',
+    placeholder: "Member disk",
+    options: [],
+  }, {
+    type : 'checkbox',
+    name : 'force',
+    placeholder: "Force",
+  }];
 
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
@@ -62,6 +82,17 @@ export class VolumeStatusComponent implements OnInit {
       this.pk = parseInt(params['pk']);
       this.getData();
     });
+
+    this.ws.call('disk.get_unused').subscribe((res) => {
+      for (let i in res) {
+        console.log(res[i]);
+        this.availableDisks.push({
+          label: res[i].name,
+          value: res[i].name,
+        })
+      }
+      _.find(this.replaceDiskFormFields, {name: 'replace_disk'}).options = this.availableDisks;
+    })
   }
 
   parseResponse(id: any, data: any, parentId: any, category?: any) {
@@ -128,7 +159,6 @@ export class VolumeStatusComponent implements OnInit {
                 );
               }
             })
-          console.log("offline", row);
         },
         isHidden: data.status == "OFFLINE" ? true : false,
       }, {
@@ -137,32 +167,39 @@ export class VolumeStatusComponent implements OnInit {
           this.dialogService.confirm(
             "Offline",
             "Are your sure you want to online the disk " + _.split(row.name, 'p')[0],
-            ).subscribe((res) => {
-              console.log(res);
-              if (res) {
-                this.loader.open();
-                let value = { label: row.path };
-                this.rest.post('storage/volume/' + this.pk + '/online/', {
-                  body: JSON.stringify(value)
-                }).subscribe(
-                  (res) => {
-                    this.getData();
-                    this.loader.close();
-                  },
-                  (res)=> {
-                    this.loader.close();
-                    this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
-                  }
-                );
-              }
-            })
-          console.log("online", row);
+          ).subscribe((res) => {
+            if (res) {
+              this.loader.open();
+              let value = { label: row.path };
+              this.rest.post('storage/volume/' + this.pk + '/online/', {
+                body: JSON.stringify(value)
+              }).subscribe(
+                (res) => {
+                  this.getData();
+                  this.loader.close();
+                },
+                (res)=> {
+                  this.loader.close();
+                  this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
+                }
+              );
+            }
+          });
         },
         isHidden: data.status == "ONLINE" ? true : false,
       }, {
         label: "Replace",
         onClick: (row) => {
-          console.log("replace", row);
+          _.find(this.replaceDiskFormFields, {name: 'label'}).value = row.path;
+          const conf: DialogFormConfiguration = {
+            title: "Replacing disk " + _.split(row.name, 'p')[0],
+            fieldConfig: this.replaceDiskFormFields,
+            method_rest: "storage/volume/" + this.pk + "/replace",
+            saveButtonText: "Replace Disk",
+          }
+          this.dialogService.dialogForm(conf).subscribe((res)=>{
+            this.getData();
+          });
         },
         isHidden: false,
       }, {
