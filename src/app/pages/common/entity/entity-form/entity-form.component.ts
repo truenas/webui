@@ -323,7 +323,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     // Stop-gap measure for forms that don't cooperate with the above including
     // System/Support and Storage/Import Disk
-    // setTimeout(() => { this.setShowDefaults(); }, 500);
+    setTimeout(() => { this.setShowDefaults(); }, 500);
   }
 
   setShowDefaults() {
