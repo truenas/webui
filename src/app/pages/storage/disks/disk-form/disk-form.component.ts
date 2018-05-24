@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
@@ -91,8 +91,15 @@ export class DiskFormComponent {
   constructor(
     private _router: Router,
     protected rest: RestService,
-    protected ws: WebSocketService
-  ) {}
+    protected ws: WebSocketService,
+    protected aroute: ActivatedRoute
+  ) {
+    this.aroute.params.subscribe((params)=> {
+      if (params['poolId']) {
+        this.route_success = ["storage", "pools", "status", params['poolId']];
+      }
+    })
+  }
 
   afterInit(entityEdit: any) {
     this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {

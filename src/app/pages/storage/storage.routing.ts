@@ -72,7 +72,7 @@ export const routes: Routes = [
           },
           {
             path: 'status/:pk', component: VolumeStatusComponent,
-            data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
+            data: { title: 'Pool Status', breadcrumb: 'Pool Status' }
           },
           {
             path: 'detachvolume/:pk', component: VolumeDeleteComponent,
@@ -151,6 +151,10 @@ export const routes: Routes = [
           {
             path: 'edit/:pk', component: DiskFormComponent,
             data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' }
+          },
+          {
+            path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,
+            data: { title: 'Edit Pool Disk', breadcrumb: 'Edit Pool Disk' }
           },
           {
             path: 'wipe/:pk', component: DiskWipeComponent,
