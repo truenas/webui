@@ -5,7 +5,7 @@
 </div>
 <div mat-dialog-actions>
   <span fxFlex></span>
-  <button class="mat-raised-button mat-primary" (click)="submit()">{{saveButtonText | translate}}</button>
+  <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid">{{saveButtonText | translate}}</button>
   <span fxFlex></span>
   <button class="mat-raised-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
 </div>
