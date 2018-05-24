@@ -16,8 +16,8 @@ interface poolDiskInfo {
   write: any,
   checksum: any,
   status: any,
-  actions?: any,
-  path?: any,
+  actions ? : any,
+  path ? : any,
 }
 
 @Component({
@@ -28,27 +28,27 @@ interface poolDiskInfo {
 export class VolumeStatusComponent implements OnInit {
 
   public poolScan: any;
-  public topology: Array<poolDiskInfo> = [];
+  public topology: Array < poolDiskInfo > = [];
   protected pk: number;
-  public expandRows: Array<number> = [1];
+  public expandRows: Array < number > = [1];
 
   protected editDiskRoute: any = ["storage", "disks", "pool"];
   protected replaceDiskRoute: any = ["storage", "disks", "pool"];
 
-  protected availableDisks: Array<any> = [];
+  protected availableDisks: Array < any > = [];
   protected replaceDiskFormFields: FieldConfig[] = [{
-    type : 'input',
-    name : 'label',
+    type: 'input',
+    name: 'label',
     value: '',
     isHidden: true,
   }, {
-    type : 'select',
-    name : 'replace_disk',
+    type: 'select',
+    name: 'replace_disk',
     placeholder: "Member disk",
     options: [],
   }, {
-    type : 'checkbox',
-    name : 'force',
+    type: 'checkbox',
+    name: 'force',
     placeholder: "Force",
   }];
 
@@ -87,17 +87,16 @@ export class VolumeStatusComponent implements OnInit {
 
     this.ws.call('disk.get_unused').subscribe((res) => {
       for (let i in res) {
-        console.log(res[i]);
         this.availableDisks.push({
           label: res[i].name,
           value: res[i].name,
         })
       }
-      _.find(this.replaceDiskFormFields, {name: 'replace_disk'}).options = this.availableDisks;
+      _.find(this.replaceDiskFormFields, { name: 'replace_disk' }).options = this.availableDisks;
     })
   }
 
-  parseResponse(id: any, data: any, parentId: any, category?: any) {
+  parseResponse(id: any, data: any, parentId: any, category ? : any) {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -130,7 +129,11 @@ export class VolumeStatusComponent implements OnInit {
         label: "Edit",
         onClick: (row) => {
           const diskName = _.split(row.name, 'p')[0];
-          this.ws.call('disk.query', [[["name", "=", diskName]]]).subscribe((res) => {
+          this.ws.call('disk.query', [
+            [
+              ["name", "=", diskName]
+            ]
+          ]).subscribe((res) => {
             this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
             this.router.navigate(new Array('').concat(this.editDiskRoute));
           })
@@ -142,25 +145,24 @@ export class VolumeStatusComponent implements OnInit {
           this.dialogService.confirm(
             "Offline",
             "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
-            ).subscribe((res) => {
-              console.log(res);
-              if (res) {
-                this.loader.open();
-                let value = { label: row.path };
-                this.rest.post('storage/volume/' + this.pk + '/offline/', {
-                  body: JSON.stringify(value)
-                }).subscribe(
-                  (res) => {
-                    this.getData();
-                    this.loader.close();
-                  },
-                  (res)=> {
-                    this.loader.close();
-                    this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
-                  }
-                );
-              }
-            })
+          ).subscribe((res) => {
+            if (res) {
+              this.loader.open();
+              let value = { label: row.path };
+              this.rest.post('storage/volume/' + this.pk + '/offline/', {
+                body: JSON.stringify(value)
+              }).subscribe(
+                (res) => {
+                  this.getData();
+                  this.loader.close();
+                },
+                (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                }
+              );
+            }
+          })
         },
         isHidden: data.status == "OFFLINE" ? true : false,
       }, {
@@ -180,9 +182,9 @@ export class VolumeStatusComponent implements OnInit {
                   this.getData();
                   this.loader.close();
                 },
-                (res)=> {
+                (res) => {
                   this.loader.close();
-                  this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
+                  this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
                 }
               );
             }
@@ -192,14 +194,14 @@ export class VolumeStatusComponent implements OnInit {
       }, {
         label: "Replace",
         onClick: (row) => {
-          _.find(this.replaceDiskFormFields, {name: 'label'}).value = row.path;
+          _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.path;
           const conf: DialogFormConfiguration = {
             title: "Replacing disk " + _.split(row.name, 'p')[0],
             fieldConfig: this.replaceDiskFormFields,
             method_rest: "storage/volume/" + this.pk + "/replace",
             saveButtonText: "Replace Disk",
           }
-          this.dialogService.dialogForm(conf).subscribe((res)=>{
+          this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
               this.getData();
               this.snackBar.open("Disk replacement has been initiated.", 'close', { duration: 5000 });
@@ -218,28 +220,29 @@ export class VolumeStatusComponent implements OnInit {
               this.loader.open();
               let value = { label: row.path };
               this.rest.post('storage/volume/' + this.pk + '/detach/', {
-              body: JSON.stringify(value)
-            }).subscribe(
-              (res) => {
-                this.getData();
-                this.loader.close();
-              },
-              (res)=> {
-                this.loader.close();
-                this.dialogService.errorReport("Error",res.error.error_message,res.error.traceback);
-              }
-            )};
+                body: JSON.stringify(value)
+              }).subscribe(
+                (res) => {
+                  this.getData();
+                  this.loader.close();
+                },
+                (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport("Error", res.error.error_message, res.error.traceback);
+                }
+              )
+            };
           });
         },
         isHidden: false,
       }];
       if (category) {
         if (category == "data") {
-          _.find(item.actions, {label: "Remove"}).isHidden = true;
+          _.find(item.actions, { label: "Remove" }).isHidden = true;
         } else if (category == "spares") {
-          _.find(item.actions, {label: "Online"}).isHidden = true;
-          _.find(item.actions, {label: "Offline"}).isHidden = true;
-          _.find(item.actions, {label: "Replace"}).isHidden = true;
+          _.find(item.actions, { label: "Online" }).isHidden = true;
+          _.find(item.actions, { label: "Offline" }).isHidden = true;
+          _.find(item.actions, { label: "Replace" }).isHidden = true;
         }
       }
     }
@@ -250,18 +253,17 @@ export class VolumeStatusComponent implements OnInit {
   parseTopology(data, parentRow: any) {
     let parentId = 1;
     let namePostfix: boolean = false;
-    if ( parentRow && parentRow != 'data' && data.length > 0) {
+    if (parentRow && parentRow != 'data' && data.length > 0) {
       parentId = this.topology.length + 1;
-      this.topology.push(
-        {
-          id: this.topology.length + 1,
-          parentId: 1,
-          name: parentRow,
-          read: '',
-          write: '',
-          checksum: '',
-          status: '',
-        });
+      this.topology.push({
+        id: this.topology.length + 1,
+        parentId: 1,
+        name: parentRow,
+        read: '',
+        write: '',
+        checksum: '',
+        status: '',
+      });
       this.expandRows.push(parentId);
     }
     if (data.length > 1) {
@@ -272,17 +274,15 @@ export class VolumeStatusComponent implements OnInit {
       if (data[i].type != 'DISK') {
         let rowId = this.topology.length + 1;
         this.expandRows.push(rowId);
-        this.topology.push(
-          {
-            id: rowId,
-            parentId: parentId,
-            name: namePostfix ? data[i].type + '-' + i : data[i].type,
-            read: data[i].stats.read_errors,
-            write: data[i].stats.write_errors,
-            checksum: data[i].stats.write_errors,
-            status: data[i].status,
-          }
-        );
+        this.topology.push({
+          id: rowId,
+          parentId: parentId,
+          name: namePostfix ? data[i].type + '-' + i : data[i].type,
+          read: data[i].stats.read_errors,
+          write: data[i].stats.write_errors,
+          checksum: data[i].stats.write_errors,
+          status: data[i].status,
+        });
         subParentId = rowId;
       }
       if (data[i].children) {
@@ -291,7 +291,7 @@ export class VolumeStatusComponent implements OnInit {
         }
       }
       if (data[i].path != null) {
-          this.parseResponse(this.topology.length + 1, data[i], subParentId, parentRow);
+        this.parseResponse(this.topology.length + 1, data[i], subParentId, parentRow);
       }
     }
   }
