@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 import {WebSocketService} from '../services/ws.service';
 import { MatSnackBar } from '@angular/material';
 import { AppLoaderService } from '../services/app-loader/app-loader.service';
+import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 
 @Injectable()
 export class DialogService {
@@ -107,6 +108,15 @@ export class DialogService {
         });
 
 
+    }
+
+    public dialogForm(conf: any): Observable<boolean> {
+        let dialogRef: MatDialogRef<EntityDialogComponent>;
+
+        dialogRef = this.dialog.open(EntityDialogComponent, {width: '300px'});
+        dialogRef.componentInstance.conf = conf;
+
+        return dialogRef.afterClosed();
     }
 
 }
