@@ -15,9 +15,27 @@
     <dx-tree-list id='pool' [dataSource]="topology" [columnAutoWidth]="true" [expandedRowKeys]="expandRows">
       <dxo-selection mode="single"></dxo-selection>
       <dxi-column dataField="name" [width]="300"></dxi-column>
-      <dxi-column dataField="read"></dxi-column>
-      <dxi-column dataField="write"></dxi-column>
-      <dxi-column dataField="checksum"></dxi-column>
+      <dxi-column dataField="read" cellTemplate="readCellTemplate"></dxi-column>
+      <div *dxTemplate="let rowData of 'readCellTemplate'">
+        <div [ngClass]="rowData.data.read > 0 ? 'CellHighlight' : ''">
+          {{rowData.data.read}}
+        </div>
+      </div>
+
+      <dxi-column dataField="write" cellTemplate="writeCellTemplate"></dxi-column>
+      <div *dxTemplate="let rowData of 'writeCellTemplate'">
+        <div [ngClass]="rowData.data.write > 0 ? 'CellHighlight' : ''">
+          {{rowData.data.write}}
+        </div>
+      </div>
+
+      <dxi-column dataField="checksum" cellTemplate="checksumCellTemplate"></dxi-column>
+      <div *dxTemplate="let rowData of 'checksumCellTemplate'">
+        <div [ngClass]="rowData.data.checksum > 0 ? 'CellHighlight' : ''">
+          {{rowData.data.checksum}}
+        </div>
+      </div>
+
       <dxi-column dataField="status"></dxi-column>
       <dxi-column dataField="" cellTemplate="cellTemplate"></dxi-column>
       <div *dxTemplate="let rowData of 'cellTemplate'">
