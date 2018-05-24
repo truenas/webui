@@ -1,5 +1,5 @@
 import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
@@ -147,7 +147,7 @@ export class AFPFormComponent implements OnDestroy {
                   the selected permissions.')
     },
     {
-      type: 'permissions',
+      type: 'input',
       name: 'afp_umask',
       placeholder: T('Default umask'),
       tooltip: T('Unmask is used for newly created files.\
@@ -209,7 +209,7 @@ export class AFPFormComponent implements OnDestroy {
     }
   ];
 
-  constructor(protected router: Router) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -220,11 +220,17 @@ export class AFPFormComponent implements OnDestroy {
     return true;
   }
 
+  preInit(entityForm: any){
+    const paramMap: any = (<any>this.aroute.params).getValue();
+    if (paramMap['pk'] === undefined) {
+      _.find(this.fieldConfig, {name:'afp_umask'}).value = "000";
+      _.find(this.fieldConfig, {name:'afp_fperm'}).value = "644";
+      _.find(this.fieldConfig, {name:'afp_dperm'}).value = "755";
+    }
+  }
+
   afterInit(entityForm: any) {
     if (entityForm.isNew) {
-      entityForm.formGroup.controls['afp_umask'].setValue("000", {emitEvent: true});
-      entityForm.formGroup.controls['afp_fperm'].setValue("644", {emitEvent: true});
-      entityForm.formGroup.controls['afp_dperm'].setValue("755", {emitEvent: true});
       entityForm.formGroup.controls['afp_upriv'].setValue(true);
     }
     this.afp_timemachine_quota = _.find(this.fieldConfig, {'name': 'afp_timemachine_quota'});
