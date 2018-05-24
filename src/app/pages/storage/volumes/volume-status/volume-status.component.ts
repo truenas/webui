@@ -6,6 +6,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { MatSnackBar } from '@angular/material';
 
 interface poolDiskInfo {
   id: number,
@@ -57,7 +58,8 @@ export class VolumeStatusComponent implements OnInit {
     protected translate: TranslateService,
     protected router: Router,
     protected dialogService: DialogService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService,
+    protected snackBar: MatSnackBar) {}
 
   getData() {
     this.ws.call('pool.query', [
@@ -198,7 +200,10 @@ export class VolumeStatusComponent implements OnInit {
             saveButtonText: "Replace Disk",
           }
           this.dialogService.dialogForm(conf).subscribe((res)=>{
-            this.getData();
+            if (res) {
+              this.getData();
+              this.snackBar.open("Disk replacement has been initiated.", 'close', { duration: 5000 });
+            }
           });
         },
         isHidden: false,
