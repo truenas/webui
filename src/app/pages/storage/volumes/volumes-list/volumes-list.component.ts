@@ -361,13 +361,11 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete zvol"),
         onClick: (row1) => {
-
-
           this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
 
-              this.rest.delete('storage/volume/' + this._classId + '/zvols/' + row1.name, {}).subscribe((wsResp) => {
+                this.ws.call('pool.dataset.delete',[row1.path]).subscribe((wsResp) => {
                 this.loader.close();
                 this.parentVolumesListComponent.repaintMe();
 
@@ -380,7 +378,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
         }
-      });// return 'storage/volume/' + this.pk + '/zvols/';
+      });
       actions.push({
         label: T("Edit Zvol"),
         onClick: (row1) => {

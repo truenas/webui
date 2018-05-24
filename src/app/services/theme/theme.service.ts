@@ -170,7 +170,7 @@ export class ThemeService {
     this.core.register({observerClass:this,eventName:"Authenticated", sender:this.api}).subscribe((evt:CoreEvent) => {
       this.loggedIn = evt.data;
       if(this.loggedIn == true){
-        this.core.emit({ name:"UserDataRequest",data:[[["id", "=", "1"]]] });
+        this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]] });
       } else {
         //console.warn("SETTING DEFAULT THEME");
         this.setDefaultTheme();

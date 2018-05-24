@@ -39,7 +39,7 @@ export class MembersComponent implements OnInit {
     let myFilter = [];
     myFilter.push("id");
     myFilter.push("=");
-    myFilter.push(this.group.id);
+    myFilter.push(parseInt(this.group.id));
     const group$ = this.ws.call('group.query', [[myFilter]]);
 
     this.ws.call('group.query', [[myFilter]]).subscribe((groupInfo)=>{

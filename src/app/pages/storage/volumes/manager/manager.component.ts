@@ -60,20 +60,26 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   public busy: Subscription;
 
-  public name_tooltip = T('ZFS pools must conform to strict naming\
- <a href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
- target="_blank">conventions</a>. Choose a memorable name that will\
- stick out in the logs.');
+  public name_tooltip = T('ZFS pools must conform to strict naming <a\
+                           href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html"\
+                           target="_blank">conventions</a>. Choose a\
+                           memorable name.');
+
   public encryption_tooltip = T('<a href="https://www.freebsd.org/cgi/man.cgi?query=geli&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">GELI</a> encryption is available for ZFS pools.\
- <b>WARNING: </b>Read the <a href="..//docs/storage.html#encryption"\
- target="_blank">Encryption section</a> of the guide before activating\
- this option.');
+                                 target="_blank">GELI</a> encryption is\
+                                 available for ZFS pools. <b>WARNING:</b>\
+                                 Read the <a\
+                                 href="..//docs/storage.html#managing-encrypted-pools"\
+                                 target="_blank">Encryption section</a>\
+                                 of the guide before activating this\
+                                 option.');
+
   public suggested_layout_tooltip = T('Arranges available disks in a\
- system recommended formation.');
-  
-  public encryption_message = T("Always backup the key! If the key is lost, the\
-                   data on the disks will also be lost with no hope of recovery.");
+                                       system recommended formation.');
+
+  public encryption_message = T("Always backup the key! If the key is\
+                                 lost, the data on the disks is also\
+                                 lost with no hope of recovery.");
 
   constructor(
     private rest: RestService,
@@ -161,11 +167,15 @@ export class ManagerComponent implements OnInit, OnDestroy {
       this.temp = [...this.disks];
     });
     if (!this.isNew) {
-      this.dialog.confirm(T("Warning"), T("Extending your pool will stripe additional \
-        vdevs onto your pool resulting in a larger pool.  It is recommended that \
-        you only stripe vdevs of the same size and type as the ones that are already \
-        in the existing pool, this operation cannot be reversed.  \
-        Do you wish to continue?")).subscribe((res) => {
+      this.dialog.confirm(T("Warning"), T("Extending the pool stripes\
+                                           additional vdevs onto the\
+                                           pool, resulting in a larger\
+                                           pool. Only stripe vdevs of\
+                                           the same size and type as the\
+                                           ones already in the existing\
+                                           pool. This operation cannot\
+                                           be reversed. Do you wish to\
+                                           continue?")).subscribe((res) => {
         if (!res) {
            this.goBack();
         }
@@ -199,7 +209,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   }
 
   doSubmit() {
-    this.dialog.confirm(T("Warning"), T("The existing contents of all the disks you have added will be erased.")).subscribe((res) => {
+    this.dialog.confirm(T("Warning"), T("The contents of all added disks will be erased.")).subscribe((res) => {
       if (res) {
         this.error = null;
 

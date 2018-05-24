@@ -124,11 +124,14 @@ export class CloudsyncFormComponent implements OnInit {
     ],
     required: true,
     validation : [ Validators.required ]
-  }, 
+  },
   {
     type: 'checkbox',
     name: 'encryption',
     placeholder: T('Remote encryption'),
+    tooltip: T('Set to use <a href="https://rclone.org/crypt/"\
+                target="_blank">rclone Crypt</a> to encrypt and decrypt\
+                the files shared remotely.'),
     value: false,
   },
   {
@@ -136,18 +139,29 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'filename_encryption',
     placeholder: T('Filename encryption'),
     value: true,
+    tooltip: T('Set to encrypt the shared file names.'),
     isHidden: true,
   },
   {
     type: 'input',
     name: 'encryption_password',
     placeholder: T('Encryption password'),
+    tooltip: T('Enter the remote password to authorize\
+                encrypting/decrypting the remote. <b>Warning:</b>\
+                Forgetting or losing the encryption password can result\
+                in data loss. Always back up or save this password. '),
     isHidden: true,
   },
   {
     type: 'input',
     name: 'encryption_salt',
     placeholder: T('Encryption salt'),
+    tooltip: T('Enter the <a\
+                href="https://searchsecurity.techtarget.com/definition/salt"\
+                target="_blank">salt</a> for the encryption password.\
+                <b>Warning:</b> Forgetting or losing the encryption salt\
+                can result in data loss. Always back up or save this\
+                value.'),
     isHidden: true,
   },
 
