@@ -460,10 +460,11 @@ export class VolumesListTableConfig implements InputTableConf {
             ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
             : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
 
-          dataset_data2[k].comments.source !== "INHERITED"
+          if (dataset_data2[k].comments) {
+            dataset_data2[k].comments.source !== "INHERITED"
             ? dataObj.comments = (dataset_data2[k].comments.parsed)
-            : dataObj.comments = ("");
-
+            : dataObj.comments = ("");            
+          }
         }
 
       }
