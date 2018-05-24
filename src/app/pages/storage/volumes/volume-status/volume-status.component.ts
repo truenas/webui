@@ -7,6 +7,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatSnackBar } from '@angular/material';
+import { Validators } from '@angular/forms';
 
 interface poolDiskInfo {
   id: number,
@@ -46,6 +47,8 @@ export class VolumeStatusComponent implements OnInit {
     name: 'replace_disk',
     placeholder: "Member disk",
     options: [],
+    required: true,
+    validation: [Validators.required],
   }, {
     type: 'checkbox',
     name: 'force',
