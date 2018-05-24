@@ -313,6 +313,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
+          // Gets called on most entity forms after ws data returns
           this.showDefaults = true;
         });
       }
@@ -320,6 +321,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+    // Stop-gap measure for forms that don't cooperate with the above including
+    // System/Support and Storage/Import Disk
+    // setTimeout(() => { this.setShowDefaults(); }, 500);
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
 
   ngOnChanges() {
