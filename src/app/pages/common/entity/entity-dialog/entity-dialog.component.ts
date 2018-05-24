@@ -58,7 +58,7 @@ export class EntityDialogComponent implements OnInit {
       }).subscribe(
         (res) => {
           this.loader.close();
-          this.dialogRef.close();
+          this.dialogRef.close(true);
         },
         (res) => {
           this.loader.close();
@@ -69,5 +69,9 @@ export class EntityDialogComponent implements OnInit {
       // ws call
     }
 
+  }
+
+  cancel() {
+    this.dialogRef.close(false);
   }
 }
