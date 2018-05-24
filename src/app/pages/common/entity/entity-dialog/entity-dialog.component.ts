@@ -49,6 +49,7 @@ export class EntityDialogComponent implements OnInit {
   }
 
   submit() {
+    this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
 
     this.loader.open();
@@ -73,5 +74,13 @@ export class EntityDialogComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close(false);
+    this.clearErrors();
+  }
+
+  clearErrors() {
+    for (let f = 0; f < this.fieldConfig.length; f++) {
+      this.fieldConfig[f].errors = '';
+      this.fieldConfig[f].hasErrors = false;
+    }
   }
 }
