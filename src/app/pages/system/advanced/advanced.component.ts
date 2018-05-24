@@ -9,6 +9,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
 import { RestService, UserService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
+import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../translate-marker';
 import {
   FieldConfig
@@ -24,7 +25,48 @@ import {
 export class AdvancedComponent implements OnInit {
   //protected resource_name: string = 'system/advanced';
   public job: any = {};
-  protected queryCall: string = 'system.advanced.config';
+  protected queryCall = 'system.advanced.config';
+  protected adv_serialconsole: any;
+  protected adv_serialconsole_subscription: any;
+  public adv_serialport: any;
+  public adv_serialspeed: any;
+  public adv_periodic_notifyuser: any;
+  public custActions: Array < any > = [{
+    id: 'save_debug',
+    name: 'Save Debug',
+    function: () => {
+      this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?")).subscribe((res) => {
+            if (res) {
+              this.load.open();
+              this.ws.job('system.debug').subscribe((system_debug) => {
+                this.load.close();
+                if (system_debug.state === "SUCCESS") {
+                  this.ws.call('core.download', ['filesystem.get', [system_debug.result], 'debug.tgz']).subscribe(
+                    (system_debug_result) => {
+                      this.openSnackBar(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"));
+                      window.open(system_debug_result[1]);
+                    },
+                    (err) => {
+                      this.openSnackBar(T("Please check the network connection"), T("Failed"));
+                    }
+                  );
+                }
+              }, () => {
+                this.load.close();
+
+              }, () => {
+                this.load.close();
+                if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
+                  this.openSnackBar(T("Please check the network connection"), T("Failed"));
+                }
+              });
+            } else {
+              console.log("User canceled");
+            }
+          });        
+    }
+  }
+];
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
@@ -174,7 +216,37 @@ export class AdvancedComponent implements OnInit {
     placeholder: T('Report CPU usage in percentage'),
     tooltip: T('Check to display CPU usage as percentages in\
                 <b>Reporting</b>.')
-  }];
+  },
+  {
+    type: 'select',
+    name: 'sed_user',
+    placeholder: T('ATA Security User'),
+    tooltip: T('User passed to camcontrol security -u for unlocking SEDs'),
+    options: [
+      {label:'user', value:'USER'},
+      {label:'master', value:'MASTER'}
+              ],
+    value : 'USER'
+
+  },
+  {
+    type: 'input',
+    name: 'sed_passwd',
+    placeholder: T('SED Password'),
+    tooltip: T('Global password to unlock SED disks.'),
+    inputType: 'password',
+
+  },
+  {
+    type: 'input',
+    name: 'sed_passwd2',
+    placeholder: T('Confirm SED Password'),
+    tooltip: T(''),
+    inputType: 'password',
+    validation : [ matchOtherValidator('sed_passwd') ],
+
+  },
+];
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
@@ -191,13 +263,11 @@ export class AdvancedComponent implements OnInit {
 
   ngOnInit() {}
 
-  protected adv_serialconsole: any;
-  protected adv_serialconsole_subscription: any;
-  public adv_serialport: any;
-  public adv_serialspeed: any;
-  public adv_periodic_notifyuser: any;
 
   afterInit(entityEdit: any) {
+     this.ws.call(this.queryCall).subscribe((adv_values)=>{
+      entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
+    }) 
     this.adv_serialport =
     _.find(this.fieldConfig, { 'name': 'serialport' });
     this.adv_serialspeed =
@@ -226,7 +296,7 @@ export class AdvancedComponent implements OnInit {
     });
 
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
-      let adv_periodic_notifyuser =
+      const adv_periodic_notifyuser =
         _.find(this.fieldConfig, { 'name': 'periodic_notifyuser' });
       res.data.forEach((item) => {
         adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
@@ -235,6 +305,7 @@ export class AdvancedComponent implements OnInit {
   }
 
   public customSubmit(body) {
+    delete body.sed_passwd2;
     this.load.open();
 
 
@@ -249,40 +320,5 @@ export class AdvancedComponent implements OnInit {
     });
   }
 
-  public custActions: Array < any > = [{
-      id: 'save_debug',
-      name: 'Save Debug',
-      function: () => {
-        this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?")).subscribe((res) => {
-              if (res) {
-                this.load.open();
-                this.ws.job('system.debug').subscribe((res) => {
-                  this.load.close();
-                  if (res.state === "SUCCESS") {
-                    this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
-                      (res) => {
-                        this.openSnackBar(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"));
-                        window.open(res[1]);
-                      },
-                      (err) => {
-                        this.openSnackBar(T("Please check the network connection"), T("Failed"));
-                      }
-                    );
-                  }
-                }, () => {
-                  this.load.close();
 
-                }, () => {
-                  this.load.close();
-                  if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
-                    this.openSnackBar(T("Please check the network connection"), T("Failed"));
-                  }
-                });
-              } else {
-                console.log("User canceled");
-              }
-            });        
-      }
-    }
-  ];
 }
