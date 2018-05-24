@@ -19,7 +19,6 @@ import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-// import { SSL_OP_NO_COMPRESSION } from 'constants';
 
 
 
