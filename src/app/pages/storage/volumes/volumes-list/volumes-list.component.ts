@@ -497,7 +497,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
   }
-
+  public showDefaults: boolean = false;
   public repaintMe() {
     this.paintMe = false;
     this.ngOnInit();
@@ -509,6 +509,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
 
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
+      this.loader.open();
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
@@ -533,7 +534,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           this.expanded = true;
         }
 
-        this.paintMe = true;
+        this.paintMe = true; 
+        this.showDefaults = true;
+        this.loader.close();
+        
       }, (res) => {
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
