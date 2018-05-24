@@ -131,6 +131,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public error: string;
   public success = false;
   public data: Object = {};
+  public showDefaults: boolean = false;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -312,6 +313,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
+          this.showDefaults = true;
         });
       }
     });
