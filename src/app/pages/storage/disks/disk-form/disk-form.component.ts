@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
-
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component({
   selector : 'app-disk-form',
@@ -81,7 +81,24 @@ export class DiskFormComponent {
       tooltip : T('Additional <a\
                    href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
                    target="_blank">smartctl(8)</a> options.'),
-    }
+    },
+    {
+      type: 'input',
+      name: 'disk_passwd',
+      placeholder: T('SED Password'),
+      tooltip: T('Password for SED'),
+      inputType: 'password',
+
+    },
+    {
+      type: 'input',
+      name: 'disk_passwd2',
+      placeholder: T('Confirm SED Password'),
+      tooltip: T(''),
+      inputType: 'password',
+      validation : [ matchOtherValidator('disk_passwd') ],
+
+    },
   ];
 
   protected disk_hddstandby: any;
