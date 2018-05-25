@@ -208,6 +208,14 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  getPoolData(poolId: number) {
+    return this.ws.call('pool.query', [
+      [
+        ["id", "=", poolId]
+      ]
+    ]);
+  }
+
   getActions(rowData: any) {
     let rowDataPathSplit = [];
     if (rowData.path) {
@@ -233,23 +241,43 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Scrub Pool"),
         onClick: (row1) => {
-          const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
-          this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
-            if (res) {
-              this.loader.open();
-              this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                (res)=> {
-                  this.loader.close();
-                  this.snackBar.open(res.data, 'close', { duration: 5000 });
-                  console.log(res);
-
-                },
-                (res)=> {
-
+          this.getPoolData(row1.id).subscribe((res) => {
+            if (res[0]) {
+              if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
+                const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                  if (res) {
+                    this.loader.open();
+                    this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                      (res)=> {
+                        this.loader.close();
+                        this.snackBar.open(res.data, 'close', { duration: 5000 });
+                      },
+                      (res)=> {
+                        this.loader.close();
+                        new EntityUtils().handleError(this, res);
+                      });
+                  }
                 });
-              console.log("start scrubing pool");
+              } else {
+                const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                  if (res) {
+                    this.loader.open();
+                    this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                      (res)=> {
+                        this.loader.close();
+                        this.snackBar.open(res.data, 'close', { duration: 5000 });
+                      },
+                      (res)=> {
+                        this.loader.close();
+                        new EntityUtils().handleError(this, res);
+                      });
+                  }
+                });
+              }
             }
-          });
+          })
         }
       });
       actions.push({
