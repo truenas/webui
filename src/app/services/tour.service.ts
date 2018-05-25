@@ -138,9 +138,9 @@ export class TourService {
       onEnd: function() {
         self.snackBar.open(T('Awesome! Now let\'s explore FreeNAS\'s cool features.'), T('close'), { duration: 5000 });
       },
-      onClose: function() {
-        self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
-      },
+      // onClose: function() {
+      //   self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
+      // },
       steps: steps
     }
   }

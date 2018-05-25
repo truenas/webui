@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
-import { TourService } from '../../../../services/tour.service';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -55,17 +54,12 @@ export class UserListComponent implements OnInit {
     this.rest.get(this.resource_name, {}).subscribe((res) => {})
   }
 
-  constructor(protected rest: RestService, private router: Router, private tour: TourService,
+  constructor(protected rest: RestService, private router: Router,
               protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService){
     this.getUserList()
   }
 
   ngOnInit() {
-    const showTour = localStorage.getItem(this.router.url) || 'false';
-    if (showTour !== "false") {
-      hopscotch.startTour(this.tour.startTour(this.router.url));
-      localStorage.setItem(this.router.url, 'true');
-    }
     this.ws.call('user.query').subscribe((user_list)=>{
       this.usr_lst.push(user_list);
     })
@@ -100,10 +94,10 @@ export class UserListComponent implements OnInit {
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Are you sure you want to delete the selected item?"), 
+      T("Delete the selected item?"), 
       false, T("Delete"),
       true,
-      T('Do not delete user primary group'),
+      T('Keep user primary group'),
       'user.delete',
       params);
     ds.afterClosed().subscribe((status)=>{
