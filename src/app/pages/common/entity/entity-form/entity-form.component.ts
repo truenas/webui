@@ -131,6 +131,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public error: string;
   public success = false;
   public data: Object = {};
+  public showDefaults: boolean = false;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -312,12 +313,21 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
+          // Gets called on most entity forms after ws data returns, 
+          // thus hiding messages like 'no data'
+          this.showDefaults = true;
         });
       }
     });
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+    // ...but for entity forms that don't make a data request, this kicks in 
+    setTimeout(() => { this.setShowDefaults(); }, 500);
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
 
   ngOnChanges() {
