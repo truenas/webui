@@ -20,7 +20,7 @@ export class StorageService {
   mySorter(myArray, key) {
   let tempArr = [];
   myArray.forEach((item) => {
-    tempArr.push(item.devname);
+    tempArr.push(item[key]);
   })
   // The Intl Collator allows language-sensitive str comparison and can allow for numbers
   let myCollator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
