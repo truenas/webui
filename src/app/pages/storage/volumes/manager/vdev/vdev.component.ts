@@ -27,6 +27,8 @@ export class VdevComponent implements OnInit {
   public selected: Array < any > = [];
   public id: number;
   public size;
+  public rawSize = 0;
+  public firstdisksize;
   public vdev_type_tooltip = T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
                                 or <i>Raid-Z</i> configuration for the\
                                 chosen disk layout. See the <a\
@@ -88,6 +90,9 @@ export class VdevComponent implements OnInit {
     let estimate = 0;
     let swapsize = 2 * 1024 * 1024 * 1024;
     for (let i = 0; i < this.disks.length; i++) {
+      if (i === 0) {
+        this.firstdisksize = this.disks[i].real_capacity;
+      }
       let size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
       if (i === 0 || this.disks[i].real_capacity < smallestdisk) {
         smallestdisk = size;
@@ -106,6 +111,7 @@ export class VdevComponent implements OnInit {
       estimate = totalsize; // stripe
     }
 
+    this.rawSize =estimate;
     this.size = (<any>window).filesize(estimate, {standard : "iec"});
   }
 
@@ -135,6 +141,10 @@ export class VdevComponent implements OnInit {
   onTypeChange(e) {
     this.estimateSize();
     //console.log(e, this.group);
+  }
+
+  getRawSize() {
+    return this.rawSize;
   }
 
   remove() {

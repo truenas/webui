@@ -41,6 +41,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     any = { data: [{}], cache: [], spare: [], log: [] };
   public original_vdevs: any = {};
   public error: string;
+  public vdevErrors = [];
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
@@ -57,6 +58,34 @@ export class ManagerComponent implements OnInit, OnDestroy {
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
   public dirty = false;
+
+  public submitTitle = T("Create");
+  protected extendedSubmitTitle = T("Extend");
+
+  protected current_layout: any;
+  protected existing_pool: any;
+  protected needs_disk = true;
+  protected needsDiskMessage = T("Please add one or more disks to be used for data");
+  protected extendedNeedsDiskMessage = T("Please add one or more disks to extend your pool");
+  public size;
+  public sizeMessage = T("Estimated total raw capacity");
+  protected extendedSizeMessage = T("Estimated total extended capacity");
+
+  public disknumError = false;
+  public disknumErrorMessage = T("Adding data vdevs with different amounts of \
+      disks is not recommended.  Please create data vdevs with the following amount of disks: ");
+
+  public vdevtypeError = false;
+  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not \
+      not recommended.  Please create data vdevs of the following type: ");
+
+  public disksizeError = false;
+  public disksizeErrorMessage = T("Mixing disks of different sizes within the same vdev group\
+      is not recommended");
+
+  first_data_vdev_type: string;
+  first_data_vdev_disksize: number;
+  first_data_vdev_disknum: number;
 
   public busy: Subscription;
 
@@ -132,6 +161,8 @@ export class ManagerComponent implements OnInit, OnDestroy {
       }
     });
     if (!this.isNew) {
+      this.submitTitle = this.extendedSubmitTitle;
+      this.sizeMessage = this.extendedSizeMessage;
       this.rest.get(this.resource_name + this.pk + '/', {}).subscribe((res) => {
         this.name = res.data.vol_name;
         this.vol_encrypt = res.data.vol_encrypt;
@@ -190,6 +221,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
   addVdev(group) {
     this.dirty = true;
     this.vdevs[group].push({});
+    this.getCurrentLayout();
   }
 
   removeVdev(vdev: VdevComponent) {
@@ -206,6 +238,63 @@ export class ManagerComponent implements OnInit, OnDestroy {
         this.vdevs[vdev.group] = []; // should only be one cache/spare/log
       }
     }
+    this.getCurrentLayout();
+  }
+
+  getCurrentLayout() {
+    let size_estimate = 0;
+    let data_vdev_disknum = 0;
+    let data_vdev_disksize = 0;
+    let data_disk_found = false;
+
+    for (let i =0; i < this.vdevComponents.length; i++) {
+      const vdev = this.vdevComponents[i];
+      if (vdev.group === 'data') { 
+        if (i === 0 && this.isNew) {
+          this.first_data_vdev_type = vdev.type;
+          if (vdev.disks.length > 0) {
+            this.first_data_vdev_disknum = vdev.disks.length;
+            this.first_data_vdev_disksize = vdev.firstdisksize;
+          } else {
+            this.first_data_vdev_disknum = 0;
+            this.first_data_vdev_disksize = 0;
+          }
+        }
+        if (vdev.disks.length > 0) {
+          data_disk_found = true;
+          data_vdev_disknum = vdev.disks.length;
+          data_vdev_disksize = vdev.firstdisksize;
+        } else {
+          data_vdev_disknum = 0;
+          data_vdev_disksize = 0;
+        }
+        size_estimate += vdev.rawSize;
+        this.vdevErrors = [];
+        if (data_vdev_disknum > 0) {
+          if( data_vdev_disknum !== this.first_data_vdev_disknum) {
+            this.disknumError = true;
+          }
+          for (let j = 0; j < vdev.disks.length; j++) {
+            if(this.first_data_vdev_disksize !== vdev.disks.rawSize) {
+             this.disksizeError = true;
+            }
+          }
+        }
+        
+      }
+
+    }
+    this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
+  }
+
+  canSave() {
+    if (!this.name) {
+      return false;
+    }
+    if (this.needs_disk) {
+      return false;
+    }
+    return true;
   }
 
   doSubmit() {
@@ -213,9 +302,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
       if (res) {
         this.error = null;
 
-        let layout = [];
+        const layout = [];
         this.vdevComponents.forEach((vdev) => {
-          let disks = [];
+          const disks = [];
           vdev.getDisks().forEach((disk) => {
             disks.push(disk.devname); });
           if (disks.length > 0) {
@@ -302,6 +391,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks = [...this.disks];
      this.temp.push(disk);
      this.disks = this.sorter.mySorter(this.disks, 'devname');
+     this.getCurrentLayout();
   }
 
   removeDisk(disk: any) {
@@ -309,6 +399,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
     this.disks = [...this.disks];
     this.temp.splice(this.temp.indexOf(disk), 1);
     this.dirty = true;
+    this.getCurrentLayout();
   }
 
   onSelect({ selected }) {
