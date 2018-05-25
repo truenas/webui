@@ -140,11 +140,12 @@ class delete_test(unittest.TestCase):
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
+
     def test_02_01_delete_group(self):
         try:
             print (" deleting a group: " + newusername)
             time.sleep(2)
-            self.delete("group", newusername)
+#            self.delete("group", newusername)
             # Taking screenshot
             self.screenshot("_")
         except Exception:
@@ -159,7 +160,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + superusername)
             time.sleep(2)
-            self.delete("group", superusername)
+#            self.delete("group", superusername)
             # Taking screenshot
             self.screenshot("02_02")
         except Exception:
@@ -174,7 +175,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + newgroupname)
             time.sleep(2)
-            self.delete("group", newgroupname)
+#            self.delete("group", newgroupname)
             # Taking screenshot
             self.screenshot("02_03")
         except Exception:
@@ -189,7 +190,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + supergroupname)
             time.sleep(2)
-            self.delete("group", supergroupname)
+#            self.delete("group", supergroupname)
             # Taking screenshot
             self.screenshot("02_03")
         except Exception:
@@ -280,6 +281,8 @@ class delete_test(unittest.TestCase):
             driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
             time.sleep(1)
             # click on delete option
+
+
 #            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
             driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
             # check confirmation checkbox
@@ -297,15 +300,15 @@ class delete_test(unittest.TestCase):
                 print ("Delete button clicked")
                 driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/button[2]').click()
 
-                click_check =  driver.find_element_by_xpath(xpaths['submenu' + path])
-                for i in range(1, 10):
-                    if driver.element_to_be_clickable(By.XPATH, xpaths['submenu' + path]):
-                        time.sleep(1)
-                        print ("element clickable")
-                        break
-                    else:
-                        time.sleep(5)
-                        print ("waiting on element to be clickable")
+#                click_check =  driver.find_element_by_xpath(xpaths['submenu' + path])
+#                for i in range(1, 10):
+#                    if driver.element_to_be_clickable(By.XPATH, xpaths['submenu' + path]):
+#                        time.sleep(1)
+#                        print ("element clickable")
+#                        break
+#                    else:
+#                        time.sleep(5)
+#                        print ("waiting on element to be clickable")
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
 

@@ -141,7 +141,7 @@ except NameError:
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
-    run_delete_test(runDriver)
+#    run_delete_test(runDriver)
     run_change_theme_test(runDriver)
 else:
     if (test_name == "account"):
@@ -149,7 +149,7 @@ else:
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
-        run_delete_test(runDriver)
+#        run_delete_test(runDriver)
     elif (test_name == "network"):
         run_conf_network_test(runDriver)
     elif (test_name == "system"):
