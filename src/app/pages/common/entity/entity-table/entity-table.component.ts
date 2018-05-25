@@ -154,7 +154,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
+
+      setTimeout(() => { this.setShowDefaults(); }, 1000);
     
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
   
 
