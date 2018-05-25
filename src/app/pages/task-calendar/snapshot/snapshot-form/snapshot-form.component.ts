@@ -35,15 +35,15 @@ export class SnapshotFormComponent {
     type: 'checkbox',
     name: 'task_recursive',
     placeholder: T('Recursive'),
-    tooltip: T('Checking this enables taking separate snapshots of the\
-     volume/dataset and each of its child datasets. Leave unchecked to take\
-     a single snapshot of the specified volume/dataset and <b>not</b> any\
-     child datasets.'),
+    tooltip: T('Set this to enable taking separate snapshots of the\
+                pool/dataset and each of its child datasets. Leave\
+                unset to take a single snapshot of the specified\
+                pool/dataset with <b>no</b> child datasets.'),
   }, {
     placeholder: T('Snapshot Lifetime'),
     tooltip: T('Define a length of time to retain the snapshot on this\
-     system. If the snapshot is replicated, it is not removed from the\
-     receiving system when the lifetime expires.'),
+                system. A replicated snapshot is not removed from the\
+                receiving system when the lifetime expires.'),
     type: 'input',
     name: 'task_ret_count',
     inputType: 'number',
@@ -75,7 +75,8 @@ export class SnapshotFormComponent {
     type: 'select',
     name: 'task_begin',
     placeholder: T('Begin'),
-    tooltip: T('Choose when the system can begin taking snapshots.'),
+    tooltip: T('Choose the hour and minute when the system can begin\
+                taking snapshots.'),
     options: [],
     value: '',
     required: true,
@@ -84,7 +85,8 @@ export class SnapshotFormComponent {
     type: 'select',
     name: 'task_end',
     placeholder: T('End'),
-    tooltip: T('Choose when the system must stop taking snapshots.'),
+    tooltip: T('Choose the hour and minute when the system must stop\
+                taking snapshots.'),
     options: [],
     value: '',
     required: true,
@@ -94,7 +96,7 @@ export class SnapshotFormComponent {
     name: 'task_interval',
     placeholder: T('Interval'),
     tooltip: T('Define how often the system takes snapshots between the\
-     <b>Begin</b> and <b>End</b> times.'),
+                <b>Begin</b> and <b>End</b> times.'),
     options: [],
     value: '',
     required: true,
@@ -134,7 +136,7 @@ export class SnapshotFormComponent {
     type: 'checkbox',
     name: 'task_enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Uncheck to disable this task without deleting it.'),
+    tooltip: T('Unset to disable this task without deleting it.'),
     value: true,
   }];
 

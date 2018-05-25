@@ -36,7 +36,7 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
     });
 
     this.core.register({observerClass:this,eventName:"StatsCpuAggregateSum"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setCPUData(evt);
     });
 

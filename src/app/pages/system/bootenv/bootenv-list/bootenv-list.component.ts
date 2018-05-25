@@ -123,7 +123,7 @@ export class BootEnvironmentListComponent {
   getAddActions() {
     let actions = [];
     actions.push({
-      label : "create",
+      label : "Create",
       icon: "album",
       onClick : () => {
          this._router.navigate(new Array('').concat(
@@ -131,14 +131,14 @@ export class BootEnvironmentListComponent {
        }
     });
     actions.push({
-      label : "scrub",
+      label : "Scrub",
       icon: "device_hub",
       onClick : () => {
         this.scrub();
       }
     });
     actions.push({
-      label : "status",
+      label : "Status",
       icon: "local_laundry_service",
       onClick : () => {
         this._router.navigate(new Array('').concat(

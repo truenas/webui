@@ -29,8 +29,8 @@ export class NFSFormComponent {
       formarray: [{
         name: 'path',
         placeholder: T('Path'),
-        tooltip: T('Browse to the volume or dataset to be shared. Click\
- <b>Add extra path</b> to select multiple paths.'),
+        tooltip: T('Browse to the pool or dataset to be shared. Click\
+                    <b>Add extra path</b> to select multiple paths.'),
         type: 'explorer',
         explorerType: 'directory',
         initial: '/mnt',
@@ -48,50 +48,52 @@ export class NFSFormComponent {
       name: 'nfs_comment',
       placeholder: T('Comment'),
       tooltip: T('Set the share name. If left empty, share name is the\
- list of selected <b>Path</b> entries.'),
+                  list of selected <b>Path</b> entries.')
     },
     {
       type: 'checkbox',
       name: 'nfs_alldirs',
       placeholder: T('All dirs'),
-      tooltip: T('When checked, allow the client to mount any subdirectory\
- within the <b>Path</b>.'),
+      tooltip: T('Set to allow the client to mount any\
+                  subdirectory within the <b>Path</b>.')
     },
     {
       type: 'checkbox',
       name: 'nfs_ro',
       placeholder: T('Read Only'),
-      tooltip: T('Prohibit writing to the share.'),
+      tooltip: T('Set to prohibit writing to the share.'),
     },
     {
       type: 'checkbox',
       name: 'nfs_quiet',
       placeholder: T('Quiet'),
-      tooltip: T('Inhibit otherwise-useful syslog diagnostics to avoid\
- some annoying error messages. See\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
- target="_blank">exports(5)</a> for examples.'),
+      tooltip: T('Set to inhibit some syslog diagnostics\
+                  to avoid error messages. See\
+                  <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
+                  target="_blank">exports(5)</a> for examples.'),
     },
     {
       type: 'textarea',
       name: 'nfs_network',
       placeholder: T('Authorized Networks'),
-      tooltip: T('Space-delimited list of allowed networks in network/mask\
- CIDR notation\ (e.g. <i>1.2.3.0/24</i>). Leave empty to allow all.'),
+      tooltip: T('Space-delimited list of allowed networks in\
+                  network/mask CIDR notation.\
+                  Example: <i>1.2.3.0/24</i>. Leave empty\
+                  to allow all.'),
     },
        {
       type: 'textarea',
       name: 'nfs_hosts',
       placeholder: T('Authorized Hosts and IP addresses'),
       tooltip: T('Space-delimited list of allowed IP addresses or\
- hostnames. Leave empty to allow all.'),
+                  hostnames. Leave empty to allow all.'),
     },
     {
       type: 'select',
       name: 'nfs_maproot_user',
       placeholder: T('Maproot User'),
       tooltip: T('When a user is selected, the <i>root</i> user is\
- limited to the permissions of that user.'),
+                  limited to the permissions of that user.'),
       options: []
     },
     {
@@ -99,23 +101,23 @@ export class NFSFormComponent {
       name: 'nfs_maproot_group',
       placeholder: T('Maproot Group'),
       tooltip: T('When a group is selected, the <i>root</i> user is also\
- limited to the permissions of that group.'),
+                  limited to the permissions of that group.'),
       options: []
     },
     {
       type: 'select',
       name: 'nfs_mapall_user',
       placeholder: T('Mapall User'),
-      tooltip: T('The specified permissions of that user are used by all\
- clients.'),
+      tooltip: T('The specified permissions of that user are used\
+                  by all clients.'),
       options: []
     },
     {
       type: 'select',
       name: 'nfs_mapall_group',
       placeholder: T('Mapall Group'),
-      tooltip: T('The specified permissions of that group are used by all\
- clients.'),
+      tooltip: T('The specified permissions of that group are used\
+                  by all clients.'),
       options: []
     },
     {

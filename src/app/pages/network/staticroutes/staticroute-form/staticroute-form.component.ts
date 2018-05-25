@@ -29,7 +29,7 @@ export class StaticRouteFormComponent {
       name : 'sr_destination',
       placeholder : T('Destination'),
       tooltip : T('Use the format <i>A.B.C.D/E</i> where <i>E</i> is the\
- CIDR mask.'),
+                   CIDR mask.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -45,7 +45,7 @@ export class StaticRouteFormComponent {
       type : 'input',
       name : 'sr_description',
       placeholder : T('Description'),
-      tooltip : T('Optional.'),
+      tooltip : T('Enter any notes about the new static route.'),
     },
   ];
 

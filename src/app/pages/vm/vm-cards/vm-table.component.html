@@ -72,7 +72,8 @@
 	  <mat-icon>more_vert</mat-icon>
 	 </button>
 	 <mat-menu #menu="matMenu">
-	    <button mat-menu-item (click)="editRow(row)">Edit</button>
+	    <button mat-menu-item (click)="editRow(row)" [disabled]="row.state !== 'stopped'">Edit</button>
+	    <button mat-menu-item (click)="goToDevices(row)" [disabled]="row.state !== 'stopped'">Devices</button>
 	    <button mat-menu-item (click)="deleteRow(row)">Delete</button>
 	  </mat-menu>
         </ng-template>

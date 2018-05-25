@@ -113,9 +113,9 @@ export class NavigationService {
       ]
     },
     {
-      name: T('Directory Service'),
+      name: T('Directory Services'),
       type: 'dropDown',
-      tooltip: T('Directory Service'),
+      tooltip: T('Directory Services'),
       icon: 'group_work',
       state: 'directoryservice',
       sub: [

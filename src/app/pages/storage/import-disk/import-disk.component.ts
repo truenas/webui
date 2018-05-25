@@ -30,9 +30,9 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       type : 'select',
       name : 'volume',
       placeholder : T('Disk'),
-      tooltip: T('Use the drop-down menu to select the disk to import.\
- The import will copy the data from the chosen disk to an existing ZFS dataset.\
- Only one disk can be imported at a time.'),
+      tooltip: T('Select the disk to import. The import will copy the\
+                  data from the chosen disk to an existing ZFS dataset.\
+                  Only one disk can be imported at a time.'),
       options: [],
       required: true,
       validation : [ Validators.required ]
@@ -41,15 +41,14 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       type : 'radio',
       name : 'fs_type',
       placeholder : T('Filesystem type'),
-      tooltip: T('Select the type of filesystem on the disk.\
- FreeNAS supports UFS, NTFS, MSDOS, and EXT2 filesystems. Imports of EXT3\
- or EXT4 filesystems are possible in some cases, although neither is fully supported.\
- Refer to the <a href="http://doc.freenas.org/11/storage.html#import-disk" target="_blank">FreeNAS User Guide</a>\
- to learn more about disk imports.'),
+      tooltip: T('Choose the type of filesystem on the disk. Refer to\
+                  the guide section on <a\
+                  href="..//docs/storage.html#import-disk"\
+                  target="_blank">importing disks</a> for more details.'),
       options: [
-                    {value:'ufs', label:'UFS'}, 
-                    {value:'ntfs', label:'NTFS'}, 
-                    {value:'msdosfs', label:'MSDOSFS'}, 
+                    {value:'ufs', label:'UFS'},
+                    {value:'ntfs', label:'NTFS'},
+                    {value:'msdosfs', label:'MSDOSFS'},
                     {value: 'ext2fs', label:'EXT2FS'}
                   ],
       required: true,
@@ -59,8 +58,8 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       type: 'select',
       name: 'msdosfs_locale',
       placeholder: T('MSDOSFS locale'),
-      tooltip: T('Select the locale for your MSDOSFS device to be able to see \
-      files of that locale properly'),
+      tooltip: T('Select the locale for the MSDOSFS device to see files\
+                  of that locale properly'),
       options: [],
       isHidden: true,
     },
@@ -68,7 +67,8 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       type : 'explorer',
       name : 'dst_path',
       placeholder : T('Destination Path'),
-      tooltip: T('Browse to the ZFS dataset that will hold the copied data.'),
+      tooltip: T('Browse to the ZFS dataset that will hold the copied\
+                  data.'),
       explorerType: 'directory',
       initial: '/mnt',
       required: true,
@@ -91,7 +91,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.entityForm = entityForm;
     entityForm.isNew = true; // disable attempting to load data that doesn't exist
   }
-  
+
   afterInit(entityForm: any) {
     this.volume = _.find(this.fieldConfig, {'name':'volume'});
     this.msdosfs_locale = _.find(this.fieldConfig, {'name':'msdosfs_locale'});
@@ -111,14 +111,14 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
         this.msdosfs_locale.isHidden = false;
       }
     });
-    
+
     this.ws.call("disk.get_unused", [true]).subscribe((data)=>{
 
       for (let i = 0; i < data.length; i++) {
         if(data[i].partitions) {
           for (let p = 0; p < data[i].partitions.length; p++) {
             this.volume.options.push(
-              {label : data[i].partitions[p].path, 
+              {label : data[i].partitions[p].path,
                value : data[i].partitions[p].path});
           }
         }
@@ -149,7 +149,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
     });
-    
+
   }
 
   ngOnDestroy() {

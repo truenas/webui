@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import { RestService, WebSocketService } from '../../../services/';
 import { MarkdownModule } from 'angular2-markdown';
@@ -24,8 +24,8 @@ export class UpdateComponent implements OnInit {
   public status: string;
   public releaseNotes: any = '';
   public changeLog: any = '';
-  public updating: boolean = false;
-  public updated: boolean = false;
+  public updating = false;
+  public updated = false;
   public progress: Object = {};
   public job: any = {};
   public error: string;
@@ -50,7 +50,7 @@ export class UpdateComponent implements OnInit {
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       this.trains = [];
-      for (let i in res.trains) {
+      for (const i in res.trains) {
         this.trains.push({ name: i });
       }
       this.train = res.selected;
@@ -64,14 +64,14 @@ export class UpdateComponent implements OnInit {
     const newVer = newVersion.split('-')[1];
     const newTrain = newVersion.split('-')[2];
     if ((!isNaN(oriVer) && !isNaN(newVer)) && (newVer >= oriVer)) {
-      if (oriTrain == newTrain) {
+      if (oriTrain === newTrain) {
         return true;
-      } else if ((oriTrain == 'STABLE') && (newTrain == 'Nightlies')) {
+      } else if ((oriTrain === 'STABLE') && (newTrain === 'Nightlies')) {
         return true;
       } else {
         return false
       }
-    } else if((!isNaN(oriVer) && isNaN(newVer)) && (newVer >= oriVer) && (oriTrain == newTrain)){
+    } else if((!isNaN(oriVer) && isNaN(newVer)) && (newVer >= oriVer) && (oriTrain === newTrain)){
       return true;
     } else {
       return false;
@@ -79,7 +79,7 @@ export class UpdateComponent implements OnInit {
   }
 
   onTrainChanged(event){
-    var isValid = this.validUpdate(this.selectedTrain, event.value);
+    const isValid = this.validUpdate(this.selectedTrain, event.value);
     if (isValid) {
       this.dialogService.confirm("Switch Train", "Are you sure you want to switch trains?").subscribe((res)=>{
         if (res) {
@@ -107,28 +107,27 @@ export class UpdateComponent implements OnInit {
   check() {
     this.error = null;
     this.loader.open();
-    this.busy =
-      this.ws.call('update.check_available', [{ train: this.train }])
+    this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
         (res) => {
-          console.log('this is the res', res);
+          this.loader.close();
           this.status = res.status;
-          if (res.status == 'AVAILABLE') {
+          if (res.status === 'AVAILABLE') {
             this.packages = [];
             res.changes.forEach((item) => {
-              if (item.operation == 'upgrade') {
+              if (item.operation === 'upgrade') {
                 this.packages.push({
                   operation: 'Upgrade',
                   name: item.old.name + '-' + item.old.version +
                     ' -> ' + item.new.name + '-' +
                     item.new.version,
                 });
-              } else if (item.operation == 'install') {
+              } else if (item.operation === 'install') {
                 this.packages.push({
                   operation: 'Install',
                   name: item.new.name + '-' + item.new.version,
                 });
-              } else if (item.operation == 'delete') {
+              } else if (item.operation === 'delete') {
                 // FIXME: For some reason new is populated instead of
                 // old?
                 if (item.old) {
@@ -157,7 +156,10 @@ export class UpdateComponent implements OnInit {
             }
           }
         },
-        (err) => { this.error = err.error; },
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error checking for updates"), err.reason, err.trace.formatted);
+        }, 
         () => {
           this.loader.close();
         });
@@ -173,5 +175,8 @@ export class UpdateComponent implements OnInit {
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
+  }
+  ManualUpdate(){
+    this.router.navigate([this.router.url +'/manualupdate']);
   }
 }

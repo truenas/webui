@@ -20,6 +20,7 @@ export class KerberosKeytabsFormComponent {
       type: 'input',
       name: 'keytab_name',
       placeholder: 'Name',
+      tooltip: 'Enter a name for this Keytab.',
       required: true,
       validation : [ Validators.required ]
     },
@@ -28,6 +29,7 @@ export class KerberosKeytabsFormComponent {
       inputType: 'file',
       name: 'keytab_file',
       placeholder: 'Kerberos Keytab',
+      tooltip: 'Browse to the keytab file to upload.',
       fileType: 'binary',
       required: true,
       validation : [ Validators.required ]

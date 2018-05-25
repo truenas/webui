@@ -68,7 +68,7 @@ export class DeviceAddComponent implements OnInit {
   }
 
   goBack() { this.location.back(); }
-  
+
   isShow(id: any): any {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
