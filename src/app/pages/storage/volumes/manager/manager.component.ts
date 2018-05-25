@@ -149,6 +149,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
         res[i]['capacity'] = (<any>window).filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
+      
+     this.disks = this.sorter.mySorter(this.disks, 'devname');
+
 
       // assign disks for suggested layout
       let largest_capacity = 0;

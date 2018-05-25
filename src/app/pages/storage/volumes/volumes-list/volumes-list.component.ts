@@ -19,7 +19,7 @@ import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-
+import { StorageService } from '../../../../services/storage.service'
 
 
 export interface ZfsPoolData {
@@ -564,7 +564,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    protected snackBar: MatSnackBar) {
+    public sorter: StorageService, protected snackBar: MatSnackBar) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
   }
   public showDefaults: boolean = false;
@@ -598,6 +598,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           this.zfsPoolRows.push(volume);
         });
+        
+        this.zfsPoolRows = this.sorter.mySorter(this.zfsPoolRows, 'name');
 
         if (this.zfsPoolRows.length === 1) {
           this.expanded = true;
