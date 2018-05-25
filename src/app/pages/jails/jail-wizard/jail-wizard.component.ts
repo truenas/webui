@@ -25,6 +25,16 @@ export class JailWizardComponent {
 
   isLinear = true;
   firstFormGroup: FormGroup;
+  protected custActions: Array<any> = [
+  {
+    id: 'advanced_add',
+    name: "Advanced Jail Creation",
+    function: () => {
+      this.router.navigate(
+        new Array('').concat(["jails", "add"])
+      );
+    }
+  }];
 
   protected wizardConfig: Wizard[] = [{
       label: T('Name the jail and choose a FreeBSD release.'),
@@ -128,7 +138,10 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
   protected releaseField: any;
   protected currentServerVersion: any;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService, protected jailService: JailService, ) {
+  constructor(protected rest: RestService,
+              protected ws: WebSocketService,
+              protected jailService: JailService,
+              protected router: Router) {
 
   }
 
@@ -235,4 +248,12 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
 
     return value;
   }
+
+  isCustActionVisible(id, stepperIndex) {
+    if (stepperIndex == 0) {
+      return true;
+    }
+    return false;
+  }
+
 }
