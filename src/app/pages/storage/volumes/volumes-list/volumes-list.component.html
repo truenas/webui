@@ -102,13 +102,6 @@
               </div>
             </div>
             
-            <dxi-column dataField='path' [width]="Path" cellTemplate="cellTemplatepath"></dxi-column>
-            <div *dxTemplate="let rowData of 'cellTemplatepath'">
-              <div class="panel_container" id="row_path_{{rowData.data.name}}">
-                {{rowData.data.path}}
-              </div>
-            </div>
-
             <dxi-column dataField='comments' [width]="Comments" cellTemplate="cellTemplatecomments"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplatecomments'">
               <div class="panel_container" id="row_comments_{{rowData.data.name}}">
