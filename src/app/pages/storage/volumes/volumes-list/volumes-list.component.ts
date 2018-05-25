@@ -539,9 +539,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.loader.close();
         
       }, (res) => {
+        this.loader.close();
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
+      this.loader.close();
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
