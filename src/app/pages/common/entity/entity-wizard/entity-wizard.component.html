@@ -17,7 +17,7 @@
             <button *ngIf="!conf.customNext" mat-raised-button matStepperNext color="primary" >{{"Next" | translate}}</button>
             <button *ngIf="conf.customNext" (click)="conf.customNext(stepper)" mat-raised-button color="primary">{{customNextText | translate}}</button>
             <span *ngFor="let custBtn of conf.custActions">
-              <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+              <button id="cust_button_{{custBtn.name}}" mat-raised-button color="primary" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id, i)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
             </span>
           </mat-card-actions>
         </mat-step>
