@@ -22,7 +22,6 @@
             <button *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-raised-button class="btn btn-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button>
             <tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip>
           </div>
-          <div>{{ sizeMessage | translate}}: {{ size }} </div>
         </div>
         <ng-template #extend>
           <mat-input-container>
@@ -107,11 +106,12 @@
           </div>
         </div>
       </div>
-      <div *ngif="disknumError" [style.color]="'red'" [innerHTML]="disknumErrorMessage + first_data_vdev_disknum"></div>
-      <div *ngif="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeErrorMessage + first_data_vdev_type"></div>
+      <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
+      <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
+      <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="buttons">
-        <button mat-raised-button name="create-button" class="btn btn-primary" (click)="doSubmit()" color="primary" [disabled]="isDisabled()">{{submitTitle | translate }}</button>
+        <button mat-raised-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
         <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
         <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>

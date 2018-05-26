@@ -5,6 +5,7 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
+  AfterViewInit,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
@@ -17,6 +18,7 @@ import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { StorageService } from '../../../../services/storage.service'
+import { EntityUtils } from '../../../common/entity/utils';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { T } from '../../../../translate-marker';
 
@@ -31,7 +33,7 @@ import { T } from '../../../../translate-marker';
     DialogService
   ],
 })
-export class ManagerComponent implements OnInit, OnDestroy {
+export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public disks: Array < any > = [];
   public suggestable_disks: Array < any > = [];
@@ -41,7 +43,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
     any = { data: [{}], cache: [], spare: [], log: [] };
   public original_vdevs: any = {};
   public error: string;
-  public vdevErrors = [];
   @ViewChild('disksdnd') disksdnd;
   @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
   @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
@@ -68,23 +69,27 @@ export class ManagerComponent implements OnInit, OnDestroy {
   protected needsDiskMessage = T("Please add one or more disks to be used for data");
   protected extendedNeedsDiskMessage = T("Please add one or more disks to extend your pool");
   public size;
-  public sizeMessage = T("Estimated total raw capacity");
-  protected extendedSizeMessage = T("Estimated total extended capacity");
+  protected extendedAvailable;
+  public sizeMessage = T("Estimated total raw data capacity");
+  protected extendedSizeMessage = T("Estimated data capacity available after extending");
 
-  public disknumError = false;
-  public disknumErrorMessage = T("Adding data vdevs with different amounts of \
-      disks is not recommended.  Please create data vdevs with the following amount of disks: ");
+  public disknumError = null;
+  public disknumErrorMessage = T("WARNING: Adding data vdevs with different amounts of \
+      disks is not recommended.");
+  public disknumErrorConfirmMessage = T("Creating a pool with vdevs containing different \
+      amounts of disks is not recommended, do you wish to continue?");
+  public disknumExtendConfirmMessage = T("Extending a pool with one or more vdevs containing \
+      different amounts of disks is not recommended, do you wish to continue?");
 
-  public vdevtypeError = false;
-  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not \
-      not recommended.  Please create data vdevs of the following type: ");
+  public vdevtypeError = null;
+  public vdevtypeErrorMessage = T("WARNING: Adding data vdevs of different types is not \
+      supported.");
 
-  public disksizeError = false;
-  public disksizeErrorMessage = T("Mixing disks of different sizes within the same vdev group\
-      is not recommended");
+  public diskAddWarning = T("The contents of all added disks will be erased.");
+  public diskExtendWarning = T("The contents of all newly added disks will be erased.  Your pool \
+      will be extended to the new topology with its data left in tact.");
 
   first_data_vdev_type: string;
-  first_data_vdev_disksize: number;
   first_data_vdev_disknum: number;
 
   public busy: Subscription;
@@ -153,10 +158,58 @@ export class ManagerComponent implements OnInit, OnDestroy {
     dragulaService.out.subscribe((value) => { console.log(value); });
   }
 
+  getDiskNumErrorMsg(disks) {
+    this.translate.get(this.disknumErrorMessage).subscribe((errorMessage) => {
+      this.disknumError = errorMessage + T(' The first vdev has ') + this.first_data_vdev_disknum + T(' disks, seen ') + disks + '.';
+    });
+  }
+
+  getVdevTypeErrorMsg(type) {
+    this.translate.get(this.vdevtypeErrorMessage).subscribe((errorMessage) => {
+      this.vdevtypeError = errorMessage + T(' The first vdev has type: ') + this.first_data_vdev_type + T(', seen ') + type + '.'; 
+    });
+  }
+
+  getPoolData() {
+    this.ws.call('pool.query', [
+      [
+        ["id", "=", this.pk]
+      ]
+    ]).subscribe(
+      (res) => {
+        if (res[0]) {
+          this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
+          if (this.first_data_vdev_type === 'raidz1') {
+            this.first_data_vdev_type = 'raidz';
+          }
+          this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
+
+          if (this.first_data_vdev_disknum === 0 && 
+              this.first_data_vdev_type === 'disk') {
+            this.first_data_vdev_disknum = 1;
+            this.first_data_vdev_type = 'stripe';
+          } 
+        }
+      },
+      (err) => {
+        new EntityUtils().handleError(this, err);
+      }
+    );
+    this.rest.get(this.resource_name + this.pk, {}).subscribe((res) => {
+      if (res && res.data) {
+        this.extendedAvailable = res.data.avail;
+        this.size = (<any>window).filesize(this.extendedAvailable, {standard : "iec"});
+      }
+    },
+    (err) => {
+      new EntityUtils().handleError(this, err);
+    });
+  }
+
   ngOnInit() {
     this.route.params.subscribe(params => {
       if (params['pk']) {
-        this.pk = params['pk'];
+        this.pk = parseInt(params['pk']);
         this.isNew = false;
       }
     });
@@ -170,6 +223,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
           this.isEncrypted = true;
         }
       });
+      this.getPoolData();
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
@@ -197,19 +251,24 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
       this.temp = [...this.disks];
     });
+  }
+
+  ngAfterViewInit() {
     if (!this.isNew) {
-      this.dialog.confirm(T("Warning"), T("Extending the pool stripes\
-                                           additional vdevs onto the\
-                                           pool, resulting in a larger\
-                                           pool. Only stripe vdevs of\
-                                           the same size and type as the\
-                                           ones already in the existing\
-                                           pool. This operation cannot\
-                                           be reversed. Do you wish to\
-                                           continue?")).subscribe((res) => {
-        if (!res) {
-           this.goBack();
-        }
+      setTimeout(() => { // goofy workaround for stupid angular error
+        this.dialog.confirm(T("Warning"), T("Extending the pool stripes\
+                                             additional vdevs onto the\
+                                             pool, resulting in a larger\
+                                             pool. Only stripe vdevs of\
+                                             the same size and type as the\
+                                             ones already in the existing\
+                                             pool. This operation cannot\
+                                             be reversed. Do you wish to\
+                                             continue?")).subscribe((res) => {
+          if (!res) {
+            this.goBack();
+          }
+        });
       });
     }
   }
@@ -243,52 +302,62 @@ export class ManagerComponent implements OnInit, OnDestroy {
 
   getCurrentLayout() {
     let size_estimate = 0;
+    if (!this.isNew) {
+      size_estimate = this.extendedAvailable;
+    }
     let data_vdev_disknum = 0;
-    let data_vdev_disksize = 0;
     let data_disk_found = false;
+    let data_vdev_type;
+    this.disknumError = null;
+    this.vdevtypeError = null;
 
-    for (let i =0; i < this.vdevComponents.length; i++) {
-      const vdev = this.vdevComponents[i];
+    this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') { 
         if (i === 0 && this.isNew) {
           this.first_data_vdev_type = vdev.type;
+          data_vdev_type = vdev.type;
           if (vdev.disks.length > 0) {
             this.first_data_vdev_disknum = vdev.disks.length;
-            this.first_data_vdev_disksize = vdev.firstdisksize;
           } else {
             this.first_data_vdev_disknum = 0;
-            this.first_data_vdev_disksize = 0;
           }
         }
         if (vdev.disks.length > 0) {
           data_disk_found = true;
           data_vdev_disknum = vdev.disks.length;
-          data_vdev_disksize = vdev.firstdisksize;
+          data_vdev_type = vdev.type;
         } else {
           data_vdev_disknum = 0;
-          data_vdev_disksize = 0;
         }
         size_estimate += vdev.rawSize;
-        this.vdevErrors = [];
         if (data_vdev_disknum > 0) {
           if( data_vdev_disknum !== this.first_data_vdev_disknum) {
-            this.disknumError = true;
+            this.getDiskNumErrorMsg(data_vdev_disknum);
           }
-          for (let j = 0; j < vdev.disks.length; j++) {
-            if(this.first_data_vdev_disksize !== vdev.disks.rawSize) {
-             this.disksizeError = true;
-            }
+          if( data_vdev_type !== this.first_data_vdev_type) {
+            this.getVdevTypeErrorMsg(data_vdev_type);
           }
         }
         
       }
+      if (!this.isNew) {
+        if (vdev.disks.length > 0) {
+          this.needs_disk = false;
+        }
+      }
 
+    });
+    if (this.isNew) {
+      this.needs_disk = !data_disk_found;
     }
     this.size = (<any>window).filesize(size_estimate, {standard : "iec"});
   }
 
   canSave() {
-    if (!this.name) {
+    if (this.isNew && !this.name) {
+      return false;
+    }
+    if (this.vdevtypeError) {
       return false;
     }
     if (this.needs_disk) {
@@ -297,8 +366,31 @@ export class ManagerComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  checkSubmit() {
+    let disknumErr = this.disknumErrorConfirmMessage;
+    if (!this.isNew) {
+      disknumErr = this.disknumExtendConfirmMessage;
+    }
+    if (this.disknumError) {
+      this.dialog.confirm(T("Warning"), disknumErr).subscribe((res) => {
+        if (!res) {
+          return;
+        } else {
+          this.doSubmit();
+        }
+      });
+    } else {
+      this.doSubmit();
+    }
+  }
+
   doSubmit() {
-    this.dialog.confirm(T("Warning"), T("The contents of all added disks will be erased.")).subscribe((res) => {
+    let diskWarning = this.diskAddWarning;
+    if (!this.isNew) {
+      diskWarning = this.diskExtendWarning;
+    }
+
+    this.dialog.confirm(T("Warning"), diskWarning).subscribe((res) => {
       if (res) {
         this.error = null;
 
@@ -391,7 +483,6 @@ export class ManagerComponent implements OnInit, OnDestroy {
      this.disks = [...this.disks];
      this.temp.push(disk);
      this.disks = this.sorter.mySorter(this.disks, 'devname');
-     this.getCurrentLayout();
   }
 
   removeDisk(disk: any) {
