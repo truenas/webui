@@ -26,8 +26,8 @@ export class SnapshotFormComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'select',
     name: 'task_filesystem',
-    placeholder: T('Volume/Dataset'),
-    tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
+    placeholder: T('Pool/Dataset'),
+    tooltip: T('Select an existing ZFS Pool, dataset, or zvol.'),
     options: [],
     required: true,
     validation : [ Validators.required ]
