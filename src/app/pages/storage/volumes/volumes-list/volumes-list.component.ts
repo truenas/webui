@@ -232,13 +232,12 @@ export class VolumesListTableConfig implements InputTableConf {
             
           );
           ds.afterClosed().subscribe((status) => {
-            this.loader.open();
             if (status) {
+              this.loader.open();
               return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                 this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
-                // this._router.navigate(new Array('/').concat(
-                //   ["storage", "pools"]));
                 this.loader.close();
+                this.parentVolumesListComponent.repaintMe();
               }, (res) => {
                 this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
               });
@@ -575,7 +574,5 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngAfterViewInit(): void {
 
   }
-
-
 
 }
