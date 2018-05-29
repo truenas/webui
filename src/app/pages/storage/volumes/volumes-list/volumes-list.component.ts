@@ -64,6 +64,7 @@ export class VolumesListTableConfig implements InputTableConf {
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
+  public showDefaults: boolean = false;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -91,7 +92,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-
+  
 
 
   }
@@ -231,6 +232,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
+          const params = [row1.name, {"data_destroy": true}]
           const ds = this.dialogService.confirm(
             T("Detach Pool: " + row1.name), 
             T("You are about to detach '" +  row1.name + "'. WARNING! \
@@ -239,17 +241,19 @@ export class VolumesListTableConfig implements InputTableConf {
             for encrypted pools, take a moment to download and safely store your recovery key."), 
             false, T("Detach"),
             true,
-            T('Destroy data on this pool (' + row1.name + ')?')
-            
-          );
+            T('Destroy data on this pool (' + row1.name + ')?'), 
+              'data.destroy', 
+              params);
           ds.afterClosed().subscribe((status) => {
             if (status) {
               this.loader.open();
               return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
-                this.loader.close();
-                this.parentVolumesListComponent.repaintMe();
+                this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              this.loader.close();
               }, (res) => {
+                this.loader.close();
                 this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
               });
             }
@@ -593,8 +597,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     public sorter: StorageService, protected snackBar: MatSnackBar) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
   }
-  public showDefaults: boolean = false;
+
   public repaintMe() {
+    this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
   }
@@ -632,8 +637,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         }
 
         this.paintMe = true; 
-        this.showDefaults = true;
+        
         this.loader.close();
+        this.showDefaults = true;
         
       }, (res) => {
         this.loader.close();
@@ -643,7 +649,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.loader.close();
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
-
+    
   }
 
   ngAfterViewInit(): void {
