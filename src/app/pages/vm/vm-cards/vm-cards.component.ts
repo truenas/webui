@@ -459,7 +459,7 @@ export class VmCardsComponent implements OnInit {
         }
           if (res[0].vm_type === "Container Provider"){
             this.dialogRef = this.matdialog.open(EntityJobComponent, { data: {title: 'Fetching RancherOS'}, disableClose: false});
-            this.dialogRef.componentInstance.progressNumberType = "nopercent";
+            // this.dialogRef.componentInstance.progressNumberType = "nopercent";
             this.dialogRef.componentInstance.setCall('vm.fetch_image', ['RancherOS']);
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.subscribe((sucess_res) => {
