@@ -41,7 +41,7 @@ export class JailAddComponent implements OnInit {
       name: 'uuid',
       placeholder: T('Name'),
       tooltip: T('Required. Can only contain alphanumeric characters \
-                 (Aa-Zz 0-9), dashes (-), or underscores (_).')\
+                  (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
       required: true,
       validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
     },
