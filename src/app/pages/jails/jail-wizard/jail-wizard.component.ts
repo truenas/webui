@@ -25,6 +25,16 @@ export class JailWizardComponent {
 
   isLinear = true;
   firstFormGroup: FormGroup;
+  protected custActions: Array<any> = [
+  {
+    id: 'advanced_add',
+    name: "Advanced Jail Creation",
+    function: () => {
+      this.router.navigate(
+        new Array('').concat(["jails", "add"])
+      );
+    }
+  }];
 
   protected wizardConfig: Wizard[] = [{
       label: T('Name the jail and choose a FreeBSD release.'),
@@ -33,17 +43,19 @@ export class JailWizardComponent {
           name: 'uuid',
           required: true,
           placeholder: T('Jail Name'),
-          tooltip: T('Mandatory. Can only contain alphanumeric characters,\
- dashes (-), or underscores (_).'),
-          validation: [ Validators.required ],
+          tooltip: T('A Jail Name can only contain alphanumeric \
+                      characters (Aa-Zz 0-9), dashes (-), or \
+                      underscores (_).'),
+          validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
         },
         {
           type: 'select',
           name: 'release',
           required: true,
           placeholder: T('Release'),
-          tooltip: T('Select the FreeBSD release to use as the jail\
- operating system.'),
+          tooltip: T('Select the FreeBSD release to use as the jail \
+                      operating system. <br>\
+                      Releases already downloaded display <b>(fetched)</b>'),
           options: [],
         },
       ]
@@ -54,17 +66,19 @@ export class JailWizardComponent {
           type: 'checkbox',
           name: 'dhcp',
           placeholder: T('DHCP autoconfigure IPv4'),
-          tooltip: T('Check this to automatically configure IPv4 settings\
- for the jail. <b>VirtIO</b> must also be enabled.'),
-        },
+          tooltip: T('Automatically configure the jail to use IPv4 \
+                      networking.\
+                      <br><b>VirtIO</b> must also be enabled.'),
+      },
         {
           type: 'checkbox',
           name: 'vnet',
           placeholder: T('VirtIO Virtual Networking'),
-          tooltip: T('Check to use VirtIO to emulate network devices for\
- this jail. See <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">VIRTIO(4)</a> for more details.'),
+          tooltip: T('Use VirtIO to emulate network devices for the \
+                      jail. <br> \
+                      See <a \
+href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports\
+"target="_blank">VIRTIO(4)</a> for more details.'),
           required: false,
           hasErrors: false,
           errors: '',
@@ -73,11 +87,7 @@ export class JailWizardComponent {
           type: 'input',
           name: 'ip4_addr',
           placeholder: T('IPv4 Address'),
-          tooltip: T('Type the IPv4 address for VNET and shared IP jails.\
- Single interface format: <b>interface|ip-address/netmask</b>. Multiple\
- interface format:\
- <b>interface|ip-address/netmask,interface|ip-address/netmask</b>.\
- Example: <b>vnet0|192.168.0.10/24</b>'),
+          tooltip: T('IPv4 address for the jail.'),
           validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
           relation: [{
             action: 'DISABLE',
@@ -91,9 +101,11 @@ export class JailWizardComponent {
           type: 'input',
           name: 'defaultrouter',
           placeholder: T('Default Router For IPv4'),
-          tooltip: T('Type <i>none</i> or a valid IP address. Setting\
- this property to anything other than <i>none</i> configures a default\
- route inside a <b>VNET</b> jail.'),
+          tooltip: T('A valid IPv4 address to use as the default route. \
+                      <br>Enter <b>none</b> to configure the jail with \
+                      no IPv4 default route. <br>\
+                      <b>A jail without a default route will not be \
+                      able to access a network or the outside world.</b>'),
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -106,20 +118,18 @@ export class JailWizardComponent {
           type: 'input',
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
-          tooltip: T('Type the IPv6 address for VNET and shared IP jails.\
- Single interface format: <i>interface|ip-address/netmask</i>. Multiple\
- interface format:\
- <i>interface|ip-address/netmask,interface|ip-address/netmask</i>.\
- Example: <b>re0|2001:0db8:85a3:0000:0000:8a2e:0370:7334/24</b>'),
+          tooltip: T('IPv6 address for the jail.'),
           validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
         },
         {
           type: 'input',
           name: 'defaultrouter6',
           placeholder: T('Default Router For IPv6'),
-      tooltip: T('Type <i>none</i> or a valid IP address. Setting this\
- property to anything other than <i>none</i> configures a default route\
- inside a <b>VNET</b> jail.'),
+      tooltip: T('A valid IPv6 address to use as the default route. \
+                  <br>Enter <b>none</b> to configure the jail with no \
+                  IPv6 default route. <br>\
+                  <b>A jail without a default route will not be able \
+                  to access a network or the outside world.</b>'),
         },
       ]
     },
@@ -128,7 +138,10 @@ export class JailWizardComponent {
   protected releaseField: any;
   protected currentServerVersion: any;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService, protected jailService: JailService, ) {
+  constructor(protected rest: RestService,
+              protected ws: WebSocketService,
+              protected jailService: JailService,
+              protected router: Router) {
 
   }
 
@@ -235,4 +248,12 @@ export class JailWizardComponent {
 
     return value;
   }
+
+  isCustActionVisible(id, stepperIndex) {
+    if (stepperIndex == 0) {
+      return true;
+    }
+    return false;
+  }
+
 }

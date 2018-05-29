@@ -41,15 +41,15 @@ export class VolumeDeleteComponent implements Formconfiguration {
       label: T('destroy'),
       value: false,
       placeholder: T("Destroy data on this pool?"),
-      tooltip: T("Check this box to cause all information stored on this pool to be \
-                  permanently erased when the detach operation is confirmed.")
+      tooltip: T("Set to permanently erase all information stored on\
+                  this pool when the detach operation is confirmed.")
 
     }, {
       type: 'checkbox',
       name: 'confirm_detach_checkbox',
       label: T("Confirm it is okay to proceed with Detach."),
-      placeholder: T("Confirm this detach procedure."),
-      tooltip: T("Check this box to confirm that the pool is to be detached."),
+      placeholder: T("Confirm detach"),
+      tooltip: T("Set to confirm detaching the pool."),
       validation: [Validators.required],
       required: true
 
@@ -110,7 +110,6 @@ export class VolumeDeleteComponent implements Formconfiguration {
   }
 
 }
-
 
 
 

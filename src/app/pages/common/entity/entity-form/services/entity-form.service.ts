@@ -7,7 +7,8 @@ import {
   FormGroup,
   Validators
 } from "@angular/forms";
-import {WebSocketService, RestService} from '../../../../../services/';
+import {WebSocketService} from '../../../../../services/ws.service';
+import {RestService} from '../../../../../services/rest.service';
 import 'rxjs/add/operator/toPromise';
 
 import {FieldConfig} from '../models/field-config.interface';

@@ -26,24 +26,19 @@ import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
+import { ManualUpdateComponent } from './update/manualupdate/';
+import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/';
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
-import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
-import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
-import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
-import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CertificateAuthorityImportComponent } from './ca/ca-import/';
-import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
-import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
+import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
-import { CAFormComponent } from './ca/ca-form/';
-import { CertificateCSRComponent } from './certificates/certificate-csr/';
+import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
-import { CertificateImportComponent } from './certificates/certificate-import/';
-import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { TranslateModule } from '@ngx-translate/core';
@@ -74,25 +69,20 @@ import { AlertConfigComponent } from './alert/alert.component';
     TunableListComponent,
     TunableFormComponent,
     UpdateComponent,
+    ManualUpdateComponent,
+    ManualUpdateConfigSaveComponent,
     NTPServerListComponent,
     NTPServerAddComponent,
     NTPServerEditComponent,
     AlertServiceListComponent,
-    CloudCredentialsGCSComponent,
-    CloudCredentialsAmazonComponent,
-    CloudCredentialsAzureComponent,
-    CloudCredentialsB2Component,
     CloudCredentialsListComponent,
-    CAFormComponent,
+    CloudCredentialsFormComponent,
     CertificateAuthorityListComponent,
-    CertificateAuthorityImportComponent,
-    CertificateAuthorityInternalComponent,
-    CertificateAuthorityIntermediateComponent,
+    CertificateAuthorityAddComponent,
+    CertificateAuthoritySignComponent,
     CertificateListComponent,
+    CertificateAddComponent,
     CertificateEditComponent,
-    CertificateImportComponent,
-    CertificateInternalComponent,
-    CertificateCSRComponent,
     SupportComponent,
     EmailComponent,
     AlertServiceComponent,

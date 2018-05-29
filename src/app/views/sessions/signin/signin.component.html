@@ -13,7 +13,7 @@
           <form #signinForm="ngForm" (ngSubmit)="signin()">
             <div class="">
               <mat-input-container class="full-width">
-                <input matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
+                <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                   <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
                   <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>

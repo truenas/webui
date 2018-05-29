@@ -31,11 +31,10 @@ export class DeviceNicAddComponent {
   public fieldConfig: FieldConfig[] = [{
       name: 'NIC_type',
       placeholder: 'Adapter Type:',
-      tooltip: 'The default emulates an Intel E1000 (82545) Ethernet\
- card for compatibility with most operating systems. If the operating\
- system installed in the VM supports VirtIO paravirtualized network\
- drivers, this can be changed to <i>VirtIO</i> to provide better\
- performance.',
+      tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> ethernet card\
+                has compatibility with most operating systems. Change to\
+                <i>VirtIO</i> to provide better performance on systems\
+                with VirtIO paravirtualized network driver support.',
       type: 'select',
       options: [],
       validation: [Validators.required],
@@ -43,10 +42,11 @@ export class DeviceNicAddComponent {
     },
     {
       name: 'NIC_mac',
-      placeholder: 'Mac Address',
+      placeholder: 'MAC Address',
       tooltip: 'By default, the VM receives an auto-generated random\
- MAC address. To override the default with a custom value, enter the\
- desired address into the field.',
+                MAC address. Enter a custom address into the field to\
+                override the default. Click <b>Generate MAC Address</b>\
+                to add a new randomized address into this field.',
       type: 'input',
       value: '00:a0:98:FF:FF:FF',
       validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
@@ -54,9 +54,7 @@ export class DeviceNicAddComponent {
     {
       name: 'nic_attach',
       placeholder: 'Nic to attach:',
-      tooltip: 'Can be used to specify which physical interface to\
- associate with the VM if the system has multiple physical network\
- cards.',
+      tooltip: 'Select a physical interface to associate with the VM.',
       type: 'select',
       options: [],
       validation: [Validators.required],
@@ -96,7 +94,7 @@ export class DeviceNicAddComponent {
   afterInit(entityForm: any) {
     entityForm.conf.custActions = [{
       id: 'generate_mac_address',
-      name: 'Generate MAC ADDRESS',
+      name: 'Generate MAC Address',
       function: () => {
         entityForm.ws.call('vm.random_mac').subscribe((random_mac) => {
           entityForm.formGroup.controls['NIC_mac'].setValue(random_mac);

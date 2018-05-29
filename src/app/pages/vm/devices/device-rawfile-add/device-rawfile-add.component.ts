@@ -31,25 +31,27 @@ export class DeviceRawFileAddComponent {
       initial: '/mnt',
       name : 'RAW_path',
       placeholder : 'Raw File',
-      tooltip : 'Select the location of the RAW file being added.',
+      tooltip : 'Browse to a storage location and add the name of the\
+                 new raw file on the end of the path.',
       required: true,
       validation: [Validators.required]
     },
     {
       type : 'input',
       name : 'RAW_sectorsize',
-      placeholder : 'Disk sectorsize',
-      tooltip : 'If a specific sector size is required, enter the\
- number of bytes. The default of <i>0</i> leaves the sector size unset.',
+      placeholder : 'Disk sector size',
+      tooltip : 'Enter a sector size in bytes. <i>0</i> leaves the\
+                 sector size unset.',
       inputType : 'number',
     },
     {
       name : 'RAW_mode',
       placeholder : 'Mode',
       tooltip : '<i>AHCI</i> emulates an AHCI hard disk for best\
- software compatibility. <i>VirtIO</i> uses paravirtualized drivers and\
- can provide better performance, but requires the operating system\
- installed in the VM to support VirtIO disk devices.',
+                 software compatibility. <i>VirtIO</i> uses\
+                 paravirtualized drivers and can provide better\
+                 performance, but requires the operating system\
+                 installed in the VM to support VirtIO disk devices.',
       type: 'select',
       options : [
         {label : 'AHCI', value : 'AHCI'},

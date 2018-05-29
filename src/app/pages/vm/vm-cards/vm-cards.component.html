@@ -138,19 +138,16 @@
 
 
         <div class="vm-controls">
-          <!-- <span matTooltip="{{(!cards[i].vnc) ? 'Web VNC Disabled: Please create a VNC device and restart your VM.' : 'Web VNC'}}" matTooltipPosition="above"> -->
-            
-            <button mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
-            <mat-menu #appMenu="matMenu">
-              <button mat-menu-item color="primary" [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button>
-              <button mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
-              <!-- <button mat-menu-item [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button> -->
-              <!-- <button mat-menu-item(click)="vnc(i)">Serial Console</button> -->
-            </mat-menu>
-            <!-- <button mat-icon-button [matMenuTriggerFor]="appMenu"> -->
-              <!-- <mat-icon>more_vert</mat-icon> -->
-            <!-- </button> -->
-          <!-- </span> -->
+              <button *ngIf="cards[i].vm_type === 'Bhyve'" mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
+                <mat-menu #appMenu="matMenu">
+                  <button  mat-menu-item color="primary" [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button>
+                  <button  mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
+                </mat-menu>
+              <button *ngIf="cards[i].vm_type === 'Container Provider'" mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu2">Connect</button>
+                <mat-menu  #appMenu2="matMenu">
+                  <button mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
+                </mat-menu>
+                
           <span matTooltip="Edit Devices" matTooltipPosition="above">
            <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
           </span>

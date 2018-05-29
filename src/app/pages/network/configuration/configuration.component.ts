@@ -43,29 +43,28 @@ export class ConfigurationComponent {
       type : 'textarea',
       name : 'gc_domains',
       placeholder: T('Additional Domains'),
-      tooltip : T('Additional domains to be searched can be entered here, \
-                  separated by spaces. Be aware that adding search domains \
-                  can cause slow DNS lookups.')
+      tooltip : T('Add other domains to search, separated by spaces.\
+                   Adding search domains can cause slow DNS lookups.'),
     },
     {
       type : 'input',
       name : 'gc_ipv4gateway',
       placeholder : T('IPv4 Default Gateway'),
-      tooltip : T('Adding an IPv4 address here overrides a default\
- gateway provided by DHCP.'),
+      tooltip : T('Enter an IPv4 address. This overrides the default\
+                   gateway provided by DHCP.'),
     },
     {
       type : 'input',
       name : 'gc_ipv6gateway',
       placeholder : T('IPv6 Default Gateway'),
-      tooltip : T('Adding an IPv6 address here overrides a default\
- gateway provided by DHCP.'),
+      tooltip : T('Enter an IPv4 address. This overrides the default\
+                   gateway provided by DHCP.'),
     },
     {
       type : 'input',
       name : 'gc_nameserver1',
       placeholder : T('Nameserver 1'),
-      tooltip : T('The primary DNS server, typically in Windows domain.'),
+      tooltip : T('The primary DNS server, typically a Windows domain.'),
     },
     {
       type : 'input',
@@ -83,39 +82,37 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_httpproxy',
       placeholder : T('HTTP Proxy'),
-      tooltip : T('Enter the proxy information for the network in the\
- format <i>http://my.proxy.server:3128</i> or\
- <i>http://user:password@my.proxy.server:3128</i>'),
+      tooltip : T('Enter the proxy information for the network. Example:\
+                   <i>http://my.proxy.server:3128</i> or\
+                   <i>http://user:password@my.proxy.server:3128</i>'),
     },
     {
       type : 'checkbox',
       name : 'gc_netwait_enabled',
       placeholder : T('Enable netwait feature'),
-      tooltip : T('If enabled, delays the start of network-reliant\
- services until the interface is up and ICMP packets to a destination\
- defined in <i>netwait ip list</i> are flowing. Link state is examined\
- first, followed by "pinging" an IP address to verify network usability.\
- If no destination can be reached or timeouts are exceeded, network\
- services are started anyway with no guarantee the network is usable.')
+      tooltip : T('Set to delay the start of network-reliant services\
+                   until ICMP packets to a destination in the <i>netwait\
+                   ip list</i> are flowing.'),
     },
     {
       type : 'input',
       name : 'gc_netwait_ip',
       placeholder : T('Netwait IP list'),
-      tooltip : T('Space-delimited list of IP addresses to\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports" target="_blank"><ins>ping(8)</ins></a>.\
- If multiple IP addresses are specified, each is tried until one is\
- successful or the list is exhausted. If empty, the default gateway is\
- used.')
+      tooltip : T('Enter a space-delimited list of IP addresses to <a\
+                   href="https://www.freebsd.org/cgi/man.cgi?query=ping&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                   target="_blank">ping(8)</a>. Each address is tried\
+                   until one is successful or the list is exhausted.\
+                   Leave empty to use the default gateway.'),
     },
     {
       type : 'textarea',
       name : 'gc_hosts',
       placeholder : T('Host name database'),
       tooltip :
-          T('This value is appended to <i>/etc/hosts</i> which contains\
- information regarding known hosts on the network. See\
- <a href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports" target="_blank"><ins>hosts(5)</ins></a>.')
+          T('This is appended to <i>/etc/hosts</i>, which contains\
+             information regarding known hosts on the network. See <a\
+             href="www.freebsd.org/cgi/man.cgi?query=hosts&manpath=FreeBSD+11.1+RELEASE+and+Ports"\
+             target="_blank">hosts(5)</a>.'),
     },
   ];
   private entityEdit: EntityFormComponent;

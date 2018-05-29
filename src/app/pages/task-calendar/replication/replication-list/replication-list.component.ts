@@ -12,7 +12,7 @@ import {  DialogService } from '../../../../services/';
   template: `<entity-table [title]="title"  [conf]="this"></entity-table>`
 })
 export class ReplicationListComponent {
-  
+
   public title = "Replication Tasks";
   protected resource_name = 'storage/replication';
   protected route_success: string[] = ['tasks', 'replication'];
@@ -21,13 +21,13 @@ export class ReplicationListComponent {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    { name: 'Volume/Dataset', prop: 'repl_filesystem' },
+    { name: 'Pool/Dataset', prop: 'repl_filesystem' },
     { name: 'Remote Host', prop: 'repl_remote_hostname'},
     { name: "Status", prop: 'repl_status'},
     { name: 'Begin Time', prop:'repl_begin'},
     { name: 'End Time', prop:'repl_end'},
     { name: 'Enabled', prop: 'repl_enabled' }  ];
-    
+
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },

@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-title>Members</mat-card-title>
+  <mat-card-title>Members of {{groupName}} group</mat-card-title>
   <mat-card-content>
     <div class="padding-16" *ngIf="members.length > 0">
       <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">

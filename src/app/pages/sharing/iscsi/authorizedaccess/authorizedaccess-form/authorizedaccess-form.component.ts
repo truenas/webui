@@ -24,10 +24,11 @@ export class AuthorizedAccessFormComponent {
       type : 'input',
       name : 'iscsi_target_auth_tag',
       placeholder : T('Group ID'),
-      tooltip: T('Allows different groups to be configured with different\
- authentication profiles. For instance, all users with a group ID of\
- <i>1</i> will inherit the authentication profile associated with Group\
- <i>1</i>.'),
+      tooltip: T('Allows different groups to be configured\
+                  with different authentication profiles.\
+                  Example: all users with a group ID of\
+                  <i>1</i> will inherit the authentication profile\
+                  associated with Group <i>1</i>.'),
       inputType : 'number',
       min: 0,
       required: true,
@@ -37,18 +38,18 @@ export class AuthorizedAccessFormComponent {
       type : 'input',
       name : 'iscsi_target_auth_user',
       placeholder : T('User'),
-      tooltip: T('Name of user account to create for CHAP authentication\
- with the user on the remote system. Many initiators default to using\
- the initiator name as the user.'),
-      required: true,
+      tooltip: T('Enter name of user account to use\
+                  for CHAP authentication with the user on the remote\
+                  system. Many initiators\
+                  default to the initiator name as the user.'),
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_secret',
       placeholder : T('Secret'),
-      tooltip: T('Password to be associated with <b>User</b>. The iSCSI\
- standard requires that this be between 12 and 16 characters.'),
+      tooltip: T('Enter a password for <b>User</b>.\
+                  Must be between 12 and 16 characters.'),
       inputType : 'password',
       required: true,
       validation : [
@@ -67,16 +68,17 @@ export class AuthorizedAccessFormComponent {
       type : 'input',
       name : 'iscsi_target_auth_peeruser',
       placeholder : T('Peer User'),
-      tooltip: T('Only input when configuring mutual CHAP. In most cases\
- it will need to be the same value as <b>User</b>.'),
+      tooltip: T('Only input when configuring mutual CHAP.\
+                  In most cases it will need to be the same value\
+                  as <b>User</b>.'),
     },
     {
       type : 'input',
       name : 'iscsi_target_auth_peersecret',
       placeholder : T('Peer Secret'),
-      tooltip: T('The mutual secret password which\
- <b>must be different than the <i>Secret</i></b>. Required if\
- <b>Peer User</b> is set.'),
+      tooltip: T('Enter the mutual secret password which\
+                  <b>must be different than the <i>Secret</i></b>.\
+                  Required if <b>Peer User</b> is set.'),
       inputType : 'password',
       validation : [
         Validators.minLength(12),

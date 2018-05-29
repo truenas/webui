@@ -21,14 +21,15 @@ export class RYSNCConfigurationFormComponent {
         type: 'input',
         name: 'rsyncmod_name',
         placeholder: 'Name',
-        tooltip: '',
+        tooltip: 'This <b>must</b> match the settings on the rsync\
+                  client.',
         validation: Validators.required
     },
     {
         type: 'input',
         name: 'rsyncmod_comment',
         placeholder: 'Comment',
-        tooltip: ''
+        tooltip: 'Describe this module.'
     },
     {
         type : 'explorer',
@@ -36,7 +37,7 @@ export class RYSNCConfigurationFormComponent {
         explorerType: 'directory',
         placeholder: 'Path',
         name: 'rsyncmod_path',
-        tooltip: '',
+        tooltip: 'Browse to the pool or dataset to store received data.',
         validation: Validators.required
     },
     {
@@ -48,7 +49,7 @@ export class RYSNCConfigurationFormComponent {
             { label: 'Write Only', value:'wo' },
             { label: 'Read and Write', value:'rw' },
         ],
-        tooltip: '',
+        tooltip: 'Choose permissions for this rsync module.',
     },
     {
         type: 'input',
@@ -57,41 +58,58 @@ export class RYSNCConfigurationFormComponent {
         inputType: 'number',
         value: 0,
         validation: Validators.min(0),
-        tooltip: '',
+        tooltip: 'Enter the number of maximum connections to this module.\
+                  <i>0</i> is unlimited.',
     },
     {
         type: 'select',
         name: 'rsyncmod_user',
         placeholder: 'User',
-        tooltip: '',
+        tooltip: 'Select the user to conduct file transfers to and from\
+                  this module.',
         options: []
     },
     {
         type: 'select',
         name: 'rsyncmod_group',
         placeholder: 'Group',
-        tooltip: '',
+        tooltip: 'Select the group to conduct file transfers to and from\
+                  this module.',
         options: []
     },
     {
         type: 'textarea',
         name: 'rsyncmod_hostsallow',
         placeholder: 'Hosts Allow',
-        tooltip: '',
+        tooltip: 'From <a\
+                  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
+                  target="_blank">rsyncd.conf(5)</a>. Enter a list of\
+                  patterns to match with the hostname and IP address of\
+                  a connecting client. The connection is rejected if no\
+                  patterns match. Separate patterns with whitespace or a\
+                  comma.',
         value: '',
       },
       {
         type: 'textarea',
         name: 'rsyncmod_hostsdeny',
         placeholder: 'Hosts Deny',
-        tooltip: '',
+        tooltip: 'From <a\
+                  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
+                  target="_blank">rsyncd.conf(5)</a>. Enter a list of\
+                  patterns to match with the hostname and IP address of\
+                  a connecting client. The connection is rejected when\
+                  the patterns match. Separate patterns with whitespace\
+                  or a comma.',
         value: '',
       },
       {
         type: 'textarea',
         name: 'rsyncmod_auxiliary',
         placeholder: 'Auxiliary parameters',
-        tooltip: '',
+        tooltip: 'Enter any additional settings from <a\
+                  href="https://www.samba.org/ftp/rsync/rsyncd.conf.html"\
+                  target="_blank">rsyncd.conf(5)</a>.',
         value: '',
       },
 

@@ -41,8 +41,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
       //DEBUG: console.log(evt.data);
       this.data = evt.data;
       this.memory = this.formatMemory(this.data.physmem, "GB");
-      if(this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
-        this.manufacturer = "iX Systems";
+      if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
+        this.manufacturer = "ixsystems";
+      } else {
+        this.manufacturer = "other";
       }
 
       // Hardware detection
@@ -75,7 +77,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     //console.log(this.el.nativeElement.children);
     setTimeout(()=>{
       this.core.emit({name:"AnimateColorLoopStart", data:{element:'#widget-sysinfo-logo-bg', colors:this.themeAccentColors}});
-    }, 1000);
+    }, 3000);
   }
 
   getCardBg(){

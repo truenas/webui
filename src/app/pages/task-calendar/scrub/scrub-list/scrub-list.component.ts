@@ -22,7 +22,7 @@ export class ScrubListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Volume', prop: 'scrub_volume' },
+    { name: 'Pool', prop: 'scrub_volume' },
     { name: 'Threshold days', prop: 'scrub_threshold' },
     { name: 'Description', prop: 'scrub_description' },
     { name: 'Minute', prop: 'scrub_minute' },
@@ -55,21 +55,21 @@ export class ScrubListComponent {
       let months = entityList.rows[i].scrub_month.split(',');
 
       if (_.isEqual(entityList.rows[i].scrub_month, "*")) {
-        entityList.rows[i].scrub_month = "Evey month";
+        entityList.rows[i].scrub_month = "Every month";
       } else {
         this.taskService.getMonthChoices().subscribe((res) => {
           for (let i = 0; i < months.length; i++) {
             month_list.push(res[Number(months[i]) - 1][1]);
           }
-          entityList.rows[i].scrub_month = _.join(month_list, ', ');         
+          entityList.rows[i].scrub_month = _.join(month_list, ', ');
         });
       }
 
       let dayweeks_list: Array < string > = [];
       let dayweeks = entityList.rows[i].scrub_dayweek.split(',');
-      
+
       if (_.isEqual(entityList.rows[i].scrub_dayweek, "*")) {
-        entityList.rows[i].scrub_dayweek = "Eveyday";
+        entityList.rows[i].scrub_dayweek = "Every day";
       } else {
         this.taskService.getWeekdayChoices().subscribe((res) => {
           for (let i = 0; i < dayweeks.length; i++) {
@@ -81,23 +81,23 @@ export class ScrubListComponent {
 
       if (_.startsWith(entityList.rows[i].scrub_daymonth, '*/')) {
         let N = Number(_.trim(entityList.rows[i].scrub_daymonth, '*/'));
-        entityList.rows[i].scrub_daymonth = "Evey " + N + " days";
+        entityList.rows[i].scrub_daymonth = "Every " + N + " days";
       } else if (_.isEqual(entityList.rows[i].scrub_daymonth, "*")) {
-        entityList.rows[i].scrub_daymonth = "Eveyday";
+        entityList.rows[i].scrub_daymonth = "Every day";
       }
 
       if (_.startsWith(entityList.rows[i].scrub_minute, '*/')) {
         let N = Number(_.trim(entityList.rows[i].scrub_minute, '*/'));
-        entityList.rows[i].scrub_minute = "Evey " + N + " minutes";
+        entityList.rows[i].scrub_minute = "Every " + N + " minutes";
       } else if (_.isEqual(entityList.rows[i].scrub_minute, "*")) {
-        entityList.rows[i].scrub_minute = "Evey minute";
+        entityList.rows[i].scrub_minute = "Every minute";
       }
 
       if (_.startsWith(entityList.rows[i].scrub_hour, '*/')) {
         let N = Number(_.trim(entityList.rows[i].scrub_hour, '*/'));
-        entityList.rows[i].scrub_hour = "Evey " + N + " hours";
+        entityList.rows[i].scrub_hour = "Every " + N + " hours";
       } else if (_.isEqual(entityList.rows[i].scrub_hour, "*")) {
-        entityList.rows[i].scrub_hour = "Evey hour";
+        entityList.rows[i].scrub_hour = "Every hour";
       }
     }
   }
