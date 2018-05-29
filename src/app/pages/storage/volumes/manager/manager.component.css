@@ -47,3 +47,7 @@ h4 {
 .volumeTooltip {
 	display: auto;
 }
+
+.sizeMessage {
+	padding: 10px;
+}
