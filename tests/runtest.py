@@ -46,7 +46,7 @@ if path.exists("/usr/local/etc/ixautomation.conf"):
     else:
         grid_server_ip = "127.0.0.1"
 else:
-    grid_server_ip = "127.0.0.1"
+    grid_server_ip = "10.20.21.200"
 
 sys.stdout.flush()
 
@@ -141,7 +141,7 @@ except NameError:
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
-    run_delete_test(runDriver)
+#    run_delete_test(runDriver)
     run_change_theme_test(runDriver)
 else:
     if (test_name == "account"):
@@ -149,7 +149,7 @@ else:
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
-        run_delete_test(runDriver)
+#        run_delete_test(runDriver)
     elif (test_name == "network"):
         run_conf_network_test(runDriver)
     elif (test_name == "system"):
