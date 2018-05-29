@@ -471,13 +471,13 @@ export class DatasetFormComponent implements Formconfiguration{
         const readonly = _.find(this.fieldConfig, {name:'readonly'});
         const atime = _.find(this.fieldConfig, {name:'atime'});
         const recordsize = _.find(this.fieldConfig, {name:'recordsize'});
-        const sync_inherit = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-        const compression_inherit = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-        const deduplication_inherit = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-        const exec_inherit = [{label:`Inherits (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT'}];
-        const readonly_inherit = [{label:`Inherits (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
-        const atime_inherit = [{label:`Inherits (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
-        const recordsize_inherit = [{label:`Inherits (${pk_dataset[0].recordsize.value})`, value: 'INHERIT'}];
+        const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+        const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+        const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+        const exec_inherit = [{label:`Inherit (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT'}];
+        const readonly_inherit = [{label:`Inherit (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT'}];
+        const atime_inherit = [{label:`Inherit (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT'}];
+        const recordsize_inherit = [{label:`Inherit (${pk_dataset[0].recordsize.value})`, value: 'INHERIT'}];
 
 
         sync.options = sync_inherit.concat(sync.options);
@@ -516,65 +516,65 @@ export class DatasetFormComponent implements Formconfiguration{
             let edit_recordsize_collection = [{label:pk_dataset[0].recordsize.value, value: pk_dataset[0].recordsize.value}];
 
             if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_sync_collection = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: pk_dataset[0].sync.value}];
+              edit_sync_collection = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: pk_dataset[0].sync.value}];
             }
             else{
-              edit_sync_collection = [{label:`Inherits (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
+              edit_sync_collection = [{label:`Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT'}];
 
             }
 
             edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
             if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
-              edit_compression_collection = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: pk_dataset[0].compression.value}];
+              edit_compression_collection = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: pk_dataset[0].compression.value}];
             }
             else {
-              edit_compression_collection = [{label:`Inherits (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
+              edit_compression_collection = [{label:`Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT'}];
             }
 
             edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
             if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_deduplication_collection = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: pk_dataset[0].deduplication.value}];
+              edit_deduplication_collection = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: pk_dataset[0].deduplication.value}];
             }
             else {
-              edit_deduplication_collection = [{label:`Inherits (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
+              edit_deduplication_collection = [{label:`Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT'}];
             }
             edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
             if (pk_dataset[0].exec.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_exec_collection = [{label:`Inherits (${pk_dataset[0].exec.rawvalue})`, value: pk_dataset[0].exec.value}];
+              edit_exec_collection = [{label:`Inherit (${pk_dataset[0].exec.rawvalue})`, value: pk_dataset[0].exec.value}];
 
             }
             else {
 
-              edit_exec_collection = [{label:`Inherits (${this.parent_dataset.exec.value})`, value: 'INHERIT'}];
+              edit_exec_collection = [{label:`Inherit (${this.parent_dataset.exec.value})`, value: 'INHERIT'}];
             }
             edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
             if (pk_dataset[0].readonly.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_readonly_collection = [{label:`Inherits (${pk_dataset[0].readonly.rawvalue})`, value: pk_dataset[0].readonly.value}];
+              edit_readonly_collection = [{label:`Inherit (${pk_dataset[0].readonly.rawvalue})`, value: pk_dataset[0].readonly.value}];
 
             }
             else {
-              edit_readonly_collection = [{label:`Inherits (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
+              edit_readonly_collection = [{label:`Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT'}];
             }
             edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
             if (pk_dataset[0].atime.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_atime_collection = [{label:`Inherits (${pk_dataset[0].atime.rawvalue})`, value: pk_dataset[0].atime.value}];
+              edit_atime_collection = [{label:`Inherit (${pk_dataset[0].atime.rawvalue})`, value: pk_dataset[0].atime.value}];
 
             } else {
-              edit_atime_collection = [{label:`Inherits (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
+              edit_atime_collection = [{label:`Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT'}];
 
             }
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
             if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
+              edit_recordsize_collection = [{label:`Inherit (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
 
             } else {
-              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
+              edit_recordsize_collection = [{label:`Inherit (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
             }
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);

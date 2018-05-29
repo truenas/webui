@@ -42,8 +42,8 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
       {
         type: 'select',
         name: 'dataset',
-        placeholder: T('Volume/Dataset'),
-        tooltip: T('Select an existing ZFS volume, dataset, or zvol.'),
+        placeholder: T('Pool/Dataset'),
+        tooltip: T('Select an existing ZFS pool, dataset, or zvol.'),
         options: [],
         validation: [Validators.required],
         required: true
@@ -61,7 +61,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
         type: 'checkbox',
         name: 'recursive',
         placeholder: 'Recursive',
-        tooltip: T('Check this to include child datasets of the chosen dataset.'),
+        tooltip: T('Set to include child datasets of the chosen dataset.'),
       }
     ];
 
