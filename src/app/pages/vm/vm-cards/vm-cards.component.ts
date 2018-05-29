@@ -67,15 +67,10 @@ export class VmCardsComponent implements OnInit {
   public direction ='down';
   public animationMode = 'fling';
 
-  public actions: any = [{
-      label : "Add DockerVM",
-      icon: "picture_in_picture",
-      onClick : () => {
-         this.addDockerVMWizard();
-       }
-    }, {
+  public actions: any = [
+    {
       label : "Add VM",
-      icon: "beach_access",
+      icon: "add",
       onClick : () => {
         this.addVMWizard();
       }

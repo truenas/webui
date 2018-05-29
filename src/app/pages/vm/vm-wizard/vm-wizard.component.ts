@@ -35,7 +35,30 @@ export class VMWizardComponent {
   summary_title = "VM Summary";
   
 
-  protected wizardConfig: Wizard[] = [{
+  protected wizardConfig: Wizard[] = [
+
+    {
+      label: T('Select VM wizard type'),
+      fieldConfig: [
+
+        {
+          type: 'select',
+          name: 'wizard_type',
+          required: true,
+          placeholder: T('Virtual Machine (VM) Wizard type.'),
+          tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
+          options: [
+            {label: 'Virtual Machine (VM)', value: 'vm'},
+            {label: 'Docker', value: 'docker'},
+          ],
+          validation : [ Validators.required ],
+          value: 'vm'
+        },
+      ]
+    },
+    
+    
+    {
       label: T('Operating System'),
       fieldConfig: [
         {
@@ -251,104 +274,111 @@ export class VMWizardComponent {
 
   afterInit(entityWizard: EntityWizardComponent) {
 
-    ( < FormGroup > entityWizard.formArray.get([0]).get('os')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
+      if (res === 'docker') {
+        this.router.navigate(new Array('/').concat(['vm','dockerwizard']))
+      }
+    });
+
+
+    ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
       this.summary[T('guest operating system')] = res;
-      ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
+      ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPU')] = vcpus;
       });
-      ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
+      ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' Mib';
       });
-      ( < FormGroup > entityWizard.formArray.get([2])).get('volsize').valueChanges.subscribe((volsize) => {
+      ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
         this.summary[T('Hard Disk Size')] = volsize + ' Gib';
       });
-      ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
+      ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
       });
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
-        ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
+        ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
       })
       if (res === 'windows') {
-        ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(2);
-        ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(4096);
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(40);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
       }
       else {
-        ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
-        ( < FormGroup > entityWizard.formArray.get([1])).controls['memory'].setValue(512);
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue(10);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
+        ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(512);
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
       }
     });
-    ( < FormGroup > entityWizard.formArray.get([2]).get('disk_radio')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([3]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = false;
-        _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = false;
-        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = true;
       } else {
-        _.find(this.wizardConfig[2].fieldConfig, {name : 'volsize'}).isHidden = true;
-        _.find(this.wizardConfig[2].fieldConfig, {name : 'datastore'}).isHidden = true;
-        _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).isHidden = false;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'volsize'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'datastore'}).isHidden = true;
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).isHidden = false;
       }
 
     });
-    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([5]).get('upload_iso_checkbox')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = false;
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
+        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso'}).isHidden = false;
+        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso_path'}).isHidden = false;
       } else {
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).isHidden = true;
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
+        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso'}).isHidden = true;
+        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso_path'}).isHidden = true;
       }
 
     });
-    ( < FormGroup > entityWizard.formArray.get([4]).get('upload_iso_path')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([5]).get('upload_iso_path')).valueChanges.subscribe((res) => {
       if (res){
-        _.find(this.wizardConfig[4].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
+        _.find(this.wizardConfig[5].fieldConfig, {name : 'upload_iso'}).fileLocation = res;
       }
 
     });
     this.ws.call('pool.dataset.query').subscribe((filesystem_res)=>{
-      this.datastore = _.find(this.wizardConfig[2].fieldConfig, { name : 'datastore' });
+      this.datastore = _.find(this.wizardConfig[3].fieldConfig, { name : 'datastore' });
       for (const idx in filesystem_res) {
         if(!filesystem_res[idx].name.includes("/") && !filesystem_res[idx].name.includes("freenas-boot")){
           this.datastore.options.push(
             {label : filesystem_res[idx].name, value : filesystem_res[idx].name});
         }
       };
-    ( < FormGroup > entityWizard.formArray.get([2])).controls['datastore'].setValue(
+    ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(
       this.datastore.options[0].value
     )
     });
 
     this.networkService.getAllNicChoices().subscribe((res) => {
-      this.nic_attach = _.find(this.wizardConfig[3].fieldConfig, {'name' : 'nic_attach'});
+      this.nic_attach = _.find(this.wizardConfig[4].fieldConfig, {'name' : 'nic_attach'});
       res.forEach((item) => {
         this.nic_attach.options.push({label : item[1], value : item[0]});
       });
-      ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
+      ( < FormGroup > entityWizard.formArray.get([4])).controls['nic_attach'].setValue(
         this.nic_attach.options[0].value
       )
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
+        ( < FormGroup > entityWizard.formArray.get([4])).controls['NIC_mac'].setValue(mac_res);
       });
 
     });
     this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
-          this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
+          this.nicType = _.find(this.wizardConfig[4].fieldConfig, {name : "NIC_type"});
           res.forEach((item) => {
             this.nicType.options.push({label : item[1], value : item[0]});
           });
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
+        ( < FormGroup > entityWizard.formArray.get([4])).controls['NIC_type'].setValue(
           this.nicType.options[0].value
         )
         });
 
       this.ws.call('notifier.choices', [ 'VM_BOOTLOADER' ]).subscribe((res) => {
-        this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
+        this.bootloader = _.find(this.wizardConfig[1].fieldConfig, {name : 'bootloader'});
         res.forEach((item) => {
           this.bootloader.options.push({label : item[1], value : item[0]})
         });
-      ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
+      ( < FormGroup > entityWizard.formArray.get([1])).controls['bootloader'].setValue(
         this.bootloader.options[0].value
       )
       });

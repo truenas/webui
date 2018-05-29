@@ -24,17 +24,17 @@
         <mat-button-toggle value="table" >Table</mat-button-toggle>
       </mat-button-toggle-group>
 
-      <smd-fab-speed-dial class="vm-fab-speed-dial" id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
+      <!-- <smd-fab-speed-dial class="vm-fab-speed-dial" id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
         (mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
         <smd-fab-trigger [spin]="spin">
             <button mat-fab><mat-icon>list</mat-icon></button>
         </smd-fab-trigger>
-        <smd-fab-actions>
+        <smd-fab-actions> -->
           <button *ngFor="let action of actions" mat-mini-fab (click)="action.onClick()" matTooltip="{{action.label | translate}}">
             <mat-icon>{{action.icon}}</mat-icon>
           </button>
-        </smd-fab-actions>
-      </smd-fab-speed-dial>
+        <!-- </smd-fab-actions>
+      </smd-fab-speed-dial> -->
     </div>
   </mat-card-header>
 
