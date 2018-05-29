@@ -101,10 +101,10 @@ export class CloudsyncFormComponent implements OnInit {
     initial: '/mnt',
     explorerType: 'directory',
     name: 'path',
-    placeholder: T('Home Directory'),
+    placeholder: T('Directory/Files'),
     value: '/mnt',
-    tooltip: T('Browse to the name of an <b>existing</b> pool or dataset\
-                the user will be assigned access permissions.'),
+    tooltip: T('Select the directories or files to be sent for *Push*\
+                syncs or the destinations for *Pull* syncs.'),
     required: true,
     validation : [ Validators.required ]
   }, {
