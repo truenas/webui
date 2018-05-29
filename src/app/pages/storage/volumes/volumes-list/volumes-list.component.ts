@@ -19,7 +19,11 @@ import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { StorageService } from '../../../../services/storage.service'
+import { StorageService } from '../../../../services/storage.service';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+
+
 
 
 export interface ZfsPoolData {
@@ -78,7 +82,27 @@ export class VolumesListTableConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService,
-    protected snackBar: MatSnackBar) {
+    protected snackBar: MatSnackBar,
+
+    protected replaceDiskFormFields: FieldConfig[] = [{
+      type: 'input',
+      name: 'label',
+      value: 'what the...?',
+      isHidden: false,
+    }, {
+      type: 'select',
+      name: 'replace_disk',
+      placeholder: "Member disk",
+      options: ["heel it", 'roger that', 'whatevs'],
+      required: false,
+      // validation: [Validators.required],
+    }, {
+      type: 'checkbox',
+      name: 'bring_it',
+      placeholder: "You better bring it",
+    }]
+  
+  ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -229,39 +253,56 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
+     
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
-          const params = [row1.name, {"data_destroy": true}]
-          const ds = this.dialogService.confirm(
-            T("Detach Pool: " + row1.name), 
-            T("You are about to detach '" +  row1.name + "'. WARNING! \
-            Detaching a pool makes the data unavailable. If your pool is encrypted, and you do not have a \
-            passphrase, your data will be permanently unrecoverable! Be sure that you understand the risks, and \
-            for encrypted pools, take a moment to download and safely store your recovery key."), 
-            false, T("Detach"),
-            true,
-            T('Destroy data on this pool (' + row1.name + ')?'), 
-              'data.destroy', 
-              params);
-          ds.afterClosed().subscribe((status) => {
-            if (status) {
-              this.loader.open();
-              return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              this.loader.close();
-              }, (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-              });
-            }
+          const conf: DialogFormConfiguration = {
+            title: "Detatch pool " + row1.name,
+            fieldConfig: this.replaceDiskFormFields,
+            // method_rest: "storage/volume/" + this.pk + "/replace",
+            saveButtonText: "Make it mine!",
+          }
+          this.loader.close();
+          this.dialogService.dialogForm(conf).subscribe((res) => {
+
+              // this.getData();
+              this.snackBar.open("Disk replacement has been initiated.", 'close', { duration: 5000 });
             
-          })
+          });
+       
+
+
+        //   const params = [row1.name, {"data_destroy": true}]
+        //   const ds = this.dialogService.confirm(
+        //   //   T("Detach Pool: " + row1.name), 
+        //   //   T("You are about to detach '" +  row1.name + "'. WARNING! \
+        //   //   Detaching a pool makes the data unavailable. If your pool is encrypted, and you do not have a \
+        //   //   passphrase, your data will be permanently unrecoverable! Be sure that you understand the risks, and \
+        //   //   for encrypted pools, take a moment to download and safely store your recovery key."), 
+        //   //   false, T("Detach"),
+        //   //   true,
+        //   //   T('Destroy data on this pool (' + row1.name + ')?'), 
+        //   //     'data.destroy', 
+        //   //     params);
+        //   ds.afterClosed().subscribe((status) => {
+        //     if (status) {
+        //       this.loader.open();
+        //       return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+        //         this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
+        //           this.parentVolumesListComponent.repaintMe();
+        //         });
+        //       this.loader.close();
+        //       }, (res) => {
+        //         this.loader.close();
+        //         this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+        //       });
+        //     }
+            
+        //   })
           
-        }
-      });
+        // }
+      }});
       
       actions.push({
         label: T("Extend"),

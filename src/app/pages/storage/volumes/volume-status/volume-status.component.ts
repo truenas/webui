@@ -43,12 +43,12 @@ export class VolumeStatusComponent implements OnInit {
     value: '',
     isHidden: true,
   }, {
-    type: 'select',
+    type: 'input',
     name: 'replace_disk',
     placeholder: "Member disk",
-    options: [],
-    required: true,
-    validation: [Validators.required],
+    options: ['whatevs', 'totes'],
+    required: false,
+    // validation: [Validators.required],
   }, {
     type: 'checkbox',
     name: 'force',
