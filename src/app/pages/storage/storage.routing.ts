@@ -11,8 +11,7 @@ import { ManagerComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
 import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
-import { ZvolAddComponent } from './volumes/zvol/zvol-add/';
-import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
+import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
@@ -48,11 +47,11 @@ export const routes: Routes = [
             data: { title: 'Edit Dataset', breadcrumb: 'Edit Dataset' }
           },
           {
-            path: 'id/:pk/zvol/add/:path', component: ZvolAddComponent,
+            path: 'id/:pk/zvol/add/:path', component: ZvolFormComponent,
             data: { title: 'Add Zvol', breadcrumb: 'Add Zvol' }
           },
           {
-            path: 'id/:pk/zvol/edit/:path', component: ZvolEditComponent,
+            path: 'id/:pk/zvol/edit/:path', component: ZvolFormComponent,
             data: { title: 'Edit Zvol', breadcrumb: 'Edit Zvol' }
           },
           {
@@ -73,7 +72,7 @@ export const routes: Routes = [
           },
           {
             path: 'status/:pk', component: VolumeStatusComponent,
-            data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
+            data: { title: 'Pool Status', breadcrumb: 'Pool Status' }
           },
           {
             path: 'detachvolume/:pk', component: VolumeDeleteComponent,
@@ -152,6 +151,10 @@ export const routes: Routes = [
           {
             path: 'edit/:pk', component: DiskFormComponent,
             data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' }
+          },
+          {
+            path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,
+            data: { title: 'Edit Pool Disk', breadcrumb: 'Edit Pool Disk' }
           },
           {
             path: 'wipe/:pk', component: DiskWipeComponent,

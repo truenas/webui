@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
-
+import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 
 @Component({
   selector : 'app-disk-form',
@@ -81,7 +81,24 @@ export class DiskFormComponent {
       tooltip : T('Additional <a\
                    href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
                    target="_blank">smartctl(8)</a> options.'),
-    }
+    },
+    {
+      type: 'input',
+      name: 'disk_passwd',
+      placeholder: T('SED Password'),
+      tooltip: T('Password for SED'),
+      inputType: 'password',
+
+    },
+    {
+      type: 'input',
+      name: 'disk_passwd2',
+      placeholder: T('Confirm SED Password'),
+      tooltip: T(''),
+      inputType: 'password',
+      validation : [ matchOtherValidator('disk_passwd') ],
+
+    },
   ];
 
   protected disk_hddstandby: any;
@@ -91,8 +108,15 @@ export class DiskFormComponent {
   constructor(
     private _router: Router,
     protected rest: RestService,
-    protected ws: WebSocketService
-  ) {}
+    protected ws: WebSocketService,
+    protected aroute: ActivatedRoute
+  ) {
+    this.aroute.params.subscribe((params)=> {
+      if (params['poolId']) {
+        this.route_success = ["storage", "pools", "status", params['poolId']];
+      }
+    })
+  }
 
   afterInit(entityEdit: any) {
     this.ws.call('notifier.choices', ['HDDSTANDBY_CHOICES']).subscribe((res) => {

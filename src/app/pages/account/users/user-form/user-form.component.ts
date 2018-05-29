@@ -31,7 +31,7 @@ export class UserFormComponent {
   protected isEntity  = true;
   protected isNew: boolean;
 
-  public fieldSetDisplay:string = 'default';//default | carousel | stepper
+  public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
@@ -106,8 +106,8 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'group_create',
           placeholder : T('New Primary Group'),
-          tooltip : T('Create a new primary group with the same name as\
-                      the user. Uncheck to select an existing group for\
+          tooltip : T('Set to create a new primary group with the same name as\
+                      the user. Unset to select an existing group for\
                       the user.'),
           value : true,
           isHidden: false
@@ -181,7 +181,7 @@ export class UserFormComponent {
           placeholder : T('SSH Public Key'),
           tooltip : T('Enter or paste the <b>public</b> SSH key of the\
                       user for any key-based authentication. <b>Do not\
-                      paste the private key!</b>'),
+                      paste the private key.</b>'),
         },
         {
           type : 'select',
@@ -207,7 +207,7 @@ export class UserFormComponent {
           type : 'checkbox',
           name : 'locked',
           placeholder : T('Lock User'),
-          tooltip : T('Disable logging in to this user account.'),
+          tooltip : T('Set to disable logging in to this user account.'),
           isHidden: false
         },
         {
@@ -297,7 +297,7 @@ export class UserFormComponent {
     const filter = [];
     filter.push("id");
     filter.push("=");
-    filter.push(entityForm.pk);
+    filter.push(parseInt(entityForm.pk,10));
     this.ws.call('user.query',[[filter]]).subscribe((res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe(stat => {

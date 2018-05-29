@@ -69,7 +69,7 @@ export class ManagerComponent implements OnInit, OnDestroy {
                                  target="_blank">GELI</a> encryption is\
                                  available for ZFS pools. <b>WARNING:</b>\
                                  Read the <a\
-                                 href="..//docs/storage.html#encryption"\
+                                 href="..//docs/storage.html#managing-encrypted-pools"\
                                  target="_blank">Encryption section</a>\
                                  of the guide before activating this\
                                  option.');
@@ -149,6 +149,9 @@ export class ManagerComponent implements OnInit, OnDestroy {
         res[i]['capacity'] = (<any>window).filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
+      
+     this.disks = this.sorter.mySorter(this.disks, 'devname');
+
 
       // assign disks for suggested layout
       let largest_capacity = 0;

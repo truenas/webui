@@ -94,6 +94,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     paging: true,
     sorting: { columns: this.columns },
   };
+  public showDefaults: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -153,6 +154,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
+
+      setTimeout(() => { this.setShowDefaults(); }, 1000);
+    
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
   
 
@@ -193,6 +201,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
       });
+
   }
 
   handleData(res): any {
@@ -249,6 +258,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.currentRows = this.rows;
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
+    this.showDefaults = true;
     return res;
 
   }

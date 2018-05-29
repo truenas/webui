@@ -36,7 +36,7 @@
   </div>
 
   <div>
-    <ngx-datatable class='material' 
+    <ngx-datatable *ngIf="showDefaults" class='material' 
       [rows]='seenRows' 
       [columns]="conf.columns" 
       [columnMode]="'force'" 

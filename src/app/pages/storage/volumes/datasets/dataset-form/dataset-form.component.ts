@@ -574,7 +574,7 @@ export class DatasetFormComponent implements Formconfiguration{
               edit_recordsize_collection = [{label:`Inherits (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
 
             } else {
-              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.rawvalue})`, value: 'INHERIT'}];
+              edit_recordsize_collection = [{label:`Inherits (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
             }
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);

@@ -1,5 +1,5 @@
 import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
@@ -13,9 +13,9 @@ import { T } from '../../../../translate-marker';
 export class AFPFormComponent implements OnDestroy {
 
   protected route_success: string[] = [ 'sharing', 'afp' ];
-  protected resource_name: string = 'sharing/afp/';
-  protected isEntity: boolean = true;
-  protected isBasicMode: boolean = true;
+  protected resource_name  = 'sharing/afp/';
+  protected isEntity = true;
+  protected isBasicMode = true;
   public afp_timemachine: any;
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
@@ -147,7 +147,7 @@ export class AFPFormComponent implements OnDestroy {
                   the selected permissions.')
     },
     {
-      type: 'permissions',
+      type: 'input',
       name: 'afp_umask',
       placeholder: T('Default umask'),
       tooltip: T('Unmask is used for newly created files.\
@@ -209,22 +209,28 @@ export class AFPFormComponent implements OnDestroy {
     }
   ];
 
-  constructor(protected router: Router) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute) {}
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
   }
 
+  preInit(entityForm: any){
+    const paramMap: any = (<any>this.aroute.params).getValue();
+    if (paramMap['pk'] === undefined) {
+      _.find(this.fieldConfig, {name:'afp_umask'}).value = "000";
+      _.find(this.fieldConfig, {name:'afp_fperm'}).value = "644";
+      _.find(this.fieldConfig, {name:'afp_dperm'}).value = "755";
+    }
+  }
+
   afterInit(entityForm: any) {
     if (entityForm.isNew) {
-      entityForm.formGroup.controls['afp_umask'].setValue("000", {emitEvent: true});
-      entityForm.formGroup.controls['afp_fperm'].setValue("644", {emitEvent: true});
-      entityForm.formGroup.controls['afp_dperm'].setValue("755", {emitEvent: true});
       entityForm.formGroup.controls['afp_upriv'].setValue(true);
     }
     this.afp_timemachine_quota = _.find(this.fieldConfig, {'name': 'afp_timemachine_quota'});

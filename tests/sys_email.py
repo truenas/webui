@@ -55,7 +55,7 @@ class conf_system_email_test(unittest.TestCase):
             page_data=ui_element.text
             print ("the Page now is: " + page_data)
             # assert response
-            self.assertTrue("email" in page_data)
+            self.assertTrue("Email" in page_data)
             # Taking screenshot
             self.screenshot("_")
         except Exception:
