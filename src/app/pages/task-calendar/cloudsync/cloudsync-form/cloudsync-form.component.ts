@@ -17,6 +17,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { ValueValidator } from '../../../common/entity/entity-form/validators/value-validation';
 
 @Component({
   selector: 'cloudsync-add',
@@ -61,9 +62,7 @@ export class CloudsyncFormComponent implements OnInit {
       label: '----------', value: null
     }],
     required: true,
-    validation : [ Validators.required ],
-    hasErrors: false,
-    errors: '',
+    validation : [ Validators.required, ValueValidator()],
   }, {
     type: 'select',
     name: 'bucket',
@@ -368,9 +367,6 @@ export class CloudsyncFormComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     this.formGroup.controls['credential'].valueChanges.subscribe((res)=>{
-      this.credential.hasErrors = false;
-      this.credential.errors = '';
-
       if (res!=null) {
         this.credential_list.forEach((item)=>{
           if (item.id == res) {
@@ -395,12 +391,8 @@ export class CloudsyncFormComponent implements OnInit {
                 this.loader.close();
                 this.bucket_field.isHidden = true;
                 this.folder_field.isHidden = true;
-                this.credential.hasErrors = true;
-                if(res.reason) {
-                  this.credential.errors = res.reason;
-                } else {
-                  this.credential.errors = "Invalid Credential!";
-                }
+                this.formGroup.controls['credential'].setErrors(res.reason);
+                this.dialog.errorReport("Error " + res.error, res.reason, res.trace.formatted);
                 this.validCredential = false;
                 this.setDisabled('bucket', true);
                 this.setDisabled('folder', true);
