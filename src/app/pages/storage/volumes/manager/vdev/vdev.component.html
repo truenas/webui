@@ -45,10 +45,10 @@
            	[flexGrow]="2"
            	name="Capacity" 
            	prop="capacity"></ngx-datatable-column>
-     </ngx-datatable>
-     <div class="vdev-wrapper">
-         <div class="vdev-type">
-         <div *ngIf="group === 'data'">
+    </ngx-datatable>
+    <div class="vdev-wrapper">
+        <div class="vdev-type">
+        <div *ngIf="group === 'data'">
             <mat-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2">{{"Mirror" | translate}}</mat-option>
@@ -62,8 +62,9 @@
         </div>
         <div class="vdev-close">
             <button mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
-         </div>
-     </div>
+        </div>
+    </div>
+    <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
 </div>
 </div>
 

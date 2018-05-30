@@ -262,10 +262,10 @@ export class ZvolFormComponent {
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
 
 
-        const sync_inherit = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-        const compression_inherit = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-        const deduplication_inherit = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-        const volblocksize_inherit = [{label:`Inherits`, value: 'INHERIT'}];
+        const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+        const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+        const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+        const volblocksize_inherit = [{label:`Inherit`, value: 'INHERIT'}];
 
         sync.options = sync_inherit.concat(sync.options);   
         compression.options = compression_inherit.concat(compression.options);        
@@ -298,10 +298,10 @@ export class ZvolFormComponent {
           const volumesize = pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[0-9]+/g)[0];
           const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[0-9]+/g)[1];
   
-          const sync_inherit = [{label:`Inherits (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-          const compression_inherit = [{label:`Inherits (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-          const deduplication_inherit = [{label:`Inherits (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-          const volblocksize_inherit = [{label:`Inherits`, value: 'INHERIT'}];
+          const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+          const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+          const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+          const volblocksize_inherit = [{label:`Inherit`, value: 'INHERIT'}];
   
         
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
@@ -318,21 +318,21 @@ export class ZvolFormComponent {
 
           
           if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
-            sync_collection = [{label:`Inherits (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value}];
+            sync_collection = [{label:`Inherit (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value}];
             
   
           } else {
-            sync_collection = [{label:`Inherits (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT'}];
+            sync_collection = [{label:`Inherit (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT'}];
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
           }
   
           sync.options = sync_collection.concat(sync.options);
   
           if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].compression.source === "DEFAULT" ){
-            compression_collection = [{label:`Inherits (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value}];
+            compression_collection = [{label:`Inherit (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value}];
   
           } else {
-            compression_collection = [{label:`Inherits (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT'}];
+            compression_collection = [{label:`Inherit (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT'}];
             entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
           }
   
@@ -340,10 +340,10 @@ export class ZvolFormComponent {
   
   
           if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].deduplication.source === "DEFAULT" ){
-            deduplication_collection = [{label:`Inherits (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value}];
+            deduplication_collection = [{label:`Inherit (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value}];
   
           } else {
-            deduplication_collection = [{label:`Inherits (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+            deduplication_collection = [{label:`Inherit (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT'}];
             entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
           }
   

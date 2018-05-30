@@ -47,6 +47,7 @@ import { FormCheckboxComponent } from './pages/common/entity/entity-form/compone
 import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
 import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
 import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
+import { EntityModule } from './pages/common/entity/entity.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -75,7 +76,8 @@ export function createTranslateLoader(http: HttpClient) {
     CoreServices.forRoot(),
     CoreComponents,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    EntityModule,
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
