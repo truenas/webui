@@ -15,6 +15,7 @@
         <button mat-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Check Now" | translate}}</button>
         <button mat-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">{{"Update and Reboot" | translate}}</button>
         <button mat-raised-button class="btn btn-success" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
+        <p><font color ="red">{{general_update_error}}</font></p>
       </div>
     </div>
     <div class="row">
