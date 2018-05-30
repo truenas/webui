@@ -88,7 +88,7 @@ export class VolumesListTableConfig implements InputTableConf {
       type: 'input',
       name: 'label',
       value: 'what the...?',
-      isHidden: false,
+      isHidden: true,
     }, {
       type: 'select',
       name: 'replace_disk',
@@ -96,6 +96,16 @@ export class VolumesListTableConfig implements InputTableConf {
       options: ["heel it", 'roger that', 'whatevs'],
       required: false,
       // validation: [Validators.required],
+    }, {
+      type: 'checkbox',
+      name: 'bring_it',
+      placeholder: "You better bring it",
+    }, {
+      type: 'paragraph',
+      name: 'vinyl_purse',
+      value: "I wanna say vinyl purse. You are totes on your own if you detach \
+      this disk and don't have a key. Don't even think of asking me to fix it.",
+      isHidden: false
     }, {
       type: 'checkbox',
       name: 'bring_it',
@@ -258,10 +268,10 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Detach"),
         onClick: (row1) => {
           const conf: DialogFormConfiguration = {
-            title: "Detatch pool " + row1.name,
+            title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: this.replaceDiskFormFields,
             // method_rest: "storage/volume/" + this.pk + "/replace",
-            saveButtonText: "Make it mine!",
+            saveButtonText: "Make it mine!"
           }
           this.loader.close();
           this.dialogService.dialogForm(conf).subscribe((res) => {

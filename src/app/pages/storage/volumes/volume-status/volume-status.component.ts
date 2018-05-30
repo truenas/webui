@@ -43,12 +43,12 @@ export class VolumeStatusComponent implements OnInit {
     value: '',
     isHidden: true,
   }, {
-    type: 'input',
+    type: 'select',
     name: 'replace_disk',
     placeholder: "Member disk",
-    options: ['whatevs', 'totes'],
-    required: false,
-    // validation: [Validators.required],
+    options: [],
+    required: true,
+    validation: [Validators.required],
   }, {
     type: 'checkbox',
     name: 'force',
@@ -216,7 +216,7 @@ export class VolumeStatusComponent implements OnInit {
         label: "Remove",
         onClick: (row) => {
           this.dialogService.confirm(
-            "Offline",
+            "Remove",
             "Are your sure you want to remove the disk " + _.split(row.name, 'p')[0],
           ).subscribe((res) => {
             if (res) {

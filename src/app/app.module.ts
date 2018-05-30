@@ -46,6 +46,7 @@ import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entit
 import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
 import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
 import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
+import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -104,6 +105,7 @@ export function createTranslateLoader(http: HttpClient) {
     FormCheckboxComponent,
     FormInputComponent,
     FormSelectComponent,
+    FormParagraphComponent
   ],
 })
 export class AppModule { 
