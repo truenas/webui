@@ -52,8 +52,11 @@ import { EntityTaskComponent } from './entity-task/entity-task.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
-import { CdkTableModule } from '@angular/cdk/table';
 
+// CDK
+import { CdkTableModule } from '@angular/cdk/table';
+import { OverlayModule } from '@angular/cdk/overlay';
+import {A11yModule} from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
@@ -61,7 +64,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule
+    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
+    OverlayModule, A11yModule
   ],
   declarations: [
     EntityDeleteComponent,

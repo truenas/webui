@@ -7,6 +7,7 @@
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12);
   display: block;
   border-radius: 2px;
+  border-color:red;
 }
 
 .advanced-date-picker.mat-card h4.preview-label{
@@ -47,8 +48,8 @@ ul.schedule-list li:nth-child(odd){
   background-color:rgba(0,0,0,0.1);
 }
 
-:host ::ng-deep .mat-calendar-body-label,
-:host ::ng-deep .mat-calendar-body-cell-content{
+::ng-deep .mat-calendar-body-label,
+::ng-deep .mat-calendar-body-cell-content{
   color:var(--fg2);
 }
 
@@ -64,21 +65,21 @@ ul.schedule-list li:nth-child(odd){
   padding:0;
 }
 
-:host ::ng-deep .cron-fields .mat-checkbox-frame{
+::ng-deep .cron-fields .mat-checkbox-frame{
   border-color:var(--alt-bg1);
 }
 
-:host ::ng-deep .cron-fields .mat-form-field-label,
-/*:host ::ng-deep .cron-fields .mat-focused .mat-form-field-label,*/
-:host ::ng-deep .cron-fields label.mat-form-field-placeholder,
-:host ::ng-deep .cron-fields .mat-input-infix,
+::ng-deep .cron-fields .mat-form-field-label,
+/*::ng-deep .cron-fields .mat-focused .mat-form-field-label,*/
+::ng-deep .cron-fields label.mat-form-field-placeholder,
+::ng-deep .cron-fields .mat-input-infix,
 .cron-fields .mat-form-field-should-float.mat-focused label{
   color:var(--alt-bg1) !important;
 }
 
-:host ::ng-deep .mat-form-field-underline,
-:host ::ng-deep .mat-focused .mat-form-field-underline,
-:host ::ng-deep .mat-form-field-underline .mat-form-field-ripple{
+::ng-deep .mat-form-field-underline,
+::ng-deep .mat-focused .mat-form-field-underline,
+::ng-deep .mat-form-field-underline .mat-form-field-ripple{
   background-color:var(--alt-bg1);
 }
 
@@ -134,33 +135,34 @@ mat-form-field.cron-presets{
   width:120px;
 }
 
-:host ::ng-deep .cron-fields .mat-button-toggle-label-content{
+/* Calendar View Settings*/
+::ng-deep .cron-fields .mat-button-toggle-label-content{
   line-height:unset;
   padding:unset;
 }
 
-:host ::ng-deep .mat-calendar-table{
+::ng-deep .mat-calendar-table{
   width:100%;
   background-color: var(--bg2);
   color: var(--fg2);
 }
 
-:host ::ng-deep thead.mat-calendar-table-header{
+::ng-deep thead.mat-calendar-table-header{
   display:none;
 }
 
-:host ::ng-deep .mat-calendar-table-header tr{
+::ng-deep .mat-calendar-table-header tr{
   /*border-bottom:solid 1px var(--bg1);*/
   padding:4px;
 }
-:host ::ng-deep .mat-calendar-table-header th{
+::ng-deep .mat-calendar-table-header th{
   text-align: center;
   padding: 8px 0;
 }
-:host ::ng-deep .mat-calendar-body td.mat-calendar-body-cell.mat-calendar-body-active .mat-calendar-body-cell-content{
+::ng-deep .mat-calendar-body td.mat-calendar-body-cell.mat-calendar-body-active .mat-calendar-body-cell-content{
   background: var(--bg1);
   border-radius: 50%; 
 }
-:host ::ng-deep .mat-calendar-body-today{
+::ng-deep .mat-calendar-body-today{
   border-color:var(--green) !important;
 }

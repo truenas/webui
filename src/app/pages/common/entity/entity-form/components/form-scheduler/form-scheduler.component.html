@@ -1,10 +1,53 @@
+<!--
 <div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
-  <mat-input-container class="full-width"[formControlName]="config.name">
-    <input matInput [placeholder]="config.placeholder" [(value)]="colorProxy" (input)="colorProxy=$event.target.value">
-    <!--<mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>-->
-  </mat-input-container>
+-->  
+<!--<div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>-->
+  <!--<mat-input-container class="full-width"[formControlName]="config.name">
+      <input matInput [placeholder]="config.placeholder" [(value)]="colorProxy" (input)="colorProxy=$event.target.value">
+      <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+  </mat-input-container>-->
 
+<!--
+  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+</div>
+-->  
+
+
+  <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+  <mat-form-field class="full-width">
+    <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
+      <!--<mat-option *ngFor="let option of config.options" [value]="option.value">-->
+      <mat-option *ngFor="let preset of presets" [value]="preset.value">
+      {{ preset.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+      <!--<mat-option #cdkOverlayOrigin (click)="isOpen = !isOpen">
+        Custom
+        </mat-option>-->
+  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+  <button type="button" mat-button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="isOpen = !isOpen">Custom</button>
+</div>
+
+<!--
+  <mat-form-field>
+  <mat-select placeholder="Schedule Presets">
+    <mat-option *ngFor="let preset of presets" [value]="preset.value">
+      {{ preset.label }}
+    </mat-option>
+    <mat-option #cdkOverlayOrigin (click)="isOpen = !isOpen">
+      Custom
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+-->
+
+<ng-template 
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen">
   <div  class="mat-card advanced-date-picker">
     <div class="mat-calendar-content">
       <h4 class="preview-label">Generated Schedule</h4>
@@ -162,7 +205,5 @@
           </section>
       </div>
   </div>
+</ng-template>
   <!--</mat-input-container>-->
-  <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-  <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
-</div>

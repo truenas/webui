@@ -1,11 +1,12 @@
-import {Component,AfterViewInit,OnInit,OnChanges, ViewChild, ElementRef, QueryList} from '@angular/core';
+import {Component,AfterViewInit,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2} from '@angular/core';
 import {FormGroup} from '@angular/forms';
-
-import {MatDatepickerModule, MatMonthView} from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
+
+import {MatDatepickerModule, MatMonthView} from '@angular/material';
 import * as parser from 'cron-parser';
 
 interface CronPreset {
@@ -23,9 +24,17 @@ interface CronDate {
   templateUrl : './form-scheduler.component.html',
   styleUrls:['./form-scheduler.component.css']
 })
-export class FormSchedulerComponent implements Field,OnInit, AfterViewInit,OnChanges{
+export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnChanges{
 
-  @ViewChild('calendar') calendar: ElementRef;
+  // Basic form-select props
+  public config:FieldConfig;
+  public group: FormGroup;
+  public fieldShow: string;
+
+  @ViewChild('calendar', {read:ElementRef}) calendar: ElementRef;
+  @ViewChild('calendar') calendarComp;
+  @ViewChild('trigger') trigger: ElementRef;
+  public isOpen:boolean = false;
 
   private _minutes:string = "0";
   private _hours:string = "*";
@@ -116,14 +125,11 @@ export class FormSchedulerComponent implements Field,OnInit, AfterViewInit,OnCha
   public maxDate;
   public activeDate;
   public generatedSchedule: any[] = [];
-  public config:FieldConfig;
-  group: FormGroup;
-  fieldShow: string;
   public picker:boolean = false;
   private _textInput:string = '';
   public crontab:string = "0 0 * * * *";
   private _preset:CronPreset;// = { label:"Custom", value:"* * * * * *"};
-  private presets: CronPreset[] = [
+  public presets: CronPreset[] = [
     {
       label: "Hourly",
       value: "0 0 * * * *"
@@ -187,7 +193,7 @@ export class FormSchedulerComponent implements Field,OnInit, AfterViewInit,OnCha
     console.log(this._preset);
   }
 
-  constructor(){
+  constructor(public translate: TranslateService, private renderer: Renderer2){
     //Set default value
     this.preset = this.presets[1];
     //for(let i = 0; i<12;i++){this._monthsValues.push(true)}
@@ -211,7 +217,13 @@ export class FormSchedulerComponent implements Field,OnInit, AfterViewInit,OnCha
   }
 
   ngAfterViewInit(){
-    this.generateSchedule(this.minDate, this.maxDate);
+    if(this.isOpen){ this.generateSchedule(this.minDate, this.maxDate);}
+  }
+
+  onChangeOption($event) {
+    if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
+      this.config.onChangeOption({ event: $event });
+    }
   }
 
   // OLD COLORPICKER STUFF ////////////////////////////////////////////////////////
@@ -260,21 +272,89 @@ export class FormSchedulerComponent implements Field,OnInit, AfterViewInit,OnCha
   private updateCalendar(){
     console.log("UPDATE CALENDAR");
     console.log(this.generatedSchedule);
-    let nodes = (<any>document).querySelectorAll('form-scheduler mat-month-view td.mat-calendar-body-cell')
+
+    // target cells with renderer
+    //let monthView = this.renderer.nativeElement(this.calendar);
+    //console.warn(monthView);
+
+    let nodes = this.getCalendarCells();
+    //let nodes = (<any>document).querySelectorAll('form-scheduler mat-month-view td.mat-calendar-body-cell')
     //console.log(nodes);
     //console.warn(this.calendar);
     for(let i in nodes){
       //console.log(nodes);
       nodes[i].className = "mat-calendar-body-cell ng-star-inserted";
-      let aria = nodes[i].getAttribute("aria-label");
+      let aria = this.getAttribute("aria-label",nodes[i]);
       let isScheduled = this.checkSchedule(aria);
       if(isScheduled){
-        nodes[i].className += " mat-calendar-body-active";
+        let nodeClass = this.getAttribute("class", nodes[i]);
+        this.setAttribute("class", nodes[i], nodeClass + " mat-calendar-body-active");
+        //nodes[i].className += " mat-calendar-body-active";
+      }
+    }
+  }
+
+  private getCalendarCells(){
+    let el = this.calendar.nativeElement;
+    console.warn(this.calendar);
+    console.warn(this.calendarComp);
+    let rows = this.calendar.nativeElement.children[0].children[1].children;
+    let cells = [];
+    
+    for(let i = 0; i < rows.length; i++){
+      //if(i == 0) { break;}
+      //console.log("getCalendarCells: ")
+      //console.log(rows[i].childNodes);
+      let row = rows[i].childNodes;
+      let tds = [];
+      for(let index = 0; index < row.length; index++){
+        if(row[index].tagName == "TD"){
+          tds.push(row[index])
+        }
+      }
+      cells = cells.concat(tds);
+    }
+    //console.warn(rows);
+    //console.log(cells);
+    return cells;
+  }
+
+  getAttribute(attr, node){
+    let val = node.attributes.getNamedItem(attr);
+    //console.log(val.replace(/["]/,''));
+    //console.log(val);
+    for(let i = 0; i < node.attributes.length; i++){
+      let name = String(node.attributes[i]["name"])
+      let value = String(node.attributes[i]["value"])
+      
+      //console.log(node.attributes)
+      //console.log(Object.keys(node.attributes[i]));
+      //console.log(attr == name);
+      //console.log(value);
+      if(name == attr){
+        return value;
+      } else {
+        return "Attribute not found"
+      }
+    }
+  }
+
+  setAttribute(attr, node, value){
+    console.log("SETTING ATTRIBUTE")
+    console.log(attr);
+    console.log(node);
+    console.log(value);
+    for(let i = 0; i < node.attributes.length; i++){
+      let a = node.attributes[i];
+      console.log(a);
+      if(a.name == attr){
+        a.value = value;
       }
     }
   }
 
   private checkSchedule(aria){
+    console.log(aria);
     let cal = aria.split(" "); // eg. May 06, 2018
     let cd = cal[1].split(",");
     let calMonth = cal[0];
