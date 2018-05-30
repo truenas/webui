@@ -222,7 +222,7 @@ export class VolumeStatusComponent implements OnInit {
             if (res) {
               this.loader.open();
               let value = { label: row.path };
-              this.rest.post('storage/volume/' + this.pk + '/detach/', {
+              this.rest.post('storage/volume/' + this.pk + '/remove/', {
                 body: JSON.stringify(value)
               }).subscribe(
                 (res) => {
