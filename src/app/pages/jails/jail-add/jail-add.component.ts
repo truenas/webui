@@ -59,7 +59,7 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: T('DHCP autoconfigure IPv4'),
+      placeholder: T('DHCP Autoconfigure IPv4'),
       tooltip: T('Set to start the jail with the Dynamic Host \
                   Configuration Protocol enabled. <b>VirtIO</b> and \
                   <b>Berkeley Packet Filter</b> must also be enabled.'),

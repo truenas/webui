@@ -153,6 +153,19 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   ngOnInit() {
+    //get system general setting
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        if (this.conf.isBasicMode) {
+          if(res.advancedmode) {
+            this.conf.isBasicMode = false;
+          } else {
+            this.conf.isBasicMode = true;
+          }
+        }
+      }
+    });
+
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }

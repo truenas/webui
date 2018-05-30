@@ -65,7 +65,7 @@ export class JailWizardComponent {
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
-          placeholder: T('DHCP autoconfigure IPv4'),
+          placeholder: T('DHCP Autoconfigure IPv4'),
           tooltip: T('Automatically configure the jail to use IPv4 \
                       networking.\
                       <br><b>VirtIO</b> must also be enabled.'),
@@ -211,11 +211,11 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
       if (res) {
-        this.summary[T('DHCP autoconfigure IPv4')] = 'Yes';
+        this.summary[T('DHCP Autoconfigure IPv4')] = 'Yes';
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
       } else {
-        this.summary[T('DHCP autoconfigure IPv4')] = 'No';
+        this.summary[T('DHCP Autoconfigure IPv4')] = 'No';
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
       }
     });
