@@ -25,8 +25,9 @@ export class EntityDialogComponent implements OnInit {
   public title: string;
   public fieldConfig: Array < FieldConfig > ;
   public formGroup: FormGroup;
-  public saveButtonText: string = "Ok";
+  public saveButtonText: string;
   public cancelButtonText: string = "Cancel";
+  public deleteButtonText: string;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -45,6 +46,9 @@ export class EntityDialogComponent implements OnInit {
     if (this.conf.cancelButtonText) {
       this.cancelButtonText = this.conf.cancelButtonText;
     }
+    if (this.conf.deleteButtonText) {
+      this.deleteButtonText = this.conf.deleteButtonText;
+    }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
   }
 
@@ -55,6 +59,31 @@ export class EntityDialogComponent implements OnInit {
     this.loader.open();
     if (this.conf.method_rest) {
       this.rest.post(this.conf.method_rest, {
+        body: JSON.stringify(value)
+      }).subscribe(
+        (res) => {
+          this.loader.close();
+          this.dialogRef.close(true);
+        },
+        (res) => {
+          this.loader.close();
+          new EntityUtils().handleError(this, res);
+        }
+      );
+    } else if (this.conf.method_ws) {
+      // ws call
+    }
+
+  }
+
+  delete() {
+    this.clearErrors();
+    let value = _.cloneDeep(this.formGroup.value);
+
+    this.loader.open();
+    if (this.conf.method_rest) {
+      console.log(this.conf.method_rest) //storage/volume/bat
+      this.rest.delete(this.conf.method_rest, {
         body: JSON.stringify(value)
       }).subscribe(
         (res) => {

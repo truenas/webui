@@ -7,4 +7,5 @@ export interface DialogFormConfiguration {
   method_ws?: string,
   saveButtonText?: string,
   cancelButtonText?: string,
+  deleteButtonText?: string
 }

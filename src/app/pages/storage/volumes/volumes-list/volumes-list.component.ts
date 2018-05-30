@@ -212,8 +212,10 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === 'zpool') {
      
       actions.push({
+        
         label: T("Detach"),
         onClick: (row1) => {
+          console.log(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) })
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: [    { 
@@ -234,23 +236,31 @@ export class VolumesListTableConfig implements InputTableConf {
               required: true
             }],
             method_rest: this.resource_name + "/" + row1.name,
-            saveButtonText: T("Detach")
+            deleteButtonText: T("Detach")
           }
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
-              this.loader.open();
-              return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
-                  this.parentVolumesListComponent.repaintMe();
-                });
-              this.loader.close();
-              }, (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-              });
+              console.log('boom');
+              this.parentVolumesListComponent.repaintMe();
+              this.snackBar.open(row1.name + "has been detached.", 'close', { duration: 5000 });
             }
           });
         }
+        //   this.dialogService.dialogForm(conf).subscribe((res) => {
+        //     if (res) {
+        //       this.loader.open();
+        //       return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+        //         this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
+        //           this.parentVolumesListComponent.repaintMe();
+        //         });
+        //       this.loader.close();
+        //       }, (res) => {
+        //         this.loader.close();
+        //         this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+        //       });
+        //     }
+        //   });
+        // }
       });
 
 
