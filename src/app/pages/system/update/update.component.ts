@@ -47,6 +47,9 @@ export class UpdateComponent implements OnInit {
     this.busy = this.rest.get('system/update', {}).subscribe((res) => {
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
+      if (this.autoCheck){
+        this.check();
+      }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
       this.trains = [];
@@ -100,7 +103,6 @@ export class UpdateComponent implements OnInit {
       this.rest
       .put('system/update', { body: JSON.stringify({ upd_autocheck: this.autoCheck }) })
       .subscribe((res) => {
-        // verify auto check
       });
   }
 
@@ -151,7 +153,7 @@ export class UpdateComponent implements OnInit {
             if (res.changelog) {
               this.changeLog = res.changelog;
             }
-            if (res.notes.ReleaseNotes) {
+            if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
