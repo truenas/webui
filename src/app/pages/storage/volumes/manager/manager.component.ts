@@ -108,10 +108,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                                  of the guide before activating this\
                                  option.');
 
-  public suggested_layout_tooltip = T('Arranges available disks in a\
-                                       system recommended formation.');
+  public suggested_layout_tooltip = T('Create a recommended formation\
+                                       of vdevs in a pool.');
 
-  public encryption_message = T("Always backup the key! If the key is\
+  public encryption_message = T("Always back up the key! If the key is\
                                  lost, the data on the disks is also\
                                  lost with no hope of recovery.");
 
@@ -160,13 +160,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getDiskNumErrorMsg(disks) {
     this.translate.get(this.disknumErrorMessage).subscribe((errorMessage) => {
-      this.disknumError = errorMessage + T(' The first vdev has ') + this.first_data_vdev_disknum + T(' disks, seen ') + disks + '.';
+      this.disknumError = errorMessage + T(' First vdev has ') + this.first_data_vdev_disknum + T(' disks, new vdev has ') + disks + '.';
     });
   }
 
   getVdevTypeErrorMsg(type) {
     this.translate.get(this.vdevtypeErrorMessage).subscribe((errorMessage) => {
-      this.vdevtypeError = errorMessage + T(' The first vdev has type: ') + this.first_data_vdev_type + T(', seen ') + type + '.'; 
+      this.vdevtypeError = errorMessage + T(' First vdev is a ') + this.first_data_vdev_type + T(', new vdev is ') + type + '.';
     });
   }
 
@@ -184,11 +184,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
 
-          if (this.first_data_vdev_disknum === 0 && 
+          if (this.first_data_vdev_disknum === 0 &&
               this.first_data_vdev_type === 'disk') {
             this.first_data_vdev_disknum = 1;
             this.first_data_vdev_type = 'stripe';
-          } 
+          }
         }
       },
       (err) => {
@@ -234,7 +234,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         res[i]['capacity'] = (<any>window).filesize(res[i]['capacity'], {standard : "iec"});
         this.disks.push(res[i]);
       }
-      
+
      this.disks = this.sorter.mySorter(this.disks, 'devname');
 
 
@@ -259,14 +259,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     if (!this.isNew) {
       setTimeout(() => { // goofy workaround for stupid angular error
-        this.dialog.confirm(T("Warning"), T("Extending the pool stripes\
-                                             additional vdevs onto the\
-                                             pool, resulting in a larger\
-                                             pool. Only stripe vdevs of\
-                                             the same size and type as the\
-                                             ones already in the existing\
-                                             pool. This operation cannot\
-                                             be reversed. Do you wish to\
+        this.dialog.confirm(T("Warning"), T("Extending the pool adds new\
+                                             vdevs in a stripe with the\
+                                             existing vdevs. It is important\
+                                             to only use new vdevs of the\
+                                             same size and type as those\
+                                             already in the pool. This\
+                                             operation cannot be reversed.\
+                                             Are you sure you wish to\
                                              continue?")).subscribe((res) => {
           if (!res) {
             this.goBack();
@@ -315,7 +315,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vdevtypeError = null;
 
     this.vdevComponents.forEach((vdev, i) => {
-      if (vdev.group === 'data') { 
+      if (vdev.group === 'data') {
         if (i === 0 && this.isNew) {
           this.first_data_vdev_type = vdev.type;
           data_vdev_type = vdev.type;
@@ -341,7 +341,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
             this.getVdevTypeErrorMsg(data_vdev_type);
           }
         }
-        
+
       }
       if (!this.isNew) {
         if (vdev.disks.length > 0) {

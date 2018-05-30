@@ -181,30 +181,50 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
       this.summary[T('Release')] = res;
     });
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
-      this.summary[T('IPv4 Address')] = res;
+      if (res == undefined || res == '') {
+        delete this.summary[T('IPv4 Address')];
+      } else {
+        this.summary[T('IPv4 Address')] = res;
+      }
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.subscribe((res) => {
-      this.summary[T('Default Router For IPv4')] = res;
+      if (res == undefined || res == '') {
+        delete this.summary[T('Default Router For IPv4')];
+      } else {
+        this.summary[T('Default Router For IPv4')] = res;
+      }
     });
     ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
-      this.summary[T('IPv6 Address')] = res;
+      if (res == undefined || res == '') {
+        delete this.summary[T('IPv6 Address')];
+      } else {
+        this.summary[T('IPv6 Address')] = res;
+      }
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.subscribe((res) => {
-      this.summary[T('Default Router For IPv6')] = res;
+      if (res == undefined || res == '') {
+        delete this.summary[T('Default Router For IPv6')];
+      } else {
+        this.summary[T('Default Router For IPv6')] = res;
+      }
     });
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
-      this.summary[T('DHCP Autoconfigure IPv4')] = res;
-
       if (res) {
+        this.summary[T('DHCP Autoconfigure IPv4')] = 'Yes';
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
       } else {
+        this.summary[T('DHCP Autoconfigure IPv4')] = 'No';
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
       }
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
-      this.summary[T('VirtIO Virtual Networking')] = res;
+      if (res) {
+        this.summary[T('VirtIO Virtual Networking')] = 'Yes';
+      } else {
+        this.summary[T('VirtIO Virtual Networking')] = 'No';
+      }
 
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
