@@ -33,6 +33,7 @@ export class UpdateComponent implements OnInit {
   public train: string;
   public trains: any[];
   public selectedTrain;
+  public general_update_error;
 
   public busy: Subscription;
   public busy2: Subscription;
@@ -48,7 +49,7 @@ export class UpdateComponent implements OnInit {
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
       if (this.autoCheck){
-        this.check();
+        this.autocheck();
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
@@ -180,5 +181,58 @@ export class UpdateComponent implements OnInit {
   }
   ManualUpdate(){
     this.router.navigate([this.router.url +'/manualupdate']);
+  }
+
+  autocheck() {
+    this.error = null;
+    this.ws.call('update.check_available', [{ train: this.train }])
+      .subscribe(
+        (res) => {
+          this.status = res.status;
+          if (res.status === 'AVAILABLE') {
+            this.packages = [];
+            res.changes.forEach((item) => {
+              if (item.operation === 'upgrade') {
+                this.packages.push({
+                  operation: 'Upgrade',
+                  name: item.old.name + '-' + item.old.version +
+                    ' -> ' + item.new.name + '-' +
+                    item.new.version,
+                });
+              } else if (item.operation === 'install') {
+                this.packages.push({
+                  operation: 'Install',
+                  name: item.new.name + '-' + item.new.version,
+                });
+              } else if (item.operation === 'delete') {
+                if (item.old) {
+                  this.packages.push({
+                    operation: 'Delete',
+                    name: item.old.name + '-' + item.old.version,
+                  });
+                } else if (item.new) {
+                  this.packages.push({
+                    operation: 'Delete',
+                    name: item.new.name + '-' + item.new.version,
+                  });
+                }
+              } else {
+                console.error("Unknown operation:", item.operation)
+              }
+            });
+
+            if (res.changelog) {
+              this.changeLog = res.changelog;
+            }
+            if (res.notes) {
+              this.releaseNotes = res.notes.ReleaseNotes;
+            }
+          }
+        },
+        (err) => {
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + ":  Automatic update check failed, please check your network setting."
+        }, 
+        () => {
+        });
   }
 }
