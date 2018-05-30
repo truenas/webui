@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
-import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
