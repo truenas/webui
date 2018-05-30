@@ -459,7 +459,7 @@ entity-form .form-card.mat-card{
   
   .mat-dialog-content {
     max-width: 600px;
-  
+    padding-bottom: -3px;
   
     .info-panel {
       max-height: 100px;
@@ -534,5 +534,7 @@ entity-form .form-card.mat-card{
   left: 8px;
 }
 
-  
+#pool_detach_warning {
+  margin-bottom: 15px;
+}
   

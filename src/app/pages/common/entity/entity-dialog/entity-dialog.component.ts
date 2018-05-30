@@ -79,22 +79,39 @@ export class EntityDialogComponent implements OnInit {
   delete() {
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-
     this.loader.open();
     if (this.conf.method_rest) {
-      console.log(this.conf.method_rest) //storage/volume/bat
-      this.rest.delete(this.conf.method_rest, {
-        body: JSON.stringify(value)
-      }).subscribe(
-        (res) => {
-          this.loader.close();
-          this.dialogRef.close(true);
-        },
-        (res) => {
-          this.loader.close();
-          new EntityUtils().handleError(this, res);
-        }
-      );
+      if (value.destroy !== true){
+        this.rest.delete(this.conf.method_rest, {
+          body: JSON.stringify({ destroy: value.destroy })
+        }).subscribe(
+          (res) => {
+            this.loader.close();
+            this.dialogRef.close(true);
+            console.log ('detach');
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleError(this, res);
+          }
+        );
+      } else {
+        this.rest.delete(this.conf.method_rest, {
+          body: JSON.stringify(value)
+        }).subscribe(
+          (res) => {
+            this.loader.close();
+            this.dialogRef.close(true);
+            console.log ('destroy');
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleError(this, res);
+          }
+        );
+
+      }
+
     } else if (this.conf.method_ws) {
       // ws call
     }

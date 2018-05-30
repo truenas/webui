@@ -220,10 +220,11 @@ export class VolumesListTableConfig implements InputTableConf {
             title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: [    { 
               type: 'paragraph',
-              name: 'warning',
+              name: 'pool_detach_warning',
               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
                 Detaching a pool makes the data unavailable. If your pool is encrypted, \
-                and you do not have a passphrase, your data will be permanently unrecoverable!"), 
+                and you do not have a passphrase, your data will be permanently unrecoverable! \
+                In addion to detaching the pool you may also choose to destroy its data."), 
               isHidden: false
             }, {
             type: 'checkbox',
@@ -240,59 +241,43 @@ export class VolumesListTableConfig implements InputTableConf {
           }
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
-              console.log('boom');
               this.parentVolumesListComponent.repaintMe();
-              this.snackBar.open(row1.name + "has been detached.", 'close', { duration: 5000 });
+              this.snackBar.open(row1.name + " has been detached.", 'close', { duration: 5000 });
             }
           });
         }
-        //   this.dialogService.dialogForm(conf).subscribe((res) => {
-        //     if (res) {
-        //       this.loader.open();
-        //       return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-        //         this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
-        //           this.parentVolumesListComponent.repaintMe();
-        //         });
-        //       this.loader.close();
-        //       }, (res) => {
-        //         this.loader.close();
-        //         this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-        //       });
-        //     }
-        //   });
-        // }
       });
 
-
-        //   const params = [row1.name, {"data_destroy": true}]
-        //   const ds = this.dialogService.confirm(
-        //   //   T("Detach Pool: " + row1.name), 
-        //   //   T("You are about to detach '" +  row1.name + "'. WARNING! \
-        //   //   Detaching a pool makes the data unavailable. If your pool is encrypted, and you do not have a \
-        //   //   passphrase, your data will be permanently unrecoverable! Be sure that you understand the risks, and \
-        //   //   for encrypted pools, take a moment to download and safely store your recovery key."), 
-        //   //   false, T("Detach"),
-        //   //   true,
-        //   //   T('Destroy data on this pool (' + row1.name + ')?'), 
-        //   //     'data.destroy', 
-        //   //     params);
-        //   ds.afterClosed().subscribe((status) => {
-        //     if (status) {
-        //       this.loader.open();
-        //       return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-        //         this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
-        //           this.parentVolumesListComponent.repaintMe();
-        //         });
-        //       this.loader.close();
-        //       }, (res) => {
-        //         this.loader.close();
-        //         this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-        //       });
-        //     }
-            
-        //   })
-          
-        // }
+      // customSubmit(value) {
+      //   this.loader.open();
+      //   if (value.destroy === false) {
+      //     return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
+      //       console.log("restPostResp", restPostResp);
+      //       this.loader.close();
+      //       this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
+    
+      //       this.router.navigate(new Array('/').concat(
+      //         this.route_success));
+      //     }, (res) => {
+      //       this.loader.close();
+      //       this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+      //     });
+      //   } else {
+      //     return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+      //       console.log("restPostResp", restPostResp);
+      //       this.loader.close();
+      //       this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
+    
+      //       this.router.navigate(new Array('/').concat(
+      //         this.route_success));
+      //     }, (res) => {
+      //       this.loader.close();
+      //       this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+      //     });
+      //   }
+    
+    
+      // }
       
       
       actions.push({

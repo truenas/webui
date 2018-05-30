@@ -4,10 +4,10 @@
   </ng-container>
 </div>
 <div mat-dialog-actions>
-  <span fxFlex></span>
+  <!-- <span fxFlex></span> -->
   <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
-  <span fxFlex></span>
+  <!-- <span fxFlex></span> -->
   <button class="mat-raised-button mat-primary" (click)="delete()" [disabled]="!formGroup.valid" *ngIf="deleteButtonText">{{deleteButtonText | translate}}</button>
-  <span fxFlex></span>
+  <!-- <span fxFlex></span> -->
   <button class="mat-raised-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
 </div>
