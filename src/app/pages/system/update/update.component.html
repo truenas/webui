@@ -14,10 +14,7 @@
       <div class="col-md-12">
         <button mat-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Check Now" | translate}}</button>
         <button mat-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">{{"Update and Reboot" | translate}}</button>
-      </div>
-      <div class="col-md-12">
-        <tr></tr>  
-          <button mat-raised-button class="btn btn-success" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
+        <button mat-raised-button class="btn btn-success" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
       </div>
     </div>
     <div class="row">
