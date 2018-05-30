@@ -83,35 +83,6 @@ export class VolumesListTableConfig implements InputTableConf {
     protected loader: AppLoaderService,
     protected translate: TranslateService,
     protected snackBar: MatSnackBar,
-
-    protected replaceDiskFormFields: FieldConfig[] = [{
-      type: 'input',
-      name: 'label',
-      value: 'what the...?',
-      isHidden: true,
-    }, {
-      type: 'select',
-      name: 'replace_disk',
-      placeholder: "Member disk",
-      options: ["heel it", 'roger that', 'whatevs'],
-      required: false,
-      // validation: [Validators.required],
-    }, {
-      type: 'checkbox',
-      name: 'bring_it',
-      placeholder: "You better bring it",
-    }, {
-      type: 'checkbox',
-      name: 'pks',
-      placeholder: "Porkchop sandwiches",
-    }, {
-      type: 'paragraph',
-      name: 'vinyl_purse',
-      paraText: "I wanna say vinyl purse. You are totes on your own if you detach \
-      this disk and don't have a key. Don't even think of asking me to fix it.",
-      isHidden: false
-    }]
-  
   ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
@@ -125,27 +96,7 @@ export class VolumesListTableConfig implements InputTableConf {
         this.dialogService.errorReport(T("Error getting volume/dataset data"), res.message, res.stack);
       });
     }
-
-  
-
-
   }
-  
-  
-
-  /*getAddActions() {
-    const actions = [];
-    actions.push({
-      label: T("Import or Create Pool"),
-      icon: "add",
-      onClick: () => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "import"]));
-      }
-    });
-
-    return actions;
-  }*/
 
   getEncryptedActions(rowData: any) {
     const actions = [];
@@ -183,9 +134,6 @@ export class VolumesListTableConfig implements InputTableConf {
       }
 
     }
-
-
-
 
     actions.push({
       label: T("Create Passphrase"),
@@ -243,7 +191,6 @@ export class VolumesListTableConfig implements InputTableConf {
       }
     });
 
-
     return actions;
   }
 
@@ -269,18 +216,42 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
-            fieldConfig: this.replaceDiskFormFields,
-            // method_rest: "storage/volume/" + this.pk + "/replace",
-            saveButtonText: "Make it mine!"
+            fieldConfig: [    { 
+              type: 'paragraph',
+              name: 'warning',
+              paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
+                Detaching a pool makes the data unavailable. If your pool is encrypted, \
+                and you do not have a passphrase, your data will be permanently unrecoverable!"), 
+              isHidden: false
+            }, {
+            type: 'checkbox',
+              name: 'destroy',
+              placeholder: T("Destroy data on this pool?"),
+            }, {
+              type: 'checkbox',
+              name: 'confirm',
+              placeholder: T("Confirm detach"),
+              required: true
+            }],
+            method_rest: this.resource_name + "/" + row1.name,
+            saveButtonText: T("Detach")
           }
-          this.loader.close();
           this.dialogService.dialogForm(conf).subscribe((res) => {
-
-              // this.getData();
-              this.snackBar.open("Disk replacement has been initiated.", 'close', { duration: 5000 });
-            
+            if (res) {
+              this.loader.open();
+              return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed.")).subscribe((infoResult) => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              this.loader.close();
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+              });
+            }
           });
-       
+        }
+      });
 
 
         //   const params = [row1.name, {"data_destroy": true}]
@@ -312,7 +283,7 @@ export class VolumesListTableConfig implements InputTableConf {
         //   })
           
         // }
-      }});
+      
       
       actions.push({
         label: T("Extend"),
