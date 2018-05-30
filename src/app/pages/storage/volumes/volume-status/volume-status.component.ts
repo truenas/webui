@@ -216,7 +216,7 @@ export class VolumeStatusComponent implements OnInit {
         label: "Remove",
         onClick: (row) => {
           this.dialogService.confirm(
-            "Offline",
+            "Remove",
             "Are your sure you want to remove the disk " + _.split(row.name, 'p')[0],
           ).subscribe((res) => {
             if (res) {
