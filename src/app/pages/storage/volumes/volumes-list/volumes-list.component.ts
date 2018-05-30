@@ -101,15 +101,15 @@ export class VolumesListTableConfig implements InputTableConf {
       name: 'bring_it',
       placeholder: "You better bring it",
     }, {
+      type: 'checkbox',
+      name: 'pks',
+      placeholder: "Porkchop sandwiches",
+    }, {
       type: 'paragraph',
       name: 'vinyl_purse',
-      value: "I wanna say vinyl purse. You are totes on your own if you detach \
+      paraText: "I wanna say vinyl purse. You are totes on your own if you detach \
       this disk and don't have a key. Don't even think of asking me to fix it.",
       isHidden: false
-    }, {
-      type: 'checkbox',
-      name: 'bring_it',
-      placeholder: "You better bring it",
     }]
   
   ) {
