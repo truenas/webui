@@ -115,12 +115,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   get sat(){ return this._sat}
   set sat(val){ this._sat = val; this.formatDaysOfWeek()}
 
-  /*get minutes(){ return minutes}
-  set minutes(val){ this._minutes = val; this.updateCronTab()}
-
-  get minutes(){ return minutes}
-  set minutes(val){ this._minutes = val; this.updateCronTab()}*/
-
   public minDate;
   public maxDate;
   public activeDate;
@@ -189,8 +183,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     if(this.minDate && this.maxDate){
       this.generateSchedule(this.minDate, this.maxDate);
     }
-    console.log("NEW SELECTION!")
-    console.log(this._preset);
   }
 
   constructor(public translate: TranslateService, private renderer: Renderer2){
@@ -226,25 +218,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     }
   }
 
-  // OLD COLORPICKER STUFF ////////////////////////////////////////////////////////
-  cpListener(evt:string, data: any): void {
-    this.group.value[this.config.name] = data;
-  }
-
-  inputListener(evt:string, data:any): void {
-    console.log(evt);
-    this.group.value[this.config.name] = data;
-  }
-
-  public onChangeColor(color: string): any {
-    //console.log(color);
-    }
-
-  public togglePicker(){
-    this.picker = !this.picker;
-  }
-  // END OLD COLORPICKER STUFF ////////////////////////////////////////////////////////
-
   private generateSchedule(min, max){
     let newSchedule = [];
     let options = {
@@ -252,15 +225,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
       endDate: max,
       iterator: true
     };
-    //this.crontab = "0 5 4 */5 * *";
     let interval = parser.parseExpression(this.crontab, options);
 
     while (true) {
       try {
         let obj:any = interval.next();
-        //console.log(obj);
         newSchedule.push(obj.value);
-        //console.log('value:', obj.value.toString(), 'done:', obj.done);
       } catch (e) {
         break;
       }
@@ -270,41 +240,27 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   }
 
   private updateCalendar(){
-    console.log("UPDATE CALENDAR");
-    console.log(this.generatedSchedule);
-
-    // target cells with renderer
-    //let monthView = this.renderer.nativeElement(this.calendar);
-    //console.warn(monthView);
+    //console.log("UPDATE CALENDAR");
+    //console.log(this.generatedSchedule);
 
     let nodes = this.getCalendarCells();
-    //let nodes = (<any>document).querySelectorAll('form-scheduler mat-month-view td.mat-calendar-body-cell')
-    //console.log(nodes);
-    //console.warn(this.calendar);
-    for(let i in nodes){
-      //console.log(nodes);
-      nodes[i].className = "mat-calendar-body-cell ng-star-inserted";
+    for(let i = 0; i < nodes.length; i++){
+      let nodeClass = "mat-calendar-body-cell ng-star-inserted";
       let aria = this.getAttribute("aria-label",nodes[i]);
       let isScheduled = this.checkSchedule(aria);
       if(isScheduled){
-        let nodeClass = this.getAttribute("class", nodes[i]);
         this.setAttribute("class", nodes[i], nodeClass + " mat-calendar-body-active");
-        //nodes[i].className += " mat-calendar-body-active";
+      } else if(!isScheduled && i > 0) {
+        this.setAttribute("class", nodes[i], nodeClass);
       }
     }
   }
 
   private getCalendarCells(){
-    let el = this.calendar.nativeElement;
-    console.warn(this.calendar);
-    console.warn(this.calendarComp);
     let rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells = [];
     
     for(let i = 0; i < rows.length; i++){
-      //if(i == 0) { break;}
-      //console.log("getCalendarCells: ")
-      //console.log(rows[i].childNodes);
       let row = rows[i].childNodes;
       let tds = [];
       for(let index = 0; index < row.length; index++){
@@ -314,47 +270,30 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
       }
       cells = cells.concat(tds);
     }
-    //console.warn(rows);
-    //console.log(cells);
     return cells;
   }
 
   getAttribute(attr, node){
-    let val = node.attributes.getNamedItem(attr);
-    //console.log(val.replace(/["]/,''));
-    //console.log(val);
-    for(let i = 0; i < node.attributes.length; i++){
-      let name = String(node.attributes[i]["name"])
-      let value = String(node.attributes[i]["value"])
-      
-      //console.log(node.attributes)
-      //console.log(Object.keys(node.attributes[i]));
-      //console.log(attr == name);
-      //console.log(value);
-      if(name == attr){
-        return value;
-      } else {
-        return "Attribute not found"
-      }
+    let a = node.attributes.getNamedItem(attr);
+    //console.log(a);
+    if(a){
+      //console.log(a.name);
+      //console.log(a.value);
+      return a.value;
     }
   }
 
   setAttribute(attr, node, value){
-    console.log("SETTING ATTRIBUTE")
-    console.log(attr);
-    console.log(node);
-    console.log(value);
-    for(let i = 0; i < node.attributes.length; i++){
-      let a = node.attributes[i];
-      console.log(a);
-      if(a.name == attr){
-        a.value = value;
-      }
-    }
+    //console.log("SETTING ATTRIBUTE")
+    let a = (<any>document).createAttribute(attr);
+    a.value = value;
+    node.attributes.removeNamedItem(attr);
+    node.attributes.setNamedItem(a);
   }
 
-  private checkSchedule(aria){
-    console.log(aria);
+  private checkSchedule(aria?){
+    if(!aria){ return; }
+
     let cal = aria.split(" "); // eg. May 06, 2018
     let cd = cal[1].split(",");
     let calMonth = cal[0];
@@ -376,12 +315,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   }
 
   formatMonths(){ 
-    console.log("****** formatMonths");
     let months = [this._jan, this._feb, this._mar, this._apr, this._may, this._jun, this._jul, this._aug, this._sep, this._oct, this._nov, this._dec];
     let months_str = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
     let rule = "";
     for(let i = 0; i < months.length; i++){
-      console.log(months[i]);
       if(months[i]){
         if(rule.length > 0 && i > 0){ rule += ","}
         rule +=  months_str[i];
@@ -390,18 +327,15 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     if(rule.length == 0){
       rule = "*";
     }
-    console.warn(rule);
     this._months = rule;
     this.updateCronTab();
   }
 
   formatDaysOfWeek(){
-    console.log("****** formatDaysOfWeek");
     let dow = [this._sun, this._mon, this._tue, this._wed, this._thu, this._fri, this._sat];
     let dow_str = ["sun","mon","tue","wed","thu","fri","sat"];
     let rule = "";
     for(let i = 0; i < dow.length; i++){
-      console.log(dow[i]);
       if(dow[i]){
         if(rule.length > 0 && i > 0){ rule += ","}
         rule +=  dow_str[i];
@@ -410,7 +344,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     if(rule.length == 0){
       rule = "*";
     }
-    console.warn(rule);
     this._daysOfWeek = rule;
     this.updateCronTab();
   }
@@ -522,10 +455,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   updateCronTab(preset?){
     this.crontab = "";
-    console.log("UPDATING CRONTAB ...");
     if(!preset){
       let result = "0" + " " + this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
-      console.log(result);
       this.crontab = result;
     }
     if(this.minDate && this.maxDate){
@@ -534,12 +465,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   }
 
   convertPreset(value){
-    //this.days = "*";
-    console.log("CONVERTING PRESET");
-    console.log(value);
-
     let arr = value.split(" ");
-    console.log(arr);
     this._minutes = arr[1];
     this._hours = arr[2];
     this._days = arr[3];

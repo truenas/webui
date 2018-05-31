@@ -348,6 +348,17 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(color, --fg2, $fg2);
 }
 
+.mat-calendar-table,
+.mat-calendar-body-cell-content,
+.mat-calendar-body-label{
+  @include variable(color, --fg2, $fg2);
+}
+
+.mat-calendar-body-cell,
+.mat-calendar-body-cell-content{
+  cursor:default;
+}
+
 .mat-raised-button.mat-primary[disabled],
 .mat-raised-button.mat-accent[disabled],
 .mat-raised-button.mat-warn[disabled],
@@ -365,7 +376,8 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 }
 
 .egret-swatch,
-.mat-checkbox-frame{ 
+.mat-checkbox-frame,
+{ 
   @include variable(border-color, --fg2, $fg2);
 }
 

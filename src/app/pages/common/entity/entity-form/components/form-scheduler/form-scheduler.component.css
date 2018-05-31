@@ -144,6 +144,10 @@ mat-form-field.cron-presets{
 ::ng-deep .mat-calendar-table{
   width:100%;
   background-color: var(--bg2);
+}
+::ng-deep .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-label,
+::ng-deep .mat-calendar-table{
   color: var(--fg2);
 }
 
