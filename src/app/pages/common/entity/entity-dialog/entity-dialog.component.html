@@ -11,4 +11,7 @@
   <button class="mat-raised-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
   <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
   <button class="mat-raised-button mat-primary" (click)="detachPool()" [disabled]="!formGroup.valid" *ngIf="detachButtonText">{{detachButtonText | translate}}</button>
+  <span *ngFor="let custBtn of conf.custActions">
+    <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+  </span>
 </div>
