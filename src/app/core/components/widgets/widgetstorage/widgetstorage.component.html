@@ -2,7 +2,7 @@
   <div class="card-container {{flipDirection}} front" animate [animation]="flipAnimation">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch" fxFlex="100" class="mat-card-toolbar">
-        <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
+        <h4 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h4>
         <button mat-icon-button (click)="toggleConfig()">
           <mat-icon>settings</mat-icon>
         </button>
@@ -24,13 +24,13 @@
               <span fxFlex="100" class="disk-detail-subtitle">{{disks[selectedDisk].size}}</span>
 
               <div fxFlex="50" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" style="border-right:solid 1px rgba(0,0,0,0.1);">
-                <span class="label">Description:</span><br><span class="value">{{disks[selectedDisk].description}}</span>
-                <span class="label">Serial:</span><br><span class="value">{{disks[selectedDisk].serial}}</span>
+                <span class="label">{{"Description" | translate}}:</span><br><span class="value">{{disks[selectedDisk].description}}</span>
+                <span class="label">{{"Serial" | translate}}:</span><br><span class="value">{{disks[selectedDisk].serial}}</span>
               </div>
 
               <div fxFlex="50" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start">
-                <span class="label">S.M.A.R.T. Enabled:</span><br><span class="value">{{disks[selectedDisk].smart_enabled}}</span>
-                <span class="label">S.M.A.R.T. Options:</span><br><span class="value">{{disks[selectedDisk].smartoptions}}</span>
+                <span class="label">{{"S.M.A.R.T. Enabled" | translate}}:</span><br><span class="value">{{disks[selectedDisk].smart_enabled}}</span>
+                <span class="label">{{"S.M.A.R.T. Options" | translate}}:</span><br><span class="value">{{disks[selectedDisk].smartoptions}}</span>
               </div>
               <!--<span class="label"></span><span class="value">{{disks[selectedDisk].}}</span>
               <span class="label"></span><span class="value">{{disks[selectedDisk].}}</span>
@@ -52,8 +52,8 @@
         </form>
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-raised-button color="accent" (click)="toggleConfig()">Cancel</button>
-        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">Save</button>
+        <button mat-raised-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
   </div>

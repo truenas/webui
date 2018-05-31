@@ -6,6 +6,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { Validators } from '@angular/forms';
 
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector: 'app-kerberos-keytbas-form',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -19,8 +21,8 @@ export class KerberosKeytabsFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'keytab_name',
-      placeholder: 'Name',
-      tooltip: 'Enter a name for this Keytab.',
+      placeholder: T('Name'),
+      tooltip: T('Enter a name for this Keytab.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -28,8 +30,8 @@ export class KerberosKeytabsFormComponent {
       type: 'input',
       inputType: 'file',
       name: 'keytab_file',
-      placeholder: 'Kerberos Keytab',
-      tooltip: 'Browse to the keytab file to upload.',
+      placeholder: T('Kerberos Keytab'),
+      tooltip: T('Browse to the keytab file to upload.'),
       fileType: 'binary',
       required: true,
       validation : [ Validators.required ]
