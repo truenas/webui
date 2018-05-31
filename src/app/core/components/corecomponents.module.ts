@@ -31,6 +31,8 @@ import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widg
 
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 /*
  *
  * This is the Core Module. By importing this module you'll 
@@ -44,7 +46,8 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
     CommonModule,
     MaterialModule,
     FlexLayoutModule,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ],
   declarations: [
     AnimationDirective,
