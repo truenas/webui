@@ -49,9 +49,9 @@ export class JailAddComponent implements OnInit {
       type: 'select',
       name: 'release',
       placeholder: T('Release'),
-      tooltip: T('Select the FreeBSD release to use as the jail \
-                  operating system. <br>\
-                  Releases already downloaded display <b>(fetched)</b>.'),
+      tooltip: T('Choose the FreeBSD release to use as the jail \
+                  operating system. Releases that have already \
+                  been downloaded show <b>(fetched)</b>.'),
         options: [],
       required: true,
       validation: [ Validators.required ],
@@ -60,9 +60,9 @@ export class JailAddComponent implements OnInit {
       type: 'checkbox',
       name: 'dhcp',
       placeholder: T('DHCP Autoconfigure IPv4'),
-      tooltip: T('Set to start the jail with the Dynamic Host \
-                  Configuration Protocol enabled. <b>VirtIO</b> and \
-                  <b>Berkeley Packet Filter</b> must also be enabled.'),
+      tooltip: T('Set to autoconfigure jail networking with the \
+                  Dynamic Host Configuration Protocol. <b>VirtIO</b> \
+                  and <b>Berkeley Packet Filter<b> are also required.'),
     },
     {
       type: 'checkbox',
@@ -116,8 +116,7 @@ export class JailAddComponent implements OnInit {
                   <br>Enter <b>none</b> to configure the jail with \
                   no IPv4 default route. <br>\
                   <b>A jail without a default route will not be \
-                  able to access the network without additional \
-                  configuration.</b>'),
+                  able to access any networks.</b>'),
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -150,8 +149,7 @@ export class JailAddComponent implements OnInit {
                   <br>Enter <b>none</b> to configure the jail with \
                   no IPv4 default route. <br>\
                   <b>A jail without a default route will not be \
-                  able to access the network without additional \
-                  configuration.'),
+                  able to access any networks.'),
     },
     {
       type: 'input',
