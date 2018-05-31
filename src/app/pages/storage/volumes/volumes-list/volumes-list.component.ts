@@ -453,7 +453,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
-    for (let i in data) { // 16 loops right now (DELETE ME)
+    for (let i in data) { 
 
       const dataObj = data[i];
 
@@ -492,16 +492,20 @@ export class VolumesListTableConfig implements InputTableConf {
       dataObj.readonly = "";
       dataObj.dedup = "";
       dataObj.comments = "";
-      dataObj.compressionRatio = "";
+      dataObj.compressratio = "";
 
-      for (let k in dataset_data2) { // About 15 itmes, and we are already in a for/loop (DELETE ME) 
+      for (let k in dataset_data2) { 
 
         if (dataset_data2[k].mountpoint === dataObj.nodePath) {
 
           dataset_data2[k].compression.source !== "INHERITED"
             ? dataObj.compression = (dataset_data2[k].compression.parsed)
             : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
-
+            
+          dataset_data2[k].compressratio.source !== "INHERITED"
+            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+            : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+          
           dataset_data2[k].readonly.source !== "INHERITED"
             ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
             : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
