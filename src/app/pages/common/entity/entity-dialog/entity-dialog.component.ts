@@ -12,6 +12,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
+import { DownloadKeyModalDialog } from '/home/dennis/webui/src/app/components/common/dialog/downloadkey/downloadkey-dialog.component'
 
 @Component({
   selector: 'app-entity-dialog',
@@ -29,6 +30,7 @@ export class EntityDialogComponent implements OnInit {
   public cancelButtonText: string = "Cancel";
   public detachButtonText: string;
   public getKeyButtonText: string;
+  public mdDialog: MatDialog;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -124,7 +126,11 @@ export class EntityDialogComponent implements OnInit {
   }
 
   getKey() {
-    console.log('get key')
+    if (this.conf.method_rest) {
+      console.log('get key')
+      // const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true }); 
+      //     dialogRef.componentInstance.volumeId = ??; 
+    }
   }
 
   cancel() {
