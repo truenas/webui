@@ -8,5 +8,6 @@ export interface DialogFormConfiguration {
   saveButtonText?: string,
   cancelButtonText?: string,
   detachButtonText?: string,
-  getKeyButtonText?: string
+  getKeyButtonText?: string,
+  poolId?: any
 }

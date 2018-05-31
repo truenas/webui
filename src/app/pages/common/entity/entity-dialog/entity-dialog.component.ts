@@ -30,14 +30,15 @@ export class EntityDialogComponent implements OnInit {
   public cancelButtonText: string = "Cancel";
   public detachButtonText: string;
   public getKeyButtonText: string;
-  public mdDialog: MatDialog;
+  
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
     protected entityFormService: EntityFormService,
     protected rest: RestService,
     protected ws: WebSocketService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService,
+    public mdDialog: MatDialog) {}
 
   ngOnInit() {
     this.title = this.conf.title;
@@ -85,7 +86,6 @@ export class EntityDialogComponent implements OnInit {
   detachPool() {
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-    console.log(value)
     this.loader.open();
     if (this.conf.method_rest) {
       if (value.destroy !== true){
@@ -95,7 +95,6 @@ export class EntityDialogComponent implements OnInit {
           (res) => {
             this.loader.close();
             this.dialogRef.close(true);
-            console.log ('detach');
           },
           (res) => {
             this.loader.close();
@@ -109,7 +108,6 @@ export class EntityDialogComponent implements OnInit {
           (res) => {
             this.loader.close();
             this.dialogRef.close(true);
-            console.log ('destroy');
           },
           (res) => {
             this.loader.close();
@@ -126,11 +124,8 @@ export class EntityDialogComponent implements OnInit {
   }
 
   getKey() {
-    if (this.conf.method_rest) {
-      console.log('get key')
-      const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true }); 
-          dialogRef.componentInstance.volumeId = '17'; 
-    }
+    const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true }); 
+    dialogRef.componentInstance.volumeId = this.conf.poolId; 
   }
 
   cancel() {
