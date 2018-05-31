@@ -12,6 +12,5 @@ export * from './dialog.service';
 export * from './shell.service';
 export * from './storage.service';
 export * from './task.service';
-export * from './tour.service';
 export * from './language.service';
 export * from './app-loader/app-loader.service';
