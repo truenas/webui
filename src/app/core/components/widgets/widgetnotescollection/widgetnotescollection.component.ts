@@ -5,6 +5,10 @@ import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widg
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import {RestService,WebSocketService} from 'app/services/';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 interface NoteCard {
   id?:string;
   title?:string;
@@ -27,8 +31,8 @@ export class WidgetNotesCollectionComponent extends WidgetComponent implements O
   @Input() collectionLayout:string;
   public notes:any[] = [];
 
-  constructor(private rest: RestService, private ws: WebSocketService){
-    super();
+  constructor(private rest: RestService, private ws: WebSocketService, public translate: TranslateService){
+    super(translate);
   }
 
   ngOnChanges(changes){

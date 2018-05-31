@@ -2,7 +2,7 @@
   <div class="card-container  front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
-        <h4 class="mat-card-title-text"><div class="card-title-text">{{title}}</div></h4>
+        <h4 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h4>
         <ng-template *ngIf="configurable"><button mat-icon-button (click)="toggleConfig()">
           <mat-icon>settings</mat-icon>
           </button></ng-template>
@@ -17,8 +17,8 @@
       <mat-card-content fxLayout="column" fxLayoutAlign="start stretch" fxFlex="100">
       </mat-card-content>
       <div class="widget-footer">
-        <button mat-raised-button color="accent" (click)="toggleConfig()">Cancel</button>
-        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">Save</button>
+        <button mat-raised-button color="accent" (click)="toggleConfig()">{{"Cancel" | translate}}</button>
+        <button mat-raised-button color="primary" type="submit" form="preferences" (click)="toggleConfig()">{{"Save" | translate}}</button>
       </div>
     </mat-card>
     </ng-template>

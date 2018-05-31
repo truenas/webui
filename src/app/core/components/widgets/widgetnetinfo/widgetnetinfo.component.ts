@@ -6,6 +6,9 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'widget-netinfo',
@@ -20,8 +23,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   public defaultRoutes: string;
   public primaryIp:string = '';
 
-  constructor(public router: Router){
-    super();
+  constructor(public router: Router, public translate: TranslateService){
+    super(translate);
     this.configurable = false;
   }
 

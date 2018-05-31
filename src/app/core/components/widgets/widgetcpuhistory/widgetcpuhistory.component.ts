@@ -10,6 +10,9 @@ import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewch
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'widget-cpu-history',
@@ -18,10 +21,10 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
-  public title:string = "CPU History";
+  public title:string = T("CPU History");
 
-  constructor(){
-    super();
+  constructor(public translate: TranslateService){
+    super(translate);
   }
 
   ngOnDestroy(){
