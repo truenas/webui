@@ -30,7 +30,8 @@ import { FormTextareaComponent } from './entity-form/components/form-textarea/fo
 import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormDatepickerComponent } from './entity-form/components/form-datepicker/form-datepicker.component';
 import { FormColorpickerComponent } from './entity-form/components/form-colorpicker/form-colorpicker.component';
-import {FormParagraphComponent} from './entity-form/components/form-paragraph/form-paragraph.component';
+import { FormParagraphComponent } from './entity-form/components/form-paragraph/form-paragraph.component';
+import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -52,8 +53,11 @@ import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
-import { CdkTableModule } from '@angular/cdk/table';
 
+// CDK
+import { CdkTableModule } from '@angular/cdk/table';
+import { OverlayModule } from '@angular/cdk/overlay';
+import {A11yModule} from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
@@ -61,7 +65,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule
+    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
+    OverlayModule, A11yModule
   ],
   declarations: [
     EntityDeleteComponent,
@@ -83,6 +88,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
+    FormSchedulerComponent,
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
@@ -130,6 +136,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
+    FormSchedulerComponent,
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,
