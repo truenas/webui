@@ -152,7 +152,7 @@ mat-form-field.cron-presets{
 }
 
 ::ng-deep thead.mat-calendar-table-header{
-  display:none;
+  /*display:none;*/
 }
 
 ::ng-deep .mat-calendar-table-header tr{

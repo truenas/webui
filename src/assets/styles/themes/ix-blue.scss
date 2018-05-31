@@ -354,6 +354,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(color, --fg2, $fg2);
 }
 
+.mat-calendar-table-header,
 .mat-calendar-body-cell,
 .mat-calendar-body-cell-content{
   cursor:default;

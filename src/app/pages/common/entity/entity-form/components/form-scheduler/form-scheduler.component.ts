@@ -35,6 +35,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   @ViewChild('calendar') calendarComp;
   @ViewChild('trigger') trigger: ElementRef;
   public isOpen:boolean = false;
+  //this.generateSchedule(this.minDate, this.maxDate);
 
   private _minutes:string = "0";
   private _hours:string = "*";
@@ -121,8 +122,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   public generatedSchedule: any[] = [];
   public picker:boolean = false;
   private _textInput:string = '';
-  public crontab:string = "0 0 * * * *";
-  private _preset:CronPreset;// = { label:"Custom", value:"* * * * * *"};
+  public crontab:string = "custom";
+  private _preset:CronPreset;// = { label:"Custom", value:"* * * * * *"}; 
   public presets: CronPreset[] = [
     {
       label: "Hourly",
@@ -139,11 +140,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     {
       label: "Monthly",
       value: "0 0 0 1 * *"
-    }/*,
-    {
-      label:"Custom",
-      value: "custom"
-    }*/
+    }
   ];
 
   get textInput(){
@@ -201,11 +198,17 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   ngOnChanges(changes){
     if(changes.group){
+      console.log(this.group);
     }
   }
 
   ngOnInit(){
     this.config.value = this.group.value[this.config.name];
+    console.log(this.group);
+    this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
+      console.log("VALUE CHANGES")
+      console.log(evt);
+    })
   }
 
   ngAfterViewInit(){
@@ -215,6 +218,20 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   onChangeOption($event) {
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
+    }
+  }
+
+  togglePopup(){
+    this.isOpen = !this.isOpen;
+    if(this.crontab == "custom"){
+      this.crontab = "0 0 * * * *";
+      if(this.isOpen){
+        setTimeout(() => {this.generateSchedule(this.minDate, this.maxDate);},500);
+      }
+    } else{
+      if(this.isOpen){
+        setTimeout(() => {this.updateCalendar();},500);
+      }
     }
   }
 
