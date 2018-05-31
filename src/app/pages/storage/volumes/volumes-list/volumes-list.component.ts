@@ -238,7 +238,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }],
             method_rest: this.resource_name + "/" + row1.name,
             detachButtonText: T("Detach"),
-            getKeyButtonText: (row1.vol_encryptkey !== '' ? 'Download Your Key' : '')
+            getKeyButtonText: T(row1.vol_encryptkey !== '' ? 'Download Your Key' : '')
 
           }
           this.dialogService.dialogForm(conf).subscribe((res) => {

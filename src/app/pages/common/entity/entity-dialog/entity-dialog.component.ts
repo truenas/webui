@@ -12,7 +12,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
-import { DownloadKeyModalDialog } from '/home/dennis/webui/src/app/components/common/dialog/downloadkey/downloadkey-dialog.component'
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component'
 
 @Component({
   selector: 'app-entity-dialog',
@@ -128,8 +128,8 @@ export class EntityDialogComponent implements OnInit {
   getKey() {
     if (this.conf.method_rest) {
       console.log('get key')
-      // const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true }); 
-      //     dialogRef.componentInstance.volumeId = ??; 
+      const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true }); 
+          dialogRef.componentInstance.volumeId = '17'; 
     }
   }
 
