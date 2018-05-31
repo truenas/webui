@@ -6,6 +6,7 @@ import {RestService, SystemGeneralService, WebSocketService} from '../../../serv
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
 import { Validators } from '@angular/forms';
+import { T } from "../../../translate-marker";
 
 @Component({
   selector : 'app-activedirectory',
@@ -15,7 +16,7 @@ import { Validators } from '@angular/forms';
 export class ActiveDirectoryComponent {
   protected resource_name = 'directoryservice/activedirectory';
   protected isBasicMode = true;
-  protected idmapBacked: any;
+  protected idmapBacked: any = null;
   protected ad_certificate: any;
   protected ad_kerberos_realm: any;
   protected ad_kerberos_principal: any;
@@ -330,8 +331,6 @@ export class ActiveDirectoryComponent {
     return true;
   }
 
-
-
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
@@ -396,7 +395,30 @@ export class ActiveDirectoryComponent {
     });
 
     entityEdit.formGroup.controls['ad_idmap_backend'].valueChanges.subscribe((res)=> {
-      this.idmapBacked = res;
-    })
+      if ((this.idmapBacked != null) && (this.idmapBacked != res)) {
+        this.dialogservice.confirm(T("Active Directory IDMAP change!"),
+          T("<font color='red'>STOP</font>: Do you know what you are doing? <br><br>\
+          The idmap_ad plugin provides a way for Winbind to read id mappings from \
+          an AD server that uses RFC2307/SFU schema extensions. This module \
+          implements only the \"idmap\" API, and is READONLY. Mappings must be \
+          provided in advance by the administrator by adding the uidNumber \
+          attributes for users and gidNumber attributes for groups in the AD. \
+          Winbind will only map users that have a uidNumber and whose primary \
+          group have a gidNumber attribute set. It is however recommended that \
+          all groups in use have gidNumber attributes assigned, otherwise they \
+          are not working. <br><br>\
+          <font color='red'>STOP</font>: If your Active Directory is not \
+          configured for this, it will not work. <br>")).subscribe(
+        (confirm) => {
+          if (confirm) {
+            this.idmapBacked = res;
+          } else {
+            entityEdit.formGroup.controls['ad_idmap_backend'].setValue(this.idmapBacked);
+          }
+        });
+      } else {
+        this.idmapBacked = res;
+      }
+    });
   }
 }
