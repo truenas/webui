@@ -1,5 +1,5 @@
 import {Component,AfterViewInit,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, FormControl} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -35,7 +35,11 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   @ViewChild('calendar') calendarComp;
   @ViewChild('trigger') trigger: ElementRef;
   public isOpen:boolean = false;
-  //this.generateSchedule(this.minDate, this.maxDate);
+  formControl = new FormControl();
+  private _currentValue:string;
+  get currentValue(){
+    return this.group.controls[this.config.name].value;
+  }
 
   private _minutes:string = "0";
   private _hours:string = "*";
@@ -198,17 +202,17 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   ngOnChanges(changes){
     if(changes.group){
-      console.log(this.group);
+      //console.log(this.group);
     }
   }
 
   ngOnInit(){
     this.config.value = this.group.value[this.config.name];
-    console.log(this.group);
-    this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
+    /*this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
       console.log("VALUE CHANGES")
       console.log(evt);
-    })
+      console.log(this.group.controls[this.config.name]);
+    })*/
   }
 
   ngAfterViewInit(){
@@ -221,6 +225,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     }
   }
 
+  onPopupSave(){
+    this.togglePopup();
+    if(this.formControl){
+      this.group.controls[this.config.name].setValue(this.crontab);
+    }
+    console.log(this.formControl);
+  }
   togglePopup(){
     this.isOpen = !this.isOpen;
     if(this.crontab == "custom"){
@@ -233,6 +244,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
         setTimeout(() => {this.updateCalendar();},500);
       }
     }
+    console.log(this.group.controls[this.config.name]);
   }
 
   private generateSchedule(min, max){

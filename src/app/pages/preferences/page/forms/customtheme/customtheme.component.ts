@@ -164,16 +164,6 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           tooltip: "Choose which color from the palette will be the theme's accent color",
           class:'inline'
         },
-        { 
-          type: 'scheduler', 
-          name: 'cron', 
-          width:'100%',
-          placeholder: 'Scheduler a Task', 
-          required:true,
-          //options:this.colorOptions,
-          tooltip: "Choose a schedule or hit custom to create an advanced schedule",
-          class:'inline'
-        },
       ]
     },
     {
