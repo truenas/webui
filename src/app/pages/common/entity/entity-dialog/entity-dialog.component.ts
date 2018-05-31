@@ -27,7 +27,8 @@ export class EntityDialogComponent implements OnInit {
   public formGroup: FormGroup;
   public saveButtonText: string;
   public cancelButtonText: string = "Cancel";
-  public deleteButtonText: string;
+  public detachButtonText: string;
+  public getKeyButtonText: string;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -46,8 +47,11 @@ export class EntityDialogComponent implements OnInit {
     if (this.conf.cancelButtonText) {
       this.cancelButtonText = this.conf.cancelButtonText;
     }
-    if (this.conf.deleteButtonText) {
-      this.deleteButtonText = this.conf.deleteButtonText;
+    if (this.conf.detachButtonText) {
+      this.detachButtonText = this.conf.detachButtonText;
+    }
+    if (this.conf.getKeyButtonText) {
+      this.getKeyButtonText = this.conf.getKeyButtonText;
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
   }
@@ -76,9 +80,10 @@ export class EntityDialogComponent implements OnInit {
 
   }
 
-  delete() {
+  detachPool() {
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
+    console.log(value)
     this.loader.open();
     if (this.conf.method_rest) {
       if (value.destroy !== true){
@@ -116,6 +121,10 @@ export class EntityDialogComponent implements OnInit {
       // ws call
     }
 
+  }
+
+  getKey() {
+    console.log('get key')
   }
 
   cancel() {

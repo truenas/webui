@@ -1,13 +1,14 @@
 <h1 mat-dialog-title> {{ title | translate }} </h1>
+
 <div mat-dialog-content>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
   </ng-container>
 </div>
+
 <div mat-dialog-actions>
-  <!-- <span fxFlex></span> -->
-  <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
-  <!-- <span fxFlex></span> -->
-  <button class="mat-raised-button mat-primary" (click)="delete()" [disabled]="!formGroup.valid" *ngIf="deleteButtonText">{{deleteButtonText | translate}}</button>
-  <!-- <span fxFlex></span> -->
+  <span fxFlex></span>
+  <button class="mat-raised-button mat-warn" (click)="getKey()" *ngIf="getKeyButtonText">{{getKeyButtonText | translate}}</button>
   <button class="mat-raised-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
+  <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
+  <button class="mat-raised-button mat-primary" (click)="detachPool()" [disabled]="!formGroup.valid" *ngIf="detachButtonText">{{detachButtonText | translate}}</button>
 </div>

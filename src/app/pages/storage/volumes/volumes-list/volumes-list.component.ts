@@ -212,9 +212,9 @@ export class VolumesListTableConfig implements InputTableConf {
     if (rowData.type === 'zpool') {
      
       actions.push({
-        
         label: T("Detach"),
         onClick: (row1) => {
+          console.log(row1)
           console.log(this.resource_name + "/" + row1.name, { body: JSON.stringify({}) })
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
@@ -224,7 +224,7 @@ export class VolumesListTableConfig implements InputTableConf {
               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
                 Detaching a pool makes the data unavailable. If your pool is encrypted, \
                 and you do not have a passphrase, your data will be permanently unrecoverable! \
-                In addion to detaching the pool you may also choose to destroy its data."), 
+                In addition to detaching the pool you may also choose to destroy its data."), 
               isHidden: false
             }, {
             type: 'checkbox',
@@ -237,7 +237,9 @@ export class VolumesListTableConfig implements InputTableConf {
               required: true
             }],
             method_rest: this.resource_name + "/" + row1.name,
-            deleteButtonText: T("Detach")
+            detachButtonText: T("Detach"),
+            getKeyButtonText: (row1.vol_encryptkey !== '' ? 'Download Your Key' : '')
+
           }
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
