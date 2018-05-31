@@ -1,6 +1,6 @@
 <div id="dashboardcontainerdiv">
 	<mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
-		<mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName }}">
+		<mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
 			<div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
 				
 
@@ -10,7 +10,7 @@
 				</div>
 
 				<mat-card *ngFor="let chartConfigData of tabChartsMappingDataSelected.paginatedChartConfigData">
-					<mat-card-title>{{ chartConfigData.title }}</mat-card-title>
+					<mat-card-title>{{ chartConfigData.title  | translate }}</mat-card-title>
 					<mat-card-content>
 						<line-chart [dataList]="chartConfigData.dataList" [legends]="chartConfigData.legends" [type]='"Line"' [divideBy]="chartConfigData.divideBy"></line-chart>
 					</mat-card-content>
