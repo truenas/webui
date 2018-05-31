@@ -415,6 +415,7 @@ tr.dx-row:nth-child(odd){
 //Entity Module Overrides
 
 entity-task .form-card.mat-card,
+device-edit .form-card.mat-card,
 entity-form .form-card.mat-card{
   max-width:960px;
   margin:0 auto;

@@ -22,15 +22,17 @@ import {WebSocketService, NetworkService, SystemGeneralService} from '../../../.
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent, Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'device-edit',
-  // WTF?
   //templateUrl : '../../../common/entity/entity-form/entity-form.component.html',
-  template:'<entity-form [conf]="conf"></entity-form>',
+  //template:'<entity-form [conf]="conf"></entity-form>',
+  templateUrl : './device-edit.component.html',
+  styleUrls: ['./device-edit.component.scss'],
   providers : [ VmService ]
 })
 
@@ -51,7 +53,12 @@ export class DeviceEditComponent implements OnInit {
   public busy: Subscription;
   public DISK_zvol: any;
   public fieldConfig: FieldConfig[] = [];
-  public conf: any = {};
+  public fieldSets: FieldSet[] = [{
+    name: 'Config',
+    class: 'config',
+    config: []
+  }];
+  public conf: Formconfiguration = {};
   public hasConf = true;
   public success = false;
   private nic_attach: any;
@@ -86,7 +93,7 @@ export class DeviceEditComponent implements OnInit {
       this.pk = params['pk'];
     });
     if (this.dtype === "CDROM") {
-      this.fieldConfig = [
+      this.fieldSets[0].config = [
         {
           type : 'explorer',
           initial: '/mnt',
@@ -97,7 +104,7 @@ export class DeviceEditComponent implements OnInit {
         },
       ];
     } else if (this.dtype === "NIC") {
-      this.fieldConfig = [
+      this.fieldSets[0].config = [
         {
           name : 'NIC_type',
           placeholder : 'Adapter Type:',
@@ -136,7 +143,7 @@ export class DeviceEditComponent implements OnInit {
         },
       ];
     } else if (this.dtype === "VNC") {
-      this.fieldConfig = [
+      this.fieldSets[0].config = [
         {
           name : 'VNC_port',
           placeholder : 'Port',
@@ -192,7 +199,7 @@ export class DeviceEditComponent implements OnInit {
         },
       ];
     } else if (this.dtype === "DISK") {
-      this.fieldConfig = [
+      this.fieldSets[0].config = [
         {
           name : 'DISK_zvol',
           placeholder : 'Zvol',
@@ -228,7 +235,7 @@ export class DeviceEditComponent implements OnInit {
         },
       ];
     } else if (this.dtype === "RAW") {
-      this.fieldConfig = [
+      this.fieldSets[0].config = [
         {
           type : 'explorer',
           initial: '/mnt',
@@ -292,7 +299,8 @@ export class DeviceEditComponent implements OnInit {
 
   afterInit(){
     const self = this;
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+    //this.formGroup = this.entityFormService.createFormGroup(this.fieldSets[0].config);
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldSets[0].config);
     const vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
       'vnc_resolution' : 'VNC_resolution',
@@ -328,7 +336,8 @@ export class DeviceEditComponent implements OnInit {
       }
       else if(device[0].dtype === 'VNC'){
         this.systemGeneralService.getIPChoices().subscribe((ipchoices) => {
-          this.vnc_bind = _.find(this.fieldConfig, {'name' : 'vnc_bind'});
+          //this.vnc_bind = _.find(this.fieldSets[0].config, {'name' : 'vnc_bind'});
+          this.vnc_bind = _.find(this.fieldSets[0].config, {'name' : 'vnc_bind'});
           for(const ipchoice of ipchoices){
             this.vnc_bind.options.push({label : ipchoice[1], value : ipchoice[0]});
           }
@@ -361,9 +370,9 @@ export class DeviceEditComponent implements OnInit {
       }
       else {
         if (device[0].vm.vm_type==="Container Provider"){
-          this.RAW_boot = _.find(this.fieldConfig, {name:'RAW_boot'})
-          this.RAW_rootpwd = _.find(this.fieldConfig, {name:'RAW_rootpwd'})
-          this.RAW_size = _.find(this.fieldConfig, {name:'RAW_size'})
+          this.RAW_boot = _.find(this.fieldSets[0].config, {name:'RAW_boot'})
+          this.RAW_rootpwd = _.find(this.fieldSets[0].config, {name:'RAW_rootpwd'})
+          this.RAW_size = _.find(this.fieldSets[0].config, {name:'RAW_size'})
           this.RAW_boot.isHidden = false
           this.RAW_rootpwd.isHidden = false
           this.RAW_size.isHidden = false
