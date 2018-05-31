@@ -498,21 +498,29 @@ export class VolumesListTableConfig implements InputTableConf {
 
         if (dataset_data2[k].mountpoint === dataObj.nodePath) {
 
-          dataset_data2[k].compression.source !== "INHERITED"
-            ? dataObj.compression = (dataset_data2[k].compression.parsed)
-            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
-            
-          dataset_data2[k].compressratio.source !== "INHERITED"
-            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
-            : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
-          
-          dataset_data2[k].readonly.source !== "INHERITED"
-            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          if (dataset_data2[k].compression) {
+            dataset_data2[k].compression.source !== "INHERITED"
+              ? dataObj.compression = (dataset_data2[k].compression.parsed)
+              : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+          }
 
-          dataset_data2[k].deduplication.source !== "INHERITED"
-            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          if (dataset_data2[k].compressratio) {
+            dataset_data2[k].compressratio.source !== "INHERITED"
+              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+              : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+          }
+
+          if (dataset_data2[k].readonly) {
+            dataset_data2[k].readonly.source !== "INHERITED"
+              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+              : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          }
+
+          if (dataset_data2[k].deduplication) {
+            dataset_data2[k].deduplication.source !== "INHERITED"
+              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+              : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          }
 
           if (dataset_data2[k].comments) {
             dataset_data2[k].comments.source !== "INHERITED"
