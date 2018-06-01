@@ -158,7 +158,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             const ds  = this.dialogService.confirm(
-              "Check Now", "Do you want to continue?",false,"",true,"Apply updates after downloading (The system will reboot)","update.update",[{ train: this.train, reboot: false }]
+              "Download Update", "Do you want to continue?",true,"",true,"Apply updates after downloading (The system will reboot)","update.update",[{ train: this.train, reboot: false }]
             )
             ds.afterClosed().subscribe((status)=>{
               if(status){

@@ -12,8 +12,8 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <button mat-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Check Now" | translate}}</button>
-        <button mat-raised-button class="btn btn-warning" (click)="update()" [disabled]="status != 'AVAILABLE' && !updating">{{"Update and Reboot" | translate}}</button>
+        <button mat-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Download Update" | translate}}</button>
+        <button mat-raised-button class="btn btn-success" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-raised-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
         <button mat-raised-button class="btn btn-success" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
         <p><font color ="red">{{general_update_error}}</font></p>
       </div>
@@ -43,12 +43,7 @@
         <div *ngIf="status == 'UNAVAILABLE'">{{"No updates available" | translate}}</div>
         <div *ngIf="updated">
           Update is complete, reboot the machine yourself because I'm tired!
-      </div>
-        <div *ngIf="status !== 'UNAVAILABLE'" class="row">
-          <div class="col-md-12">
-            <button mat-raised-button class="btn btn-success" *ngIf="update_downloaded" mat-raised-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
-          </div>
-        </div>   
+      </div> 
       </div>
       </div>
   <div class="row">
