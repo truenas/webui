@@ -50,7 +50,7 @@ export class ServiceAFPComponent {
       type : 'checkbox',
       name : 'afp_srv_guest',
       placeholder : T('Guest Access'),
-      tooltip: T('Set to disable the passport prompt that appears\
+      tooltip: T('Set to disable the password prompt that appears\
                   before clients access AFP shares.'),
     },
     {
