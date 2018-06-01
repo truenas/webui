@@ -266,7 +266,7 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           this.encryptedStatus = row1.vol_encryptkey;
           this.isCustActionVisible('download_key');
-          console.log(this.isCustActionVisible('download_key'))
+
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: [    { 
@@ -296,31 +296,37 @@ export class VolumesListTableConfig implements InputTableConf {
               placeholder: T("Confirm detach"),
               required: true
             }],
-            // method_rest: this.resource_name + "/" + row1.name,
             custActions: [
               {
-                'id' : 'download_key',
-                'name' : 'DownloadKey',
+                id : 'download_key',
+                name : 'DownloadKey',
                 function : () => { 
                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
-                },
-                isCustActionVisible() {
-
                 }
               },
               {
-                'id' : 'detach',
-                'type' : 'submit',
-                'name' : 'Detach',
-                function : (value) => { this.customSubmit(value); }
-                // function : () => { this.isBasicMode = !this.isBasicMode; }
+                id : 'detach',
+                type : 'submit',
+                name : 'Detach',
+                function : () => { 
+                  this.loader.open();
+                  console.log(row1);
+                  return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({ destroy: row1.destroy }) }).subscribe((restPostResp) => {
+                    console.log("restPostResp", restPostResp);
+                    this.loader.close();
+                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
+                    this.parentVolumesListComponent.repaintMe();
+                  }, (res) => {
+                    this.loader.close();
+                    this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                  });
+                 }
               }
 
             ]
           }
           
-
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
               this.parentVolumesListComponent.repaintMe();
