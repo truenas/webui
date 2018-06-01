@@ -48,8 +48,8 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
       isHidden: true
     },{
       type : 'input',
-      inputType: 'adminpw',
-      name : 'passphrase',
+      inputType: 'password',
+      name : 'adminpw',
       placeholder: T('Root Password'),
       tooltip: T('Enter the root password.'),
       validation: [Validators.required],
@@ -97,9 +97,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
 
   customSubmit(value) {
     this.loader.open();
-    console.log("VALUE", value);
     return this.rest.put(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({adminpw: value.adminpw, passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
       this.loader.close();
       this.dialogService.Info(T("Change Pool Passphrase"), T("Successfully changed passphrase for pool ") + value.name);
 

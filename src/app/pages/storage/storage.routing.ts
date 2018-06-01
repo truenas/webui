@@ -96,7 +96,7 @@ export const routes: Routes = [
             data: { title: 'Create Passphrase', breadcrumb: 'Create Passphrase' }
           },
           {
-            path: 'changekey/:pk', component: VolumeCreatekeyFormComponent,
+            path: 'changekey/:pk', component: VolumeChangekeyFormComponent,
             data: { title: 'Change Passphrase', breadcrumb: 'Change Passphrase' }
           }
         ]
