@@ -12,7 +12,7 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <button mat-raised-button class="btn btn-success" (click)="check()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Download Update" | translate}}</button>
+        <button mat-raised-button class="btn btn-success" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Download update" | translate}}</button>
         <button mat-raised-button class="btn btn-success" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-raised-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
         <button mat-raised-button class="btn btn-success" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
         <p><font color ="red">{{general_update_error}}</font></p>

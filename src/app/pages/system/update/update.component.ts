@@ -52,7 +52,7 @@ export class UpdateComponent implements OnInit {
       this.autoCheck = res.data.upd_autocheck;
       this.train = res.data.upd_train;
       if (this.autoCheck){
-        this.autocheck();
+        this.check();
       }
     });
     this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
@@ -90,6 +90,7 @@ export class UpdateComponent implements OnInit {
     if (isValid) {
       this.dialogService.confirm("Switch Train", "Are you sure you want to switch trains?").subscribe((res)=>{
         if (res) {
+          this.check();
           this.train = event.value;
         }else {
           this.train = this.selectedTrain;
@@ -110,7 +111,7 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  check() {
+  downloadUpdate() {
     this.error = null;
     this.loader.open();
     this.ws.call('update.check_available', [{ train: this.train }])
@@ -230,7 +231,7 @@ export class UpdateComponent implements OnInit {
     });
 }
 
-  autocheck() {
+  check() {
     this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
