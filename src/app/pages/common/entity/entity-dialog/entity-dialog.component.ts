@@ -58,7 +58,7 @@ export class EntityDialogComponent implements OnInit {
     let value = _.cloneDeep(this.formGroup.value);
 
     if (this.conf.customSubmit) {
-      this.conf.customSubmit();
+      this.conf.customSubmit(value);
     } else {
       this.loader.open();
       if (this.conf.method_rest) {
