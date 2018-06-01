@@ -50,12 +50,6 @@ export class EntityDialogComponent implements OnInit {
     if (this.conf.cancelButtonText) {
       this.cancelButtonText = this.conf.cancelButtonText;
     }
-    if (this.conf.detachButtonText) {
-      this.detachButtonText = this.conf.detachButtonText;
-    }
-    if (this.conf.getKeyButtonText) {
-      this.getKeyButtonText = this.conf.getKeyButtonText;
-    }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
   }
 
@@ -121,11 +115,6 @@ export class EntityDialogComponent implements OnInit {
       // ws call
     }
 
-  }
-
-  getKey() {
-    const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true }); 
-    dialogRef.componentInstance.volumeId = this.conf.poolId; 
   }
 
   cancel() {

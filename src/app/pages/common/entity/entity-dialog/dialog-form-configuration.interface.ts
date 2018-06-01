@@ -7,8 +7,5 @@ export interface DialogFormConfiguration {
   method_ws?: string,
   saveButtonText?: string,
   cancelButtonText?: string,
-  detachButtonText?: string,
-  getKeyButtonText?: string,
-  poolId?: any,
   custActions?: any[];
 }

@@ -220,13 +220,18 @@ export class VolumesListTableConfig implements InputTableConf {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
-                Detaching a pool makes the data unavailable. If the pool is encrypted \
-                and there is no passphrase, the data will be PERMANENTLY UNRECOVERABLE! \
+                Detaching a pool makes the data unavailable. \
                 Be sure that you understand the risks.\
-                Before detaching encrypted pools, download and safely\
-                store the recovery key.\
                 In addition to detaching the pool you may also choose to destroy its data."), 
               isHidden: false
+            }, { 
+              type: 'paragraph',
+              name: 'pool_detach_warning',
+              paraText: T("'" + row1.name + "' is encrypted!. If there is no passphrase for \
+                this encrypted pool, the data will be PERMANENTLY UNRECOVERABLE! \
+                Before detaching encrypted pools, download and safely\
+                store the recovery key."), 
+              isHidden: row1.vol_encryptkey !== '' ? false : true
             }, {
             type: 'checkbox',
               name: 'destroy',
@@ -238,10 +243,6 @@ export class VolumesListTableConfig implements InputTableConf {
               required: true
             }],
             method_rest: this.resource_name + "/" + row1.name,
-            detachButtonText: T("Detach"),
-            getKeyButtonText: T(row1.vol_encryptkey !== '' ? 'Download Your Key' : ''),
-            poolId: row1.id
-
           }
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
