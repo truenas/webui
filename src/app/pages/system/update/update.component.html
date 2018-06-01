@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
+        <div class="col-md-12">
         <div *ngIf="status == 'REBOOT_REQUIRED'">
           {{"An update has already been applied. Please reboot." | translate}}
         </div>
@@ -43,7 +43,19 @@
         <div *ngIf="status == 'UNAVAILABLE'">{{"No updates available" | translate}}</div>
         <div *ngIf="updated">
           Update is complete, reboot the machine yourself because I'm tired!
-        </div>
+      </div>
+        <div *ngIf="status !== 'UNAVAILABLE'" class="row">
+          <div class="col-md-12">
+            <button mat-raised-button class="btn btn-success" *ngIf="update_downloaded" mat-raised-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
+          </div>
+        </div>   
+      </div>
+      </div>
+  <div class="row">
+    <div class="col-md-12">
+
+
+
         <div *ngIf="error">
           {{ error }}
         </div>

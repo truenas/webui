@@ -12,6 +12,8 @@ import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-update',
@@ -34,7 +36,8 @@ export class UpdateComponent implements OnInit {
   public trains: any[];
   public selectedTrain;
   public general_update_error;
-
+  public update_downloaded=false;
+ 
   public busy: Subscription;
   public busy2: Subscription;
 
@@ -148,9 +151,6 @@ export class UpdateComponent implements OnInit {
                 console.error("Unknown operation:", item.operation)
               }
             });
-            // if(res.notes.ChangeLog) {
-            //   this.rest.get(res.notes.ChangeLog.toString(), {}, false).subscribe(logs => this.changeLog = logs.data, err => this.snackBar.open(err.message.toString(), 'OKAY', {duration: 5000}));
-            // }
             if (res.changelog) {
               this.changeLog = res.changelog;
             }
@@ -158,6 +158,34 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
           }
+          const ds  = this.dialogService.confirm(
+            "Check Now", "Do you want to continue?",false,"",true,"Apply updates after downloading (The system will reboot)","update.update",[{ train: this.train, reboot: false }]
+          )
+          ds.afterClosed().subscribe((status)=>{
+            if(status){
+              if (!ds.componentInstance.data[0].reboot){
+                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
+                this.dialogRef.componentInstance.setCall('update.download');
+                this.dialogRef.componentInstance.setDescription("Downloading Updates");
+                this.dialogRef.componentInstance.submit();
+                this.dialogRef.componentInstance.success.subscribe((succ) => {
+                  this.dialogRef.close(false);
+                  this.snackBar.open("Updates are successfully Downloaded",'close', { duration: 5000 });
+                  this.pendingupdates();
+                  
+                });
+                this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                  this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                });
+
+              }
+              else{
+                this.update();
+              }
+
+            }
+            
+          })
         },
         (err) => {
           this.loader.close();
@@ -179,15 +207,33 @@ export class UpdateComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
     });
   }
+  ApplyPendingUpdate() {
+    const apply_pending_update_ds  = this.dialogService.confirm(
+      "Apply Pending Updates", "Are you sure you want to continue? The system will be rebooted after updates are applied."
+    ).subscribe((res)=>{
+      if(res){
+       this.update();
+      }
+    });
+  }
   ManualUpdate(){
     this.router.navigate([this.router.url +'/manualupdate']);
   }
 
+  pendingupdates(){
+    this.ws.call('update.get_pending').subscribe((pending)=>{
+      if(pending.length !== 0){
+        this.update_downloaded = true;
+      }
+    });
+}
+
   autocheck() {
+    this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
-        (res) => {
+        (res) => { 
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
             this.packages = [];
