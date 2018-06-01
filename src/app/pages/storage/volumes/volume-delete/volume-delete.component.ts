@@ -15,6 +15,8 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../translate-marker';
 import { Validators } from '@angular/forms';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-volume-delete',
@@ -29,12 +31,16 @@ export class VolumeDeleteComponent implements Formconfiguration {
   isNew = false;
   isEntity = true;
 
+  public volumeInfo: any;
+  public volumeEncryptKey: any;
+
   fieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
       label: T('name'),
-      isHidden: true
+      isHidden: false,
+      readonly: true
     }, {
       type: 'checkbox',
       name: 'destroy',
@@ -54,9 +60,12 @@ export class VolumeDeleteComponent implements Formconfiguration {
       required: true
 
     }
+
   ];
 
   resourceTransformIncomingRestData(data: any): any {
+    this.volumeInfo = data;
+    this.volumeEncryptKey = data.vol_encryptkey;
     return data;
   };
 
@@ -69,7 +78,8 @@ export class VolumeDeleteComponent implements Formconfiguration {
     protected _injector: Injector,
     protected _appRef: ApplicationRef,
     protected dialogService: DialogService,
-    protected loader: AppLoaderService
+    protected loader: AppLoaderService,
+    public mdDialog: MatDialog
   ) {
 
   }
@@ -108,6 +118,24 @@ export class VolumeDeleteComponent implements Formconfiguration {
 
 
   }
+
+  isCustActionVisible() {
+    if (!this.volumeEncryptKey || this.volumeEncryptKey === '') {
+      return false;
+    }
+    return true;
+  }
+
+  public custActions: Array<any> = [
+    {
+      'id': 'download_key',
+      name: T('Download Key'),
+      function: () => {
+        const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+        dialogRef.componentInstance.volumeId = this.volumeInfo.id;
+      }
+    }
+  ];
 
 }
 
