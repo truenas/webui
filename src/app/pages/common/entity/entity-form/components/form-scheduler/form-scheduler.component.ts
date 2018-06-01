@@ -176,7 +176,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
       this._preset = {label:"Custom", value:this.crontab};
     } else {
       this.crontab = p.value;
-      //this.updateCronTab(p.value);
       this.convertPreset(p.value);
       this._preset = p;
     }
@@ -189,11 +188,9 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   constructor(public translate: TranslateService, private renderer: Renderer2){
     //Set default value
     this.preset = this.presets[1];
-    //for(let i = 0; i<12;i++){this._monthsValues.push(true)}
     this._months = "*";
 
     let min = new Date('Tue 1 May 2018 00:00:00 UTC');
-    //let min = Date.now();
     let max = new Date('Thur 31 May 2018 23:59:59 UTC');
     this.minDate = min;
     this.maxDate = max;
@@ -208,11 +205,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   ngOnInit(){
     this.config.value = this.group.value[this.config.name];
-    /*this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
-      console.log("VALUE CHANGES")
-      console.log(evt);
-      console.log(this.group.controls[this.config.name]);
-    })*/
   }
 
   ngAfterViewInit(){
@@ -231,7 +223,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
       this.group.controls[this.config.name].setValue(this.crontab);
       console.log(this.group.controls[this.config.name].value)
     }
-    console.log(this.formControl);
   }
   togglePopup(){
     this.isOpen = !this.isOpen;
@@ -270,9 +261,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   }
 
   private updateCalendar(){
-    //console.log("UPDATE CALENDAR");
-    //console.log(this.generatedSchedule);
-
     let nodes = this.getCalendarCells();
     for(let i = 0; i < nodes.length; i++){
       let nodeClass = "mat-calendar-body-cell ng-star-inserted";
@@ -305,16 +293,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   getAttribute(attr, node){
     let a = node.attributes.getNamedItem(attr);
-    //console.log(a);
     if(a){
-      //console.log(a.name);
-      //console.log(a.value);
       return a.value;
     }
   }
 
   setAttribute(attr, node, value){
-    //console.log("SETTING ATTRIBUTE")
     let a = (<any>document).createAttribute(attr);
     a.value = value;
     node.attributes.removeNamedItem(attr);
@@ -486,7 +470,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   updateCronTab(preset?){
     this.crontab = "";
     if(!preset){
-      //let result = "0" + " " + this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
       let result = this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
       this.crontab = result;
     }
