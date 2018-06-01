@@ -70,6 +70,21 @@ export class VolumesListTableConfig implements InputTableConf {
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
 
+  public custActions: Array<any> = [
+    // {
+    //   'id' : 'download_key',
+    //   'name' : 'Download Key',
+    //   // function : () => { this.isBasicMode = !this.isBasicMode; }
+    // },
+    // {
+    //   'id' : 'detach',
+    //   'name' : 'Detach',
+    //   function : () => { console.log('detach!'); }
+    // }
+  ];
+  // activedirectory.component.tz
+
+
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
     private _router: Router,
@@ -96,6 +111,15 @@ export class VolumesListTableConfig implements InputTableConf {
         this.dialogService.errorReport(T("Error getting volume/dataset data"), res.message, res.stack);
       });
     }
+  }
+
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'download_key') {
+      return false;
+    } else if (actionname === 'detach') {
+      return true;
+    } 
+    return true;
   }
 
   getEncryptedActions(rowData: any) {
@@ -214,6 +238,8 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
+          this.isCustActionVisible('download_key');
+          console.log(this.isCustActionVisible('download_key'))
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: [    { 
@@ -243,7 +269,22 @@ export class VolumesListTableConfig implements InputTableConf {
               required: true
             }],
             method_rest: this.resource_name + "/" + row1.name,
+            custActions: [
+              {
+                'id' : 'download_key',
+                'name' : 'Download Key',
+                function : () => { console.log('download!'); }
+                // function : () => { this.isBasicMode = !this.isBasicMode; }
+              },
+              {
+                'id' : 'detach',
+                'name' : 'Detach',
+                function : () => { console.log('detach!'); }
+              }
+            ]
           }
+          
+
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
               this.parentVolumesListComponent.repaintMe();
