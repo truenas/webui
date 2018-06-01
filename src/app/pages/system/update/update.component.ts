@@ -157,35 +157,37 @@ export class UpdateComponent implements OnInit {
             if (res.notes) {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
+            const ds  = this.dialogService.confirm(
+              "Check Now", "Do you want to continue?",false,"",true,"Apply updates after downloading (The system will reboot)","update.update",[{ train: this.train, reboot: false }]
+            )
+            ds.afterClosed().subscribe((status)=>{
+              if(status){
+                if (!ds.componentInstance.data[0].reboot){
+                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
+                  this.dialogRef.componentInstance.setCall('update.download');
+                  this.dialogRef.componentInstance.setDescription("Downloading Updates");
+                  this.dialogRef.componentInstance.submit();
+                  this.dialogRef.componentInstance.success.subscribe((succ) => {
+                    this.dialogRef.close(false);
+                    this.snackBar.open("Updates are successfully Downloaded",'close', { duration: 5000 });
+                    this.pendingupdates();
+                    
+                  });
+                  this.dialogRef.componentInstance.failure.subscribe((failure) => {
+                    this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+                  });
+  
+                }
+                else{
+                  this.update();
+                }
+  
+              }
+              
+            })
+          } else if (res.status === 'UNAVAILABLE'){
+            this.dialogService.Info('Check Now', 'No updates available')
           }
-          const ds  = this.dialogService.confirm(
-            "Check Now", "Do you want to continue?",false,"",true,"Apply updates after downloading (The system will reboot)","update.update",[{ train: this.train, reboot: false }]
-          )
-          ds.afterClosed().subscribe((status)=>{
-            if(status){
-              if (!ds.componentInstance.data[0].reboot){
-                this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
-                this.dialogRef.componentInstance.setCall('update.download');
-                this.dialogRef.componentInstance.setDescription("Downloading Updates");
-                this.dialogRef.componentInstance.submit();
-                this.dialogRef.componentInstance.success.subscribe((succ) => {
-                  this.dialogRef.close(false);
-                  this.snackBar.open("Updates are successfully Downloaded",'close', { duration: 5000 });
-                  this.pendingupdates();
-                  
-                });
-                this.dialogRef.componentInstance.failure.subscribe((failure) => {
-                  this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-                });
-
-              }
-              else{
-                this.update();
-              }
-
-            }
-            
-          })
         },
         (err) => {
           this.loader.close();
@@ -233,7 +235,7 @@ export class UpdateComponent implements OnInit {
     this.error = null;
     this.ws.call('update.check_available', [{ train: this.train }])
       .subscribe(
-        (res) => { 
+        (res) => {
           this.status = res.status;
           if (res.status === 'AVAILABLE') {
             this.packages = [];
