@@ -537,4 +537,15 @@ entity-form .form-card.mat-card{
 #pool_detach_warning {
   margin-bottom: 15px;
 }
-  
+
+#cust_button_Detach {
+  background-color: map-get($md-primary, 500);
+  color: white;
+  margin-right: 5px;
+}
+
+#cust_button_DownloadKey {
+  background-color: red;
+  color: white;
+  margin-right: 4px;
+}

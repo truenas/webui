@@ -69,18 +69,19 @@ export class VolumesListTableConfig implements InputTableConf {
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
+  public encryptedStatus: any;
 
   public custActions: Array<any> = [
-    // {
-    //   'id' : 'download_key',
-    //   'name' : 'Download Key',
-    //   // function : () => { this.isBasicMode = !this.isBasicMode; }
-    // },
-    // {
-    //   'id' : 'detach',
-    //   'name' : 'Detach',
-    //   function : () => { console.log('detach!'); }
-    // }
+    {
+      'id' : 'download_key',
+      'name' : 'Download Key',
+      // function : () => { this.isBasicMode = !this.isBasicMode; }
+    },
+    {
+      'id' : 'detach',
+      'name' : 'Detach',
+      function : () => { console.log('detach!'); }
+    }
   ];
   // activedirectory.component.tz
 
@@ -114,12 +115,37 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   isCustActionVisible(actionname: string) {
-    if (actionname === 'download_key') {
-      return false;
-    } else if (actionname === 'detach') {
+    if (actionname === 'download_key' && this.encryptedStatus !== '')  {
       return true;
-    } 
-    return true;
+    } else {
+      return false;
+    }
+  }
+
+  customSubmit(value) {
+    console.log(value)
+    this.loader.open();
+    if (value.destroy === false) {
+      return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
+        console.log("restPostResp", restPostResp);
+        this.loader.close();
+        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
+        this.parentVolumesListComponent.repaintMe();
+      }, (res) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+      });
+    } else {
+      return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+        console.log("restPostResp", restPostResp);
+        this.loader.close();
+        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
+        this.parentVolumesListComponent.repaintMe();
+      }, (res) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+      });
+    }
   }
 
   getEncryptedActions(rowData: any) {
@@ -238,6 +264,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
+          this.encryptedStatus = row1.vol_encryptkey;
           this.isCustActionVisible('download_key');
           console.log(this.isCustActionVisible('download_key'))
           const conf: DialogFormConfiguration = {
@@ -261,6 +288,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }, {
             type: 'checkbox',
               name: 'destroy',
+              value : false,
               placeholder: T("Destroy data on this pool?"),
             }, {
               type: 'checkbox',
@@ -268,19 +296,27 @@ export class VolumesListTableConfig implements InputTableConf {
               placeholder: T("Confirm detach"),
               required: true
             }],
-            method_rest: this.resource_name + "/" + row1.name,
+            // method_rest: this.resource_name + "/" + row1.name,
             custActions: [
               {
                 'id' : 'download_key',
-                'name' : 'Download Key',
-                function : () => { console.log('download!'); }
-                // function : () => { this.isBasicMode = !this.isBasicMode; }
+                'name' : 'DownloadKey',
+                function : () => { 
+                  const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                  dialogRef.componentInstance.volumeId = row1.id;
+                },
+                isCustActionVisible() {
+
+                }
               },
               {
                 'id' : 'detach',
+                'type' : 'submit',
                 'name' : 'Detach',
-                function : () => { console.log('detach!'); }
+                function : (value) => { this.customSubmit(value); }
+                // function : () => { this.isBasicMode = !this.isBasicMode; }
               }
+
             ]
           }
           
