@@ -37,6 +37,7 @@ import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunloc
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 
@@ -58,6 +59,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,
+    VolumeChangekeyFormComponent,
     ZvolFormComponent,
     VolumeImportWizardComponent,
     SnapshotListComponent,
