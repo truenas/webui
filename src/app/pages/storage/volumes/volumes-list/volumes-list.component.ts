@@ -144,18 +144,23 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
+      actions.push({
+        label: T("Change Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "changekey", row1.id]));
+        }
+      });
+
+    } else if (rowData.vol_encrypt === 1) {
+      actions.push({
+        label: T("Create Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "createkey", row1.id]));
+        }
+      });
     }
-
-
-
-
-    actions.push({
-      label: T("Create Passphrase"),
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "createkey", row1.id]));
-      }
-    });
 
     actions.push({
       label: T("Add Recovery Key"),
