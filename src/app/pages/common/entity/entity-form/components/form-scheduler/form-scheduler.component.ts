@@ -127,23 +127,23 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   public picker:boolean = false;
   private _textInput:string = '';
   public crontab:string = "custom";
-  private _preset:CronPreset;// = { label:"Custom", value:"* * * * * *"}; 
+  private _preset:CronPreset;// = { label:"Custom", value:"* * * * *"}; 
   public presets: CronPreset[] = [
     {
       label: "Hourly",
-      value: "0 0 * * * *"
+      value: "0 * * * *"
     },
     {
       label: "Daily",
-      value: "0 0 0 * * *"
+      value: "0 0 * * *"
     },
     {
       label: "Weekly",
-      value: "0 0 0 * * sun"
+      value: "0 0 * * sun"
     },
     {
       label: "Monthly",
-      value: "0 0 0 1 * *"
+      value: "0 0 1 * *"
     }
   ];
 
@@ -171,8 +171,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   set preset(p){
     if(p.value == "custom"){
-      this.crontab = "0 0 0 * * *";
-      this.convertPreset("0 0 0 * * *");
+      this.crontab = "0 0 * * *";
+      this.convertPreset("0 0 * * *");
       this._preset = {label:"Custom", value:this.crontab};
     } else {
       this.crontab = p.value;
@@ -229,13 +229,14 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     this.togglePopup();
     if(this.formControl){
       this.group.controls[this.config.name].setValue(this.crontab);
+      console.log(this.group.controls[this.config.name].value)
     }
     console.log(this.formControl);
   }
   togglePopup(){
     this.isOpen = !this.isOpen;
     if(this.crontab == "custom"){
-      this.crontab = "0 0 * * * *";
+      this.crontab = "0 * * * *";
       if(this.isOpen){
         setTimeout(() => {this.generateSchedule(this.minDate, this.maxDate);},500);
       }
@@ -254,7 +255,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
       endDate: max,
       iterator: true
     };
-    let interval = parser.parseExpression(this.crontab, options);
+    let interval = parser.parseExpression("0 " + this.crontab, options);
 
     while (true) {
       try {
@@ -485,7 +486,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   updateCronTab(preset?){
     this.crontab = "";
     if(!preset){
-      let result = "0" + " " + this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
+      //let result = "0" + " " + this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
+      let result = this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
       this.crontab = result;
     }
     if(this.minDate && this.maxDate){
@@ -495,16 +497,16 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
 
   convertPreset(value){
     let arr = value.split(" ");
-    this._minutes = arr[1];
-    this._hours = arr[2];
-    this._days = arr[3];
+    this._minutes = arr[0];
+    this._hours = arr[1];
+    this._days = arr[2];
 
     // Months
-    this.updateMonthsFields(arr[4]);
-    this._months = arr[4];
+    this.updateMonthsFields(arr[3]);
+    this._months = arr[3];
 
     // Days of Week
-    this.updateDaysOfWeekFields(arr[5]);
-    this._daysOfWeek = arr[5];
+    this.updateDaysOfWeekFields(arr[4]);
+    this._daysOfWeek = arr[4];
   }
 }

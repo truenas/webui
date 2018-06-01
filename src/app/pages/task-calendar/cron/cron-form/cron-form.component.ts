@@ -167,6 +167,8 @@ export class CronFormComponent implements OnInit {
      evt.stopPropagation();
      this.error = null;
      let value = _.cloneDeep(this.formGroup.value);
+     console.log("ONSUBMIT");
+     console.log(value);
 
      this.loader.open();
      if (this.isNew) {
