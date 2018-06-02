@@ -121,32 +121,6 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  customSubmit(value) {
-    console.log(value)
-    this.loader.open();
-    if (value.destroy === false) {
-      return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
-        console.log("restPostResp", restPostResp);
-        this.loader.close();
-        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
-        this.parentVolumesListComponent.repaintMe();
-      }, (res) => {
-        this.loader.close();
-        this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-      });
-    } else {
-      return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-        console.log("restPostResp", restPostResp);
-        this.loader.close();
-        this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
-        this.parentVolumesListComponent.repaintMe();
-      }, (res) => {
-        this.loader.close();
-        this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-      });
-    }
-  }
-
   getEncryptedActions(rowData: any) {
     const actions = [];
 
@@ -182,17 +156,6 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-<<<<<<< HEAD
-    }
-
-    actions.push({
-      label: T("Create Passphrase"),
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "createkey", row1.id]));
-      }
-    });
-=======
       actions.push({
         label: T("Change Passphrase"),
         onClick: (row1) => {
@@ -210,7 +173,6 @@ export class VolumesListTableConfig implements InputTableConf {
         }
       });
     }
->>>>>>> master
 
     actions.push({
       label: T("Add Recovery Key"),
@@ -283,8 +245,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
-          this.encryptedStatus = row1.vol_encryptkey;
-          this.isCustActionVisible('download_key');
+          let encryptedStatus = row1.vol_encryptkey;
 
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
@@ -303,7 +264,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 this encrypted pool, the data will be PERMANENTLY UNRECOVERABLE! \
                 Before detaching encrypted pools, download and safely\
                 store the recovery key."), 
-              isHidden: row1.vol_encryptkey !== '' ? false : true
+              isHidden: encryptedStatus !== '' ? false : true
             }, {
             type: 'checkbox',
               name: 'destroy',
@@ -315,6 +276,14 @@ export class VolumesListTableConfig implements InputTableConf {
               placeholder: T("Confirm detach"),
               required: true
             }],
+            isCustActionVisible(actionId: string) {
+              if (actionId == 'download_key' && encryptedStatus === '') {
+                return false;
+              } else {
+                return true;
+              }
+            },
+            saveButtonText: 'Detach',
             custActions: [
               {
                 id : 'download_key',
@@ -323,27 +292,32 @@ export class VolumesListTableConfig implements InputTableConf {
                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
                 }
-              },
-              {
-                id : 'detach',
-                type : 'submit',
-                name : 'Detach',
-                function : () => { 
-                  this.loader.open();
-                  console.log(row1);
-                  return this.rest.delete(this.resource_name + "/" + row1.name, { body: JSON.stringify({ destroy: row1.destroy }) }).subscribe((restPostResp) => {
+              }],
+              customSubmit: function submit(value) {
+                console.log(value)
+                // this.loader.open();
+                if (value.destroy === false) {
+                  return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
                     console.log("restPostResp", restPostResp);
-                    this.loader.close();
-                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
+                    // this.loader.close();
+                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
                     this.parentVolumesListComponent.repaintMe();
                   }, (res) => {
-                    this.loader.close();
+                    // this.loader.close();
                     this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
                   });
-                 }
+                } else {
+                  return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                    console.log("restPostResp", restPostResp);
+                    // this.loader.close();
+                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
+                    this.parentVolumesListComponent.repaintMe();
+                  }, (res) => {
+                    // this.loader.close();
+                    this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                  });
+                }
               }
-
-            ]
           }
           
           this.dialogService.dialogForm(conf).subscribe((res) => {
