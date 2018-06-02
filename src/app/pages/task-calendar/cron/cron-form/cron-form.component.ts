@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -23,7 +23,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['cron-form.component.css'],
   providers: [UserService]
 })
-export class CronFormComponent implements OnInit {
+export class CronFormComponent implements AfterViewInit {
 
    protected resource_name: string = 'tasks/cronjob';
    public route_success: string[] = ['tasks', 'cron'];
@@ -105,6 +105,8 @@ export class CronFormComponent implements OnInit {
      }
    ];
 
+   @ViewChild('form') form:EntityFormComponent;
+
    constructor(
      protected userService: UserService,
      protected router: Router, 
@@ -113,9 +115,9 @@ export class CronFormComponent implements OnInit {
      protected aroute: ActivatedRoute,
      protected loader: AppLoaderService,
      private core:CoreService
-   ) {}
+   ){}
 
-   ngOnInit(){
+   ngAfterViewInit(){
      this.init();
    }
 
@@ -136,12 +138,42 @@ export class CronFormComponent implements OnInit {
          this.pk = params['pk'];
          if (this.pk && !this.isNew) {
            // only enable advanced mode
-           } else {
-             this.isNew = true;
-           }
+         } else {
+           this.isNew = true;
+         }
+         this.postFetch();
        }
       });
-     this.generateFieldConfig();
+    }
+
+   postFetch(){
+     let cron_field = _.find(this.fieldSets[0].config, {'name': 'cron_picker'});
+     if(this.pk){
+       //console.log("Task ID = " + this.pk);
+       // Setup initial value
+       this.rest.get(this.resource_name + '/' + this.pk, {}).subscribe((res) => {
+         console.log("RESPONSE!");
+         console.log(res);
+         //this.form.formGroup.value.cron_picker = res.data.cron_minute + " " + res.data.cron_hour + " " + res.data.cron_daymonth + " " + res.data.cron_month + " " + res.data.cron_dayweek;
+         let newValue = res.data.cron_minute + " " + res.data.cron_hour + " " + res.data.cron_daymonth + " " + res.data.cron_month + " " + res.data.cron_dayweek;
+         let clone = Object.assign({}, this.form.formGroup.value);
+         //this.form.formGroup.value.cron_id = res.data.id;
+         this.form.formGroup.controls.cron_command.setValue(res.data.cron_command);
+         this.form.formGroup.controls.cron_description.setValue(res.data.cron_description);
+         this.form.formGroup.controls.cron_enabled.setValue(res.data.cron_enabled);
+         this.form.formGroup.controls.cron_picker.setValue(newValue);
+         this.form.formGroup.controls.cron_stderr.setValue(res.data.cron_stderr);
+         this.form.formGroup.controls.cron_stdout.setValue(res.data.cron_stdout);
+         this.form.formGroup.controls.cron_user.setValue(res.data.cron_user);
+         
+         //console.log(this.form.formGroup.value);
+         this.generateFieldConfig();
+       });
+     } else {
+       cron_field.value = "0 0 * * *";
+       this.generateFieldConfig();
+     }
+
    }
 
    generateFieldConfig(){

@@ -1,4 +1,4 @@
-import {Component,AfterViewInit,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2} from '@angular/core';
+import {Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, ChangeDetectorRef, SimpleChanges} from '@angular/core';
 import {FormGroup, FormControl} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -24,7 +24,7 @@ interface CronDate {
   templateUrl : './form-scheduler.component.html',
   styleUrls:['./form-scheduler.component.css']
 })
-export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnChanges{
+export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
   // Basic form-select props
   public config:FieldConfig;
@@ -36,6 +36,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
   @ViewChild('trigger') trigger: ElementRef;
   public isOpen:boolean = false;
   formControl = new FormControl();
+  private initialValue: string;
   private _currentValue:string;
   get currentValue(){
     return this.group.controls[this.config.name].value;
@@ -174,6 +175,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
       this.crontab = "0 0 * * *";
       this.convertPreset("0 0 * * *");
       this._preset = {label:"Custom", value:this.crontab};
+      console.log("Setting crontab to " + this.crontab);
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -185,7 +187,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2){
+  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef){
     //Set default value
     this.preset = this.presets[1];
     this._months = "*";
@@ -197,17 +199,23 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     this.activeDate = max; //Determines what month is displayed
   }
 
-  ngOnChanges(changes){
+  ngOnChanges(changes:SimpleChanges){
     if(changes.group){
-      //console.log(this.group);
+      console.log("CHANGE!!!");
+      console.log(this.group);
     }
   }
 
   ngOnInit(){
-    this.config.value = this.group.value[this.config.name];
   }
 
   ngAfterViewInit(){
+    this.cd.detectChanges();
+    console.log(this.group);
+    let clone = Object.assign({}, this.group);
+    this.config.value = this.group.value[this.config.name];
+    this.initialValue = this.group.value[this.config.name];
+    console.warn(this.initialValue);
     if(this.isOpen){ this.generateSchedule(this.minDate, this.maxDate);}
   }
 
@@ -221,22 +229,26 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, OnC
     this.togglePopup();
     if(this.formControl){
       this.group.controls[this.config.name].setValue(this.crontab);
-      console.log(this.group.controls[this.config.name].value)
+      console.log(this.group.controls[this.config.name].value);
     }
   }
   togglePopup(){
     this.isOpen = !this.isOpen;
-    if(this.crontab == "custom"){
-      this.crontab = "0 * * * *";
-      if(this.isOpen){
-        setTimeout(() => {this.generateSchedule(this.minDate, this.maxDate);},500);
-      }
+    if(this.isOpen){
+      console.log("isOpen");
+        //setTimeout(() => {
+          this.crontab = this.initialValue;//this.group.controls[this.config.name].value;
+          this.convertPreset(this.crontab); // <-- Test
+          this.generateSchedule(this.minDate, this.maxDate);
+          //console.log(this.group.controls[this.config.name]);
+          console.log(this.currentValue);
+          console.log(this.initialValue);
+        //},200);
     } else{
       if(this.isOpen){
         setTimeout(() => {this.updateCalendar();},500);
       }
     }
-    console.log(this.group.controls[this.config.name]);
   }
 
   private generateSchedule(min, max){
