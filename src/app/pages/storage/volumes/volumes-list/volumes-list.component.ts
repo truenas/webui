@@ -69,21 +69,8 @@ export class VolumesListTableConfig implements InputTableConf {
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
   public encryptedStatus: any;
-
-  public custActions: Array<any> = [
-    {
-      'id' : 'download_key',
-      'name' : 'Download Key',
-      // function : () => { this.isBasicMode = !this.isBasicMode; }
-    },
-    {
-      'id' : 'detach',
-      'name' : 'Detach',
-      function : () => { console.log('detach!'); }
-    }
-  ];
-  // activedirectory.component.tz
-
+  public custActions: Array<any> = [];
+ 
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -246,7 +233,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Detach"),
         onClick: (row1) => {
           let encryptedStatus = row1.vol_encryptkey;
-
+          console.log(this.loader)
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: [    { 
@@ -294,26 +281,24 @@ export class VolumesListTableConfig implements InputTableConf {
                 }
               }],
               customSubmit: function submit(value) {
-                console.log(value)
-                // this.loader.open();
+                console.log(this.loader)
+                this.loader.open();
                 if (value.destroy === false) {
-                  return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
-                    console.log("restPostResp", restPostResp);
-                    // this.loader.close();
-                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name);
+                  return this.rest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
+                    this.loader.close();
+                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
                     this.parentVolumesListComponent.repaintMe();
                   }, (res) => {
-                    // this.loader.close();
+                    this.loader.close();
                     this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
                   });
                 } else {
-                  return this.rest.delete(this.resource_name + "/" + value.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                    console.log("restPostResp", restPostResp);
-                    // this.loader.close();
-                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + value.name + T(". All data on that pool was destroyed."));
+                  return this.rest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                    this.loader.close();
+                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
                     this.parentVolumesListComponent.repaintMe();
                   }, (res) => {
-                    // this.loader.close();
+                    this.loader.close();
                     this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
                   });
                 }
