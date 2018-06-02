@@ -84,7 +84,7 @@ export class VolumesListTableConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService,
-    protected snackBar: MatSnackBar,
+    protected snackBar: MatSnackBar
   ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
@@ -241,7 +241,8 @@ export class VolumesListTableConfig implements InputTableConf {
             localLoader = this.loader,
             localRest = this.rest,
             localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService;
+            localDialogService = this.dialogService,
+            localDialogRef = this.dialogRef;
 
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
@@ -291,30 +292,31 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
             customSubmit: function (value) {
               localLoader.open();
-              if (value.destroy === false) {
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
-                  localLoader.close();
-                  localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
-                  localParentVol.repaintMe();
+              if (value.destroy === false) { 
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
+                  }).subscribe((res) => {
+                    localLoader.close();
+                    console.log(localDialogRef);
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
+                    localParentVol.repaintMe();
                 }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
                 });
               } else {
-                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  localLoader.close();
-                  localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
-                  localParentVol.repaintMe();
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
+                  }).subscribe((res) => {
+                    localLoader.close();
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + 
+                      T(". All data on that pool was destroyed."));
+                    localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
                   localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
                 });
               }
-
             }
-            
           }
-
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
               console.log('response is' + res)
@@ -324,6 +326,46 @@ export class VolumesListTableConfig implements InputTableConf {
           });
         }
       });
+
+      // detachPool() {
+      //   this.clearErrors();
+      //   let value = _.cloneDeep(this.formGroup.value);
+      //   this.loader.open();
+      //   if (this.conf.method_rest) {
+      //     if (value.destroy !== true){
+      //       this.rest.delete(this.conf.method_rest, {
+      //         body: JSON.stringify({ destroy: value.destroy })
+      //       }).subscribe(
+      //         (res) => {
+      //           this.loader.close();
+      //           this.dialogRef.close(true);
+      //         },
+      //         (res) => {
+      //           this.loader.close();
+      //           new EntityUtils().handleError(this, res);
+      //         }
+      //       );
+      //     } else {
+      //       this.rest.delete(this.conf.method_rest, {
+      //         body: JSON.stringify(value)
+      //       }).subscribe(
+      //         (res) => {
+      //           this.loader.close();
+      //           this.dialogRef.close(true);
+      //         },
+      //         (res) => {
+      //           this.loader.close();
+      //           new EntityUtils().handleError(this, res);
+      //         }
+      //       );
+    
+      //     }
+    
+      //   } else if (this.conf.method_ws) {
+      //     // ws call
+      //   }
+    
+      // }
 
       actions.push({
         label: T("Extend"),

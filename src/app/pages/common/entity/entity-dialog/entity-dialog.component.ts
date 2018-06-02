@@ -80,46 +80,6 @@ export class EntityDialogComponent implements OnInit {
     }
   }
 
-  detachPool() {
-    this.clearErrors();
-    let value = _.cloneDeep(this.formGroup.value);
-    this.loader.open();
-    if (this.conf.method_rest) {
-      if (value.destroy !== true){
-        this.rest.delete(this.conf.method_rest, {
-          body: JSON.stringify({ destroy: value.destroy })
-        }).subscribe(
-          (res) => {
-            this.loader.close();
-            this.dialogRef.close(true);
-          },
-          (res) => {
-            this.loader.close();
-            new EntityUtils().handleError(this, res);
-          }
-        );
-      } else {
-        this.rest.delete(this.conf.method_rest, {
-          body: JSON.stringify(value)
-        }).subscribe(
-          (res) => {
-            this.loader.close();
-            this.dialogRef.close(true);
-          },
-          (res) => {
-            this.loader.close();
-            new EntityUtils().handleError(this, res);
-          }
-        );
-
-      }
-
-    } else if (this.conf.method_ws) {
-      // ws call
-    }
-
-  }
-
   cancel() {
     this.dialogRef.close(false);
     this.clearErrors();
