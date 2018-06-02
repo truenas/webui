@@ -6,6 +6,7 @@ import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
 import {TooltipComponent} from '../tooltip/tooltip.component';
 
+import {Overlay, OverlayOrigin, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
 import * as parser from 'cron-parser';
 
@@ -22,7 +23,7 @@ interface CronDate {
 @Component({
   selector : 'form-scheduler',
   templateUrl : './form-scheduler.component.html',
-  styleUrls:['./form-scheduler.component.css']
+  styleUrls:['./form-scheduler.component.css'] 
 })
 export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
@@ -34,9 +35,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   @ViewChild('calendar', {read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar') calendarComp;
   @ViewChild('trigger') trigger: ElementRef;
+
   public isOpen:boolean = false;
   formControl = new FormControl();
-  private initialValue: string;
   private _currentValue:string;
   get currentValue(){
     return this.group.controls[this.config.name].value;
@@ -187,7 +188,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef){
+  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay){
     //Set default value
     this.preset = this.presets[1];
     this._months = "*";
@@ -207,15 +208,25 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   }
 
   ngOnInit(){
+    this.group.controls[this.config.name].valueChanges.subscribe((evt) => {
+      console.log("ValueCHANGED");
+      console.log(evt);
+      this.crontab = evt;
+    });
+
+    /*this.overlay.backdropClick.subscribe((evt) => {
+      this.togglePopup();
+    });*/
+    console.log(this.overlay);
   }
 
   ngAfterViewInit(){
     this.cd.detectChanges();
-    console.log(this.group);
+    /*console.log(this.group);
     let clone = Object.assign({}, this.group);
     this.config.value = this.group.value[this.config.name];
     this.initialValue = this.group.value[this.config.name];
-    console.warn(this.initialValue);
+    console.warn(this.initialValue);*/
     if(this.isOpen){ this.generateSchedule(this.minDate, this.maxDate);}
   }
 
@@ -232,22 +243,28 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
       console.log(this.group.controls[this.config.name].value);
     }
   }
+
+  backdropClicked(evt){
+    console.log(evt);
+    this.togglePopup();
+  }
+
   togglePopup(){
     this.isOpen = !this.isOpen;
     if(this.isOpen){
       console.log("isOpen");
-        //setTimeout(() => {
-          this.crontab = this.initialValue;//this.group.controls[this.config.name].value;
+        setTimeout(() => {
+          //this.crontab = this.initialValue;//this.group.controls[this.config.name].value;
           this.convertPreset(this.crontab); // <-- Test
           this.generateSchedule(this.minDate, this.maxDate);
           //console.log(this.group.controls[this.config.name]);
           console.log(this.currentValue);
-          console.log(this.initialValue);
-        //},200);
-    } else{
-      if(this.isOpen){
+        },200);
+    } else {
+
+      /*if(this.isOpen){
         setTimeout(() => {this.updateCalendar();},500);
-      }
+      }*/
     }
   }
 

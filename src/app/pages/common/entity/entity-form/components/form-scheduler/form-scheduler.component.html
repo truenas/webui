@@ -1,5 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden" >
+  <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let preset of presets" [value]="preset.value">
         {{ preset.label }}
@@ -13,11 +13,12 @@
     <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>
 
-<ng-template 
+<ng-template (backdropClick)="backdropClicked($event)"
+    [hasBackdrop]="isOpen"
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="isOpen">
-  <div  class="mat-card advanced-date-picker">
+  <div  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
       <h4 class="preview-label">Generated Schedule</h4>
       <mat-divider></mat-divider>
@@ -145,7 +146,7 @@
 
       <mat-divider></mat-divider>
 
-      <button mat-button color="accent" (click)="onPopupSave()" style="margin:9px;">Save Schedule</button>
+      <button mat-button color="accent" (click)="onPopupSave()" style="margin:9px;">Done</button>
     </div>
   </div>
 </ng-template>
