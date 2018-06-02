@@ -9,5 +9,9 @@
   <mat-input-container floatPlaceholder="never">
     <input matInput [value]="scrub_interval" #scrubIntervalEvent>
   </mat-input-container>
+  <div>
+    <button mat-button type="button" (click)="scrub()" mat-button color="primary">{{"Scrub" | translate}}</button>
+    <button mat-button type="button" (click)="goToStatus()" mat-button color="primary">{{"Status" | translate}}</button>
+  </div>
 </mat-card>
 <entity-table [title]="title" [conf]="this"></entity-table>
