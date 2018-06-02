@@ -70,7 +70,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public showDefaults: boolean = false;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
- 
+
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -100,8 +100,12 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
+  myFunction() {
+    console.log('Jimmy Messina! How\'s she blowin?');
+  }
+
   isCustActionVisible(actionname: string) {
-    if (actionname === 'download_key' && this.encryptedStatus !== '')  {
+    if (actionname === 'download_key' && this.encryptedStatus !== '') {
       return true;
     } else {
       return false;
@@ -228,34 +232,39 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-     
+
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
-          let encryptedStatus = row1.vol_encryptkey;
-          console.log(this.loader)
+
+          let encryptedStatus = row1.vol_encryptkey,
+            localLoader = this.loader,
+            localRest = this.rest,
+            localParentVol = this.parentVolumesListComponent,
+            localDialogService = this.dialogService;
+
           const conf: DialogFormConfiguration = {
             title: "Detatch pool: '" + row1.name + "'",
-            fieldConfig: [    { 
+            fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
                 Detaching a pool makes the data unavailable. \
                 Be sure that you understand the risks.\
-                In addition to detaching the pool you may also choose to destroy its data."), 
+                In addition to detaching the pool you may also choose to destroy its data."),
               isHidden: false
-            }, { 
+            }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: T("'" + row1.name + "' is encrypted!. If there is no passphrase for \
                 this encrypted pool, the data will be PERMANENTLY UNRECOVERABLE! \
                 Before detaching encrypted pools, download and safely\
-                store the recovery key."), 
+                store the recovery key."),
               isHidden: encryptedStatus !== '' ? false : true
             }, {
-            type: 'checkbox',
+              type: 'checkbox',
               name: 'destroy',
-              value : false,
+              value: false,
               placeholder: T("Destroy data on this pool?"),
             }, {
               type: 'checkbox',
@@ -273,47 +282,49 @@ export class VolumesListTableConfig implements InputTableConf {
             saveButtonText: 'Detach',
             custActions: [
               {
-                id : 'download_key',
-                name : 'DownloadKey',
-                function : () => { 
+                id: 'download_key',
+                name: 'DownloadKey',
+                function: () => {
                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;
                 }
               }],
-              customSubmit: function submit(value) {
-                console.log(this.loader)
-                this.loader.open();
-                if (value.destroy === false) {
-                  return this.rest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
-                    this.loader.close();
-                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
-                    this.parentVolumesListComponent.repaintMe();
-                  }, (res) => {
-                    this.loader.close();
-                    this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-                  });
-                } else {
-                  return this.rest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                    this.loader.close();
-                    this.dialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
-                    this.parentVolumesListComponent.repaintMe();
-                  }, (res) => {
-                    this.loader.close();
-                    this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-                  });
-                }
+            customSubmit: function (value) {
+              localLoader.open();
+              if (value.destroy === false) {
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) }).subscribe((restPostResp) => {
+                  localLoader.close();
+                  localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
+                  localParentVol.repaintMe();
+                }, (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                });
+              } else {
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  localLoader.close();
+                  localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + T(". All data on that pool was destroyed."));
+                  localParentVol.repaintMe();
+                }, (res) => {
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                });
               }
+
+            }
+            
           }
-          
+
           this.dialogService.dialogForm(conf).subscribe((res) => {
             if (res) {
+              console.log('response is' + res)
               this.parentVolumesListComponent.repaintMe();
               this.snackBar.open(row1.name + " has been detached.", 'close', { duration: 5000 });
             }
           });
         }
       });
-      
+
       actions.push({
         label: T("Extend"),
         onClick: (row1) => {
@@ -328,15 +339,15 @@ export class VolumesListTableConfig implements InputTableConf {
             if (res[0]) {
               if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
                 const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         this.snackBar.open(res.data, 'close', { duration: 5000 });
                       },
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         new EntityUtils().handleError(this, res);
                       });
@@ -344,15 +355,15 @@ export class VolumesListTableConfig implements InputTableConf {
                 });
               } else {
                 const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         this.snackBar.open(res.data, 'close', { duration: 5000 });
                       },
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         new EntityUtils().handleError(this, res);
                       });
@@ -535,7 +546,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
-    for (let i in data) { 
+    for (let i in data) {
 
       const dataObj = data[i];
 
@@ -576,7 +587,7 @@ export class VolumesListTableConfig implements InputTableConf {
       dataObj.comments = "";
       dataObj.compressratio = "";
 
-      for (let k in dataset_data2) { 
+      for (let k in dataset_data2) {
 
         if (dataset_data2[k].mountpoint === dataObj.nodePath) {
 
@@ -606,8 +617,8 @@ export class VolumesListTableConfig implements InputTableConf {
 
           if (dataset_data2[k].comments) {
             dataset_data2[k].comments.source !== "INHERITED"
-            ? dataObj.comments = (dataset_data2[k].comments.parsed)
-            : dataObj.comments = ("");            
+              ? dataObj.comments = (dataset_data2[k].comments.parsed)
+              : dataObj.comments = ("");
           }
         }
 
@@ -692,18 +703,18 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           this.zfsPoolRows.push(volume);
         });
-        
+
         this.zfsPoolRows = this.sorter.mySorter(this.zfsPoolRows, 'name');
 
         if (this.zfsPoolRows.length === 1) {
           this.expanded = true;
         }
 
-        this.paintMe = true; 
-        
+        this.paintMe = true;
+
         this.loader.close();
         this.showDefaults = true;
-        
+
       }, (res) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
@@ -712,7 +723,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.loader.close();
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
-    
+
   }
 
   ngAfterViewInit(): void {
