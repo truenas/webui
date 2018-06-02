@@ -37,15 +37,14 @@ export class JailWizardComponent {
   }];
 
   protected wizardConfig: Wizard[] = [{
-      label: T('Name the jail and choose a FreeBSD release.'),
+      label: T('Name Jail and Choose FreeBSD Release'),
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
           required: true,
           placeholder: T('Jail Name'),
-          tooltip: T('A Jail Name can only contain alphanumeric \
-                      characters (Aa-Zz 0-9), dashes (-), or \
-                      underscores (_).'),
+          tooltip: T('Required. Can only contain alphanumeric characters \
+                      Aa-Zz 0-9), dashes (-), or underscores (_).'),
           validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
         },
         {
@@ -53,22 +52,22 @@ export class JailWizardComponent {
           name: 'release',
           required: true,
           placeholder: T('Release'),
-          tooltip: T('Select the FreeBSD release to use as the jail \
-                      operating system. <br>\
-                      Releases already downloaded display <b>(fetched)</b>'),
+          tooltip: T('Choose the FreeBSD release to use as the jail \
+                      operating system. Releases that have already \
+                      been downloaded show <b>(fetched)</b>.'),
           options: [],
         },
       ]
     },
     {
-      label: T('Configure jail networking'),
+      label: T('Configure Networking'),
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
-          placeholder: T('DHCP autoconfigure IPv4'),
-          tooltip: T('Automatically configure the jail to use IPv4 \
-                      networking.\
-                      <br><b>VirtIO</b> must also be enabled.'),
+          placeholder: T('DHCP Autoconfigure IPv4'),
+          tooltip: T('Set to autoconfigure jail networking with the \
+                      Dynamic Host Configuration Protocol. <b>VirtIO</b> \
+                      is required.'),
       },
         {
           type: 'checkbox',
@@ -105,7 +104,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
                       <br>Enter <b>none</b> to configure the jail with \
                       no IPv4 default route. <br>\
                       <b>A jail without a default route will not be \
-                      able to access a network or the outside world.</b>'),
+                      able to access any networks.</b>'),
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -129,7 +128,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
                   <br>Enter <b>none</b> to configure the jail with no \
                   IPv6 default route. <br>\
                   <b>A jail without a default route will not be able \
-                  to access a network or the outside world.</b>'),
+                  to access any networks.</b>'),
         },
       ]
     },
@@ -211,11 +210,11 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
       if (res) {
-        this.summary[T('DHCP autoconfigure IPv4')] = 'Yes';
+        this.summary[T('DHCP Autoconfigure IPv4')] = 'Yes';
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
       } else {
-        this.summary[T('DHCP autoconfigure IPv4')] = 'No';
+        this.summary[T('DHCP Autoconfigure IPv4')] = 'No';
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
       }
     });

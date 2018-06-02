@@ -13,14 +13,12 @@ import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { TourService } from './services/tour.service';
 import { WebSocketService } from './services/ws.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [TourService]
 })
 export class AppComponent implements OnInit {
   appTitle = 'FreeNAS Material UI';
@@ -39,8 +37,7 @@ export class AppComponent implements OnInit {
     private animations: AnimationService,
     private core: CoreService,
     public preferencesService: PreferencesService,
-    public themeservice: ThemeService,
-    private tour: TourService) {
+    public themeservice: ThemeService) {
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";

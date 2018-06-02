@@ -22,7 +22,7 @@ export class JailListComponent implements OnInit {
   public selectedPool;
   public activatedPool: any;
   public availablePools: any = [];
-  public title = "Instances";
+  public title = "Jails";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';

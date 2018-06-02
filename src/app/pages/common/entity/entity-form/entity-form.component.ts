@@ -153,6 +153,19 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   ngOnInit() {
+    //get system general setting
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        if (this.conf.isBasicMode) {
+          if(res.advancedmode) {
+            this.conf.isBasicMode = false;
+          } else {
+            this.conf.isBasicMode = true;
+          }
+        }
+      }
+    });
+
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
@@ -268,7 +281,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
-                    this.data[i] = _.split(this.data[i], ',');
+                    if (this.data[i]) {
+                      this.data[i] = _.split(this.data[i], ',');
+                    }
                   }
                   fg.setValue(this.data[i]);
                 }

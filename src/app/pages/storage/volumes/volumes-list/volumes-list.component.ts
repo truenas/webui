@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
-import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -183,6 +182,7 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
+<<<<<<< HEAD
     }
 
     actions.push({
@@ -192,6 +192,25 @@ export class VolumesListTableConfig implements InputTableConf {
           ["storage", "pools", "createkey", row1.id]));
       }
     });
+=======
+      actions.push({
+        label: T("Change Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "changekey", row1.id]));
+        }
+      });
+
+    } else if (rowData.vol_encrypt === 1) {
+      actions.push({
+        label: T("Create Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "createkey", row1.id]));
+        }
+      });
+    }
+>>>>>>> master
 
     actions.push({
       label: T("Add Recovery Key"),
@@ -557,7 +576,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
-    for (let i in data) { // 16 loops right now (DELETE ME)
+    for (let i in data) { 
 
       const dataObj = data[i];
 
@@ -596,23 +615,35 @@ export class VolumesListTableConfig implements InputTableConf {
       dataObj.readonly = "";
       dataObj.dedup = "";
       dataObj.comments = "";
-      dataObj.compressionRatio = "";
+      dataObj.compressratio = "";
 
-      for (let k in dataset_data2) { // About 15 itmes, and we are already in a for/loop (DELETE ME) 
+      for (let k in dataset_data2) { 
 
         if (dataset_data2[k].mountpoint === dataObj.nodePath) {
 
-          dataset_data2[k].compression.source !== "INHERITED"
-            ? dataObj.compression = (dataset_data2[k].compression.parsed)
-            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+          if (dataset_data2[k].compression) {
+            dataset_data2[k].compression.source !== "INHERITED"
+              ? dataObj.compression = (dataset_data2[k].compression.parsed)
+              : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+          }
 
-          dataset_data2[k].readonly.source !== "INHERITED"
-            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          if (dataset_data2[k].compressratio) {
+            dataset_data2[k].compressratio.source !== "INHERITED"
+              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+              : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+          }
 
-          dataset_data2[k].deduplication.source !== "INHERITED"
-            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          if (dataset_data2[k].readonly) {
+            dataset_data2[k].readonly.source !== "INHERITED"
+              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+              : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          }
+
+          if (dataset_data2[k].deduplication) {
+            dataset_data2[k].deduplication.source !== "INHERITED"
+              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+              : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          }
 
           if (dataset_data2[k].comments) {
             dataset_data2[k].comments.source !== "INHERITED"

@@ -39,9 +39,9 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'uuid',
-      placeholder: T('Jail Name'),
-      tooltip: T('A Jail Name can only contain alphanumeric characters \
-                 (Aa-Zz 0-9), dashes (-), or underscores (_).'),
+      placeholder: T('Name'),
+      tooltip: T('Required. Can only contain alphanumeric characters \
+                  (Aa-Zz 0-9), dashes (-), or underscores (\_).'),
       required: true,
       validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
     },
@@ -49,9 +49,9 @@ export class JailAddComponent implements OnInit {
       type: 'select',
       name: 'release',
       placeholder: T('Release'),
-      tooltip: T('Select the FreeBSD release to use as the jail \
-                  operating system. <br>\
-                  Releases already downloaded display <b>(fetched)</b>.'),
+      tooltip: T('Choose the FreeBSD release to use as the jail \
+                  operating system. Releases that have already \
+                  been downloaded show <b>(fetched)</b>.'),
         options: [],
       required: true,
       validation: [ Validators.required ],
@@ -59,10 +59,10 @@ export class JailAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: T('DHCP autoconfigure IPv4'),
-      tooltip: T('Set to start the jail with the Dynamic Host \
-                  Configuration Protocol enabled. <b>VirtIO</b> and \
-                  <b>Berkeley Packet Filter</b> must also be enabled.'),
+      placeholder: T('DHCP Autoconfigure IPv4'),
+      tooltip: T('Set to autoconfigure jail networking with the \
+                  Dynamic Host Configuration Protocol. <b>VirtIO</b> \
+                  and <b>Berkeley Packet Filter<b> are also required.'),
     },
     {
       type: 'checkbox',
@@ -116,8 +116,7 @@ export class JailAddComponent implements OnInit {
                   <br>Enter <b>none</b> to configure the jail with \
                   no IPv4 default route. <br>\
                   <b>A jail without a default route will not be \
-                  able to access the network without additional \
-                  configuration.</b>'),
+                  able to access any networks.</b>'),
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -150,14 +149,13 @@ export class JailAddComponent implements OnInit {
                   <br>Enter <b>none</b> to configure the jail with \
                   no IPv4 default route. <br>\
                   <b>A jail without a default route will not be \
-                  able to access the network without additional \
-                  configuration.'),
+                  able to access any networks.'),
     },
     {
       type: 'input',
       name: 'notes',
-      placeholder: T('Note'),
-      tooltip: T('Save notes about the jail.'),
+      placeholder: T('Notes'),
+      tooltip: T('Enter any notes about the jail here.'),
     },
     {
       type: 'checkbox',
@@ -207,33 +205,30 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'exec_prestart',
-      placeholder: T('exec.prestart'),
-      tooltip: T('Commands to run in the system environment before a \
-                  jail is created.'),
+      placeholder: T('exec_prestart'),
+      tooltip: T('Commands to run in the system environment\
+                  before a jail is started.'),
     },
     {
       type: 'input',
       name: 'exec_poststart',
-      placeholder: T('exec.poststart'),
-      tooltip: T('Commands to run in the system environment after a \
-                  jail is created and any <b>exec.start</b> commands \
-                  are finished.'),
-    },
-    {
+      placeholder: T('exec_poststart'),
+      tooltip: T('Commands to run in the system environment after\
+                  a jail is started and after any <b>exec_start</b> \
+                  commands are finished.'),
+    }, {
       type: 'input',
       name: 'exec_prestop',
-      placeholder: T('exec.prestop'),
-      tooltip: T('Commands to run in the system environment before a \
-                  jail is removed.'),
-    },
-    {
+      placeholder: T('exec_prestop'),
+      tooltip: T('Commands to run in the system environment\
+                  before a jail is stopped.'),
+    }, {
       type: 'input',
       name: 'exec_poststop',
-      placeholder: T('exec.poststop'),
-      tooltip: T('Commands to run in the system environment after a \
-                  jail is removed.'),
-    },
-    {
+      placeholder: T('exec_poststop'),
+      tooltip: T('Commands to run in the system environment after\
+ a jail is stopped.'),
+    }, {
       type: 'checkbox',
       name: 'exec_clean',
       placeholder: T('exec.clean'),
@@ -249,33 +244,27 @@ export class JailAddComponent implements OnInit {
     {
       type: 'input',
       name: 'exec_timeout',
-      placeholder: T('exec.timeout'),
-      tooltip: T('Maximum amount of time in seconds to wait for a \
-                  command to complete. A jail cannot be created or \
-                  removed when a command is still running after the \
-                  allotted time.'),
-    },
-    {
+      placeholder: T('exec_timeout'),
+      tooltip: T('Maximum amount of time in seconds to wait for \
+                  a command to complete. If a command is still running \
+                  after the allotted time, the jail is terminated.'),
+    }, {
       type: 'input',
       name: 'stop_timeout',
-      placeholder: T('stop.timeout'),
-      tooltip: T('Maximum amount of time in seconds to wait for jail \
-                  processes to exit after sending a SIGTERM signal. \
-                  The timeout starts after <b>exec.stop</b> commands \
-                  have completed. When time is up the jail is removed, \
-                  killing any remaining processes. When set to \
-                  <i>0</i>, no SIGTERM is sent and the jail is \
-                  immediately removed. The default timeout is 10 \
-                  seconds.'),
-    },
-    {
+      placeholder: T('stop_timeout'),
+      tooltip: T('Maximum amount of time in seconds to wait for \
+                  jail processes to exit after sending a SIGTERM signal. This \
+                  happens after any <b>exec_stop</b> commands are complete. \
+                  After the specified time, the jail is removed, killing any \
+                  remaining processes. If set to <i>0</i>, no SIGTERM is sent \
+                  and the jail is removed immediately.'),
+    }, {
       type: 'input',
       name: 'exec_jail_user',
-      placeholder: T('exec.jail_user'),
-      tooltip: T('Run commands in the jail as this user. By default, \
-                  commands are run as the current user.'),
-    },
-    {
+      placeholder: T('exec_jail_user'),
+      tooltip: T('Enter either <i>root</i> or another valid <i>username</i>. \
+                  Inside the jail, commands run as this user.'),
+    }, {
       type: 'input',
       name: 'exec_system_jail_user',
       placeholder: T('exec.system_jail_user'),
@@ -583,11 +572,11 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'interfaces',
       placeholder: T('interfaces'),
-      tooltip: T('List up to four interface configurations in the \
-                  format <i>interface:bridge</i>, separated by a comma \
-                  (,). The left value is the virtual VNET interface \
-                  name and the right value is the bridge name where \
-                  the virtual interface is attached.'),
+      tooltip: T('Enter up to four interface configurations in the format \
+                  <i>interface:bridge</i>, separated by a comma (,). The \
+                  left value is the virtual VNET interface name and the \
+                  right value is the bridge name where the virtual interface \
+                  should be attached.'),
     },
     {
       type: 'input',
@@ -607,11 +596,10 @@ export class JailAddComponent implements OnInit {
       type: 'input',
       name: 'exec_fib',
       placeholder: T('exec.fib'),
-      tooltip: T('<a \
+      tooltip: T('This number selects the routing table (<a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=setfib&sektion=1&apropos=0&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
-                  target="_blank">FIB </a> \
-                  (routing table) to set when running commands inside \
-                  the jail.'),
+                  target="_blank">FIB</a>) \
+                  used when running commands inside the jail.'),
 //There is SETFIB(1) that is network related, and SETFIB(2) that
 //is system call related. As this tooltip is under the jail
 //networking section, I went with SETFIB(1) the network related
@@ -827,7 +815,7 @@ export class JailAddComponent implements OnInit {
  //      type: 'input',
  //      name: 'memoryuse',
  //      placeholder: T('memoryuse'),
- //      tooltip: T('Define the resident set size in bytes. See <a\
+ //      tooltip: T('Resident set size in bytes. See <a\
  // href="https://www.freebsd.org/cgi/man.cgi?query=rctl&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  // target="_blank">RCTL(8)</a> for more details.'),
  //    },
@@ -841,7 +829,7 @@ export class JailAddComponent implements OnInit {
  //      type: 'checkbox',
  //      name: 'cpuset',
  //      placeholder: T('cpuset'),
- //      tooltip: T('Define the jail CPU affinity. Options are <i>off</i> or\
+ //      tooltip: T('Jail CPU affinity. Options are <i>off</i> or\
  // a combination of <i>1-4</i>, separated by commas (,). <b>Example:</b>\
  // <i>1,2,3,4</i>'),
  //    },
@@ -857,66 +845,66 @@ export class JailAddComponent implements OnInit {
  //      type: 'checkbox',
  //      name: 'memorylocked',
  //      placeholder: T('memorylocked'),
- //      tooltip: T('Define in bytes the amount of locked memory for the jail.'),
+ //      tooltip: T('Amount of locked memory in bytes for the jail.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'vmemoryuse',
  //      placeholder: T('vmemoryuse'),
- //      tooltip: T('Define in bytes the address space limit for the jail.'),
+ //      tooltip: T('Address space limit in bytes for the jail.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'maxproc',
  //      placeholder: T('maxproc'),
- //      tooltip: T('Enter a number to define the maximum number of processes\
+ //      tooltip: T('Maximum number of processes\
  // for the jail.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'cputime',
  //      placeholder: T('cputime'),
- //      tooltip: T('Define the maximium amount of CPU time a jail process\
- // may consume. The kernel will terminate processes exceeding the defined\
+ //      tooltip: T('Maximum amount of CPU time a jail process\
+ // may consume. The kernel terminates processes exceeding the specified\
  // limit.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'datasize',
  //      placeholder: T('datasize'),
- //      tooltip: T('Define the jail data size in bytes.'),
+ //      tooltip: T('Jail data size in bytes.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'stacksize',
  //      placeholder: T('stacksize'),
- //      tooltip: T('Define the jail stack size in bytes.'),
+ //      tooltip: T('Jail stack size in bytes.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'coredumpsize',
  //      placeholder: T('coredumpsize'),
- //      tooltip: T('Define the jail core dump size in bytes.'),
+ //      tooltip: T('Jail core dump size in bytes.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'openfiles',
  //      placeholder: T('openfiles'),
- //      tooltip: T('Enter a numeric value to define the file descriptor\
+ //      tooltip: T('Numeric value to set the file descriptor\
  // table size.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'pseudoterminals',
  //      placeholder: T('pseudoterminals'),
- //      tooltip: T('Enter a numeric value for the number of PTYs available\
+ //      tooltip: T('Numeric value for the number of PTYs available\
  // to the jail.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'swapuse',
  //      placeholder: T('swapuse'),
- //      tooltip: T('Enter a numeric value to define the maximum swap use for\
+ //      tooltip: T('Maximum swap space to use for\
  // the jail.'),
  //    },
  //    {
@@ -930,27 +918,27 @@ export class JailAddComponent implements OnInit {
  //      type: 'checkbox',
  //      name: 'msgqqueued',
  //      placeholder: T('msgqqueued'),
- //      tooltip: T('Define the number of queued SysV messages allowed for\
+ //      tooltip: T('Number of queued SysV messages allowed for\
  // the jail.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'msgqsize',
  //      placeholder: T('msgqsize'),
- //      tooltip: T('Define in bytes the maximum SysV message queue size for\
+ //      tooltip: T('Maximum SysV message queue size in bytes for\
  // the jail.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'nmsgq',
  //      placeholder: T('nmsgq'),
- //      tooltip: T('Define the maximum number of SysV message queues.'),
+ //      tooltip: T('Maximum number of SysV message queues.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'nsemop',
  //      placeholder: T('nsemop'),
- //      tooltip: T('Define the number of SysV semaphores modified in a single\
+ //      tooltip: T('Number of SysV semaphores modified in a single\
  // <a\
  // href="https://www.freebsd.org/cgi/man.cgi?query=semop&sektion=2&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
  // target="_blank">semop(2)</a> call.'),
@@ -959,19 +947,19 @@ export class JailAddComponent implements OnInit {
  //      type: 'checkbox',
  //      name: 'nshm',
  //      placeholder: T('nshm'),
- //      tooltip: T('Enter the number of SysV shared memory segments.'),
+ //      tooltip: T('Number of SysV shared memory segments.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'shmsize',
  //      placeholder: T('shmsize'),
- //      tooltip: T('Define in bytes the number of SysV shared memory segments.'),
+ //      tooltip: T('Number of SysV shared memory segments in bytes.'),
  //    },
  //    {
  //      type: 'checkbox',
  //      name: 'wallclock',
  //      placeholder: T('wallclock'),
- //      tooltip: T('Define in seconds the wallclock time.'),
+ //      tooltip: T('Wallclock time in seconds.'),
  //    },
   ];
 

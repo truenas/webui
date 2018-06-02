@@ -14,6 +14,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 @Component({
   selector: 'app-alertservice',
   templateUrl: './alert-service.component.html',
+  styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService]
 })
 export class AlertServiceComponent implements OnInit {
@@ -344,6 +345,8 @@ export class AlertServiceComponent implements OnInit {
   public settingFormGroup: any;
   public settingEnabled: boolean = false;
 
+  public fieldSets: any;
+
   constructor(protected router: Router,
     protected route: ActivatedRoute,
     protected rest: RestService,
@@ -373,6 +376,31 @@ export class AlertServiceComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.fieldSets = [
+      {
+        name:'FallBack',
+        class:'fallback',
+        width:'100%',
+        divider:false,
+        fieldConfig: this.fieldConfig,
+        emailFieldConfig: this.emailFieldConfig,
+        snmpTrapFieldConfig: this.snmpTrapFieldConfig,
+        slackFieldConfig: this.slackFieldConfig,
+        awssnsFieldConfig: this.awssnsFieldConfig,
+        influxdbFieldConfig: this.influxdbFieldConfig,
+        mattermostFieldConfig: this.mattermostFieldConfig,
+        opsgenieFieldConfig: this.opsgenieFieldConfig,
+        htpchatFieldConfig: this.htpchatFieldConfig,
+        pagerdutyFieldConfig: this.pagerdutyFieldConfig,
+        victoropsFieldConfig: this.victoropsFieldConfig,
+        settingFieldConfig: this.settingFieldConfig,
+      },
+      {
+        name:'divider',
+        divider:true,
+        width:'100%'
+      }
+    ];
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.emailFormGroup = this.entityFormService.createFormGroup(this.emailFieldConfig);

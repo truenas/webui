@@ -13,7 +13,7 @@ export const routes: Routes = [
     {
       path: '',
       component: JailListComponent,
-      data: { title: 'Instances', breadcrumb: 'Instances'}
+      data: { title: 'Jails', breadcrumb: 'Jails'}
     }, {
       path: 'add',
       component: JailAddComponent,

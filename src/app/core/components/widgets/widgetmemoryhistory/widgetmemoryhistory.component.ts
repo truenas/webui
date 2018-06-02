@@ -11,6 +11,10 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector: 'widget-memory-history',
   templateUrl:'./widgetmemoryhistory.component.html'
@@ -18,10 +22,10 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 export class WidgetMemoryHistoryComponent extends WidgetComponent implements AfterViewInit,OnDestroy {
 
   @ViewChild('chartMem') chartMem: ViewChartLineComponent;
-  public title:string = "Memory Usage";
+  public title:string = T("Memory Usage");
 
-  constructor(){
-    super();
+  constructor(public translate: TranslateService){
+    super(translate);
   }
 
   ngOnDestroy(){

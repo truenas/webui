@@ -6,6 +6,8 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { Validators } from '@angular/forms';
 
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector: 'app-group-form',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -20,30 +22,30 @@ export class KerberosRealmsFormComponent {
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'krb_realm',
-      placeholder: 'Realm',
-      tooltip: 'Enter the name of the realm.',
+      placeholder: T('Realm'),
+      tooltip: T('Enter the name of the realm.'),
       required: true,
       validation : [ Validators.required ]
     },
     {
       type: 'input',
       name: 'krb_kdc',
-      placeholder: 'KDC',
-      tooltip: 'Enter the name of the Key Distribution Center.'
+      placeholder: T('KDC'),
+      tooltip: T('Enter the name of the Key Distribution Center.')
     },
     {
       type: 'input',
       name: 'krb_admin_server',
-      placeholder: 'Admin Server',
-      tooltip: 'Define the server where all changes to the database are\
-                performed.'
+      placeholder: T('Admin Server'),
+      tooltip: T('Define the server where all changes to the database are\
+                performed.')
     },
     {
       type: 'input',
       name: 'krb_kpasswd_server',
-      placeholder: 'Password Server',
-      tooltip: 'Define the server where all password changes are\
-                performed.'
+      placeholder: T('Password Server'),
+      tooltip: T('Define the server where all password changes are\
+                performed.')
     },
   ];
 

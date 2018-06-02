@@ -24,7 +24,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
    userTheme:string; // Theme name
    customThemes?: Theme[]; 
    favoriteThemes?: string[]; // Theme Names
-   showGuide:boolean; // Guided Tour on/off
    showTooltips:boolean; // Form Tooltips on/off
    metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
 
@@ -64,15 +63,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnChanges {
             options:[{label:'Cards',value:'cards'},{label:'Tables',value:'tables'},{label:'Auto',value:'auto'}],
             value:'cards',
             tooltip: 'Choose your preferred view type.',
-          },
-          { 
-            type: 'checkbox', 
-            name: 'showGuide', 
-            width:'300px',
-            placeholder: 'Enable Guided Tour on Startup',
-            value:this.prefs.preferences.showGuide,
-            tooltip: 'Choose whether you\'d like to see the guide upon logging in.',
-            class:'inline'
           },
           { 
             type: 'checkbox', 
