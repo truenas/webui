@@ -100,10 +100,6 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  myFunction() {
-    console.log('Jimmy Messina! How\'s she blowin?');
-  }
-
   isCustActionVisible(actionname: string) {
     if (actionname === 'download_key' && this.encryptedStatus !== '') {
       return true;
@@ -241,10 +237,9 @@ export class VolumesListTableConfig implements InputTableConf {
             localLoader = this.loader,
             localRest = this.rest,
             localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService,
-            localDialogRef = this.dialogRef;
+            localDialogService = this.dialogService
 
-          const conf: DialogFormConfiguration = {
+          const conf: DialogFormConfiguration = { 
             title: "Detatch pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
@@ -296,8 +291,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
                   }).subscribe((res) => {
                     localLoader.close();
-                    console.log(localDialogRef);
-                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name);
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + "'");
                     localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
@@ -307,8 +301,8 @@ export class VolumesListTableConfig implements InputTableConf {
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
                   }).subscribe((res) => {
                     localLoader.close();
-                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool ") + row1.name + 
-                      T(". All data on that pool was destroyed."));
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
+                      T("'. All data on that pool was destroyed."));
                     localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
@@ -316,56 +310,11 @@ export class VolumesListTableConfig implements InputTableConf {
                 });
               }
             }
+            
           }
-          this.dialogService.dialogForm(conf).subscribe((res) => {
-            if (res) {
-              console.log('response is' + res)
-              this.parentVolumesListComponent.repaintMe();
-              this.snackBar.open(row1.name + " has been detached.", 'close', { duration: 5000 });
-            }
-          });
+          this.dialogService.dialogForm(conf);
         }
       });
-
-      // detachPool() {
-      //   this.clearErrors();
-      //   let value = _.cloneDeep(this.formGroup.value);
-      //   this.loader.open();
-      //   if (this.conf.method_rest) {
-      //     if (value.destroy !== true){
-      //       this.rest.delete(this.conf.method_rest, {
-      //         body: JSON.stringify({ destroy: value.destroy })
-      //       }).subscribe(
-      //         (res) => {
-      //           this.loader.close();
-      //           this.dialogRef.close(true);
-      //         },
-      //         (res) => {
-      //           this.loader.close();
-      //           new EntityUtils().handleError(this, res);
-      //         }
-      //       );
-      //     } else {
-      //       this.rest.delete(this.conf.method_rest, {
-      //         body: JSON.stringify(value)
-      //       }).subscribe(
-      //         (res) => {
-      //           this.loader.close();
-      //           this.dialogRef.close(true);
-      //         },
-      //         (res) => {
-      //           this.loader.close();
-      //           new EntityUtils().handleError(this, res);
-      //         }
-      //       );
-    
-      //     }
-    
-      //   } else if (this.conf.method_ws) {
-      //     // ws call
-      //   }
-    
-      // }
 
       actions.push({
         label: T("Extend"),
@@ -726,7 +675,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
 
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
-      this.loader.open();
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
@@ -754,15 +702,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
         this.paintMe = true;
 
-        this.loader.close();
         this.showDefaults = true;
 
       }, (res) => {
-        this.loader.close();
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
-      this.loader.close();
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
