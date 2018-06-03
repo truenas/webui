@@ -53,13 +53,13 @@
           <input matInput placeholder="Seconds">
           </mat-form-field>-->
           <mat-form-field>
-            <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes">
+            <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
           </mat-form-field>
           <mat-form-field>
-            <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours">
+            <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
           </mat-form-field>
           <mat-form-field>
-            <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days">
+            <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
           </mat-form-field>
       </section>
       <mat-divider></mat-divider>
@@ -146,7 +146,7 @@
 
       <mat-divider></mat-divider>
 
-      <button mat-button color="accent" (click)="onPopupSave()" style="margin:9px;">Done</button>
+      <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">Done</button>
     </div>
   </div>
 </ng-template>

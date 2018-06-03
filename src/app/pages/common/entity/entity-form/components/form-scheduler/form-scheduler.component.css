@@ -120,6 +120,10 @@ ul.schedule-list li:nth-child(odd){
   margin-top:4px;
 }
 
+.cron-fields .invalid{
+  color:var(--red) !important;
+}
+
 /*Button Toggle Group*/
 .cron-fields mat-button-toggle-group{
   margin:16px 0;

@@ -1,5 +1,5 @@
 import {Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, ChangeDetectorRef, SimpleChanges} from '@angular/core';
-import {FormGroup, FormControl} from '@angular/forms';
+import {FormGroup, FormControl, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -36,6 +36,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   @ViewChild('calendar') calendarComp;
   @ViewChild('trigger') trigger: ElementRef;
 
+  // Popup Controls
+  /*public minutesCtl = new FormControl('', [Validators.required, Validators.pattern]);
+  public hoursCtl = new FormControl('', [Validators.required, Validators.pattern]);
+  public daysCtl = new FormControl('', [Validators.required, Validators.pattern]);*/
+
   public isOpen:boolean = false;
   formControl = new FormControl();
   private _currentValue:string;
@@ -46,6 +51,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   private _minutes:string = "0";
   private _hours:string = "*";
   private _days:string = "*";
+  // Validity
+  public validMinutes:boolean = true;
+  public validHours:boolean = true;
+  public validDays:boolean = true;
+
 
   private _jan:boolean;
   private _feb:boolean;
@@ -74,13 +84,43 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   private _daysOfWeek:string = "*";
 
   get minutes(){ return this._minutes}
-  set minutes(val){ this._minutes = val; this.updateCronTab()}
+  set minutes(val){
+    let pattern = new RegExp("^([0-9]|[1-5][0-9]|[*]|[*]\/[0-9]|[*]\/[0-9][0-9])$");
+    if(pattern.test(val)){ 
+      this.validMinutes = true;
+      this._minutes = val; 
+      this.updateCronTab();
+    } else {
+      console.warn("minutes invalid");
+      this.validMinutes = false;
+    }
+  }
 
   get hours(){ return this._hours}
-  set hours(val){ this._hours = val; this.updateCronTab()}
+  set hours(val){ 
+    let pattern = new RegExp("^([0-9]|1[0-9]|2[0-3]|[*]|[*]\/[0-9]|[*]\/[0-9][0-9])$");
+    if(pattern.test(val)){ 
+    this.validHours = true;
+    this._hours = val; 
+    this.updateCronTab();
+    } else {
+      console.warn("hours invalid");
+      this.validHours = false;
+    }
+  }
 
   get days(){ return this._days}
-  set days(val){ this._days = val; this.updateCronTab()}
+  set days(val){ 
+    let pattern = new RegExp("^([0-9]|1[0-9]|2[0-9]|3[0-1]|[*]|[*]\/[0-9]|[*]\/[0-9][0-9])$");
+    if(pattern.test(val)){ 
+      this.validDays = true;
+      this._days = val; 
+      this.updateCronTab();
+    } else {
+      console.warn("days invalid");
+      this.validDays = false;
+    }
+  }
 
   get jan(){ return this._jan}
   set jan(val){this._jan = val; this.formatMonths();}
@@ -233,6 +273,15 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   onChangeOption($event) {
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
+    }
+  }
+
+  validPopup(){
+    // Assigned to disabled attribute
+    if(this.validMinutes === false || this.validHours === false || this.validDays === false){
+      return true;
+    } else {
+      return false;
     }
   }
 
