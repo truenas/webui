@@ -33,6 +33,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
   public manufacturer:string = '';
+  public buildDate:string;
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
@@ -44,6 +45,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
       //DEBUG: console.log("******** SysInfo ********");
       //DEBUG: console.log(evt.data);
       this.data = evt.data;
+
+      let build = new Date(this.data.buildtime[0]['$date']);
+      let year = build.getUTCFullYear();
+      let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
+      let month = months[build.getUTCMonth()];
+      let day = build.getUTCDate();
+      let hours = build.getUTCHours();
+      let minutes = build.getUTCMinutes();
+      this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
+
       this.memory = this.formatMemory(this.data.physmem, "GB");
       if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
         this.manufacturer = "ixsystems";
