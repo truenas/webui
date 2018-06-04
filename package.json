@@ -68,6 +68,7 @@
     "classlist.js": "1.1.20150312",
     "commander": "2.13.0",
     "core-js": "2.5.3",
+    "cron-parser": "2.5.0",
     "d3": "4.12.2",
     "date-fns": "1.29.0",
     "devextreme": "17.2.5",

@@ -27,6 +27,10 @@ export class VdevComponent implements OnInit {
   public selected: Array < any > = [];
   public id: number;
   public size;
+  public rawSize = 0;
+  public firstdisksize;
+  public error;
+  public diskSizeErrorMsg = T('Mixing disks of different sizes in a vdev is not recommended.');
   public vdev_type_tooltip = T('Choose a <i>Stripe</i>, <i>Mirror</i>,\
                                 or <i>Raid-Z</i> configuration for the\
                                 chosen disk layout. See the <a\
@@ -64,6 +68,7 @@ export class VdevComponent implements OnInit {
     this.disks = [...this.disks];
     this.guessVdevType();
     this.estimateSize();
+    this.manager.getCurrentLayout();
   }
 
   guessVdevType() {
@@ -83,13 +88,22 @@ export class VdevComponent implements OnInit {
   }
 
   estimateSize() {
+    this.error = null;
+    this.firstdisksize = 0;
     let totalsize = 0;
     let smallestdisk = 0;
     let estimate = 0;
-    let swapsize = 2 * 1024 * 1024 * 1024;
+    const swapsize = 2 * 1024 * 1024 * 1024;
     for (let i = 0; i < this.disks.length; i++) {
-      let size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
-      if (i === 0 || this.disks[i].real_capacity < smallestdisk) {
+      const size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
+      if (i === 0) {
+        smallestdisk = size;
+        this.firstdisksize = size;
+      }
+      if (size !== smallestdisk) {
+        this.error = this.diskSizeErrorMsg;
+      }
+      if (this.disks[i].real_capacity < smallestdisk) {
         smallestdisk = size;
       }
     }
@@ -106,6 +120,7 @@ export class VdevComponent implements OnInit {
       estimate = totalsize; // stripe
     }
 
+    this.rawSize =estimate;
     this.size = (<any>window).filesize(estimate, {standard : "iec"});
   }
 
@@ -134,7 +149,12 @@ export class VdevComponent implements OnInit {
 
   onTypeChange(e) {
     this.estimateSize();
+    this.manager.getCurrentLayout();
     //console.log(e, this.group);
+  }
+
+  getRawSize() {
+    return this.rawSize;
   }
 
   remove() {

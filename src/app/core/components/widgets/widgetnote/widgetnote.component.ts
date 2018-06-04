@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { MaterialModule } from 'app/appMaterial.module';
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'widget-note',
@@ -14,11 +17,11 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 export class WidgetNoteComponent extends WidgetComponent implements OnInit, AfterViewInit {
 
   @Input() noteData:any = "";
-  public title = "Note";
+  public title = T("Note");
   public flipDirection = "horizontal";
 
-  constructor(public router: Router){
-    super();
+  constructor(public router: Router, public translate: TranslateService){
+    super(translate);
     this.configurable = true;
   }
 

@@ -32,7 +32,27 @@ export class DockerVMWizardComponent {
   objectKeys = Object.keys;
   summary_title = "Docker Summary";
 
-  protected wizardConfig: Wizard[] = [{
+  protected wizardConfig: Wizard[] = [
+    {
+      label: T('Select VM wizard type'),
+      fieldConfig: [
+
+        {
+          type: 'select',
+          name: 'wizard_type',
+          required: true,
+          placeholder: T('Virtual Machine (VM) Wizard type.'),
+          tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
+          options: [
+            {label: 'Virtual Machine (VM)', value: 'vm'},
+            {label: 'Docker', value: 'docker'},
+          ],
+          validation : [ Validators.required ],
+          value: 'docker'
+        },
+      ]
+    },
+    {
       label: 'Docker VM details',
       fieldConfig: [
       { type: 'input',
@@ -186,52 +206,58 @@ export class DockerVMWizardComponent {
 
   afterInit(entityWizard: EntityWizardComponent) {
 
+    ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
+      if (res === 'vm') {
+        this.router.navigate(new Array('/').concat(['vm','wizard']))
+      }
+    });
+
     this.networkService.getAllNicChoices().subscribe((res) => {
-      this.nic_attach = _.find(this.wizardConfig[2].fieldConfig, {'name' : 'nic_attach'});
+      this.nic_attach = _.find(this.wizardConfig[3].fieldConfig, {'name' : 'nic_attach'});
       res.forEach((item) => {
         this.nic_attach.options.push({label : item[1], value : item[0]});
       });
-      ( < FormGroup > entityWizard.formArray.get([2])).controls['nic_attach'].setValue(
+      ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'].setValue(
         this.nic_attach.options[0].value
       )
 
     });
     this.ws.call('notifier.choices', [ 'VM_NICTYPES' ]).subscribe((res) => {
-          this.nicType = _.find(this.wizardConfig[2].fieldConfig, {name : "NIC_type"});
+          this.nicType = _.find(this.wizardConfig[3].fieldConfig, {name : "NIC_type"});
           res.forEach((item) => {
             this.nicType.options.push({label : item[1], value : item[0]});
           });
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['NIC_type'].setValue(
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type'].setValue(
           this.nicType.options[0].value
         )
         });
 
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['NIC_mac'].setValue(mac_res);
+        ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
       });
 
-    ( < FormGroup > entityWizard.formArray.get([0]).get('name')).valueChanges.subscribe((name) => {
+    ( < FormGroup > entityWizard.formArray.get([1]).get('name')).valueChanges.subscribe((name) => {
       this.summary[T('Name')] = name;
-      this.summary[T('Number of CPU')] = ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').value;
+      this.summary[T('Number of CPU')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
 
-      ( < FormGroup > entityWizard.formArray.get([1])).get('vcpus').valueChanges.subscribe((vcpus) => {
+      ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPU')] = vcpus;
       });
-      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([1])).get('memory').value + ' Mib';
-      ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
+      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' Mib';
+      ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' Mib';
       });
-      ( < FormGroup > entityWizard.formArray.get([3])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
-        ( < FormGroup > entityWizard.formArray.get([3])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
+      ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
+        ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
           this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });
-      ( < FormGroup > entityWizard.formArray.get([3])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
-        ( < FormGroup > entityWizard.formArray.get([3])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
+      ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
+        ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
           this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });
-      this.summary[T('RAW file size')] = ( < FormGroup > entityWizard.formArray.get([3])).get('size').value + ' Gib';
+      this.summary[T('RAW file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' Gib';
     });
   }
   getRndInteger(min, max) {

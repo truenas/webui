@@ -49,7 +49,6 @@
                   <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                     <div class="headerCheckboxCellManager">
                       <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
-                                  <!-- &nbsp character needed to fix checkbox alignment on mozila-->
                     </div>
                   </ng-template>
           
@@ -106,9 +105,12 @@
           </div>
         </div>
       </div>
+      <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
+      <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
+      <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
       <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="buttons">
-        <button mat-raised-button name="create-button" class="btn btn-primary" (click)="doSubmit()" color="primary" [disabled]="!name">{{"Create" | translate }}</button>
+        <button mat-raised-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button mat-raised-button class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
         <button mat-raised-button class="btn btn-accent" (click)="addVdev('data')">{{"Add Data" | translate}}</button>
         <button [disabled]="vdevs.cache.length > 0" mat-raised-button class="btn btn-accent" (click)="addVdev('cache')">{{"Add Cache" | translate}}</button>

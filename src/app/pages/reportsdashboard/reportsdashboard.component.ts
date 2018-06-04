@@ -9,7 +9,8 @@ import {
 } from '../../services/';
 import { PageEvent } from '@angular/material';
 import { ErdService } from 'app/services/erd.service';
-
+import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../translate-marker';
 
 interface TabChartsMappingData {
   keyName: string;
@@ -46,7 +47,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   
 
 
-  constructor(private _lineChartService: LineChartService, private erdService: ErdService) {
+  constructor(private _lineChartService: LineChartService, private erdService: ErdService, public translate: TranslateService) {
     
   }
 
@@ -91,51 +92,51 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     // For every one of these map entries.. You see one tab in the UI With the charts collected for that tab
     map.set("CPU", {
-      keyName: "CPU",
+      keyName: T("CPU"),
       chartConfigData: [],
       paginatedChartConfigData: []
 
     });
 
     map.set("Disk", {
-      keyName: "Disk",
+      keyName: T("Disk"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Memory", {
-      keyName: "Memory",
+      keyName: T("Memory"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Network", {
-      keyName: "Network",
+      keyName: T("Network"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
 
     map.set("Partition", {
-      keyName: "Partition",
+      keyName: T("Partition"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("System", {
-      keyName: "System",
+      keyName: T("System"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("Target", {
-      keyName: "Target",
+      keyName: T("Target"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
 
     map.set("ZFS", {
-      keyName: "ZFS",
+      keyName: T("ZFS"),
       chartConfigData: [],
       paginatedChartConfigData: []
     });
@@ -216,10 +217,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     let foundTabChartsMappingData: TabChartsMappingData = null;
 
     for (const item of this.tabChartsMappingDataArray) {
-      if (name === item.keyName) {
-        foundTabChartsMappingData = item;
+      //fixme: using keynames for tab values is stupid and doesn't work well with translations
+      if (foundTabChartsMappingData !== null) {
         break;
       }
+      this.translate.get(item.keyName).subscribe((keyName) => {
+        if (name === keyName) {
+          foundTabChartsMappingData = item;
+        }
+      });
     }
     return foundTabChartsMappingData;
   }

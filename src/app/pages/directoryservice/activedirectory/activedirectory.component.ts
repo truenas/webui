@@ -6,6 +6,7 @@ import {RestService, SystemGeneralService, WebSocketService} from '../../../serv
 import {FieldConfig} from '../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../services/';
 import { Validators } from '@angular/forms';
+import { T } from "../../../translate-marker";
 
 @Component({
   selector : 'app-activedirectory',
@@ -15,7 +16,7 @@ import { Validators } from '@angular/forms';
 export class ActiveDirectoryComponent {
   protected resource_name = 'directoryservice/activedirectory';
   protected isBasicMode = true;
-  protected idmapBacked: any;
+  protected idmapBacked: any = null;
   protected ad_certificate: any;
   protected ad_kerberos_realm: any;
   protected ad_kerberos_principal: any;
@@ -37,14 +38,14 @@ export class ActiveDirectoryComponent {
     },
     {
       'id' : 'edit_idmap',
-      'name' : 'Edit Idmap',
+      'name' : T('Edit Idmap'),
       function : () => {
         this.router.navigate(new Array('').concat(['directoryservice','idmap', this.idmapBacked, 'activedirectory']));
       }
     },
     {
       'id' : 'ds_clearcache',
-      'name' : 'Rebuild Directory Service Cache',
+      'name' : T('Rebuild Directory Service Cache'),
        function : async () => {
          this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
           this.dialogservice.Info("Active Directory", "The cache is being rebuilt.");
@@ -58,239 +59,239 @@ export class ActiveDirectoryComponent {
     {
       type : 'input',
       name : 'ad_domainname',
-      placeholder : 'Domain Name',
-      tooltip : 'Enter the Active Directory domain (<i>example.com</i>)\
-                 or child domain (<i>sales.example.com</i>).',
+      placeholder : T('Domain Name'),
+      tooltip : T('Enter the Active Directory domain (<i>example.com</i>)\
+                 or child domain (<i>sales.example.com</i>).'),
       required: true,
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'ad_bindname',
-      placeholder : 'Domain Account Name',
-      tooltip : 'Enter Active Directory administrator account name.',
+      placeholder : T('Domain Account Name'),
+      tooltip : T('Enter Active Directory administrator account name.'),
     },
     {
       type : 'input',
       name : 'ad_bindpw',
-      placeholder : 'Domain Account Password',
-      tooltip : 'Enter the administrator account password.',
+      placeholder : T('Domain Account Password'),
+      tooltip : T('Enter the administrator account password.'),
       inputType : 'password'
     },
     {
       type : 'input',
       name : 'ad_monitor_frequency',
-      placeholder : 'Connectivity Check',
-      tooltip : 'Enter how often in seconds for the system to verify\
-                 Active Directory services are functioning.',
+      placeholder : T('Connectivity Check'),
+      tooltip : T('Enter how often in seconds for the system to verify\
+                 Active Directory services are functioning.'),
     },
     {
       type : 'input',
       name : 'ad_recover_retry',
-      placeholder : 'Recovery Attempts',
-      tooltip : 'Enter a number of times to attempt reconnecting to the\
+      placeholder : T('Recovery Attempts'),
+      tooltip : T('Enter a number of times to attempt reconnecting to the\
                  Active directory server. Tries forever when set to\
-                 <i>0</i>.',
+                 <i>0</i>.'),
     },
     {
       type : 'checkbox',
       name : 'ad_enable_monitor',
-      placeholder : 'Enable AD Monitoring',
-      tooltip : 'Set to restart Active Directory automatically if the\
-                 service disconnects.',
+      placeholder : T('Enable AD Monitoring'),
+      tooltip : T('Set to restart Active Directory automatically if the\
+                 service disconnects.'),
     },
     {
       type : 'select',
       name : 'ad_ssl',
-      placeholder : 'Encryption Mode',
-      tooltip : 'Choose between <i>Off</i>, <a\
+      placeholder : T('Encryption Mode'),
+      tooltip : T('Choose between <i>Off</i>, <a\
                  href="http://info.ssl.com/article.aspx?id=10241"\
                  target="_blank">SSL</a> or <a\
                  href="https://hpbn.co/transport-layer-security-tls/"\
-                 target="_blank">TLS</a>.',
+                 target="_blank">TLS</a>.'),
       options : []
     },
     {
       type : 'select',
       name : 'ad_certificate',
-      placeholder : 'Certificate',
-      tooltip : 'Select the certificate of the Active Directory server\
+      placeholder : T('Certificate'),
+      tooltip : T('Select the certificate of the Active Directory server\
                  if SSL connections are used. Add a certificate here by\
                  creating a <a href="guide" target="_blank">CA</a> then\
                  a certificate on the Active Directory server. Import\
                  the certificate to this system with the <a\
-                 href="guide" target="_blank">Certificates</a> menu.',
+                 href="guide" target="_blank">Certificates</a> menu.'),
       options : []
     },
     {
       type : 'checkbox',
       name : 'ad_verbose_logging',
-      placeholder : 'Verbose logging',
-      tooltip : 'Set to log attempts to join the domain to\
-                 <b>/var/log/messages</b>.',
+      placeholder : T('Verbose logging'),
+      tooltip : T('Set to log attempts to join the domain to\
+                 <b>/var/log/messages</b>.'),
     },
     {
       type : 'checkbox',
       name : 'ad_unix_extensions',
-      placeholder : 'UNIX extensions',
-      tooltip : '<b>Only</b> set if the AD server is explicitly\
+      placeholder : T('UNIX extensions'),
+      tooltip : T('<b>Only</b> set if the AD server is explicitly\
                  configured to map permissions for UNIX users. Setting\
                  provides persistent UIDs and GUIDs. Leave unset to map\
                  users and groups to the UID or GUID range configured in\
-                 Samba.',
+                 Samba.'),
     },
     {
       type : 'checkbox',
       name : 'ad_allow_trusted_doms',
-      placeholder : 'Allow Trusted Domains',
-      tooltip : 'Set when the network has active <a\
+      placeholder : T('Allow Trusted Domains'),
+      tooltip : T('Set when the network has active <a\
                  href="https://technet.microsoft.com/en-us/library/cc757352(WS.10).aspx"\
                  target="_blank">domain/forest trusts</a> and managing\
                  files on multiple domains is required. Setting will\
                  generate more winbind traffic and slow down filtering\
-                 through user/group info.',
+                 through user/group info.'),
     },
     {
       type : 'checkbox',
       name : 'ad_use_default_domain',
-      placeholder : 'Use Default Domain',
-      tooltip : 'Unset to prepend the domain name to the username.\
+      placeholder : T('Use Default Domain'),
+      tooltip : T('Unset to prepend the domain name to the username.\
                  Unset to prevent name collisions when <b>Allow Trusted\
                  Domains</b> is set and multiple domains use the same\
-                 username.',
+                 username.'),
     },
     {
       type : 'checkbox',
       name : 'ad_allow_dns_updates',
-      placeholder : 'Allow DNS updates',
-      tooltip : 'Set to enable Samba to do DNS updates when joining a\
-                 domain.',
+      placeholder : T('Allow DNS updates'),
+      tooltip : T('Set to enable Samba to do DNS updates when joining a\
+                 domain.'),
     },
     {
       type : 'checkbox',
       name : 'ad_disable_freenas_cache',
-      placeholder : 'Disable FreeNAS Cache',
-      tooltip : 'Set to disable caching AD users and groups. This can\
+      placeholder : T('Disable FreeNAS Cache'),
+      tooltip : T('Set to disable caching AD users and groups. This can\
                  help when unable to bind to a domain with a large\
-                 number of users or groups.',
+                 number of users or groups.'),
     },
     {
       type : 'input',
       name : 'ad_userdn',
-      placeholder : 'User Base',
-      tooltip : 'Enter the Distinguished Name (DN) of the user container\
-                 in the Active Directory.',
+      placeholder : T('User Base'),
+      tooltip : T('Enter the Distinguished Name (DN) of the user container\
+                 in the Active Directory.'),
     },
     {
       type : 'input',
       name : 'ad_groupdn',
-      placeholder : 'Group Base',
-      tooltip : 'Enter the Distinguished Name (DN) of the group\
-                 container in the Active Directory.',
+      placeholder : T('Group Base'),
+      tooltip : T('Enter the Distinguished Name (DN) of the group\
+                 container in the Active Directory.'),
     },
     {
       type : 'input',
       name : 'ad_site',
-      placeholder : 'Site Name',
-      tooltip : 'Enter the relative distinguished name of the\
-                 site object in the Active Directory.',
+      placeholder : T('Site Name'),
+      tooltip : T('Enter the relative distinguished name of the\
+                 site object in the Active Directory.'),
     },
     {
       type : 'input',
       name : 'ad_dcname',
-      placeholder : 'Domain Controller',
-      tooltip : 'This is automatically added to the SRV record for the\
+      placeholder : T('Domain Controller'),
+      tooltip : T('This is automatically added to the SRV record for the\
                  domain. When multiple controllers are specified, this\
                  system selects the closest responding controller. Use a\
-                 short form of the FQDN: <i>exampleserver</i>.',
+                 short form of the FQDN: <i>exampleserver</i>.'),
     },
     {
       type : 'input',
       name : 'ad_gcname',
-      placeholder : 'Global Catalog Server',
-      tooltip : 'Ensure the hostname of the global catalog server to use\
-                 is resolvable.',
+      placeholder : T('Global Catalog Server'),
+      tooltip : T('Ensure the hostname of the global catalog server to use\
+                 is resolvable.'),
     },
     {
       type : 'select',
       name : 'ad_kerberos_realm',
-      placeholder : 'Kerberos Realm',
-      tooltip : 'Select the realm created in <a href="guide"\
-                 target="_blank">Kerberos Realms</a>.',
+      placeholder : T('Kerberos Realm'),
+      tooltip : T('Select the realm created in <a href="guide"\
+                 target="_blank">Kerberos Realms</a>.'),
       options : []
     },
     {
       type : 'select',
       name : 'ad_kerberos_principal',
-      placeholder : 'Kerberos Principal',
-      tooltip : 'Select the keytab created in <a href="guide"\
-                 target="_blank">Kerberos Keytabs</a>.',
+      placeholder : T('Kerberos Principal'),
+      tooltip : T('Select the keytab created in <a href="guide"\
+                 target="_blank">Kerberos Keytabs</a>.'),
       options : []
     },
     {
       type : 'input',
       name : 'ad_timeout',
-      placeholder : 'AD Timeout',
-      tooltip : 'Increase number of seconds before timeout if the AD\
+      placeholder : T('AD Timeout'),
+      tooltip : T('Increase number of seconds before timeout if the AD\
                  service does not immediately start after connecting to\
-                 the domain.',
+                 the domain.'),
     },
     {
       type : 'input',
       name : 'ad_dns_timeout',
-      placeholder : 'DNS Timeout',
-      tooltip : 'Increase the number of seconds before a timeout occurs\
-                 if AD DNS queries timeout.',
+      placeholder : T('DNS Timeout'),
+      tooltip : T('Increase the number of seconds before a timeout occurs\
+                 if AD DNS queries timeout.'),
     },
     {
       type : 'select',
       name : 'ad_idmap_backend',
-      placeholder : 'Idmap backend',
-      tooltip : 'Choose the backend to map Windows security\
+      placeholder : T('Idmap backend'),
+      tooltip : T('Choose the backend to map Windows security\
                  identifiers (SIDs) to UNIX UIDs and GIDs. Click\
-                 <b>Edit</b> to configure that backend.',
+                 <b>Edit</b> to configure that backend.'),
       options : []
     },
     {
       type : 'select',
       name : 'ad_nss_info',
-      placeholder : 'Winbind NSS Info',
-      tooltip : 'Choose the schema to use when querying AD for\
+      placeholder : T('Winbind NSS Info'),
+      tooltip : T('Choose the schema to use when querying AD for\
                  user/group info. <i>rfc2307</i> uses the schema support\
                  included in Windows 2003 R2, <i>sfu</i> is for\
                  Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for\
-                 Service For Unix 2.0.',
+                 Service For Unix 2.0.'),
       options : []
     },
     {
       type : 'select',
       name : 'ad_ldap_sasl_wrapping',
-      placeholder : 'SASL wrapping',
-      tooltip : 'Choose how LDAP traffic is transmitted. Choices are\
+      placeholder : T('SASL wrapping'),
+      tooltip : T('Choose how LDAP traffic is transmitted. Choices are\
                  <i>plain</i> (plain text), <i>sign</i> (signed only),\
                  or <i>seal</i> (signed and encrypted). Windows 2000 SP3\
                  and newer can be configured to enforce signed LDAP\
-                 connections.',
+                 connections.'),
       options : []
     },
     {
       type : 'checkbox',
       name : 'ad_enable',
-      placeholder : 'Enable',
-      tooltip : 'Set to enable the Active Directory service.',
+      placeholder : T('Enable'),
+      tooltip : T('Set to enable the Active Directory service.'),
     },
     {
       type : 'input',
       name : 'ad_netbiosname_a',
       placeholder : 'Netbios Name',
-      tooltip : 'Limited to 15 characters. It <b>must</b> differ from\
-                 the <i>Workgroup</i> name.',
+      tooltip : T('Limited to 15 characters. It <b>must</b> differ from\
+                 the <i>Workgroup</i> name.'),
     },
     {
       type : 'input',
       name : 'ad_netbiosalias',
-      placeholder : 'NetBIOS alias',
-      tooltip : 'Limited to 15 characters.',
+      placeholder : T('NetBIOS alias'),
+      tooltip : T('Limited to 15 characters.'),
     }
   ];
 
@@ -329,8 +330,6 @@ export class ActiveDirectoryComponent {
     }
     return true;
   }
-
-
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -396,7 +395,30 @@ export class ActiveDirectoryComponent {
     });
 
     entityEdit.formGroup.controls['ad_idmap_backend'].valueChanges.subscribe((res)=> {
-      this.idmapBacked = res;
-    })
+      if ((this.idmapBacked != null) && (this.idmapBacked != res)) {
+        this.dialogservice.confirm(T("Active Directory IDMAP change!"),
+          T("<font color='red'>STOP</font>: Do you know what you are doing? <br><br>\
+          The idmap_ad plugin provides a way for Winbind to read id mappings from \
+          an AD server that uses RFC2307/SFU schema extensions. This module \
+          implements only the \"idmap\" API, and is READONLY. Mappings must be \
+          provided in advance by the administrator by adding the uidNumber \
+          attributes for users and gidNumber attributes for groups in the AD. \
+          Winbind will only map users that have a uidNumber and whose primary \
+          group have a gidNumber attribute set. It is however recommended that \
+          all groups in use have gidNumber attributes assigned, otherwise they \
+          are not working. <br><br>\
+          <font color='red'>STOP</font>: If your Active Directory is not \
+          configured for this, it will not work. <br>")).subscribe(
+        (confirm) => {
+          if (confirm) {
+            this.idmapBacked = res;
+          } else {
+            entityEdit.formGroup.controls['ad_idmap_backend'].setValue(this.idmapBacked);
+          }
+        });
+      } else {
+        this.idmapBacked = res;
+      }
+    });
   }
 }

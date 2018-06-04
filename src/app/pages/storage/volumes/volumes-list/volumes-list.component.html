@@ -59,14 +59,14 @@
               </div>
             </div>
 
-            <dxi-column dataField='usedStr' [width]="Used" cellTemplate="cellTemplateusedStr"></dxi-column>
+            <dxi-column dataField='used ' [width]="Used" cellTemplate="cellTemplateusedStr"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplateusedStr'">
               <div class="panel_container" id="row_usedStr_{{rowData.data.name}}">
                 {{rowData.data.usedStr}}
               </div>
             </div>
 
-            <dxi-column dataField='availStr' [width]="Avail" cellTemplate="cellTemplateavailStr"></dxi-column>
+            <dxi-column dataField='available' [width]="Avail" cellTemplate="cellTemplateavailStr"></dxi-column>
             <div *dxTemplate="let rowData of 'cellTemplateavailStr'">
               <div class="panel_container" id="row_availStr_{{rowData.data.name}}">
                 {{rowData.data.availStr}}
@@ -77,6 +77,13 @@
             <div *dxTemplate="let rowData of 'cellTemplatecompression'">
               <div class="panel_container" id="row_compression_{{rowData.data.name}}">
                 {{rowData.data.compression}}
+              </div>
+            </div>
+
+            <dxi-column dataField='compression Ratio' [width]="Compression" cellTemplate="cellTemplatecompressionratio"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatecompressionratio'">
+              <div class="panel_container" id="row_compression_ratio_{{rowData.data.name}}">
+                {{rowData.data.compressratio}}
               </div>
             </div>
             
@@ -95,10 +102,10 @@
               </div>
             </div>
             
-            <dxi-column dataField='path' [width]="Path" cellTemplate="cellTemplatepath"></dxi-column>
-            <div *dxTemplate="let rowData of 'cellTemplatepath'">
-              <div class="panel_container" id="row_path_{{rowData.data.name}}">
-                {{rowData.data.path}}
+            <dxi-column dataField='comments' [width]="Comments" cellTemplate="cellTemplatecomments"></dxi-column>
+            <div *dxTemplate="let rowData of 'cellTemplatecomments'">
+              <div class="panel_container" id="row_comments_{{rowData.data.name}}">
+                {{rowData.data.comments}}
               </div>
             </div>
             
@@ -120,7 +127,7 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <div *ngIf="zfsPoolRows.length < 1">
+  <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
     <mat-card>
       <mat-card-content name="no_pools">
         {{"No pools" | translate}}

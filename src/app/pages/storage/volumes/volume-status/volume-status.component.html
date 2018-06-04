@@ -6,6 +6,7 @@
   </div>
   <div>
     <mat-list *ngIf="poolScan">
+      <mat-list-item><b>{{poolScan.function}}</b></mat-list-item>
       <mat-list-item>Status: {{poolScan.state ? poolScan.state : 'None requested'}}</mat-list-item>
       <mat-list-item *ngIf="poolScan.errors != null">Errors: {{poolScan.errors}}</mat-list-item>
       <mat-list-item *ngIf="poolScan.start_time != null">Date: {{getReadableDate(poolScan.start_time)}}</mat-list-item>

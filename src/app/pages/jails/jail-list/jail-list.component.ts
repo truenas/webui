@@ -22,11 +22,13 @@ export class JailListComponent implements OnInit {
   public selectedPool;
   public activatedPool: any;
   public availablePools: any = [];
-  public title = "Instances";
+  public title = "Jails";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
+  protected route_add = ["jails", "wizard"];
+  protected route_add_tooltip = "Add Jail";
 
   public columns: Array < any > = [
     { name: 'Jail', prop: 'host_hostuuid' },
@@ -257,24 +259,6 @@ export class JailListComponent implements OnInit {
         }
       }
     ]
-  }
-
-  getAddActions() {
-    return [{
-        label: 'Add Jail',
-        icon: 'add',
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["jails", "add"]));
-        }
-      },{
-        label: "Jail Wizard",
-        icon: "beach_access",
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["jails", "wizard"]));
-        }
-      }]
   }
 
   getSelectedNames(selectedJails) {

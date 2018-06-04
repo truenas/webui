@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/';
-import { TourService } from '../../../../services/tour.service';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -13,13 +12,13 @@ import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey
 import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-
+import { MatSnackBar } from '@angular/material';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-
+import { StorageService } from '../../../../services/storage.service'
 
 
 export interface ZfsPoolData {
@@ -49,6 +48,8 @@ export interface ZfsPoolData {
   children?: any[];
   dataset_data?: any;
   actions?: any[];
+  comments?: string;
+  compressionRatio?: any;
   volumesListTableConfig?: VolumesListTableConfig;
 
 }
@@ -74,7 +75,8 @@ export class VolumesListTableConfig implements InputTableConf {
     protected ws: WebSocketService,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
-    protected translate: TranslateService) {
+    protected translate: TranslateService,
+    protected snackBar: MatSnackBar) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -132,7 +134,7 @@ export class VolumesListTableConfig implements InputTableConf {
           }
         });
 
-      } else  {
+      } else {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
@@ -142,18 +144,23 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
+      actions.push({
+        label: T("Change Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "changekey", row1.id]));
+        }
+      });
+
+    } else if (rowData.vol_encrypt === 1) {
+      actions.push({
+        label: T("Create Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "createkey", row1.id]));
+        }
+      });
     }
-
-
-
-
-    actions.push({
-      label: T("Create Passphrase"),
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "createkey", row1.id]));
-      }
-    });
 
     actions.push({
       label: T("Add Recovery Key"),
@@ -207,6 +214,14 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
+  getPoolData(poolId: number) {
+    return this.ws.call('pool.query', [
+      [
+        ["id", "=", poolId]
+      ]
+    ]);
+  }
+
   getActions(rowData: any) {
     let rowDataPathSplit = [];
     if (rowData.path) {
@@ -227,6 +242,48 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "pools", "manager", row1.id]));
+        }
+      });
+      actions.push({
+        label: T("Scrub Pool"),
+        onClick: (row1) => {
+          this.getPoolData(row1.id).subscribe((res) => {
+            if (res[0]) {
+              if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
+                const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                  if (res) {
+                    this.loader.open();
+                    this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                      (res)=> {
+                        this.loader.close();
+                        this.snackBar.open(res.data, 'close', { duration: 5000 });
+                      },
+                      (res)=> {
+                        this.loader.close();
+                        new EntityUtils().handleError(this, res);
+                      });
+                  }
+                });
+              } else {
+                const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                  if (res) {
+                    this.loader.open();
+                    this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
+                      (res)=> {
+                        this.loader.close();
+                        this.snackBar.open(res.data, 'close', { duration: 5000 });
+                      },
+                      (res)=> {
+                        this.loader.close();
+                        new EntityUtils().handleError(this, res);
+                      });
+                  }
+                });
+              }
+            }
+          })
         }
       });
       actions.push({
@@ -365,7 +422,7 @@ export class VolumesListTableConfig implements InputTableConf {
             if (confirmed === true) {
               this.loader.open();
 
-                this.ws.call('pool.dataset.delete',[row1.path]).subscribe((wsResp) => {
+              this.ws.call('pool.dataset.delete', [row1.path]).subscribe((wsResp) => {
                 this.loader.close();
                 this.parentVolumesListComponent.repaintMe();
 
@@ -394,14 +451,15 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
 
     data = new EntityUtils().flattenData(data);
+    const dataset_data2 = this.datasetData;
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
-    for (let i = 0; i < data.length; i++) {
+    for (let i in data) { 
+
       const dataObj = data[i];
 
       dataObj.nodePath = dataObj.mountpoint;
@@ -423,7 +481,6 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.parentPath = "0";
       }
 
-
       try {
         dataObj.availStr = (<any>window).filesize(dataObj.avail, { standard: "iec" });
       } catch (error) {
@@ -438,17 +495,45 @@ export class VolumesListTableConfig implements InputTableConf {
 
       dataObj.compression = "";
       dataObj.readonly = "";
-      dataObj.dedub = "";
+      dataObj.dedup = "";
+      dataObj.comments = "";
+      dataObj.compressratio = "";
 
-      if (dataObj.type === 'dataset' && typeof (dataObj.dataset_data) !== "undefined" && typeof (dataObj.dataset_data.data) !== "undefined") {
-        for (let k = 0; k < dataObj.dataset_data.data.length; k++) {
-          if (dataObj.dataset_data.data[k].name === dataObj.nodePath) {
-            dataObj.compression = dataObj.dataset_data.data[k].compression;
-            dataObj.readonly = dataObj.dataset_data.data[k].readonly;
-            dataObj.dedup = dataObj.dataset_data.data[k].dedup;
+      for (let k in dataset_data2) { 
+
+        if (dataset_data2[k].mountpoint === dataObj.nodePath) {
+
+          if (dataset_data2[k].compression) {
+            dataset_data2[k].compression.source !== "INHERITED"
+              ? dataObj.compression = (dataset_data2[k].compression.parsed)
+              : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
           }
 
+          if (dataset_data2[k].compressratio) {
+            dataset_data2[k].compressratio.source !== "INHERITED"
+              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+              : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+          }
+
+          if (dataset_data2[k].readonly) {
+            dataset_data2[k].readonly.source !== "INHERITED"
+              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+              : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          }
+
+          if (dataset_data2[k].deduplication) {
+            dataset_data2[k].deduplication.source !== "INHERITED"
+              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+              : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          }
+
+          if (dataset_data2[k].comments) {
+            dataset_data2[k].comments.source !== "INHERITED"
+            ? dataObj.comments = (dataset_data2[k].comments.parsed)
+            : dataObj.comments = ("");            
+          }
         }
+
       }
 
       dataObj.actions = this.getActions(dataObj);
@@ -472,20 +557,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
 
   actionComponent = {
     getActions: (row) => {
       return this.conf.getActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar)
   };
 
   actionEncryptedComponent = {
     getActions: (row) => {
       return (<VolumesListTableConfig>this.conf).getEncryptedActions(row);
     },
-    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate)
+    conf: new VolumesListTableConfig(this, this.router, "", "Pools", {}, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar)
   };
 
   expanded = false;
@@ -494,10 +579,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService) {
+    protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
+    public sorter: StorageService, protected snackBar: MatSnackBar) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
   }
-
+  public showDefaults: boolean = false;
   public repaintMe() {
     this.paintMe = false;
     this.ngOnInit();
@@ -509,11 +595,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
 
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
+      this.loader.open();
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
-          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate);
+          volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
           volume.type = 'zpool';
-
 
           try {
             volume.availStr = (<any>window).filesize(volume.avail, { standard: "iec" });
@@ -528,16 +614,23 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           this.zfsPoolRows.push(volume);
         });
+        
+        this.zfsPoolRows = this.sorter.mySorter(this.zfsPoolRows, 'name');
 
         if (this.zfsPoolRows.length === 1) {
           this.expanded = true;
         }
 
-        this.paintMe = true;
+        this.paintMe = true; 
+        this.showDefaults = true;
+        this.loader.close();
+        
       }, (res) => {
+        this.loader.close();
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
+      this.loader.close();
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 

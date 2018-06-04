@@ -4,7 +4,7 @@
 </p>
 <mat-card class="form-card">
     <div class="mat-content">
-        <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
+        <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm" *ngIf="showDefaults">
            <!-- <ng-container *ngFor="let field of fieldConfig; let i = index">
                 <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{i}}">
                     <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">

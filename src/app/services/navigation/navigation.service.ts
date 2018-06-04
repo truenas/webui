@@ -166,7 +166,7 @@ export class NavigationService {
       icon: 'apps',
       state: 'jails',
       // sub: [
-      //   { name: 'Instances', state: 'jails' },
+      //   { name: 'Jails', state: 'jails' },
       //   // {name: 'Storage', state: 'storage'},
       //   // {name: 'Templates', state: 'templates'},
       //   // {name: 'Configuration', state: 'configuration'},

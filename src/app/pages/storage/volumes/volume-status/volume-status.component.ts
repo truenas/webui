@@ -216,13 +216,13 @@ export class VolumeStatusComponent implements OnInit {
         label: "Remove",
         onClick: (row) => {
           this.dialogService.confirm(
-            "Offline",
+            "Remove",
             "Are your sure you want to remove the disk " + _.split(row.name, 'p')[0],
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
               let value = { label: row.path };
-              this.rest.post('storage/volume/' + this.pk + '/detach/', {
+              this.rest.post('storage/volume/' + this.pk + '/remove/', {
                 body: JSON.stringify(value)
               }).subscribe(
                 (res) => {
