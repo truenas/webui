@@ -53,6 +53,7 @@
       (sort)='reorderEvent($event)'
       [selectionType]="'checkbox'"
       [selected]='selected'
+      [scrollbarH]="true"
       (select)='onSelect($event)'>
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
