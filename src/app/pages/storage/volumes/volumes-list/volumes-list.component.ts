@@ -138,11 +138,129 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "unlock", row1.id]));
+            this.dialogService.confirm(T("Unlock"), T("Passphrase") + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+                this.loader.open();
+                this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
+
+                }, (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
+                });
+              }
+            });
           }
         });
       }
+          // customSubmit(value) {
+          //   this.loader.open();
+          //   return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
+          //     console.log("restPostResp", restPostResp);
+          //     this.loader.close();
+        
+          //     this.router.navigate(new Array('/').concat(
+          //       this.route_success));
+        
+          //   }, (res) => {
+          //     this.loader.close();
+          //     this.dialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
+          //   });
+          // }
+
+          // onClick: (row1) => {
+          //   this._router.navigate(new Array('/').concat(
+          //     ["storage", "pools", "unlock", row1.id]));
+          // }
+
+    //       actions.push({
+    //         label: T("Detach"),
+    //         onClick: (row1) => {
+    
+    //           let encryptedStatus = row1.vol_encryptkey,
+    //             localLoader = this.loader,
+    //             localRest = this.rest,
+    //             localParentVol = this.parentVolumesListComponent,
+    //             localDialogService = this.dialogService
+    
+    //           const conf: DialogFormConfiguration = { 
+    //             title: "Detatch pool: '" + row1.name + "'",
+    //             fieldConfig: [{
+    //               type: 'paragraph',
+    //               name: 'pool_detach_warning',
+    //               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
+    //                 Detaching a pool makes the data unavailable. \
+    //                 Be sure that you understand the risks.\
+    //                 In addition to detaching the pool you may also choose to destroy its data."),
+    //               isHidden: false
+    //             }, {
+    //               type: 'paragraph',
+    //               name: 'pool_detach_warning',
+    //               paraText: T("'" + row1.name + "' is encrypted!. If there is no passphrase for \
+    //                 this encrypted pool, the data will be PERMANENTLY UNRECOVERABLE! \
+    //                 Before detaching encrypted pools, download and safely\
+    //                 store the recovery key."),
+    //               isHidden: encryptedStatus !== '' ? false : true
+    //             }, {
+    //               type: 'checkbox',
+    //               name: 'destroy',
+    //               value: false,
+    //               placeholder: T("Destroy data on this pool?"),
+    //             }, {
+    //               type: 'checkbox',
+    //               name: 'confirm',
+    //               placeholder: T("Confirm detach"),
+    //               required: true
+    //             }],
+    //             isCustActionVisible(actionId: string) {
+    //               if (actionId == 'download_key' && encryptedStatus === '') {
+    //                 return false;
+    //               } else {
+    //                 return true;
+    //               }
+    //             },
+    //             saveButtonText: 'Detach',
+    //             custActions: [
+    //               {
+    //                 id: 'download_key',
+    //                 name: 'DownloadKey',
+    //                 function: () => {
+    //                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+    //                   dialogRef.componentInstance.volumeId = row1.id;
+    //                 }
+    //               }],
+    //             customSubmit: function (value) {
+    //               localLoader.open();
+    //               if (value.destroy === false) { 
+    //                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
+    //                   }).subscribe((res) => {
+    //                     localLoader.close();
+    //                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + "'");
+    //                     localParentVol.repaintMe();
+    //                 }, (res) => {
+    //                   localLoader.close();
+    //                   localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+    //                 });
+    //               } else {
+    //                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
+    //                   }).subscribe((res) => {
+    //                     localLoader.close();
+    //                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
+    //                       T("'. All data on that pool was destroyed."));
+    //                     localParentVol.repaintMe();
+    //                 }, (res) => {
+    //                   localLoader.close();
+    //                   localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+    //                 });
+    //               }
+    //             }
+                
+    //           }
+    //           this.dialogService.dialogForm(conf);
+    //         }
+    // });
+
 
       actions.push({
         label: T("Change Passphrase"),
