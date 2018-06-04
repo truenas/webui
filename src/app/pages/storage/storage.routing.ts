@@ -22,6 +22,7 @@ import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunloc
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
 
@@ -93,6 +94,10 @@ export const routes: Routes = [
           {
             path: 'createkey/:pk', component: VolumeCreatekeyFormComponent,
             data: { title: 'Create Passphrase', breadcrumb: 'Create Passphrase' }
+          },
+          {
+            path: 'changekey/:pk', component: VolumeChangekeyFormComponent,
+            data: { title: 'Change Passphrase', breadcrumb: 'Change Passphrase' }
           }
         ]
       },

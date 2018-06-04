@@ -142,7 +142,7 @@ export class ServiceFTPComponent implements OnInit {
       name : 'ftp_ssltls_certfile',
       placeholder : T('Certificate'),
       tooltip: T('The SSL certificate to be used for TLS FTP connections.\
-                  To create a certificate, use <b>System -> Certificates</b>.'),
+                  To create a certificate, use <b>System --> Certificates</b>.'),
       options : [],
     },
     {
@@ -254,7 +254,7 @@ export class ServiceFTPComponent implements OnInit {
       type : 'checkbox',
       name : 'ftp_tls_opt_allow_dot_login',
       placeholder : T('TLS Allow Dot Login'),
-      tooltip: T('If set, the home directory of the user is checked\
+      tooltip: T('If set, the user home directory is checked\
                   for a <b>.tlslogin</b> file which contains one or more PEM-encoded\
                   certificates. If not found, the user is prompted for password\
                   authentication.'),
@@ -284,8 +284,8 @@ export class ServiceFTPComponent implements OnInit {
       type : 'checkbox',
       name : 'ftp_tls_opt_export_cert_data',
       placeholder : T('TLS Export Certificate Data'),
-      tooltip: T('If set, the certificate environment\
-                  variables are exported.'),
+      tooltip: T('Set to export the certificate environment\
+                  variables.'),
     },
     {
       type : 'checkbox',
