@@ -50,3 +50,8 @@
   display:inline-block;
   margin-right:16px;
 }
+
+.build-date{
+  font-style:italic;
+  opacity:0.5;
+}
