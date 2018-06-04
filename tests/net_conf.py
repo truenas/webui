@@ -83,7 +83,7 @@ class conf_network_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['nameserver1']).send_keys("8.8.8.8")
             driver.find_element_by_xpath(xpaths['nameserver2']).clear()
             print ("clear the nameserver 2 field")
-            driver.find_element_by_xpath(xpaths['nameserver2']).send_keys("10.231.1.0")
+            driver.find_element_by_xpath(xpaths['nameserver2']).send_keys("10.231.1.1")
             driver.find_element_by_xpath(xpaths['buttonSave']).click()
             # Taking screenshot
             self.screenshot("_")

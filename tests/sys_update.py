@@ -125,7 +125,7 @@ class check_update_test(unittest.TestCase):
         return True
 
     def error_check_sys(self):
-        if (self.is_element_present(By.XPATH, "/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/div[2]/button")):
+        if (self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]")):
             driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
 
     def screenshot(self, count):
