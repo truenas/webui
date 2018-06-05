@@ -43,6 +43,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
 
+  keepAlive = 0.420;
+
   constructor(
     public themeService: ThemeService,
     public core: CoreService,
@@ -107,6 +109,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.showResilvering = true;
       }
     });
+
+    setInterval(() => {
+      this.keepAlive = Math.random();
+    }, 10000);
 
     setInterval(() => {
       if(this.resilveringDetails && this.resilveringDetails.scan.state == 'FINISHED') {
