@@ -20,7 +20,7 @@ import {Subscription} from 'rxjs';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
@@ -71,6 +71,7 @@ export class DeviceAddComponent2 implements OnInit {
   public vmname: any;
   protected route_success: string[];
   public fieldSets: any;
+  public isCustActionVisible: boolean = false;
   // cd-rom
   public cdromFieldConfig: FieldConfig[] = [
     {
@@ -155,6 +156,10 @@ export class DeviceAddComponent2 implements OnInit {
       required: true
     },
   ];
+  protected nic_attach: any;
+  protected nicType: any;
+  protected nicMac: any;
+
   //rawfile
   public rawfileFieldConfig: FieldConfig[] = [
     {
@@ -247,6 +252,8 @@ export class DeviceAddComponent2 implements OnInit {
       type: 'checkbox'
     },
   ];
+  protected ipAddress: any = [];
+
 
   public selectedType = 'CDROM';
   public formGroup: any;
@@ -257,14 +264,47 @@ export class DeviceAddComponent2 implements OnInit {
   public rawfileFormGroup: any;
   public vncFormGroup: any;
 
+  public custActions: any[];
+
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService,
               protected ws: WebSocketService, protected entityFormService: EntityFormService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               private location: Location,
-              public translate: TranslateService, protected loader: AppLoaderService) {}
+              public translate: TranslateService, protected loader: AppLoaderService,
+              protected systemGeneralService: SystemGeneralService,
+              protected networkService: NetworkService) {}
 
+
+  preInit() {
+    // vnc
+    this.systemGeneralService.getIPChoices().subscribe((res) => {
+      if (res.length > 0) {
+        this.ipAddress = _.find(this.vncFieldConfig, {'name' : 'vnc_bind'});
+        for (const item of res){
+          this.ipAddress.options.push({label : item[1], value : item[0]});
+        }
+      }
+    });
+
+    // nic
+    this.networkService.getAllNicChoices().subscribe((res) => {
+      this.nic_attach = _.find(this.nicFieldConfig, { 'name': 'nic_attach' });
+      res.forEach((item) => {
+        this.nic_attach.options.push({ label: item[1], value: item[0] });
+      });
+    });
+    this.ws.call('notifier.choices', ['VM_NICTYPES']).subscribe(
+      (res) => {
+        this.nicType = _.find(this.nicFieldConfig, { name: "NIC_type" });
+        res.forEach((item) => {
+          this.nicType.options.push({ label: item[1], value: item[0] });
+        });
+      }
+    );
+  }
   ngOnInit() {
+    this.preInit();
     console.log('on init');
     this.fieldSets = [
       {
@@ -298,14 +338,19 @@ export class DeviceAddComponent2 implements OnInit {
       this.selectedType = res;
       if (res == 'CDROM') {
         this.activeFormGroup = this.cdromFormGroup;
+        this.isCustActionVisible = false;
       } else if (res == 'NIC') {
         this.activeFormGroup = this.nicFormGroup;
+        this.isCustActionVisible = true;
       } else if (res == 'DISK') {
         this.activeFormGroup = this.diskFormGroup;
+        this.isCustActionVisible = false;
       } else if (res == 'RAW') {
         this.activeFormGroup = this.rawfileFormGroup;
+        this.isCustActionVisible = false;
       } else if (res == 'VNC') {
         this.activeFormGroup = this.vncFormGroup;
+        this.isCustActionVisible = false;
       }
     });
 
@@ -314,6 +359,21 @@ export class DeviceAddComponent2 implements OnInit {
       this.vmname = params['name'];
       this.route_success = ['vm', this.vmid, 'devices', this.vmname];
     });
+
+    this.afterInit();
+  }
+  afterInit() {
+    this.custActions = [
+      {
+        id: 'generate_mac_address',
+        name: 'Generate MAC Address',
+        function: () => {
+          this.ws.call('vm.random_mac').subscribe((random_mac) => {
+            this.nicFormGroup.controls['NIC_mac'].setValue(random_mac);
+          })
+        }
+      }
+    ];
   }
 
   goBack() {
