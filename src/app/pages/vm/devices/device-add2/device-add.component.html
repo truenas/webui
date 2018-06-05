@@ -1,0 +1,45 @@
+<mat-card>
+  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm">
+    <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
+      <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
+        <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}" fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+          <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
+          <div *ngFor="let field of fieldSet.fieldConfig;" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div dynamicField [config]="field" [group]="formGroup"></div>
+          </div>
+
+          <div *ngIf="selectedType == 'CDROM'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let cdromField of fieldSet.cdromFieldConfig;">
+              <div dynamicField [config]="cdromField" [group]="cdromFormGroup"></div>
+            </div>
+          </div>
+          <!-- <div *ngIf="selectedType == 'NIC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let snmpTrapField of fieldSet.snmpTrapFieldConfig;">
+              <div dynamicField [config]="snmpTrapField" [group]="snmpTrapFormGroup"></div>
+            </div>
+          </div>
+          <div *ngIf="selectedType == 'DISK'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let slackField of fieldSet.slackFieldConfig;">
+              <div dynamicField [config]="slackField" [group]="slackFormGroup"></div>
+            </div>
+          </div>
+          <div *ngIf="selectedType == 'RAW'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let awssnsField of fieldSet.awssnsFieldConfig;">
+              <div dynamicField [config]="awssnsField" [group]="awssnsFormGroup"></div>
+            </div>
+          </div>
+          <div *ngIf="selectedType == 'VNC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let influxdbField of fieldSet.influxdbFieldConfig;">
+              <div dynamicField [config]="influxdbField" [group]="influxdbFormGroup"></div>
+            </div>
+          </div> -->
+
+        </div>
+      </ng-container>
+      <mat-card-actions class="buttons">
+        <button id="save_button" class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
+        <button id="goback_button" *ngIf="route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
+      </mat-card-actions>
+    </div>
+  </form>
+</mat-card>
