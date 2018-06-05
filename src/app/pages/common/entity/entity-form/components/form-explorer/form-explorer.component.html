@@ -11,6 +11,8 @@
             <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
         </ng-template>
     </tree-root>
+    <pre>
+    </pre>  
     <mat-input-container class="full-width">
         <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
         <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
