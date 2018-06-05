@@ -62,6 +62,8 @@ export class DeviceAddComponent2 implements OnInit {
         }
       ],
       value: 'CDROM',
+      required: true,
+      validation: [Validators.required],
     }
   ];
 
@@ -325,7 +327,7 @@ export class DeviceAddComponent2 implements OnInit {
 
     let device = _.cloneDeep(this.formGroup.value);
     let deviceValue = _.cloneDeep(this.activeFormGroup.value);
-    // payload['devices'] = serviceValue;
+
     console.log(device, deviceValue);
     device['attributes'] = deviceValue;
     payload['devices'].push(device);

@@ -13,26 +13,26 @@
               <div dynamicField [config]="cdromField" [group]="cdromFormGroup"></div>
             </div>
           </div>
-          <!-- <div *ngIf="selectedType == 'NIC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let snmpTrapField of fieldSet.snmpTrapFieldConfig;">
-              <div dynamicField [config]="snmpTrapField" [group]="snmpTrapFormGroup"></div>
+          <div *ngIf="selectedType == 'NIC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngFor="let nicField of fieldSet.nicFieldConfig;">
+              <div dynamicField [config]="nicField" [group]="nicFormGroup"></div>
             </div>
           </div>
           <div *ngIf="selectedType == 'DISK'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let slackField of fieldSet.slackFieldConfig;">
-              <div dynamicField [config]="slackField" [group]="slackFormGroup"></div>
+            <div *ngFor="let diskField of fieldSet.diskFieldConfig;">
+              <div dynamicField [config]="diskField" [group]="diskFormGroup"></div>
             </div>
           </div>
           <div *ngIf="selectedType == 'RAW'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let awssnsField of fieldSet.awssnsFieldConfig;">
-              <div dynamicField [config]="awssnsField" [group]="awssnsFormGroup"></div>
+            <div *ngFor="let rawfileField of fieldSet.rawfileFieldConfig;">
+              <div dynamicField [config]="rawfileField" [group]="rawfileFormGroup"></div>
             </div>
           </div>
           <div *ngIf="selectedType == 'VNC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let influxdbField of fieldSet.influxdbFieldConfig;">
-              <div dynamicField [config]="influxdbField" [group]="influxdbFormGroup"></div>
+            <div *ngFor="let vncField of fieldSet.vncFieldConfig;">
+              <div dynamicField [config]="vncField" [group]="vncFormGroup"></div>
             </div>
-          </div> -->
+          </div>
 
         </div>
       </ng-container>
