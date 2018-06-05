@@ -13,12 +13,14 @@ import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { StorageService } from '../../../../services/storage.service'
+import { StorageService } from '../../../../services/storage.service';
+import { Validators } from '@angular/forms'
 
 
 export interface ZfsPoolData {
@@ -137,130 +139,42 @@ export class VolumesListTableConfig implements InputTableConf {
       } else {
         actions.push({
           label: T("Un-Lock"),
-          onClick: (row1) => {
-            this.dialogService.confirm(T("Unlock"), T("Passphrase") + row1.name).subscribe((confirmResult) => {
-              if (confirmResult === true) {
-                this.loader.open();
-                this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-                  this.loader.close();
-                  this.parentVolumesListComponent.repaintMe();
+          onClick: (row1) => 
+          {let encryptedStatus = row1.vol_encryptkey,
+            localLoader = this.loader,
+            localRest = this.rest,
+            localParentVol = this.parentVolumesListComponent,
+            localDialogService = this.dialogService
 
+            const conf: DialogFormConfiguration = {
+              title: "Unlock " + row1.name,
+              fieldConfig: [{
+                type : 'input',
+                inputType: 'password',
+                name : 'passphrase',
+                placeholder: T('Passphrase'),
+                validation: [Validators.required],
+                required: true
+              }],
+
+              saveButtonText: "Unlock",
+              customSubmit: function (value) {
+                localLoader.open();
+                return localRest.post("storage/volume/" + row1.name + "/unlock/", { body: JSON.stringify({passphrase: 
+                  value.passphrase}) }).subscribe((restPostResp) => {
+                  localLoader.close();
+                  localParentVol.repaintMe();            
                 }, (res) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
                 });
               }
-            });
+            }
+            this.dialogService.dialogForm(conf);
+
           }
         });
       }
-          // customSubmit(value) {
-          //   this.loader.open();
-          //   return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
-          //     console.log("restPostResp", restPostResp);
-          //     this.loader.close();
-        
-          //     this.router.navigate(new Array('/').concat(
-          //       this.route_success));
-        
-          //   }, (res) => {
-          //     this.loader.close();
-          //     this.dialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
-          //   });
-          // }
-
-          // onClick: (row1) => {
-          //   this._router.navigate(new Array('/').concat(
-          //     ["storage", "pools", "unlock", row1.id]));
-          // }
-
-    //       actions.push({
-    //         label: T("Detach"),
-    //         onClick: (row1) => {
-    
-    //           let encryptedStatus = row1.vol_encryptkey,
-    //             localLoader = this.loader,
-    //             localRest = this.rest,
-    //             localParentVol = this.parentVolumesListComponent,
-    //             localDialogService = this.dialogService
-    
-    //           const conf: DialogFormConfiguration = { 
-    //             title: "Detatch pool: '" + row1.name + "'",
-    //             fieldConfig: [{
-    //               type: 'paragraph',
-    //               name: 'pool_detach_warning',
-    //               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
-    //                 Detaching a pool makes the data unavailable. \
-    //                 Be sure that you understand the risks.\
-    //                 In addition to detaching the pool you may also choose to destroy its data."),
-    //               isHidden: false
-    //             }, {
-    //               type: 'paragraph',
-    //               name: 'pool_detach_warning',
-    //               paraText: T("'" + row1.name + "' is encrypted!. If there is no passphrase for \
-    //                 this encrypted pool, the data will be PERMANENTLY UNRECOVERABLE! \
-    //                 Before detaching encrypted pools, download and safely\
-    //                 store the recovery key."),
-    //               isHidden: encryptedStatus !== '' ? false : true
-    //             }, {
-    //               type: 'checkbox',
-    //               name: 'destroy',
-    //               value: false,
-    //               placeholder: T("Destroy data on this pool?"),
-    //             }, {
-    //               type: 'checkbox',
-    //               name: 'confirm',
-    //               placeholder: T("Confirm detach"),
-    //               required: true
-    //             }],
-    //             isCustActionVisible(actionId: string) {
-    //               if (actionId == 'download_key' && encryptedStatus === '') {
-    //                 return false;
-    //               } else {
-    //                 return true;
-    //               }
-    //             },
-    //             saveButtonText: 'Detach',
-    //             custActions: [
-    //               {
-    //                 id: 'download_key',
-    //                 name: 'DownloadKey',
-    //                 function: () => {
-    //                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-    //                   dialogRef.componentInstance.volumeId = row1.id;
-    //                 }
-    //               }],
-    //             customSubmit: function (value) {
-    //               localLoader.open();
-    //               if (value.destroy === false) { 
-    //                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
-    //                   }).subscribe((res) => {
-    //                     localLoader.close();
-    //                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + "'");
-    //                     localParentVol.repaintMe();
-    //                 }, (res) => {
-    //                   localLoader.close();
-    //                   localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-    //                 });
-    //               } else {
-    //                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
-    //                   }).subscribe((res) => {
-    //                     localLoader.close();
-    //                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
-    //                       T("'. All data on that pool was destroyed."));
-    //                     localParentVol.repaintMe();
-    //                 }, (res) => {
-    //                   localLoader.close();
-    //                   localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
-    //                 });
-    //               }
-    //             }
-                
-    //           }
-    //           this.dialogService.dialogForm(conf);
-    //         }
-    // });
-
 
       actions.push({
         label: T("Change Passphrase"),
@@ -703,6 +617,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
   public showDefaults: boolean = false;
   public repaintMe() {
+    this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
   }
@@ -713,7 +628,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
 
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
-      this.loader.open();
+      // this.loader.open();
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
@@ -741,14 +656,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
         this.paintMe = true; 
         this.showDefaults = true;
-        this.loader.close();
+        // this.loader.close();
         
       }, (res) => {
-        this.loader.close();
+        // this.loader.close();
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
-      this.loader.close();
+      // this.loader.close();
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
