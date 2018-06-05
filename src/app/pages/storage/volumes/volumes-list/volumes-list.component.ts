@@ -247,13 +247,13 @@ export class VolumesListTableConfig implements InputTableConf {
               paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
                 Detaching a pool makes the data unavailable. \
                 Be sure that you understand the risks.\
-                In addition to detaching the pool you may also choose to destroy its data."),
+                In addition to detaching the pool, you may also choose to destroy its data."),
               isHidden: false
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("'" + row1.name + "' is encrypted!. If there is no passphrase for \
-                this encrypted pool, the data will be PERMANENTLY UNRECOVERABLE! \
+              paraText: T("'" + row1.name + "' is encrypted!. If the passphrase for \
+                this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
                 Before detaching encrypted pools, download and safely\
                 store the recovery key."),
               isHidden: encryptedStatus !== '' ? false : true
@@ -279,7 +279,7 @@ export class VolumesListTableConfig implements InputTableConf {
             custActions: [
               {
                 id: 'download_key',
-                name: 'DownloadKey',
+                name: 'Download Key',
                 function: () => {
                   const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                   dialogRef.componentInstance.volumeId = row1.id;

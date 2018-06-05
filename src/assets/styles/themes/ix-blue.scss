@@ -533,36 +533,31 @@ entity-form .form-card.mat-card{
   
 }
 
+// To move tooltips up when they appear too low on viewport
 #raised-tooltip {
   top: -90px;
 }
 
-// .checkboxCellJails {
-//   height: 30px;
-//   position: relative;
-// }
-
+// To fix alignment issues w/checkboxes on Create Pool page
 .headerCheckboxCellManager, .headerCheckboxCellVDev {
   position: relative;
   top: 6px;
   left: 8px;
 }
 
+// For Detach Pools functions on volumes-list.component.ts
 #pool_detach_warning {
   margin-bottom: 15px;
 }
 
-#cust_button_Detach {
-  background-color: map-get($md-primary, 500);
-  color: white;
-  margin-right: 5px;
-}
-
-#cust_button_DownloadKey {
+#cust_button_download_key {
   background-color: #f44336;
   color: white;
   margin-right: 7px;
+}
+// ------------------------
 
+// For some items on VM Wizard Hard Disks page
 #disk_radio {
   max-width: 220px;
 }
@@ -571,3 +566,4 @@ entity-form .form-card.mat-card{
   float: right;
   margin-top: 23px;
 }
+// ---------
