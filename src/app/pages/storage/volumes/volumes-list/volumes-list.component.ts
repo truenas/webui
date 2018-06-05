@@ -252,7 +252,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("'" + row1.name + "' is encrypted!. If the passphrase for \
+              paraText: T("'" + row1.name + "' is encrypted! If the passphrase for \
                 this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
                 Before detaching encrypted pools, download and safely\
                 store the recovery key."),
