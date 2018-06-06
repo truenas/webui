@@ -120,53 +120,19 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            let encryptedStatus = row1.vol_encryptkey,
-            localLoader = this.loader,
-            localRest = this.rest,
-            localParentVol = this.parentVolumesListComponent,
-            localDialogService = this.dialogService,
-            localSnackBar = this.snackBar;
+            this.dialogService.confirm(T("Lock"), T("Proceed with locking the pool: ") + row1.name).subscribe((confirmResult) => {
+              if (confirmResult === true) {
+                this.loader.open();
+                this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                  this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
 
-            const conf: DialogFormConfiguration = {
-              title: "Lock " + row1.name,
-              fieldConfig: [{
-                type : 'input',
-                inputType: 'password',
-                name : 'passphrase',
-                placeholder: T('Passphrase'),
-                validation: [Validators.required],
-                required: true
-              }],
-              // required passphrase won't work w/o help from server side
-              saveButtonText: "Lock",
-              customSubmit: function (value) {
-                localLoader.open();
-                return localRest.post("storage/volume/" + row1.name + "/lock/", { body: JSON.stringify({passphrase: 
-                  value.passphrase}) }).subscribe((restPostResp) => {
-                  localLoader.close();
-                  localParentVol.repaintMe();     
-                  localSnackBar.open(row1.name + " has been locked.", 'close', { duration: 5000 });       
                 }, (res) => {
-                  localLoader.close();
-                  localDialogService.errorReport(T("Error locking pool"), res.message, res.stack);
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
                 });
               }
-            }
-            this.dialogService.dialogForm(conf);
-
-            // this.dialogService.confirm(T("Lock"), T("Proceed with locking the pool: ") + row1.name).subscribe((confirmResult) => {
-            //   if (confirmResult === true) {
-            //     this.loader.open();
-            //     this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-            //       this.loader.close();
-            //       this.parentVolumesListComponent.repaintMe();
-
-            //     }, (res) => {
-            //       this.loader.close();
-            //       this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
-            //     });
-            //   }
-            // });
+            });
           }
         });
 
@@ -174,15 +140,14 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
-            let encryptedStatus = row1.vol_encryptkey,
-            localLoader = this.loader,
+            let localLoader = this.loader,
             localRest = this.rest,
             localParentVol = this.parentVolumesListComponent,
             localDialogService = this.dialogService,
             localSnackBar = this.snackBar;
 
             const conf: DialogFormConfiguration = {
-              title: "Unlock " + row1.name,
+              title: "Unlock Pool: " + row1.name,
               fieldConfig: [{
                 type : 'input',
                 inputType: 'password',
@@ -199,7 +164,6 @@ export class VolumesListTableConfig implements InputTableConf {
                   value.passphrase}) }).subscribe((restPostResp) => {
                   localLoader.close();
                   localParentVol.repaintMe();     
-                  // document.getElementById('expansionpanel_zfs_' + row1.name).className += 'mat-expanded';
                   localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
                 }, (res) => {
                   localLoader.close();
@@ -208,7 +172,6 @@ export class VolumesListTableConfig implements InputTableConf {
               }
             }
             this.dialogService.dialogForm(conf);
-
           }
         });
       }
