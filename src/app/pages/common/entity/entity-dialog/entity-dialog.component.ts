@@ -12,6 +12,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
+import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component'
 
 @Component({
   selector: 'app-entity-dialog',
@@ -25,15 +26,19 @@ export class EntityDialogComponent implements OnInit {
   public title: string;
   public fieldConfig: Array < FieldConfig > ;
   public formGroup: FormGroup;
-  public saveButtonText: string = "Ok";
+  public saveButtonText: string;
   public cancelButtonText: string = "Cancel";
+  public detachButtonText: string;
+  public getKeyButtonText: string;
+  
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
     protected entityFormService: EntityFormService,
     protected rest: RestService,
     protected ws: WebSocketService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService,
+    public mdDialog: MatDialog) {}
 
   ngOnInit() {
     this.title = this.conf.title;
@@ -51,25 +56,29 @@ export class EntityDialogComponent implements OnInit {
   submit() {
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
+    this.dialogRef.close(true);
 
-    this.loader.open();
-    if (this.conf.method_rest) {
-      this.rest.post(this.conf.method_rest, {
-        body: JSON.stringify(value)
-      }).subscribe(
-        (res) => {
-          this.loader.close();
-          this.dialogRef.close(true);
-        },
-        (res) => {
-          this.loader.close();
-          new EntityUtils().handleError(this, res);
-        }
-      );
-    } else if (this.conf.method_ws) {
-      // ws call
+    if (this.conf.customSubmit) {
+      this.conf.customSubmit(value);
+    } else {
+      this.loader.open();
+      if (this.conf.method_rest) {
+        this.rest.post(this.conf.method_rest, {
+          body: JSON.stringify(value)
+        }).subscribe(
+          (res) => {
+            this.loader.close();
+            this.dialogRef.close(true);
+          },
+          (res) => {
+            this.loader.close();
+            new EntityUtils().handleError(this, res);
+          }
+        );
+      } else if (this.conf.method_ws) {
+        // ws call
+      }
     }
-
   }
 
   cancel() {

@@ -43,6 +43,10 @@ import { ErdService } from 'app/services/erd.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
+import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
+import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
+import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
 import { EntityModule } from './pages/common/entity/entity.module';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -100,6 +104,10 @@ export function createTranslateLoader(http: HttpClient) {
     DownloadKeyModalDialog,
     SelectDialogComponent,
     EntityDialogComponent,
+    FormCheckboxComponent,
+    FormInputComponent,
+    FormSelectComponent,
+    FormParagraphComponent
   ],
 })
 export class AppModule { 
