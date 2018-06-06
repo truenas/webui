@@ -13,7 +13,6 @@ import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
