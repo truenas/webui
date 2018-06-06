@@ -16,7 +16,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
-export class DeviceAddComponent2 implements OnInit {
+export class DeviceAddComponent implements OnInit {
 
   protected addCall = 'vm.create_device';
   protected route_success: string[];

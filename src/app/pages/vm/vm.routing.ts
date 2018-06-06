@@ -9,7 +9,7 @@ import {VmListComponent} from './vm-list/';
 import {VMWizardComponent} from './vm-wizard/';
 import { DockerVMWizardComponent } from './dockervm-wizard/';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
-import { DeviceAddComponent2 } from './devices/device-add2';
+import { DeviceAddComponent } from './devices/device-add2';
 
 // export const routes: Routes = [
 //   --{path : 'add', component : VmFormComponent},
@@ -69,7 +69,7 @@ export const routes: Routes = [
         {
           path:'add',
           data: {title: 'Add', breadcrumb: 'Add'},
-          component : DeviceAddComponent2,
+          component : DeviceAddComponent,
         },
       ]
     },

@@ -30,7 +30,7 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
 import { DockerVMWizardComponent } from './dockervm-wizard/';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
-import { DeviceAddComponent2 } from './devices/device-add2';
+import { DeviceAddComponent } from './devices/device-add2';
 
 @NgModule({
   imports : [
@@ -52,7 +52,7 @@ import { DeviceAddComponent2 } from './devices/device-add2';
     VMWizardComponent,
     DockerVMWizardComponent,
     VMSerialShellComponent,
-    DeviceAddComponent2
+    DeviceAddComponent
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService,MessageService ]
 })
