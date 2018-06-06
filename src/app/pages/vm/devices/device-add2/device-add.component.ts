@@ -1,28 +1,13 @@
-import {Location} from '@angular/common';
-import {
-  ApplicationRef,
-  Component,
-  ContentChildren,
-  Injector,
-  Input,
-  OnInit,
-  QueryList,
-  TemplateRef,
-  ViewChildren
-} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component,OnInit} from '@angular/core';
+import {Validators} from '@angular/forms';
 import {Router, ActivatedRoute} from '@angular/router';
-import {
-  FieldConfig
-} from '../../../common/entity/entity-form/models/field-config.interface';
+import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
 import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
 import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
-import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
@@ -30,11 +15,16 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   selector : 'device-add2',
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
-  // template : `<entity-form [conf]="this"></entity-form>`
 })
 export class DeviceAddComponent2 implements OnInit {
 
   protected addCall = 'vm.create_device';
+  protected route_success: string[];
+  public vmid: any;
+  public vmname: any;
+  public fieldSets: any;
+  public isCustActionVisible: boolean = false;
+
   public fieldConfig: FieldConfig[] = [
     {
       type: 'select',
@@ -67,11 +57,6 @@ export class DeviceAddComponent2 implements OnInit {
     }
   ];
 
-  public vmid: any;
-  public vmname: any;
-  protected route_success: string[];
-  public fieldSets: any;
-  public isCustActionVisible: boolean = false;
   // cd-rom
   public cdromFieldConfig: FieldConfig[] = [
     {
@@ -266,12 +251,13 @@ export class DeviceAddComponent2 implements OnInit {
 
   public custActions: any[];
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
+  constructor(protected router: Router,
+              protected aroute: ActivatedRoute,
               protected rest: RestService,
-              protected ws: WebSocketService, protected entityFormService: EntityFormService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
-              private location: Location,
-              public translate: TranslateService, protected loader: AppLoaderService,
+              protected ws: WebSocketService,
+              protected entityFormService: EntityFormService,
+              public translate: TranslateService,
+              protected loader: AppLoaderService,
               protected systemGeneralService: SystemGeneralService,
               protected networkService: NetworkService) {}
 
@@ -305,7 +291,7 @@ export class DeviceAddComponent2 implements OnInit {
   }
   ngOnInit() {
     this.preInit();
-    console.log('on init');
+
     this.fieldSets = [
       {
         name:'FallBack',
@@ -362,7 +348,21 @@ export class DeviceAddComponent2 implements OnInit {
 
     this.afterInit();
   }
+
   afterInit() {
+    // if bootloader == 'GRUB', hidde VNC option
+    this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm)=>{
+      if (vm[0].bootloader == 'GRUB'){
+        let dtypeField = _.find(this.fieldConfig, {name: "dtype"});
+        console.log(dtypeField);
+        for (let i in dtypeField.options) {
+          if (dtypeField.options[i].label == 'VNC') {
+            _.pull(dtypeField.options, dtypeField.options[i]);
+          }
+        }
+      };
+    });
+
     this.custActions = [
       {
         id: 'generate_mac_address',
