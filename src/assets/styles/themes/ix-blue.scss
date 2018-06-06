@@ -544,7 +544,6 @@ entity-form .form-card.mat-card{
 
 .headerCheckboxCellManager, .headerCheckboxCellVDev {
   position: relative;
-  top: 6px;
   left: 8px;
 }
 
@@ -558,3 +557,7 @@ entity-form .form-card.mat-card{
 }
   
   
+.datatable-header-cell {
+  position: relative;
+  bottom: -6px;
+}
