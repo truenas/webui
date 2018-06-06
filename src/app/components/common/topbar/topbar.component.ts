@@ -59,7 +59,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {
 
-    idle.setIdle(10); // 10 seconds for delaying
+// FIXME: someday we might like to have autologout but not yet
+/*    idle.setIdle(10); // 10 seconds for delaying
     idle.setTimeout(900); // 15 minutes for waiting of activity
     idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
 
@@ -71,7 +72,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.dialog.closeAll();
       this.ws.logout();
     });
-    idle.watch();
+    idle.watch();*/
   }
 
   ngOnInit() {
