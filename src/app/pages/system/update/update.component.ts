@@ -166,7 +166,6 @@ export class UpdateComponent implements OnInit {
                 if (!ds.componentInstance.data[0].reboot){
                   this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
                   this.dialogRef.componentInstance.setCall('update.download');
-                  this.dialogRef.componentInstance.setDescription("Downloading Updates");
                   this.dialogRef.componentInstance.submit();
                   this.dialogRef.componentInstance.success.subscribe((succ) => {
                     this.dialogRef.close(false);
