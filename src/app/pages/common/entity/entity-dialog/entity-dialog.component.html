@@ -8,7 +8,7 @@
 <div mat-dialog-actions>
   <span fxFlex></span>
   <span *ngFor="let custBtn of conf.custActions">
-    <button id="cust_button_{{custBtn.name}}" mat-raised-button 
+    <button id="cust_button_{{custBtn.id}}" mat-raised-button 
       *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" 
       (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
   </span>
