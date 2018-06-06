@@ -298,8 +298,6 @@ export class DeviceEditComponent implements OnInit {
   }
 
   afterInit(){
-    const self = this;
-    //this.formGroup = this.entityFormService.createFormGroup(this.fieldSets[0].config);
     this.formGroup = this.entityFormService.createFormGroup(this.fieldSets[0].config);
     const vnc_lookup_table: Object = {
       'vnc_port' : 'VNC_port',
@@ -336,7 +334,6 @@ export class DeviceEditComponent implements OnInit {
       }
       else if(device[0].dtype === 'VNC'){
         this.systemGeneralService.getIPChoices().subscribe((ipchoices) => {
-          //this.vnc_bind = _.find(this.fieldSets[0].config, {'name' : 'vnc_bind'});
           this.vnc_bind = _.find(this.fieldSets[0].config, {'name' : 'vnc_bind'});
           for(const ipchoice of ipchoices){
             this.vnc_bind.options.push({label : ipchoice[1], value : ipchoice[0]});
@@ -346,7 +343,7 @@ export class DeviceEditComponent implements OnInit {
       }
       else if(device[0].dtype === 'NIC'){
         this.networkService.getAllNicChoices().subscribe((nics) => {
-          this.nic_attach = _.find(self.fieldConfig, {'name' : 'nic_attach'});
+          this.nic_attach = _.find(this.fieldSets[0].config, {'name' : 'nic_attach'});
           if (this.nic_attach ){
             for(const nic of nics){
               this.nic_attach.options.push({label : nic[1], value : nic[0]});
@@ -355,17 +352,17 @@ export class DeviceEditComponent implements OnInit {
         });
         this.ws.call('notifier.choices', [ 'VM_NICTYPES' ])
         .subscribe((NIC_types) => {
-          this.nicType = _.find(self.fieldConfig, {name : "NIC_type"});
+          this.nicType = _.find(this.fieldSets[0].config, {name : "NIC_type"});
           if (this.nicType ){
             for(const NIC_type of NIC_types){
-              self.nicType.options.push({label : NIC_type[1], value : NIC_type[0]});
+              this.nicType.options.push({label : NIC_type[1], value : NIC_type[0]});
             };
           }
         });
         this.setgetValues(device[0].attributes, nic_lookup_table);
       }
       else if (device[0].dtype === 'DISK'){
-        self.DISK_zvol = _.find(self.fieldConfig, {name:'DISK_zvol'});
+        this.DISK_zvol = _.find(this.fieldSets[0].config, {name:'DISK_zvol'});
         this.setgetValues(device[0].attributes, disk_lookup_table);
       }
       else {
