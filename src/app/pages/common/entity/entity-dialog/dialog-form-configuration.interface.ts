@@ -7,5 +7,7 @@ export interface DialogFormConfiguration {
   method_ws?: string,
   saveButtonText?: string,
   cancelButtonText?: string,
-  customSubmit?: any;
+  custActions?: any[],
+  customSubmit?: any,
+  isCustActionVisible?: any
 }
