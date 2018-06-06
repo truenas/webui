@@ -32,9 +32,6 @@ export class DeviceAddComponent implements OnInit {
       placeholder: 'Type',
       options: [
         {
-          label: '-------',
-          value: '',
-        }, {
           label: 'CD-ROM',
           value: 'CDROM',
         }, {
