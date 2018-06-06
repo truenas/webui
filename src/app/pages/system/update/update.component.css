@@ -1,3 +1,9 @@
 .row {
     margin-bottom: 10px;
 }
+#train-selector {
+    max-width: 200px;
+}
+.update-button {
+    margin-right: 3px;
+}

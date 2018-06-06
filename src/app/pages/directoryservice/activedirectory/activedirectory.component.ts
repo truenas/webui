@@ -70,13 +70,17 @@ export class ActiveDirectoryComponent {
       name : 'ad_bindname',
       placeholder : T('Domain Account Name'),
       tooltip : T('Enter Active Directory administrator account name.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'ad_bindpw',
       placeholder : T('Domain Account Password'),
       tooltip : T('Enter the administrator account password.'),
-      inputType : 'password'
+      inputType : 'password',
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
