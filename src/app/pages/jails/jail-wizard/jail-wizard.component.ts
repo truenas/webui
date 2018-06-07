@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-import { JailService } from '../../../services/';
+import { JailService, NetworkService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
@@ -87,7 +87,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           name: 'ip4_addr',
           placeholder: T('IPv4 Address'),
           tooltip: T('IPv4 address for the jail.'),
-          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
+          validation : [ regexValidator(this.networkService.ipv4_regex) ],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -118,7 +118,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
           tooltip: T('IPv6 address for the jail.'),
-          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
+          validation : [ regexValidator(this.networkService.ipv6_regex) ],
         },
         {
           type: 'input',
@@ -140,7 +140,8 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
               protected jailService: JailService,
-              protected router: Router) {
+              protected router: Router,
+              protected networkService: NetworkService) {
 
   }
 
