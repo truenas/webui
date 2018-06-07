@@ -152,7 +152,9 @@ export class ServiceS3Component implements OnInit {
       entityForm.formGroup.controls['storage_path'].setValue(res.storage_path);
       entityForm.formGroup.controls['browser'].setValue(res.browser);
       //entityForm.formGroup.controls['mode'].setValue(res.mode);
-      entityForm.formGroup.controls['certificate'].setValue(res.certificate.id);
+      if (res.certificate && res.certificate.id) {
+        entityForm.formGroup.controls['certificate'].setValue(res.certificate.id);
+      }
     })
     entityForm.submitFunction = this.submitFunction;
 
