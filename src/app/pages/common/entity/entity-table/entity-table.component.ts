@@ -36,6 +36,7 @@ export interface InputTableConf {
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
+  checkbox_confirm_show?: any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -100,6 +101,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     paging: true,
     sorting: { columns: this.columns },
   };
+  public showDefaults: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -193,6 +195,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.currentPreferredCols = this.conf.columns;
       }
         // End of checked/display section ------------
+        
+      setTimeout(() => { this.setShowDefaults(); }, 1000);
+    
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
   
   ngAfterViewInit(): void {
@@ -232,6 +241,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
       });
+
   }
 
   handleData(res): any {
@@ -288,6 +298,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.currentRows = this.rows;
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
+    this.showDefaults = true;
     return res;
 
   }
@@ -332,7 +343,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       try {
         return this.conf.rowValue(row, attr);
       } catch(e) {
-        console.log("Conversion issue defaulting to straight value (calling rowValue in conf", this.conf );
         return row[attr];
       }
     }
@@ -351,7 +361,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   doDelete(id) {
     let dialog = {};
-    if (this.conf.checkbox_confirm) {
+    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
       this.conf.checkbox_confirm(id);
       return;
     }

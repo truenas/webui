@@ -35,7 +35,7 @@ export class SnapshotCloneComponent {
 
   public fieldConfig: FieldConfig[];
 
-  get custom_add_query(): string { 
+  get custom_add_query(): string {
     return this.resource_name + '/' + this.pk + '/clone/'
   }
 
@@ -48,18 +48,29 @@ export class SnapshotCloneComponent {
   preInit(entityForm: any) {
     this.route.params.subscribe(params => {
       this.pk = params['pk'];
-      this.fieldConfig = 
+      this.fieldConfig =
         [
           {
             type: 'input',
             name: 'name',
             placeholder: 'Name',
             tooltip: T('Enter a name for the cloned snapshot.'),
-            value: this.pk.replace("@", "-") + "-clone",
+            value: this.setName(this.pk),
             required: true,
             validation : [ Validators.required ]
           }
         ];
     });
+  }
+
+  setName(name) {
+    let value;
+    if (name.indexOf('/') !== -1) {
+      value = name.replace("@", "-") + "-clone";
+    } else {
+      value = name.replace("@", "/") + "-clone";
+    }
+
+    return value;
   }
 }

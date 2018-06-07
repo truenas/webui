@@ -5,6 +5,8 @@ import {Subscription} from 'rxjs/Subscription';
 import {  DialogService } from '../../../services/';
 import { Validators } from '@angular/forms';
 
+import { T } from '../../../translate-marker';
+
 import {
   RestService,
   SystemGeneralService,
@@ -24,11 +26,11 @@ export class NISComponent {
   public custActions: Array<any> = [
     {
       'id' : 'ds_clearcache',
-      'name' : 'Rebuild Directory Service Cache',
+      'name' : T('Rebuild Directory Service Cache'),
        function : async () => {
          this.ws.call('notifier.ds_clearcache').subscribe((cache_status)=>{
           this.dialogservice.Info("NIS", "The cache is being rebuilt.");
-          
+
         })
       }
     }
@@ -38,39 +40,39 @@ export class NISComponent {
     {
       type : 'input',
       name : 'nis_domain',
-      placeholder : 'NIS domain:',
-      tooltip: 'Name of NIS domain.',
+      placeholder : T('NIS domain'),
+      tooltip: T('Name of NIS domain.'),
       required: true,
       validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'nis_servers',
-      placeholder : 'NIS servers:',
-      tooltip : 'Comma delimited list of hostnames or IP addresses.'
+      placeholder : T('NIS servers'),
+      tooltip : T('Enter a comma-delimited list of hostnames or IP\
+                 addresses.')
     },
     {
       type : 'checkbox',
       name : 'nis_secure_mode',
-      placeholder : 'Secure mode',
-      tooltip : 'If checked,\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=ypbind"\
- target="_blank">ypbind(8)</a> refuses to bind to any NIS server that\
- is not running as root on a TCP port number over 1024.'
+      placeholder : T('Secure mode'),
+      tooltip : T('Set to have <a\
+                 href="https://www.freebsd.org/cgi/man.cgi?query=ypbind"\
+                 target="_blank">ypbind(8)</a> refuse to bind to any NIS\
+                 server not running as root on a TCP port over 1024.')
     },
     {
       type : 'checkbox',
       name : 'nis_manycast',
-      placeholder : 'Manycast',
-      tooltip : 'If checked, ypbind binds to the server that responds\
- the fastest. This is useful when no local NIS server is available on\
- the same subnet.'
+      placeholder : T('Manycast'),
+      tooltip : T('Set for ypbind to bind to the server that responds\
+                 the fastest.')
     },
     {
       type : 'checkbox',
       name : 'nis_enable',
-      placeholder : 'Enable',
-      tooltip : 'Uncheck to disable the configuration without deleting it.'
+      placeholder : T('Enable'),
+      tooltip : T('Unset to disable the configuration without deleting it.')
     },
   ];
 

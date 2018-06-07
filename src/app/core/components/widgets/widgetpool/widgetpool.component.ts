@@ -10,6 +10,10 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import filesize from 'filesize';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 export interface Disk {
   name: string;
   smart_enabled: boolean;
@@ -47,7 +51,7 @@ export interface VolumeData {
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @ViewChild('zvol') chartZvol:ViewChartDonutComponent;
-  public title:string = "Pool";
+  public title:string = T("Pool");
   //public standalone:boolean = false;
   @Input() volumeData:VolumeData;
   public volumeName:string = "";
@@ -61,8 +65,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   //public _slideProps:any = {x:0,y:0};
   @Input() configurable:boolean;
 
-  constructor(){
-    super();
+  constructor(public translate: TranslateService){
+    super(translate);
   }
 
   ngOnChanges(changes){
@@ -140,7 +144,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });*/
 
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       let data = evt.data.data.data;
       let temp: number;
       for(let i = data.length-1; i >= 0; i--){

@@ -38,8 +38,20 @@ interface Registration {
 @Injectable()
 export class CoreService {
   public coreEvents: Subject<CoreEvent>;
+  private debug:boolean;
+  debug_show_subscription_type:boolean;
+  debug_show_dispatch_table:boolean;
+  //private debug_show_data:boolean
   constructor() {
-    //DEBUG: console.log("*** New Instance of Core Service ***");
+    /////////////////////////////
+    //Set Debug options here
+    this.debug = false;
+    this.debug_show_subscription_type = false;
+    this.debug_show_dispatch_table = false;
+    /////////////////////////////
+    if(this.debug){
+      console.log("*** New Instance of Core Service ***");
+    }
     this.coreEvents = new Subject();
     this.coreEvents.subscribe(
       (evt:CoreEvent) => {
@@ -80,9 +92,14 @@ export class CoreService {
   }
 
   public emit(evt: CoreEvent){
-    //DEBUG: console.log("CORESERVICE: Emitting " + evt.name);
-    //DEBUG: console.log(this.dispatchTable)
-
+    if(this.debug){ 
+      console.log("*******************************************************");
+      console.log("CORESERVICE: Emitting " + evt.name);
+      if(this.debug_show_dispatch_table){
+        console.log("CORESERVICE: dispatchTable...");
+        console.log(this.dispatchTable)
+      }
+    }
     //avoid matching null values
     if(!evt.name){
       evt.name = "null";
@@ -102,33 +119,44 @@ export class CoreService {
       } else if(reg.sender){
         subscriptionType = "Sender";
       }
-      //DEBUG: console.log(i + ":CoreService: Subscription type = " + subscriptionType);
+
+      if(this.debug && this.debug_show_subscription_type){
+        console.log(i + ":CoreService: Subscription type = " + subscriptionType);
+      }
 
       if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
-	//DEBUG:
-        //DEBUG: console.log("Matched name and sender");
-        //DEBUG: console.log(reg.observerClass);
-        //DEBUG: console.log(evt);
+        if(this.debug){
+          console.log(">>>>>>>>");
+          console.log("Matched name and sender");
+          console.log(reg.observerClass);
+          console.log(evt);
+          console.log("<<<<<<<<");
+        }
 	reg.observable.next(evt);
-        //return this;
       } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
-	//DEBUG:
-        //DEBUG: console.log("Matched name only");
-        //DEBUG: console.log(reg.observerClass);
-        //DEBUG: console.log(evt);
+        if(this.debug){
+          console.log(">>>>>>>>");
+          console.log("Matched name only");
+          console.log(reg.observerClass);
+          console.log(evt);
+          console.log("<<<<<<<<");
+        }
 	reg.observable.next(evt);
-        //return this;
       } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
-	//DEBUG: 
-        //DEBUG: console.log("Matched sender only");
-        //DEBUG: console.log(reg.observerClass);
-        //DEBUG: console.log(evt);
+        if(this.debug){
+          console.log(">>>>>>>>");
+          console.log("Matched sender only");
+          console.log(reg.observerClass);
+          console.log(evt);
+          console.log("<<<<<<<<");
+        }
 	reg.observable.next(evt);
-        //return this;
       } else {
-	//DEBUG: 
         //DEBUG: console.log("No match found");
       }
+    }
+    if(this.debug){ 
+      console.log("*******************************************************");
     }
     return this;
   }

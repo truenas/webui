@@ -37,6 +37,7 @@ export class EntityTaskComponent implements OnInit {
   protected pk: any;
   public isNew: boolean = false;
   protected data: any;
+  public showDefaults: boolean = false;
 
   protected preTaskName: string = '';
 
@@ -215,11 +216,18 @@ export class EntityTaskComponent implements OnInit {
           }
         }
       });
+      this.showDefaults = true;
     }
 
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+
+    setTimeout(() => { this.setShowDefaults(); }, 500);
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
 
   isShow(name: any): any {

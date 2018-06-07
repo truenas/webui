@@ -29,17 +29,19 @@ export class PortalAddComponent {
       type : 'input',
       name : 'iscsi_target_portal_comment',
       placeholder : T('Comment'),
-      tooltip: T('Optional description. Portals are automatically assigned\
- a numeric group ID.'),
+      tooltip: T('Optional description. Portals are automatically\
+                  assigned a numeric group ID.'),
     },
     {
       type : 'select',
       name : 'iscsi_target_portal_discoveryauthmethod',
       placeholder : T('Discovery Auth Method'),
-      tooltip: T('Configures the authentication level required by the\
- target for discovery of valid devices, where <i>None</i> will allow\
- anonymous discovery while <i>CHAP</i> and <i>Mutual CHAP</i> require\
- authentication.'),
+      tooltip: T('<a href="http://doc.freenas.org/11/sharing.html#block-iscsi"\
+                  target="_blank">iSCSI</a> supports multiple authentication\
+                  methods that are used by the target to discover valid\
+                  devices. <i>None</i> allows anonymous discovery while\
+                  <i>CHAP</i> and <i>Mutual CHAP</i> both require\
+                  authentication.'),
       options : [
         {
           label : 'NONE',
@@ -61,8 +63,8 @@ export class PortalAddComponent {
       name : 'iscsi_target_portal_discoveryauthgroup',
       placeholder : T('Discovery Auth Group'),
       tooltip: T('Select a user created in <b>Authorized Access</b> if\
- the <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
- <i>Mutual CHAP</i>.'),
+                  the <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
+                  <i>Mutual CHAP</i>.'),
       options : [ {
         label : 'NONE',
         value : '',
@@ -79,7 +81,8 @@ export class PortalAddComponent {
           name : 'ip',
           placeholder : T('IP Address'),
           tooltip: T('Select the IP address associated with an interface\
- or the wildcard address of <i>0.0.0.0</i> (any interface).'),
+                      or the wildcard address of <i>0.0.0.0</i>\
+                      (any interface).'),
           value : '0.0.0.0',
           options : [],
           required: true,
@@ -89,8 +92,8 @@ export class PortalAddComponent {
           type : 'input',
           name : 'port',
           placeholder : T('Port'),
-          tooltip: T('TCP port used to access the iSCSI target. Default\
- is <i>3260</i>.'),
+          tooltip: T('TCP port used to access the iSCSI target.\
+                      Default is <i>3260</i>.'),
           value : '3260',
           required: true,
           validation: [ Validators.required ],

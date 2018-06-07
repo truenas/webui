@@ -41,13 +41,16 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   public resize_terminal = true;
   private shellSubscription: any;
 
-  public shell_tooltip = T('Copy/paste with <b>Ctrl + C/V</b> or\
-   <b>Command + C/V</b>.<br>\
-   Many utilities are built-in, including:<br>\
-   <b>Iperf</b>, <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
-   <b>tw_cli</b>, <b>MegaCli</b>,<b>freenas-debug</b>,<b>tmux</b>,\
-   and <b>Dmidecode</b>. See the <b>Guide > Command Line Utilities</b>\
-   chapter for more information.');
+  public shell_tooltip = T('<b>Ctrl+C</b> kills a foreground process.<br>\
+                            Many utilities are built-in:<br> <b>Iperf</b>,\
+                            <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
+                            <b>tw_cli</b>, <br><b>MegaCli</b>,\
+                            <b>freenas-debug</b>, <b>tmux</b>,\
+                            <b>Dmidecode</b>.<br> Refer to the <a\
+                            href="..//docs/cli.html"\
+                            target="_blank">Command Line Utilities</a>\
+                            chapter in the guide for usage information\
+                            and examples.');
 
   clearLine = "\u001b[2K\r"
 
@@ -105,7 +108,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       rowNum = 10;
     }
 
-    this.xterm = new (<any>window).Terminal({ 
+    this.xterm = new (<any>window).Terminal({
       'cursorBlink': false,
       'tabStopWidth': 8,
       'cols': parseInt(colNum.toFixed(),10),

@@ -39,7 +39,7 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     name: "",
     passphrase: ""
   };
-  
+
   fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -50,7 +50,7 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
       inputType: 'password',
       name : 'passphrase',
       placeholder: T('Passphrase'),
-      tooltip: 'Geli Passphrase',
+      tooltip: 'Enter the GELI passphrase.',
       validation: [Validators.required],
       required: true
     }
@@ -75,7 +75,7 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-  
+
   }
 
   customSubmit(value) {
@@ -83,7 +83,7 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      
+
       this.router.navigate(new Array('/').concat(
         this.route_success));
 
@@ -92,5 +92,5 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
       this.dialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
     });
   }
-  
+
 }

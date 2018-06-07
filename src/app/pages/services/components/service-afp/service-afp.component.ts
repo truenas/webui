@@ -35,12 +35,13 @@ export class ServiceAFPComponent {
       type : 'select',
       name : 'afp_srv_guest_user',
       placeholder : T('Guest Account'),
-      tooltip: T('Select account to use for guest access; the selected\
-       account must have permissions to the volume or dataset being shared.\
-       The privileges given to this user are also available to any \
-       client connecting to the guest service. This user must exist in the\
-       password file, but does not require a\
-       valid login. Note the user root cannot be used as guest account.'),
+      tooltip: T('Select an account to use for guest access. This\
+                  account must have permissions to the shared pool or dataset.\
+                  The privileges given to this user are also\
+                  available to any client connecting to the guest service.\
+                  This user must  exist in the password file, but does\
+                  not require a valid login. The root user cannot be\
+                  used as guest account.'),
       options: [
         {label : 'nobody', value : 'nobody'}
       ]
@@ -49,15 +50,15 @@ export class ServiceAFPComponent {
       type : 'checkbox',
       name : 'afp_srv_guest',
       placeholder : T('Guest Access'),
-      tooltip: T('If checked, clients will not be prompted to\
-       authenticate before accessing AFP shares.'),
+      tooltip: T('Set to disable the password prompt that appears\
+                  before clients access AFP shares.'),
     },
     {
       type : 'input',
       name : 'afp_srv_connections_limit',
       placeholder : T('Max. Connections'),
       tooltip: T('Maximum number of simultaneous connections permitted\
-       via AFP. The default limit is 50.'),
+                  via AFP. The default limit is 50.'),
     },
     {
       type : 'explorer',
@@ -65,19 +66,20 @@ export class ServiceAFPComponent {
       explorerType: 'directory',
       name : 'afp_srv_dbpath',
       placeholder : T('Database Path'),
-      tooltip: T('Sets the database information to be stored in path.\
-        The path must be writable even if the volume is read only.'),
+      tooltip: T('Sets the database information to be stored in the path.\
+                  The path must be writable even if the pool is read only.'),
     },
     {
       type : 'select',
       name : 'afp_srv_chmod_request',
       placeholder : T('Chmod Request'),
-      tooltip: T('Indicates how to handle Access Control Lists(ACL); choices are\
-       <b>Ignore</b> - This option is used to completely ignore requests, and to give\
-       the parent directory ACL inheritance full control over new items.\
-       <b>Preserve </b> - This option preserves ZFS ACEs for named users and groups or the POSIX\
-       ACL group mask. <b>Simple </b>- Set to chmod() as requested\
-       without any extra steps.'),
+      tooltip: T('Indicates how to handle Access Control Lists.\
+                  <b>Ignore:</b> ignores requests and gives\
+                  the parent directory ACL inheritance full control over\
+                  new items.<b> Preserve:</b> preserves ZFS ACEs for named\
+                  users and groups or the POSIX ACL group mask.\
+                  <b>Simple:</b> is set to chmod() as requested\
+                  without any extra steps.'),
       options : [
         {label : 'Ignore', value : 'ignore'},
         {label : 'Preserve', value : 'preserve'},
@@ -88,10 +90,10 @@ export class ServiceAFPComponent {
       type : 'select',
       name : 'afp_srv_map_acls',
       placeholder : T('Map ACLs'),
-      tooltip: T('Choose mapping of effective permissions for\
-       authenticated users; <b>Rights</b>\
-       (default, Unix-style permissions), <b>None</b>, or\
-       <b>Mode</b> (ACLs).'),
+      tooltip: T('Select mapping of permissions for\
+                  authenticated users. <b>Rights</b>\
+                  (default, Unix-style permissions), <b>None</b>,\
+                  or <b>Mode</b> (ACLs).'),
       options : [
         {label : 'Rights', value : 'rights'},
         {label : 'None', value : 'none'},
@@ -103,8 +105,9 @@ export class ServiceAFPComponent {
       name : 'afp_srv_bindip',
       placeholder : T('Bind Interfaces'),
       tooltip: T('Specify the IP addresses to listen for FTP connections.\
-       If none are specified, advertise the first IP address of the\
-       system, but to listen for any incoming request.'),
+                  If none are specified, advertise the first IP\
+                  address of the system, but listen for any\
+                  incoming request.'),
       options: [],
       multiple: true
     },
@@ -112,8 +115,9 @@ export class ServiceAFPComponent {
       type : 'textarea',
       name : 'afp_srv_global_aux',
       placeholder : T('Global auxiliary parameters'),
-      tooltip: T('Additional <a href="http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html" target="_blank">afp.conf(5)</a>\
-       parameters not covered elsewhere in this screen.'),
+      tooltip: T('Additional <a href="http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html"\
+                  target="_blank">afp.conf(5)</a>\
+                  parameters.'),
     }
   ];
   private guest_users: any;

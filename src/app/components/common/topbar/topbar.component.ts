@@ -7,7 +7,6 @@ import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
-import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
@@ -43,7 +42,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme:string = "ix-blue";
   public createThemeLabel = "Create Theme";
-  public showTour: boolean = false;
 
   constructor(
     public themeService: ThemeService,
@@ -55,7 +53,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
-    private tour: TourService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     private idle: Idle,
@@ -77,40 +74,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
     idle.watch();
   }
 
-  getTourPerference(){
-    this.rest.get("account/users/1", {}).subscribe((res) => {
-      this.showTour = res.data.bsdusr_attributes['showTour'] || false;
-    });
-  }
-
-  disableTour(){
-    this.loader.open();
-    this.ws.call('user.set_attribute', [1, 'showTour', false]).subscribe((res)=>{
-      this.loader.close();
-      this.snackBar.open("Tour perference saved.", 'close', { duration: 5000 });
-    }, (err)=>{
-      this.loader.close();
-      new EntityUtils().handleError(this, err);
-    })
-  }
-
   ngOnInit() {
     let theme = this.themeService.currentTheme();
     this.currentTheme = theme.name;
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
       this.themesMenu = this.themeService.themesMenu
     });
-    
-    try{
-      this.getTourPerference(); 
-    }
-    catch{
-      this.showTour = false;
-    }
-    if (this.showTour == true) {
-      this.disableTour();
-      hopscotch.startTour(this.tour.startTour(this.router.url));
-    }
 
     const notifications = this.notificationsService.getNotificationList();
 
@@ -153,11 +122,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
 
     this.continuosStreaming.unsubscribe();
-  }
-
-  startTour() {
-    hopscotch.startTour(this.tour.startTour(this.router.url));
-    this.disableTour();
   }
 
   setLang(lang) {
@@ -256,6 +220,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilveringDetails() {
     this.translate.get('Ok').subscribe((ok: string) => {
       this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
+    });
+  }
+
+  onGoToLegacy() {
+    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
+      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
+        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true).subscribe((res) => {
+          if (res) {
+            window.location.href = '/legacy/';
+          }
+        });
+      });
     });
   }
 }

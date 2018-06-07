@@ -11,6 +11,10 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector: 'widget-load-history',
   templateUrl:'./widgetloadhistory.component.html'
@@ -18,10 +22,10 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 export class WidgetLoadHistoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('chartLoad') chartLoad: ViewChartLineComponent;
-  public title:string = "System Load";
+  public title:string = T("System Load");
 
-  constructor(){
-    super();
+  constructor(public translate: TranslateService){
+    super(translate);
   }
 
   ngOnDestroy(){

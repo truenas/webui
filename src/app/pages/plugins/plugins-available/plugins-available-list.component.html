@@ -1,0 +1,31 @@
+<div *ngIf="!isPoolActivated;else jail_list">
+  <div class="mat-content">
+    <mat-card>
+      <div *ngIf="availablePools.length > 0; else noPool">
+        <form (ngSubmit)="activatePool($event)">
+          <label for="power">{{ "Activate Jail Manager" | translate }}</label>
+          <div class="dynamic-field form-select has-tooltip">
+            <mat-form-field class="form-control full-width">
+              <mat-select placeholder="{{ 'Choose a pool or dataset for jail storage' | translate }}" required [(ngModel)]="selectedPool" name="Pool">
+                <mat-option *ngFor="let pool of availablePools" [value]="pool">{{pool.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <tooltip [message]=tooltipMsg></tooltip>
+          </div>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!selectedPool">{{ "Activate" | translate }}</button>
+        </form>
+      </div>
+      <ng-template #noPool>
+        <div class="div-content">
+          <span>
+            {{ "No pools exist. Plugins cannot be installed until a pool is present for storing them. Please create a pool first." | translate }}
+          </span>
+        </div>
+        <button mat-raised-button color="primary" routerLink="/storage/pools/manager">{{ "Create Pool" | translate }}</button>
+      </ng-template>
+    </mat-card>
+  </div>
+</div>
+<ng-template #jail_list>
+  <entity-table [title]="title" [conf]="this "></entity-table>
+</ng-template>

@@ -38,7 +38,7 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       //console.log(evt.data);
       if(evt.data){
-        this.core.emit({name:"UserDataRequest", data: [[["id", "=", "1" ]]] });
+        this.core.emit({name:"UserDataRequest", data: [[["id", "=", 1 ]]] });
       }
     });
 

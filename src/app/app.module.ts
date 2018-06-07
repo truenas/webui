@@ -40,7 +40,14 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { StatsService } from 'app/services/stats.service';
 
 import { ErdService } from 'app/services/erd.service';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+
+import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
+import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
+import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
+import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
+import { EntityModule } from './pages/common/entity/entity.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -68,7 +75,9 @@ export function createTranslateLoader(http: HttpClient) {
     MarkdownModule.forRoot(),
     CoreServices.forRoot(),
     CoreComponents,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    EntityModule,
   ],
   declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
@@ -93,7 +102,12 @@ export function createTranslateLoader(http: HttpClient) {
     AboutModalDialog,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
-    SelectDialogComponent
+    SelectDialogComponent,
+    EntityDialogComponent,
+    FormCheckboxComponent,
+    FormInputComponent,
+    FormSelectComponent,
+    FormParagraphComponent
   ],
 })
 export class AppModule { 

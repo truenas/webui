@@ -39,7 +39,7 @@ export class VmTableComponent implements OnChanges{
   protected toggleStart: string = "vm.start";
   protected toggleStop: string = "vm.stop";
 
-	
+
   public title = "Virtual Machines"
 
   public columns: Array<any> = [
@@ -97,23 +97,23 @@ export class VmTableComponent implements OnChanges{
     console.log("********  setPage ********");
     console.log(pageInfo);
     this.page.pageNumber = pageInfo.offset;
-    this.page.size = pageInfo.pageSize;    
+    this.page.size = pageInfo.pageSize;
 
     this.getResults(this.page).subscribe(pagedData => {
     this.page = pagedData.page;
 
       // calc start
       const start = this.page.pageNumber * this.page.size;
-  
+
       // copy rows
       const rows = [...this.data];
-  
+
       // insert rows into new position
       rows.splice(start, 0, ...pagedData.data);
-  
+
       // set rows to our new rows
       this.rows = rows;
-  
+
       // add flag for results
         this.cache[this.page.pageNumber] = true;
     });
@@ -149,6 +149,13 @@ export class VmTableComponent implements OnChanges{
     let index = this.data.indexOf(row);
     console.log(index);
     this.edit.emit(index);
+  }
+
+  goToDevices(row){
+    let index = this.data.indexOf(row);
+    this.router.navigate(
+      new Array('').concat([ "vm", row.id, "devices", row.name ])
+    );
   }
 
   deleteRow(row){

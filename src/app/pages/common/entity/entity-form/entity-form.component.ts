@@ -67,7 +67,8 @@ export interface Formconfiguration {
   customFilter?:any[];
   confirmSubmit?;
   confirmSubmitDialog?:Object;
-  
+ 
+  afterSubmit?;
   beforeSubmit?;
   customSubmit?;
   clean?;
@@ -130,6 +131,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public error: string;
   public success = false;
   public data: Object = {};
+  public showDefaults: boolean = false;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -151,6 +153,19 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   ngOnInit() {
+    //get system general setting
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        if (this.conf.isBasicMode) {
+          if(res.advancedmode) {
+            this.conf.isBasicMode = false;
+          } else {
+            this.conf.isBasicMode = true;
+          }
+        }
+      }
+    });
+
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
@@ -266,7 +281,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
-                    this.data[i] = _.split(this.data[i], ',');
+                    if (this.data[i]) {
+                      this.data[i] = _.split(this.data[i], ',');
+                    }
                   }
                   fg.setValue(this.data[i]);
                 }
@@ -311,12 +328,21 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
+          // Gets called on most entity forms after ws data returns, 
+          // thus hiding messages like 'no data'
+          this.showDefaults = true;
         });
       }
     });
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+    // ...but for entity forms that don't make a data request, this kicks in 
+    setTimeout(() => { this.setShowDefaults(); }, 500);
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
 
   ngOnChanges() {
@@ -435,6 +461,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           } else {
                             this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
                             this.success = true;
+                          }
+
+                          if (this.conf.afterSubmit) {
+                            this.conf.afterSubmit(value);
                           }
 
                         },

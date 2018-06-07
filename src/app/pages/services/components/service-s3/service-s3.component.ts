@@ -42,8 +42,10 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'bindip',
       placeholder : T('IP Address'),
-      tooltip: T('The IP address on which to run the S3 service; 0.0.0.0\
-       sets the server to listen on all addresses.'),
+      tooltip: T('Enter the IP address which runs the <a\
+                  href="..//docs/services.html#s3" target="_blank">S3\
+                  service</a>. <i>0.0.0.0</i> tells the server to listen\
+                  on all addresses.'),
       options : [
         {label:'0.0.0.0', value: '0.0.0.0'}
       ]
@@ -52,7 +54,7 @@ export class ServiceS3Component implements OnInit {
       type : 'input',
       name : 'bindport',
       placeholder : T('Port'),
-      tooltip: T('TCP port on which to provide the S3 service (default 9000).'),
+      tooltip: T('Enter the TCP port which provides the S3 service.'),
       value: '9000'
     },
     {
@@ -60,23 +62,25 @@ export class ServiceS3Component implements OnInit {
       name : 'access_key',
       placeholder : T('Access Key'),
       tooltip: T('Enter the S3 username.'),
+      required: true,
       validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required]
     },
     {
       type : 'input',
       name : 'secret_key',
       placeholder : T('Secret Key'),
-      tooltip: T('The password to be used by connecting S3 systems; must\
-       be at least 8 but no more than 40 characters long.'),
+      tooltip: T('Enter the password that must be used by connecting S3\
+                  systems.'),
       inputType : 'password',
+      required : true,
       validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required]
     },
     {
       type : 'input',
       name : 'secret_key2',
-      placeholder : T('Confirm S3 Key'),
-      tooltip: T('Re-enter the S3 password to confirm.'),
+      placeholder : T('Confirm Secret Key'),
       inputType : 'password',
+      required: true,
       validation : [ matchOtherValidator('secret_key'), Validators.required ],
     },
     {
@@ -85,14 +89,15 @@ export class ServiceS3Component implements OnInit {
       explorerType: 'directory',
       name : 'storage_path',
       placeholder : T('Disk'),
-      tooltip: T('S3 filesystem directory.'),
+      tooltip: T('Browse to the directory for the S3 filesystem.'),
+      required: true,
       validation: [ Validators.required]
     },
     {
       type : 'checkbox',
       name : 'browser',
       placeholder : T('Enable Browser'),
-      tooltip: T('Enable the web user interface for the S3 service.'),
+      tooltip: T('Set to enable the S3 web user interface.'),
     },
 /*  This is to be enabled when the mode feature is finished and fully implemented for S3
     {
@@ -108,8 +113,9 @@ export class ServiceS3Component implements OnInit {
       type : 'select',
       name : 'certificate',
       placeholder : T('Certificate'),
-      tooltip : T('Add an SSL certificate to be used for secure S3\
-       connections. To create a certificate, use <b>System/Certificates</b>.'),
+      tooltip : T('Add an <a href="..//docs/system.html#certificates"\
+                   target="_blank">SSL certificate</a> to be used for\
+                   secure S3 connections.'),
       options : []
     },
   ];
@@ -124,15 +130,19 @@ export class ServiceS3Component implements OnInit {
   afterInit(entityForm: any) {
     this.systemGeneralService.getCertificates().subscribe((res)=>{
       this.certificate = _.find(this.fieldConfig, {name:'certificate'});
-      res.forEach(element => {
-        this.certificate.options.push({label:element[1], value: element[0]})
-      });
+      if (res.length > 0) {
+        res.forEach(item => {
+          this.certificate.options.push({label:item.name, value: item.id});
+        });
+      }
     });
     this.systemGeneralService.getIPChoices().subscribe(res=>{
       this.ip_address = _.find(this.fieldConfig,{name:'bindip'});
-      res.forEach(element => {
-        this.ip_address.options.push({label:element[1], value: element[0]});
-      });
+      if (res.length > 0) {
+        res.forEach(element => {
+          this.ip_address.options.push({label:element[1], value: element[0]});
+        });
+      }
     });
     entityForm.ws.call('s3.config').subscribe((res)=>{
       entityForm.formGroup.controls['bindip'].setValue(res.bindip);

@@ -348,6 +348,18 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
   @include variable(color, --fg2, $fg2);
 }
 
+.mat-calendar-table,
+.mat-calendar-body-cell-content,
+.mat-calendar-body-label{
+  @include variable(color, --fg2, $fg2);
+}
+
+.mat-calendar-table-header,
+.mat-calendar-body-cell,
+.mat-calendar-body-cell-content{
+  cursor:default;
+}
+
 .mat-raised-button.mat-primary[disabled],
 .mat-raised-button.mat-accent[disabled],
 .mat-raised-button.mat-warn[disabled],
@@ -365,7 +377,8 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 }
 
 .egret-swatch,
-.mat-checkbox-frame{ 
+.mat-checkbox-frame,
+{ 
   @include variable(border-color, --fg2, $fg2);
 }
 
@@ -412,15 +425,32 @@ tr.dx-row:nth-child(odd){
 
 // END Treelist styles
 
+//Entity Module Overrides
+
+entity-task .form-card.mat-card,
+device-edit .form-card.mat-card,
+entity-form .form-card.mat-card{
+  max-width:960px;
+  margin:0 auto;
+}
+
+.form-card.mat-card{
+  font-size:12px;
+}
+
 .fieldset-label{
   min-width:100%;
   margin-bottom:16px;
 }
 
+.combo-box-menu.mat-menu-panel {
+    max-height: 256px;
+}
+
 .mat-checkbox-inner-container{
   width:16px;
   height:16px;
-  margin-bottom:4px;
+  margin:4px;
   overflow: visible;
 }
 .mat-checkbox-ripple{
@@ -443,7 +473,7 @@ tr.dx-row:nth-child(odd){
   
   .mat-dialog-content {
     max-width: 600px;
-  
+    padding-bottom: -3px;
   
     .info-panel {
       max-height: 100px;
@@ -503,12 +533,45 @@ tr.dx-row:nth-child(odd){
   
 }
 
+// To move tooltips up when they appear too low on viewport
+#raised-tooltip {
+  top: -90px;
+}
+
+// To fix alignment issues w/checkboxes on Create Pool page
+.headerCheckboxCellManager, .headerCheckboxCellVDev {
+  position: relative;
+  top: 6px;
+  left: 8px;
+}
+
+// For Detach Pools functions on volumes-list.component.ts
+#pool_detach_warning {
+  margin-bottom: 15px;
+}
+
+#cust_button_download_key {
+  background-color: #f44336;
+  color: white;
+  margin-right: 7px;
+}
+// ------------------------
+
+// For some items on VM Wizard Hard Disks page
+#disk_radio {
+  max-width: 220px;
+}
+
+#disk_radio tooltip {
+  float: right;
+  margin-top: 23px;
+}
+// ---------
+
+// Put header labels directly over cells
 .datatable-header-cell-label {
   margin-left: -7px;
   text-align: center;
   position: relative;
   left: 15px;
 }
-
-  
-  

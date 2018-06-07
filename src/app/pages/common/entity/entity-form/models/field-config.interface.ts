@@ -10,5 +10,7 @@ export interface FieldConfig {
   initialCount?: number, readonly?: boolean, initial?: string,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
   customEventActionLabel?: string, explorerType?: string, required?: boolean,
-  acceptedFiles?: string, fileLocation?: string, fileType?: string, customEventMethod?(data:any), onChangeOption?(data:any), width?:string,
+  acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string, message?: any, updater?:any, parent?:any,hideButton?:boolean, paraText?: any,
+  customEventMethod?(data:any), onChangeOption?(data:any), 
+  
 }

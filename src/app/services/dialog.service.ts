@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 import {WebSocketService} from '../services/ws.service';
 import { MatSnackBar } from '@angular/material';
 import { AppLoaderService } from '../services/app-loader/app-loader.service';
+import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 
 @Injectable()
 export class DialogService {
@@ -40,8 +41,14 @@ export class DialogService {
             dialogRef.componentInstance.method = method;
             dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
             if(selection){
-                if(data[1].hasOwnProperty('delete_users')){
+                if(data[1] && data[1].hasOwnProperty('delete_users')){
                     data[1].delete_users = !data[1].delete_users;
+                }
+                if(data[1] && data[1].hasOwnProperty('delete_groups')){
+                    data[1].delete_groups = !data[1].delete_groups;
+                }
+                if(data[0] && data[0].hasOwnProperty('reboot')){
+                    data[0].reboot = !data[0].reboot;
                 }
                 return dialogRef;
             }
@@ -104,6 +111,15 @@ export class DialogService {
         });
 
 
+    }
+
+    public dialogForm(conf: any): Observable<boolean> {
+        let dialogRef: MatDialogRef<EntityDialogComponent>;
+
+        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '400px'});
+        dialogRef.componentInstance.conf = conf;
+
+        return dialogRef.afterClosed();
     }
 
 }

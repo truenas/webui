@@ -30,7 +30,7 @@ except ImportError:
     import unittest
 
 xpaths = { 'navSystem' : "//*[@id='nav-2']/div/a[1]",
-           'submenuUpdate' : "//*[@id='2-9']",
+           'submenuUpdate' : "//*[@id='2-10']",
            'buttonChecknow' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-update/mat-card/div/div[3]/div/button[1]"
          }
 
@@ -95,7 +95,7 @@ class check_update_test(unittest.TestCase):
                     print ("There is no update available")
                     self.assertTrue("No" in update_data2)
                     self.error_check_sys()
-                else: 
+                else:
                     print ("There is an unexpected issue: something wrong with no update available element:" + update_data2)
                     self.error_check_sys()
             else:
@@ -125,7 +125,7 @@ class check_update_test(unittest.TestCase):
         return True
 
     def error_check_sys(self):
-        if (self.is_element_present(By.XPATH, "/html/body/div[5]/div[4]/div/mat-dialog-container/error-dialog/h1")):
+        if (self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]")):
             driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
 
     def screenshot(self, count):

@@ -64,9 +64,9 @@ export class StorageFormComponent {
       explorerType: 'directory',
       name: 'source',
       placeholder: T('Source'),
-      tooltip: T('Directory or dataset on the FreeNAS system which will\
- be accessed by the jail. This directory <b>must</b> reside outside of\
- the volume or dataset being used by the jail.'),
+      tooltip: T('Browse to the directory on the system which will\
+                  be accessed by the jail. This directory <b>must</b>\
+                  be separate from the jail pool or dataset.'),
     },
     {
       type: 'explorer',
@@ -74,14 +74,17 @@ export class StorageFormComponent {
       explorerType: 'directory',
       name: 'destination',
       placeholder: T('Destination'),
-      tooltip: T('Browse to an existing and empty directory or enter a\
- new directory name within the jail to link to the <b>Source</b> storage\
- area. The directory is automatically created if it does not exist.'),
+      tooltip: T('Browse to an empty directory within the jail or enter\
+                  a new directory name within the jail directory\
+                  structure. This links to the <b>Source</b> storage\
+                  area.'),
     },
     {
       type: 'checkbox',
       name: 'readonly',
       placeholder: T('Read-Only'),
+      tooltip: T('Set to prevent users from modifying the\
+                  <b>Destination</b>.'),
     },
   ];
 
