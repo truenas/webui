@@ -18,7 +18,6 @@ import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
-import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
@@ -83,10 +82,6 @@ export const routes: Routes = [
           {
             path: 'detachvolume/:pk', component: VolumeDeleteComponent,
             data: { title: 'Detach Pool', breadcrumb: 'Detach Pool' }
-          },
-          {
-            path: 'unlock/:pk', component: VolumeUnlockFormComponent,
-            data: { title: 'Unlock Pool', breadcrumb: 'Unlock Pool' }
           },
           {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,

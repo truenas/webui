@@ -19,10 +19,9 @@ import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { StorageService } from '../../../../services/storage.service';
+import { Validators } from '@angular/forms'
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-
-
 
 
 export interface ZfsPoolData {
@@ -137,8 +136,38 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "unlock", row1.id]));
+            let localLoader = this.loader,
+            localRest = this.rest,
+            localParentVol = this.parentVolumesListComponent,
+            localDialogService = this.dialogService,
+            localSnackBar = this.snackBar;
+
+            const conf: DialogFormConfiguration = {
+              title: "Unlock Pool: " + row1.name,
+              fieldConfig: [{
+                type : 'input',
+                inputType: 'password',
+                name : 'passphrase',
+                placeholder: T('Passphrase'),
+                validation: [Validators.required],
+                required: true
+              }],
+
+              saveButtonText: "Unlock",
+              customSubmit: function (value) {
+                localLoader.open();
+                return localRest.post("storage/volume/" + row1.name + "/unlock/", { body: JSON.stringify({passphrase: 
+                  value.passphrase}) }).subscribe((restPostResp) => {
+                  localLoader.close();
+                  localParentVol.repaintMe();     
+                  localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
+                }, (res) => {
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
+                });
+              }
+            }
+            this.dialogService.dialogForm(conf);
           }
         });
       }
@@ -704,10 +733,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
         this.showDefaults = true;
 
+        
       }, (res) => {
+        this.showDefaults = true;
+
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
+      this.showDefaults = true;
+
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
