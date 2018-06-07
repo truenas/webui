@@ -22,6 +22,8 @@ export class EntityDashboardComponent implements OnInit {
 			if (routeConfigs[i].path !== "") {
 				if (_.find(routeConfigs[i].children, {path: 'add'})) {
 					routeConfigs[i]['addPath'] = 'add';
+				} else if (_.find(routeConfigs[i].children, {path: 'import'})) {
+					routeConfigs[i]['addPath'] = 'import';
 				}
 				this.routeParts.push(routeConfigs[i]);
 			}
