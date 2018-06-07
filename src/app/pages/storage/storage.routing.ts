@@ -25,6 +25,7 @@ import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecr
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -32,8 +33,12 @@ export const routes: Routes = [
     data: { title: 'Storage' },
     children: [
       {
+        path: '',
+        component: EntityDashboardComponent,
+      },
+      {
         path: 'pools',
-        data: { title: 'Pools', breadcrumb: 'Pools' },
+        data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
         children: [
           {
             path: '', component: VolumesListComponent,
@@ -101,12 +106,9 @@ export const routes: Routes = [
           }
         ]
       },
-
-
-
       {
         path: 'snapshots',
-        data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
+        data: { title: 'Snapshots', breadcrumb: 'Snapshots', icon: 'camera_alt' },
         children: [
           {
             path: '', component: SnapshotListComponent,
@@ -128,7 +130,7 @@ export const routes: Routes = [
       },
       {
         path: 'vmware-Snapshots',
-        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
+        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
         children: [
           {
             path: '', component: VMwareSnapshotListComponent,
@@ -147,7 +149,7 @@ export const routes: Routes = [
       },
       {
         path: 'disks',
-        data: { title: 'Disks', breadcrumb: 'Disks' },
+        data: { title: 'Disks', breadcrumb: 'Disks', icon: 'view_stream' },
         children: [
           {
             path: '', component: DisksListComponent,
@@ -169,9 +171,8 @@ export const routes: Routes = [
       },
       {
         path: 'import-disk', component: ImportDiskComponent,
-        data: { title: 'Import Disk', breadcrumb: 'Import Disk' }
+        data: { title: 'Import Disk', breadcrumb: 'Import Disk', icon: 'view_stream' }
       }
-      
     ]
   }
 ];
