@@ -539,9 +539,9 @@ entity-form .form-card.mat-card{
 }
 
 // To fix alignment issues w/checkboxes on Create Pool page
-.headerCheckboxCellManager, .headerCheckboxCellVDev {
+.headerCheckBox {
   position: relative;
-  left: 8px;
+  left: 16px;
 }
 
 // For Detach Pools functions on volumes-list.component.ts
@@ -578,3 +578,10 @@ entity-form .form-card.mat-card{
 }
 // -----------------------
 
+// Put header labels directly over cells
+.datatable-header-cell-label {
+  margin-left: -7px;
+  text-align: center;
+  position: relative;
+  left: 14px;
+}

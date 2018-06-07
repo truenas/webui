@@ -57,9 +57,8 @@
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-          <div>
+          <div class="headerCheckBox">
             <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
-            <!-- &nbsp character needed to fix checkbox alignment on mozila-->
           </div>
         </ng-template>
 
