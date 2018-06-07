@@ -1,0 +1,22 @@
+<div fxLayout="row wrap" fxLayout.xs="column" >
+  <div *ngFor="let item of routeParts" fxFlex="50">
+    <mat-card>
+      <mat-card-content>
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <div>
+            <button mat-icon-button (click)="goList(item)" matTooltip="View {{item.data.title}}">
+              <mat-icon aria-label="Example icon-button with a heart icon">{{item.data.icon}}</mat-icon>
+            </button>
+            <span>{{item.data.title}}</span>
+          </div>
+          <div>
+            <i class="fas fa-camera-retro"></i>
+            <button mat-icon-button (click)="goAdd(item)">
+              <mat-icon aria-label="Example icon-button with a heart icon">add_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
