@@ -127,6 +127,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.alwaysDisplayedCols.push(column); // Make an array of required cols
       }
     });
+    
+    this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
+
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
@@ -194,6 +197,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         }
         this.currentPreferredCols = this.conf.columns;
       }
+      console.log (this.conf.columns)
         // End of checked/display section ------------
         
       setTimeout(() => { this.setShowDefaults(); }, 1000);
