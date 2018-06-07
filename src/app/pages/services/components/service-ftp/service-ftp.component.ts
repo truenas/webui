@@ -415,7 +415,10 @@ export class ServiceFTPComponent implements OnInit {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['ssltls_certificate'] = data['ssltls_certificate'].id;
+    const certificate = data['ssltls_certificate'];
+    if (certificate && certificate.id) {
+      data['ssltls_certificate'] = certificate.id;
+    }
     return data;
   }
 
