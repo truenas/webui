@@ -59,14 +59,14 @@
                   </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column
-                  [width]="30"
+                  [width]="35"
                   [sortable]="false"
                   [canAutoResize]="false"
                   [draggable]="false"
                   [resizeable]="false">
                 </ngx-datatable-column>
-                <ngx-datatable-column name="Disk" prop="devname"></ngx-datatable-column>
-                <ngx-datatable-column name="Capacity" prop="capacity"></ngx-datatable-column>
+                <ngx-datatable-column [width]="120" name="Disk" prop="devname"></ngx-datatable-column>
+                <ngx-datatable-column [width]="120" name="Capacity" prop="capacity"></ngx-datatable-column>
               </ngx-datatable>
               <mat-input-container>
                   <input matInput
@@ -88,19 +88,19 @@
         </div>
         <div class="pool">
           <div>
-            <h4>{{"Data VDevs" | translate}}</h4>
+            <h4 class="vdev-h4">{{"Data VDevs" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.data; let i = index" [group]="'data'" [manager]="this" [index]="i"></app-vdev>
           </div>
           <div *ngIf="vdevs.cache.length > 0">
-            <h4>{{"Cache VDev" | translate}}</h4>
+            <h4 class="vdev-h4">{{"Cache VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.cache; let i = index" [group]="'cache'" [manager]="this" [index]="i"></app-vdev>
           </div>
           <div *ngIf="vdevs.log.length > 0">
-            <h4>{{"Log VDev" | translate}}</h4>
+            <h4 class="vdev-h4">{{"Log VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.log; let i = index" [group]="'log'" [manager]="this" [index]="i"></app-vdev>
           </div>
           <div *ngIf="vdevs.spare.length > 0">
-            <h4>{{"Spare VDev" | translate}}</h4>
+            <h4 class="vdev-h4">{{"Spare VDev" | translate}}</h4>
             <app-vdev *ngFor="let vdev of vdevs.spare; let i = index" [group]="'spare'" [manager]="this" [index]="i"></app-vdev>
           </div>
         </div>

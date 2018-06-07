@@ -15,15 +15,9 @@ import {
 } from '../../services'
 import {EntityModule} from '../common/entity/entity.module';
 
-import {DeviceAddComponent} from './devices/device-add/device-add.component';
-import {DeviceCdromAddComponent} from './devices/device-cdrom-add/';
 import {DeviceDeleteComponent} from './devices/device-delete/';
-import {DeviceDiskAddComponent} from './devices/device-disk-add/';
 import {DeviceEditComponent} from './devices/device-edit/';
-import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/';
 import {DeviceListComponent} from './devices/device-list';
-import {DeviceNicAddComponent} from './devices/device-nic-add/';
-import {DeviceVncAddComponent} from './devices/device-vnc-add/';
 import {VmFormComponent} from './vm-form/';
 import {VmDeleteComponent} from './vm-delete/';
 import {VmListComponent} from './vm-list/';
@@ -35,8 +29,8 @@ import { VmSummaryComponent } from './vm-cards/vm-summary.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
 import { DockerVMWizardComponent } from './dockervm-wizard/';
-import {VMSerialShellComponent} from './vm-cards/vm-serial-shell'
-
+import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
+import { DeviceAddComponent } from './devices/device-add2';
 
 @NgModule({
   imports : [
@@ -52,18 +46,13 @@ import {VMSerialShellComponent} from './vm-cards/vm-serial-shell'
     VmFormComponent,
     VmDeleteComponent,
     DeviceListComponent,
-    DeviceCdromAddComponent,
-    DeviceAddComponent,
-    DeviceNicAddComponent,
-    DeviceDiskAddComponent,
-    DeviceVncAddComponent,
     DeviceDeleteComponent,
     DeviceEditComponent,
-    DeviceRawFileAddComponent,
     VmSummaryComponent,
     VMWizardComponent,
     DockerVMWizardComponent,
-    VMSerialShellComponent
+    VMSerialShellComponent,
+    DeviceAddComponent
   ],
   providers : [ VmService, EntityFormService, NetworkService, SystemGeneralService,MessageService ]
 })
