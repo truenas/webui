@@ -503,8 +503,12 @@ tr.dx-row:nth-child(odd){
   
 }
 
-
-
+.datatable-header-cell-label {
+  margin-left: -7px;
+  text-align: center;
+  position: relative;
+  left: 15px;
+}
 
   
   

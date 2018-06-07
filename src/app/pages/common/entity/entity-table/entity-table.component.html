@@ -22,7 +22,7 @@
 
 
 <!-- Selected columns checkbox ----------------- -->
-<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 3 ? true : false">
+<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 7 ? true : false">
   <div>
     <mat-checkbox
       type="checkbox"
@@ -73,7 +73,7 @@
       [columns]="conf.columns" 
       [columnMode]="'force'" 
       [columnWidth]="'auto'"
-      [headerHeight]="38" 
+      [headerHeight]="'auto'" 
       [footerHeight]="50" 
       [rowHeight]="50" 
       [reorderable]="true"

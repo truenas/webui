@@ -166,31 +166,32 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       });
 
       // Next section sets the checked/displayed columns
-      this.conf.columns = [];
-      this.userPrefColumns = window.localStorage.getItem('myCols');
-      
-      for (let i = 0; i < this.allColumns.length; i++) {
-        if (!this.allColumns[i].hidden) {
-          this.presetDisplayedCols.push(i);
-        }
-      } 
-
-      if (!this.userPrefColumns || this.userPrefColumns === '') {
-        this.arePresetsStillCurrent = true;
-        for (let item of this.allColumns) {
-          if (!item.hidden) {
-            this.conf.columns.push(item);
+      if (this.conf.columns && this.conf.columns.length > 7) {
+        this.conf.columns = [];
+        this.userPrefColumns = window.localStorage.getItem('myCols');
+        
+        for (let i = 0; i < this.allColumns.length; i++) {
+          if (!this.allColumns[i].hidden) {
+            this.presetDisplayedCols.push(i);
           }
-        }   
-      } else {
-        this.arePresetsStillCurrent = false;
-        let tempArr = this.userPrefColumns.split(',');
-        for (let item of tempArr) {
-          this.conf.columns.push(this.allColumns[parseInt(item)]);
+        } 
+  
+        if (!this.userPrefColumns || this.userPrefColumns === '') {
+          this.arePresetsStillCurrent = true;
+          for (let item of this.allColumns) {
+            if (!item.hidden) {
+              this.conf.columns.push(item);
+            }
+          }   
+        } else {
+          this.arePresetsStillCurrent = false;
+          let tempArr = this.userPrefColumns.split(',');
+          for (let item of tempArr) {
+            this.conf.columns.push(this.allColumns[parseInt(item)]);
+          }
         }
+        this.currentPreferredCols = this.conf.columns;
       }
-      this.currentPreferredCols = this.conf.columns;
-
         // End of checked/display section ------------
   }
   
