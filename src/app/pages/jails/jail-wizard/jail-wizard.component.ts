@@ -118,7 +118,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
           tooltip: T('IPv6 address for the jail.'),
-          validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
+          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
         },
         {
           type: 'input',
@@ -209,21 +209,15 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
     });
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+      this.summary[T('DHCP Autoconfigure IPv4')] = res ? T('Yes') : T('No');
+
       if (res) {
-        this.summary[T('DHCP Autoconfigure IPv4')] = 'Yes';
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
-      } else {
-        this.summary[T('DHCP Autoconfigure IPv4')] = 'No';
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
       }
+      _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
-      if (res) {
-        this.summary[T('VirtIO Virtual Networking')] = 'Yes';
-      } else {
-        this.summary[T('VirtIO Virtual Networking')] = 'No';
-      }
+      this.summary[T('VirtIO Virtual Networking')] = res ? T('Yes') : T('No');
 
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
