@@ -10,8 +10,7 @@
             <span>{{item.data.title}}</span>
           </div>
           <div>
-            <i class="fas fa-camera-retro"></i>
-            <button mat-icon-button (click)="goAdd(item)">
+            <button mat-icon-button (click)="goAdd(item)" *ngIf="item.addPath">
               <mat-icon aria-label="Example icon-button with a heart icon">add_circle</mat-icon>
             </button>
           </div>

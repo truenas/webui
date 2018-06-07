@@ -20,6 +20,9 @@ export class EntityDashboardComponent implements OnInit {
 		let routeConfigs = this.aroute.parent.routeConfig.children;
 		for (let i in routeConfigs) {
 			if (routeConfigs[i].path !== "") {
+				if (_.find(routeConfigs[i].children, {path: 'add'})) {
+					routeConfigs[i]['addPath'] = 'add';
+				}
 				this.routeParts.push(routeConfigs[i]);
 			}
 		}
@@ -30,6 +33,6 @@ export class EntityDashboardComponent implements OnInit {
 	}
 
 	goAdd(item) {
-		this.router.navigate(new Array('/').concat([this.parent, item.path, "add"]));
+		this.router.navigate(new Array('/').concat([this.parent, item.path, item.addPath]));
 	}
 }
