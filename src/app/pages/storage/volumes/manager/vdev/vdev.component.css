@@ -4,6 +4,8 @@
 .vdev-table {
     flex: 1 1 auto;
     padding-bottom: 10px;
+    min-width: 350px; 
+	max-width: 400px;
 }
 
 .vdev-actions {

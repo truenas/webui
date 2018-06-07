@@ -565,7 +565,9 @@ entity-form .form-card.mat-card{
   float: right;
   margin-top: 23px;
 }
-  
+// ---------------
+
+// Vertically align header-footer items on entity tables  
 .datatable-header-cell {
   position: relative;
   bottom: -6px;
@@ -574,4 +576,5 @@ entity-form .form-card.mat-card{
 .datatable-pager {
   margin-top: 15px;
 }
+// -----------------------
 
