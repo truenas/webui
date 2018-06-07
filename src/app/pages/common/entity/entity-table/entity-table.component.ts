@@ -33,6 +33,7 @@ export interface InputTableConf {
   route_add?: string[];
   queryRes?: any [];
   isActionVisible?: any;
+  custActions?: any[];
   config?: any;
   confirmDeleteDialog?: Object;
   checkbox_confirm?: any;
