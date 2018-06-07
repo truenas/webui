@@ -30,7 +30,8 @@ import { T } from '../../../../translate-marker';
 })
 
 export class ServiceS3Component implements OnInit {
-  protected resource_name: string = 'services/s3';
+  //protected resource_name: string = 'services/s3';
+  protected queryCall: string = 's3.config';
   protected addCall: string = 's3.update';
   protected route_success: string[] = [ 'services' ];
   private certificate: any;
@@ -150,8 +151,8 @@ export class ServiceS3Component implements OnInit {
       entityForm.formGroup.controls['access_key'].setValue(res.access_key);
       entityForm.formGroup.controls['storage_path'].setValue(res.storage_path);
       entityForm.formGroup.controls['browser'].setValue(res.browser);
-      entityForm.formGroup.controls['mode'].setValue(res.mode);
-      entityForm.formGroup.controls['certificate'].setValue(res.certificate);
+      //entityForm.formGroup.controls['mode'].setValue(res.mode);
+      entityForm.formGroup.controls['certificate'].setValue(res.certificate.id);
     })
     entityForm.submitFunction = this.submitFunction;
 
@@ -161,6 +162,10 @@ export class ServiceS3Component implements OnInit {
     delete value['secret_key2'];
 
     return value;
+  }
+
+  resourceTransformIncomingRestData(data) {
+    delete data['secret_key'];
   }
 
   submitFunction(this: any, entityForm: any,){
