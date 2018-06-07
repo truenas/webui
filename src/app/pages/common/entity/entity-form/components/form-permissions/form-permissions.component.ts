@@ -31,6 +31,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   private grp: number = 0;
   private other: number = 0;
   private value: string;
+  private control: any;
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -144,13 +145,18 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   }
   
   ngOnInit() {
-    this.group.controls[this.config.name].valueChanges.subscribe(data => {
+    this.control = this.group.controls[this.config.name];
+    this.control.valueChanges.subscribe(data => {
       if (this.value != data) {
         this.setValue(data);
         this.refreshPermissions();
       }
     });
-    this.setValue();
+    if (this.control.value && this.formatRe.test(this.control.value)) {
+      this.setValue(this.control.value);
+    } else {
+      this.setValue();
+    }
     this.refreshPermissions();
   }
 
