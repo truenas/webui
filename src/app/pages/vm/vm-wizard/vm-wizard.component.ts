@@ -429,7 +429,6 @@ async customSubmit(value) {
     });
 
     } else {
-      console.log(payload)
       this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
         for (const device of vm_payload["devices"]){
           if (device.dtype === "DISK"){
