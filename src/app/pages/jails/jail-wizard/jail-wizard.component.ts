@@ -66,18 +66,19 @@ export class JailWizardComponent {
           name: 'dhcp',
           placeholder: T('DHCP Autoconfigure IPv4'),
           tooltip: T('Set to autoconfigure jail networking with the \
-                      Dynamic Host Configuration Protocol. <b>VirtIO</b> \
+                      Dynamic Host Configuration Protocol. <b>VNET</b> \
                       is required.'),
       },
         {
           type: 'checkbox',
           name: 'vnet',
-          placeholder: T('VirtIO Virtual Networking'),
-          tooltip: T('Use VirtIO to emulate network devices for the \
-                      jail. <br> \
-                      See <a \
-href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports\
-"target="_blank">VIRTIO(4)</a> for more details.'),
+          placeholder: T('VNET'),
+	  tooltip: T('Set to use <a \
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
+                  target="_blank">VNET(9)</a> to emulate network \
+                  devices for the jail. \
+                  A fully virtualized per-jail network stack will be \
+                  installed.'),
           required: false,
           hasErrors: false,
           errors: '',
@@ -218,7 +219,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
       _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
-      this.summary[T('VirtIO Virtual Networking')] = res ? T('Yes') : T('No');
+      this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
 
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
