@@ -18,10 +18,29 @@ export class SnapshotListComponent {
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    {name : 'Fullname', prop : 'fullname'}, {name : 'Used', prop : 'used'},
+    {name : 'Fullname', prop : 'fullname'},
+    {name : 'Used', prop : 'used'},
     {name : 'Refer', prop : 'refer'}
   ];
+  public config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
+    multiSelect: true,
+  };
 
+  protected wsMultiDelete = 'core.bulk';
+  public multiActions: Array < any > = [
+    {
+      id: "mdelete",
+      label: "Delete",
+      icon: "delete",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
+      }
+    }
+  ];
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -44,7 +63,6 @@ export class SnapshotListComponent {
   preInit(entityList: any) {
     this.sub = this._route.params.subscribe(params => { });
   }
-
 
   getActions(parentRow) {
     const actions = [];
@@ -74,5 +92,17 @@ export class SnapshotListComponent {
     return actions;
   }
 
-  
+  getSelectedNames(selectedSnapshots) {
+    let selected: any = [];
+    for (let i in selectedSnapshots) {
+      selected.push([{"dataset": selectedSnapshots[i].filesystem, "name": selectedSnapshots[i].name}]);
+    }
+    return selected;
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['zfs.snapshot.remove'];
+    params.push(this.getSelectedNames(selected));
+    return params;
+  }
 }
