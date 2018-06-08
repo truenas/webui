@@ -1,17 +1,20 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component ({
 	selector: 'entity-dashboard',
 	templateUrl: './entity-dashboard.component.html',
+	styleUrls: ['./entity-dashboard.component.css'],
 })
 export class EntityDashboardComponent implements OnInit {
 
 	public routeParts: any = [];
 	protected parent: string = "";
 	constructor(protected router: Router,
-				protected aroute: ActivatedRoute){
+				protected aroute: ActivatedRoute,
+				public translate: TranslateService){
 
 	}
 

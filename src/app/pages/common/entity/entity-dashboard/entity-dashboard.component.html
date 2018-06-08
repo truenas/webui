@@ -4,10 +4,10 @@
       <mat-card-content>
         <div fxLayout="row" fxLayoutAlign="space-between center">
           <div>
-            <button mat-icon-button (click)="goList(item)" matTooltip="View {{item.data.title}}">
+            <button mat-icon-button (click)="goList(item)">
               <mat-icon aria-label="Example icon-button with a heart icon">{{item.data.icon}}</mat-icon>
             </button>
-            <span>{{item.data.title}}</span>
+            <span><a class="text-click" (click)="goList(item)">{{item.data.title}}</a></span>
           </div>
           <div>
             <button mat-icon-button (click)="goAdd(item)" *ngIf="item.addPath">
