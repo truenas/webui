@@ -67,15 +67,10 @@ export class VmCardsComponent implements OnInit {
   public direction ='down';
   public animationMode = 'fling';
 
-  public actions: any = [{
-      label : "Add DockerVM",
-      icon: "picture_in_picture",
-      onClick : () => {
-         this.addDockerVMWizard();
-       }
-    }, {
+  public actions: any = [
+    {
       label : "Add VM",
-      icon: "beach_access",
+      icon: "add",
       onClick : () => {
         this.addVMWizard();
       }
@@ -242,15 +237,25 @@ export class VmCardsComponent implements OnInit {
     }
     return card;
   }
+  
+  scrollTo(destination:string){
+    this.core.emit({name:"ScrollTo", data: destination});
+  }
 
   getVmList(){
     this.core.emit({name:"VmProfilesRequest"});
   }
 
-  setVmList(res:CoreEvent, init?:string) { 
-    if(this.cache.length < res.data.length){;
+  setVmList(res:CoreEvent, init?:string) {
+    //const cacheLength = this.cache.length
+    let scroll:boolean = false;
+    console.log("CARDS LENGTH = " + this.cards.length +  " && CACHE-LENGTH = " + this.cache.length + " && DATA-LENGTH = " + res.data.length );
+    if(this.cache.length != 0 && this.cache.length < res.data.length){;
       // Put window scroll stuff here
+      scroll = true;
+      console.log("Setting Scroll to TRUE!");
     }
+
     this.cache = [];
     for(let i = 0; i < res.data.length; i++){
       const card = this.parseResponse(res.data[i]);
@@ -263,6 +268,17 @@ export class VmCardsComponent implements OnInit {
       this.updateCards();
     }
     this.checkStatus();
+    console.log("CARDS LENGTH = " + this.cards.length);
+    if(scroll && this.cards.length == res.data.length){
+      setTimeout(()=>{
+      let test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
+      console.log("SENDING SCROLLTO EVENT...");
+      console.log('.vm-card-' + this.cards[this.cards.length-1].id);
+      console.log(test);
+      this.scrollTo(String('.vm-card-' + this.cards[this.cards.length-1].id));
+      //this.scrollTo('#animation-target');
+      },1000);
+    }
   }
 
 
@@ -319,6 +335,7 @@ export class VmCardsComponent implements OnInit {
     }
 
     this.cards = result;
+    console.log("UPDATE CARDS METHOD");
   }
 
   refreshVM(index,id:any){
@@ -429,7 +446,7 @@ export class VmCardsComponent implements OnInit {
   }
 
   // toggles VM on/off
-  toggleVmState(index){
+  toggleVmState(index, poweroff?:boolean){
     const vm = this.cards[index];
     let eventName: string;
     if (vm.state !== 'running') {
@@ -442,7 +459,7 @@ export class VmCardsComponent implements OnInit {
         }
           if (res[0].vm_type === "Container Provider"){
             this.dialogRef = this.matdialog.open(EntityJobComponent, { data: {title: 'Fetching RancherOS'}, disableClose: false});
-            this.dialogRef.componentInstance.progressNumberType = "nopercent";
+            // this.dialogRef.componentInstance.progressNumberType = "nopercent";
             this.dialogRef.componentInstance.setCall('vm.fetch_image', ['RancherOS']);
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.subscribe((sucess_res) => {
@@ -492,7 +509,11 @@ export class VmCardsComponent implements OnInit {
       });
     }
      else {
-      eventName = "VmStop";
+      if(poweroff){
+        eventName = "VmPowerOff";
+      } else {
+        eventName = "VmStop";
+      }
       this.cards[index].state = "stopping";
       this.core.emit({name: eventName, data:[vm.id]});
     }

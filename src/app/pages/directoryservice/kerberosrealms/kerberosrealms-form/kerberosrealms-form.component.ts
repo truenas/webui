@@ -4,6 +4,9 @@ import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { Validators } from '@angular/forms';
+
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-group-form',
@@ -12,33 +15,37 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 export class KerberosRealmsFormComponent {
 
   protected route_success: string[] = ['directoryservice', 'kerberosrealms'];
-  protected resource_name: string = 'directoryservice/kerberosrealm';
-  protected isEntity: boolean = true;
-  protected isBasicMode: boolean = true;
+  protected resource_name = 'directoryservice/kerberosrealm';
+  protected isEntity = true;
+  protected isBasicMode = true;
 
   protected fieldConfig: FieldConfig[] = [{
       type: 'input',
       name: 'krb_realm',
-      placeholder: 'Realm',
-      tooltip: 'Mandatory. Name of the realm.'
+      placeholder: T('Realm'),
+      tooltip: T('Enter the name of the realm.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
       name: 'krb_kdc',
-      placeholder: 'KDC',
-      tooltip: 'Name of the Key Distribution Center.'
+      placeholder: T('KDC'),
+      tooltip: T('Enter the name of the Key Distribution Center.')
     },
     {
       type: 'input',
       name: 'krb_admin_server',
-      placeholder: 'Admin Server',
-      tooltip: 'Server where all changes to the database are performed.'
+      placeholder: T('Admin Server'),
+      tooltip: T('Define the server where all changes to the database are\
+                performed.')
     },
     {
       type: 'input',
       name: 'krb_kpasswd_server',
-      placeholder: 'Password Server',
-      tooltip: 'Server where all password changes are performed.'
+      placeholder: T('Password Server'),
+      tooltip: T('Define the server where all password changes are\
+                performed.')
     },
   ];
 
@@ -63,9 +70,9 @@ export class KerberosRealmsFormComponent {
   constructor(protected rest: RestService, private router: Router) {}
 
   isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;

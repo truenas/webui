@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../services/';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 @Component({
@@ -20,24 +20,29 @@ export class ResilverComponent {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'enabled',
-    placeholder: T('Enable'),
+    placeholder: T('Enabled'),
+    tooltip: T('Set to run this task at the configured times.'),
     value: true,
   }, {
     type: 'select',
     name: 'begin',
     placeholder: T('Begin'),
+    tooltip: T('Choose a starting hour and minute for the resilver task.'),
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'end',
     placeholder: T('End'),
+    tooltip: T('Choose an ending hour and minute the resilver task\
+                cannot begin after.'),
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'weekday',
     placeholder: T('Day of week'),
+    tooltip: T('Choose the days to run this task.'),
     multiple: true,
     options: [{
       label: 'Monday',
@@ -62,6 +67,8 @@ export class ResilverComponent {
       value: '7',
     }],
     value: ['1', '2', '3', '4', '5', '6', '7'],
+    required: true,
+    validation : [ Validators.required ],
   }];
 
   protected begin_field: any;

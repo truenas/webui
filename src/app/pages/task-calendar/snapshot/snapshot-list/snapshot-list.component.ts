@@ -12,7 +12,7 @@ import { TaskService } from '../../../../services/';
 })
 export class SnapshotListComponent {
 
-  public title = "Snapshots";
+  public title = "Periodic Snapshot Tasks";
   protected resource_name = 'storage/task';
   protected route_add: string[] = ['tasks', 'snapshot', 'add'];
   protected route_add_tooltip = "Add Periodic Snapshot Task";
@@ -63,7 +63,7 @@ export class SnapshotListComponent {
   }];
 
   public columns: Array < any > = [
-    { name: 'Volumne/Dataset', prop: 'task_filesystem' },
+    { name: 'Pool/Dataset', prop: 'task_filesystem' },
     { name: 'Recursive', prop: 'task_recursive' },
     { name: 'When', prop: 'when' },
     { name: 'Frequency', prop: 'frequency' },

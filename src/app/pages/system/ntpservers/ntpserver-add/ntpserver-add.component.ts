@@ -19,6 +19,7 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
+import { greaterThan } from '../../../common/entity/entity-form/validators/compare-validation';
 
 @Component({
   selector : 'app-ntpserver-add',
@@ -34,37 +35,39 @@ export class NTPServerAddComponent {
       type : 'input',
       name : 'ntp_address',
       placeholder : T('Address'),
-      tooltip: T('Enter the hostname or IP address of the <b>NTP</b> server.'),
+      tooltip: T('Enter the hostname or IP address of the <b>NTP</b>\
+       server.'),
     },
     {
       type : 'checkbox',
       name : 'ntp_burst',
       placeholder : T('Burst'),
       tooltip: T('Recommended when <i>Max. Poll</i> is greater\
-       than 10; only use on your own servers i.e. do not use with\
+       than 10; only use on your own servers. Do not use with\
        a public NTP server.'),
     },
     {
       type : 'checkbox',
       name : 'ntp_iburst',
       placeholder : T('IBurst'),
-      tooltip: T('Speeds the initial synchronization\
+      tooltip: T('Speeds up the initial synchronization\
        (seconds instead of minutes).'),
     },
     {
       type : 'checkbox',
       name : 'ntp_prefer',
       placeholder : T('Prefer'),
-      tooltip: T('Should only be used for <b>NTP</b> servers known to\
-       be highly accurate, such as those with time monitoring hardware.'),
+      tooltip: T('Should only be used for highly accurate <b>NTP</b>\
+       servers such as those with time monitoring hardware.'),
     },
     {
       type : 'input',
       name : 'ntp_minpoll',
       placeholder : T('Min. Poll'),
       tooltip: T('Power of 2 in seconds; cannot be lower than 4 or\
-       higher than <i>Max. Poll</i> which is 17.'),
-      value : 6
+       higher than <i>Max. Poll</i>.'),
+      value : 6,
+      validation: [Validators.min(4),Validators.required]
     },
     {
       type : 'input',
@@ -73,6 +76,7 @@ export class NTPServerAddComponent {
       tooltip: T('Power of 2 in seconds; cannot be higher than 17 or\
        lower than <i>Min. Poll</i>.'),
       value : 10,
+      validation: [Validators.max(17), greaterThan('ntp_minpoll'), Validators.required,]
     },
     {
       type : 'checkbox',

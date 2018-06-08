@@ -7,13 +7,13 @@ export const routes: Routes = [
   {
     path: '',
     component : PreferencesPage,
-    data: {title: 'UI Preferences', breadcrumb:'UI-Preferences'},
+    data: {title: 'UI Preferences', breadcrumb:'UI Preferences'},
     pathMatch : 'full'
   },
   {
     path: 'create-theme',
     component : CustomThemeComponent,
-    data: {title: 'Create Custom Theme', breadcrumb:'Create-Theme'},
+    data: {title: 'Create Custom Theme', breadcrumb:'Create Custom Theme'},
     pathMatch : 'full'
   }
 ]

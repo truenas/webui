@@ -14,6 +14,10 @@ import { AnimationDirective } from 'app/core/directives/animation.directive';
 import {CardComponent, CardComponentMetadata} from 'app/core/components/card/card.component';
 import filesize from 'filesize';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 interface Disk {
   name:string;
   smart_enabled:boolean;
@@ -37,11 +41,11 @@ export class WidgetStorageComponent extends ViewControllerComponent implements A
   //@ViewChild('zpool') chartZpool:ViewChartDonutComponent;
   private chartZpool;
   public chartSize:number;
-  public title:string = "Storage";
+  public title:string = T("Storage");
   public disks:Disk[] = [];
   public selectedDisk:number = -1
 
-  constructor(){
+  constructor(public translate: TranslateService){
     super();
   }
 

@@ -19,44 +19,25 @@ import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
+import { ManualUpdateComponent } from './update/manualupdate/';
+import {ManualUpdateConfigSaveComponent} from './update/manualupdate/manualupdateconfig-save/'
 import { NTPServerAddComponent } from './ntpservers/ntpserver-add/';
 import { NTPServerEditComponent } from './ntpservers/ntpserver-edit/';
 import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
-import { CloudCredentialsGCSComponent } from './CloudCredentials/CloudCredentials-gcs/';
-import { CloudCredentialsB2Component } from './CloudCredentials/CloudCredentials-B2/';
-import { CloudCredentialsAmazonComponent } from './CloudCredentials/CloudCredentials-amazon/';
-import { CloudCredentialsAzureComponent } from './CloudCredentials/CloudCredentials-azure/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CloudCredentialsDeleteComponent } from './CloudCredentials/CloudCredentials-delete/';
-import { CertificateAuthorityImportComponent } from './ca/ca-import/';
-import { CertificateAuthorityIntermediateComponent } from './ca/ca-intermediate/';
-import { CertificateAuthorityInternalComponent } from './ca/ca-internal/';
+import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
-import { CAFormComponent } from './ca/ca-form/';
-import { CertificateCSRComponent } from './certificates/certificate-csr/';
+import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
-import { CertificateImportComponent } from './certificates/certificate-import/';
-import { CertificateInternalComponent } from './certificates/certificate-internal/';
 import { CertificateListComponent } from './certificates/certificate-list';
+import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
-import { AlertServiceEditAWSComponent } from 'app/pages/system/alertservice/alertservice-edit-aws/alertservice-edit-aws.component';
-import { AlertServiceAddAWSComponent } from 'app/pages/system/alertservice/alertservice-add-aws/alertservice-add-aws.component';
-import { AlertServiceAddHipchatComponent } from 'app/pages/system/alertservice/alertservice-add-hipchat/alertservice-add-hipchat.component';
-import { AlertServiceEditHipchatComponent } from 'app/pages/system/alertservice/alertservice-edit-hipchat/alertservice-edit-hipchat.component';
-import { AlertServiceAddInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-add-influxdb/alertservice-add-influxdb.component';
-import { AlertServiceEditInfluxdbComponent } from 'app/pages/system/alertservice/alertservice-edit-influxdb/alertservice-edit-influxdb.component';
-import { AlertServiceAddMattermostComponent } from 'app/pages/system/alertservice/alertservice-add-mattermost';
-import { AlertServiceEditMattermostComponent } from 'app/pages/system/alertservice/alertservice-edit-mattermost';
-import { AlertServiceEditVictoropsComponent } from 'app/pages/system/alertservice/alertservice-edit-victorops';
-import { AlertServiceAddVictoropsComponent } from 'app/pages/system/alertservice/alertservice-add-victorops';
-import { AlertServiceEditSlackComponent } from 'app/pages/system/alertservice/alertservice-edit-slack';
-import { AlertServiceAddSlackComponent } from 'app/pages/system/alertservice/alertservice-add-slack';
-import { AlertServiceEditPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-edit-pagerduty';
-import { AlertServiceAddPagerdutyComponent } from 'app/pages/system/alertservice/alertservice-add-pagerduty';
-import { AlertServiceEditOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-edit-opsgenie';
-import { AlertServiceAddOpsgenieComponent } from 'app/pages/system/alertservice/alertservice-add-opsgenie';
 import {EmailComponent} from './email/';
+import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
+import { AlertConfigComponent } from './alert/alert.component';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -65,8 +46,11 @@ export const routes: Routes = [
     path: '',
     data: { title: 'System' },
     children: [{
+      path: '',
+      component: EntityDashboardComponent,
+    }, {
       path: 'general',
-      data: { title: 'General', breadcrumb: 'General' },
+      data: { title: 'General', breadcrumb: 'General', icon: 'build' },
       children: [{
         path: '',
         component: GeneralComponent,
@@ -87,14 +71,14 @@ export const routes: Routes = [
     }, {
       path: 'advanced',
       component: AdvancedComponent,
-      data: { title: 'Advanced', breadcrumb: 'Advanced' },
+      data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
     },{
       path: 'dataset',
       component: DatasetComponent,
-      data: { title: 'Dataset', breadcrumb: 'Dataset' },
+      data: { title: 'Dataset', breadcrumb: 'Dataset', icon: 'storage' },
     }, {
       path: 'bootenv',
-      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments' },
+      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments', icon: 'replay' },
       children: [{
         path: '',
         component: BootEnvironmentListComponent,
@@ -112,27 +96,27 @@ export const routes: Routes = [
       {
         path: 'create',
         component: BootEnvironmentCreateComponent,
-        data: { title: 'create', breadcrumb: 'create' },
+        data: { title: 'Create', breadcrumb: 'Create' },
       },
       {
         path: 'status',
         component: BootStatusListComponent,
-        data: { title: 'BootStatus', breadcrumb: 'BootStatus' },
+        data: { title: 'Status', breadcrumb: 'Status' },
       },
       {
         path: 'attach/:pk',
         component: BootEnvAttachFormComponent,
-        data: { title: 'Attach', breadcrumb: 'attach' },
+        data: { title: 'Attach', breadcrumb: 'Attach' },
       },
       {
         path: 'replace/:pk',
         component: BootEnvReplaceFormComponent,
-        data: { title: 'replace', breadcrumb: 'replace' },
+        data: { title: 'Replace', breadcrumb: 'Replace' },
       }
     ]
     }, {
       path: 'tunable',
-      data: { title: 'Tunable', breadcrumb: 'Tunable' },
+      data: { title: 'Tunable', breadcrumb: 'Tunable', icon: 'settings_overscan' },
       children: [{
           path: '',
           component: TunableListComponent,
@@ -150,15 +134,38 @@ export const routes: Routes = [
       ]
     }, {
       path: 'update',
-      component: UpdateComponent,
-      data: { title: 'Update', breadcrumb: 'Update' },
-    }, {
+      data: { title: 'Update', breadcrumb: 'Update', icon: 'update' },
+      children:[
+        {
+        path:'',
+        component: UpdateComponent,
+        data: { title: 'Update', breadcrumb: 'Update' },
+        },
+        {
+          path:'manualupdate',
+          data: {title:'Manual Update', breadcrumb: 'Manual Update'},
+          children:[
+            {
+              path:'',
+              component: ManualUpdateComponent,
+              data: { title: 'Manual Update', breadcrumb: 'Manual Update' },
+            },
+            {
+              path:'saveconfig',
+              component: ManualUpdateConfigSaveComponent,
+              data: {title:'Save Config', breadcrumb: 'config'}
+            }
+          ]
+        },
+      ]
+    },
+     {
       path: 'ntpservers',
-      data: { title: 'NTPservers', breadcrumb: 'NTPservers' },
+      data: { title: 'NTP Servers', breadcrumb: 'NTP Servers', icon: 'device_hub' },
       children: [{
           path: '',
           component: NTPServerListComponent,
-          data: { title: 'NTPservers', breadcrumb: 'NTPservers' },
+          data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
         }, {
           path: 'add',
           component: NTPServerAddComponent,
@@ -174,179 +181,78 @@ export const routes: Routes = [
     {
       path : 'email', 
       component : EmailComponent,
-      data: { title: 'email', breadcrumb: 'email' },
+      data: { title: 'Email', breadcrumb: 'Email', icon: 'email' },
+    },
+    {
+      path : 'alertsettings',
+      component : AlertConfigComponent,
+      data: { title: 'Alert Settings', breadcrumb: 'Alert Settings', icon: 'notifications_active' },
     },
     {
       path: 'alertservice',
-      data: { title: 'AlertService', breadcrumb: 'AlertService' },
+      data: { title: 'Alert Services', breadcrumb: 'Alert Services', icon: 'notifications' },
       children: [{
           path: '',
           component: AlertServiceListComponent,
-          data: { title: 'AlertService', breadcrumb: 'AlertService' },
+          data: { title: 'Alert Services', breadcrumb: 'Alert Services' },
         }, {
-          path: 'add-aws',
-          component: AlertServiceAddAWSComponent,
-          data: { title: 'Add AWSSNS', breadcrumb: 'Add AWS' },
-        },{
-          path: 'edit-aws/:pk',
-          component: AlertServiceEditAWSComponent,
-          data: { title: 'Edit AWSSNS', breadcrumb: 'Edit AWS' },
-        },{
-          path: 'add-hipchat',
-          component: AlertServiceAddHipchatComponent,
-          data: { title: 'Add Hipchat', breadcrumb: 'Add Hipchat' },
-        },{
-          path: 'edit-hipchat/:pk',
-          component: AlertServiceEditHipchatComponent,
-          data: { title: 'Edit Hipchat', breadcrumb: 'Edit Hipchat' },
-        },{
-          path: 'add-influxdb',
-          component: AlertServiceAddInfluxdbComponent,
-          data: { title: 'Add Influxdb', breadcrumb: 'Add Influxdb' },
-        },{
-          path: 'edit-influxdb/:pk',
-          component: AlertServiceEditInfluxdbComponent,
-          data: { title: 'Edit Influxdb', breadcrumb: 'Edit Influxdb' },
-        },{
-          path: 'add-mattermost',
-          component: AlertServiceAddMattermostComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add Mattermost' },
-        },{
-          path: 'edit-mattermost/:pk',
-          component: AlertServiceEditMattermostComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit Mattermost' },
-        },{
-          path: 'add-opsgenie',
-          component: AlertServiceAddOpsgenieComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add OpsGenie' },
-        },{
-          path: 'edit-opsgenie/:pk',
-          component: AlertServiceEditOpsgenieComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit OpsGenie' },
-        },{
-          path: 'add-pagerduty',
-          component: AlertServiceAddPagerdutyComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add PagerDuty' },
-        },{
-          path: 'edit-pagerduty/:pk',
-          component: AlertServiceEditPagerdutyComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit PagerDuty' },
-        },{
-          path: 'add-slack',
-          component: AlertServiceAddSlackComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add Slack' },
-        },{
-          path: 'edit-slack/:pk',
-          component: AlertServiceEditSlackComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit Slack' },
-        },{
-          path: 'add-victorops',
-          component: AlertServiceAddVictoropsComponent,
-          data: { title: 'Add Mattermost', breadcrumb: 'Add VictOps' },
-        },{
-          path: 'edit-victorops/:pk',
-          component: AlertServiceEditVictoropsComponent,
-          data: { title: 'Edit Mattermost', breadcrumb: 'Edit VictorOps' },
+          path: 'add',
+          component: AlertServiceComponent,
+          data: { title: 'Add Alert Service', breadcrumb: 'Add Alert Service' },
+        }, {
+          path: 'edit/:pk',
+          component: AlertServiceComponent,
+          data: { title: 'Edit Alert Service', breadcrumb: 'Edit Alert Service' },
         }
       ]
     },{
       path: 'cloudcredentials',
-      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials', icon: 'cloud_circle' },
       children: [{
           path: '',
           component: CloudCredentialsListComponent,
           data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
         },
         {
-          path: 'gcs',
-          component: CloudCredentialsGCSComponent,
-          data: { title: 'gcs', breadcrumb: 'gcs' },
+          path: 'add',
+          component: CloudCredentialsFormComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
         },
         {
-          path: 'gcs/:pk',
-          component: CloudCredentialsGCSComponent,
-          data: { title: 'gcs', breadcrumb: 'gcs' },
-        },
-        {
-          path: 'amazon',
-          component: CloudCredentialsAmazonComponent,
-          data: { title: 'amazon', breadcrumb: 'amazon' },
-        },
-        {
-          path: 'amazon/:pk',
-          component: CloudCredentialsAmazonComponent,
-          data: { title: 'amazon', breadcrumb: 'amazon' },
-        },
-        {
-          path: 'azure',
-          component: CloudCredentialsAzureComponent,
-          data: { title: 'azure', breadcrumb: 'azure' },
-        },
-        {
-          path: 'azure/:pk',
-          component: CloudCredentialsAzureComponent,
-          data: { title: 'azure', breadcrumb: 'azure' },
-        },
-        {
-          path: 'b2',
-          component: CloudCredentialsB2Component,
-          data: { title: 'b2', breadcrumb: 'b2' },
-        },
-        {
-          path: 'b2/:pk',
-          component: CloudCredentialsB2Component,
-          data: { title: 'b2', breadcrumb: 'b2' },
-        },
-        {
-          path: ':pk/delete',
-          component: CloudCredentialsDeleteComponent,
-          data: { title: 'delete', breadcrumb: 'delete' },
+          path: 'edit/:pk',
+          component: CloudCredentialsFormComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
         },
       ]
     },
     {
       path: 'ca',
-      data: { title: 'CAs', breadcrumb: 'CAs' },
+      data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities', icon: 'card_membership' },
       children: [{
         path: '',
         component: CertificateAuthorityListComponent,
-        data: { title: 'CAs', breadcrumb: 'CAs' },
+        data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
+      }, 
+      {
+        path: 'add',
+        component: CertificateAuthorityAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
       }, {
-        path: 'import',
-        component: CertificateAuthorityImportComponent,
-        data: { title: 'Import', breadcrumb: 'Import' },
-      }, {
-        path: 'internal',
-        component: CertificateAuthorityInternalComponent,
-        data: { title: 'Internal', breadcrumb: 'Internal' },
-      }, {
-        path: 'intermediate',
-        component: CertificateAuthorityIntermediateComponent,
-        data: { title: 'Intermediate', breadcrumb: 'Intermediate' },
-      }, {
-        path: 'edit/:pk',
-        component: CertificateEditComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        path: 'sign/:pk',
+        component: CertificateAuthoritySignComponent,
+        data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
       }]
     }, {
       path: 'certificates',
-      data: { title: 'Certificates', breadcrumb: 'Certificates' },
+      data: { title: 'Certificates', breadcrumb: 'Certificates', icon: 'turned_in' },
       children: [{
         path: '',
         component: CertificateListComponent,
         data: { title: 'Certificates', breadcrumb: 'Certificates' },
       }, {
-        path: 'import',
-        component: CertificateImportComponent,
-        data: { title: 'Import', breadcrumb: 'Import' },
-      }, {
-        path: 'internal',
-        component: CertificateInternalComponent,
-        data: { title: 'Internal', breadcrumb: 'Internal' },
-      }, {
-        path: 'csr',
-        component: CertificateCSRComponent,
-        data: { title: 'CSR', breadcrumb: 'CSR' },
+        path: 'add',
+        component: CertificateAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
       }, {
         path: 'edit/:pk',
         component: CertificateEditComponent,
@@ -355,7 +261,7 @@ export const routes: Routes = [
     }, {
       path: 'support',
       component: SupportComponent,
-      data: { title: 'Support', breadcrumb: 'Support' },
+      data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
     },]
   }
 ];

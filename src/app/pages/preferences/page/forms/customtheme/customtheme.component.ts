@@ -32,7 +32,6 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
   private _globalPreview:boolean = false;
   public baseThemes: Theme[];
   public snapshot:FormSnapshot;
-
   customThemeFormConfig:FormConfig = {};// see if we can use this instead of passing this whole component in 
   protected isEntity: boolean = true; // was true
 

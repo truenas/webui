@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
 import {
@@ -28,19 +29,23 @@ export class StaticRouteFormComponent {
       name : 'sr_destination',
       placeholder : T('Destination'),
       tooltip : T('Use the format <i>A.B.C.D/E</i> where <i>E</i> is the\
- CIDR mask.'),
+                   CIDR mask.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'sr_gateway',
       placeholder : T('Gateway'),
       tooltip : T('Enter the IP address of the gateway.'),
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type : 'input',
       name : 'sr_description',
       placeholder : T('Description'),
-      tooltip : T('Optional.'),
+      tooltip : T('Enter any notes about the new static route.'),
     },
   ];
 

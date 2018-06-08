@@ -32,15 +32,19 @@ export class PluginAddComponent implements OnInit {
     {
       type: 'checkbox',
       name: 'dhcp',
-      placeholder: T('dhcp'),
-      tooltip: T('Check to use DHCP to configure IP settings.'),
+      placeholder: T('DHCP'),
+      tooltip: T('Set for <a\
+                  href="https://kb.iu.edu/d/adov"\
+                  target="_blank">DHCP</a> to automatically configure\
+                  network settings.'),
+      value: true,
     },
     {
       type: 'input',
       name: 'ip4_addr',
       placeholder: T('IPv4 Address'),
-      tooltip: T('Enter a unique IPv4 address that is in the local network\
-       and not already in use.'),
+      tooltip: T('Enter a unique IPv4 address that is in the local\
+                  network and not already in use.'),
       relation: [{
         action: "DISABLE",
         when: [{
@@ -53,8 +57,8 @@ export class PluginAddComponent implements OnInit {
       type: 'input',
       name: 'ip6_addr',
       placeholder: T('IPv6 Address'),
-      tooltip: T('Enter a unique IPv6 address that is in the local network\
-       and not already in use.'),
+      tooltip: T('Enter a unique IPv6 address that is in the local\
+                  network and not already in use.'),
       relation: [{
         action: "DISABLE",
         when: [{

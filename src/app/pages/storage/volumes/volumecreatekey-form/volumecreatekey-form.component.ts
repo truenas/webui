@@ -24,12 +24,12 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'app-volumeunlock-form',
+  selector : 'app-createpassphrase-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class VolumeCreatekeyFormComponent implements Formconfiguration {
 
-  saveSubmitText = T("Create");
+  saveSubmitText = T("Create Passphrase");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'pools'];
@@ -40,7 +40,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     passphrase: "",
     passphrase2: ""
   };
-  
+
   fieldConfig: FieldConfig[] = [
     {
       type : 'input',
@@ -48,16 +48,20 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       isHidden: true
     },{
       type : 'input',
+      inputType: 'password',
       name : 'passphrase',
-      label: T("passphrase"),
       placeholder: T('Passphrase'),
-      tooltip: T('Geli Passphrase')
+      tooltip: T('Enter the GELI passphrase.'),
+      validation: [Validators.required],
+      required: true
     },{
       type : 'input',
+      inputType: 'password',
       name : 'passphrase2',
-      label : T('Passphrase2'),
-      placeholder: T('Passphrase2 must match above'),
-      tooltip: T('Geli Passphrase must match above')
+      placeholder: T('Verify passphrase'),
+      tooltip: T('Confirm the GELI passphrase.'),
+      validation: [Validators.required],
+      required: true
     }
   ];
 
@@ -80,7 +84,7 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-  
+
   }
 
   customSubmit(value) {
@@ -89,14 +93,14 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
     return this.rest.post(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       console.log("restPostResp", restPostResp);
       this.loader.close();
-      this.dialogService.Info(T("Create Pool Key"), T("Successfully added key to pool ") + value.name);
+      this.dialogService.Info(T("Create Pool Passphrase"), T("Successfully created passphrase for pool ") + value.name);
 
       this.router.navigate(new Array('/').concat(
         this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error adding key to pool"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error creating passphrase for pool"), res.error.message, res.error.traceback);
     });
   }
-  
+
 }

@@ -21,6 +21,7 @@ import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dy
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
 import { FormButtonComponent } from './entity-form/components/form-button/form-button.component';
 import { FormCheckboxComponent } from './entity-form/components/form-checkbox/form-checkbox.component';
+import { FormComboboxComponent } from './entity-form/components/form-combobox/form-combobox.component';
 import { FormInputComponent } from './entity-form/components/form-input/form-input.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
@@ -29,6 +30,8 @@ import { FormTextareaComponent } from './entity-form/components/form-textarea/fo
 import { FormTextareaButtonComponent } from './entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormDatepickerComponent } from './entity-form/components/form-datepicker/form-datepicker.component';
 import { FormColorpickerComponent } from './entity-form/components/form-colorpicker/form-colorpicker.component';
+import { FormParagraphComponent } from './entity-form/components/form-paragraph/form-paragraph.component';
+import { FormSchedulerComponent } from './entity-form/components/form-scheduler/form-scheduler.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -46,18 +49,25 @@ import { EntityTemplateDirective } from './entity-template.directive';
 import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
+import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
+
+// CDK
 import { CdkTableModule } from '@angular/cdk/table';
+import { OverlayModule } from '@angular/cdk/overlay';
+import {A11yModule} from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
+import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule,
-    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule
+    Ng2DropdownModule, NgUploaderModule, FlexLayoutModule, TranslateModule,
+    OverlayModule, A11yModule
   ],
   declarations: [
     EntityDeleteComponent,
@@ -75,9 +85,11 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     FormSelectComponent,
     FormRadioComponent,
     FormCheckboxComponent,
+    FormComboboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
+    FormSchedulerComponent,
     FormColorpickerComponent,
     FormExplorerComponent,
     FormPermissionsComponent,
@@ -94,6 +106,9 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
+    FormParagraphComponent,
+    EntityDialogComponent,
+    EntityDashboardComponent
   ],
   exports: [
     EntityDeleteComponent,
@@ -112,15 +127,19 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     TooltipComponent,
     EntityWizardComponent,
     EntityTaskComponent,
+    EntityDialogComponent,
+    EntityDashboardComponent
   ],
   entryComponents: [
     FormButtonComponent,
     FormInputComponent,
     FormSelectComponent,
     FormCheckboxComponent,
+    FormComboboxComponent,
     FormTextareaComponent,
     FormTextareaButtonComponent,
     FormDatepickerComponent,
+    FormSchedulerComponent,
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,
@@ -131,7 +150,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityJobComponent,
     FormSliderComponent,
     FormToggleButtonComponent,
-    FormTaskComponent
+    FormTaskComponent,
+    FormParagraphComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

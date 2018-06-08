@@ -24,17 +24,17 @@
         <mat-button-toggle value="table" >Table</mat-button-toggle>
       </mat-button-toggle-group>
 
-      <smd-fab-speed-dial class="vm-fab-speed-dial" id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
+      <!-- <smd-fab-speed-dial class="vm-fab-speed-dial" id="myFab" #myFab [direction]="direction" [animationMode]="animationMode"
         (mouseenter)="myFab.open = true" (mouseleave)="myFab.open = false">
         <smd-fab-trigger [spin]="spin">
             <button mat-fab><mat-icon>list</mat-icon></button>
         </smd-fab-trigger>
-        <smd-fab-actions>
+        <smd-fab-actions> -->
           <button *ngFor="let action of actions" mat-mini-fab (click)="action.onClick()" matTooltip="{{action.label | translate}}">
             <mat-icon>{{action.icon}}</mat-icon>
           </button>
-        </smd-fab-actions>
-      </smd-fab-speed-dial>
+        <!-- </smd-fab-actions>
+      </smd-fab-speed-dial> -->
     </div>
   </mat-card-header>
 
@@ -75,8 +75,7 @@
 
 
 <div class="entity-cards-container" *ngIf="viewMode.value == 'cards' || viewMode.value == 'slim'">
-  <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper" 
-                                               [ngClass]="{'slim':viewMode.value == 'slim'}">
+  <div *ngFor="let card of cards; let i=index" class="entity-card-wrapper vm-card-{{card.id}}" [ngClass]="{'slim':viewMode.value == 'slim'}">
     <!-- 
       This is where both the regular and slim cards are created. The difference between
       slim and regular card views are generated purely via css there is no
@@ -103,7 +102,16 @@
 
 
         <div class="side-content-header">
-          <button class="card-close" (click)="deleteVM(i)"><mat-icon>close</mat-icon></button>
+          <!--<button class="card-close" (click)="deleteVM(i)"><mat-icon>close</mat-icon></button>-->
+          <button class="card-close" [matMenuTriggerFor]="cardMenu"><mat-icon>more_vert</mat-icon></button>
+          <mat-menu #cardMenu="matMenu">
+            <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i)">Stop</button>
+            <button *ngIf="cards[i].state == 'stopped'" mat-menu-item (click)="toggleVmState(i)">Start</button>
+            <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i,true)">Power Off</button>
+            <button *ngIf="cards[i].state == 'stopped'" mat-menu-item disabled>Power Off</button>
+            <button mat-menu-item (click)="deleteVM(i)">Delete</button>
+          </mat-menu>
+
           <button mat-fab 
                   *ngIf="viewMode.value == 'cards'"
                   class="vm-power-btn"
@@ -130,19 +138,16 @@
 
 
         <div class="vm-controls">
-          <!-- <span matTooltip="{{(!cards[i].vnc) ? 'Web VNC Disabled: Please create a VNC device and restart your VM.' : 'Web VNC'}}" matTooltipPosition="above"> -->
-            
-            <button mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
-            <mat-menu #appMenu="matMenu">
-              <button mat-menu-item color="primary" [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button>
-              <button mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
-              <!-- <button mat-menu-item [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button> -->
-              <!-- <button mat-menu-item(click)="vnc(i)">Serial Console</button> -->
-            </mat-menu>
-            <!-- <button mat-icon-button [matMenuTriggerFor]="appMenu"> -->
-              <!-- <mat-icon>more_vert</mat-icon> -->
-            <!-- </button> -->
-          <!-- </span> -->
+              <button *ngIf="cards[i].vm_type === 'Bhyve'" mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu">Connect</button>
+                <mat-menu #appMenu="matMenu">
+                  <button  mat-menu-item color="primary" [disabled]="(!cards[i].vnc || cards[i].state === 'stopped')" (click)="vnc(i)">VNC</button>
+                  <button  mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
+                </mat-menu>
+              <button *ngIf="cards[i].vm_type === 'Container Provider'" mat-raised-button color="primary" [disabled]="(cards[i].state == 'stopped')" [matMenuTriggerFor]="appMenu2">Connect</button>
+                <mat-menu  #appMenu2="matMenu">
+                  <button mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
+                </mat-menu>
+                
           <span matTooltip="Edit Devices" matTooltipPosition="above">
            <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
           </span>

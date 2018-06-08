@@ -54,6 +54,7 @@ export class NavigationService {
         { name: T('Email'), state: 'email'},
         { name: T('System Dataset'), state: 'dataset'},
         { name: T('Alert Services'), state: 'alertservice' },
+        { name: T('Alert Settings'), state: 'alertsettings' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },
         { name: T('Tunables'), state: 'tunable' },
         { name: T('Update'), state: 'update' },
@@ -73,7 +74,7 @@ export class NavigationService {
         { name: T('Cron Jobs'), state: 'cron' },
         { name: T('Init/Shutdown Scripts'), state: 'initshutdown' },
         { name: T('Rsync Tasks'), state: 'rsync' },
-        { name: T('S.M.A.R.T Tests'), state: 'smart' },
+        { name: T('S.M.A.R.T. Tests'), state: 'smart' },
         { name: T('Periodic Snapshot Tasks'), state: 'snapshot' },
         { name: T('Replication Tasks'), state: 'replication' },
         { name: T('Resilver Priority'), state: 'resilver' },
@@ -112,9 +113,9 @@ export class NavigationService {
       ]
     },
     {
-      name: T('Directory Service'),
+      name: T('Directory Services'),
       type: 'dropDown',
-      tooltip: T('Directory Service'),
+      tooltip: T('Directory Services'),
       icon: 'group_work',
       state: 'directoryservice',
       sub: [
@@ -165,7 +166,7 @@ export class NavigationService {
       icon: 'apps',
       state: 'jails',
       // sub: [
-      //   { name: 'Instances', state: 'jails' },
+      //   { name: 'Jails', state: 'jails' },
       //   // {name: 'Storage', state: 'storage'},
       //   // {name: 'Templates', state: 'templates'},
       //   // {name: 'Configuration', state: 'configuration'},

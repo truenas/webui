@@ -138,9 +138,9 @@ export class TourService {
       onEnd: function() {
         self.snackBar.open(T('Awesome! Now let\'s explore FreeNAS\'s cool features.'), T('close'), { duration: 5000 });
       },
-      onClose: function() {
-        self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
-      },
+      // onClose: function() {
+      //   self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
+      // },
       steps: steps
     }
   }
@@ -172,10 +172,10 @@ export class TourService {
       onEnd: function() {
         self.snackBar.open(T('Awesome! Now let\'s explore FreeNAS\'s cool features.'), T('close'), { duration: 5000 });
       },
-      onClose: function() {
-        self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
-        self.router.navigate(['account','users']);
-      },
+      // onClose: function() {
+      //   self.snackBar.open(T('You just closed User Tour!'), T('close'), { duration: 3000 });
+      //   self.router.navigate(['account','users']);
+      // },
       steps: [{
           title: T('Sidebar Controls'),
           content: T('Control left sidebar\'s display style.'),
@@ -200,7 +200,7 @@ export class TourService {
         },
         {
           title: T('Users & Groups'),
-          content: T('Setup Users and Groups.'),
+          content: T('Set up Users and Groups.'),
           target: 'Dashboard',
           placement: 'right',
           xOffset: 200,

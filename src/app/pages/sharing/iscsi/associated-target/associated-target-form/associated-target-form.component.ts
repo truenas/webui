@@ -24,7 +24,7 @@ export class AssociatedTargetFormComponent {
       type: 'select',
       name: 'iscsi_target',
       placeholder: T('Target'),
-      tooltip: T('Select the pre-created target.'),
+      tooltip: T('Select an existing target.'),
       options: [],
       value: '',
       required: true,
@@ -35,9 +35,9 @@ export class AssociatedTargetFormComponent {
       inputType: 'number',
       name: 'iscsi_lunid',
       placeholder: T('LUN ID'),
-      tooltip: T('Select the value to use or type in a value between\
- <i>1</i> and <i>1023</i>. Note that some initiators expect a value\
- below <i>256</i>.'),
+      tooltip: T('Select the value or enter a value between\
+                  <i>1</i> and <i>1023</i>. Some initiators\
+                  expect a value below <i>256</i>.'),
       min: 1,
       max: 1023,
       value: 1,
@@ -47,9 +47,11 @@ export class AssociatedTargetFormComponent {
       type: 'select',
       name: 'iscsi_extent',
       placeholder: T('Extent'),
-      tooltip: T('Select the pre-created extent.'),
+      tooltip: T('Select an existing extent.'),
       options: [],
       value: '',
+      required: true,
+      validation : [ Validators.required ]
     },
   ];
 
@@ -60,8 +62,6 @@ export class AssociatedTargetFormComponent {
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   afterInit(entityForm: any) {
-    console.log(entityForm.formGroup);
-
     this.target_control = _.find(this.fieldConfig, {'name' : 'iscsi_target'});
     this.target_control.options.push({label: '----------', value: ''});
     this.iscsiService.getTargets().subscribe((res) => {
@@ -74,7 +74,6 @@ export class AssociatedTargetFormComponent {
     this.extent_control.options.push({label: '----------', value: ''});
     this.iscsiService.getExtents().subscribe((res) => {
       res.data.forEach((extent) => {
-        console.log(extent);
         this.extent_control.options.push({label: extent.iscsi_target_extent_name, value: extent.id});
       })
     });

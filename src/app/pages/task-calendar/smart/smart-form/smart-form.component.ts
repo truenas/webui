@@ -8,7 +8,7 @@ import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, StorageService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -28,33 +28,36 @@ export class SmartFormComponent {
       type: 'select',
       name: 'smarttest_disks',
       placeholder: T('Disks'),
-      tooltip : T('Highlight disks to monitor.'),
+      tooltip : T('Select the disks to monitor.'),
       options: [],
       multiple: true,
+      required: true,
+      validation : [ Validators.required ]
     }, {
       type: 'select',
       name: 'smarttest_type',
       placeholder: T('Type'),
-      tooltip : T('Select type of test to run. See\
-       <a\
-       href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
-       target="_blank">smartctl(8)</a> for a description of each type of test\
-       (note that some test types will degrade performace or take disks\
-       offline. Do not schedule S.M.A.R.T. tests at the same time as a scrub\
-       or during a resilver operation).'),
+      tooltip : T('Choose the test type. See <a\
+                   href="https://www.smartmontools.org/browser/trunk/smartmontools/smartctl.8.in"\
+                   target="_blank">smartctl(8)</a> for descriptions of\
+                   each type. Some types will degrade performance or\
+                   take disks offline. Avoid scheduling S.M.A.R.T. tests\
+                   simultaneously with scrub or resilver operations.'),
       options: [],
+      required: true,
+      validation : [ Validators.required ]
     }, {
       type: 'input',
       name: 'smarttest_desc',
       placeholder: T('Short description'),
-      tooltip : T('Optional.'),
+      tooltip : T('Optional. Describe this test.'),
     },
     {
       type: 'select',
       name: 'smarttest_repeat',
       placeholder: T('Quick Schedule'),
-      tooltip: T('Select a time frame for the job. Otherwise, do not select\
-       a time frame to customize the schedule.'),
+      tooltip: T('Choose how often to run the task. Choose the\
+                  empty value to define a custom schedule.'),
       options: [
         { label: '----------', value: 'none' },
         { label: 'Daily', value: 'daily' },
@@ -67,6 +70,7 @@ export class SmartFormComponent {
       type: 'input',
       name: 'smarttest_hour',
       placeholder: T('Hour'),
+      tooltip: T('Define the hour to run the test.'),
       value: '*',
       isHidden: false,
     },
@@ -74,6 +78,7 @@ export class SmartFormComponent {
       type: 'input',
       name: 'smarttest_daymonth',
       placeholder: T('Day of month'),
+      tooltip: T('Define the day of the month to run the test.'),
       value: '*',
       isHidden: false,
     },
@@ -81,6 +86,7 @@ export class SmartFormComponent {
       type: 'select',
       name: 'smarttest_month',
       placeholder: T('Month'),
+      tooltip: T('Define which months to run the test.'),
       multiple: true,
       options: [{
         label: 'January',
@@ -126,6 +132,7 @@ export class SmartFormComponent {
       type: 'select',
       name: 'smarttest_dayweek',
       placeholder: T('Day of week'),
+      tooltip: T('Choose which days of the week to run the test.'),
       multiple: true,
       options: [{
         label: 'Monday',

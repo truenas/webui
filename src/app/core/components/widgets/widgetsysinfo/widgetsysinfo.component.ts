@@ -12,26 +12,31 @@ import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector: 'widget-sysinfo',
   templateUrl:'./widgetsysinfo.component.html',
   styleUrls: ['./widgetsysinfo.component.css']
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, AfterViewInit {
-  public title: string = "System Info";
+  public title: string = T("System Info");
   public data: any;
   public memory:string;
   public imagePath:string = "assets/images/";
   public cardBg:string = "";
   public updateAvailable:boolean = false;
   private _updateBtnStatus:string = "primary";
-  public updateBtnLabel:string = "Check for Updates..."
+  public updateBtnLabel:string = T("Check for Updates...")
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
   public manufacturer:string = '';
+  public buildDate:string;
 
-  constructor(public router: Router){
-    super();
+  constructor(public router: Router, public translate: TranslateService){
+    super(translate);
     this.configurable = false;
   }
 
@@ -40,9 +45,21 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
       //DEBUG: console.log("******** SysInfo ********");
       //DEBUG: console.log(evt.data);
       this.data = evt.data;
+
+      let build = new Date(this.data.buildtime[0]['$date']);
+      let year = build.getUTCFullYear();
+      let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
+      let month = months[build.getUTCMonth()];
+      let day = build.getUTCDate();
+      let hours = build.getUTCHours();
+      let minutes = build.getUTCMinutes();
+      this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
+
       this.memory = this.formatMemory(this.data.physmem, "GB");
-      if(this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
-        this.manufacturer = "iX Systems";
+      if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
+        this.manufacturer = "ixsystems";
+      } else {
+        this.manufacturer = "other";
       }
 
       // Hardware detection
@@ -73,6 +90,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   
   ngAfterViewInit(){
     //console.log(this.el.nativeElement.children);
+    setTimeout(()=>{
+      this.core.emit({name:"AnimateColorLoopStart", data:{element:'#widget-sysinfo-logo-bg', colors:this.themeAccentColors}});
+    }, 3000);
   }
 
   getCardBg(){
@@ -91,7 +111,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   get updateBtnStatus(){
     if(this.updateAvailable){
       this._updateBtnStatus = "warn";
-      this.updateBtnLabel = "Updates Available...";
+      this.updateBtnLabel = T("Updates Available...");
     }
     return this._updateBtnStatus;
   }

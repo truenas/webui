@@ -29,6 +29,9 @@ import {FormReadFileComponent} from '../form-readfile/form-readfile.component'
 import { FormTextareaButtonComponent } from 'app/pages/common/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FormDatepickerComponent } from '../form-datepicker/form-datepicker.component';
 import { FormColorpickerComponent } from '../form-colorpicker/form-colorpicker.component';
+import { FormComboboxComponent } from '../form-combobox/form-combobox.component';
+import {FormParagraphComponent} from '../form-paragraph/form-paragraph.component';
+import {FormSchedulerComponent} from '../form-scheduler/form-scheduler.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
@@ -48,6 +51,9 @@ const components: {[type: string] : Type<Field>} = {
   readfile: FormReadFileComponent,
   datepicker: FormDatepickerComponent,
   colorpicker: FormColorpickerComponent,
+  combobox: FormComboboxComponent,
+  paragraph: FormParagraphComponent,
+  scheduler: FormSchedulerComponent
 };
 
 @Directive({selector : '[dynamicField]'})

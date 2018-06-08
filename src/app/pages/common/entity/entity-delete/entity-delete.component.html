@@ -8,7 +8,7 @@
     </p>
     <div *ngIf="conf.deleteSnapshot; else else_condition">
       <p>
-        <mat-checkbox (change)="toggleExtraCheck($event)">I'm aware this will destory snapshots within this dataset</mat-checkbox>
+        <mat-checkbox (change)="toggleExtraCheck($event)">I'm aware this will destroy snapshots within this dataset</mat-checkbox>
       </p>
       <button mat-raised-button color="primary" class="btn btn-outline-danger" [disabled]="!isSubmitEnabled || !extraWarning" (click)="doSubmit()">Yes</button>
       <button mat-raised-button color="accent" class="btn btn-outline-warning" (click)="doCancel()">Cancel</button>

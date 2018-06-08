@@ -56,12 +56,12 @@ export class AnimationDirective implements OnChanges{
 
   // HELLO WORLD!
   animate(){
-    console.log(this.animation);
+    //DEBUG: console.log(this.animation);
     switch(this.animation){
       case 'stop':
-        console.log("Stopping animations");
+        //DEBUG: console.log("Stopping animations");
         if(this.inMotion){
-          console.log(this.inMotion);
+          //DEBUG: console.log(this.inMotion);
           this.inMotion.pause()
         }
       break;
@@ -117,17 +117,17 @@ export class AnimationDirective implements OnChanges{
     reset();
 
     if(this.shake){
-      console.log("Starting the shaking");
+      //DEBUG: console.log("Starting the shaking");
       this.shaking.resume();
     } else if(!this.shake){
-      console.log("Stopping the shaking");
+      //DEBUG: console.log("Stopping the shaking");
       reset();
     }
      //return s;
   }
   
   flipV(reverse?:boolean){
-    console.log("**** FLIP ANIMATION ****");
+    //DEBUG: console.log("**** FLIP ANIMATION ****");
 
     let start: number;
     let finish: number;
@@ -150,7 +150,7 @@ export class AnimationDirective implements OnChanges{
   }
 
   flipH(reverse?:boolean){
-    console.log("**** FLIP ANIMATION ****");
+    //DEBUG: console.log("**** FLIP ANIMATION ****");
 
     let start: number;
     let finish: number;
@@ -173,7 +173,7 @@ export class AnimationDirective implements OnChanges{
   }
 
   slide(){
-    console.log("**** SLIDE ANIMATION ****");
+    //DEBUG: console.log("**** SLIDE ANIMATION ****");
 
     let startX:  number;
     let finishX:  number;
@@ -194,7 +194,7 @@ export class AnimationDirective implements OnChanges{
       startX = this.elStyler.get('translateX');
       fromProps.x = startX;
       toProps.x = finishX;
-      console.warn(startX)
+      //DEBUG: console.warn(startX)
     }
     if(this.slideProps.y){
       // Detect and convert if percentage value
@@ -242,10 +242,10 @@ export class AnimationDirective implements OnChanges{
     reset();
 
     if(this.colorLoop){
-      console.log("Starting the Color Loop");
+      //DEBUG: console.log("Starting the Color Loop");
       this.colorLoopActive.resume();
     } else if(!this.colorLoop){
-      console.log("Stopping the Color Loop");
+      //DEBUG: console.log("Stopping the Color Loop");
       reset();
     }
      //return s;
@@ -256,7 +256,7 @@ export class AnimationDirective implements OnChanges{
     let spl = value.split('%');
     let num = Number(spl[0])/100;
     let result = d*num;
-    console.warn(result);
+    //DEBUG: console.warn(result);
     return result;
   }
 

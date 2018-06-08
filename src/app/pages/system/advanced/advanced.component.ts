@@ -8,6 +8,8 @@ import { DialogService } from "../../../services/dialog.service";
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
 import { RestService, UserService, WebSocketService } from '../../../services/';
+import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
+import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
 import { T } from '../../../translate-marker';
 import {
   FieldConfig
@@ -21,42 +23,84 @@ import {
 })
 
 export class AdvancedComponent implements OnInit {
-  protected resource_name: string = 'system/advanced';
+  //protected resource_name: string = 'system/advanced';
   public job: any = {};
+  protected queryCall = 'system.advanced.config';
+  protected adv_serialconsole: any;
+  protected adv_serialconsole_subscription: any;
+  public adv_serialport: any;
+  public adv_serialspeed: any;
+  public adv_periodic_notifyuser: any;
+  public custActions: Array < any > = [{
+    id: 'save_debug',
+    name: 'Save Debug',
+    function: () => {
+      this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?")).subscribe((res) => {
+            if (res) {
+              this.load.open();
+              this.ws.job('system.debug').subscribe((system_debug) => {
+                this.load.close();
+                if (system_debug.state === "SUCCESS") {
+                  this.ws.call('core.download', ['filesystem.get', [system_debug.result], 'debug.tgz']).subscribe(
+                    (system_debug_result) => {
+                      this.openSnackBar(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"));
+                      window.open(system_debug_result[1]);
+                    },
+                    (err) => {
+                      this.openSnackBar(T("Please check the network connection"), T("Failed"));
+                    }
+                  );
+                }
+              }, () => {
+                this.load.close();
+
+              }, () => {
+                this.load.close();
+                if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
+                  this.openSnackBar(T("Please check the network connection"), T("Failed"));
+                }
+              });
+            } else {
+              console.log("User canceled");
+            }
+          });        
+    }
+  }
+];
 
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
-    name: 'adv_consolemenu',
+    name: 'consolemenu',
     placeholder: T('Enable Console Menu'),
     tooltip: T('Uncheck this to add a login prompt to the system before\
- the console menu is shown.')
+                the console menu is shown.')
   }, {
     type: 'checkbox',
-    name: 'adv_serialconsole',
+    name: 'serialconsole',
     placeholder: T('Enable Serial Console'),
-    tooltip: T('<b>Do not</b> check this box if the <b>serial port</b> is\
- disabled.')
+    tooltip: T('<b>Do not</b> set this if the <b>serial port</b>\
+                is disabled.')
   }, {
     type: 'select',
-    name: 'adv_serialport',
+    name: 'serialport',
     placeholder: T('Serial Port'),
     options: [
       { label: '---', value: null},
     ],
     tooltip: T('Select the serial port address in\
- hex.'),
+                hex.'),
     relation: [
-      {
-        action : 'DISABLE',
-        when : [{
-          name: 'adv_serialconsole',
-          value: false
-        }]
-      }
-    ]
+    {
+      action : 'DISABLE',
+      when : [{
+        name: 'serialconsole',
+        value: false
+      }]
+    }
+  ]
   }, {
     type: 'select',
-    name: 'adv_serialspeed',
+    name: 'serialspeed',
     placeholder: T('Serial Speed'),
     options: [
         { label: '---', value: null},
@@ -71,116 +115,144 @@ export class AdvancedComponent implements OnInit {
       {
         action : 'DISABLE',
         when : [{
-          name: 'adv_serialconsole',
+          name: 'serialconsole',
           value: false
         }]
       }
     ],
   }, {
     type: 'input',
-    name: 'adv_swapondrive',
+    name: 'swapondrive',
     placeholder: T('Swap size on each drive in GiB, affects new disks\
  only. Setting this to 0 disables swap creation completely (STRONGLY\
  DISCOURAGED).'),
-    tooltip: T('By default, all data disks are created with this amount of\
- swap. This setting does not affect log or cache devices as they are\
- created without swap.')
+    tooltip: T('By default, all data disks are created with this amount\
+                of swap. This setting does not affect log or cache\
+                devices as they are created without swap.')
   }, {
     type: 'checkbox',
-    name: 'adv_consolescreensaver',
+    name: 'consolescreensaver',
     placeholder: T('Enable Console Screensaver'),
     tooltip: T('Enable or disable the console screensaver.')
   }, {
     type: 'checkbox',
-    name: 'adv_powerdaemon',
+    name: 'powerdaemon',
     placeholder: T('Enable Power Saving Daemon'),
     tooltip: T('<a\
- href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">powerd(8)</a> monitors the system state and sets the\
- CPU frequency accordingly.')
+                href="https://www.freebsd.org/cgi/man.cgi?query=powerd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+                target="_blank">powerd(8)</a> monitors the system state and sets the\
+                CPU frequency accordingly.')
   }, {
     type: 'checkbox',
-    name: 'adv_autotune',
+    name: 'autotune',
     placeholder: T('Enable autotune'),
     tooltip: T('Enables the <b>autotune</b> script\
- which attempts to optimize the system depending on the installed\
- hardware. <b>Warning:</b> Autotuning should only be used as a temporary\
- measure and is not a permanent fix for system hardware issues. See\
- <b>Chapter 5.4.1: Autotune</b> in the <a href="ui/guide">Guide</a> for\
- more information.')
+                which attempts to optimize the system depending on the\
+                installed hardware. <b>Warning:</b> Autotuning is\
+                only used as a temporary measure and is not a\
+                permanent fix for system hardware issues. See the\
+                <a href="..//docs/system.html#autotune"\
+                target="_blank">Autotune section</a> of the guide for\
+                more information.')
   }, {
     type: 'checkbox',
-    name: 'adv_debugkernel',
+    name: 'debugkernel',
     placeholder: T('Enable Debug Kernel'),
-    tooltip: T('When checked, the next system boot uses a debug version of\
- the kernel.')
+    tooltip: T('When checked, the next system boot uses a debug version\
+                of the kernel.')
   }, {
     type: 'checkbox',
-    name: 'adv_consolemsg',
+    name: 'consolemsg',
     placeholder: T('Show console messages'),
     tooltip: T('Display console messages in real time\
- at the bottom of the browser. Click the <b>Console</b> to bring up a\
- scrollable screen. Check the <b>Stop</b> refresh box in the scrollable\
- screen to pause updating and uncheck the box to continue to watch the\
- messages as they occur.')
+                at the bottom of the browser.')
   }, {
     type: 'textarea',
-    name: 'adv_motd',
+    name: 'motd',
     placeholder: T('MOTD Banner'),
-    tooltip: T('Write a message to be shown when a user logs in with SSH.')
+    tooltip: T('This message is shown when a user logs in with SSH.')
   }, {
     type: 'checkbox',
-    name: 'adv_traceback',
+    name: 'traceback',
     placeholder: T('Show tracebacks in case of fatal error'),
     tooltip: T('Provides a pop-up window of diagnostic information if a\
- fatal error occurs.')
+                fatal error occurs.')
   }, {
     type: 'checkbox',
-    name: 'adv_advancedmode',
+    name: 'advancedmode',
     placeholder: T('Show advanced fields by default'),
-    tooltip: T('Many GUI menus provide an\
- <b>Advanced Mode</b> button to access additional features. Enabling\
- this shows these features by default.')
+    tooltip: T('Enabling this shows additional features by default.')
   }, {
     type: 'checkbox',
-    name: 'adv_uploadcrash',
+    name: 'uploadcrash',
     placeholder: T('Enable automatic upload of kernel crash dumps and\
  daily telemetry'),
-    tooltip: T('Report kernel crash dumps and daily\
- performance measurements to iXsystems.')
+    tooltip: T('Report kernel crash dumps and daily performance\
+                measurements to iXsystems.')
   }, {
     type: 'select',
-    name: 'adv_periodic_notifyuser',
+    name: 'periodic_notifyuser',
     placeholder: T('Periodic Notification User'),
     options: [],
     tooltip: T('Choose a user to receive security output emails. This\
- output runs nightly, but only sends an email when the system reboots or\
- encounters an error.')
+                output runs nightly, but only sends an email when the\
+                system reboots or encounters an error.')
   }, {
     type: 'input',
-    name: 'adv_graphite',
+    name: 'graphite',
     placeholder: T('Remote Graphite Server Hostname'),
     tooltip: T('Enter the IP address or hostname of a remote server\
- running Graphite.')
+                running Graphite.')
   }, {
     type: 'checkbox',
-    name: 'adv_fqdn_syslog',
+    name: 'fqdn_syslog',
     placeholder: T('Use FQDN for logging'),
-    tooltip: T('Check to include the\
- Fully-Qualified Domain Name (FQDN) in logs to precisely identify\
- systems with similar hostnames.')
+    tooltip: T('Check to include the Fully-Qualified Domain Name (FQDN)\
+                in logs to precisely identify systems with similar\
+                hostnames.')
   }, {
     type: 'checkbox',
-    name: 'adv_cpu_in_percentage',
+    name: 'cpu_in_percentage',
     placeholder: T('Report CPU usage in percentage'),
     tooltip: T('Check to display CPU usage as percentages in\
- <b>Reporting</b>.')
-  }];
+                <b>Reporting</b>.')
+  },
+  {
+    type: 'select',
+    name: 'sed_user',
+    placeholder: T('ATA Security User'),
+    tooltip: T('User passed to camcontrol security -u for unlocking SEDs'),
+    options: [
+      {label:'user', value:'USER'},
+      {label:'master', value:'MASTER'}
+              ],
+    value : 'USER'
+
+  },
+  {
+    type: 'input',
+    name: 'sed_passwd',
+    placeholder: T('SED Password'),
+    tooltip: T('Global password to unlock SED disks.'),
+    inputType: 'password',
+
+  },
+  {
+    type: 'input',
+    name: 'sed_passwd2',
+    placeholder: T('Confirm SED Password'),
+    tooltip: T(''),
+    inputType: 'password',
+    validation : [ matchOtherValidator('sed_passwd') ],
+
+  },
+];
 
   constructor(private rest: RestService,
     private load: AppLoaderService,
     private dialog: DialogService,
     private ws: WebSocketService,
+    public adminLayout: AdminLayoutComponent,
     public snackBar: MatSnackBar) {}
 
   openSnackBar(message: string, action: string) {
@@ -191,57 +263,62 @@ export class AdvancedComponent implements OnInit {
 
   ngOnInit() {}
 
-  public adv_serialport: any;
-  public adv_periodic_notifyuser: any;
 
   afterInit(entityEdit: any) {
+     this.ws.call(this.queryCall).subscribe((adv_values)=>{
+      entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
+    }) 
+    this.adv_serialport =
+    _.find(this.fieldConfig, { 'name': 'serialport' });
+    this.adv_serialspeed =
+    _.find(this.fieldConfig, { 'name': 'serialspeed' });
+    this.adv_serialconsole =
+    entityEdit.formGroup.controls['serialconsole'];
+    this.adv_serialspeed.isHidden = !this.adv_serialconsole.value;
+    this.adv_serialport.isHidden = !this.adv_serialconsole.value;
+    this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
+      this.adv_serialspeed.isHidden = !value;
+      this.adv_serialport.isHidden = !value;
+    });
+    entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
+      for(let i=0; i<serial_port_choices.length; i++){
+        this.adv_serialport.options.push(
+          {
+            label: serial_port_choices[i], value: serial_port_choices[i]
+          }
+        )}
+      
+    });
     entityEdit.ws.call('device.get_info', ['SERIAL']).subscribe((res) => {
-      let adv_serialport =
-        _.find(this.fieldConfig, { 'name': 'adv_serialport' });
       res.forEach((item) => {
-        adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
+        this.adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
       });
     });
 
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
-      let adv_periodic_notifyuser =
-        _.find(this.fieldConfig, { 'name': 'adv_periodic_notifyuser' });
+      const adv_periodic_notifyuser =
+        _.find(this.fieldConfig, { 'name': 'periodic_notifyuser' });
       res.data.forEach((item) => {
         adv_periodic_notifyuser.options.push({label: item['bsdusr_username'], value: item['bsdusr_username']});
       });
     });
   }
-  public custActions: Array < any > = [{
-      id: 'basic_mode',
-      name: 'Save Debug',
-      function: () => {
-        this.dialog.confirm(T("Generating Debug File"), T("Run this in the background?")).subscribe((res) => {
-              if (res) {
-                this.ws.job('system.debug').subscribe((res) => {
-                  console.log(res);
-                  if (res.state === "SUCCESS") {
-                    this.ws.call('core.download', ['filesystem.get', [res.result], 'debug.tgz']).subscribe(
-                      (res) => {
-                        this.openSnackBar(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"));
-                        window.open(res[1]);
-                      },
-                      (err) => {
-                        this.openSnackBar(T("Please check the network connection"), T("Failed"));
-                      }
-                    );
-                  }
-                }, () => {
 
-                }, () => {
-                  if (this.job.state == 'SUCCESS') {} else if (this.job.state == 'FAILED') {
-                    this.openSnackBar(T("Please check the network connection"), T("Failed"));
-                  }
-                });
-              } else {
-                console.log("User canceled");
-              }
-            });        
-      }
-    }
-  ];
+  public customSubmit(body) {
+    delete body.sed_passwd2;
+    this.load.open();
+
+
+    return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
+      this.load.close();
+      this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+      this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
+      
+    }, (res) => {
+      this.load.close();
+      this.dialog.errorReport(T("Error saving"), res.reason, res.trace.formatted);
+    });
+  }
+
+
 }

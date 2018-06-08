@@ -15,21 +15,26 @@ export class InterfacesListComponent {
   protected route_add: string[] = [ 'network', 'interfaces', 'add' ];
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
-
-  constructor(_rest: RestService, _router: Router) {}
+  protected confirmDeleteDialog = {
+    message: T("Network connectivity will be interrupted. Do you want to delete the selected interface?"),
+  }
 
   public columns: Array<any> = [
     {name : T('Interface'), prop : 'int_interface'},
     {name : T('Name'), prop : 'int_name'},
     {name : T('Media Status'), prop : 'int_media_status'},
     {name : T('DHCP'), prop : 'int_dhcp'},
+    {name : T('IPv6 Auto Configure'), prop: 'int_ipv6auto'},
     {name : T('IPv4 Addresses'), prop : 'ipv4_addresses'},
     {name : T('IPv6 Addresses'), prop : 'ipv6_addresses'},
+    {name : T('Options'), prop: 'int_options'}
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
   };
+
+  constructor(_rest: RestService, _router: Router) {}
 
   rowValue(row, attr) {
     if (attr == 'ipv4_addresses' || attr == 'ipv6_addresses') {

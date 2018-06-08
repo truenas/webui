@@ -1,14 +1,22 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 
+
+
+
 <div mat-dialog-content>
-  {{ message | translate }}
+  <span *ngIf="secondaryCheckBox">
+      <mat-checkbox class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)"></mat-checkbox>
+      {{ secondaryCheckBoxMsg | translate }}
+      <br><br>
+  </span>
+  <span [innerHTML]="message"></span>
 </div>
 
 
 <div mat-dialog-actions>
-  <mat-checkbox *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
+  <mat-checkbox name="confirm_checkbox" class="confirm-checkbox" *ngIf="!hideCheckBox" (change)="toggleSubmit($event)">{{"Confirm" | translate}}</mat-checkbox>
   <span fxFlex></span>
-  <button class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">{{"Ok"| translate}}
+  <button name="cancel_button" class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Cancel" | translate}}</button>
+  <button name="ok_button" class="mat-raised-button mat-primary" [disabled]="!isSubmitEnabled && !hideCheckBox" (click)="dialogRef.close(true)">{{buttonMsg | translate}}
   </button>
-  <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Cancel" | translate}}</button>
 </div>

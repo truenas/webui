@@ -1,13 +1,13 @@
 <div>
   <div class="text-center mat-bg-primary pt-1 pb-1">
-    <h6 class="m-0">Notifications</h6>
+    <h6 class="m-0">Alerts</h6>
   </div>
   <mat-nav-list class="notification-list" role="list">
     <!-- Notification item -->
     <mat-list-item *ngIf="notifications.length === 0" class="notific-item" role="listitem">
       <mat-icon color="primary" class="notific-icon">info</mat-icon>
       <div class="mat-list-text">
-        <h4 class="message">There are no alert notifications.</h4>
+        <h4 class="message">There are no alerts.</h4>
       </div>
     </mat-list-item>
     <mat-list-item *ngFor="let n of notifications" class="notific-item" role="listitem">
@@ -20,7 +20,7 @@
       </a>
     </mat-list-item>
     <div class="text-center mt-1" *ngIf="notifications.length">
-      <small><a href="#" (click)="closeAll($event)">Clear All Notifications</a></small>
+      <small><a href="#" (click)="closeAll($event)">Clear All Alerts</a></small>
     </div>
     <mat-list-item *ngFor="let n of dismissedNotifications" class="notific-item" role="listitem">
       <span style="font-weight: bolder;">Closed</span>
@@ -33,6 +33,6 @@
     </mat-list-item>
   </mat-nav-list>
   <div class="text-center mt-1" *ngIf="dismissedNotifications.length">
-    <small><a href="#" (click)="reopenAll($event)">Re-Open All Notifications</a></small>
+    <small><a href="#" (click)="reopenAll($event)">Re-Open All Alerts</a></small>
   </div>
 </div>

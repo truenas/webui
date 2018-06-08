@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild, OnChanges } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, OnChanges, OnDestroy } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -9,6 +9,10 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import filesize from 'filesize';
+
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
 
 export interface Disk {
   name: string;
@@ -44,10 +48,10 @@ export interface VolumeData {
   templateUrl:'./widgetpool.component.html',
   styleUrls: ['./widgetpool.component.css'],
 })
-export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @ViewChild('zvol') chartZvol:ViewChartDonutComponent;
-  public title:string = "Pool";
+  public title:string = T("Pool");
   //public standalone:boolean = false;
   @Input() volumeData:VolumeData;
   public volumeName:string = "";
@@ -61,28 +65,32 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   //public _slideProps:any = {x:0,y:0};
   @Input() configurable:boolean;
 
-  constructor(){
-    super();
+  constructor(public translate: TranslateService){
+    super(translate);
   }
 
   ngOnChanges(changes){
     if(changes.volumeData){
-      console.log("**** WidgetVolumeComponent Changes detected ****");
+      //DEBUG: console.log("**** WidgetVolumeComponent Changes detected ****");
       this.parseVolumeData();
     }
   }
 
+  ngOnDestroy(){
+    //this.core.emit({name:"StatsRemoveListener", data:{name:"DiskTemp",obj:this}});
+  }
+
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       //this.parseVolumeData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       if(evt.data.callArgs[0] == this.volumeData.id){
-        console.log("**** WidgetVolumeComponent DISKS ****");
-        console.log(evt.data);
+        //DEBUG: console.log("**** WidgetVolumeComponent DISKS ****");
+        //DEBUG: console.log(evt.data);
         // Simulate massive array
         for(let i = 0; i < 1; i++){
           //this.disks.push("ada" + i);
@@ -112,7 +120,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         } else {
           this.diskSets[0] = this.disks;
         }
-        console.log(this.diskSets);
+        //DEBUG: console.log(this.diskSets);
         
         if(evt.data.length > 0){
           this.setSelectedDisk(0);
@@ -120,8 +128,22 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       }
     });
 
+    /*this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
+      //DEBUG: console.log(evt);
+      let data = evt.data.data.data;
+      let temp: number;
+      for(let i = data.length-1; i >= 0; i--){
+        if(data[i][0]){
+          temp = data[i][0];
+          break;
+        }
+      }
+      // Test hot temps
+      //temp = 64;
+      this.diskDetails[evt.data.callArgs[1]].temp = temp;
+    });*/
+
     this.core.register({observerClass:this,eventName:"StatsDiskTemp"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       let data = evt.data.data.data;
       let temp: number;
       for(let i = data.length-1; i >= 0; i--){
@@ -136,7 +158,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
+      //DEBUG: console.log(evt);
       this.setDisksData(evt);
     });
 
@@ -146,11 +168,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     //this.core.emit({name:"PoolDataRequest"});
     this.core.emit({name:"DisksInfoRequest"});
+    //this.core.emit({ name:"StatsAddListener", data:{ name:"DiskTemp", obj:this} });
   }
 
   setDisksData(evt:CoreEvent){
-    console.log("******** DISKS INFO ********");
-    console.log(evt);
+    //DEBUG: console.log("******** DISKS INFO ********");
+    //DEBUG: console.log(evt);
     for(let i in evt.data){
       let disk:Disk = {
         name:evt.data[i].name,
@@ -177,15 +200,15 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     let slideW = 100/this.diskSets.length;
     let origin = this.currentDiskSet;
     let destination = num;
-    console.log("Origin = " + origin + " && destination = " + destination);
+    //DEBUG: console.log("Origin = " + origin + " && destination = " + destination);
     this._slideProps = {x:String((origin-destination)*slideW) + '%'}
     //this._slideProps = {x:String(destination*-1) + '%'}
-    console.warn(this._slideProps);
+    //DEBUG: console.warn(this._slideProps);
   }*/
 
   parseVolumeData(){
-    console.log("******** PARSING VOLUME DATA ********");
-    console.log(this.volumeData);
+    //DEBUG: console.log("******** PARSING VOLUME DATA ********");
+    //DEBUG: console.log(this.volumeData);
     let usedObj = (<any>window).filesize(this.volumeData.used, {output: "object", exponent:3});
     let used: ChartData = {
       legend: 'Used', 
@@ -206,7 +229,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       legend: this.volumeData.vol_name,
       data:[Number(percentage[0])]
     }];*/
-    console.log(this.chartZvol.data);
+    //DEBUG: console.log(this.chartZvol.data);
     this.chartZvol.width = this.chartSize;
     this.chartZvol.height = this.chartSize;
 

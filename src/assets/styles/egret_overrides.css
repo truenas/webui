@@ -215,7 +215,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 .widget .mat-card{
-  position:absolute;
+  /*position:absolute;*/
   left:0;
   right:0;
   width:100%;
@@ -261,3 +261,14 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   text-align:center;
 }
 
+.widget .card-title-text{
+  font-size:20px;
+}
+
+.widget .mat-card.back{
+  display:none;
+}
+
+.legend-item-time{
+  height:82px;
+}

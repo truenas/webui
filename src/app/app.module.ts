@@ -20,6 +20,7 @@ import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.comp
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
+import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
 import { WebSocketService } from './services/ws.service';
@@ -36,8 +37,17 @@ import { MarkdownModule } from 'angular2-markdown';
 import { CoreServices} from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { StatsService } from 'app/services/stats.service';
+
 import { ErdService } from 'app/services/erd.service';
-import { TestAlertModalDialogComponent } from 'app/pages/system/alertservice/test-alerts/testalerts-dialog.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+
+import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
+import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
+import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
+import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
+import { EntityModule } from './pages/common/entity/entity.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -64,9 +74,12 @@ export function createTranslateLoader(http: HttpClient) {
     NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
     CoreServices.forRoot(),
-    CoreComponents
+    CoreComponents,
+    FormsModule,
+    ReactiveFormsModule,
+    EntityModule,
   ],
-  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, TestAlertModalDialogComponent ],
+  declarations: [AppComponent, ConfirmDialog, ErrorDialog, InfoDialog, AboutModalDialog, ConsolePanelModalDialog, DownloadKeyModalDialog, SelectDialogComponent ],
   providers: [
     RoutePartsService,
     NavigationService,
@@ -75,6 +88,7 @@ export function createTranslateLoader(http: HttpClient) {
     RestService,
     AppLoaderService, 
     NotificationsService,
+    StatsService,
     ErdService,
     ENV_PROVIDERS],
   bootstrap: [
@@ -88,7 +102,12 @@ export function createTranslateLoader(http: HttpClient) {
     AboutModalDialog,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
-    TestAlertModalDialogComponent
+    SelectDialogComponent,
+    EntityDialogComponent,
+    FormCheckboxComponent,
+    FormInputComponent,
+    FormSelectComponent,
+    FormParagraphComponent
   ],
 })
 export class AppModule { 

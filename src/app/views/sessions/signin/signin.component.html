@@ -13,7 +13,7 @@
           <form #signinForm="ngForm" (ngSubmit)="signin()">
             <div class="">
               <mat-input-container class="full-width">
-                <input matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
+                <input autofocus matInput name="username" required [(ngModel)]="signinData.username" #username="ngModel" placeholder="{{'Username' | translate}}" value="">
                 <mat-error *ngIf="username.errors && (username.dirty || username.touched) && (username.errors.required)">
                   <span *ngIf="!failed">{{"Please enter your username" | translate}}</span>
                   <span *ngIf="failed">{{"Please enter your username again" | translate}}</span>
@@ -29,18 +29,22 @@
                 </mat-error>
               </mat-input-container>
             </div>
-            <button mat-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
+            <button name="signin_button" mat-raised-button class="mat-accent full-width mb-1" [disabled]="username.errors || password.errors">{{"Sign in" | translate}}</button>
           </form>
+          <div>
+            <a mat-button color="primary" (click)="onGoToLegacy()">{{"Legacy UI" | translate}}</a>
+          </div>
+          <div>
+            <span fxFlex class="copyright-txt">
+              <span *ngIf="is_freenas">FreeNAS</span>
+              <span *ngIf="!is_freenas">TrueNAS</span>
+              ® © 2018 - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+            </span>
+          </div>
         </div>
         <ng-template #notconnected>
-          {{"System is not yet available, please wait" | translate}}
+          {{"Connecting to NAS... Make sure the NAS system is powered on and connected to the network." | translate}}
         </ng-template>
-        <div>
-          <a mat-button color="primary" href="/legacy/">{{"Back to the Old UI" | translate}}</a>
-        </div>
-        <div>
-          <span fxFlex class="copyright-txt">FreeNAS® © 2018 - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
-        </div>
       </mat-card-content>
     </mat-card>
   </div>

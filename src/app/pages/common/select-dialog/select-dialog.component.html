@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>
+    {{ title | translate }}
+  </h1>
+  <div mat-dialog-content>
+    <mat-select  name="name"  placeholder="{{optionPlaceHolder}}"   [(ngModel)]="DisplaySelection" (change)=switchSelection()>
+        <mat-option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+        </mat-option>
+    </mat-select>  
+  </div>
+  <div mat-dialog-actions>
+    &nbsp;
+    <span fxFlex></span>
+    <button class="mat-raised-button mat-accent" (click)="dialogRef.close(false)">{{"Close" | translate}}</button>
+    <span fxFlex></span>
+    <button class="mat-raised-button mat-accent" (click)="dialogRef.close(true)">{{"OK" | translate}}</button> 
+  </div>

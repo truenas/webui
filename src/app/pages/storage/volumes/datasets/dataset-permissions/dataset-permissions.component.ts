@@ -55,8 +55,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
       type: 'radio',
       name: 'mp_acl',
       placeholder: T('ACL Type'),
-      tooltip: T('Choices are <b>Unix</b>, <b>Mac</b> or <b>Windows</b>. Select the\
-                type that matches the type of client accessing the volume/dataset.'),
+      tooltip: T('Select the type that matches the type of client\
+                  accessing the pool/dataset.'),
       options: [{label:'Unix', value: 'unix'},
                 {label:'Windows', value: 'windows'},
                 {label:'Mac', value: 'mac'}],
@@ -65,47 +65,46 @@ export class DatasetPermissionsComponent implements OnDestroy {
       type: 'checkbox',
       name: 'mp_user_en',
       placeholder: T('Apply User'),
-      tooltip: T('Check this box to apply changes to the user'),
+      tooltip: T('Set to apply changes to the user.'),
       value: true
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'mp_user',
       placeholder: T('User'),
-      tooltip: T('Select the user to control the volume/dataset.\
- Note that users manually created or imported from a directory service will\
- appear in the drop-down menu.'),
+      tooltip: T('Select the user to control the pool/dataset. Users\
+                  manually created or imported from a directory service\
+                  will appear in the drop-down menu.'),
       options: [],
     },
     {
       type: 'checkbox',
       name: 'mp_group_en',
       placeholder: T('Apply Group'),
-      tooltip: T('Check this box to apply changes to the group'),
+      tooltip: T('Set to apply changes to the group'),
       value: true
     },
     {
-      type: 'select',
+      type: 'combobox',
       name: 'mp_group',
       placeholder: T('Group'),
-      tooltip: T('Select the group to control the volume/dataset.\
- Note that groups manually created or imported from a directory service will\
- appear in the drop-down menu.'),
+      tooltip: T('Select the group to control the pool/dataset. Groups\
+                  manually created or imported from a directory service\
+                  will appear in the drop-down menu.'),
       options: [],
     },
     {
       type: 'checkbox',
       name: 'mp_mode_en',
       placeholder: T('Apply Mode'),
-      tooltip: T('Check this box to apply changes to the mode'),
+      tooltip: T('Set to apply changes to the mode'),
       value: true
     },
     {
       type: 'permissions',
       name: 'mp_mode',
       placeholder: T('Mode'),
-      tooltip: T('Only applies to Unix or Mac permission types.\
- Note that the mode cannot be changed when Windows is selected.'),
+      tooltip: T('Only applies to Unix or Mac permission types.'),
       isHidden: false
     },
     {
@@ -113,7 +112,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
       name: 'mp_recursive',
       placeholder: T('Apply permissions recursively'),
       tooltip: T('Apply permissions recursively to all directories\
-  and files within the current dataset'),
+                  and files within the current dataset'),
       value: false
     }
   ];
@@ -131,19 +130,21 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.mp_path.value = this.path;
     });
 
-    this.userService.listUsers().subscribe(res => {
+    this.userService.listAllUsers().subscribe(res => {
       let users = [];
-      for (let user of res.data) {
-        users.push({label: user['bsdusr_username'], value: user['bsdusr_uid']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
       }
       this.mp_user = _.find(this.fieldConfig, {'name' : 'mp_user'});
       this.mp_user.options = users;
     });
 
-    this.userService.listGroups().subscribe(res => {
+    this.userService.listAllGroups().subscribe(res => {
       let groups = [];
-      for (let group of res.data) {
-        groups.push({label: group['bsdgrp_group'], value: group['bsdgrp_gid']});
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        groups.push({label: items[i].label, value: items[i].id});
       }
       this.mp_group = _.find(this.fieldConfig, {'name' : 'mp_group'});
         this.mp_group.options = groups;
@@ -155,8 +156,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.storageService.filesystemStat(this.path).subscribe(res => {
       entityEdit.formGroup.controls['mp_mode'].setValue(res.mode.toString(8).substring(2,5));
-      entityEdit.formGroup.controls['mp_user'].setValue(res.uid);
-      entityEdit.formGroup.controls['mp_group'].setValue(res.gid);
+      entityEdit.formGroup.controls['mp_user'].setValue(res.user);
+      entityEdit.formGroup.controls['mp_group'].setValue(res.group);
       this.mp_acl = entityEdit.formGroup.controls['mp_acl'];
       this.mp_acl.setValue(res.acl);
       if (res.acl === 'windows') {
@@ -176,7 +177,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     this.mp_recursive = entityEdit.formGroup.controls['mp_recursive'];
     this.mp_recursive_subscription = this.mp_recursive.valueChanges.subscribe((value) => {
       if (value === true) {
-        this.dialog.confirm(T("Warning"), T("Seting permissions recursively will affect this directory and all those below it. This can result in data that is inaccessible."))
+        this.dialog.confirm(T("Warning"), T("Setting permissions recursively will affect this directory and all those below it. This can result in data that is inaccessible."))
         .subscribe((res) => {
           if (!res) {
             this.mp_recursive.setValue(false);

@@ -6,12 +6,14 @@
 
 import sys
 import getopt
+from shutil import copyfile
 from subprocess import call
 from os import path
-# when running for jenkins user driver, and when running on  an ubuntu system user driverU, because of  capabilities
+# when running for jenkins user driver, and when running on  an ubuntu system
+# user driverU, because of capabilities
 
-#from driver import webDriver
-#from driverU import webDriver
+# from driver import webDriver
+# from driverU import webDriver
 # Importing test
 # from autoflush import autoflush
 from login import run_login_test
@@ -36,7 +38,16 @@ from acc_edit import run_edit_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
 from logout import run_logout_test
-import sys
+if path.exists("/usr/local/etc/ixautomation.conf"):
+    copyfile("/usr/local/etc/ixautomation.conf", "config.py")
+    from config import *
+    if "Grid_ip" in locals():
+        grid_server_ip = Grid_ip
+    else:
+        grid_server_ip = "127.0.0.1"
+else:
+    grid_server_ip = "10.20.21.200"
+
 sys.stdout.flush()
 
 argument = sys.argv
@@ -90,25 +101,23 @@ except NameError:
     print(UsageMSG)
     sys.exit(1)
 
+global runDriver
+
 try:
     driver_v
 except NameError:
-    from driver import webDriver
-    print ("Running jenkin/truos driver")
+    from driverG import webDriver
+    print("Running Selenium Grid")
+    runDriver = webDriver(grid_server_ip)
 
 else:
     if (driver_v == "U"):
         from driverU import webDriver
         print ("Running Ubuntu driver")
+        runDriver = webDriver()
 
-
-global runDriver
-runDriver = webDriver()
-# turning on the autoflush to display result
-# autoflush(True)
-# Starting the test and genewratinf result
+#running tests
 run_login_test(runDriver, ip)
-# run_guide_test(runDriver)
 
 try:
     test_name
@@ -126,13 +135,13 @@ except NameError:
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)
-# temporary shutdown 
+# temporary shutdown
 #    run_conf_lldp_test(runDriver)
 #    run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
-    run_delete_test(runDriver)
+#    run_delete_test(runDriver)
     run_change_theme_test(runDriver)
 else:
     if (test_name == "account"):
@@ -140,7 +149,7 @@ else:
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
-        run_delete_test(runDriver)
+#        run_delete_test(runDriver)
     elif (test_name == "network"):
         run_conf_network_test(runDriver)
     elif (test_name == "system"):
@@ -166,8 +175,7 @@ else:
         run_change_theme_test(runDriver)
 
 run_logout_test(runDriver)
-# turning off autoflush, the default mode
-# autoflush(False)
+
 # Example test run
 # run_creat_nameofthetest(runDriver)
 

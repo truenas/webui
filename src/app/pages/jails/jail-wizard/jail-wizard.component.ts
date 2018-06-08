@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-import { JailService } from '../../../services/';
+import { JailService, NetworkService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
@@ -19,49 +19,66 @@ export class JailWizardComponent {
 
   protected addWsCall = 'jail.create';
   public route_success: string[] = ['jails'];
+  public summary = {};
+  summary_title = "Jail Summary";
+  objectKeys = Object.keys;
 
   isLinear = true;
   firstFormGroup: FormGroup;
+  protected custActions: Array<any> = [
+  {
+    id: 'advanced_add',
+    name: "Advanced Jail Creation",
+    function: () => {
+      this.router.navigate(
+        new Array('').concat(["jails", "add"])
+      );
+    }
+  }];
 
   protected wizardConfig: Wizard[] = [{
-      label: 'Name the jail and choose a FreeBSD release.',
+      label: T('Name Jail and Choose FreeBSD Release'),
       fieldConfig: [{
           type: 'input',
           name: 'uuid',
           required: true,
           placeholder: T('Jail Name'),
-          tooltip: T('Mandatory. Can only contain alphanumeric characters,\
- dashes (-), or underscores (_).'),
-          validation: [ Validators.required ],
+          tooltip: T('Required. Can only contain alphanumeric characters \
+                      Aa-Zz 0-9), dashes (-), or underscores (_).'),
+          validation: [ regexValidator(/^[a-zA-Z0-9-_]+$/) ],
         },
         {
           type: 'select',
           name: 'release',
           required: true,
           placeholder: T('Release'),
-          tooltip: T('Select the FreeBSD release to use as the jail\
- operating system.'),
+          tooltip: T('Choose the FreeBSD release to use as the jail \
+                      operating system. Releases that have already \
+                      been downloaded show <b>(fetched)</b>.'),
           options: [],
         },
       ]
     },
     {
-      label: 'Configure jail networking',
+      label: T('Configure Networking'),
       fieldConfig: [{
           type: 'checkbox',
           name: 'dhcp',
-          placeholder: T('DHCP autoconfigure IPv4'),
-          tooltip: T('Check this to automatically configure IPv4 settings\
- for the jail. <b>VirtIO</b> must also be enabled.'),
-        },
+          placeholder: T('DHCP Autoconfigure IPv4'),
+          tooltip: T('Set to autoconfigure jail networking with the \
+                      Dynamic Host Configuration Protocol. <b>VNET</b> \
+                      is required.'),
+      },
         {
           type: 'checkbox',
           name: 'vnet',
-          placeholder: T('VirtIO Virtual Networking'),
-          tooltip: T('Check to use VirtIO to emulate network devices for\
- this jail. See <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
- target="_blank">VIRTIO(4)</a> for more details.'),
+          placeholder: T('VNET'),
+	  tooltip: T('Set to use <a \
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
+                  target="_blank">VNET(9)</a> to emulate network \
+                  devices for the jail. \
+                  A fully virtualized per-jail network stack will be \
+                  installed.'),
           required: false,
           hasErrors: false,
           errors: '',
@@ -70,12 +87,8 @@ export class JailWizardComponent {
           type: 'input',
           name: 'ip4_addr',
           placeholder: T('IPv4 Address'),
-          tooltip: T('Type the IPv4 address for VNET and shared IP jails.\
- Single interface format: <b>interface|ip-address/netmask</b>. Multiple\
- interface format:\
- <b>interface|ip-address/netmask,interface|ip-address/netmask</b>.\
- Example: <b>vnet0|192.168.0.10/24</b>'),
-          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
+          tooltip: T('IPv4 address for the jail.'),
+          validation : [ regexValidator(this.networkService.ipv4_regex) ],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -88,9 +101,11 @@ export class JailWizardComponent {
           type: 'input',
           name: 'defaultrouter',
           placeholder: T('Default Router For IPv4'),
-          tooltip: T('Type <i>none</i> or a valid IP address. Setting\
- this property to anything other than <i>none</i> configures a default\
- route inside a <b>VNET</b> jail.'),
+          tooltip: T('A valid IPv4 address to use as the default route. \
+                      <br>Enter <b>none</b> to configure the jail with \
+                      no IPv4 default route. <br>\
+                      <b>A jail without a default route will not be \
+                      able to access any networks.</b>'),
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -103,20 +118,18 @@ export class JailWizardComponent {
           type: 'input',
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
-          tooltip: T('Type the IPv6 address for VNET and shared IP jails.\
- Single interface format: <i>interface|ip-address/netmask</i>. Multiple\
- interface format:\
- <i>interface|ip-address/netmask,interface|ip-address/netmask</i>.\
- Example: <b>re0|2001:0db8:85a3:0000:0000:8a2e:0370:7334/24</b>'),
-          validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
+          tooltip: T('IPv6 address for the jail.'),
+          validation : [ regexValidator(this.networkService.ipv6_regex) ],
         },
         {
           type: 'input',
           name: 'defaultrouter6',
           placeholder: T('Default Router For IPv6'),
-      tooltip: T('Type <i>none</i> or a valid IP address. Setting this\
- property to anything other than <i>none</i> configures a default route\
- inside a <b>VNET</b> jail.'),
+      tooltip: T('A valid IPv6 address to use as the default route. \
+                  <br>Enter <b>none</b> to configure the jail with no \
+                  IPv6 default route. <br>\
+                  <b>A jail without a default route will not be able \
+                  to access any networks.</b>'),
         },
       ]
     },
@@ -125,7 +138,11 @@ export class JailWizardComponent {
   protected releaseField: any;
   protected currentServerVersion: any;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService, protected jailService: JailService, ) {
+  constructor(protected rest: RestService,
+              protected ws: WebSocketService,
+              protected jailService: JailService,
+              protected router: Router,
+              protected networkService: NetworkService) {
 
   }
 
@@ -158,15 +175,52 @@ export class JailWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
-      if (res) {
-        ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
+    ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
+      this.summary[T('Jail Name')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.subscribe((res) => {
+      this.summary[T('Release')] = res;
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
+      if (res == undefined || res == '') {
+        delete this.summary[T('IPv4 Address')];
       } else {
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
+        this.summary[T('IPv4 Address')] = res;
       }
     });
+    ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.subscribe((res) => {
+      if (res == undefined || res == '') {
+        delete this.summary[T('Default Router For IPv4')];
+      } else {
+        this.summary[T('Default Router For IPv4')] = res;
+      }
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
+      if (res == undefined || res == '') {
+        delete this.summary[T('IPv6 Address')];
+      } else {
+        this.summary[T('IPv6 Address')] = res;
+      }
+    });
+    ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.subscribe((res) => {
+      if (res == undefined || res == '') {
+        delete this.summary[T('Default Router For IPv6')];
+      } else {
+        this.summary[T('Default Router For IPv6')] = res;
+      }
+    });
+
+    ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+      this.summary[T('DHCP Autoconfigure IPv4')] = res ? T('Yes') : T('No');
+
+      if (res) {
+        ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
+      }
+      _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
+    });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
+      this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
+
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
@@ -209,4 +263,12 @@ export class JailWizardComponent {
 
     return value;
   }
+
+  isCustActionVisible(id, stepperIndex) {
+    if (stepperIndex == 0) {
+      return true;
+    }
+    return false;
+  }
+
 }

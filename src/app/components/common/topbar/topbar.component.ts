@@ -5,8 +5,8 @@ import { ThemeService, Theme } from '../../../services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
-import { TourService } from '../../../services/tour.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
@@ -16,6 +16,7 @@ import { LanguageService } from "../../../services/language.service"
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from '../../../pages/common/entity/utils';
 
 @Component({
   selector: 'topbar',
@@ -52,11 +53,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private rest: RestService,
     public language: LanguageService,
     private dialogService: DialogService,
-    private tour: TourService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     private idle: Idle,
-    public translate: TranslateService ) {
+    public translate: TranslateService,
+    protected loader: AppLoaderService, ) {
 
     idle.setIdle(10); // 10 seconds for delaying
     idle.setTimeout(900); // 15 minutes for waiting of activity
@@ -79,13 +80,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
       this.themesMenu = this.themeService.themesMenu
     });
-
-    const showTour = localStorage.getItem(this.router.url) || 'true';
-
-    if (showTour === "true") {
-      hopscotch.startTour(this.tour.startTour(this.router.url));
-      localStorage.setItem(this.router.url, 'false');
-    }
 
     const notifications = this.notificationsService.getNotificationList();
 
@@ -128,11 +122,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
 
     this.continuosStreaming.unsubscribe();
-  }
-
-  startTour() {
-    hopscotch.startTour(this.tour.startTour(this.router.url));
-    localStorage.setItem(this.router.url, 'true');
   }
 
   setLang(lang) {
@@ -198,7 +187,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   onReboot() {
     this.translate.get('Restart').subscribe((reboot: string) => {
-      this.translate.get('Are you sure you wish to reboot the system?').subscribe((reboot_prompt: string) => {
+      this.translate.get('Are you sure you wish to restart the system?').subscribe((reboot_prompt: string) => {
         this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/reboot']);
@@ -231,6 +220,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
   showResilveringDetails() {
     this.translate.get('Ok').subscribe((ok: string) => {
       this.snackBar.open(`Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`, ok);
+    });
+  }
+
+  onGoToLegacy() {
+    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
+      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
+        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true).subscribe((res) => {
+          if (res) {
+            window.location.href = '/legacy/';
+          }
+        });
+      });
     });
   }
 }

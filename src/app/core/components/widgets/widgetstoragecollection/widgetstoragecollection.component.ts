@@ -8,6 +8,11 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WidgetPoolComponent, Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import filesize from 'filesize';
+
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 /*
 interface Disk {
   name:string;
@@ -49,8 +54,8 @@ export class WidgetStorageCollectionComponent extends WidgetComponent implements
   public volumes: VolumeData[] = [];
   public disks:Disk[] = [];
 
-  constructor(){
-    super();
+  constructor(public translate: TranslateService){
+    super(translate);
   }
 
   ngOnChanges(changes){

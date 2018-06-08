@@ -23,13 +23,13 @@ export const ViewChartMetadata = {
   template: `
     <div class="viewchart-wrapper {{chartClass}}-wrapper">
       <div *ngIf="chartLoaded" class="legend-wrapper">
-        <div class="legend-x legend-item" *ngIf="chartConfig.data.x">Time: <span *ngIf="showLegendValues">{{legend[0].x}}</span></div>
-        <div class="legend-html" fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="16px" >
+        <div class="legend-x legend-item" *ngIf="chartConfig.data.x">Time: <span *ngIf="showLegendValues" class="legend-item-time">{{legend[0].x}}</span></div>
+        <div class="legend-html" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="16px" >
           <ng-container *ngFor="let item of legend; let i=index ">
-            <div class="legend-item" *ngIf="chartType != 'gauge'" (click)="focus(legend[i])" [ngClass]="{'legend-item-disabled':!legend[i].visible}">
+            <div fxFlex.xs="calc(33% - 16px)" class="legend-item" *ngIf="chartType != 'gauge'" (click)="focus(legend[i])" [ngClass]="{'legend-item-disabled':!legend[i].visible}">
               <span class="legend-swatch" [style.background-color]="legend[i].swatch"></span>
               <span class="legend-name">{{legend[i].name}}: </span>
-              <div class="legend-value" [style.color]="legend[i].swatch"><span *ngIf="showLegendValues">{{legend[i].value}}{{units}}</span></div>
+              <div class="legend-value" [style.color]="legend[i].swatch"><span *ngIf="showLegendValues">{{legend[i].value | number : '1.2-2'}}{{units}}</span></div>
             </div>
           </ng-container>
         </div>
@@ -109,7 +109,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   ngOnChanges(changes) {
     //DEBUG: console.log("OnChanges");
-    if(changes.data){
+    if(changes.data){ // This only works with @Input() properties
       this.render();
     }
   }
@@ -128,9 +128,8 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       this._data = [];
     } else {
       let result: any[] = [];
-     
+ 
       for(let i = 0; i < d.length; i++){
-
         // setup data
         let item = d[i];
         let legend = [item.legend];
@@ -144,7 +143,20 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
           legendHtmlItem.value = d[i].data[0];
           this.showLegendValues = true;
         }
-        this.legend.push(legendHtmlItem);
+
+        //this.legend.push(legendHtmlItem);
+
+        // Don't duplicate legend items when new data comes in
+        let legendIndex = this.findLegendItem(legendHtmlItem);
+        if(legendIndex == -1){
+          this.legend.push(legendHtmlItem);
+        } else {
+          let dupe = this.legend[legendIndex];
+          dupe.value = legendHtmlItem.value
+          /*if(!dupe.visible){
+            this.chart.hide(dupe.name);
+          }*/
+        }
       }
       this._data = result;
 
@@ -179,6 +191,16 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   set chartType(str:string){
     this._chartType = str;
     //this.chartConfig.data.type = str;
+  }
+
+  findLegendItem(item:Legend){
+    for(let i = 0; i < this.legend.length; i++){
+      let legendItem = this.legend[i];
+      if(legendItem.name == item.name){
+        return i;
+      }
+    }
+    return -1;
   }
 
   makeConfig(){
@@ -219,10 +241,12 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     } else {
       this.chart.show(item.name);
     }
-    item.visible = !item.visible;
+      item.visible = !item.visible;
   }
 
   refresh(){
+    // Reset legend to avoid concatenation
+    //this.legend = [];
     this.render();
   }
 
@@ -246,9 +270,16 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     conf.legend = this.legendOptions;
     conf.tooltip = this.tooltipOptions;
     if(this.legend.length > 0 && colors){
-      //DEBUG: console.log(conf);
+      // Since we're checking the legend
+      // hide any existing data points
+      // where legend.visible=false
+      conf.data.hide = [];
       for(let i in this.legend){
-        this.legend[i].swatch = conf.color.pattern[i];
+        let legendItem = this.legend[i];
+        legendItem.swatch = conf.color.pattern[i];
+        if(!legendItem.visible){
+          conf.data.hide.push(legendItem.name);
+        }
       }
     }
     if(this.chartType != "donut" && this.chartType != "pie"){

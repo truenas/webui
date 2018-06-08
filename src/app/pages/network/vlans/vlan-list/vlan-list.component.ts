@@ -10,11 +10,14 @@ import { T } from '../../../../translate-marker';
 })
 export class VlanListComponent {
 
-  public title = "Vlans";
+  public title = "VLANs";
   protected resource_name: string = 'network/vlan/';
   protected route_add: string[] = [ 'network', 'vlans', 'add' ];
   protected route_add_tooltip: string = "Add VLAN";
   protected route_edit: string[] = [ 'network', 'vlans', 'edit' ];
+  protected confirmDeleteDialog = {
+    message: T("Network connectivity will be interrupted. Do you want to delete the selected interface?"),
+  }
 
   constructor(_rest: RestService, _router: Router) {}
 

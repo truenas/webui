@@ -36,7 +36,7 @@ xpaths = {
         'submenuGroup': '//*[@id="1-0"]',
         'newUser': '//*[@id="username"]/mat-input-container/div/div[1]/div/input',
         'primaryGroupcheckbox': '//*[@id="group_create"]/mat-checkbox/label/div',
-        'primaryGroupdropdown': '//*[@id="group"]/mat-form-field/div/div[1]/div',
+        'primaryGroupdropdown': '//*[@id="group"]',
         'newUserName': '//*[@id="full_name"]/mat-input-container/div/div[1]/div/input',
         'newUserEmail': '//*[@id="email"]/mat-input-container/div/div[1]/div/input',
         'newUserPass': '//*[@id="password"]/mat-input-container/div/div[1]/div/input',
@@ -109,7 +109,17 @@ class create_user_test(unittest.TestCase):
             # Enter Password Conf
             driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
             # Click on create new User button
-            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            if driver.find_element_by_xpath(xpaths['saveButton']):
+                print ("found the save button")
+                driver.find_element_by_xpath(xpaths['saveButton']).click()
+            else:
+                print ("could not find the save button and clicking")
+#            if driver.find_element_by_xpath(xpaths['saveButton']):
+#                print ("found the save button second time and clicking")
+#                driver.find_element_by_xpath(xpaths['saveButton']).click()
+#            else:
+#                print ("could not find the save button")
+
             # check if there is a generic error when making a duplicate user, and print the error
             time.sleep(1)
             self.screenshot("_")
@@ -139,13 +149,20 @@ class create_user_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['fabAction']).click()
             # Enter New Username
             driver.find_element_by_xpath(xpaths['newUser']).send_keys(newusernameuncheck)
+
+#temporary turn off dropdownlist test
             # uncheck create primary group  Checkbox
-            driver.find_element_by_xpath(xpaths['primaryGroupcheckbox']).click()
+#            driver.find_element_by_xpath(xpaths['primaryGroupcheckbox']).click()
             # click on primary group dropdownlist
-            driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
+#            driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
+#            if driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click():
+#                driver.find_element_by_xpath(xpaths['primaryGroupdropdown']).click()
             # select the element from the dropdown list by using selectlist function
-            time.sleep(2)
-            driver.find_element_by_xpath('//*[contains(text(), "userNAS")]').click()
+#            time.sleep(2)
+#            print ("attempt")
+#            Select(driver.find_element_by_xpath(xpaths['primaryGroupdropdown'])).select_by_visible_text("userNAS")
+#            print ("made")
+#            driver.find_element_by_xpath('//*[contains(text(), "userNAS")]').click()
             # Enter User Full name
             driver.find_element_by_xpath(xpaths['newUserName']).send_keys(newuserfnameuncheck)
             # Enter Password
@@ -153,10 +170,15 @@ class create_user_test(unittest.TestCase):
             # Enter Password Conf
             driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
             # Click on create new User button
-            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            if driver.find_element_by_xpath(xpaths['saveButton']):
+                print ("found the save button")
+                driver.find_element_by_xpath(xpaths['saveButton']).click()
+            else:
+                print ("could not find the save button and clicking")
             # Taking screenshot
             self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
@@ -193,10 +215,15 @@ class create_user_test(unittest.TestCase):
             # check Permit Sudo Checkbox
             driver.find_element_by_xpath(xpaths['permitSudocheckbox']).click()
             # Click on create new User button
-            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            if driver.find_element_by_xpath(xpaths['saveButton']):
+                print ("found the save button")
+                driver.find_element_by_xpath(xpaths['saveButton']).click()
+            else:
+                print ("could not find the save button and clicking")
             # Taking screenshot
             self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
             self.error_check()
             # check if the the user list is loaded after addding a new user
         except Exception:
@@ -233,10 +260,15 @@ class create_user_test(unittest.TestCase):
             # Enter Password Conf
             driver.find_element_by_xpath(xpaths['newUserPassConf']).send_keys(newuserpassword)
             # Click on create new User button
-            driver.find_element_by_xpath(xpaths['saveButton']).click()
+            if driver.find_element_by_xpath(xpaths['saveButton']):
+                print ("found the save button")
+                driver.find_element_by_xpath(xpaths['saveButton']).click()
+            else:
+                print ("could not find the save button and clicking")
             # Taking screenshot
             self.screenshot("_")
             # check if there is a generic error when making a duplicate user, and print the error
+            time.sleep(1)
             self.error_check()
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
@@ -281,6 +313,14 @@ class create_user_test(unittest.TestCase):
                 print (error_element)
             driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
+        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
+            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+                ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
+                error_element=ui_element.text
+                print (error_element)
+            driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
+            print ("Duplicate user cannot be created")
+
 
     def selectlist(self, element):
         for i in range(0,10):

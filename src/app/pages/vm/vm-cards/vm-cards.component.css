@@ -181,7 +181,7 @@ mat-chip.vm-state-on,
 }
 
 .card-close mat-icon.mat-icon.material-icons{
-  font-size:18px;
+  /*font-size:18px;*/
   cursor:pointer;
 }
 .indent{

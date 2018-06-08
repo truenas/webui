@@ -29,32 +29,32 @@ export const routes: Routes = [
     component : Services,
   },
   {
-    data: { title: 'ssh', breadcrumb: 'SSH'},
+    data: { title: 'SSH', breadcrumb: 'SSH'},
     path : 'ssh',
     component : ServiceSSHComponent,
   },
   {
-    data: { title: 'afp', breadcrumb: 'AFP'},
+    data: { title: 'AFP', breadcrumb: 'AFP'},
     path : 'afp',
     component : ServiceAFPComponent,
   },
   {
-    data: { title: 'domaincontroller', breadcrumb: 'Domain Controller'},
+    data: { title: 'Domain Controller', breadcrumb: 'Domain Controller'},
     path : 'domaincontroller',
     component : ServiceDCComponent,
   },
   {
-    data: { title: 'ftp', breadcrumb: 'FTP'},
+    data: { title: 'FTP', breadcrumb: 'FTP'},
     path : 'ftp',
     component : ServiceFTPComponent,
   },
   {
-    data: { title: 'lldp', breadcrumb: 'LLDP'},
+    data: { title: 'LLDP', breadcrumb: 'LLDP'},
     path : 'lldp',
     component : ServiceLLDPComponent,
   },
   {
-    data: { title: 'rsync', breadcrumb: 'Rsync'},
+    data: { title: 'Rsync', breadcrumb: 'Rsync'},
     path : 'rsync',
     component : ServiceRSYNCComponent,
     children: [
@@ -65,7 +65,7 @@ export const routes: Routes = [
       {
         path: 'configure',
         component: CconfigureRYSNCComponent,
-        data: { title: 'configure', breadcrumb: 'Configure' },
+        data: { title: 'Configure', breadcrumb: 'Configure' },
       },
       {
         path: 'rsync-module',
@@ -75,7 +75,7 @@ export const routes: Routes = [
       {
         path: 'rsync-module/add',
         component: RYSNCConfigurationFormComponent,
-        data: { title: 'add', breadcrumb: 'add' },
+        data: { title: 'Add', breadcrumb: 'Add' },
       },
       {
         path : 'rsync-module/edit/:pk', component : RYSNCConfigurationFormComponent,
@@ -84,47 +84,47 @@ export const routes: Routes = [
     ]
   },
   {
-    data: { title: 'smartd', breadcrumb: 'SMARTD'},
+    data: { title: 'SMARTD', breadcrumb: 'SMARTD'},
     path : 'smartd',
     component : ServiceSMARTComponent,
   },
   {
-    data: { title: 'nfs', breadcrumb: 'NFS'},
+    data: { title: 'NFS', breadcrumb: 'NFS'},
     path : 'nfs',
     component : ServiceNFSComponent,
   },
   {
-    data: { title: 'tftp', breadcrumb: 'TFTP'},
+    data: { title: 'TFTP', breadcrumb: 'TFTP'},
     path : 'tftp',
     component : ServiceTFTPComponent,
   },
   {
-    data: { title: 'ups', breadcrumb: 'UPS'},
+    data: { title: 'UPS', breadcrumb: 'UPS'},
     path : 'ups',
     component : ServiceUPSComponent,
   },
   {
-    data: { title: 'dynamicdns', breadcrumb: 'DynamicDNS'},
+    data: { title: 'DynamicDNS', breadcrumb: 'DynamicDNS'},
     path : 'dynamicdns',
     component : ServiceDDNSComponent,
   },
   {
-    data: { title: 'smb', breadcrumb: 'SMB'},
+    data: { title: 'SMB', breadcrumb: 'SMB'},
     path : 'smb',
     component : ServiceSMBComponent,
   },
   {
-    data: { title: 'snmp', breadcrumb: 'SNMP'},
+    data: { title: 'SNMP', breadcrumb: 'SNMP'},
     path : 'snmp',
     component : ServiceSNMPComponent,
   },
   {
-    data: { title: 'webdav', breadcrumb: 'WebDAV'},
+    data: { title: 'WebDAV', breadcrumb: 'WebDAV'},
     path : 'webdav',
     component : ServiceWebdavComponent,
   },
   {
-    data: { title: 's3', breadcrumb: 'S3'},
+    data: { title: 'S3', breadcrumb: 'S3'},
     path : 's3',
     component : ServiceS3Component,
   }

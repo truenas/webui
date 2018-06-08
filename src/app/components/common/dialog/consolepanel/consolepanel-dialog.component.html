@@ -1,7 +1,7 @@
 <div mat-dialog-content>
   <pre #footerBarScroll class="message">{{consoleMsg}}</pre>
   <div mat-dialog-content class="overflow-hide">
-    <mat-checkbox (change)="onStopRefresh($event)">Stop refresh</mat-checkbox>
+    <mat-checkbox (change)="onStopRefresh($event)">{{refreshMsg}}</mat-checkbox>
   </div>
 </div>
 <div mat-dialog-actions>

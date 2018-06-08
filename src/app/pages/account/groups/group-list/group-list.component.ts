@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import { T } from '../../../../translate-marker';
+import { DialogService } from 'app/services';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { WebSocketService } from '../../../../services/ws.service';
 
 @Component({
   selector : 'app-group-list',
@@ -14,9 +17,10 @@ export class GroupListComponent {
   protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
   protected route_delete: string[] = [ 'account', 'groups', 'delete' ];
   protected entityList: any;
+  protected loaderOpen = false;
   public columns: Array<any> = [
-    {name : 'GID', prop : 'bsdgrp_gid'},
     {name : 'Group', prop : 'bsdgrp_group'},
+    {name : 'GID', prop : 'bsdgrp_gid'},
     {name : 'Builtin', prop : 'bsdgrp_builtin'},
     {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},
   ];
@@ -25,7 +29,7 @@ export class GroupListComponent {
     sorting : {columns : this.columns},
   };
 
-  constructor(private _router: Router) { }
+  constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
   afterInit(entityList: any) { this.entityList = entityList; }
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.bsdgrp_builtin === true) {
@@ -63,5 +67,36 @@ export class GroupListComponent {
     }
 
     return actions;
+  }
+  checkbox_confirm(id: any){
+    const params = [id, {"delete_users": false}]
+    const ds = this.dialogService.confirm(
+      T("Delete"), 
+      T("Are you sure you want to delete the selected item?"), 
+      false, T("Delete"),
+      true,
+      T('Do you want to delete all users with this primary group?'),
+      'group.delete',
+      params);
+    ds.afterClosed().subscribe((status)=>{
+      if(status){
+        this.loader.open();
+        this.loaderOpen = true;
+        this.ws.call(
+          ds.componentInstance.method,ds.componentInstance.data).subscribe((res)=>{
+            this.entityList.getData();
+            this.loader.close();
+          },
+          (err)=>{
+            this.entityList.getData();
+            this.loader.close();
+          }
+        )
+      }
+    }
+  );
+  };
+  checkbox_confirm_show(id: any){
+    return true;
   }
 }

@@ -10,6 +10,9 @@ import {WebSocketService} from './ws.service';
 @Injectable()
 export class NetworkService {
 
+  public ipv4_regex = /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
+  public ipv6_regex = /^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i;
+
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getVlanNicChoices() {

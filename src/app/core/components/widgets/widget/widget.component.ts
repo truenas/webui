@@ -11,6 +11,10 @@ import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewch
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector: 'widget',
   templateUrl:'./widget.component.html'
@@ -21,14 +25,14 @@ export class WidgetComponent implements AfterViewInit {
   protected themeService: ThemeService;
   @Input() widgetSize: string;
   @Input() configurable:boolean = false;
-  public title:string = "Widget Base Class";
+  public title:string = T("Widget Base Class");
   public chartSize:number;
   //public configurable: boolean = true;
   public flipAnimation = "stop";
   public flipDirection = "vertical";
   public isFlipped: boolean = false;
 
-  constructor(){
+  constructor(public translate: TranslateService){
     this.core = CoreServiceInjector.get(CoreService);
     this.themeService = CoreServiceInjector.get(ThemeService);
   }

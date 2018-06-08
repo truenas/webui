@@ -4,24 +4,31 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
-import { TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from '../../../../app/services';
+import { T } from '../../../translate-marker';
+
 
 @Component({
   selector: 'app-jail-list',
   // template: `<entity-table [title]="title" [conf]="this"></entity-table>`
-  templateUrl: './jail-list.component.html' 
+  templateUrl: './jail-list.component.html',
+  styleUrls: ['../../plugins/plugins-available/plugins-available-list.component.css'],
+  providers: [DialogService]
 })
 export class JailListComponent implements OnInit {
 
-  public isPoolActivated: boolean = false;
+  public isPoolActivated: boolean = true;
   public selectedPool;
   public activatedPool: any;
   public availablePools: any = [];
-  public title = "Instances";
+  public title = "Jails";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
+  protected route_add = ["jails", "wizard"];
+  protected route_add_tooltip = "Add Jail";
 
   public columns: Array < any > = [
     { name: 'Jail', prop: 'host_hostuuid' },
@@ -40,7 +47,9 @@ export class JailListComponent implements OnInit {
     {
       id: "mstart",
       label: "Start",
+      icon: "play_arrow",
       enable: true,
+      ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -62,29 +71,39 @@ export class JailListComponent implements OnInit {
     {
       id: "mstop",
       label: "Stop",
+      icon: "stop",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
-        let selectedJails = this.getSelectedNames(selected);
-        this.loader.open();
-        this.entityList.busy =
-          this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
-            (res) => {
-              for (let i in selected) {
-                selected[i].state = 'down';
-              }
-              this.updateMultiAction(selected);
-              this.loader.close();
-            },
-            (res) => {
-              this.loader.close();
-              new EntityUtils().handleError(this, res);
-            });
+        let dialog = {};
+        this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
+          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true ).subscribe((res) => {
+          if (res) {
+            let selectedJails = this.getSelectedNames(selected);
+            this.loader.open();
+            this.entityList.busy =
+              this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
+                (res) => {
+                  for (let i in selected) {
+                    selected[i].state = 'down';
+                  }
+                  this.updateMultiAction(selected);
+                  this.loader.close();
+                },
+                (res) => {
+                  this.loader.close();
+                  new EntityUtils().handleError(this, res);
+                });
+          }
+        })      
       }
     },
     {
       id: "mupdate",
       label: "Update",
+      icon: "update",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -102,7 +121,9 @@ export class JailListComponent implements OnInit {
     {
       id: "mdelete",
       label: "Delete",
+      icon: "delete",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }
@@ -140,7 +161,14 @@ export class JailListComponent implements OnInit {
       }
     }
   ];
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService) {}
+
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
+    protected loader: AppLoaderService, protected dialogService: DialogService) {}
+
+  public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the iocage jail manager \
+  to create a /iocage dataset in the selected pool. The '/iocage' dataset may not be visible \
+  until after the first jail is created. iocage uses this dataset to store FreeBSD RELEASES \
+  and all other jail data. To create a new ZFS Pool, navigate Storage/Volumes and click 'Create ZFS Pool'.");
 
   ngOnInit(){
     this.getActivatedPool();
@@ -166,6 +194,8 @@ export class JailListComponent implements OnInit {
       if (res != null) {
         this.activatedPool = res;
         this.isPoolActivated = true;
+      } else {
+        this.isPoolActivated = false;
       }
     })
   }
@@ -189,7 +219,7 @@ export class JailListComponent implements OnInit {
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => { row.state = 'up'; },
+              (res) => { row.state = 'up'; this.updateMultiAction([row]); },
               (res) => {
                 new EntityUtils().handleError(this, res);
               });
@@ -199,12 +229,18 @@ export class JailListComponent implements OnInit {
         id: "stop",
         label: "Stop",
         onClick: (row) => {
-          this.entityList.busy =
-            this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-              (res) => { row.state = 'down'; },
-              (res) => {
-                new EntityUtils().handleError(this, res);
-              });
+          let dialog = {};
+          this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
+            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true ).subscribe((res) => {
+            if (res) {
+              this.entityList.busy =
+                this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
+                  (res) => { row.state = 'down'; this.updateMultiAction([row]);},
+                  (res) => {
+                    new EntityUtils().handleError(this, res);
+                  });
+            }
+          })
         }
       },
       {
@@ -258,24 +294,6 @@ export class JailListComponent implements OnInit {
     ]
   }
 
-  getAddActions() {
-    return [{
-        label: 'Add Jail',
-        icon: 'add',
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["jails", "add"]));
-        }
-      },{
-        label: "Jail Wizard",
-        icon: "beach_access",
-        onClick: () => {
-          this.router.navigate(
-            new Array('').concat(["jails", "wizard"]));
-        }
-      }]
-  }
-
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
@@ -303,4 +321,13 @@ export class JailListComponent implements OnInit {
     params.push(this.getSelectedNames(selected));
     return params;
   }
+
+  dataHandler(entityList: any) {
+    for (let i = 0; i < entityList.rows.length; i++) {
+      if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
+        entityList.rows[i].ip4_addr = _.split(entityList.rows[i].ip4_addr, '|')[1];
+      }
+    }
+  }
+
 }

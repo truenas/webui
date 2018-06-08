@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { RestService } from 'app/services';
+import { RestService, WebSocketService } from 'app/services';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';
@@ -24,7 +24,7 @@ export class NotificationsService {
   private notifications: NotificationAlert[] = [];
   private running = false;
 
-  constructor(private restService: RestService) {
+  constructor(private restService: RestService, private ws: WebSocketService) {
 
     this.initMe();
 
@@ -32,18 +32,17 @@ export class NotificationsService {
 
   initMe(): void {
 
-    this.restService.get("system/alert", {}).subscribe((res) => {
+    this.ws.call('alert.list', []).subscribe((res) => {
         this.notifications = this.alertsArrivedHandler(res);
         this.subject.next(this.notifications);
     });
-
 
     this.interval = setInterval(() => {
         
         if (this.running === false) {
           this.running = true;
 
-          this.restService.get("system/alert", {}).subscribe((res) => {
+          this.ws.call('alert.list', []).subscribe((res) => {
             this.notifications = this.alertsArrivedHandler(res);
             this.subject.next(this.notifications);
             this.running = false;
@@ -64,39 +63,61 @@ export class NotificationsService {
     return this.notifications;
   }
 
-  public clearNotifications(notifications: Array<NotificationAlert>, dismissedFlag: boolean) {
+  public dismissNotifications(notifications: Array<NotificationAlert>) {
     const notificationMap = new Map<string,NotificationAlert>();
 
     notifications.forEach((notification) => {
-      notification.dismissed = dismissedFlag;
       notificationMap.set(notification.id, notification);
-      this.restService.put("system/alert/" + notification.id + "/dismiss/", { body: dismissedFlag }).subscribe((res) => {
-        //console.log("alert dismissed id:" + notification.id);
+      this.ws.call('alert.dismiss', [notification.id]).subscribe((res) => {
+        console.log("alert dismissed id:" + notification.id);
       });
     });
 
     this.notifications.forEach((notification)=>{
       if( notificationMap.has(notification.id) === true ) {
-        notification.dismissed = dismissedFlag;
+        notification.dismissed = true;
       }
     });
 
     this.subject.next(this.notifications);
-    
   }
 
-  /**
-  * Takes incomming JSON REST message from system/alert rest api
-  * res.data  array where each element looks like:
-  *  {"dismissed":false,
-  *   "id":"d90e9594a20cba9660003a55c3f51a6c",
-  *   "level":"WARN",
-  *   "message":"smartd is not running.\n",
-  *   "timestamp":1504725447}
-  */
+  public restoreNotifications(notifications: Array<NotificationAlert>) {
+    const notificationMap = new Map<string,NotificationAlert>();
+
+    notifications.forEach((notification) => {
+      notificationMap.set(notification.id, notification);
+      this.ws.call('alert.restore', [notification.id]).subscribe((res) => {
+        console.log("alert restore id:" + notification.id);
+      });
+    });
+
+    this.notifications.forEach((notification)=>{
+      if( notificationMap.has(notification.id) === true ) {
+        notification.dismissed = false;
+      }
+    });
+
+    this.subject.next(this.notifications);
+  }
+
+  // response array from 'alert.lst'
+  //   {
+  //     args:"tank"
+  //     datetime:{$date: 1525108866081}
+  //     dismissed:false
+  //     formatted:"New feature flags are available for volume tank. Refer to the "Upgrading a ZFS Pool" section of the User Guide for instructions."
+  //     id:"A;VolumeVersion;["New feature flags are available for volume %s. Refer to the \"Upgrading a ZFS Pool\" section of the User Guide for instructions.", "tank"]"
+  //     key:"["New feature flags are available for volume %s. Refer to the \"Upgrading a ZFS Pool\" section of the User Guide for instructions.", "tank"]"
+  //     level:"WARNING"
+  //     mail:null
+  //     node:"A"
+  //     source:"VolumeVersion"
+  //     title:"New feature flags are available for volume %s. Refer to the "Upgrading a ZFS Pool" section of the User Guide for instructions."
+  //   }
   private alertsArrivedHandler(res): NotificationAlert[] {
     const returnAlerts = new Array<NotificationAlert>();
-    const data: Array<any> = res.data;
+    const data: Array<any> = res;
 
     if (data && data.length > 0) {
       data.forEach((alertObj: NotificationAlert) => {
@@ -109,37 +130,19 @@ export class NotificationsService {
     return returnAlerts;
   }
 
-  /**
-  * Returns the hours/mintues am/pm part of the date.
-  */
-  private getTimeAsString(timestamp: number) {
-    const d: Date = new Date(timestamp);
-    d.setHours(d.getHours() + 2); // offset from local time
-    const h = (d.getHours() % 12) || 12; // show midnight & noon as 12
-    return (
-      (h < 10 ? '0' : '') + h +
-      (d.getMinutes() < 10 ? ':0' : ':') + d.getMinutes() +
-      // optional seconds display
-      // ( d.getSeconds() < 10 ? ':0' : ':') + d.getSeconds() + 
-      (d.getHours() < 12 ? ' AM' : ' PM')
-    );
-
-  }
-
   private addNotification(alertObj): NotificationAlert {
     const id: string = alertObj.id;
     const dismissed: boolean = alertObj.dismissed;
-    const message: string = <string>alertObj.message;
+    const message: string = <string>alertObj.formatted;
     const level: string = <string>alertObj.level;
-    const timestamp: number = <number>alertObj.timestamp * 1000; // unix timestamp in seconds
-    // javascript in milli
-    const date: Date = new Date(timestamp);
-    const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
+    const date: Date = new Date(alertObj.datetime.$date);
+    const dateStr = date.toUTCString();
+    //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
     const routeName = "/dashboard"
     let icon = "info";
     let color = "primary";
 
-    if (level === "WARN") {
+    if (level === "WARNING") {
       icon = "watch_later";
       color = "warn";
     } else if (level === 'ERROR') {

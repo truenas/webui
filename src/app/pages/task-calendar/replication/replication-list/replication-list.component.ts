@@ -12,26 +12,43 @@ import {  DialogService } from '../../../../services/';
   template: `<entity-table [title]="title"  [conf]="this"></entity-table>`
 })
 export class ReplicationListComponent {
-  
-  public title = "Replication";
+
+  public title = "Replication Tasks";
   protected resource_name = 'storage/replication';
+  protected route_add: string[] = ["tasks", "replication", "add-replication"];
   protected route_success: string[] = ['tasks', 'replication'];
   protected entityList: any;
 
   public busy: Subscription;
   public sub: Subscription;
   public columns: Array<any> = [
-    { name: 'Volume/Dataset', prop: 'repl_filesystem' },
+    { name: 'Pool/Dataset', prop: 'repl_filesystem' },
     { name: 'Remote Host', prop: 'repl_remote_hostname'},
     { name: "Status", prop: 'repl_status'},
     { name: 'Begin Time', prop:'repl_begin'},
     { name: 'End Time', prop:'repl_end'},
     { name: 'Enabled', prop: 'repl_enabled' }  ];
-    
+
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
   };
+
+  public custActions: Array<any> = [
+  {
+    id: "replication_keys",
+    name: "Replication Keys",
+    function: () => {
+      this.getReplicationKeys();
+    }
+  },
+  {
+    id: "replication_token",
+    name: "Replication Token",
+    function: () => {
+      this.getReplicationToken();
+    }
+  }];
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -45,33 +62,6 @@ export class ReplicationListComponent {
 
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => { });
-  }
-
-  getAddActions() {
-    let actions = [];
-    actions.push({
-      label: "Replication",
-      icon: "card_membership",
-      onClick: () => {
-        this.router.navigate(
-          new Array('').concat(["tasks", "replication", "add-replication"]));
-      }
-    });
-    actions.push({
-      label: "Replication Keys",
-      icon: "card_membership",
-      onClick: () => {
-        this.getReplicationKeys();
-      }
-    });
-    actions.push({
-      label: "Replication Token",
-      icon: "card_membership",
-      onClick: () => {
-        this.getReplicationToken();
-      }
-    });
-    return actions;
   }
 
   getActions(parentRow) {

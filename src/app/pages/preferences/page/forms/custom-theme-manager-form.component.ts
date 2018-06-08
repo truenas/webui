@@ -23,7 +23,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
    userTheme:string; // Theme name
    customThemes?: Theme[]; 
    favoriteThemes?: string[]; // Theme Names
-   showGuide:boolean; // Guided Tour on/off
    showTooltips:boolean; // Form Tooltips on/off
    metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
 

@@ -5,7 +5,6 @@ import {LocalStorage} from 'ngx-webstorage';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {environment} from '../../environments/environment';
-import { DialogService } from '../services/dialog.service';
 
 @Injectable()
 export class WebSocketService {
@@ -23,13 +22,18 @@ export class WebSocketService {
   redirectUrl: string = '';
   shuttingdown = false;
 
+  protocol: any;
+  remote: any;
+
   public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
 
-  constructor(private _router: Router, private dialogService: DialogService) {
+  constructor(private _router: Router) {
     this._authStatus = new Subject();
     this.onOpenSubject = new Subject();
     this.onCloseSubject = new Subject();
     this.pendingCalls = new Map();
+    this.protocol = window.location.protocol;
+    this.remote = environment.remote;
     this.connect();
   }
 
@@ -37,10 +41,16 @@ export class WebSocketService {
     return this._authStatus.asObservable();
   }
 
+  reconnect(protocol = window.location.protocol, remote = environment.remote) {
+    this.protocol = protocol;
+    this.remote = remote;
+    this.socket.close();
+  }
+
   connect() {
     this.socket = new WebSocket(
-        (window.location.protocol == 'https:' ? 'wss://' : 'ws://') +
-        environment.remote + '/websocket');
+        (this.protocol == 'https:' ? 'wss://' : 'ws://') +
+        this.remote + '/websocket');
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);

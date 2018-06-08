@@ -23,6 +23,7 @@ export class BootEnvironmentListComponent {
   public title = "Boot Environments";
   protected resource_name: string = 'system/bootenv';
   protected queryCall = 'bootenv.query';
+  protected route_add: string[] = ['system', 'bootenv', 'create']
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
   protected entityList: any;
   protected wsActivate = 'bootenv.activate';
@@ -120,33 +121,7 @@ export class BootEnvironmentListComponent {
     }
     return true;
   }
-  getAddActions() {
-    let actions = [];
-    actions.push({
-      label : "create",
-      icon: "album",
-      onClick : () => {
-         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "create" ]));
-       }
-    });
-    actions.push({
-      label : "scrub",
-      icon: "device_hub",
-      onClick : () => {
-        this.scrub();
-      }
-    });
-    actions.push({
-      label : "status",
-      icon: "local_laundry_service",
-      onClick : () => {
-        this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "status" ]));
-      }
-    });
-    return actions;
-  }
+
   getActions(row) {
     let actions = [];
     if (row.active === '-'){
@@ -260,6 +235,12 @@ export class BootEnvironmentListComponent {
     }
 
   }
+
+  goToStatus() {
+    this._router.navigate(new Array('').concat(
+      [ "system", "bootenv", "status" ]));
+  }
+
   scrub() {
     this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
       if (res) {

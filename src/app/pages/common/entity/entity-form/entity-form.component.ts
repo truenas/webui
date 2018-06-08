@@ -26,9 +26,11 @@ import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
 import {FieldConfig} from './models/field-config.interface';
+import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import {  DialogService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
 
 import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
 
@@ -63,7 +65,10 @@ export interface Formconfiguration {
   custom_add_query?
   custActions?: any[];
   customFilter?:any[];
-  
+  confirmSubmit?;
+  confirmSubmitDialog?:Object;
+ 
+  afterSubmit?;
   beforeSubmit?;
   customSubmit?;
   clean?;
@@ -92,6 +97,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   @Input('conf') conf: Formconfiguration;
 
   public pk: any;
+  public fieldSetDisplay: string = 'default';
+  public fieldSets: FieldSet[]
   public formGroup: FormGroup;
   public fieldConfig: FieldConfig[];
   public resourceName: string;
@@ -124,6 +131,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public error: string;
   public success = false;
   public data: Object = {};
+  public showDefaults: boolean = false;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -145,6 +153,19 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   ngOnInit() {
+    //get system general setting
+    this.ws.call('system.advanced.config').subscribe((res)=> {
+      if (res) {
+        if (this.conf.isBasicMode) {
+          if(res.advancedmode) {
+            this.conf.isBasicMode = false;
+          } else {
+            this.conf.isBasicMode = true;
+          }
+        }
+      }
+    });
+
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
@@ -160,7 +181,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.pk = params['pk'];
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
-            this.submitFunction = this.editCall;  // this is strange so iM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+            this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
                                                   // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
             this.submitFunction = this.editSubmit;
@@ -176,7 +197,42 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
       }
 
-      this.fieldConfig = this.conf.fieldConfig;
+
+      // Make sure fieldSetDisplay is defined
+      if(this.conf.fieldSetDisplay){
+        this.fieldSetDisplay = this.conf.fieldSetDisplay;
+      } else {
+        this.fieldSetDisplay = "default";
+      }
+
+      // Fallback if no fieldsets are defined
+      if(this.conf.fieldSets){
+        this.fieldConfig = [];
+        this.fieldSets = this.conf.fieldSets;
+        for(let i = 0; i < this.fieldSets.length; i++){
+          let fieldset = this.fieldSets[i];
+          if(fieldset.config){
+            this.fieldConfig = this.fieldConfig.concat(fieldset.config);
+          }
+        }
+        this.conf.fieldConfig = this.fieldConfig;
+      } else {
+        this.fieldConfig = this.conf.fieldConfig;
+        this.fieldSets = [
+          {
+            name:'FallBack',
+            class:'fallback',
+            width:'100%',
+            divider:false,
+            config: this.fieldConfig
+          },
+          {
+            name:'divider',
+            divider:true,
+            width:'100%'
+          }
+        ]
+      }
       this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
       for (const i in this.fieldConfig) {
@@ -225,7 +281,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.data[i], fg, i);
                 } else {
                   if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
-                    this.data[i] = _.split(this.data[i], ',');
+                    if (this.data[i]) {
+                      this.data[i] = _.split(this.data[i], ',');
+                    }
                   }
                   fg.setValue(this.data[i]);
                 }
@@ -233,7 +291,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             }
           } else {
             this.queryResponse = res;
-            this.wsResponse = res[0];
+            if (res[0]) {
+              this.wsResponse = res[0];
+            } else {
+              this.wsResponse = res;
+            }
 
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
@@ -266,12 +328,21 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
+          // Gets called on most entity forms after ws data returns, 
+          // thus hiding messages like 'no data'
+          this.showDefaults = true;
         });
       }
     });
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+    // ...but for entity forms that don't make a data request, this kicks in 
+    setTimeout(() => { this.setShowDefaults(); }, 500);
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
 
   ngOnChanges() {
@@ -332,6 +403,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   onSubmit(event: Event) {
+    if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
+      this.dialog.confirm(this.conf.confirmSubmitDialog['title'],
+                          this.conf.confirmSubmitDialog['message'], 
+                          this.conf.confirmSubmitDialog.hasOwnProperty("hideCheckbox") ?
+                              this.conf.confirmSubmitDialog['hideCheckbox'] : false,
+                          this.conf.confirmSubmitDialog.hasOwnProperty("button") ?
+                              this.conf.confirmSubmitDialog['button']: T("Ok")).subscribe((confirm) => {
+                            if (!confirm) {
+                              return;
+                            } else {
+                              this.doSubmit(event);
+                            }
+                          });
+    } else {
+      this.doSubmit(event);
+    }
+  }
+
+  doSubmit(event: Event) {  
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
@@ -373,9 +463,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                             this.success = true;
                           }
 
-                          if (this.conf.resource_name === "system/advanced") {                            
-                            this.adminLayout.onShowConsoleFooterBar(value['adv_consolemsg']);
-                          }                          
+                          if (this.conf.afterSubmit) {
+                            this.conf.afterSubmit(value);
+                          }
+
                         },
                         (res) => {
                           this.loader.close();
@@ -385,7 +476,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                             this.dialog.errorReport(res.type, res.reason, res.trace.formatted);
                           }
                           else {
-                              new EntityUtils().handleError(this, res);
+                            new EntityUtils().handleError(this, res);
                           }
                         });
     }
@@ -430,7 +521,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({disabled, value}, validation);
   }
 
-  setDisabled(name: string, disable: boolean) {
+  setDisabled(name: string, disable: boolean, status?:string) {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
@@ -463,8 +554,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     data.forEach((value, index) => {
-      this.conf.initialCount += 1;
-      this.conf.initialCount_default += 1;
+      if (this.conf.initialCount.hasOwnProperty(name)) {
+        this.conf.initialCount[name] += 1;
+        this.conf.initialCount_default[name] += 1;
+      } else {
+        this.conf.initialCount += 1;
+        this.conf.initialCount_default += 1;
+      }
 
       const formGroup = this.entityFormService.createFormGroup(array_controls);
       for (const i in value) {

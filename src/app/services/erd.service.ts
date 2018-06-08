@@ -12,7 +12,7 @@ export class ErdService {
   constructor() {}
 
   /**
-   * This method would typicaly be called in a component's 
+   * This method would typically be called in a component's 
    * ngAfterViewInit() implementation.
    * 
    * @param elementId - Name of element on view to attach to.

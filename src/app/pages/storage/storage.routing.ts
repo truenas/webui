@@ -7,26 +7,24 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { DatasetDeleteComponent } from './volumes/datasets/dataset-delete/';
 import { ManagerComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes-edit/index';
 import { VolumeDeleteComponent } from './volumes/volume-delete/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
-import { ZvolAddComponent } from './volumes/zvol/zvol-add/';
-import { ZvolDeleteComponent } from './volumes/zvol/zvol-delete/';
-import { ZvolEditComponent } from './volumes/zvol/zvol-edit/';
-import { VolumeImportListComponent } from './volumes/volume-import/';
+import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { StatusComponent } from './volumes/status/status.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
-import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
+import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
-import { VolumeUnencryptImportListComponent } from './volumes/volume-unencryptimports';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
+import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
+import { VolumeStatusComponent } from './volumes/volume-status';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -34,8 +32,12 @@ export const routes: Routes = [
     data: { title: 'Storage' },
     children: [
       {
+        path: '',
+        component: EntityDashboardComponent,
+      },
+      {
         path: 'pools',
-        data: { title: 'Pools', breadcrumb: 'Pools' },
+        data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
         children: [
           {
             path: '', component: VolumesListComponent,
@@ -50,24 +52,16 @@ export const routes: Routes = [
             data: { title: 'Edit Dataset', breadcrumb: 'Edit Dataset' }
           },
           {
-            path: 'id/:pk/zvol/add/:path', component: ZvolAddComponent,
+            path: 'id/:pk/zvol/add/:path', component: ZvolFormComponent,
             data: { title: 'Add Zvol', breadcrumb: 'Add Zvol' }
           },
           {
-            path: 'id/:pk/zvol/edit/:path', component: ZvolEditComponent,
+            path: 'id/:pk/zvol/edit/:path', component: ZvolFormComponent,
             data: { title: 'Edit Zvol', breadcrumb: 'Edit Zvol' }
-          },
-          {
-            path: 'id/:pk/dataset/delete/:path', component: DatasetDeleteComponent,
-            data: { title: 'Delete Dataset', breadcrumb: 'Delete Dataset' }
           },
           {
             path: 'id/:pk/dataset/permissions/:path', component: DatasetPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' }
-          },
-          {
-            path: 'id/:pk/zvol/delete/:path', component: ZvolDeleteComponent,
-            data: { title: 'Delete Zvol', breadcrumb: 'Delete Zvol' }
           },
           {
             path: 'manager', component: ManagerComponent,
@@ -78,45 +72,38 @@ export const routes: Routes = [
             data: { title: 'Extend Pool', breadcrumb: 'Extend Pool' }
           },
           {
-            path: 'import_list', component: VolumeImportListComponent,
+            path: 'import', component: VolumeImportWizardComponent,
             data: { title: 'Import Pool', breadcrumb: 'Import Pool' }
           },
           {
-            path: 'unencryptimport_list', component: VolumeUnencryptImportListComponent,
-            data: { title: 'UnEncrypt Pool', breadcrumb: 'UnEncrypt Pool' }
-          },
-          {
-            path: 'status/:pk', component: StatusComponent,
-            data: { title: 'Scrub Status', breadcrumb: 'Scrub Status' }
+            path: 'status/:pk', component: VolumeStatusComponent,
+            data: { title: 'Pool Status', breadcrumb: 'Pool Status' }
           },
           {
             path: 'detachvolume/:pk', component: VolumeDeleteComponent,
             data: { title: 'Detach Pool', breadcrumb: 'Detach Pool' }
           },
           {
-            path: 'unlock/:pk', component: VolumeUnlockFormComponent,
-            data: { title: 'Unlock Pool', breadcrumb: 'Unlock Pool' }
-          },
-          {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,
             data: { title: 'Rekey Pool', breadcrumb: 'Rekey Pool' }
           },
           {
-            path: 'addkey/:pk', component: VolumeRekeyFormComponent,
+            path: 'addkey/:pk', component: VolumeAddkeyFormComponent,
             data: { title: 'Add Key', breadcrumb: 'Add Key' }
           },
           {
             path: 'createkey/:pk', component: VolumeCreatekeyFormComponent,
-            data: { title: 'Create Key', breadcrumb: 'Create Key' }
+            data: { title: 'Create Passphrase', breadcrumb: 'Create Passphrase' }
+          },
+          {
+            path: 'changekey/:pk', component: VolumeChangekeyFormComponent,
+            data: { title: 'Change Passphrase', breadcrumb: 'Change Passphrase' }
           }
         ]
       },
-
-
-
       {
         path: 'snapshots',
-        data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
+        data: { title: 'Snapshots', breadcrumb: 'Snapshots', icon: 'camera_alt' },
         children: [
           {
             path: '', component: SnapshotListComponent,
@@ -138,11 +125,11 @@ export const routes: Routes = [
       },
       {
         path: 'vmware-Snapshots',
-        data: { title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots' },
+        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
         children: [
           {
             path: '', component: VMwareSnapshotListComponent,
-            data: { title: 'vmware-Snapshots', breadcrumb: 'vmware-Snapshots' }
+            data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' }
           },
           {
             path: 'add', component: VMwareSnapshotFormComponent,
@@ -157,15 +144,19 @@ export const routes: Routes = [
       },
       {
         path: 'disks',
-        data: { title: 'disks', breadcrumb: 'disks' },
+        data: { title: 'Disks', breadcrumb: 'Disks', icon: 'view_stream' },
         children: [
           {
             path: '', component: DisksListComponent,
-            data: { title: 'View Disks', breadcrumb: 'View Disks' }
+            data: { title: 'Disks', breadcrumb: 'Disks' }
           },
           {
             path: 'edit/:pk', component: DiskFormComponent,
             data: { title: 'Edit Disk', breadcrumb: 'Edit Disk' }
+          },
+          {
+            path: 'pool/:poolId/edit/:pk', component: DiskFormComponent,
+            data: { title: 'Edit Pool Disk', breadcrumb: 'Edit Pool Disk' }
           },
           {
             path: 'wipe/:pk', component: DiskWipeComponent,
@@ -175,9 +166,8 @@ export const routes: Routes = [
       },
       {
         path: 'import-disk', component: ImportDiskComponent,
-        data: { title: 'Import Disk', breadcrumb: 'Import Disk' }
+        data: { title: 'Import Disk', breadcrumb: 'Import Disk', icon: 'view_stream' }
       }
-      
     ]
   }
 ];

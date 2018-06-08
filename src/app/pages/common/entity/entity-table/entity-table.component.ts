@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateService } from '@ngx-translate/core';
 
+import { T } from '../../../../translate-marker';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
@@ -32,7 +33,11 @@ export interface InputTableConf {
   route_add?: string[];
   queryRes?: any [];
   isActionVisible?: any;
+  custActions?: any[];
   config?: any;
+  confirmDeleteDialog?: Object;
+  checkbox_confirm?: any;
+  checkbox_confirm_show?: any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
   preInit?(entity: EntityTableComponent);
@@ -45,7 +50,7 @@ export interface InputTableConf {
   wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
-  updateMultiAction?(selected): any;
+  updateMultiAction?(selected): any; 
 }
 
 export interface SortingConfig {
@@ -90,6 +95,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     paging: true,
     sorting: { columns: this.columns },
   };
+  public showDefaults: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -149,6 +155,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
+
+      setTimeout(() => { this.setShowDefaults(); }, 1000);
+    
+  }
+
+  setShowDefaults() {
+    this.showDefaults = true;
   }
   
 
@@ -189,6 +202,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
       });
+
   }
 
   handleData(res): any {
@@ -245,6 +259,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.currentRows = this.rows;
     this.paginationPageIndex  = 0;
     this.setPaginationInfo();
+    this.showDefaults = true;
     return res;
 
   }
@@ -289,7 +304,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       try {
         return this.conf.rowValue(row, attr);
       } catch(e) {
-        console.log("Conversion issue defaulting to straight value (calling rowValue in conf", this.conf );
         return row[attr];
       }
     }
@@ -307,7 +321,19 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doDelete(id) {
-    this.dialogService.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+    let dialog = {};
+    if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
+      this.conf.checkbox_confirm(id);
+      return;
+    }
+    if (this.conf.confirmDeleteDialog) {
+      dialog = this.conf.confirmDeleteDialog;
+    }
+    this.dialogService.confirm(
+        dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"), 
+        dialog.hasOwnProperty("message") ? dialog['message'] : T("Are you sure you want to delete the selected item?"), 
+        dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false, 
+        dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
