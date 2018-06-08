@@ -33,8 +33,8 @@
         </span>
       </div>
       <ng-template #defaultMultiActions>
-        <button mat-button (click)="doMultiDelete(this.selected);">
-          <span>{{ "Delete" | translate }}</span>
+        <button mat-button matTooltip="Delete" matTooltipPosition="above" (click)="doMultiDelete(this.selected);">
+          <mat-icon>delete</mat-icon>
         </button>
       </ng-template>
     </div>
@@ -99,7 +99,7 @@
         </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column *ngIf="!conf.config || !conf.config.multiSelect">
+      <ngx-datatable-column >
         <ng-template let-row="row" ngx-datatable-cell-template>
           <app-entity-table-actions [entity]="this" [row]="row">
           </app-entity-table-actions>
@@ -110,3 +110,4 @@
   </div>
 
 </div>
+<!-- *ngIf="!conf.config || !conf.config.multiSelect" -->

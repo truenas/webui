@@ -48,6 +48,7 @@ export class BootEnvironmentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
 
   preInit(){
@@ -113,6 +114,7 @@ export class BootEnvironmentListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
+    console.log(this.entityList)
   }
 
   isActionVisible(actionId: string, row: any) {
@@ -123,6 +125,7 @@ export class BootEnvironmentListComponent {
   }
 
   getActions(row) {
+    console.log(row)
     let actions = [];
     if (row.active === '-'){
       actions.push({
