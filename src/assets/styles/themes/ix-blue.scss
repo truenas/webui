@@ -567,3 +567,10 @@ entity-form .form-card.mat-card{
   margin-top: 23px;
 }
 // ---------
+
+// Resizes loader dialog which appears on update, wipe disk, etc.
+.entity-job-dialog {
+  min-width: 200px;
+  max-width: 600px;
+  max-height: 300px; 
+}
