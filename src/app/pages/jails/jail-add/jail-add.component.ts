@@ -61,7 +61,7 @@ export class JailAddComponent implements OnInit {
       name: 'dhcp',
       placeholder: T('DHCP Autoconfigure IPv4'),
       tooltip: T('Set to autoconfigure jail networking with the \
-                  Dynamic Host Configuration Protocol. <b>VirtIO</b> \
+                  Dynamic Host Configuration Protocol. <b>VNET</b> \
                   and <b>Berkeley Packet Filter<b> are also required.'),
     },
     {

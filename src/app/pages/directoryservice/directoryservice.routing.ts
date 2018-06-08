@@ -10,29 +10,34 @@ import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-for
 import { KerberosSettingsComponent } from './kerberossettings';
 import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [{
   path: '',
   data: { title: 'Directory Services' },
-  children: [{
+  children: [
+  {
+    path: '',
+    component: EntityDashboardComponent,
+  }, {
     path: 'ldap',
     component: LdapComponent,
-    data: { title: 'LDAP', breadcrumb: 'LDAP' }
+    data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' }
   }, {
     path: 'activedirectory',
     component: ActiveDirectoryComponent,
-    data: { title: 'Active Directory', breadcrumb: 'Active Directory' }
+    data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' }
   }, {
     path: 'nis',
     component: NISComponent,
-    data: { title: 'NIS', breadcrumb: 'NIS' }
+    data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' }
   }, {
     path: 'idmap/:pk/:service',
     data: { title: 'Idmap', breadcrumb: 'Idmap' },
     component: IdmapComponent,
   }, {
     path: 'kerberosrealms',
-    data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms' },
+    data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms', icon: 'apps' },
     children: [{
       path: '',
       component: KerberosRealmsListComponent,
@@ -48,11 +53,11 @@ export const routes: Routes = [{
     }]
   }, {
     path: 'kerberossettings',
-    data : { title: 'Kerberos Settings', breadcrumb: 'Kerberos Settings'},
+    data : { title: 'Kerberos Settings', breadcrumb: 'Kerberos Settings', icon: 'settings'},
     component: KerberosSettingsComponent,
   }, {
     path: 'kerberoskeytabs',
-    data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab' },
+    data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab', icon: 'apps' },
     children: [{
       path: '',
       component: KerberosKeytabsListComponent,

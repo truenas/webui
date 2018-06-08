@@ -2,8 +2,8 @@
     display: flex;
 }
 .vdev-table {
-    flex: 1 1 auto;
     padding-bottom: 10px;
+	width: 390px;
 }
 
 .vdev-actions {
@@ -40,4 +40,8 @@
     font-size: 36px;
     padding-right: 12px;
     
+}
+
+.datainfo {
+    margin-left: 16px;
 }

@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-import { JailService } from '../../../services/';
+import { JailService, NetworkService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
@@ -66,18 +66,19 @@ export class JailWizardComponent {
           name: 'dhcp',
           placeholder: T('DHCP Autoconfigure IPv4'),
           tooltip: T('Set to autoconfigure jail networking with the \
-                      Dynamic Host Configuration Protocol. <b>VirtIO</b> \
+                      Dynamic Host Configuration Protocol. <b>VNET</b> \
                       is required.'),
       },
         {
           type: 'checkbox',
           name: 'vnet',
-          placeholder: T('VirtIO Virtual Networking'),
-          tooltip: T('Use VirtIO to emulate network devices for the \
-                      jail. <br> \
-                      See <a \
-href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELEASE+and+Ports\
-"target="_blank">VIRTIO(4)</a> for more details.'),
+          placeholder: T('VNET'),
+	  tooltip: T('Set to use <a \
+                  href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
+                  target="_blank">VNET(9)</a> to emulate network \
+                  devices for the jail. \
+                  A fully virtualized per-jail network stack will be \
+                  installed.'),
           required: false,
           hasErrors: false,
           errors: '',
@@ -87,7 +88,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           name: 'ip4_addr',
           placeholder: T('IPv4 Address'),
           tooltip: T('IPv4 address for the jail.'),
-          validation : [ regexValidator(/^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/) ],
+          validation : [ regexValidator(this.networkService.ipv4_regex) ],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -118,7 +119,7 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
           name: 'ip6_addr',
           placeholder: T('IPv6 Address'),
           tooltip: T('IPv6 address for the jail.'),
-          validation : [ regexValidator(/^([0-9a-f]|:){1,4}(:([0-9a-f]{0,4})*){1,7}$/i) ],
+          validation : [ regexValidator(this.networkService.ipv6_regex) ],
         },
         {
           type: 'input',
@@ -140,7 +141,8 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
               protected jailService: JailService,
-              protected router: Router) {
+              protected router: Router,
+              protected networkService: NetworkService) {
 
   }
 
@@ -209,21 +211,15 @@ href="https://www.freebsd.org/cgi/man.cgi?query=virtio&manpath=FreeBSD+11.1-RELE
     });
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+      this.summary[T('DHCP Autoconfigure IPv4')] = res ? T('Yes') : T('No');
+
       if (res) {
-        this.summary[T('DHCP Autoconfigure IPv4')] = 'Yes';
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vnet'].setValue(true);
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = true;
-      } else {
-        this.summary[T('DHCP Autoconfigure IPv4')] = 'No';
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = false;
       }
+      _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).required = res;
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
-      if (res) {
-        this.summary[T('VirtIO Virtual Networking')] = 'Yes';
-      } else {
-        this.summary[T('VirtIO Virtual Networking')] = 'No';
-      }
+      this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
 
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;

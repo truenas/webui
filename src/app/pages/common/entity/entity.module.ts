@@ -60,6 +60,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import {A11yModule} from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
+import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
 @NgModule({
   imports: [
@@ -106,7 +107,8 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityWizardComponent,
     EntityTaskComponent,
     FormParagraphComponent,
-    EntityDialogComponent
+    EntityDialogComponent,
+    EntityDashboardComponent
   ],
   exports: [
     EntityDeleteComponent,
@@ -126,6 +128,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
+    EntityDashboardComponent
   ],
   entryComponents: [
     FormButtonComponent,

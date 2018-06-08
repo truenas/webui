@@ -13,6 +13,7 @@ import {ConfigurationComponent} from './configuration/';
 import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
 import {IPMIComponent} from './ipmi/'
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -20,14 +21,20 @@ export const routes: Routes = [
     data: {title: 'Network'},
     children: [
       {
+        path: '',
+        component: EntityDashboardComponent,
+      },
+      {
         path : 'configuration', component : ConfigurationComponent,
-        data: {title: 'Configuration', breadcrumb:'Configuration' }},
-        {
+        data: {title: 'Configuration', breadcrumb:'Configuration', icon: 'settings' }
+      },
+      {
           path : 'ipmi', component : IPMIComponent,
-          data: {title: 'IPMI', breadcrumb:'IPMI' }}, 
+          data: {title: 'IPMI', breadcrumb:'IPMI', icon: 'settings' }
+      },
       {
         path : 'interfaces',
-        data: {title: 'Interfaces', breadcrumb:'Interfaces' },
+        data: {title: 'Interfaces', breadcrumb:'Interfaces', icon: 'web_asset' },
         children: [
           {
             path : '', component : InterfacesListComponent,
@@ -42,7 +49,7 @@ export const routes: Routes = [
       },
       {
         path : 'vlans',
-        data: {title:'VLANs', breadcrumb: 'VLANs'},
+        data: {title:'VLANs', breadcrumb: 'VLANs', icon: 'device_hub'},
         children: [
           {path : '', component : VlanListComponent,
             data: {title:'VLANs', breadcrumb: 'VLANs'}},
@@ -54,7 +61,7 @@ export const routes: Routes = [
       },
       {
         path : 'laggs',
-        data: {title:'Link Aggregations', breadcrumb:'Link Aggregations' },
+        data: {title:'Link Aggregations', breadcrumb:'Link Aggregations', icon: 'device_hub' },
         children: [
           {path : '', component : LaggListComponent,
            data: {title:'Link Aggregations', breadcrumb:'Link Aggregations' }},
@@ -76,7 +83,7 @@ export const routes: Routes = [
       },
       {
         path : 'staticroutes',
-        data: {title: 'Static Routes', breadcrumb:'Static Routes'},
+        data: {title: 'Static Routes', breadcrumb:'Static Routes', icon: 'swap_calls'},
         children: [
           {
             path : '', component : StaticRouteListComponent,
