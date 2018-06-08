@@ -13,11 +13,11 @@
 }
 
 .disks {
-	flex-basis: auto;
+	/* flex-basis: auto;
 	-webkit-box-flex: 1;
-	flex-grow: 1;
-	min-width: 350px; 
-	max-width: 400px;
+	flex-grow: 1; */
+	width: 390px; 
+	/* max-width: 400px; */
 }
 .pool {
 	flex-basis: auto;

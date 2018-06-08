@@ -539,10 +539,9 @@ entity-form .form-card.mat-card{
 }
 
 // To fix alignment issues w/checkboxes on Create Pool page
-.headerCheckboxCellManager, .headerCheckboxCellVDev {
+.headerCheckBox {
   position: relative;
-  top: 6px;
-  left: 8px;
+  left: 2px;
 }
 
 // For Detach Pools functions on volumes-list.component.ts
@@ -566,7 +565,26 @@ entity-form .form-card.mat-card{
   float: right;
   margin-top: 23px;
 }
-// ---------
+// ---------------
+
+// Vertically align header-footer items on entity tables  
+.datatable-header-cell {
+  position: relative;
+  bottom: -6px;
+  left: 14px;
+}
+
+.datatable-pager {
+  margin-top: 15px;
+}
+// -----------------------
+
+// Put header labels directly over cells
+.datatable-header-cell-label {
+  margin-left: -7px;
+  text-align: center;
+  position: relative;
+}
 
 // Resizes loader dialog which appears on update, wipe disk, etc.
 .entity-job-dialog {
