@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, MatSort, PageEvent } from '@angular/material';
+import { MatPaginator, MatSort, PageEvent, MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { TranslateService } from '@ngx-translate/core';
@@ -102,7 +102,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService, 
-    protected erdService: ErdService, protected translate: TranslateService) { }
+    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar) { }
 
   ngOnInit() {
     
@@ -422,6 +422,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
               (res1) => {
                   this.getData();
                   this.selected = [];
+                  this.snackBar.open("Selected item(s) successfully deleted", 'close', { duration: 5000 });
                },
               (res1) => {
                 new EntityUtils().handleError(this, res1);
