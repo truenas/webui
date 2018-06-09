@@ -13,7 +13,7 @@ import { T } from '../../../translate-marker'
 @Component({
   selector: 'jail-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
-  providers: [JailService]
+  providers: [JailService, NetworkService]
 })
 export class JailWizardComponent {
 
