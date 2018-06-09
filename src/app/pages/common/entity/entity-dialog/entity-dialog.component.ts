@@ -30,6 +30,7 @@ export class EntityDialogComponent implements OnInit {
   public cancelButtonText: string = "Cancel";
   public detachButtonText: string;
   public getKeyButtonText: string;
+  public error: string;
   
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
@@ -56,7 +57,6 @@ export class EntityDialogComponent implements OnInit {
   submit() {
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
-    this.dialogRef.close(true);
 
     if (this.conf.customSubmit) {
       this.conf.customSubmit(value);
@@ -87,6 +87,7 @@ export class EntityDialogComponent implements OnInit {
   }
 
   clearErrors() {
+    this.error = null;
     for (let f = 0; f < this.fieldConfig.length; f++) {
       this.fieldConfig[f].errors = '';
       this.fieldConfig[f].hasErrors = false;
