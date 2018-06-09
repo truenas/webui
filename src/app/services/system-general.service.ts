@@ -30,4 +30,8 @@ export class SystemGeneralService {
   getIPChoices() {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
   }
+
+  getSysInfo() {
+    return this.ws.call('system.info', []);
+  }
 }
