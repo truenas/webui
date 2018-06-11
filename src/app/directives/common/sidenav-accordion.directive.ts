@@ -64,7 +64,7 @@ export class SideNavAccordionDirective implements OnInit {
   }
 
   private toggleTextDecor() {
-    var elem = this.el.nativeElement;
+    let elem = this.el.nativeElement;
     domHelper.addClass(elem, 'sidenav-clicked');
     setTimeout(() => { domHelper.removeClass(elem, 'sidenav-clicked'); }, 200);
   }

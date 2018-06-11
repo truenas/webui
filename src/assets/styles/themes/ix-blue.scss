@@ -593,7 +593,6 @@ entity-form .form-card.mat-card{
   max-height: 300px; 
 }
 
-.sidenav-clicked {
-  text-decoration: underline;
-  color: orange !important;
+.sidenav-clicked a {
+  opacity: 0.85;
 }
