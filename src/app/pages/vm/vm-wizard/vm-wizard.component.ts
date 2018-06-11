@@ -158,8 +158,8 @@ export class VMWizardComponent {
         {
           type: 'explorer',
           name: 'datastore',
-          placeholder : T('Select a zpool/datastore'),
-          tooltip: T('Choose a zpool/datastore for the new zvol.'),
+          placeholder : T('Select a pool or dataset'),
+          tooltip: T('Choose a pool or dataset for the new zvol.'),
           options: [],
           isHidden: false,
           initial: '/mnt',
@@ -169,7 +169,7 @@ export class VMWizardComponent {
           type: 'explorer',
           name: 'hdd_path',
           placeholder: T('Select an existing disk'),
-          tooltip: T('Browse to the desired zpool/datastore on the disk.'),
+          tooltip: T('Browse to the desired pool or dataset on the disk.'),
           explorerType: "zvol",
           initial: '/mnt',
           isHidden: true
