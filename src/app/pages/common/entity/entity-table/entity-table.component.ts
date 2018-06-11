@@ -172,6 +172,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   getData() {
+    let localLoader = this.loader;
+    localLoader.open();
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -201,8 +203,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.busy =
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
+        localLoader.close()
+        console.log(localLoader)
       });
-
   }
 
   handleData(res): any {
