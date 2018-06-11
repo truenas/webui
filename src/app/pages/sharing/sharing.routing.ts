@@ -25,14 +25,19 @@ import { ExtentListComponent } from './iscsi/extent/extent-list/';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
     path: '',
     data: { title: 'Sharing' },
-    children: [{
+    children: [
+    {
+      path: '',
+      component: EntityDashboardComponent,
+    }, {
       path: 'afp',
-      data: { title: 'AFP', breadcrumb: 'AFP'},
+      data: { title: 'AFP', breadcrumb: 'AFP', icon: 'share'},
       children: [{
         path: '',
         component: AFPListComponent,
@@ -49,7 +54,7 @@ export const routes: Routes = [
       }]
     }, {
       path: 'nfs',
-      data: { title: 'NFS', breadcrumb: 'NFS'},
+      data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share'},
       children: [{
         path: '',
         component: NFSListComponent,
@@ -65,7 +70,7 @@ export const routes: Routes = [
       }]
     }, {
       path: 'webdav',
-      data: { title: 'WebDAV', breadcrumb: 'WebDAV'},
+      data: { title: 'WebDAV', breadcrumb: 'WebDAV', icon: 'share'},
       children: [{
         path: '',
         component: WebdavListComponent,
@@ -81,7 +86,7 @@ export const routes: Routes = [
       }]
     }, {
       path: 'smb',
-      data: { title: 'SMB', breadcrumb: 'SMB'},
+      data: { title: 'SMB', breadcrumb: 'SMB', icon: 'share'},
       children: [{
         path: '',
         component: SMBListComponent,
@@ -97,7 +102,7 @@ export const routes: Routes = [
       }]
     }, {
       path: 'iscsi',
-      data: { title: 'ISCSI', breadcrumb: 'ISCSI'},
+      data: { title: 'ISCSI', breadcrumb: 'ISCSI', icon: 'share'},
       children: [
       {
         path: '',

@@ -12,6 +12,7 @@ import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/v
 import { ErdService } from 'app/services/erd.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
+import { MatSnackBar } from '@angular/material';
 
 export class DisksListConfig implements InputTableConf {
 
@@ -221,8 +222,8 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
   constructor(protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected erdService: ErdService, protected translate: TranslateService) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
+    protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar) {
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
     this.conf = new DisksListConfig(this.router, "", "All", this, this.loader, this.dialogService, this.rest);
   }
 
