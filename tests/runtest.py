@@ -131,7 +131,7 @@ except NameError:
     run_conf_sysadvance_test(runDriver)
     run_conf_afp_test(runDriver)
     run_conf_smb_test(runDriver)
-    run_conf_dc_test(runDriver)
+#    run_conf_dc_test(runDriver)
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)

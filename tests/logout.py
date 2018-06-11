@@ -32,7 +32,7 @@ except ImportError:
     import unittest
 
 xpaths = {
-         'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[5]",
+         'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
          'logoutButton' : "//*[contains(text(), 'Log out')]",
          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
          'logoutconfirmationButton' : "//*[contains(text(), 'Ok')]"
