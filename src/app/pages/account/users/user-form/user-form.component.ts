@@ -410,7 +410,7 @@ export class UserFormComponent {
         );
         dialog.afterClosed().subscribe(() => { cancelled = true; });
         console.log(dialog);
-        navigator.credentials.create({publicKey: createData}).then(
+        (<any>navigator).credentials.create({publicKey: createData}).then(
           (attestation) => {
             if (cancelled) {
               return;

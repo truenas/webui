@@ -87,7 +87,7 @@ export class SigninComponent implements OnInit {
       );
       dialog.afterClosed().subscribe(() => { cancelled = true; });
 
-      navigator.credentials.get({publicKey: result}).then((attestation) => {
+      (<any>navigator).credentials.get({publicKey: result}).then((attestation) => {
         console.log(attestation);
         console.log(cancelled);
 
