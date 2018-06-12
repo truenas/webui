@@ -410,16 +410,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doMultiDelete(selected) {
-    console.log(selected)
     this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?").subscribe((res) => {
       if (res) {
-        // console.log(this.conf.wsMultiDelete) core.bulk
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
-        if (this.conf.wsMultiDelete) { // this condion is not met by selected items from boot environs
+        if (this.conf.wsMultiDelete) 
           // ws to do multi-delete
-          if (this.conf.wsMultiDeleteParams) {console.log(this.conf.wsMultiDeleteParams) 
+          if (this.conf.wsMultiDeleteParams) { {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
                   this.getData();

@@ -53,10 +53,25 @@ export class BootEnvironmentListComponent {
     multiSelect: true
   };
 
+  public multiActions: Array < any > = [
+    {
+      id: "mdelete",
+      label: "Delete",
+      icon: "delete",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
+      }
+    }
+  ];
+
   getSelectedNames(selectedEnvs) {
     let selected: any = [];
     for (let i in selectedEnvs) {
+      if (selectedEnvs[i].active === '-') {
       selected.push([selectedEnvs[i].name]);
+      }
     }
     return selected;
   }
