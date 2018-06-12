@@ -438,6 +438,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   onSelect({ selected }) {
+    console.log(selected)
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 

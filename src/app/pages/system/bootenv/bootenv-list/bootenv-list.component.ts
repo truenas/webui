@@ -10,6 +10,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 import { stringify } from '@angular/core/src/util';
 
 @Component({
@@ -53,17 +54,52 @@ export class BootEnvironmentListComponent {
     multiSelect: true
   };
 
-  public multiActions: Array < any > = [
+  // This module uses the default multi-action button (delete) from entity table
+
+  public singleActions: Array < any > = [
     {
-      id: "mdelete",
-      label: "Delete",
-      icon: "delete",
+      id: "clone",
+      label: "Clone",
       enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
+      onClick : (selected) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "clone", selected[0].id ]));
       }
-    }
+    },
+    {
+      id: "rename",
+      label: "Rename",
+      enable: true,
+      onClick : (selected) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "rename", selected[0].id ]));
+      }
+
+    },
+    {
+      id: "activate",
+      label: "Activate",
+      enable: true,
+      onClick : (selected) => {
+        this.doActivate(selected[0].id);
+      }
+    },
+    {
+      id: "unkeep",
+      label: "Unkeep",
+      enable: true,
+      onClick : (selected) => {
+        this.toggleKeep(selected[0].id, selected[0].keep);
+      }
+    },
+    {
+      id: "keep",
+      label: "Keep",
+      enable: true,
+      onClick : (selected) => {
+        this.toggleKeep(selected[0].id, selected[0].keep);
+      }
+    } 
   ];
 
   getSelectedNames(selectedEnvs) {
@@ -80,6 +116,20 @@ export class BootEnvironmentListComponent {
     let params: Array<any> = ['bootenv.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
+  }
+
+  updateMultiAction(selected: any) {
+    if (_.find(selected, ['keep', false])) {
+     _.find(this.singleActions, {'id': 'keep'})['enable'] = true;
+    } else {
+      _.find(this.singleActions, {'id': 'keep'})['enable'] = false;
+    }
+
+    if (_.find(selected, ['keep', true])) {
+     _.find(this.singleActions, {'id': 'unkeep'})['enable'] = true;
+    } else {
+      _.find(this.singleActions, {'id': 'unkeep'})['enable'] = false;
+    }
   }
 
   preInit(){
