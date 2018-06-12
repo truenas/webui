@@ -38,7 +38,12 @@ export class ConfigSaveComponent {
       if (res) {
         let hostname = res.hostname.split('.')[0];
         let date = this.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-        this.fileName = hostname + '-' + res.version + '-' + date + '.db';
+        this.fileName = hostname + '-' + res.version + '-' + date;
+        if (this.secretseed) {
+          this.fileName += '.tar';
+        } else {
+          this.fileName += '.db';
+        }
       }
 
       this.sub = this.ws.call('core.download', ['config.save', [{ 'secretseed': this.secretseed }], this.fileName])
