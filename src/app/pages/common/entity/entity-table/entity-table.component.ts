@@ -419,7 +419,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         const data = {};
         if (this.conf.wsMultiDelete) { // this condion is not met by selected items from boot environs
           // ws to do multi-delete
-          if (this.conf.wsMultiDeleteParams) {
+          if (this.conf.wsMultiDeleteParams) {console.log(this.conf.wsMultiDeleteParams) 
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
                   this.getData();

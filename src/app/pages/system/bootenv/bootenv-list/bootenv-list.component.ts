@@ -29,6 +29,7 @@ export class BootEnvironmentListComponent {
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
+  protected wsMultiDelete = 'core.bulk';
   public busy: Subscription;
   public size_consumed: string;
   public condition: string;
@@ -50,6 +51,33 @@ export class BootEnvironmentListComponent {
     sorting : {columns : this.columns},
     multiSelect: true
   };
+
+  // public multiActions: Array < any > = [
+  //   {
+  //     id: "mdelete",
+  //     label: "Delete",
+  //     icon: "delete",
+  //     enable: true,
+  //     ttpos: "above",
+  //     onClick: (selected) => {
+  //       this.entityList.doMultiDelete(selected);
+  //     }
+  //   }
+  // ];
+
+  getSelectedNames(selectedEnvs) {
+    let selected: any = [];
+    for (let i in selectedEnvs) {
+      selected.push([selectedEnvs[i].id]);
+    }
+    console.log( selected);
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['env.do_delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
+  }
 
   preInit(){
     this._rest.get('system/advanced/',{}).subscribe(res=>{
@@ -114,7 +142,6 @@ export class BootEnvironmentListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-    console.log(this.entityList)
   }
 
   isActionVisible(actionId: string, row: any) {
@@ -125,7 +152,6 @@ export class BootEnvironmentListComponent {
   }
 
   getActions(row) {
-    console.log(row)
     let actions = [];
     if (row.active === '-'){
       actions.push({
