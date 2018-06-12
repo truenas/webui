@@ -297,9 +297,9 @@ export class JailListComponent implements OnInit {
   getSelectedNames(selectedJails) {
     let selected: any = [];
     for (let i in selectedJails) {
-      console.log(i);
       selected.push([selectedJails[i].host_hostuuid]);
     }
+    console.log(selected)
     return selected;
   }
 
@@ -320,6 +320,7 @@ export class JailListComponent implements OnInit {
   wsMultiDeleteParams(selected: any) {
     let params: Array<any> = ['jail.do_delete'];
     params.push(this.getSelectedNames(selected));
+    console.log(params)
     return params;
   }
 

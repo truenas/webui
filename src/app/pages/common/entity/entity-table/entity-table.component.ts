@@ -413,7 +413,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     console.log(selected)
     this.dialogService.confirm("Delete", "Are you sure you want to delete selected item(s)?").subscribe((res) => {
       if (res) {
-        console.log(this.conf.wsMultiDelete)
+        // console.log(this.conf.wsMultiDelete) core.bulk
         this.loader.open();
         this.loaderOpen = true;
         const data = {};

@@ -29,6 +29,7 @@ export class BootEnvironmentListComponent {
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
+  protected wsDelete = 'bootenv.delete';
   protected wsMultiDelete = 'core.bulk';
   public busy: Subscription;
   public size_consumed: string;
@@ -52,29 +53,16 @@ export class BootEnvironmentListComponent {
     multiSelect: true
   };
 
-  // public multiActions: Array < any > = [
-  //   {
-  //     id: "mdelete",
-  //     label: "Delete",
-  //     icon: "delete",
-  //     enable: true,
-  //     ttpos: "above",
-  //     onClick: (selected) => {
-  //       this.entityList.doMultiDelete(selected);
-  //     }
-  //   }
-  // ];
-
   getSelectedNames(selectedEnvs) {
     let selected: any = [];
     for (let i in selectedEnvs) {
-      selected.push([selectedEnvs[i].id]);
+      selected.push([selectedEnvs[i].name]);
     }
-    console.log( selected);
+    return selected;
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['env.do_delete'];
+    let params: Array<any> = ['bootenv.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
