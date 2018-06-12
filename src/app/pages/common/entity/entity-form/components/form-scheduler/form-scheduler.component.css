@@ -41,7 +41,8 @@
 ul.schedule-list{
     margin-top: 16px;
     list-style-type: none;
-    max-height: 242px;
+    /*max-height: 242px;*/
+    max-height: 216px;
     overflow-y: auto;
 }
 
@@ -146,6 +147,10 @@ mat-form-field.cron-presets{
 }
 
 /* Calendar View Settings*/
+.calendar-wrapper{
+  height:300px;
+}
+
 ::ng-deep .cron-fields .mat-button-toggle-label-content{
   line-height:unset;
   padding:unset;

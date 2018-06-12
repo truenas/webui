@@ -20,11 +20,21 @@
     [cdkConnectedOverlayOpen]="isOpen">
   <div  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
-      <h4 class="preview-label">Generated Schedule</h4>
+      <h4 class="preview-label">Generated Schedule
+        <!--<button mat-button (click)="setCalendar('next')">Next</button>-->
+        <button mat-icon-button [disabled]="disablePrevious">
+          <mat-icon aria-label="Previous Month" (click)="setCalendar('previous')">keyboard_arrow_left</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon aria-label="Next Month"(click)="setCalendar('next')">keyboard_arrow_right</mat-icon>
+        </button>
+      </h4>
       <mat-divider></mat-divider>
-      <mat-month-view #calendar
+      <div class="calendar-wrapper">
+        <mat-month-view #calendar
           [activeDate]="activeDate">
-      </mat-month-view>
+        </mat-month-view>
+      </div>
       <mat-divider></mat-divider>
       <ul class="schedule-list">
         <ng-container *ngFor="let date of generatedSchedule;">

@@ -8,6 +8,7 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 
 import {Overlay, OverlayOrigin, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
 import {MatDatepickerModule, MatMonthView} from '@angular/material';
+import * as moment from 'moment';
 import * as parser from 'cron-parser';
 
 interface CronPreset {
@@ -31,9 +32,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
   public config:FieldConfig;
   public group: FormGroup;
   public fieldShow: string;
+  public disablePrevious:boolean;
 
   @ViewChild('calendar', {read:ElementRef}) calendar: ElementRef;
-  @ViewChild('calendar') calendarComp;
+  @ViewChild('calendar') calendarComp:MatMonthView<any>;
   @ViewChild('trigger') trigger: ElementRef;
 
   // Popup Controls
@@ -111,7 +113,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
   get days(){ return this._days}
   set days(val){ 
-    let pattern = new RegExp("^([0-9]|1[0-9]|2[0-9]|3[0-1]|[*]|[*]\/[0-9]|[*]\/[0-9][0-9])$");
+    let pattern = new RegExp("^([1-9]|1[0-9]|2[0-9]|3[0-1]|[*]|[*]\/[1-9]|[*]\/[0-9][0-9])$");
+    console.log("Testing Value: " + val);
+    console.log(pattern.test(val));
     if(pattern.test(val)){ 
       this.validDays = true;
       this._days = val; 
@@ -164,6 +168,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
   public minDate;
   public maxDate;
+  public currentDate;
   public activeDate;
   public generatedSchedule: any[] = [];
   public picker:boolean = false;
@@ -224,20 +229,22 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
     }
     
     if(this.minDate && this.maxDate){
-      this.generateSchedule(this.minDate, this.maxDate);
+      this.generateSchedule();
     }
   }
 
-  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay){
+  constructor(public translate: TranslateService, private renderer: Renderer2, private cd: ChangeDetectorRef,public overlay: Overlay){ 
+    
     //Set default value
     this.preset = this.presets[1];
     this._months = "*";
-
-    let min = new Date('Tue 1 May 2018 00:00:00 UTC');
-    let max = new Date('Thur 31 May 2018 23:59:59 UTC');
-    this.minDate = min;
-    this.maxDate = max;
-    this.activeDate = max; //Determines what month is displayed
+    
+    this.minDate = moment();
+    this.maxDate = moment().endOf('month');
+    this.currentDate= moment();
+    
+    this.activeDate = moment(this.currentDate).toDate();
+    this.disablePrevious = true;
   }
 
   ngOnChanges(changes:SimpleChanges){
@@ -253,21 +260,11 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
       console.log(evt);
       this.crontab = evt;
     });
-
-    /*this.overlay.backdropClick.subscribe((evt) => {
-      this.togglePopup();
-    });*/
-    console.log(this.overlay);
   }
 
   ngAfterViewInit(){
     this.cd.detectChanges();
-    /*console.log(this.group);
-    let clone = Object.assign({}, this.group);
-    this.config.value = this.group.value[this.config.name];
-    this.initialValue = this.group.value[this.config.name];
-    console.warn(this.initialValue);*/
-    if(this.isOpen){ this.generateSchedule(this.minDate, this.maxDate);}
+    if(this.isOpen){ this.generateSchedule();}
   }
 
   onChangeOption($event) {
@@ -305,7 +302,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
         setTimeout(() => {
           //this.crontab = this.initialValue;//this.group.controls[this.config.name].value;
           this.convertPreset(this.crontab); // <-- Test
-          this.generateSchedule(this.minDate, this.maxDate);
+          this.generateSchedule();
           //console.log(this.group.controls[this.config.name]);
           console.log(this.currentValue);
         },200);
@@ -317,25 +314,71 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
     }
   }
 
-  private generateSchedule(min, max){
+
+  private setCalendar(direction){
+    let newDate;
+    if(direction == "next"){
+      newDate = moment(this.minDate).add(1,'months');
+    } else if(direction == "previous" && !this.disablePrevious) {
+      newDate = moment(this.minDate).subtract(1,'months');
+    } else {
+      let message = "Your argument is invalid";
+      console.warn(message);
+      return ;
+    }
+    this.minDate = this.getMinDate(newDate);
+    //this.minDate = moment(newDate).startOf('month');;
+    this.maxDate = moment(newDate).endOf('month');
+
+    this.calendarComp.activeDate = moment(newDate).toDate();
+    this.generateSchedule();
+  }
+
+  private getMinDate(d){
+    let dt = moment(d).add(1, 'seconds');
+    let newMinDate;
+    let thisMonth = moment().month();
+    let thisYear = moment().year();
+    let dateMonth = moment(dt).month();
+    let dateYear = moment(dt).year()
+    if(thisMonth == dateMonth && thisYear == dateYear){
+      console.log("Current Month!!");
+      this.disablePrevious = true;
+      newMinDate = moment();
+    } else {
+      console.log("Future Month!!");
+      this.disablePrevious = false;
+      newMinDate = moment(dt).startOf('month');
+    }
+    return newMinDate;
+  }
+
+  private generateSchedule(){
     let newSchedule = [];
+    let adjusted =  moment(this.minDate).subtract(1, 'seconds').toDate();
     let options = {
-      currentDate: min,
-      endDate: max,
+      currentDate: adjusted,
+      endDate: this.maxDate,//max
       iterator: true
     };
-    let interval = parser.parseExpression("0 " + this.crontab, options);
+    let interval = parser.parseExpression(this.crontab, options);
 
     while (true) {
       try {
         let obj:any = interval.next();
         newSchedule.push(obj.value);
       } catch (e) {
+        //console.warn(e);
         break;
       }
     }
     this.generatedSchedule = newSchedule;
-    this.updateCalendar();
+    setTimeout(() =>{ this.updateCalendar()}, 300);
+    console.log("GENERATING SCHEDULE");
+    //console.log(min);
+    /*console.log(interval);
+    console.log(this.crontab);
+    console.log(this.generatedSchedule);*/
   }
 
   private updateCalendar(){
@@ -388,15 +431,14 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
 
     let cal = aria.split(" "); // eg. May 06, 2018
     let cd = cal[1].split(",");
-    let calMonth = cal[0];
+    let calMonth = cal[0][0] + cal[0][1] + cal[0][2]; //limit month to 3 letters
     let calYear = cal[2];
-    let calDay;
+    let calDay; 
     if(cd[0].length == 1){ 
       calDay = "0" + cd[0];
     } else {
       calDay = cd[0];
     }
-
     for(let i in this.generatedSchedule){
       let s = this.generatedSchedule[i]; // eg. Sun May 06 2018 04:05:00 GMT-0400 (EDT)
       let schedule = s.toString().split(" ");
@@ -552,7 +594,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
       this.crontab = result;
     }
     if(this.minDate && this.maxDate){
-      this.generateSchedule(this.minDate, this.maxDate);
+      this.generateSchedule();
     }
   }
 
