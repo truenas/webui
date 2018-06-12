@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
+import * as moment from 'moment';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
@@ -556,7 +557,51 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
     }
+    actions.push({
+      label: T("Create Snapshot"),
+      onClick: (row) => {
+        const conf: DialogFormConfiguration = {
+          title: "One time snapshot of " + row.path,
+          fieldConfig: [
+            {
+              type: 'input',
+              name: 'dataset',
+              placeholder: T('Pool/Dataset'),
+              value: row.path,
+              isHidden: true,
+              readonly: true
+            },
+            {
+              type: 'input',
+              name: 'name',
+              placeholder: 'Name',
+              tooltip: T('Add a name for the new snapshot'),
+              validation: [Validators.required],
+              required: true,
+              value: "manual" + '-' + this.getTimestamp()            },
+            {
+              type: 'checkbox',
+              name: 'recursive',
+              placeholder: 'Recursive',
+              tooltip: T('Set to include child datasets of the chosen dataset.'),
+            }
+          ],
+          method_rest: "storage/snapshot",
+          saveButtonText: "Create Snapshot",
+        }
+        this.dialogService.dialogForm(conf).subscribe((res) => {
+          if (res) {
+            this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+          }
+        });
+      }
+    });
     return actions;
+  }
+
+  getTimestamp() {
+    let dateTime = new Date();
+    return moment(dateTime).format("YYYYMMDD");
   }
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
@@ -689,7 +734,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
   }
 
   public repaintMe() {
