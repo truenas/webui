@@ -3,7 +3,7 @@
 
 PORTNAME=	npm
 PORTVERSION=	5.8.0
-CATEGORIES=	www
+CATEGORIES=	freenas
 MASTER_SITES=	LOCAL/sunpoet
 
 MAINTAINER=	sunpoet@FreeBSD.org
