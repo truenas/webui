@@ -331,6 +331,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
     this.maxDate = moment(newDate).endOf('month');
 
     this.calendarComp.activeDate = moment(newDate).toDate();
+    console.log("Setting Calendar to " + direction + " Month");
     this.generateSchedule();
   }
 
@@ -342,11 +343,9 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
     let dateMonth = moment(dt).month();
     let dateYear = moment(dt).year()
     if(thisMonth == dateMonth && thisYear == dateYear){
-      console.log("Current Month!!");
       this.disablePrevious = true;
       newMinDate = moment();
     } else {
-      console.log("Future Month!!");
       this.disablePrevious = false;
       newMinDate = moment(dt).startOf('month');
     }
@@ -373,12 +372,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges{
       }
     }
     this.generatedSchedule = newSchedule;
-    setTimeout(() =>{ this.updateCalendar()}, 300);
-    console.log("GENERATING SCHEDULE");
-    //console.log(min);
-    /*console.log(interval);
-    console.log(this.crontab);
-    console.log(this.generatedSchedule);*/
+    setTimeout(() =>{ this.updateCalendar()}, 500);
   }
 
   private updateCalendar(){
