@@ -9,7 +9,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
+// import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
@@ -55,7 +55,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    private idle: Idle,
+    // private idle: Idle,
     public translate: TranslateService,
     protected loader: AppLoaderService, ) {
 
@@ -162,7 +162,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   signOut() {
-    this.idle.ngOnDestroy();
+    // this.idle.ngOnDestroy();
     this.translate.get('Log out').subscribe((logout: string) => {
       this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
         this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {

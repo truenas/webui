@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
-import { NgIdleModule } from '@ng-idle/core';
+// import { NgIdleModule } from '@ng-idle/core';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from "./components/common/app-common.module";
 import { AppComponent } from './app.component';
@@ -71,7 +71,7 @@ export function createTranslateLoader(http: HttpClient) {
     }),
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
-    NgIdleModule.forRoot(),
+    // NgIdleModule.forRoot(),
     MarkdownModule.forRoot(),
     CoreServices.forRoot(),
     CoreComponents,
