@@ -186,6 +186,9 @@ if path.exists('driver.pyc'):
 if path.exists('driverU.pyc'):
     call(["rm", "driverU.pyc"])
 
+if path.exists('function.pyc'):
+    call(["rm", "function.pyc"])
+
 if path.exists('login.pyc'):
     call(["rm", "login.pyc"])
 
