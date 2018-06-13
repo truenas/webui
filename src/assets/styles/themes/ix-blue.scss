@@ -473,7 +473,7 @@ entity-form .form-card.mat-card{
   
   .mat-dialog-content {
     max-width: 600px;
-  
+    padding-bottom: -3px;
   
     .info-panel {
       max-height: 100px;
@@ -533,20 +533,62 @@ entity-form .form-card.mat-card{
   
 }
 
+// To move tooltips up when they appear too low on viewport
 #raised-tooltip {
   top: -90px;
 }
 
-// .checkboxCellJails {
-//   height: 30px;
-//   position: relative;
-// }
-
-.headerCheckboxCellManager, .headerCheckboxCellVDev {
+// To fix alignment issues w/checkboxes on Create Pool page
+.headerCheckBox {
   position: relative;
-  top: 6px;
-  left: 8px;
+  left: 2px;
 }
 
-  
-  
+// For Detach Pools functions on volumes-list.component.ts
+#pool_detach_warning {
+  margin-bottom: 15px;
+}
+
+#cust_button_download_key {
+  background-color: #f44336;
+  color: white;
+  margin-right: 7px;
+}
+// ------------------------
+
+// For some items on VM Wizard Hard Disks page
+#disk_radio {
+  max-width: 220px;
+}
+
+#disk_radio tooltip {
+  float: right;
+  margin-top: 23px;
+}
+// ---------------
+
+// Vertically align header-footer items on entity tables  
+.datatable-header-cell {
+  position: relative;
+  bottom: -6px;
+  left: 14px;
+}
+
+.datatable-pager {
+  margin-top: 15px;
+}
+// -----------------------
+
+// Put header labels directly over cells
+.datatable-header-cell-label {
+  margin-left: -7px;
+  text-align: center;
+  position: relative;
+}
+
+// Resizes loader dialog which appears on update, wipe disk, etc.
+.entity-job-dialog {
+  min-width: 200px;
+  max-width: 500px;
+  max-height: 300px; 
+}

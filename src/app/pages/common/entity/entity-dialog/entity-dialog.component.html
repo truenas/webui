@@ -1,11 +1,21 @@
 <h1 mat-dialog-title> {{ title | translate }} </h1>
+
 <div mat-dialog-content>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
   </ng-container>
 </div>
+<div>
+  <p *ngIf="error" type="danger" id="error_message"><span [innerHTML]="error"></span></p>
+</div>
+
 <div mat-dialog-actions>
   <span fxFlex></span>
-  <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid">{{saveButtonText | translate}}</button>
-  <span fxFlex></span>
+  <span *ngFor="let custBtn of conf.custActions">
+    <button id="cust_button_{{custBtn.id}}" mat-raised-button 
+      *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" 
+      (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+  </span>
   <button class="mat-raised-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
+  <button class="mat-raised-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" 
+    *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
 </div>

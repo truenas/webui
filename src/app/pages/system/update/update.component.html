@@ -6,15 +6,16 @@
     </div>
     <div class="row">
       <mat-label>{{"Train" | translate}}</mat-label>
-      <mat-select class="form-control full-width" [(ngModel)]="train"  (change)="onTrainChanged($event)">
+      <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (change)="onTrainChanged($event)">
         <mat-option *ngFor="let train of trains" [value]="train.name">{{ train.name }}</mat-option>
       </mat-select>
     </div>
     <div class="row">
-      <div class="col-md-12">
-        <button mat-raised-button class="btn btn-success" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Download update" | translate}}</button>
-        <button mat-raised-button class="btn btn-success" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-raised-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
-        <button mat-raised-button class="btn btn-success" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
+      <div class="col-md-12">      
+        <button mat-button class="btn btn-success update-button" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'">{{"Download update" | translate}}</button>
+        <button mat-button class="btn btn-success update-button" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" mat-raised-button class="btn btn-success" (click)="ApplyPendingUpdate()" >{{"Apply Pending update" | translate}}</button>
+        <button mat-button class="btn btn-success update-button" (click)="ManualUpdate()" >{{"Manual update" | translate}}</button>
+        
         <p><font color ="red">{{general_update_error}}</font></p>
       </div>
     </div>

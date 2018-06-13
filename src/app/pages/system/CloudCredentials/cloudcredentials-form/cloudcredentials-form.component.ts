@@ -107,9 +107,9 @@ export class CloudCredentialsFormComponent {
     },
     {
       type : 'textarea',
-      name : 'accesskey',
-      placeholder :  T('Access Key'),
-      tooltip : T('Enter or paste the account access key. See the <a\
+      name : 'account_id',
+      placeholder :  T('Account ID'),
+      tooltip : T('Enter or paste the Accound ID. See the <a\
                    href="https://www.backblaze.com/help.html"\
                    target="_blank">BACKBLAZE help page</a> for more\
                    information.'),
@@ -119,10 +119,10 @@ export class CloudCredentialsFormComponent {
     },
     {
       type : 'textarea',
-      name : 'secretkey',
-      placeholder : T('Secret Key'),
-      tooltip : T('Enter the secret key generated with the <b>Access\
-                   Key</b>.'),
+      name : 'app_key',
+      placeholder : T('Application Key'),
+      tooltip : T('Enter the application key for your <b>Account\
+                   ID</b>.'),
       required: true,
       validation : [ Validators.required ],
       isHidden: true,
@@ -157,8 +157,8 @@ export class CloudCredentialsFormComponent {
     'account_key',
   ];
   protected balckblazeFields: Array<any> = [
-    'accesskey',
-    'secretkey',
+    'account_id',
+    'app_key',
   ];
   protected gcloudFields: Array<any> = [
     'preview',

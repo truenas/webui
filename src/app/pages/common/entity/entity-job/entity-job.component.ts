@@ -31,7 +31,7 @@ export class EntityJobComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: Http) {}
 
   ngOnInit() {
-    this.dialogRef.updateSize('25%', '20%');
+    // this.dialogRef.updateSize('35%', '200px');
 
     if (this.data.title) {
       this.title = this.data.title;

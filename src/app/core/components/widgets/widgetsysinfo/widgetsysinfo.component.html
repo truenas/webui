@@ -16,7 +16,7 @@
             <div class="label bold"><strong>{{"Serial Number" | translate}}:</strong> </div><p class="value">{{data.system_serial}}</p>
           </div>
           <div  *ngIf="data.license"><span class="label bold"><strong>{{"License" | translate}}:</strong> </span>  <p class="value">{{data.license}}</p></div>
-          <div class="data-row"><span class="label bold"><strong>{{"OS Version" | translate}}:</strong> </span>  <p class="value">{{data.version}}</p></div>
+          <div class="data-row"><span class="label bold"><strong>{{"OS Version" | translate}}:</strong> </span>  <p class="value">{{data.version}}</p><p class="build-date">(Build Date: {{buildDate}})</p></div>
           <div class="data-row"><span class="label bold"><strong>{{"Processor" | translate}}:</strong> </span>  <p class="value">{{data.model}} ({{data.cores}} cores)</p></div>
           <div class="data-row"><span class="label bold"><strong>{{"Memory" | translate}}:</strong> </span>  <p class="value">{{memory}}</p></div>
           <div class="data-row">

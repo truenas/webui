@@ -11,6 +11,10 @@
       <mat-input-container floatPlaceholder="never">
         <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
       </mat-input-container>
+
+      <span *ngFor="let custBtn of conf.custActions">
+          <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+      </span>
     </div>
 
     <mat-paginator fxFlex="auto" [length]="currentRows.length" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" [pageIndex]="paginationPageIndex" (page)="paginationUpdate($event)">
@@ -41,8 +45,8 @@
       [columns]="conf.columns" 
       [columnMode]="'force'" 
       [columnWidth]="'auto'"
-      [headerHeight]="38" 
-      [footerHeight]="50" 
+      [headerHeight]="'50'" 
+      [footerHeight]="'auto'" 
       [rowHeight]="50" 
       [reorderable]="true"
       [limit]="paginationPageSize" 
@@ -58,9 +62,8 @@
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-          <div>
+          <div class="headerCheckBox">
             <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
-            <!-- &nbsp character needed to fix checkbox alignment on mozila-->
           </div>
         </ng-template>
 

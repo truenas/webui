@@ -10,14 +10,14 @@
         [rows]="getDisks()" 
         [headerHeight]="50" 
         [rowHeight]="50"
-        [footerHeight]="50" 
+        [footerHeight]="'auto'" 
         [limit]="10"
         [selected] = "selected"
         [selectionType]="'checkbox'"
         (select)='onSelect($event)'>
         <ngx-datatable-column [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
             <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-              <div class="headerCheckboxCellVDev">
+              <div class="headerCheckBox">
                 <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
               </div>
             </ng-template>
@@ -30,24 +30,26 @@
           </ngx-datatable-column>
         <ngx-datatable-column
         	 [flexGrow]="1"
-             [width]="24"
+             [width]="35"
              [sortable]="false"
              [canAutoResize]="false"
              [draggable]="false"
              [resizeable]="false">
         </ngx-datatable-column>
         <ngx-datatable-column 
+           [width]="120"
            [flexGrow]="2"
            name="Disk" 
            prop="devname"></ngx-datatable-column>
         <ngx-datatable-column 
-           	[flexGrow]="2"
+            [width]="120"       
+            [flexGrow]="2"
            	name="Capacity" 
            	prop="capacity"></ngx-datatable-column>
     </ngx-datatable>
     <div class="vdev-wrapper">
         <div class="vdev-type">
-        <div *ngIf="group === 'data'">
+        <div *ngIf="group === 'data'" class="datainfo">
             <mat-select *ngIf="group === 'data'" [(ngModel)]="type" (change)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2">{{"Mirror" | translate}}</mat-option>
@@ -63,7 +65,7 @@
             <button mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
         </div>
     </div>
-    <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
+    <div *ngIf="error" [style.color]="'red'" [innerHTML]="error" class="datainfo"></div>
 </div>
 </div>
 

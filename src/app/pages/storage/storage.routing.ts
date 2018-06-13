@@ -18,13 +18,13 @@ import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { DisksListComponent } from './disks/disks-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
-import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form/volumeunlock-form.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -32,8 +32,12 @@ export const routes: Routes = [
     data: { title: 'Storage' },
     children: [
       {
+        path: '',
+        component: EntityDashboardComponent,
+      },
+      {
         path: 'pools',
-        data: { title: 'Pools', breadcrumb: 'Pools' },
+        data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
         children: [
           {
             path: '', component: VolumesListComponent,
@@ -80,10 +84,6 @@ export const routes: Routes = [
             data: { title: 'Detach Pool', breadcrumb: 'Detach Pool' }
           },
           {
-            path: 'unlock/:pk', component: VolumeUnlockFormComponent,
-            data: { title: 'Unlock Pool', breadcrumb: 'Unlock Pool' }
-          },
-          {
             path: 'rekey/:pk', component: VolumeRekeyFormComponent,
             data: { title: 'Rekey Pool', breadcrumb: 'Rekey Pool' }
           },
@@ -101,12 +101,9 @@ export const routes: Routes = [
           }
         ]
       },
-
-
-
       {
         path: 'snapshots',
-        data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
+        data: { title: 'Snapshots', breadcrumb: 'Snapshots', icon: 'camera_alt' },
         children: [
           {
             path: '', component: SnapshotListComponent,
@@ -128,7 +125,7 @@ export const routes: Routes = [
       },
       {
         path: 'vmware-Snapshots',
-        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
+        data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
         children: [
           {
             path: '', component: VMwareSnapshotListComponent,
@@ -147,7 +144,7 @@ export const routes: Routes = [
       },
       {
         path: 'disks',
-        data: { title: 'Disks', breadcrumb: 'Disks' },
+        data: { title: 'Disks', breadcrumb: 'Disks', icon: 'view_stream' },
         children: [
           {
             path: '', component: DisksListComponent,
@@ -169,9 +166,8 @@ export const routes: Routes = [
       },
       {
         path: 'import-disk', component: ImportDiskComponent,
-        data: { title: 'Import Disk', breadcrumb: 'Import Disk' }
+        data: { title: 'Import Disk', breadcrumb: 'Import Disk', icon: 'view_stream' }
       }
-      
     ]
   }
 ];
