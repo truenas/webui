@@ -37,7 +37,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'description',
     placeholder: T('Description'),
-    tooltip: T('Enter a descriptive name for this task.'),
+    tooltip: T('Enter a descriptive name of this task.'),
     required: true,
     validation : [ Validators.required ]
   }, {
@@ -80,7 +80,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'folder',
     placeholder: T('Folder'),
-    tooltip: T('Name of the destination folder.'),
+    tooltip: T('Enter the name of the destination folder.'),
     isHidden: true,
     required: true,
     disabled: true,
