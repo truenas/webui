@@ -37,15 +37,15 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'description',
     placeholder: T('Description'),
-    tooltip: T('Enter a description for this task.'),
+    tooltip: T('Enter a descriptive name of this task.'),
     required: true,
     validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'direction',
     placeholder: T('Direction'),
-    tooltip: T('<i>Push</i> sends data to the cloud storage. <i>Pull</i>\
-                takes data from the cloud storage.'),
+    tooltip: T('<i>Push</i> sends data to cloud storage. <i>Pull</i>\
+                receives data from cloud storage.'),
     options: [
       { label: 'PULL', value: 'PULL' },
       { label: 'PUSH', value: 'PUSH' },
@@ -56,8 +56,8 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'credential',
     placeholder: T('Credential'),
-    tooltip: T('Choose the cloud storage provider from the list of\
-                existing Cloud credentials.'),
+    tooltip: T('Choose the cloud storage provider credentials from the\
+                list of entered Cloud Credentials.'),
     options: [{
       label: '----------', value: null
     }],
@@ -67,7 +67,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'bucket',
     placeholder: T('Bucket'),
-    tooltip: T('Select the S3 bucket to use.'),
+    tooltip: T('Select the pre-defined S3 bucket to use.'),
     options: [{
       label: '----------', value: ''
     }],
@@ -80,7 +80,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'folder',
     placeholder: T('Folder'),
-    tooltip: T('Enter the name of the folder to sync to.'),
+    tooltip: T('Enter the name of the destination folder.'),
     isHidden: true,
     required: true,
     disabled: true,
@@ -102,20 +102,23 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'path',
     placeholder: T('Directory/Files'),
     value: '/mnt',
-    tooltip: T('Select the directories or files to be sent for *Push*\
-                syncs or the destinations for *Pull* syncs.'),
+    tooltip: T('Select the directories or files to be sent to the cloud\
+                for *Push* syncs, or the destination to be written for\
+                *Pull* syncs. Be cautious about the destination of *Pull*\
+                jobs to avoid overwriting existing files.'),
     required: true,
     validation : [ Validators.required ]
   }, {
     type: 'select',
     name: 'transfer_mode',
     placeholder: T('Transfer Mode'),
-    tooltip: T('<i>SYNC</i> keeps files identical between destination\
-                and source. Files removed from the source are also\
-                removed from the destination.<i>COPY</i> duplicates\
-                files from source to destination. Skips identical files.\
-                <i>MOVE</i> copies files from source to destination.\
-                Deletes files from the source after finishing the copy.'),
+    tooltip: T('<i>SYNC</i> makes files on the destination system identical\
+                to those on the source. Files that have been removed from\
+                the source are removed from the destination. <i>COPY</i>
+                copies files from source to destination, skipping files\
+                that are identical, similar to rsync.\ <i>MOVE</i> copies\
+                files from source to destination, deleting files from\
+                the source after the copy, similar to mv.'),
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
@@ -128,9 +131,10 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'checkbox',
     name: 'encryption',
     placeholder: T('Remote encryption'),
-    tooltip: T('Set to use <a href="https://rclone.org/crypt/"\
-                target="_blank">rclone Crypt</a> to encrypt and decrypt\
-                the files shared remotely.'),
+    tooltip: T('Set to encrypt files before transfer and store the\
+                encrypted files on the remote system.\
+                <a href="https://rclone.org/crypt/"\
+                target="_blank">rclone Crypt</a> is used.'),
     value: false,
   },
   {
@@ -145,22 +149,21 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'encryption_password',
     placeholder: T('Encryption password'),
-    tooltip: T('Enter the remote password to authorize\
-                encrypting/decrypting the remote. <b>Warning:</b>\
-                Forgetting or losing the encryption password can result\
-                in data loss. Always back up or save this password. '),
+    tooltip: T('The password for encrypting and decrypting remote\
+                data. <b>Warning:</b>\
+                Always save and back up this password. Losing the\
+                encryption password can result in data loss.'),
     isHidden: true,
   },
   {
     type: 'input',
     name: 'encryption_salt',
     placeholder: T('Encryption salt'),
-    tooltip: T('Enter the <a\
-                href="https://searchsecurity.techtarget.com/definition/salt"\
+    tooltip: T('Enter a long string of random characters for use as
+                <a href="https://searchsecurity.techtarget.com/definition/salt"\
                 target="_blank">salt</a> for the encryption password.\
-                <b>Warning:</b> Forgetting or losing the encryption salt\
-                can result in data loss. Always back up or save this\
-                value.'),
+                <b>Warning:</b> Save and back up the encryption salt value.\
+                Losing the salt value can result in data loss.'),
     isHidden: true,
   },
 
@@ -168,8 +171,8 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'repeat',
     placeholder: T('Quick Schedule'),
-    tooltip: T('Choose how often to run the task. Choose the\
-                empty value to define a custom schedule.'),
+    tooltip: T('Choose how often to run the task. An empty\
+                value allows defining a custom schedule.'),
     options: [
       { label: '----------', value: 'none' },
       { label: 'Hourly', value: 'hourly' },
@@ -182,28 +185,28 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'minute',
     placeholder: T('Minute'),
-    tooltip: T('Define the minute to run the task.'),
+    tooltip: T('Minute to run the task.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'hour',
     placeholder: T('Hour'),
-    tooltip: T('Define the hour to run the task.'),
+    tooltip: T('Hour to run the task.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'input',
     name: 'daymonth',
     placeholder: T('Day of month'),
-    tooltip: T('Define the day of the month to run the task.'),
+    tooltip: T('Day of the month to run the task.'),
     value: '*',
     isHidden: false,
   }, {
     type: 'select',
     name: 'month',
     placeholder: T('Month'),
-    tooltip: T('Define which months to run the task.'),
+    tooltip: T('Months when the task runs.'),
     multiple: true,
     options: [{
       label: 'January',
@@ -248,7 +251,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'dayweek',
     placeholder: T('Day of week'),
-    tooltip: T('Choose which days of the week to run the test.'),
+    tooltip: T('Days of the week to run the task.'),
     multiple: true,
     options: [{
       label: 'Monday',
