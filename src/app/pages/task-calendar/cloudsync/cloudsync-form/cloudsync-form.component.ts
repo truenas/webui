@@ -114,11 +114,13 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: T('Transfer Mode'),
     tooltip: T('<i>SYNC</i> makes files on the destination system identical\
                 to those on the source. Files that have been removed from\
-                the source are removed from the destination. <i>COPY</i>
-                copies files from source to destination, skipping files\
-                that are identical, similar to rsync.\ <i>MOVE</i> copies\
-                files from source to destination, deleting files from\
-                the source after the copy, similar to mv.'),
+                the source are removed from the destination, similar to\
+                <i>rsync --delete</i>.\
+                <i>COPY</i> copies files from source to destination,\
+                skipping files that are identical, similar to <i>rsync</i>.\
+                <i>MOVE</i> copies files from source to destination,\
+                deleting files from the source after the copy, similar\
+                to <i>mv</i>.'),
     options: [
       { label: 'SYNC', value: 'SYNC' },
       { label: 'COPY', value: 'COPY' },
@@ -159,7 +161,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'encryption_salt',
     placeholder: T('Encryption salt'),
-    tooltip: T('Enter a long string of random characters for use as
+    tooltip: T('Enter a long string of random characters for use as\
                 <a href="https://searchsecurity.techtarget.com/definition/salt"\
                 target="_blank">salt</a> for the encryption password.\
                 <b>Warning:</b> Save and back up the encryption salt value.\
