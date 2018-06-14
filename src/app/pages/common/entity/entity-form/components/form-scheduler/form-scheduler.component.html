@@ -20,14 +20,15 @@
     [cdkConnectedOverlayOpen]="isOpen">
   <div  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
-      <h4 class="preview-label">Generated Schedule
-        <!--<button mat-button (click)="setCalendar('next')">Next</button>-->
-        <button mat-icon-button [disabled]="disablePrevious" (click)="setCalendar('previous')">
-          <mat-icon aria-label="Previous Month">keyboard_arrow_left</mat-icon>
-        </button>
-        <button mat-icon-button (click)="setCalendar('next')">
-          <mat-icon aria-label="Next Month" >keyboard_arrow_right</mat-icon>
-        </button>
+      <h4 class="preview-label">Schedule Preview
+        <div class="controls">
+          <button mat-icon-button [disabled]="disablePrevious" (click)="setCalendar('previous')">
+            <mat-icon aria-label="Previous Month">keyboard_arrow_left</mat-icon>
+          </button>
+          <button mat-icon-button (click)="setCalendar('next')">
+            <mat-icon aria-label="Next Month" >keyboard_arrow_right</mat-icon>
+          </button>
+        </div>
       </h4>
       <mat-divider></mat-divider>
       <div class="calendar-wrapper">
