@@ -3,6 +3,7 @@
 
 PORTNAME=	npm
 PORTVERSION=	5.8.0
+PORTREVISION=	1
 CATEGORIES=	freenas
 VALID_CATEGORIES+=	freenas
 MASTER_SITES=	LOCAL/sunpoet
@@ -36,7 +37,7 @@ CPE_PRODUCT=	node_packaged_modules
 SHEBANG_GLOB=	*.py
 SHEBANG_FILES=	lib/node_modules/npm/node_modules/npm-lifecycle/node_modules/node-gyp/gyp/samples/samples
 
-NODE_RUN_DEPENDS=	node>=0.8.0:www/node
+NODE_RUN_DEPENDS=	node>=0.8.0:freenas/node
 NODE4_RUN_DEPENDS=	node4>=0.8.0:www/node4
 NODE6_RUN_DEPENDS=	node6>=0.8.0:www/node6
 NODE8_RUN_DEPENDS=	node8>=0.8.0:www/node8
