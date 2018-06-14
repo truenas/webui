@@ -6,6 +6,7 @@ PORTVERSION=	5.7.1
 CATEGORIES=	freenas
 VALID_CATEGORIES+=     freenas
 MASTER_SITES=	LOCAL/sunpoet
+PKGNAMESUFFIX=	5
 
 MAINTAINER=	sunpoet@FreeBSD.org
 COMMENT=	Node package manager
