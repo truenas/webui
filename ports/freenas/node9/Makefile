@@ -7,6 +7,7 @@ PORTREVISION=	1
 CATEGORIES=     freenas
 VALID_CATEGORIES+=      freenas
 MASTER_SITES=	http://nodejs.org/dist/v${PORTVERSION}/
+PKGNAMESUFFIX=	9
 
 MAINTAINER=	bhughes@FreeBSD.org
 COMMENT=	V8 JavaScript for client and server
