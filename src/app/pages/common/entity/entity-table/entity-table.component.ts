@@ -171,9 +171,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     
   }
 
-  getData() {
-    let localLoader = this.loader;
-    localLoader.open();
+  getData() { 
+    
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -191,6 +190,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
+    
     if (this.conf.queryCall) {
       if (this.conf.queryCallOption) {
         this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
@@ -200,11 +200,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
+    this.loader.open();
     this.busy =
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
-        localLoader.close()
-        console.log(localLoader)
+        this.loader.close();
       });
   }
 
