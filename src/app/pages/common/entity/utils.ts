@@ -48,7 +48,11 @@ export class EntityUtils {
           fc.hasErrors = true;
           fc.errors = errors;
         } else {
-          field.forEach((item, j) => { entity.error += item + '<br />'; });
+          if (typeof field === 'string') {
+            entity.error = field;
+          } else {
+            field.forEach((item, j) => { entity.error += item + '<br />'; });
+          }
         }
       }
     }

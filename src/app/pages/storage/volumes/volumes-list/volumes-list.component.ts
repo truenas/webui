@@ -13,12 +13,16 @@ import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
+import * as moment from 'moment';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { StorageService } from '../../../../services/storage.service'
+import { StorageService } from '../../../../services/storage.service';
+import { Validators } from '@angular/forms'
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 
 export interface ZfsPoolData {
@@ -63,6 +67,10 @@ export class VolumesListTableConfig implements InputTableConf {
   protected dialogRef: any;
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
+  public showDefaults: boolean = false;
+  public encryptedStatus: any;
+  public custActions: Array<any> = [];
+
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -76,7 +84,8 @@ export class VolumesListTableConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected translate: TranslateService,
-    protected snackBar: MatSnackBar) {
+    protected snackBar: MatSnackBar
+  ) {
 
     if (typeof (this._classId) !== "undefined" && this._classId !== "") {
       this.resource_name += "/" + this._classId;
@@ -89,25 +98,15 @@ export class VolumesListTableConfig implements InputTableConf {
         this.dialogService.errorReport(T("Error getting volume/dataset data"), res.message, res.stack);
       });
     }
-
-
-
-
   }
 
-  /*getAddActions() {
-    const actions = [];
-    actions.push({
-      label: T("Import or Create Pool"),
-      icon: "add",
-      onClick: () => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "import"]));
-      }
-    });
-
-    return actions;
-  }*/
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'download_key' && this.encryptedStatus !== '') {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   getEncryptedActions(rowData: any) {
     const actions = [];
@@ -138,24 +137,59 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "unlock", row1.id]));
+            let localLoader = this.loader,
+            localRest = this.rest,
+            localParentVol = this.parentVolumesListComponent,
+            localDialogService = this.dialogService,
+            localSnackBar = this.snackBar;
+
+            const conf: DialogFormConfiguration = {
+              title: "Unlock Pool: " + row1.name,
+              fieldConfig: [{
+                type : 'input',
+                inputType: 'password',
+                name : 'passphrase',
+                placeholder: T('Passphrase'),
+                validation: [Validators.required],
+                required: true
+              }],
+
+              saveButtonText: "Unlock",
+              customSubmit: function (value) {
+                localLoader.open();
+                return localRest.post("storage/volume/" + row1.name + "/unlock/", { body: JSON.stringify({passphrase: 
+                  value.passphrase}) }).subscribe((restPostResp) => {
+                  localLoader.close();
+                  localParentVol.repaintMe();     
+                  localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
+                }, (res) => {
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
+                });
+              }
+            }
+            this.dialogService.dialogForm(conf);
           }
         });
       }
 
+      actions.push({
+        label: T("Change Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "changekey", row1.id]));
+        }
+      });
+
+    } else if (rowData.vol_encrypt === 1) {
+      actions.push({
+        label: T("Create Passphrase"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "createkey", row1.id]));
+        }
+      });
     }
-
-
-
-
-    actions.push({
-      label: T("Create Passphrase"),
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "createkey", row1.id]));
-      }
-    });
 
     actions.push({
       label: T("Add Recovery Key"),
@@ -205,7 +239,6 @@ export class VolumesListTableConfig implements InputTableConf {
       }
     });
 
-
     return actions;
   }
 
@@ -225,13 +258,94 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
+
       actions.push({
         label: T("Detach"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "detachvolume", row1.id]));
+
+          let encryptedStatus = row1.vol_encryptkey,
+            localLoader = this.loader,
+            localRest = this.rest,
+            localParentVol = this.parentVolumesListComponent,
+            localDialogService = this.dialogService
+
+          const conf: DialogFormConfiguration = { 
+            title: "Detatch pool: '" + row1.name + "'",
+            fieldConfig: [{
+              type: 'paragraph',
+              name: 'pool_detach_warning',
+              paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
+                Detaching a pool makes the data unavailable. \
+                Be sure that you understand the risks.\
+                In addition to detaching the pool, you may also choose to destroy its data."),
+              isHidden: false
+            }, {
+              type: 'paragraph',
+              name: 'pool_detach_warning',
+              paraText: T("'" + row1.name + "' is encrypted! If the passphrase for \
+                this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
+                Before detaching encrypted pools, download and safely\
+                store the recovery key."),
+              isHidden: encryptedStatus !== '' ? false : true
+            }, {
+              type: 'checkbox',
+              name: 'destroy',
+              value: false,
+              placeholder: T("Destroy data on this pool?"),
+            }, {
+              type: 'checkbox',
+              name: 'confirm',
+              placeholder: T("Confirm detach"),
+              required: true
+            }],
+            isCustActionVisible(actionId: string) {
+              if (actionId == 'download_key' && encryptedStatus === '') {
+                return false;
+              } else {
+                return true;
+              }
+            },
+            saveButtonText: 'Detach',
+            custActions: [
+              {
+                id: 'download_key',
+                name: 'Download Key',
+                function: () => {
+                  const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                  dialogRef.componentInstance.volumeId = row1.id;
+                }
+              }],
+            customSubmit: function (value) {
+              localLoader.open();
+              if (value.destroy === false) { 
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
+                  }).subscribe((res) => {
+                    localLoader.close();
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + "'");
+                    localParentVol.repaintMe();
+                }, (res) => {
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                });
+              } else {
+                return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
+                  }).subscribe((res) => {
+                    localLoader.close();
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
+                      T("'. All data on that pool was destroyed."));
+                    localParentVol.repaintMe();
+                }, (res) => {
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                });
+              }
+            }
+            
+          }
+          this.dialogService.dialogForm(conf);
         }
       });
+
       actions.push({
         label: T("Extend"),
         onClick: (row1) => {
@@ -246,15 +360,15 @@ export class VolumesListTableConfig implements InputTableConf {
             if (res[0]) {
               if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
                 const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         this.snackBar.open(res.data, 'close', { duration: 5000 });
                       },
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         new EntityUtils().handleError(this, res);
                       });
@@ -262,15 +376,15 @@ export class VolumesListTableConfig implements InputTableConf {
                 });
               } else {
                 const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res)=> {
+                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         this.snackBar.open(res.data, 'close', { duration: 5000 });
                       },
-                      (res)=> {
+                      (res) => {
                         this.loader.close();
                         new EntityUtils().handleError(this, res);
                       });
@@ -443,7 +557,51 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
     }
+    actions.push({
+      label: T("Create Snapshot"),
+      onClick: (row) => {
+        const conf: DialogFormConfiguration = {
+          title: "One time snapshot of " + row.path,
+          fieldConfig: [
+            {
+              type: 'input',
+              name: 'dataset',
+              placeholder: T('Pool/Dataset'),
+              value: row.path,
+              isHidden: true,
+              readonly: true
+            },
+            {
+              type: 'input',
+              name: 'name',
+              placeholder: 'Name',
+              tooltip: T('Add a name for the new snapshot'),
+              validation: [Validators.required],
+              required: true,
+              value: "manual" + '-' + this.getTimestamp()            },
+            {
+              type: 'checkbox',
+              name: 'recursive',
+              placeholder: 'Recursive',
+              tooltip: T('Set to include child datasets of the chosen dataset.'),
+            }
+          ],
+          method_rest: "storage/snapshot",
+          saveButtonText: "Create Snapshot",
+        }
+        this.dialogService.dialogForm(conf).subscribe((res) => {
+          if (res) {
+            this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+          }
+        });
+      }
+    });
     return actions;
+  }
+
+  getTimestamp() {
+    let dateTime = new Date();
+    return moment(dateTime).format("YYYYMMDD");
   }
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
@@ -453,7 +611,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const returnData: ZfsPoolData[] = [];
     const numberIdPathMap: Map<string, number> = new Map<string, number>();
 
-    for (let i in data) { // 16 loops right now (DELETE ME)
+    for (let i in data) {
 
       const dataObj = data[i];
 
@@ -492,28 +650,40 @@ export class VolumesListTableConfig implements InputTableConf {
       dataObj.readonly = "";
       dataObj.dedup = "";
       dataObj.comments = "";
-      dataObj.compressionRatio = "";
+      dataObj.compressratio = "";
 
-      for (let k in dataset_data2) { // About 15 itmes, and we are already in a for/loop (DELETE ME) 
+      for (let k in dataset_data2) {
 
         if (dataset_data2[k].mountpoint === dataObj.nodePath) {
 
-          dataset_data2[k].compression.source !== "INHERITED"
-            ? dataObj.compression = (dataset_data2[k].compression.parsed)
-            : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+          if (dataset_data2[k].compression) {
+            dataset_data2[k].compression.source !== "INHERITED"
+              ? dataObj.compression = (dataset_data2[k].compression.parsed)
+              : dataObj.compression = ("Inherits (" + dataset_data2[k].compression.parsed + ")");
+          }
 
-          dataset_data2[k].readonly.source !== "INHERITED"
-            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-            : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          if (dataset_data2[k].compressratio) {
+            dataset_data2[k].compressratio.source !== "INHERITED"
+              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+              : dataObj.compressratio = ("Inherits (" + dataset_data2[k].compressratio.parsed + ")");
+          }
 
-          dataset_data2[k].deduplication.source !== "INHERITED"
-            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-            : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          if (dataset_data2[k].readonly) {
+            dataset_data2[k].readonly.source !== "INHERITED"
+              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+              : dataObj.readonly = ("Inherits (" + dataset_data2[k].readonly.parsed + ")");
+          }
+
+          if (dataset_data2[k].deduplication) {
+            dataset_data2[k].deduplication.source !== "INHERITED"
+              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+              : dataObj.dedup = ("Inherits (" + dataset_data2[k].deduplication.parsed + ")");
+          }
 
           if (dataset_data2[k].comments) {
             dataset_data2[k].comments.source !== "INHERITED"
-            ? dataObj.comments = (dataset_data2[k].comments.parsed)
-            : dataObj.comments = ("");            
+              ? dataObj.comments = (dataset_data2[k].comments.parsed)
+              : dataObj.comments = ("");
           }
         }
 
@@ -564,10 +734,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
   }
-  public showDefaults: boolean = false;
+
   public repaintMe() {
+    this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
   }
@@ -578,7 +749,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
 
     this.ws.call('pool.dataset.query', []).subscribe((datasetData) => {
-      this.loader.open();
       this.rest.get("storage/volume", {}).subscribe((res) => {
         res.data.forEach((volume: ZfsPoolData) => {
           volume.volumesListTableConfig = new VolumesListTableConfig(this, this.router, volume.id, volume.name, datasetData, this.mdDialog, this.rest, this.ws, this.dialogService, this.loader, this.translate, this.snackBar);
@@ -597,23 +767,26 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           this.zfsPoolRows.push(volume);
         });
-        
+
         this.zfsPoolRows = this.sorter.mySorter(this.zfsPoolRows, 'name');
 
         if (this.zfsPoolRows.length === 1) {
           this.expanded = true;
         }
 
-        this.paintMe = true; 
+        this.paintMe = true;
+
         this.showDefaults = true;
-        this.loader.close();
+
         
       }, (res) => {
-        this.loader.close();
+        this.showDefaults = true;
+
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
-      this.loader.close();
+      this.showDefaults = true;
+
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
@@ -622,7 +795,5 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   ngAfterViewInit(): void {
 
   }
-
-
 
 }

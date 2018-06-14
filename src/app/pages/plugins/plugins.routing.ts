@@ -4,15 +4,20 @@ import { RouterModule, Routes } from '@angular/router';
 import { PluginsAvailabelListComponent } from './plugins-available/plugins-available-list.component';
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginsInstalledListComponent } from './plugins-installed/plugins-installed.component';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
     path: '',
-    data: { title: 'Plugins' },
-    children: [{
+    data: { title: 'Plugins', breadcrumb: 'Plugins' },
+    children: [
+    {
+      path: '',
+      component: EntityDashboardComponent,
+    }, {
       path: 'available',
       component: PluginsAvailabelListComponent,
-      data: { title: 'Available', breadcrumb: 'Available'}
+      data: { title: 'Available', breadcrumb: 'Available', icon: 'developer_board'}
     },
     {
       path: 'add/:name',
@@ -22,7 +27,7 @@ export const routes: Routes = [
     {
       path: 'installed',
       component: PluginsInstalledListComponent,
-      data: { title: 'Installed', breadcrumb: 'Installed' },
+      data: { title: 'Installed', breadcrumb: 'Installed', icon: 'developer_board' },
     }
     ]
   }

@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -20,7 +20,7 @@ import {
   selector: 'app-general',
   templateUrl: './general.component.html'
 })
-export class GeneralComponent {
+export class GeneralComponent implements OnDestroy {
 
   protected resource_name: string = 'system/settings';
 
@@ -37,6 +37,32 @@ export class GeneralComponent {
         { label: 'HTTP', value: 'http' },
         { label: 'HTTPS', value: 'https' },
         { label: 'HTTP+HTTPS', value: 'httphttps' },
+      ],
+    },
+    {
+      type: 'select',
+      name: 'stg_guicertificate',
+      placeholder: T('GUI SSL Certificate'),
+      tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
+                  the certificate to use for encrypted connections. If\
+                  there are no certificates, create a\
+                  <a href="http://doc.freenas.org/11/system.html#cas"\
+                  target="_blank">Certificate Authority (CA)</a> then\
+                  the <a href="http://doc.freenas.org/11/system.html#certificates"\
+                  target="_blank">Certificate</a>.'),
+      options: [
+        { label: '---', value: null }
+      ],
+      required: true,
+      validation: [Validators.required],
+      relation : [
+        {
+          action : 'DISABLE',
+          when : [ {
+            name : 'stg_guiprotocol',
+            value : 'http',
+          } ]
+        },
       ],
     },
     {
@@ -83,21 +109,6 @@ export class GeneralComponent {
                   over <i>HTTPS</i>.'),
       inputType: 'number',
       validation: [Validators.required]
-    },
-    {
-      type: 'select',
-      name: 'stg_guicertificate',
-      placeholder: T('GUI SSL Certificate'),
-      tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
-                  the certificate to use for encrypted connections. If\
-                  there are no certificates, create a\
-                  <a href="http://doc.freenas.org/11/system.html#cas"\
-                  target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="http://doc.freenas.org/11/system.html#certificates"\
-                  target="_blank">Certificate</a>.'),
-      options: [
-        { label: '---', value: null }
-      ]
     },
     {
       type: 'checkbox',
@@ -169,9 +180,11 @@ export class GeneralComponent {
     function: () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-reset']))}
   }];
   private stg_guiprotocol: any;
+  private stg_guiprotocol_subscription: any;
   private stg_guiaddress: any;
   private stg_guiv6address: any;
   private stg_guicertificate: any;
+  private stg_guihttpsredirect: any;
   private stg_language: any;
   private stg_kbdmap: any;
   private stg_timezone: any;
@@ -276,6 +289,28 @@ export class GeneralComponent {
           this.stg_sysloglevel.options.push({ label: item[1], value: item[0] });
         });
       });
+
+      this.stg_guiprotocol = entityEdit.formGroup.controls['stg_guiprotocol'];
+      if (this.stg_guiprotocol.value === 'http') {
+        this.stg_guicertificate.isHidden = true;
+      }
+      this.stg_guihttpsredirect = _.find(this.fieldConfig,{'name' : 'stg_guihttpsredirect'});
+      this.stg_guiprotocol_subscription = this.stg_guiprotocol.valueChanges.subscribe((value) => {
+        if (value === 'http') {
+          this.stg_guicertificate.isHidden = true;
+          this.stg_guihttpsredirect.isHidden = true;
+        } else if (value ==='httphttps') {
+          this.stg_guihttpsredirect.isHidden = true;
+          this.stg_guicertificate.isHidden = false;
+        } else {
+          this.stg_guihttpsredirect.isHidden = false;
+          this.stg_guicertificate.isHidden = false;
+        }
+      });
+  }
+
+  ngOnDestroy () {
+    this.stg_guiprotocol_subscription.unsubscribe();
   }
 
   afterSubmit(value) {

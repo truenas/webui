@@ -3,6 +3,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 2
 
+import function
 from source import *
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
@@ -62,11 +63,12 @@ class check_update_test(unittest.TestCase):
             print ("the Page now is: " + page_data)
             # assert response
             self.assertTrue("Update" in page_data)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -101,14 +103,13 @@ class check_update_test(unittest.TestCase):
             else:
                 print ("There is an unexpected issue")
                 self.error_check_sys()
-            # Taking screenshot
-            self.screenshot("_")
-            # Close the System Tab
-#            driver.find_element_by_xpath(xpaths['navSystem']).click()
+            #taking screenshot
+            function.screenshot(driver, self)
             time.sleep(5)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -125,18 +126,8 @@ class check_update_test(unittest.TestCase):
         return True
 
     def error_check_sys(self):
-        if (self.is_element_present(By.XPATH, "/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/div[2]/button")):
+        if (self.is_element_present(By.XPATH, "//*[contains(text(), 'Close')]")):
             driver.find_element_by_xpath("//*[contains(text(), 'Close')]").click()
-
-    def screenshot(self, count):
-        test_method_name = self._testMethodName
-        time.sleep(1)
-        text_path = os.path.dirname(os.path.realpath(__file__))
-        filename = str(__file__)
-        filename = filename[:-3]
-        final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + "-" + test_method_name)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
 
     @classmethod

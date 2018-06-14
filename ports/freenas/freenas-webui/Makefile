@@ -12,11 +12,11 @@ COMMENT=	Angular 4 Web User Interface for FreeNAS
 
 EXTRACT_ONLY=
 
-FETCH_DEPENDS=	npm>0:www/npm \
+FETCH_DEPENDS=	npm>0:freenas/npm \
 		git>0:devel/git \
 		python2>0:lang/python2
 BUILD_DEPENDS=	rsync>0:net/rsync \
-		npm>0:www/npm \
+		npm>0:freenas/npm \
 		python2>0:lang/python2
 
 NO_BUILD=	yes

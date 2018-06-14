@@ -33,10 +33,10 @@ import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxTreeListModule } from 'devextreme-angular';
-import { VolumeUnlockFormComponent } from 'app/pages/storage/volumes/volumeunlock-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 
@@ -54,10 +54,10 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DatasetFormComponent,
     // VolumesEditComponent,
     VolumeDeleteComponent,
-    VolumeUnlockFormComponent,
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,
+    VolumeChangekeyFormComponent,
     ZvolFormComponent,
     VolumeImportWizardComponent,
     SnapshotListComponent,

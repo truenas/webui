@@ -1,19 +1,15 @@
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {DeviceCdromAddComponent} from './devices/device-cdrom-add/';
 import {DeviceDeleteComponent} from './devices/device-delete/';
-import {DeviceDiskAddComponent} from './devices/device-disk-add/';
 import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list/';
-import {DeviceNicAddComponent} from './devices/device-nic-add/';
-import {DeviceVncAddComponent} from './devices/device-vnc-add/';
 import {VmFormComponent} from './vm-form/';
 import {VmListComponent} from './vm-list/';
-import {DeviceRawFileAddComponent} from './devices/device-rawfile-add/';
 import {VMWizardComponent} from './vm-wizard/';
 import { DockerVMWizardComponent } from './dockervm-wizard/';
-import {VMSerialShellComponent} from './vm-cards/vm-serial-shell'
+import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
+import { DeviceAddComponent } from './devices/device-add2';
 
 // export const routes: Routes = [
 //   --{path : 'add', component : VmFormComponent},
@@ -71,29 +67,9 @@ export const routes: Routes = [
           component : DeviceListComponent,
         },
         {
-          path:'cdrom/add',
-          data: {title: 'Add CDROM', breadcrumb: 'Add CDROM'},
-          component : DeviceCdromAddComponent,
-        },
-        {
-          path:'nic/add',
-          data: {title: 'Add NIC', breadcrumb: 'Add NIC'},
-          component : DeviceNicAddComponent,
-        },
-        {
-          path:'disk/add',
-          data: {title: 'Add Disk', breadcrumb: 'Add Disk'},
-          component : DeviceDiskAddComponent,
-        },
-        {
-          path:'vnc/add',
-          data: {title: 'Add VNC', breadcrumb: 'Add VNC'},
-          component : DeviceVncAddComponent,
-        },
-        {
-          path:'rawfile/add',
-          data: {title: 'Add Raw File', breadcrumb: 'Add Raw File'},
-          component : DeviceRawFileAddComponent,
+          path:'add',
+          data: {title: 'Add', breadcrumb: 'Add'},
+          component : DeviceAddComponent,
         },
       ]
     },

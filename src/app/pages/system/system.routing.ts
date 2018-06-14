@@ -37,6 +37,7 @@ import { SupportComponent } from './support/support.component';
 import {EmailComponent} from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -45,8 +46,11 @@ export const routes: Routes = [
     path: '',
     data: { title: 'System' },
     children: [{
+      path: '',
+      component: EntityDashboardComponent,
+    }, {
       path: 'general',
-      data: { title: 'General', breadcrumb: 'General' },
+      data: { title: 'General', breadcrumb: 'General', icon: 'build' },
       children: [{
         path: '',
         component: GeneralComponent,
@@ -67,14 +71,14 @@ export const routes: Routes = [
     }, {
       path: 'advanced',
       component: AdvancedComponent,
-      data: { title: 'Advanced', breadcrumb: 'Advanced' },
+      data: { title: 'Advanced', breadcrumb: 'Advanced', icon: 'settings' },
     },{
       path: 'dataset',
       component: DatasetComponent,
-      data: { title: 'Dataset', breadcrumb: 'Dataset' },
+      data: { title: 'Dataset', breadcrumb: 'Dataset', icon: 'storage' },
     }, {
       path: 'bootenv',
-      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments' },
+      data: { title: 'Boot Environments', breadcrumb: 'Boot Environments', icon: 'replay' },
       children: [{
         path: '',
         component: BootEnvironmentListComponent,
@@ -112,7 +116,7 @@ export const routes: Routes = [
     ]
     }, {
       path: 'tunable',
-      data: { title: 'Tunable', breadcrumb: 'Tunable' },
+      data: { title: 'Tunable', breadcrumb: 'Tunable', icon: 'settings_overscan' },
       children: [{
           path: '',
           component: TunableListComponent,
@@ -130,7 +134,7 @@ export const routes: Routes = [
       ]
     }, {
       path: 'update',
-      data: { title: 'Update', breadcrumb: 'Update' },
+      data: { title: 'Update', breadcrumb: 'Update', icon: 'update' },
       children:[
         {
         path:'',
@@ -157,7 +161,7 @@ export const routes: Routes = [
     },
      {
       path: 'ntpservers',
-      data: { title: 'NTP Servers', breadcrumb: 'NTP Servers' },
+      data: { title: 'NTP Servers', breadcrumb: 'NTP Servers', icon: 'device_hub' },
       children: [{
           path: '',
           component: NTPServerListComponent,
@@ -177,16 +181,16 @@ export const routes: Routes = [
     {
       path : 'email', 
       component : EmailComponent,
-      data: { title: 'Email', breadcrumb: 'Email' },
+      data: { title: 'Email', breadcrumb: 'Email', icon: 'email' },
     },
     {
       path : 'alertsettings',
       component : AlertConfigComponent,
-      data: { title: 'Alert Settings', breadcrumb: 'Alert Settings' },
+      data: { title: 'Alert Settings', breadcrumb: 'Alert Settings', icon: 'notifications_active' },
     },
     {
       path: 'alertservice',
-      data: { title: 'Alert Services', breadcrumb: 'Alert Services' },
+      data: { title: 'Alert Services', breadcrumb: 'Alert Services', icon: 'notifications' },
       children: [{
           path: '',
           component: AlertServiceListComponent,
@@ -203,7 +207,7 @@ export const routes: Routes = [
       ]
     },{
       path: 'cloudcredentials',
-      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials', icon: 'cloud_circle' },
       children: [{
           path: '',
           component: CloudCredentialsListComponent,
@@ -223,7 +227,7 @@ export const routes: Routes = [
     },
     {
       path: 'ca',
-      data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities' },
+      data: { title: 'Certificate Authorities', breadcrumb: 'Certificate Authorities', icon: 'card_membership' },
       children: [{
         path: '',
         component: CertificateAuthorityListComponent,
@@ -240,7 +244,7 @@ export const routes: Routes = [
       }]
     }, {
       path: 'certificates',
-      data: { title: 'Certificates', breadcrumb: 'Certificates' },
+      data: { title: 'Certificates', breadcrumb: 'Certificates', icon: 'turned_in' },
       children: [{
         path: '',
         component: CertificateListComponent,
@@ -257,7 +261,7 @@ export const routes: Routes = [
     }, {
       path: 'support',
       component: SupportComponent,
-      data: { title: 'Support', breadcrumb: 'Support' },
+      data: { title: 'Support', breadcrumb: 'Support', icon: 'perm_phone_msg' },
     },]
   }
 ];

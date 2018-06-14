@@ -49,7 +49,7 @@ export class VMWizardComponent {
           tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
           options: [
             {label: 'Virtual Machine (VM)', value: 'vm'},
-            {label: 'Docker', value: 'docker'},
+            {label: 'Docker Host', value: 'docker'},
           ],
           validation : [ Validators.required ],
           value: 'vm'
@@ -66,7 +66,7 @@ export class VMWizardComponent {
           name: 'os',
           required: true,
           placeholder: T('Guest Operating System'),
-          tooltip: T('Select the Virtual Machine (VM) operating system.'),
+          tooltip: T('Choose the VM operating system type.'),
           options: [
             {label: 'Windows', value: 'windows'},
             {label: 'Linux', value: 'linux'},
@@ -76,8 +76,8 @@ export class VMWizardComponent {
         },
       { type: 'input',
         name : 'name',
-        placeholder : T('VM Name'),
-        tooltip : T('Enter an alphanumeric name for the VM.'),
+        placeholder : T('Name'),
+        tooltip : T('Enter an alphanumeric name for the virtual machine.'),
         validation : [ Validators.required ],
         required: true,
       },
@@ -99,8 +99,8 @@ export class VMWizardComponent {
       { type: 'checkbox',
       name : 'enable_vnc',
       placeholder : T('Enable VNC'),
-      tooltip : T('Activate a Virtual Network Computing (VNC)\
-                   remote connection for a VM set to <i>UEFI</i> booting.'),
+      tooltip : T('Enable a VNC (Virtual Network Computing) remote\
+                   connection. Requires <i>UEFI</i> booting.'),
       value: true
     }
       ]
@@ -114,11 +114,11 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 1,
           validation : [ Validators.required, Validators.min(1) ],
-          tooltip: T('Enter a number of virtual CPUs to allocate to the\
-                      VM. The maximum is 16 unless the host CPU also\
-                      limits the maximum. The VM operating system can\
-                      also have operational or licensing restrictions on\
-                      the number of CPUs.'),
+          tooltip: T('Number of virtual CPUs to allocate to the virtual\
+                      machine. The maximum is 16, or fewer if the host\
+                      CPU limits the maximum. The VM operating system\
+                      might also have operational or licensing\
+                      restrictions on the number of CPUs.'),
           required: true,
         },
         {
@@ -128,7 +128,7 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 128,
           validation : [ Validators.required, Validators.min(128)],
-          tooltip: T('Allocate a number of mebibytes of RAM to the VM.'),
+          tooltip: T('Allocate a number of mebibytes of RAM for the VM.'),
         },
       ]
     },
@@ -139,10 +139,10 @@ export class VMWizardComponent {
           type: 'radio',
           name: 'disk_radio',
           tooltip: 'Select <i>Create new disk image</i> to create a new\
-                    Zvol on an existing datastore. This is used as a\
+                    zvol on an existing dataset. This is used as a\
                     virtual hard drive for the VM. Select <i>Use\
-                    existing disk image</i> to use an existing pool or\
-                    dataset for the VM.',
+                    existing disk image</i> to use an existing zvol or\
+                    file for the VM.',
           options:[{label:T("Create new disk image"), value: true},
                    {label:T("Use existing disk image"), value: false}],
           value: true,
@@ -150,24 +150,26 @@ export class VMWizardComponent {
         {
           type: 'input',
           name: 'volsize',
-          placeholder : T('Define the size (GiB) for the Zvol'),
-          tooltip: T('Allocate a number of Gibibytes of space for the\
-                      new Zvol.'),
+          placeholder : T('Define the size (GiB) for the zvol'),
+          tooltip: T('Allocate a number of gibibytes of space for the\
+                      new zvol.'),
           isHidden: false
         },
         {
-          type: 'select',
+          type: 'explorer',
           name: 'datastore',
-          placeholder : T('Select a datastore'),
-          tooltip: T('Select a datastore for the new Zvol.'),
+          placeholder : T('Select a pool or dataset'),
+          tooltip: T('Choose a pool or dataset for the new zvol.'),
           options: [],
-          isHidden: false
+          isHidden: false,
+          initial: '/mnt',
+          explorerType: 'directory'
         },
         {
           type: 'explorer',
           name: 'hdd_path',
           placeholder: T('Select an existing disk'),
-          tooltip: T('Browse to the desired datastore on the disk.'),
+          tooltip: T('Browse to the desired pool or dataset on the disk.'),
           explorerType: "zvol",
           initial: '/mnt',
           isHidden: true
@@ -218,17 +220,17 @@ export class VMWizardComponent {
         {
           type: 'explorer',
           name: 'iso_path',
-          placeholder : T('Choose an installation media'),
+          placeholder : T('Choose installation media image'),
           initial: '/mnt',
-          tooltip: T('Browse to the operating system installation file.'),
+          tooltip: T('Browse to the operating system installer image file.'),
           validation : [ Validators.required ],
           required: true,
         },
         {
           type: 'checkbox',
           name: 'upload_iso_checkbox',
-          placeholder : T('Upload an ISO?'),
-          tooltip: T('Set to display upload options.'),
+          placeholder : T('Upload an installer image file'),
+          tooltip: T('Set to display image upload options.'),
           value: false,
         },
         {
@@ -236,7 +238,7 @@ export class VMWizardComponent {
           name: 'upload_iso_path',
           placeholder : 'ISO save location',
           initial: '/mnt',
-          tooltip: T('Designate a location to store the .iso file.'),
+          tooltip: T('Choose a location to store the installer image file.'),
           explorerType: 'directory',
           isHidden: true,
           validation : [],
@@ -245,9 +247,9 @@ export class VMWizardComponent {
           type: 'upload',
           name: 'upload_iso',
           placeholder : 'ISO upload location',
-          tooltip: 'Browse to the .iso file and click <b>Upload</b>.',
+          tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
           isHidden: true,
-          acceptedFiles: ',.iso',
+          acceptedFiles: '.img,.iso',
           fileLocation: '',
           validation : [  ],
           message: this.messageService
@@ -346,7 +348,7 @@ export class VMWizardComponent {
         }
       };
     ( < FormGroup > entityWizard.formArray.get([3])).controls['datastore'].setValue(
-      this.datastore.options[0].value
+      '/mnt/'+this.datastore.options[0].value
     )
     });
 
@@ -388,7 +390,7 @@ export class VMWizardComponent {
 }
 
 async customSubmit(value) {
-
+    value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const payload = {}
     const vm_payload = {}

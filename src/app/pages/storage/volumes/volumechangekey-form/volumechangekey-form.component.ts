@@ -24,12 +24,12 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'app-volumeunlock-form',
+  selector : 'app-createpassphrase-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class VolumeUnlockFormComponent  implements Formconfiguration {
+export class VolumeChangekeyFormComponent implements Formconfiguration {
 
-  saveSubmitText = T("Unlock");
+  saveSubmitText = T("Change Passphrase");
 
   resource_name = 'storage/volume';
   route_success: string[] = [ 'storage', 'pools'];
@@ -37,7 +37,8 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
   isEntity = true;
   entityData = {
     name: "",
-    passphrase: ""
+    passphrase: "",
+    passphrase2: ""
   };
 
   fieldConfig: FieldConfig[] = [
@@ -48,9 +49,25 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
     },{
       type : 'input',
       inputType: 'password',
+      name : 'adminpw',
+      placeholder: T('Root Password'),
+      tooltip: T('Enter the root password.'),
+      validation: [Validators.required],
+      required: true
+    },{
+      type : 'input',
+      inputType: 'password',
       name : 'passphrase',
       placeholder: T('Passphrase'),
-      tooltip: 'Enter the GELI passphrase.',
+      tooltip: T('Enter the GELI passphrase.'),
+      validation: [Validators.required],
+      required: true
+    },{
+      type : 'input',
+      inputType: 'password',
+      name : 'passphrase2',
+      placeholder: T('Verify passphrase'),
+      tooltip: T('Confirm the GELI passphrase.'),
       validation: [Validators.required],
       required: true
     }
@@ -80,16 +97,15 @@ export class VolumeUnlockFormComponent  implements Formconfiguration {
 
   customSubmit(value) {
     this.loader.open();
-    return this.rest.post(this.resource_name + "/" + value.name + "/unlock/", { body: JSON.stringify({passphrase: value.passphrase}) }).subscribe((restPostResp) => {
-      console.log("restPostResp", restPostResp);
+    return this.rest.put(this.resource_name + "/" + value.name + "/keypassphrase/", { body: JSON.stringify({adminpw: value.adminpw, passphrase: value.passphrase, passphrase2: value.passphrase2}) }).subscribe((restPostResp) => {
       this.loader.close();
+      this.dialogService.Info(T("Change Pool Passphrase"), T("Successfully changed passphrase for pool ") + value.name);
 
       this.router.navigate(new Array('/').concat(
         this.route_success));
-
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error changing passphrase for pool"), res.error.message, res.error.traceback);
     });
   }
 

@@ -29,7 +29,9 @@ import {
 })
 
 export class ServiceFTPComponent implements OnInit {
-  protected resource_name: string = 'services/ftp';
+  //protected resource_name: string = 'services/ftp';
+  protected editCall: string = 'ftp.update';
+  protected queryCall: string = 'ftp.config';
   protected route_success: string[] = [ 'services' ];
 
   protected isBasicMode: boolean = true;
@@ -37,13 +39,13 @@ export class ServiceFTPComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [
     {
       type : 'input',
-      name : 'ftp_port',
+      name : 'port',
       placeholder : T('Port'),
       tooltip: T('Set the port the FTP service listens on.'),
     },
     {
       type : 'input',
-      name : 'ftp_clients',
+      name : 'clients',
       placeholder : T('Clients'),
       tooltip: T('The maximum number of simultaneous clients.'),
       required: true,
@@ -51,7 +53,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'input',
-      name : 'ftp_ipconnections',
+      name : 'ipconnections',
       placeholder : T('Connections'),
       tooltip: T('Set the maximum number of connections per IP address.\
                   <i>0</i> means unlimited.'),
@@ -60,7 +62,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'input',
-      name : 'ftp_loginattempt',
+      name : 'loginattempt',
       placeholder : T('Login Attempts'),
       tooltip: T('Enter the maximum number of attempts before client is\
                   disconnected. Increase this if users are prone to typos.'),
@@ -69,7 +71,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'input',
-      name : 'ftp_timeout',
+      name : 'timeout',
       placeholder : T('Timeout'),
       tooltip: T('Maximum client idle time in seconds before client is\
                   disconnected.'),
@@ -78,13 +80,13 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
-      name : 'ftp_rootlogin',
+      name : 'rootlogin',
       placeholder : T('Allow Root Login'),
       tooltip: T('Setting this option is discouraged as it increases security risk.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_onlyanonymous',
+      name : 'onlyanonymous',
       placeholder : T('Allow Anonymous Login'),
       tooltip: T('Set to allow anonymous FTP logins with access to the\
                   directory specified in <b>Path</b>.'),
@@ -93,73 +95,73 @@ export class ServiceFTPComponent implements OnInit {
       type : 'explorer',
       initial: '/mnt',
       explorerType: 'directory',
-      name : 'ftp_anonpath',
+      name : 'anonpath',
       placeholder : T('Path'),
       tooltip: T('Set the root directory for anonymous FTP connections.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_onlylocal',
+      name : 'onlylocal',
       placeholder : T('Allow Local User Login'),
       tooltip: T('Required if <b>Anonymous Login</b> is disabled.'),
     },
     {
       type : 'textarea',
-      name : 'ftp_banner',
+      name : 'banner',
       placeholder : T('Display Login'),
       tooltip: T('Specify the message displayed to local login users after\
                   authentication. Not displayed to anonymous login users.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_resume',
+      name : 'resume',
       placeholder : T('Allow Transfer Resumption'),
       tooltip: T('Set to allow FTP clients to resume interrupted transfers.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_defaultroot',
+      name : 'defaultroot',
       placeholder : T('Always Chroot'),
       tooltip: T('When set, a local user is only allowed access to their home\
                   directory if they are a member of the <i>wheel</i> group.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_reversedns',
+      name : 'reversedns',
       placeholder : T('Perform Reverse DNS Lookups'),
       tooltip: T('Set to perform reverse DNS lookups on client IPs.\
                   This can cause long delays if reverse DNS is not configured.'),
     },
     {
       type : 'input',
-      name : 'ftp_masqaddress',
+      name : 'masqaddress',
       placeholder : T('Masquerade Address'),
       tooltip: T('Public IP address or hostname. Set if FTP clients\
        c           cannot connect through a NAT device.'),
     },
     {
       type : 'select',
-      name : 'ftp_ssltls_certfile',
+      name : 'ssltls_certificate',
       placeholder : T('Certificate'),
       tooltip: T('The SSL certificate to be used for TLS FTP connections.\
-                  To create a certificate, use <b>System -> Certificates</b>.'),
+                  To create a certificate, use <b>System --> Certificates</b>.'),
       options : [],
     },
     {
       type : 'permissions',
-      name : 'ftp_filemask',
+      name : 'filemask',
       placeholder : T('File Permission'),
       tooltip: T('Sets default permissions for newly created files.'),
     },
     {
       type : 'permissions',
-      name : 'ftp_dirmask',
+      name : 'dirmask',
       placeholder : T('Directory Permission'),
       tooltip: T('Sets default permissions for newly created directories.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_fxp',
+      name : 'fxp',
       placeholder : T('Enable FXP'),
       tooltip: T('Set to enable the File eXchange Protocol. This option\
                  makes the server vulnerable to FTP bounce attacks so\
@@ -167,52 +169,52 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
-      name : 'ftp_ident',
+      name : 'ident',
       placeholder : T('Require IDENT Authentication'),
       tooltip: T('Setting this option will result in timeouts if\
                   <b>identd</b> is not running on the client.'),
     },
     {
       type : 'input',
-      name : 'ftp_passiveportsmin',
+      name : 'passiveportsmin',
       placeholder : T('Minimum Passive Port'),
       tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
                   means any port above 1023.'),
     },
     {
       type : 'input',
-      name : 'ftp_passiveportsmax',
+      name : 'passiveportsmax',
       placeholder : T('Maximum Passive Port'),
       tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
                   means any port above 1023.'),
     },
     {
       type : 'input',
-      name : 'ftp_localuserbw',
+      name : 'localuserbw',
       placeholder : T('Local User Upload Bandwidth'),
       tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
     },
     {
       type : 'input',
-      name : 'ftp_localuserdlbw',
+      name : 'localuserdlbw',
       placeholder : T('Local User Download Bandwidth'),
       tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
     },
     {
       type : 'input',
-      name : 'ftp_anonuserbw',
+      name : 'anonuserbw',
       placeholder : T('Anonymous User Upload Bandwidth'),
       tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
     },
     {
       type : 'input',
-      name : 'ftp_anonuserdlbw',
+      name : 'anonuserdlbw',
       placeholder : T('Anonymous User Download Bandwidth'),
       tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls',
+      name : 'tls',
       placeholder : T('Enable TLS'),
       tooltip: T('Set to enable encrypted connections. Requires a certificate\
                   to be created or imported using\
@@ -221,7 +223,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'select',
-      name : 'ftp_tls_policy',
+      name : 'tls_policy',
       placeholder : T('TLS Policy'),
       tooltip: T('The selected policy defines whether the control channel,\
                   data channel, both channels, or neither channel of an FTP\
@@ -243,7 +245,7 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_allow_client_renegotiations',
+      name : 'tls_opt_allow_client_renegotiations',
       placeholder : T('TLS Allow Client Renegotiations'),
       tooltip: T('Setting this option is <b>not</b> recommended as it\
                   breaks several security measures. Refer to\
@@ -252,44 +254,44 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_allow_dot_login',
+      name : 'tls_opt_allow_dot_login',
       placeholder : T('TLS Allow Dot Login'),
-      tooltip: T('If set, the home directory of the user is checked\
+      tooltip: T('If set, the user home directory is checked\
                   for a <b>.tlslogin</b> file which contains one or more PEM-encoded\
                   certificates. If not found, the user is prompted for password\
                   authentication.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_allow_per_user',
+      name : 'tls_opt_allow_per_user',
       placeholder : T('TLS Allow Per User'),
       tooltip: T('If set, the password of the user can be sent\
                   unencrypted.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_common_name_required',
+      name : 'tls_opt_common_name_required',
       placeholder : T('TLS Common Name Required'),
       tooltip: T('When set, the common name in the certificate must\
                   match the FQDN of the host.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_enable_diags',
+      name : 'tls_opt_enable_diags',
       placeholder : T('TLS Enable Diagnostics'),
       tooltip: T('If set when troubleshooting a connection, logs more\
                   verbosely.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_export_cert_data',
+      name : 'tls_opt_export_cert_data',
       placeholder : T('TLS Export Certificate Data'),
-      tooltip: T('If set, the certificate environment\
-                  variables are exported.'),
+      tooltip: T('Set to export the certificate environment\
+                  variables.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_no_cert_request',
+      name : 'tls_opt_no_cert_request',
       placeholder : T('TLS No Certificate Request'),
       tooltip : T('Set if the client cannot connect, and\
                    it is suspected the client is poorly handling the\
@@ -297,14 +299,14 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_no_empty_fragments',
+      name : 'tls_opt_no_empty_fragments',
       placeholder : T('TLS No Empty Fragments'),
       tooltip: T('Enabling this option is <b>not</b> recommended as it\
                   bypasses a security mechanism.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_no_session_reuse_required',
+      name : 'tls_opt_no_session_reuse_required',
       placeholder : T('TLS No Session Reuse Required'),
       tooltip: T('Setting this option reduces the security of the\
                   connection, so only use it if the client does not\
@@ -312,27 +314,27 @@ export class ServiceFTPComponent implements OnInit {
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_stdenvvars',
+      name : 'tls_opt_stdenvvars',
       placeholder : T('TLS Export Standard Vars'),
       tooltip: T('If selected, sets several environment variables.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_dns_name_required',
+      name : 'tls_opt_dns_name_required',
       placeholder : T('TLS DNS Name Required'),
       tooltip: T('If set, the DNS name of the client must resolve to\
                   its IP address and the cert must contain the same DNS name.'),
     },
     {
       type : 'checkbox',
-      name : 'ftp_tls_opt_ip_address_required',
+      name : 'tls_opt_ip_address_required',
       placeholder : T('TLS IP Address Required'),
       tooltip: T('If set, the client certificate must contain\
                   the IP address that matches the IP address of the client.'),
     },
     {
       type : 'textarea',
-      name : 'ftp_options',
+      name : 'options',
       placeholder : T('Auxiliary Parameters'),
       tooltip: T('Used to add additional <a href="https://linux.die.net/man/8/proftpd"\
                   target="_blank">proftpd(8)</a> parameters.'),
@@ -340,30 +342,30 @@ export class ServiceFTPComponent implements OnInit {
   ];
 
   protected advanced_field: Array<any> = [
-    'ftp_filemask',
-    'ftp_dirmask',
-    'ftp_fxp',
-    'ftp_ident',
-    'ftp_passiveportsmin',
-    'ftp_passiveportsmax',
-    'ftp_localuserbw',
-    'ftp_localuserdlbw',
-    'ftp_anonuserbw',
-    'ftp_anonuserdlbw',
-    'ftp_tls',
-    'ftp_tls_policy',
-    'ftp_tls_opt_allow_client_renegotiations',
-    'ftp_tls_opt_allow_dot_login',
-    'ftp_tls_opt_allow_per_user',
-    'ftp_tls_opt_common_name_required',
-    'ftp_tls_opt_enable_diags',
-    'ftp_tls_opt_export_cert_data',
-    'ftp_tls_opt_no_empty_fragments',
-    'ftp_tls_opt_no_session_reuse_required',
-    'ftp_tls_opt_stdenvvars',
-    'ftp_tls_opt_dns_name_required',
-    'ftp_tls_opt_ip_address_required',
-    'ftp_options'
+    'filemask',
+    'dirmask',
+    'fxp',
+    'ident',
+    'passiveportsmin',
+    'passiveportsmax',
+    'localuserbw',
+    'localuserdlbw',
+    'anonuserbw',
+    'anonuserdlbw',
+    'tls',
+    'tls_policy',
+    'tls_opt_allow_client_renegotiations',
+    'tls_opt_allow_dot_login',
+    'tls_opt_allow_per_user',
+    'tls_opt_common_name_required',
+    'tls_opt_enable_diags',
+    'tls_opt_export_cert_data',
+    'tls_opt_no_empty_fragments',
+    'tls_opt_no_session_reuse_required',
+    'tls_opt_stdenvvars',
+    'tls_opt_dns_name_required',
+    'tls_opt_ip_address_required',
+    'options'
   ];
   isCustActionVisible(actionId: string) {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
@@ -393,20 +395,34 @@ export class ServiceFTPComponent implements OnInit {
 
               protected systemGeneralService: SystemGeneralService) {}
 
-  private ftp_ssltls_certfile: any;
+  private ssltls_certificate: any;
 
   ngOnInit() {
     this.systemGeneralService.getCertificates().subscribe((res) => {
       if (res.length > 0) {
-        this.ftp_ssltls_certfile =
-            _.find(this.fieldConfig, {'name' : 'ftp_ssltls_certfile'});
+        this.ssltls_certificate =
+            _.find(this.fieldConfig, {'name' : 'ssltls_certificate'});
         res.forEach((item) => {
-          this.ftp_ssltls_certfile.options.push(
+          this.ssltls_certificate.options.push(
               {label : item.name, value : item.id});
         });
       }
     });
   }
 
-  afterInit(entityEdit: any) { }
+  afterInit(entityEdit: any) {
+    entityEdit.submitFunction = this.submitFunction;
+  }
+
+  resourceTransformIncomingRestData(data) {
+    const certificate = data['ssltls_certificate'];
+    if (certificate && certificate.id) {
+      data['ssltls_certificate'] = certificate.id;
+    }
+    return data;
+  }
+
+  submitFunction(this: any, body: any){
+    return this.ws.call('ftp.update', [body]);
+  }
 }
