@@ -1,21 +1,21 @@
 # $FreeBSD$
 
 PORTNAME=	node
-PORTVERSION=	9.11.1
+PORTVERSION=	6.14.1
 DISTVERSIONPREFIX=	v
 PORTREVISION=	1
-CATEGORIES=     freenas
+CATEGORIES=	 freenas
 VALID_CATEGORIES+=      freenas
 MASTER_SITES=	http://nodejs.org/dist/v${PORTVERSION}/
 PKGNAMESUFFIX=	9
 
 MAINTAINER=	bhughes@FreeBSD.org
-COMMENT=	V8 JavaScript for client and server
+COMMENT=	V8 JavaScript for client and server (6.x LTS)
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
-ONLY_FOR_ARCHS=		aarch64 amd64 armv6 armv7 i386 powerpc64
+ONLY_FOR_ARCHS=		amd64 armv6 armv7 i386
 
 OPTIONS_DEFINE=	BUNDLED_SSL DOCS NLS DTRACE
 OPTIONS_DEFAULT=DTRACE
@@ -29,15 +29,13 @@ OPTIONS_EXCLUDE+=	DTRACE
 .endif
 
 OPTIONS_EXCLUDE_FreeBSD_10=	DTRACE
-OPTIONS_EXCLUDE_aarch64=	DTRACE
 # dt_modtext:/usr/src/cddl/contrib/opensolaris/lib/libdtrace/common/dt_link.c(820): arm not implemented
 OPTIONS_EXCLUDE_armv6=		DTRACE
 OPTIONS_EXCLUDE_armv7=		DTRACE
 
-BUNDLED_SSL_DESC=		Use node.js's bundled OpenSSL implementation
+BUNDLED_SSL_DESC=		Use node.js's bundled OpenSSL implementation #'
 BUNDLED_SSL_USES_OFF=		ssl
-BUNDLED_SSL_CONFIGURE_OFF=	--shared-openssl --openssl-use-def-ca-store
-BUNDLED_SSL_RUN_DEPENDS_OFF=	ca_root_nss>=0:security/ca_root_nss
+BUNDLED_SSL_CONFIGURE_OFF+=	--shared-openssl
 
 NLS_CONFIGURE_ON=	--with-intl=system-icu
 NLS_LIB_DEPENDS=	libicui18n.so:devel/icu
@@ -49,7 +47,7 @@ USES=		compiler:c++11-lib gmake python:2.7,build pkgconfig \
 
 HAS_CONFIGURE=	yes
 
-CONFLICTS_INSTALL=	node[4568]-[0-9]*
+CONFLICTS_INSTALL=	node[458]-[0-9]* node-[0-9]*
 
 CONFIGURE_ARGS=	--prefix=${PREFIX_RELDEST} \
 		--without-npm \
@@ -93,7 +91,15 @@ CXXFLAGS+=	-D_GLIBCXX_USE_C99
 
 post-patch:
 	@${REINPLACE_CMD} -e 's|/usr/local|${LOCALBASE}|' \
-		${WRKSRC}/deps/v8/src/v8.gyp
+		${WRKSRC}/deps/v8/tools/gyp/v8.gyp
+	# So many different ways to run python. Fix them all.
+	@${REINPLACE_CMD} -e 's|/usr/bin/env python|${PYTHON_CMD}|' \
+		${WRKSRC}/configure
+	@${FIND} ${WRKSRC} -type f -name '*.gyp*' -print0 \
+		| ${XARGS} -0 ${REINPLACE_CMD} \
+			-e "s|'python'|'${PYTHON_CMD}'|" \
+			-e 's|<!(python |<!(${PYTHON_CMD} |' \
+			-e 's|\&\& python |\&\& ${PYTHON_CMD} |'
 
 post-configure:
 	# Post-process Makefile and *.mk files created by node-gyp and remove
