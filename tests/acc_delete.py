@@ -3,6 +3,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 10
 
+import function
 from source import *
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
@@ -58,11 +59,12 @@ class delete_test(unittest.TestCase):
             print ("the Page now is: " + page_data)
             # assert response
             self.assertTrue("User" in page_data)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -74,11 +76,12 @@ class delete_test(unittest.TestCase):
             print (" deleting a user: " + newusername)
             time.sleep(2)
             self.delete("user", newusername)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -90,11 +93,12 @@ class delete_test(unittest.TestCase):
             print (" deleting a user: " + newusernameuncheck)
             time.sleep(2)
             self.delete("user", newusernameuncheck)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -107,11 +111,12 @@ class delete_test(unittest.TestCase):
             time.sleep(2)
             self.delete("user", superusername)
             time.sleep(2)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -130,11 +135,12 @@ class delete_test(unittest.TestCase):
             print ("the Page now is: " + page_data)
             # assert response
             self.assertTrue("Group" in page_data)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -146,11 +152,12 @@ class delete_test(unittest.TestCase):
             print (" deleting a group: " + newusername)
             time.sleep(2)
 #            self.delete("group", newusername)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -161,11 +168,12 @@ class delete_test(unittest.TestCase):
             print (" deleting a group: " + superusername)
             time.sleep(2)
 #            self.delete("group", superusername)
-            # Taking screenshot
-            self.screenshot("02_02")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("02_02-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -176,11 +184,12 @@ class delete_test(unittest.TestCase):
             print (" deleting a group: " + newgroupname)
             time.sleep(2)
 #            self.delete("group", newgroupname)
-            # Taking screenshot
-            self.screenshot("02_03")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("01-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -191,11 +200,12 @@ class delete_test(unittest.TestCase):
             print (" deleting a group: " + supergroupname)
             time.sleep(2)
 #            self.delete("group", supergroupname)
-            # Taking screenshot
-            self.screenshot("02_03")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("02_03-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -206,11 +216,12 @@ class delete_test(unittest.TestCase):
             print (" closing account menu")
             driver.find_element_by_xpath(xpaths['navAccount']).click()
             time.sleep(20)
-            # Taking screenshot
-            self.screenshot("03_00")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("03_00-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -311,16 +322,6 @@ class delete_test(unittest.TestCase):
 #                        print ("waiting on element to be clickable")
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
-
-    def screenshot(self, count):
-        test_method_name = self._testMethodName
-        time.sleep(1)
-        text_path = os.path.dirname(os.path.realpath(__file__))
-        filename = str(__file__)
-        filename = filename[:-3]
-        final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + "-" + test_method_name)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
 
     @classmethod

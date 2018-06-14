@@ -131,13 +131,13 @@ except NameError:
     run_conf_sysadvance_test(runDriver)
     run_conf_afp_test(runDriver)
     run_conf_smb_test(runDriver)
-    run_conf_dc_test(runDriver)
+#    run_conf_dc_test(runDriver)
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)
 # temporary shutdown
-#    run_conf_lldp_test(runDriver)
-#    run_conf_ssh_test(runDriver)
+    run_conf_lldp_test(runDriver)
+    run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
@@ -185,6 +185,9 @@ if path.exists('driver.pyc'):
 
 if path.exists('driverU.pyc'):
     call(["rm", "driverU.pyc"])
+
+if path.exists('function.pyc'):
+    call(["rm", "function.pyc"])
 
 if path.exists('login.pyc'):
     call(["rm", "login.pyc"])
