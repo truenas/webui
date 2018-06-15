@@ -22,6 +22,8 @@ export class CloudCredentialsFormComponent {
   protected id: any;
   protected pk: any;
 
+  protected selectedProvider: string = 'AMAZON_CLOUD_DRIVE';
+
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'input',
@@ -36,7 +38,7 @@ export class CloudCredentialsFormComponent {
       name: 'provider',
       placeholder: T('Provider'),
       options: [],
-      value: 'AMAZON',
+      value: 'AMAZON_CLOUD_DRIVE',
       required: true,
       validation: [Validators.required],
     },
@@ -46,12 +48,32 @@ export class CloudCredentialsFormComponent {
       name: 'client_id',
       placeholder: T('Amazon Application Client ID'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'AMAZON_CLOUD_DRIVE',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'client_secret',
       placeholder: T('Application Key'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'AMAZON_CLOUD_DRIVE',
+           }]
+        }
+      ]
     },
     // Amazon_s3
     {
@@ -59,68 +81,178 @@ export class CloudCredentialsFormComponent {
       name: 'access_key_id',
       placeholder: T('Access Key ID'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'secret_access_key',
       placeholder: T('Secret Access Key'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'endpoint',
       placeholder: T('Endpoint URL'),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'S3',
+           }]
+        }
+      ]
     },
     // backblaze b2
     {
       type: 'input',
-      name: 'account',
+      name: 'account-B2',
       placeholder: T('Account ID'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'B2',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'key',
+      name: 'key-B2',
       placeholder: T('Application Key'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'B2',
+           }]
+        }
+      ]
     },
     // box
     {
       type: 'input',
-      name: 'token',
+      name: 'token-BOX',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'BOX',
+           }]
+        }
+      ]
     },
     // dropbox
     {
       type: 'input',
-      name: 'token',
+      name: 'token-DROPBOX',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'DROPBOX',
+           }]
+        }
+      ]
     },
     // ftp
     {
       type: 'input',
-      name: 'host',
+      name: 'host-FTP',
       placeholder: T('Host'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'FTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'port',
+      name: 'port-FTP',
       placeholder: T('Port'),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'FTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'user',
+      name: 'user-FTP',
       placeholder: T('Username'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'FTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'pass',
+      name: 'pass-FTP',
       placeholder: T('Password'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'FTP',
+           }]
+        }
+      ]
     },
     // google cloud storage
     {
@@ -128,133 +260,333 @@ export class CloudCredentialsFormComponent {
       name: 'service_account_credentials',
       placeholder: T('Service Account'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_CLOUD_STORAGE',
+           }]
+        }
+      ]
     },
     // google drive
     {
       type: 'input',
-      name: 'token',
+      name: 'token-GOOGLE_DRIVE',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_DRIVE',
+           }]
+        }
+      ]
     },
     // http
     {
       type: 'input',
-      name: 'url',
+      name: 'url-HTTP',
       placeholder: T('URL'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'HTTP',
+           }]
+        }
+      ]
     },
     // hubic
     {
       type: 'input',
-      name: 'token',
+      name: 'token-HUBIC',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'HUBIC',
+           }]
+        }
+      ]
     },
     // mega
     {
       type: 'input',
-      name: 'user',
+      name: 'user-MEGA',
       placeholder: T('Username'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'MEGA',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'pass',
+      name: 'pass-MEGA',
       placeholder: T('Password'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'MEGA',
+           }]
+        }
+      ]
     },
     // microsoft azure
     {
       type: 'input',
-      name: 'account',
+      name: 'account-AZUREBLOB',
       placeholder: T('Account Name'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'AZUREBLOB',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'key',
+      name: 'key-AZUREBLOB',
       placeholder: T('Account Key'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'AZUREBLOB',
+           }]
+        }
+      ]
     },
     // microsoft onedrive
     {
       type: 'input',
-      name: 'token',
+      name: 'token-ONEDRIVE',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'ONEDRIVE',
+           }]
+        }
+      ]
     },
     // pcloud
     {
       type: 'input',
-      name: 'token',
+      name: 'token-PCLOUD',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'PCLOUD',
+           }]
+        }
+      ]
     },
     // sftp
     {
       type: 'input',
-      name: 'host',
+      name: 'host-SFTP',
       placeholder: T('Host'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'SFTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'port',
+      name: 'port-SFTP',
       placeholder: T('Port'),
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'SFTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'user',
+      name: 'user-SFTP',
       placeholder: T('Username'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'SFTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'pass',
+      name: 'pass-SFTP',
       placeholder: T('Password'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'SFTP',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'key_file',
       placeholder: T('PEM-encoded private key file path'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'SFTP',
+           }]
+        }
+      ]
     },
     // webdav
     {
       type: 'input',
-      name: 'url',
+      name: 'url-WEBDAV',
       placeholder: T('URL'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'WEBDAV',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
       name: 'vendor',
       placeholder: T('Name of the WebDAV site/service/software'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'WEBDAV',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'user',
+      name: 'user-WEBDAV',
       placeholder: T('Username'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'WEBDAV',
+           }]
+        }
+      ]
     },
     {
       type: 'input',
-      name: 'pass',
+      name: 'pass-WEBDAV',
       placeholder: T('Password'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'WEBDAV',
+           }]
+        }
+      ]
     },
     // yandex
     {
       type: 'input',
-      name: 'token',
+      name: 'token-YANDEX',
       placeholder: T('Access Token'),
       required: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'YANDEX',
+           }]
+        }
+      ]
     },
   ];
 
-  protected selectedProvider: string = 'AMAZON';
+
   protected providers: Array<any>;
   protected providerField: any;
 
@@ -288,89 +620,21 @@ export class CloudCredentialsFormComponent {
     });
   }
 
-  // afterInit(entityForm: any) {
-  //   entityForm.submitFunction = this.submitFunction;
+  afterInit(entityForm: any) {
+    console.log(entityForm);
+    entityForm.submitFunction = this.submitFunction;
 
-  //   for (let i in this.azureFields) {
-  //     this.hideField(this.azureFields[i], true, entityForm);
-  //   }
-  //   for (let i in this.balckblazeFields) {
-  //     this.hideField(this.balckblazeFields[i], true, entityForm);
-  //   }
-  //   for (let i in this.gcloudFields) {
-  //     this.hideField(this.gcloudFields[i], true, entityForm);
-  //   }
-  //   for (let i in this.amazonFields) {
-  //     this.hideField(this.amazonFields[i], false, entityForm);
-  //   }
+    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
+      this.selectedProvider = res;
+   
+    });
+  }
 
-  //   entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
-  //     this.selectedProvider = res;
-  //     if (res == 'AMAZON') {
-  //       for (let i in this.azureFields) {
-  //         this.hideField(this.azureFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.balckblazeFields) {
-  //         this.hideField(this.balckblazeFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.gcloudFields) {
-  //         this.hideField(this.gcloudFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.amazonFields) {
-  //         this.hideField(this.amazonFields[i], false, entityForm);
-  //       }
-  //     } else if (res == 'AZURE') {
-  //       for (let i in this.amazonFields) {
-  //         this.hideField(this.amazonFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.balckblazeFields) {
-  //         this.hideField(this.balckblazeFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.gcloudFields) {
-  //         this.hideField(this.gcloudFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.azureFields) {
-  //         this.hideField(this.azureFields[i], false, entityForm);
-  //       }
-  //     } else if (res == 'BACKBLAZE') {
-  //       for (let i in this.amazonFields) {
-  //         this.hideField(this.amazonFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.gcloudFields) {
-  //         this.hideField(this.gcloudFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.azureFields) {
-  //         this.hideField(this.azureFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.balckblazeFields) {
-  //         this.hideField(this.balckblazeFields[i], false, entityForm);
-  //       }
-  //     } else if (res == 'GCLOUD') {
-  //       for (let i in this.amazonFields) {
-  //         this.hideField(this.amazonFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.azureFields) {
-  //         this.hideField(this.azureFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.balckblazeFields) {
-  //         this.hideField(this.balckblazeFields[i], true, entityForm);
-  //       }
-  //       for (let i in this.gcloudFields) {
-  //         this.hideField(this.gcloudFields[i], false, entityForm);
-  //       }
-  //     }
-  //   });
-
-  //   entityForm.formGroup.controls['keyfile'].valueChanges.subscribe((value)=>{
-  //     entityForm.formGroup.controls['preview'].setValue(value);
-  //   });
-  // }
-
-  // hideField(fieldName: any, show: boolean, entity: any) {
-  //   let target = _.find(this.fieldConfig, {'name' : fieldName});
-  //   target.isHidden = show;
-  //   entity.setDisabled(fieldName, show);
-  // }
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target.isHidden = show;
+    entity.setDisabled(fieldName, show);
+  }
 
   submitFunction() {
     const attributes = {};
