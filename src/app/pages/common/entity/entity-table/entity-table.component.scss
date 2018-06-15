@@ -34,10 +34,9 @@
        width: 220px;
     }   
 }
-.select-all-checkbox {
-    margin-left: 2px;
- }
 
-@media (max-width: 767px) {
-    background-color: red;
-}
+ #select-all-checkbox-and-label {
+     max-width: 100px;
+     font-weight: 700;
+     margin-left: 4px;
+ }

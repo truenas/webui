@@ -50,7 +50,7 @@ export class DisksListConfig implements InputTableConf {
     { name: 'Description', prop: 'disk_description', hidden: true },
     { name: 'Transfer Mode', prop: 'disk_transfermode', hidden: true },
     { name: 'HDD Standby', prop: 'disk_hddstandby', hidden: true },
-    { name: 'Advanced Power Management', prop: 'disk_advpowermgmt' },
+    { name: 'Adv. Power Management', prop: 'disk_advpowermgmt' },
     { name: 'Acoustic Level', prop: 'disk_acousticlevel' },
     { name: 'Enable S.M.A.R.T.', prop: 'disk_togglesmart' },
     { name: 'S.M.A.R.T. extra options', prop: 'disk_smartoptions', hidden: true },
