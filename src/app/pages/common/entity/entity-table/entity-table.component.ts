@@ -88,10 +88,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
-  public userPrefColumns: string; // to set user-preferred cols in local storage
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
-  public arePresetsStillCurrent: boolean; // stores whether we are using factory presets or user preferred ones
   public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
 
   public rows: any[] = [];
@@ -173,30 +171,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
       // Next section sets the checked/displayed columns
       if (this.conf.columns && this.conf.columns.length > 10) {
-        
         this.conf.columns = [];
-        this.userPrefColumns = window.localStorage.getItem('myCols');
-        
-        for (let i = 0; i < this.allColumns.length; i++) {
-          if (!this.allColumns[i].hidden) {
-            this.presetDisplayedCols.push(i);
-          }
-        } 
   
-        if (!this.userPrefColumns || this.userPrefColumns === '') {
-          this.arePresetsStillCurrent = true;
-          for (let item of this.allColumns) {
-            if (!item.hidden) {
-              this.conf.columns.push(item);
-            }
-          }   
-        } else {
-          this.arePresetsStillCurrent = false;
-          let tempArr = this.userPrefColumns.split(',');
-          for (let item of tempArr) {
-            this.conf.columns.push(this.allColumns[parseInt(item)]);
+        for (let item of this.allColumns) {
+          if (!item.hidden) {
+            this.conf.columns.push(item);
+            this.presetDisplayedCols.push(item);
           }
         }
+
         this.currentPreferredCols = this.conf.columns;
       }
         // End of checked/display section ------------
@@ -504,7 +487,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   toggle(col) {
     const isChecked = this.isChecked(col);
     this.anythingClicked = true;
-    this.arePresetsStillCurrent = false;
 
     if(isChecked) {
       this.conf.columns = this.conf.columns.filter(c => { 
@@ -524,7 +506,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   // Toggle between all cols selected and the current stored preference
   checkAll() {
     this.anythingClicked = true;
-    this.arePresetsStillCurrent = false;
     if (this.conf.columns.length < this.allColumns.length) {
 
       this.conf.columns = this.allColumns;
@@ -537,34 +518,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   // Used by the select all checkbox to determine whether it should be checked
   checkLength() {
     return this.conf.columns.length === this.allColumns.length; 
-  }
-
-  // Store the view of currently checked cols as the user's default view
-  savePrefs() {
-    let myColumns = document.getElementsByClassName('colselect');
-    let myPrefs = [];
-    for (let i = 0; i < myColumns.length; i++) {
-      if (myColumns[i].attributes[4].value === 'true' ) {
-        myPrefs.push(i);
-      }
-    }
-    this.currentPreferredCols = this.conf.columns;
-    localStorage.setItem('myCols', myPrefs.toString());
-    this.anythingClicked = false;
-  }
-
-  // Reset the default view to "factory" settings specified when cols are created
-  resetPrefs() {
-    this.conf.columns = [];
-    for (let i = 0; i < this.allColumns.length; i++) {
-      if (this.presetDisplayedCols.includes(i)){
-        this.conf.columns.push(this.allColumns[i]);
-      }
-      this.currentPreferredCols = this.conf.columns;
-      localStorage.setItem('myCols', '');
-      this.anythingClicked = false;
-      this.arePresetsStillCurrent = true;
-    } 
   }
 
   // End checkbox section -----------------------
