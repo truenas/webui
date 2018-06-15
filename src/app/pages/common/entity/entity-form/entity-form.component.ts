@@ -522,6 +522,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
+    // if field will be hide, disabled it too
+    if (hide) {
+      disable = hide;
+    }
+
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
