@@ -592,3 +592,8 @@ entity-form .form-card.mat-card{
   max-width: 500px;
   max-height: 300px; 
 }
+
+// Fix bug where ngx-datatable rows get stuck at original window width
+.datatable-scroll {
+  min-width: 100%;
+}
