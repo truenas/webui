@@ -7,13 +7,18 @@ import { MembersComponent } from './groups/members/members.component';
 import { UserListComponent } from './users/user-list/';
 import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [{
   path: '',
   data: { title: 'Account' },
   children: [{
+    path: '',
+    component: EntityDashboardComponent,
+  },
+  {
     path: 'users',
-    data: { title: 'Users', breadcrumb: 'Users' },
+    data: { title: 'Users', breadcrumb: 'Users', icon: 'group' },
     children: [{
         path: '',
         component: UserListComponent,
@@ -35,7 +40,7 @@ export const routes: Routes = [{
     ]
   }, {
     path: 'groups',
-    data: { title: 'Groups', breadcrumb: 'Groups' },
+    data: { title: 'Groups', breadcrumb: 'Groups', icon: 'group_work' },
     children: [{
         path: '',
         component: GroupListComponent,

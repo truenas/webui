@@ -216,9 +216,9 @@ export class ReplicationFormComponent implements AfterViewInit {
       {
         type : 'input',
         name : 'repl_limit',
-        placeholder : T('Limit (KB/s)'),
+        placeholder : T('Limit (kpbs)'),
         tooltip : T('Limit replication speed to the specified value in\
-                     kilobytes/second. The default <i>0</i> is unlimited.'),
+                     kilobits/second. The default <i>0</i> is unlimited.'),
         inputType : 'number',
         value : 0,
         validation : [Validators.min(0)]

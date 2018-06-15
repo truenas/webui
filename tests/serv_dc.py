@@ -3,6 +3,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 4
 
+import function
 from source import *
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
@@ -56,11 +57,12 @@ class conf_dc_test(unittest.TestCase):
             self.status_change("3", "start")
             # dc test takes almost takes 18 seconds to turn on
             time.sleep(18)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -70,11 +72,12 @@ class conf_dc_test(unittest.TestCase):
             print (" check if dc turned on")
             time.sleep(2)
             self.status_check("3")
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -86,11 +89,12 @@ class conf_dc_test(unittest.TestCase):
             self.status_change("3", "stop")
             # dc takes almost 22 sec to turn off
             time.sleep(22)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -101,11 +105,12 @@ class conf_dc_test(unittest.TestCase):
             time.sleep(2)
             self.status_check("3")
             time.sleep(10)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -167,16 +172,6 @@ class conf_dc_test(unittest.TestCase):
             else:
                 driver.find_element_by_tag_name('html').send_keys(Keys.PAGE_DOWN)
                 print ("searching for service" + which + " Attempt:" + str(i))
-
-    def screenshot(self, count):
-        test_method_name = self._testMethodName
-        time.sleep(1)
-        text_path = os.path.dirname(os.path.realpath(__file__))
-        filename = str(__file__)
-        filename = filename[:-3]
-        final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + "-" + test_method_name)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
 
     @classmethod

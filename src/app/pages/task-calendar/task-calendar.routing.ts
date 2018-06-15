@@ -18,6 +18,7 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { ResilverComponent } from './resilver/resilver.component';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -29,8 +30,12 @@ export const TaskCalendarRoutes: Routes = [{
   //   data: { title: 'Calendar', breadcrumb: 'Calendar' }
   // }, 
   {
+    path: '',
+    component: EntityDashboardComponent,
+  },
+  {
     path: 'cloudsync',
-    data: {title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks'},
+    data: {title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks', icon: 'event_note'},
     children: [{
       path: '',
       component: CloudsyncListComponent,
@@ -47,7 +52,7 @@ export const TaskCalendarRoutes: Routes = [{
   },
   {
     path: 'cron',
-    data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
+    data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs', icon: 'event_note' },
     children: [{
       path: '',
       component: CronListComponent,
@@ -63,7 +68,7 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'initshutdown',
-    data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
+    data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts', icon: 'event_note' },
     children: [{
       path: '',
       component: InitshutdownListComponent,
@@ -79,7 +84,7 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'snapshot',
-    data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks' },
+    data: { title: 'Periodic Snapshot Tasks', breadcrumb: 'Periodic Snapshot Tasks', icon: 'event_note' },
     children: [{
       path: '',
       component: SnapshotListComponent,
@@ -95,7 +100,7 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'replication',
-    data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks' },
+    data: { title: 'Replication Tasks', breadcrumb: 'Replication Tasks', icon: 'event_note' },
     children: [{
         path: '',
         component: ReplicationListComponent,
@@ -112,7 +117,7 @@ export const TaskCalendarRoutes: Routes = [{
     ]
   }, {
     path: 'rsync',
-    data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks' },
+    data: { title: 'Rsync Tasks', breadcrumb: 'Rsync Tasks', icon: 'event_note' },
     children: [{
       path: '',
       component: RsyncListComponent,
@@ -128,7 +133,7 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'smart',
-    data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests' },
+    data: { title: 'S.M.A.R.T. Tests', breadcrumb: 'S.M.A.R.T. Tests', icon: 'event_note' },
     children: [{
       path: '',
       component: SmartListComponent,
@@ -144,7 +149,7 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'scrub',
-    data: { title: 'Scrub Tasks', breadcrumb: 'Scrub Tasks' },
+    data: { title: 'Scrub Tasks', breadcrumb: 'Scrub Tasks', icon: 'event_note' },
     children: [{
       path: '',
       component: ScrubListComponent,
@@ -160,7 +165,7 @@ export const TaskCalendarRoutes: Routes = [{
     }]
   }, {
     path: 'resilver',
-    data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority'},
+    data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note'},
     component: ResilverComponent,
   }]
 }];

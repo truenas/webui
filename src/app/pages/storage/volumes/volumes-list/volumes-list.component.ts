@@ -13,16 +13,16 @@ import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
+import * as moment from 'moment';
 
 import { Injectable } from '@angular/core';
 import { ErdService } from 'app/services/erd.service';
 import { T } from '../../../../translate-marker';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { StorageService } from '../../../../services/storage.service';
+import { Validators } from '@angular/forms'
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-
-
 
 
 export interface ZfsPoolData {
@@ -137,8 +137,38 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Un-Lock"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "unlock", row1.id]));
+            let localLoader = this.loader,
+            localRest = this.rest,
+            localParentVol = this.parentVolumesListComponent,
+            localDialogService = this.dialogService,
+            localSnackBar = this.snackBar;
+
+            const conf: DialogFormConfiguration = {
+              title: "Unlock Pool: " + row1.name,
+              fieldConfig: [{
+                type : 'input',
+                inputType: 'password',
+                name : 'passphrase',
+                placeholder: T('Passphrase'),
+                validation: [Validators.required],
+                required: true
+              }],
+
+              saveButtonText: "Unlock",
+              customSubmit: function (value) {
+                localLoader.open();
+                return localRest.post("storage/volume/" + row1.name + "/unlock/", { body: JSON.stringify({passphrase: 
+                  value.passphrase}) }).subscribe((restPostResp) => {
+                  localLoader.close();
+                  localParentVol.repaintMe();     
+                  localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
+                }, (res) => {
+                  localLoader.close();
+                  localDialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
+                });
+              }
+            }
+            this.dialogService.dialogForm(conf);
           }
         });
       }
@@ -527,7 +557,51 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
     }
+    actions.push({
+      label: T("Create Snapshot"),
+      onClick: (row) => {
+        const conf: DialogFormConfiguration = {
+          title: "One time snapshot of " + row.path,
+          fieldConfig: [
+            {
+              type: 'input',
+              name: 'dataset',
+              placeholder: T('Pool/Dataset'),
+              value: row.path,
+              isHidden: true,
+              readonly: true
+            },
+            {
+              type: 'input',
+              name: 'name',
+              placeholder: 'Name',
+              tooltip: T('Add a name for the new snapshot'),
+              validation: [Validators.required],
+              required: true,
+              value: "manual" + '-' + this.getTimestamp()            },
+            {
+              type: 'checkbox',
+              name: 'recursive',
+              placeholder: 'Recursive',
+              tooltip: T('Set to include child datasets of the chosen dataset.'),
+            }
+          ],
+          method_rest: "storage/snapshot",
+          saveButtonText: "Create Snapshot",
+        }
+        this.dialogService.dialogForm(conf).subscribe((res) => {
+          if (res) {
+            this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+          }
+        });
+      }
+    });
     return actions;
+  }
+
+  getTimestamp() {
+    let dateTime = new Date();
+    return moment(dateTime).format("YYYYMMDD");
   }
 
   resourceTransformIncomingRestData(data: any): ZfsPoolData[] {
@@ -660,7 +734,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected snackBar: MatSnackBar) {
-    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate);
+    super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
   }
 
   public repaintMe() {
@@ -704,10 +778,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
         this.showDefaults = true;
 
+        
       }, (res) => {
+        this.showDefaults = true;
+
         this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
       });
     }, (res) => {
+      this.showDefaults = true;
+
       this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
     });
 
