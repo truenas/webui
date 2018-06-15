@@ -14,8 +14,8 @@ import { T } from '../../../../translate-marker';
 export class CloudCredentialsFormComponent {
 
   protected isEntity = true;
-  protected addCall = 'backup.credential.create';
-  protected queryCall = 'backup.credential.query';
+  protected addCall = 'cloudsync.credentials.create';
+  protected queryCall = 'cloudsync.credentials.query';
   protected queryCallOption: Array<any> = [['id', '=']];
   protected route_success: string[] = ['system', 'cloudcredentials'];
   protected formGroup: FormGroup;
@@ -256,7 +256,23 @@ export class CloudCredentialsFormComponent {
     },
     // google cloud storage
     {
-      type: 'input',
+      type : 'textarea',
+      name : 'preview',
+      placeholder : T('Preview JSON Service Account Key'),
+      readonly: true,
+      isHidden: true,
+      relation: [
+        {
+          action: 'SHOW',
+          when: [{
+            name: 'provider',
+            value: 'GOOGLE_CLOUD_STORAGE',
+           }]
+        }
+      ]
+    },
+    {
+      type: 'readfile',
       name: 'service_account_credentials',
       placeholder: T('Service Account'),
       required: true,
@@ -626,40 +642,40 @@ export class CloudCredentialsFormComponent {
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
       this.selectedProvider = res;
-   
     });
-  }
-
-  hideField(fieldName: any, show: boolean, entity: any) {
-    let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target.isHidden = show;
-    entity.setDisabled(fieldName, show);
+    // preview service_account_credentials
+    entityForm.formGroup.controls['service_account_credentials'].valueChanges.subscribe((value)=>{
+      entityForm.formGroup.controls['preview'].setValue(value);
+    });
   }
 
   submitFunction() {
     const attributes = {};
     const value = _.cloneDeep(this.formGroup.value);
+    let attr_name: string;
+
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item == 'keyfile') {
-          attributes[item] =  JSON.parse(value[item]);
-        } else if (item != 'preview') {
-          attributes[item] = value[item];
+        if (item != 'preview') {
+          attr_name = item.split("-")[0];
+          attributes[attr_name] = value[item];
         }
         delete value[item];
       }
     }
     value['attributes'] = attributes;
+    console.log(value);
     if (!this.pk) {
-      return this.ws.call('backup.credential.create', [value]);
+      return this.ws.call('cloudsync.credentials.create', [value]);
     } else {
-      return this.ws.call('backup.credential.update', [this.pk, value]);
+      return this.ws.call('cloudsync.credentials.update', [this.pk, value]);
     }
   }
 
   dataAttributeHandler(entityForm: any) {
     for (let i in entityForm.wsResponseIdx) {
       if (typeof entityForm.wsResponseIdx[i] === 'object') {
+        console.log('object');
         entityForm.wsResponseIdx[i] = JSON.stringify(entityForm.wsResponseIdx[i]);
       }
       entityForm.formGroup.controls[i].setValue(entityForm.wsResponseIdx[i]);
