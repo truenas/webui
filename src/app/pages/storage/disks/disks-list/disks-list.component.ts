@@ -42,7 +42,7 @@ export class DisksListConfig implements InputTableConf {
   public diskMap: Map<string, string> = new Map<string, string>();
 
   public columns: Array<any> = [
-    { name: 'Name', prop: 'disk_name' },
+    { name: 'Name', prop: 'disk_name', always_display: true },
     { name: 'Pool', prop: "poolName" },
     { name: 'Status', prop: 'status' },
     { name: 'Serial', prop: 'disk_serial' },

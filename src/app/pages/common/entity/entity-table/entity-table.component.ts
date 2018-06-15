@@ -172,7 +172,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       });
 
       // Next section sets the checked/displayed columns
-      if (this.conf.columns && this.conf.columns.length > 7) {
+      if (this.conf.columns && this.conf.columns.length > 10) {
+        
         this.conf.columns = [];
         this.userPrefColumns = window.localStorage.getItem('myCols');
         
@@ -198,7 +199,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         }
         this.currentPreferredCols = this.conf.columns;
       }
-      console.log (this.conf.columns)
         // End of checked/display section ------------
         
       setTimeout(() => { this.setShowDefaults(); }, 1000);
@@ -526,6 +526,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     this.anythingClicked = true;
     this.arePresetsStillCurrent = false;
     if (this.conf.columns.length < this.allColumns.length) {
+
       this.conf.columns = this.allColumns;
       return this.conf.columns
     } else {
