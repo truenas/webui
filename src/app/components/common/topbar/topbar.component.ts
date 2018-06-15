@@ -9,7 +9,6 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-// import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import * as hopscotch from 'hopscotch';
 import { RestService } from "../../../services/rest.service";
 import { LanguageService } from "../../../services/language.service"
@@ -55,25 +54,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
-    // private idle: Idle,
+
     public translate: TranslateService,
-    protected loader: AppLoaderService, ) {
-
-// FIXME: someday we might like to have autologout but not yet
-/*    idle.setIdle(10); // 10 seconds for delaying
-    idle.setTimeout(900); // 15 minutes for waiting of activity
-    idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
-
-    idle.onTimeoutWarning.subscribe((countdown:number) => {
-      // Countdown - console.log('TimeoutWarning: ' + countdown);
-    });
-    idle.onTimeout.subscribe(() => {
-      // Close all dialogs before auto-login
-      this.dialog.closeAll();
-      this.ws.logout();
-    });
-    idle.watch();*/
-  }
+    protected loader: AppLoaderService, ) {}
 
   ngOnInit() {
     let theme = this.themeService.currentTheme();
@@ -162,7 +145,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   signOut() {
-    // this.idle.ngOnDestroy();
     this.translate.get('Log out').subscribe((logout: string) => {
       this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
         this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {
