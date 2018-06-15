@@ -521,19 +521,22 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({disabled, value}, validation);
   }
 
-  setDisabled(name: string, disable: boolean, status?:string) {
+  setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item.isHidden = hide;
+      }
+      return item;
+    });
+
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
       return;
     }
 
-    this.fieldConfig = this.fieldConfig.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
-    });
+
   }
 
   setValue(name: string, value: any) {
@@ -577,7 +580,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
           activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+          activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
           .forEach(control => {
@@ -590,7 +595,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   relationUpdate(config: FieldConfig, activations: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+          activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
   ngOnDestroy() { 
