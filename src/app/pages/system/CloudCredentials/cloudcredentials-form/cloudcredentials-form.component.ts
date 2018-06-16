@@ -45,7 +45,7 @@ export class CloudCredentialsFormComponent {
     // Amazon_cloud_drive
     {
       type: 'input',
-      name: 'client_id',
+      name: 'client_id-AMAZON_CLOUD_DRIVE',
       placeholder: T('Amazon Application Client ID'),
       required: true,
       isHidden: true,
@@ -61,7 +61,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'input',
-      name: 'client_secret',
+      name: 'client_secret-AMAZON_CLOUD_DRIVE',
       placeholder: T('Application Key'),
       required: true,
       isHidden: true,
@@ -78,7 +78,7 @@ export class CloudCredentialsFormComponent {
     // Amazon_s3
     {
       type: 'input',
-      name: 'access_key_id',
+      name: 'access_key_id-S3',
       placeholder: T('Access Key ID'),
       required: true,
       isHidden: true,
@@ -94,7 +94,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'input',
-      name: 'secret_access_key',
+      name: 'secret_access_key-S3',
       placeholder: T('Secret Access Key'),
       required: true,
       isHidden: true,
@@ -110,7 +110,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'input',
-      name: 'endpoint',
+      name: 'endpoint-S3',
       placeholder: T('Endpoint URL'),
       isHidden: true,
       relation: [
@@ -257,7 +257,7 @@ export class CloudCredentialsFormComponent {
     // google cloud storage
     {
       type : 'textarea',
-      name : 'preview',
+      name : 'preview-GOOGLE_CLOUD_STORAGE',
       placeholder : T('Preview JSON Service Account Key'),
       readonly: true,
       isHidden: true,
@@ -273,7 +273,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'readfile',
-      name: 'service_account_credentials',
+      name: 'service_account_credentials-GOOGLE_CLOUD_STORAGE',
       placeholder: T('Service Account'),
       required: true,
       isHidden: true,
@@ -504,7 +504,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'input',
-      name: 'key_file',
+      name: 'key_file-SFTP',
       placeholder: T('PEM-encoded private key file path'),
       required: true,
       isHidden: true,
@@ -537,7 +537,7 @@ export class CloudCredentialsFormComponent {
     },
     {
       type: 'input',
-      name: 'vendor',
+      name: 'vendor-WEBDAV',
       placeholder: T('Name of the WebDAV site/service/software'),
       required: true,
       isHidden: true,
@@ -637,15 +637,14 @@ export class CloudCredentialsFormComponent {
   }
 
   afterInit(entityForm: any) {
-    console.log(entityForm);
     entityForm.submitFunction = this.submitFunction;
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
       this.selectedProvider = res;
     });
     // preview service_account_credentials
-    entityForm.formGroup.controls['service_account_credentials'].valueChanges.subscribe((value)=>{
-      entityForm.formGroup.controls['preview'].setValue(value);
+    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
+      entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
   }
 
@@ -656,7 +655,7 @@ export class CloudCredentialsFormComponent {
 
     for (let item in value) {
       if (item != 'name' && item != 'provider') {
-        if (item != 'preview') {
+        if (item != 'preview-GOOGLE_CLOUD_STORAGE') {
           attr_name = item.split("-")[0];
           attributes[attr_name] = value[item];
         }
@@ -673,12 +672,13 @@ export class CloudCredentialsFormComponent {
   }
 
   dataAttributeHandler(entityForm: any) {
+    let provider = entityForm.formGroup.controls['provider'].value;
     for (let i in entityForm.wsResponseIdx) {
+      let field_name = i + '-' + provider;
       if (typeof entityForm.wsResponseIdx[i] === 'object') {
-        console.log('object');
         entityForm.wsResponseIdx[i] = JSON.stringify(entityForm.wsResponseIdx[i]);
       }
-      entityForm.formGroup.controls[i].setValue(entityForm.wsResponseIdx[i]);
+      entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
     }
   }
 }
