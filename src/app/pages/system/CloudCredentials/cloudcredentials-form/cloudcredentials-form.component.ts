@@ -536,9 +536,28 @@ export class CloudCredentialsFormComponent {
       ]
     },
     {
-      type: 'input',
+      type: 'select',
       name: 'vendor-WEBDAV',
       placeholder: T('Name of the WebDAV site/service/software'),
+      options: [
+        {
+          label: 'NEXTCLOUD',
+          value: 'NEXTCLOUD',
+        },
+        {
+          label: 'OWNCLOUD',
+          value: 'OWNCLOUD',
+        },
+        {
+          label: 'SHAREPOINT',
+          value: 'SHAREPOINT',
+        },
+        {
+          label: 'OTHER',
+          value: 'OTHER',
+        }
+      ],
+      value: 'NEXTCLOUD',
       required: true,
       isHidden: true,
       relation: [
@@ -614,7 +633,6 @@ export class CloudCredentialsFormComponent {
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
         this.providers = res;
-        console.log(this.providers);
         for (let i in res) {
           this.providerField.options.push(
             {
@@ -663,7 +681,7 @@ export class CloudCredentialsFormComponent {
       }
     }
     value['attributes'] = attributes;
-    console.log(value);
+
     if (!this.pk) {
       return this.ws.call('cloudsync.credentials.create', [value]);
     } else {
@@ -675,9 +693,6 @@ export class CloudCredentialsFormComponent {
     let provider = entityForm.formGroup.controls['provider'].value;
     for (let i in entityForm.wsResponseIdx) {
       let field_name = i + '-' + provider;
-      if (typeof entityForm.wsResponseIdx[i] === 'object') {
-        entityForm.wsResponseIdx[i] = JSON.stringify(entityForm.wsResponseIdx[i]);
-      }
       entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
     }
   }
