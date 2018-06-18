@@ -474,6 +474,7 @@ entity-form .form-card.mat-card{
   .mat-dialog-content {
     max-width: 600px;
     padding-bottom: -3px;
+    overflow: hidden;
   
     .info-panel {
       max-height: 100px;
