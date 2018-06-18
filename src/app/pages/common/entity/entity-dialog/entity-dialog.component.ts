@@ -60,6 +60,7 @@ export class EntityDialogComponent implements OnInit {
 
     if (this.conf.customSubmit) {
       this.conf.customSubmit(value);
+      this.dialogRef.close();
     } else {
       this.loader.open();
       if (this.conf.method_rest) {
