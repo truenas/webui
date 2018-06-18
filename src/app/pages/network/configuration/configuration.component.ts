@@ -57,7 +57,7 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_ipv6gateway',
       placeholder : T('IPv6 Default Gateway'),
-      tooltip : T('Enter an IPv4 address. This overrides the default\
+      tooltip : T('Enter an IPv6 address. This overrides the default\
                    gateway provided by DHCP.'),
     },
     {

@@ -1,10 +1,9 @@
 .bg-photo {
 	background: url(/assets/images/beastie-shark.svg);
 	background-repeat: no-repeat;
-  background-size: auto 80%;
+  background-size: auto 75%;
   background-position: top right;
   padding-right: 30%;
-  min-width: 600px;
 }
 
 .copyright-txt {
@@ -26,8 +25,12 @@
 
 @media (max-width: 769px) {
   .bg-photo {
-  	background-size: auto 40%;
+  	background-size: auto 45%;
 	  padding-right: 15%;
+  }
+  #about-version {
+    max-width: 240px;
+    word-wrap: break-word;
   }
 
   .mat-icon.mat-primary {
@@ -37,7 +40,16 @@
 
 @media (max-width: 550px) {
   .bg-photo {
-  	background-size: auto 70px;
-	  padding-right: 0px;
+  	background-size: auto 35%;
+    padding-right: -20px;
+  }
+}
+
+@media (max-width: 420px) {
+  #about-list {
+    margin-top: 10px;
+  }
+  .bg-photo {
+  	background-size: auto 25%;
   }
 }
