@@ -15,11 +15,9 @@ import {
 } from '../../services'
 import {EntityModule} from '../common/entity/entity.module';
 
-import {DeviceDeleteComponent} from './devices/device-delete/';
 import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list';
 import {VmFormComponent} from './vm-form/';
-import {VmDeleteComponent} from './vm-delete/';
 import {VmListComponent} from './vm-list/';
 import {VmCardsComponent} from './vm-cards/vm-cards.component';
 import {VmCardEditComponent} from './vm-cards/vm-card-edit.component';
@@ -44,9 +42,7 @@ import { DeviceAddComponent } from './devices/device-add2';
     VmCardEditComponent,
     VmTableComponent,
     VmFormComponent,
-    VmDeleteComponent,
     DeviceListComponent,
-    DeviceDeleteComponent,
     DeviceEditComponent,
     VmSummaryComponent,
     VMWizardComponent,

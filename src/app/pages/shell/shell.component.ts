@@ -76,7 +76,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   };
 
   onResize(event){
-    this.resizeTerm();
+    // this.resizeTerm();
   }
 
   resetDefault() {
@@ -111,8 +111,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm = new (<any>window).Terminal({
       'cursorBlink': false,
       'tabStopWidth': 8,
-      'cols': parseInt(colNum.toFixed(),10),
-      'rows': parseInt(rowNum.toFixed(),10),
+      // 'cols': parseInt(colNum.toFixed(),10),
+      // 'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
