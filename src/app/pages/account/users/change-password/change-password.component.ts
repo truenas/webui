@@ -13,7 +13,6 @@ import { T } from '../../../../translate-marker';
 export class ChangePasswordComponent {
 
   protected resource_name = 'account/users/1/password/';
-  protected route_success: string[] = ['sessions', 'signin'];
   protected isEntity: boolean = true;
 
   public fieldConfig: FieldConfig[] = [

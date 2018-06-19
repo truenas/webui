@@ -68,6 +68,7 @@ export class SigninComponent implements OnInit {
   }
 
   successLogin() {
+    this.snackBar.dismiss();
     this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
         this.ws.token = result;
