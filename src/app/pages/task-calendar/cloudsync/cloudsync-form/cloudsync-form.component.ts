@@ -28,7 +28,8 @@ import { ValueValidator } from '../../../common/entity/entity-form/validators/va
 })
 export class CloudsyncFormComponent implements OnInit {
 
-  protected queryCall = 'backup.create';
+  protected addCall = 'cloudsync.create';
+  protected editCall = 'cloudsync.update';
   public route_success: string[] = ['tasks', 'cloudsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
@@ -53,11 +54,9 @@ export class CloudsyncFormComponent implements OnInit {
     ],
     required: true,
     validation : [ Validators.required ]
-  }, 
-
-  {
+  }, {
     type: 'select',
-    name: 'credential',
+    name: 'credentials',
     placeholder: T('Credential'),
     tooltip: T('Choose the cloud storage provider credentials from the\
                 list of entered Cloud Credentials.'),
@@ -82,7 +81,7 @@ export class CloudsyncFormComponent implements OnInit {
       {
         action: 'HIDE',
         when: [{
-          name: 'credential',
+          name: 'credentials',
           value: null,
          }]
       }
@@ -98,16 +97,12 @@ export class CloudsyncFormComponent implements OnInit {
       {
         action: 'HIDE',
         when: [{
-          name: 'credential',
+          name: 'credentials',
           value: null,
          }]
       }
     ]
-  }, 
-
-
-
-  {
+  }, {
     type: 'select',
     name: 'encryption',
     placeholder: T('Server Side Encryption'),
@@ -207,6 +202,15 @@ export class CloudsyncFormComponent implements OnInit {
                 <b>Warning:</b> Save and back up the encryption salt value.\
                 Losing the salt value can result in data loss.'),
     isHidden: true,
+    relation: [
+      {
+        action: 'SHOW',
+        when: [{
+          name: 'encryption',
+          value: true,
+         }]
+      }
+    ]
   },
   {
     type: 'select',
@@ -326,20 +330,15 @@ export class CloudsyncFormComponent implements OnInit {
     value: true,
   }];
 
-  protected user_field: any;
   protected month_field: any;
   protected day_field: any;
   protected mintue_field: any;
   protected hour_field: any;
   protected daymonth_field: any;
-  protected credential: any;
-  protected encryption: any;
-  protected encryption_password: any;
-  protected encryption_salt: any;
+  protected credentials: any;
   protected bucket_field: any;
-  protected folder_field: any;
-  public credential_list = [];
-  public selectedCredential: any;
+
+  public credentials_list = [];
 
   public formGroup: any;
   public error: string;
@@ -360,40 +359,6 @@ export class CloudsyncFormComponent implements OnInit {
     protected dialog: DialogService,
     protected ws: WebSocketService) {}
 
-
-  getBackblaze(credential){
-    this.ws.call('backup.b2.get_buckets', [credential.id]).subscribe((res) => {
-      return res;
-    })
-  }
-
-  // getAmazonCredential(credential){
-  //   return this.ws.call('backup.s3.get_buckets', [credential.id]);
-  // }
-
-  // getB2Credential(credential){
-  //   return this.ws.call('backup.b2.get_buckets', [credential.id])
-  // }
-
-  // getGcloudCredential(credential){
-  //   return this.ws.call('backup.gcs.get_buckets', [credential.id]);
-  // }
-
-  // getAzureCredential(credential){
-  //   return this.ws.call('backup.azure.get_buckets', [credential.id]);
-  // }
-
-  // checkCCProvider(credential) {
-  //   if (credential.provider == "AMAZON") {
-  //     return this.getAmazonCredential(credential);
-  //   } else if (credential.provider == "BACKBLAZE") {
-  //     return this.getB2Credential(credential);
-  //   } else if (credential.provider == "GCLOUD") {
-  //     return this.getGcloudCredential(credential)
-  //   } else if (credential.provider == "AZURE") {
-  //     return this.getGcloudCredential(credential);
-  //   }
-  // }
   getBuckets(credential) {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
@@ -451,9 +416,8 @@ export class CloudsyncFormComponent implements OnInit {
     this.daymonth_field = _.find(this.fieldConfig, { 'name': 'daymonth' });
     this.hour_field = _.find(this.fieldConfig, { 'name': 'hour' });
     this.mintue_field = _.find(this.fieldConfig, { 'name': 'minute' });
-    this.credential = _.find(this.fieldConfig, { 'name': 'credential' });
+    this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
-    this.folder_field = _.find(this.fieldConfig, {'name': 'folder'});
 
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
@@ -465,15 +429,13 @@ export class CloudsyncFormComponent implements OnInit {
       }
     }
 
-    this.formGroup.controls['credential'].valueChanges.subscribe((res)=>{
+    this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
       if (res!=null) {
-        this.credential_list.forEach((item)=>{
+        this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            this.selectedCredential = item;
             this.loader.open();
-            this.getBuckets(this.selectedCredential).subscribe(
+            this.getBuckets(item).subscribe(
               (res) => {
-                console.log(res);
                 this.loader.close();
                 this.bucket_field.options = [{label: '----------', value: ''}];
                 if (res) {
@@ -497,8 +459,8 @@ export class CloudsyncFormComponent implements OnInit {
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
         console.log(item);
-        this.credential.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
-        this.credential_list.push(item);
+        this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
+        this.credentials_list.push(item);
       });
     });
 
@@ -651,6 +613,10 @@ export class CloudsyncFormComponent implements OnInit {
     this.error = null;
     let value = _.cloneDeep(this.formGroup.value);
     let attributes = {};
+    let schedule = {};
+
+    value['credentials'] = parseInt(value.credentials);
+
 
     attributes['bucket'] = value.bucket;
     delete value.bucket;
@@ -658,36 +624,50 @@ export class CloudsyncFormComponent implements OnInit {
     delete value.folder;
     value['attributes'] = attributes;
 
+
+    schedule['dayweek'] = value.dayweek;
+    schedule['month'] = value.month;
+    schedule['daymonth'] = value.daymonth;
+    schedule['hour'] = value.hour;
+    schedule['minute'] = value.minute;
+
     if (value['repeat'] == 'hourly') {
-      value['dayweek'] = '*';
-      value['month'] = '*';
-      value['daymonth'] = '*';
-      value['hour'] = '*';
+      schedule['dayweek'] = '*';
+      schedule['month'] = '*';
+      schedule['daymonth'] = '*';
+      schedule['hour'] = '*';
     } else if (value['repeat'] == 'daily') {
-      value['dayweek'] = '*';
-      value['month'] = '*';
-      value['daymonth'] = '*';
+      schedule['dayweek'] = '*';
+      schedule['month'] = '*';
+      schedule['daymonth'] = '*';
     } else if (value['repeat'] == 'weekly') {
-      value['month'] = '*';
-      value['daymonth'] = '*';
+      schedule['month'] = '*';
+      schedule['daymonth'] = '*';
     } else if (value['repeat'] == 'monthly') {
-      value['dayweek'] = '*';
-      value['month'] = '*';
+      schedule['dayweek'] = '*';
+      schedule['month'] = '*';
     }
     delete value.repeat;
 
     if (_.isArray(value.dayweek)) {
-      value['dayweek'] = value.dayweek.join(",");
+      schedule['dayweek'] = value.dayweek.join(",");
     }
     if (_.isArray(value.month)) {
-      value['month'] = value.month.join(",");
+      schedule['month'] = value.month.join(",");
     }
+    delete value.dayweek;
+    delete value.month;
+    delete value.daymonth;
+    delete value.hour;
+    delete value.minute;
 
-    value['credential'] = parseInt(value.credential);
+    value['schedule'] = schedule;
 
+
+    console.log(value);
     if (!this.pk) {
       this.loader.open();
-      this.ws.call('backup.create', [value]).subscribe((res)=>{
+      this.ws.call(this.addCall, [value]).subscribe((res)=>{
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
@@ -696,7 +676,7 @@ export class CloudsyncFormComponent implements OnInit {
       });
     } else {
       this.loader.open();
-      this.ws.call('backup.update', [parseInt(this.pid), value]).subscribe(
+      this.ws.call(this.editCall, [parseInt(this.pid), value]).subscribe(
         (res)=>{
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));

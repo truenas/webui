@@ -41,6 +41,7 @@ export class CloudsyncListComponent {
   }
 
   dataHandler(entityList: any) {
+    console.log(entityList.rows);
     for (let i = 0; i < entityList.rows.length; i++) {
       entityList.rows[i].minute = entityList.rows[i].schedule['minute'];
       entityList.rows[i].hour = entityList.rows[i].schedule['hour'];
