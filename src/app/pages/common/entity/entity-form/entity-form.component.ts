@@ -68,6 +68,7 @@ export interface Formconfiguration {
   confirmSubmit?;
   confirmSubmitDialog?:Object;
   afterSave?;
+  blurEvent?;
  
   afterSubmit?;
   beforeSubmit?;
@@ -337,6 +338,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
+    }
+    if (this.conf.blurEvent) {
+      this.conf.blurEvent(this);
     }
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);

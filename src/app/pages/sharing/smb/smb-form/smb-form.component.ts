@@ -19,6 +19,7 @@ export class SMBFormComponent implements OnDestroy {
   protected isBasicMode: boolean = true;
   public cifs_default_permissions: any;
   public cifs_default_permissions_subscription: any;
+  public cifs_storage_task: any;
 
   protected fieldConfig: FieldConfig[] = [
     {
@@ -134,17 +135,16 @@ export class SMBFormComponent implements OnDestroy {
       options: [],
       multiple: true,
     },
-   // Uncomment when this is documented and testable
-   // {
-   //   type: 'select',
-   //   name: 'cifs_',
-   //   placeholder: 'Periodic Snapshot Task',
-   //   tooltip: 'Used to configure directory shadow copies on a\
-   //             per-share basis. Select the pre-configured periodic\
-   //             snapshot task to use for the shadow copies of this share.\
-   //             Periodic snapshot must be recursive.'),
-   //   options: []
-   // },
+    {
+      type: 'select',
+      name: 'cifs_storage_task',
+      placeholder: 'Periodic Snapshot Task',
+      tooltip: T('Used to configure directory shadow copies on a\
+                per-share basis. Select the pre-configured periodic\
+                snapshot task to use for the shadow copies of this share.\
+                Periodic snapshot must be recursive.'),
+      options: []
+    },
     {
       type: 'textarea',
       name: 'cifs_auxsmbconf',
@@ -249,18 +249,37 @@ export class SMBFormComponent implements OnDestroy {
         });
       }
     });
-    entityForm.ws.call('notifier.choices', [ 'CIFS_VFS_OBJECTS' ])
+    entityForm.ws.call('sharing.smb.vfsobjects_choices', [])
         .subscribe((res) => {
           this.cifs_vfsobjects =
               _.find(this.fieldConfig, {'name': "cifs_vfsobjects"});
           res.forEach((item) => {
-            this.cifs_vfsobjects.options.push({label : item[1], value : item[0]});
+            this.cifs_vfsobjects.options.push({label : item, value : item});
           });
         });
     if (entityForm.isNew) {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
-    }
+    } 
+  }
+
+  resourceTransformIncomingRestData(data) {
+    this.cifs_storage_task = _.find(this.fieldConfig, {name:"cifs_storage_task"});
+
+    let filters = [];
+    filters.push(data.cifs_path);
+
+    this.ws.call('sharing.smb.get_storage_tasks', filters).subscribe((res) => {
+      if(res) {
+        for (const key in res) {
+          if (res.hasOwnProperty(key)) {
+            this.cifs_storage_task.options.push({label: res[key], value: parseInt(key)});
+          }
+        }
+      }
+    });
+
+    return data;
   }
 
   ngOnDestroy() {

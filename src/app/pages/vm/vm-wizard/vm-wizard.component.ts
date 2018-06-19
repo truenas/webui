@@ -68,9 +68,9 @@ export class VMWizardComponent {
           placeholder: T('Guest Operating System'),
           tooltip: T('Choose the VM operating system type.'),
           options: [
-            {label: 'Windows', value: 'windows'},
-            {label: 'Linux', value: 'linux'},
-            {label: 'FreeBSD', value: 'freeBSD'},
+            {label: 'Windows', value: 'Windows'},
+            {label: 'Linux', value: 'Linux'},
+            {label: 'FreeBSD', value: 'FreeBSD'},
           ],
           validation : [ Validators.required ],
         },
@@ -156,9 +156,13 @@ export class VMWizardComponent {
           isHidden: false
         },
         {
+          type: 'paragraph',
+          name: 'pool_detach_warning',
+          paraText: T("Select a pool or dataset"),
+        },
+        {
           type: 'explorer',
           name: 'datastore',
-          placeholder : T('Select a pool or dataset'),
           tooltip: T('Choose a pool or dataset for the new zvol.'),
           options: [],
           isHidden: false,
@@ -284,15 +288,15 @@ export class VMWizardComponent {
 
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
-      this.summary[T('guest operating system')] = res;
+      this.summary[T('Guest Operating System')] = res;
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
-        this.summary[T('Number of CPU')] = vcpus;
+        this.summary[T('Number of CPUs')] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' Mib';
       });
       ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
-        this.summary[T('Hard Disk Size')] = volsize + ' Gib';
+        this.summary[T('Hard Disk Size')] = volsize + ' GiB';
       });
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
@@ -300,7 +304,7 @@ export class VMWizardComponent {
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
       })
-      if (res === 'windows') {
+      if (res === 'Windows') {
         ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
         ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
         ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
