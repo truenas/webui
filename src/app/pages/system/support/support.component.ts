@@ -55,8 +55,6 @@ export class SupportComponent  {
       tooltip : T(''),
       required: true,
       validation : [ Validators.required ],
-      blurStatus: true,
-      blurEvent: this.blurEvent
     },
     {
       type : 'input',
@@ -67,7 +65,8 @@ export class SupportComponent  {
       required: true,
       validation : [ Validators.required ],
       blurStatus: true,
-      blurEvent: this.blurEvent
+      blurEvent: this.blurEvent,
+      parent: this
     },
     {
       type : 'select',
@@ -151,26 +150,23 @@ export class SupportComponent  {
   }
 
   
-  blurEvent(){
-  
-  
-    // this.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{})   
-    //this.category = _.find(this.fieldConfig, {name: "category"});
-    // if(this.category.options.length === 0){
-    //   console.log("here")
-    //   // entityEdit.formGroup.controls['username'].valueChanges.subscribe((username)=>{
-    //   //   entityEdit.formGroup.controls['password'].valueChanges.subscribe((password)=>{
-    //   //     this.ws.call('support.fetch_categories',[username,password]).subscribe((res)=>{      
-    //   //       for (const property in res) {
-    //   //         if (res.hasOwnProperty(property)) {
-    //   //           this.category.options.push({label : property, value : res[property]});
-    //   //         }
-    //   //       }
-    //   //     })
-    //   // })
-    //   // })
-    // }
-   
+  blurEvent(parent){
+    this.category = _.find(parent.fieldConfig, {name: "category"});
+      if(parent.entityEdit){
+        this.username  = parent.entityEdit.formGroup.controls['username'].value;
+        this.password  = parent.entityEdit.formGroup.controls['password'].value;
+      }
+      if(this.category.options.length > 0){
+        this.category.options = [];
+      }
+      if(this.category.options.length === 0 ){
+        parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+          for (const property in res) {
+            if (res.hasOwnProperty(property)) {
+              this.category.options.push({label : property, value : res[property]});
+            }
+          }});
+      }
   }
 
 }
