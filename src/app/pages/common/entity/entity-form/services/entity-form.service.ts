@@ -20,7 +20,7 @@ export class EntityFormService {
               protected ws: WebSocketService, private rest: RestService) {}
 
   createFormGroup(controls: FieldConfig[]) {
-    let formGroup: {[id: string] : AbstractControl;} = {};
+    const formGroup: {[id: string]: AbstractControl;} = {};
 
     if (controls) {
       for (let i = 0; i < controls.length; i++) {
@@ -29,7 +29,7 @@ export class EntityFormService {
             controls[i].initialCount = 1;
           }
 
-          let formArray = this.createFormArray(controls[i].formarray,
+          const formArray = this.createFormArray(controls[i].formarray,
                                                controls[i].initialCount);
           formGroup[controls[i].name] = formArray;
         } else {
@@ -47,10 +47,10 @@ export class EntityFormService {
   }
 
   createFormArray(controls: FieldConfig[], initialCount: number) {
-    let formArray = this.formBuilder.array([]);
+    const formArray = this.formBuilder.array([]);
 
     for (let i = 0; i < initialCount; i++) {
-      let subFormGroup = this.createFormGroup(controls);
+      const subFormGroup = this.createFormGroup(controls);
       formArray.push(subFormGroup);
     }
     return formArray;
@@ -58,7 +58,7 @@ export class EntityFormService {
 
   insertFormArrayGroup(index: number, formArray: FormArray,
                        controls: FieldConfig[]) {
-    let formGroup = this.createFormGroup(controls);
+    const formGroup = this.createFormGroup(controls);
     formArray.insert(index, formGroup);
   }
 
@@ -67,11 +67,11 @@ export class EntityFormService {
   }
 
   getFilesystemListdirChildren(node: any, explorerType?: string, showHiddenFiles = false) {
-    let children = [];
+    const children = [];
 
     return this.ws.call('filesystem.listdir', [node.data.name]).toPromise().then(res => {
       for (let i = 0; i < res.length; i++) {
-        let child = {};
+        const child = {};
         if(!showHiddenFiles){
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
             if(explorerType === 'directory' && res[i].type !== 'DIRECTORY') {
@@ -104,7 +104,7 @@ export class EntityFormService {
   }
 
   getDatasetsAndZvolsListChildren(node: any) {
-    let children = [];
+    const children = [];
 
     return this.rest.get('storage/volume/', {}).toPromise().then(res => {
       res.data.forEach((vol) => {           
