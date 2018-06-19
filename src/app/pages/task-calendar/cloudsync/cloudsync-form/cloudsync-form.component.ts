@@ -49,9 +49,10 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: T('<i>Push</i> sends data to cloud storage. <i>Pull</i>\
                 receives data from cloud storage.'),
     options: [
-      { label: 'PULL', value: 'PULL' },
       { label: 'PUSH', value: 'PUSH' },
+      { label: 'PULL', value: 'PULL' },
     ],
+    value: 'PUSH',
     required: true,
     validation : [ Validators.required ]
   }, {
@@ -101,7 +102,8 @@ export class CloudsyncFormComponent implements OnInit {
           value: null,
          }]
       }
-    ]
+    ],
+    value: "",
   }, {
     type: 'select',
     name: 'encryption',
@@ -143,6 +145,7 @@ export class CloudsyncFormComponent implements OnInit {
       { label: 'COPY', value: 'COPY' },
       { label: 'MOVE', value: 'MOVE' },
     ],
+    value: 'SYNC',
     required: true,
     validation : [ Validators.required ]
   },
@@ -211,8 +214,12 @@ export class CloudsyncFormComponent implements OnInit {
          }]
       }
     ]
-  },
-  {
+  }, {
+    type: 'input',
+    name: 'args',
+    placeholder: T('Auxiliary arguments'),
+    value: "",
+  }, {
     type: 'select',
     name: 'repeat',
     placeholder: T('Quick Schedule'),
@@ -242,7 +249,7 @@ export class CloudsyncFormComponent implements OnInit {
     isHidden: false,
   }, {
     type: 'input',
-    name: 'daymonth',
+    name: 'dom',
     placeholder: T('Day of month'),
     tooltip: T('Day of the month to run the task.'),
     value: '*',
@@ -294,7 +301,7 @@ export class CloudsyncFormComponent implements OnInit {
     isHidden: false,
   }, {
     type: 'select',
-    name: 'dayweek',
+    name: 'dow',
     placeholder: T('Day of week'),
     tooltip: T('Days of the week to run the task.'),
     multiple: true,
@@ -334,7 +341,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected day_field: any;
   protected mintue_field: any;
   protected hour_field: any;
-  protected daymonth_field: any;
+  protected dom_field: any;
   protected credentials: any;
   protected bucket_field: any;
 
@@ -412,8 +419,8 @@ export class CloudsyncFormComponent implements OnInit {
   ngOnInit() {
     let date = new Date();
     this.month_field = _.find(this.fieldConfig, { 'name': 'month' });
-    this.day_field = _.find(this.fieldConfig, { 'name': 'dayweek' });
-    this.daymonth_field = _.find(this.fieldConfig, { 'name': 'daymonth' });
+    this.day_field = _.find(this.fieldConfig, { 'name': 'dow' });
+    this.dom_field = _.find(this.fieldConfig, { 'name': 'dom' });
     this.hour_field = _.find(this.fieldConfig, { 'name': 'hour' });
     this.mintue_field = _.find(this.fieldConfig, { 'name': 'minute' });
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
@@ -481,21 +488,21 @@ export class CloudsyncFormComponent implements OnInit {
         if (res == 'none') {
           this.month_field.isHidden = false;
           this.day_field.isHidden = false;
-          this.daymonth_field.isHidden = false;
+          this.dom_field.isHidden = false;
           this.hour_field.isHidden = false;
           this.mintue_field.isHidden = false;
 
           if (this.isNew) {
             this.formGroup.controls['month'].setValue([date.getMonth().toString()]);
-            this.formGroup.controls['dayweek'].setValue([date.getDay().toString()]);
-            this.formGroup.controls['daymonth'].setValue(date.getDate().toString());
+            this.formGroup.controls['dow'].setValue([date.getDay().toString()]);
+            this.formGroup.controls['dom'].setValue(date.getDate().toString());
             this.formGroup.controls['hour'].setValue(date.getHours().toString());
             this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
           }
         } else if (res == 'hourly') {
           this.month_field.isHidden = true;
           this.day_field.isHidden = true;
-          this.daymonth_field.isHidden = true;
+          this.dom_field.isHidden = true;
           this.hour_field.isHidden = true;
           this.mintue_field.isHidden = false;
 
@@ -505,7 +512,7 @@ export class CloudsyncFormComponent implements OnInit {
         } else if (res == 'daily') {
           this.month_field.isHidden = true;
           this.day_field.isHidden = true;
-          this.daymonth_field.isHidden = true;
+          this.dom_field.isHidden = true;
           this.hour_field.isHidden = false;
           this.mintue_field.isHidden = false;
 
@@ -516,24 +523,24 @@ export class CloudsyncFormComponent implements OnInit {
         } else if (res == 'weekly') {
           this.month_field.isHidden = true;
           this.day_field.isHidden = false;
-          this.daymonth_field.isHidden = true;
+          this.dom_field.isHidden = true;
           this.hour_field.isHidden = false;
           this.mintue_field.isHidden = false;
 
           if (this.isNew) {
-            this.formGroup.controls['dayweek'].setValue([date.getDay().toString()]);
+            this.formGroup.controls['dow'].setValue([date.getDay().toString()]);
             this.formGroup.controls['hour'].setValue(date.getHours().toString());
             this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
           }
         } else if (res == 'monthly') {
           this.month_field.isHidden = true;
           this.day_field.isHidden = true;
-          this.daymonth_field.isHidden = false;
+          this.dom_field.isHidden = false;
           this.hour_field.isHidden = false;
           this.mintue_field.isHidden = false;
 
           if (this.isNew) {
-            this.formGroup.controls['daymonth'].setValue(date.getDate().toString());
+            this.formGroup.controls['dom'].setValue(date.getDate().toString());
             this.formGroup.controls['hour'].setValue(date.getHours().toString());
             this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
           }
@@ -549,7 +556,7 @@ export class CloudsyncFormComponent implements OnInit {
             let fg = this.formGroup.controls[i];
             if (fg) {
               let current_field = this.fieldConfig.find((control) => control.name === i);
-              if (current_field.name == "month" || current_field.name == "dayweek") {
+              if (current_field.name == "month" || current_field.name == "dow") {
                 // multiple select
                 if (this.data[i] == '*') {
                   let human_value = [];
@@ -580,8 +587,8 @@ export class CloudsyncFormComponent implements OnInit {
           }
 
           if (_.isEqual(this.formGroup.controls['month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
-            if (_.isEqual(this.formGroup.controls['dayweek'].value, ['1', '2', '3', '4', '5', '6', '7'])) {
-              if (this.formGroup.controls['daymonth'].value == '*') {
+            if (_.isEqual(this.formGroup.controls['dow'].value, ['1', '2', '3', '4', '5', '6', '7'])) {
+              if (this.formGroup.controls['dom'].value == '*') {
                 if (this.formGroup.controls['hour'].value == '*') {
                   this.formGroup.controls['repeat'].setValue('hourly');
                 } else {
@@ -591,7 +598,7 @@ export class CloudsyncFormComponent implements OnInit {
                 this.formGroup.controls['repeat'].setValue('monthly');
               }
             } else {
-              if (this.formGroup.controls['daymonth'].value == '*') {
+              if (this.formGroup.controls['dom'].value == '*') {
                 this.formGroup.controls['repeat'].setValue('weekly');
               }
             }
@@ -625,44 +632,43 @@ export class CloudsyncFormComponent implements OnInit {
     value['attributes'] = attributes;
 
 
-    schedule['dayweek'] = value.dayweek;
+    schedule['dow'] = value.dow;
     schedule['month'] = value.month;
-    schedule['daymonth'] = value.daymonth;
+    schedule['dom'] = value.dom;
     schedule['hour'] = value.hour;
     schedule['minute'] = value.minute;
 
     if (value['repeat'] == 'hourly') {
-      schedule['dayweek'] = '*';
+      schedule['dow'] = '*';
       schedule['month'] = '*';
-      schedule['daymonth'] = '*';
+      schedule['dom'] = '*';
       schedule['hour'] = '*';
     } else if (value['repeat'] == 'daily') {
-      schedule['dayweek'] = '*';
+      schedule['dow'] = '*';
       schedule['month'] = '*';
-      schedule['daymonth'] = '*';
+      schedule['dom'] = '*';
     } else if (value['repeat'] == 'weekly') {
       schedule['month'] = '*';
-      schedule['daymonth'] = '*';
+      schedule['dom'] = '*';
     } else if (value['repeat'] == 'monthly') {
-      schedule['dayweek'] = '*';
+      schedule['dow'] = '*';
       schedule['month'] = '*';
     }
     delete value.repeat;
 
-    if (_.isArray(value.dayweek)) {
-      schedule['dayweek'] = value.dayweek.join(",");
+    if (_.isArray(value.dow)) {
+      schedule['dow'] = value.dow.join(",");
     }
     if (_.isArray(value.month)) {
       schedule['month'] = value.month.join(",");
     }
-    delete value.dayweek;
+    delete value.dow;
     delete value.month;
-    delete value.daymonth;
+    delete value.dom;
     delete value.hour;
     delete value.minute;
 
     value['schedule'] = schedule;
-
 
     console.log(value);
     if (!this.pk) {
