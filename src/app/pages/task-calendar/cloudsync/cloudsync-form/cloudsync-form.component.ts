@@ -5,26 +5,20 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService, RestService, WebSocketService, DialogService } from '../../../../services/';
+import { WebSocketService, DialogService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
-import {EntityUtils} from '../../../common/entity/utils';
-import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { ValueValidator } from '../../../common/entity/entity-form/validators/value-validation';
 
 @Component({
   selector: 'cloudsync-add',
   templateUrl: './cloudsync-form.component.html',
   styleUrls: ['./cloudsync-form.component.css'],
-  providers: [TaskService, UserService, EntityFormService, FieldRelationService]
+  providers: [EntityFormService, FieldRelationService]
 })
 export class CloudsyncFormComponent implements OnInit {
 
@@ -357,12 +351,9 @@ export class CloudsyncFormComponent implements OnInit {
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
-    protected taskService: TaskService,
-    protected userService: UserService,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    protected rest: RestService,
     protected dialog: DialogService,
     protected ws: WebSocketService) {}
 
