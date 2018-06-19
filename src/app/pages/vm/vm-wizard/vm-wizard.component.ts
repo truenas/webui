@@ -156,9 +156,13 @@ export class VMWizardComponent {
           isHidden: false
         },
         {
+          type: 'paragraph',
+          name: 'pool_detach_warning',
+          paraText: T("Select a pool or dataset"),
+        },
+        {
           type: 'explorer',
           name: 'datastore',
-          placeholder : T('Select a pool or dataset'),
           tooltip: T('Choose a pool or dataset for the new zvol.'),
           options: [],
           isHidden: false,
