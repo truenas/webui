@@ -29,6 +29,7 @@ export class CloudsyncListComponent {
     { name: 'Day of Month', prop: 'daymonth' },
     { name: 'Month', prop: 'month' },
     { name: 'Day of Week', prop: 'dayweek' },
+    { name: 'Auxiliary arguments', prop: 'args' },
     { name: 'Credential', prop: 'credential' },
     { name: 'Enabled', prop: 'enabled' },
   ];
