@@ -155,10 +155,12 @@ export class VolumesListTableConfig implements InputTableConf {
               }],
 
               saveButtonText: "Unlock",
-              customSubmit: function (value) {
+              customSubmit: function (entityDialog) {
+                const value = entityDialog.formValue;
                 localLoader.open();
                 return localRest.post("storage/volume/" + row1.name + "/unlock/", { body: JSON.stringify({passphrase: 
                   value.passphrase}) }).subscribe((restPostResp) => {
+                  entityDialog.dialogRef.close(true);
                   localLoader.close();
                   localParentVol.repaintMe();     
                   localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
@@ -315,11 +317,13 @@ export class VolumesListTableConfig implements InputTableConf {
                   dialogRef.componentInstance.volumeId = row1.id;
                 }
               }],
-            customSubmit: function (value) {
+            customSubmit: function (entityDialog) {
+              const value = entityDialog.formValue;
               localLoader.open();
               if (value.destroy === false) { 
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({ destroy: value.destroy }) 
                   }).subscribe((res) => {
+                    entityDialog.dialogRef.close(true);
                     localLoader.close();
                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + "'");
                     localParentVol.repaintMe();
