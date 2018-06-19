@@ -7,6 +7,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService, RestService, WebSocketService, DialogService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,7 +24,7 @@ import { ValueValidator } from '../../../common/entity/entity-form/validators/va
   selector: 'cloudsync-add',
   templateUrl: './cloudsync-form.component.html',
   styleUrls: ['./cloudsync-form.component.css'],
-  providers: [TaskService, UserService, EntityFormService]
+  providers: [TaskService, UserService, EntityFormService, FieldRelationService]
 })
 export class CloudsyncFormComponent implements OnInit {
 
@@ -52,7 +53,9 @@ export class CloudsyncFormComponent implements OnInit {
     ],
     required: true,
     validation : [ Validators.required ]
-  }, {
+  }, 
+
+  {
     type: 'select',
     name: 'credential',
     placeholder: T('Credential'),
@@ -85,7 +88,11 @@ export class CloudsyncFormComponent implements OnInit {
     required: true,
     disabled: true,
     validation : [ Validators.required ],
-  }, {
+  }, 
+
+
+
+  {
     type: 'select',
     name: 'encryption',
     placeholder: T('Server Side Encryption'),
@@ -146,6 +153,15 @@ export class CloudsyncFormComponent implements OnInit {
     value: true,
     tooltip: T('Set to encrypt the shared file names.'),
     isHidden: true,
+    relation: [
+      {
+        action: 'SHOW',
+        when: [{
+          name: 'encryption',
+          value: true,
+         }]
+      }
+    ]
   },
   {
     type: 'input',
@@ -156,6 +172,15 @@ export class CloudsyncFormComponent implements OnInit {
                 Always save and back up this password. Losing the\
                 encryption password can result in data loss.'),
     isHidden: true,
+    relation: [
+      {
+        action: 'SHOW',
+        when: [{
+          name: 'encryption',
+          value: true,
+         }]
+      }
+    ]
   },
   {
     type: 'input',
@@ -168,7 +193,6 @@ export class CloudsyncFormComponent implements OnInit {
                 Losing the salt value can result in data loss.'),
     isHidden: true,
   },
-
   {
     type: 'select',
     name: 'repeat',
@@ -308,7 +332,7 @@ export class CloudsyncFormComponent implements OnInit {
   public isNew: boolean = false;
   protected data: any;
   protected pid: any;
-  protected cloudcredential_query = 'backup.credential.query';
+  protected cloudcredential_query = 'cloudsync.credentials.query';
 
   public validCredential: boolean = false;
 
@@ -317,6 +341,7 @@ export class CloudsyncFormComponent implements OnInit {
     protected taskService: TaskService,
     protected userService: UserService,
     protected entityFormService: EntityFormService,
+    protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected rest: RestService,
     protected dialog: DialogService,
@@ -357,6 +382,52 @@ export class CloudsyncFormComponent implements OnInit {
     }
   }
 
+  setRelation(config: FieldConfig) {
+    const activations =
+        this.fieldRelationService.findActivationRelation(config.relation);
+    if (activations) {
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+          activations, this.formGroup);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+          activations, this.formGroup);
+      this.setDisabled(config.name, tobeDisabled, tobeHide);
+
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
+          .forEach(control => {
+            control.valueChanges.subscribe(
+                () => { this.relationUpdate(config, activations); });
+          });
+    }
+  }
+
+  relationUpdate(config: FieldConfig, activations: any) {
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
+        activations, this.formGroup);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
+          activations, this.formGroup);
+    this.setDisabled(config.name, tobeDisabled, tobeHide);
+  }
+
+  setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
+    if (hide) {
+      disable = hide;
+    }
+
+    this.fieldConfig = this.fieldConfig.map((item) => {
+      if (item.name === name) {
+        item.disabled = disable;
+        item.isHidden = hide;
+      }
+      return item;
+    });
+
+    if (this.formGroup.controls[name]) {
+      const method = disable ? 'disable' : 'enable';
+      this.formGroup.controls[name][method]();
+      return;
+    }
+  }
+
   ngOnInit() {
     let date = new Date();
     this.month_field = _.find(this.fieldConfig, { 'name': 'month' });
@@ -370,6 +441,13 @@ export class CloudsyncFormComponent implements OnInit {
 
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+    for (const i in this.fieldConfig) {
+      const config = this.fieldConfig[i];
+      if (config.relation.length > 0) {
+        this.setRelation(config);
+      }
+    }
 
     this.formGroup.controls['credential'].valueChanges.subscribe((res)=>{
       if (res!=null) {
@@ -412,18 +490,7 @@ export class CloudsyncFormComponent implements OnInit {
       }
     })
 
-    this.formGroup.controls['encryption'].valueChanges.subscribe((res) => {
-      if (res) {
-        this.hideField('filename_encryption', false);
-        this.hideField('encryption_password', false);
-        this.hideField('encryption_salt', false);
-      } else {
-        this.hideField('filename_encryption', true);
-        this.hideField('encryption_password', true);
-        this.hideField('encryption_salt', true);
-      }
-    });
-
+    // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
         this.credential.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
@@ -638,24 +705,4 @@ export class CloudsyncFormComponent implements OnInit {
     }
   }
 
-  hideField(fieldName: any, show: boolean) {
-    let target = _.find(this.fieldConfig, { 'name': fieldName });
-    target.isHidden = show;
-    this.setDisabled(fieldName, show);
-  }
-
-  setDisabled(name: string, disable: boolean, status ? : string) {
-    if (this.formGroup.controls[name]) {
-      const method = disable ? 'disable' : 'enable';
-      this.formGroup.controls[name][method]();
-      return;
-    }
-
-    this.fieldConfig = this.fieldConfig.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-      }
-      return item;
-    });
-  }
 }
