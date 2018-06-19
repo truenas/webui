@@ -238,10 +238,10 @@ export class DockerVMWizardComponent {
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('name')).valueChanges.subscribe((name) => {
       this.summary[T('Name')] = name;
-      this.summary[T('Number of CPU')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
+      this.summary[T('Number of CPUs')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
 
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
-        this.summary[T('Number of CPU')] = vcpus;
+        this.summary[T('Number of CPUs')] = vcpus;
       });
       this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' Mib';
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
@@ -249,15 +249,15 @@ export class DockerVMWizardComponent {
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
-          this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
-          this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });
-      this.summary[T('RAW file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' Gib';
+      this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
     });
   }
   getRndInteger(min, max) {
