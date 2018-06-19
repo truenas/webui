@@ -15,6 +15,7 @@ import {
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector : 'app-support',
@@ -113,7 +114,7 @@ export class SupportComponent  {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
-              private sanitizer: DomSanitizer)
+              private sanitizer: DomSanitizer, protected dialogService: DialogService)
               {}
   
   afterInit(entityEdit: any) {
@@ -165,7 +166,11 @@ export class SupportComponent  {
             if (res.hasOwnProperty(property)) {
               this.category.options.push({label : property, value : res[property]});
             }
-          }});
+          }},(error)=>{
+            if(parent.dialogService){
+              parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
+            }
+          });
       }
   }
 
