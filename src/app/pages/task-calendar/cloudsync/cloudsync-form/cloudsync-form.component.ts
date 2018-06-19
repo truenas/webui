@@ -465,7 +465,6 @@ export class CloudsyncFormComponent implements OnInit {
     // get cloud credentials
     this.ws.call(this.cloudcredential_query, {}).subscribe(res => {
       res.forEach((item) => {
-        console.log(item);
         this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
         this.credentials_list.push(item);
       });
@@ -549,41 +548,45 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     if (!this.isNew) {
-      this.ws.call('backup.query', [this.pk]).subscribe((res) => {
+      this.ws.call('cloudsync.query', [this.pk]).subscribe((res) => {
         if (res) {
           this.data = res[0];
           for (let i in this.data) {
             let fg = this.formGroup.controls[i];
             if (fg) {
               let current_field = this.fieldConfig.find((control) => control.name === i);
-              if (current_field.name == "month" || current_field.name == "dow") {
-                // multiple select
-                if (this.data[i] == '*') {
-                  let human_value = [];
-                  for (let i in current_field.options) {
-                    human_value.push(current_field.options[i].value);
-                  }
-                  fg.setValue(human_value);
-                } else {
-                  let human_value = [];
-                  for (let j in this.data[i]) {
-                    if (_.find(current_field.options, { 'value': this.data[i][j] })) {
-                      human_value.push(this.data[i][j]);
-                    }
-                  }
-                  fg.setValue(human_value);
-                }
-              } else {
-                fg.setValue(this.data[i]);
-              }
+              fg.setValue(this.data[i]);
             }
           }
-          if (this.data.credential) {
-            this.formGroup.controls['credential'].setValue(this.data.credential.id);
+          if (this.data.credentials) {
+            this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
           }
           if(this.data.attributes) {
             this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
             this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
+          }
+          // corn fields
+          if (this.data.schedule) {
+            for (let i in this.data.schedule) {
+              let fg = this.formGroup.controls[i];
+              if (fg) {
+                let current_field = this.fieldConfig.find((control) => control.name === i);
+                if (current_field.name == "month" || current_field.name == "dow") {
+                  // multiple select
+                  if (this.data.schedule[i] == '*') {
+                    let human_value = [];
+                    for (let i in current_field.options) {
+                      human_value.push(current_field.options[i].value);
+                    }
+                    fg.setValue(human_value);
+                  } else {
+                    fg.setValue(this.data.schedule[i].split(','));
+                  }
+                } else {
+                  fg.setValue(this.data.schedule[i]);
+                }
+              }
+            }
           }
 
           if (_.isEqual(this.formGroup.controls['month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
@@ -603,7 +606,6 @@ export class CloudsyncFormComponent implements OnInit {
               }
             }
           }
-          this.formGroup.controls['encryption'].value = this.data.encryption;
         }
       });
     }
@@ -624,13 +626,11 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['credentials'] = parseInt(value.credentials);
 
-
     attributes['bucket'] = value.bucket;
     delete value.bucket;
     attributes['folder'] = value.folder;
     delete value.folder;
     value['attributes'] = attributes;
-
 
     schedule['dow'] = value.dow;
     schedule['month'] = value.month;
@@ -670,7 +670,6 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['schedule'] = schedule;
 
-    console.log(value);
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
