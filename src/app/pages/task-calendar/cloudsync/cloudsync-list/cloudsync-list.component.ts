@@ -40,6 +40,42 @@ export class CloudsyncListComponent {
 
   constructor(protected router: Router, protected ws: WebSocketService, protected taskService: TaskService) {
   }
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+  }
+
+  getActions(parentRow) {
+    return [{
+        id: "edit",
+        label: "Edit",
+        onClick: (row) => {
+          this.router.navigate(
+            new Array('').concat(["tasks", "cloudsync", "edit", row.id]));
+        }
+      },
+      {
+        id: "delete",
+        label: "Delete",
+        onClick: (row) => {
+          this.entityList.doDelete(row.id);
+        }
+      },
+      {
+        id: "start",
+        label: "Run Now",
+        onClick: (row) => {
+          this.entityList.busy =
+            this.ws.call('cloudsync.sync', [row.id]).subscribe(
+              (res) => {
+
+              },
+              (res) => {
+                // new EntityUtils().handleError(this, res);
+              });
+        }
+      }
+    ]
+  }
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {
