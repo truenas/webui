@@ -647,11 +647,11 @@ export class CloudsyncFormComponent implements OnInit {
     }
     delete value.repeat;
 
-    if (_.isArray(value.dow)) {
-      schedule['dow'] = value.dow.join(",");
+    if (_.isArray(schedule['dow'])) {
+      schedule['dow'] = schedule['dow'].join(",");
     }
-    if (_.isArray(value.month)) {
-      schedule['month'] = value.month.join(",");
+    if (_.isArray(schedule['month'])) {
+      schedule['month'] = schedule['month'].join(",");
     }
     delete value.dow;
     delete value.month;
