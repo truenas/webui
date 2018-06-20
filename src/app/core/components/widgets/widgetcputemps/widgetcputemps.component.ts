@@ -18,11 +18,12 @@ import { T } from '../../../../translate-marker';
   selector: 'widget-cpu-temps',
   templateUrl:'./widgetcputemps.component.html'
 })
-export class WidgetCpuTempsComponent extends WidgetComponent implements OnInit, OnDestroy {
+export class WidgetCpuTempsComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
   public title:string = T("CPU Temperatures");
   public aggregateTemps = {};
+  public aggregateMeta = {};
   private _cores: number;
 
   get cores(){
@@ -30,36 +31,29 @@ export class WidgetCpuTempsComponent extends WidgetComponent implements OnInit, 
   }
 
   set cores(val){
-    console.log("SETTING CORES");
     this._cores = val;
     this.registerObservers(val);
   }
 
   constructor(public translate: TranslateService){
     super(translate);
-    //this.cores = 4;
+    //this.cores = 8;
   }
 
   ngOnDestroy(){
     this.core.emit({name:"StatsRemoveListener", data:{name:"CpuTemp", obj:this}});
   }
 
-  ngOnInit(){
+  ngAfterViewInit(){
     this.core.emit({name:"SysInfoRequest"});
+    this.core.emit({name:"StatsAddListener", data:{name:"CpuTemp", obj:this} });
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
       //this.setCPUData(evt);
       if(this.cores !== evt.data.cores){
         this.cores = evt.data.cores;
-        console.log(this.cores);
-        this.core.emit({name:"StatsAddListener", data:{name:"CpuTemp", obj:this} });
       }
     });
-
-    /*this.core.register({observerClass:this,eventName:"StatsCpuAggregateSum"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
-      this.setCPUData(evt);
-    });*/
 
     this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe(() => {
       this.chartCpu.refresh();
@@ -70,8 +64,6 @@ export class WidgetCpuTempsComponent extends WidgetComponent implements OnInit, 
   registerObservers(cores){
     for(let i = 0; i < cores; i++){
       this.core.register({observerClass:this,eventName:"StatsCpuTemp" + i}).subscribe((evt:CoreEvent) => {
-        console.log(evt);
-        //this.setCPUData(evt);
         this.aggregateData(i, evt.data);
       });
     }
@@ -79,43 +71,43 @@ export class WidgetCpuTempsComponent extends WidgetComponent implements OnInit, 
   
   aggregateData(cpu, data){
     let keys = Object.keys(this.aggregateTemps);
+    let metaKeys = Object.keys(this.aggregateMeta);
+
     let temps = data.data.map( value => value/100);
+
     if(keys.length == (this.cores - 1) && !this.aggregateTemps["cpu-" + cpu]){
       this.aggregateTemps["cpu-" + cpu] = temps;
-      console.log("AGGREGATION RESET!!");
-      this.setCPUData(this.aggregateTemps, data.meta);
+      this.setCPUData(this.aggregateTemps, this.aggregateMeta);
       this.aggregateTemps = {};
+      this.aggregateMeta = {};
     } else if(keys.length < this.cores && !this.aggregateTemps["cpu-" + cpu]){
       this.aggregateTemps["cpu-" + cpu] = temps;
+      if(metaKeys.length == 0){
+        this.aggregateMeta = data.meta;
+      }
     }
   }
 
   setCPUData(data, meta){
-    //DEBUG: console.log("SET CPU DATA");
-    //DEBUG: console.log(evt.data);
-    //let cpuUserObj = evt.data;
 
     let parsedData = [];
-    let dataTypes = [];
-    dataTypes = Object.keys(data);//evt.data.meta.legend;
+    let keys = Object.keys(data);
+    for(let i = 0; i < keys.length; i++){
 
-    for(let index in dataTypes){
       let chartData:ChartData = {
-        legend: dataTypes[index],
-        data:[]
-      }
-      for(let i in /*evt.data.*/data){
-        chartData.data.push(/*evt.data.*/data[i][index])
+        legend:"CPU " + i,
+        data: data["cpu-" + i]
       }
       parsedData.push(chartData);
     }
 
-     this.chartCpu.chartType = 'area-spline';
+     this.chartCpu.chartType = 'spline';
      this.chartCpu.units = '°';
+     //this.chartCpu.max = 100; // Uncomment this to set a static max to y axis
      this.chartCpu.timeSeries = true;
      this.chartCpu.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
-     this.chartCpu.timeData = /*evt.data.*/meta;
-     this.chartCpu.data = parsedData;//[cpuUser];
+     this.chartCpu.timeData = meta;
+     this.chartCpu.data = parsedData;
      this.chartCpu.width = this.chartSize;
      this.chartCpu.height = this.chartSize;
      this.chartCpu.refresh();
