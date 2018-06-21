@@ -1,9 +1,11 @@
-<div style="background-color: lightgrey" id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-    <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button>
-    <mat-input-container class="full-width">
-        <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
-    </mat-input-container>
+<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+    <div id="formexrow" class="full-width">
+        <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button>
+        <mat-input-container class="full-width" id="formexinput">
+            <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+            <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
+        </mat-input-container>
+    </div>
     <!-- <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
     <pre>
     </pre>  

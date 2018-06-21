@@ -1,15 +1,33 @@
 .form-explorer {
     margin-bottom: 10px;
-
  }
 
- .full-width {
-     max-width: 80%;
-     display: inline-block;
-     margin-left: 20px;
- }
+button {
+    display: inline-block;
+}
 
- button {
-     display: inline-block;
- }
+#formexinput {
+    max-width: 75%;
+    display: inline-block;
+    margin-left: 10px;
+}
 
+#formexinput tooltip {
+    position: relative;
+    left: 28px;
+    top: 20px;
+}
+  
+@media screen and (max-width: 685px) {
+    #formexinput {
+      display: block;
+      margin-left: 0;
+      margin-top: 8px;
+    }
+
+    .form-explorer {
+        border: 1px solid lightgrey;
+        padding: 5px;
+    }
+
+}
