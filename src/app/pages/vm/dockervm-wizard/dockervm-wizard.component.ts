@@ -276,6 +276,7 @@ async customSubmit(value) {
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = String(value.vcpus);
     vm_payload["bootloader"] = 'GRUB';
+    vm_payload["autostart"] = value.autostart;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path, "type": "AHCI", "rootpwd":"docker", "boot": true, "size": value.size, sectorsize: 0}},
