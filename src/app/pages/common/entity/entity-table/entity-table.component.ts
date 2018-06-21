@@ -200,11 +200,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
-    this.loader.open();
+    // this.loader.open();
     this.busy =
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
-        this.loader.close();
+        // this.loader.close();
       });
   }
 

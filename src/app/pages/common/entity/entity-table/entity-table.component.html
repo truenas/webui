@@ -1,4 +1,6 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
+    <mat-spinner id="spinner" *ngIf="!showDefaults"></mat-spinner> 
+
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
