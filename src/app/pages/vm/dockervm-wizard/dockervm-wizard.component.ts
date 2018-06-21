@@ -176,7 +176,7 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'sectorsize',
-          placeholder : T('Disk sector size'),
+          placeholder : T('Disk sector size (Bytes)'),
           tooltip: T('Disk sector size in bytes. Enter\
                       <i>0</i> to leave the sector size unset.'),
           value: 0,
