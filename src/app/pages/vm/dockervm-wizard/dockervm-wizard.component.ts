@@ -14,6 +14,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { MatDialog } from '@angular/material';
 import { validateBasis } from '@angular/flex-layout';
 import { T } from '../../../translate-marker';
+import { DialogService } from '../../../services/dialog.service';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class DockerVMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "Docker Summary";
+  entityWizard: any;
 
   protected wizardConfig: Wizard[] = [
     {
@@ -61,6 +63,9 @@ export class DockerVMWizardComponent {
         tooltip : T('Enter a name for this Docker VM.'),
         validation : [ Validators.required ],
         required: true,
+        blurStatus: true,
+        blurEvent: this.blurEvent,
+        parent: this
       },
       { type: 'checkbox',
         name : 'autostart',
@@ -199,8 +204,11 @@ export class DockerVMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    private router: Router) {
+    private router: Router, private dialogService: DialogService) {
 
+  }
+  preInit(entityWizard: EntityWizardComponent){
+    this.entityWizard = entityWizard;
   }
 
 
@@ -210,6 +218,9 @@ export class DockerVMWizardComponent {
       if (res === 'vm') {
         this.router.navigate(new Array('/').concat(['vm','wizard']))
       }
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+      this.summary[T('Name')] = name;
     });
 
     this.networkService.getAllNicChoices().subscribe((res) => {
@@ -265,6 +276,17 @@ export class DockerVMWizardComponent {
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+blurEvent(parent){
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
+    if(vm_wizard_res.length > 0){
+      parent.dialogService.Info("Error", `docker container ${vm_wizard_res[0].name} already exists, please use a diffrent name`).subscribe(()=>{
+        parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
 }
 
 async customSubmit(value) {
