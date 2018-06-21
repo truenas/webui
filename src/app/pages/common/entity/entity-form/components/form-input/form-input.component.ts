@@ -1,4 +1,4 @@
-import { Component, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component, Output, ViewChild, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -44,6 +44,12 @@ export class FormInputComponent implements Field {
       this.group.controls[this.config.name].setValue(btoa(result));
     } else {
       this.group.controls[this.config.name].setValue(result);
+    }
+  }
+
+  blurEvent(){
+    if(this.config.blurStatus){
+      this.config.blurEvent(this.config.parent)
     }
   }
 }

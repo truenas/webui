@@ -1,26 +1,21 @@
-import {ApplicationRef, Component, Injector, OnInit, OnDestroy} from '@angular/core';
+import {ApplicationRef, Component, Injector} from '@angular/core';
 import { DomSanitizer} from '@angular/platform-browser';
 
 import {
-  AbstractControl,
-  FormArray,
-  FormGroup,
+
   Validators
 } from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {Router} from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, UserService, WebSocketService} from '../../../services/';
-import {  DialogService } from '../../../services/';
+import {RestService, WebSocketService} from '../../../services/';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import {
-  matchOtherValidator
-} from '../../common/entity/entity-form/validators/password-validation';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material';
 import { T } from '../../../translate-marker';
+import { DialogService } from '../../../services/dialog.service';
 
 @Component({
   selector : 'app-support',
@@ -60,7 +55,7 @@ export class SupportComponent  {
       placeholder : T('Username'),
       tooltip : T(''),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
     },
     {
       type : 'input',
@@ -69,7 +64,10 @@ export class SupportComponent  {
       placeholder : T('Password'),
       tooltip : T('',),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      blurStatus: true,
+      blurEvent: this.blurEvent,
+      parent: this
     },
     {
       type : 'select',
@@ -116,25 +114,13 @@ export class SupportComponent  {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected _injector: Injector,
               protected _appRef: ApplicationRef, protected dialog: MatDialog,
-              private sanitizer: DomSanitizer)
+              private sanitizer: DomSanitizer, protected dialogService: DialogService)
               {}
   
   afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
     this.category = _.find(this.fieldConfig, {name: "category"});
-    console.log(_.find(this.fieldConfig, {name: "support_text"}))
-    if(this.category.options.length === 0){
-      entityEdit.formGroup.controls['username'].valueChanges.subscribe((username)=>{
-        entityEdit.formGroup.controls['password'].valueChanges.subscribe((password)=>{
-          this.ws.call('support.fetch_categories',[username,password]).subscribe((res)=>{      
-            for (const property in res) {
-              if (res.hasOwnProperty(property)) {
-                this.category.options.push({label : property, value : res[property]});
-              }
-            }
-          })
-        })
-      })
-    }
+
 
 
   }
@@ -164,5 +150,28 @@ export class SupportComponent  {
     });
   }
 
+  
+  blurEvent(parent){
+    this.category = _.find(parent.fieldConfig, {name: "category"});
+      if(parent.entityEdit){
+        this.username  = parent.entityEdit.formGroup.controls['username'].value;
+        this.password  = parent.entityEdit.formGroup.controls['password'].value;
+      }
+      if(this.category.options.length > 0){
+        this.category.options = [];
+      }
+      if(this.category.options.length === 0 ){
+        parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+          for (const property in res) {
+            if (res.hasOwnProperty(property)) {
+              this.category.options.push({label : property, value : res[property]});
+            }
+          }},(error)=>{
+            if(parent.dialogService){
+              parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
+            }
+          });
+      }
+  }
 
 }

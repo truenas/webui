@@ -11,7 +11,6 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigSaveComponent } from './general/config-save/config-save.component';
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
@@ -56,7 +55,6 @@ import { AlertConfigComponent } from './alert/alert.component';
     GeneralComponent,
     ConfigUploadComponent,
     ConfigResetComponent,
-    ConfigSaveComponent,
     AdvancedComponent,
     DatasetComponent,
     BootEnvironmentListComponent,
