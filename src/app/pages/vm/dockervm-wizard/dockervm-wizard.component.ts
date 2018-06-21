@@ -153,7 +153,7 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'size',
-          placeholder : T('Raw file size'),
+          placeholder : T('Raw file size (GiB)'),
           tooltip: T('Allocate a number of gibibytes (GiB) to the new\
                       raw file.'),
           value: 10,

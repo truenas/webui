@@ -1,5 +1,12 @@
-<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+<div style="background-color: lightgrey" id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
     <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button>
+    <mat-input-container class="full-width">
+        <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
+    </mat-input-container>
+    <!-- <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
+    <pre>
+    </pre>  
     <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
         <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
             <mat-icon>folder</mat-icon>
@@ -11,11 +18,5 @@
             <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
         </ng-template>
     </tree-root>
-    <pre>
-    </pre>  
-    <mat-input-container class="full-width">
-        <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
-    </mat-input-container>
     <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>
