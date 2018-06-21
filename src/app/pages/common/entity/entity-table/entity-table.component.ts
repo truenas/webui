@@ -96,6 +96,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   public showDefaults: boolean = false;
+  public showSpinner: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -156,12 +157,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
 
-      setTimeout(() => { this.setShowDefaults(); }, 1000);
+      setTimeout(() => { this.setShowSpinner(); }, 500);
     
   }
 
-  setShowDefaults() {
-    this.showDefaults = true;
+  setShowSpinner() {
+    this.showSpinner = true;
   }
   
 

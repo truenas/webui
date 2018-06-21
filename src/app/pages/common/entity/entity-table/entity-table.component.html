@@ -1,5 +1,5 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
-    <mat-spinner id="spinner" *ngIf="!showDefaults"></mat-spinner> 
+    <mat-spinner id="spinner" *ngIf="!showDefaults && showSpinner"></mat-spinner> 
 
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
