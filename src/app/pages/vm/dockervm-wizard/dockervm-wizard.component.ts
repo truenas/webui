@@ -279,7 +279,7 @@ export class DockerVMWizardComponent {
 }
 blurEvent(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
-  parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
+  parent.ws.call('vm.query', [[["name","=",vm_name], ["vm_type", "=", "Container Provider"]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
       parent.dialogService.Info("Error", `docker container ${vm_wizard_res[0].name} already exists, please use a diffrent name`).subscribe(()=>{
         parent.entityWizard.formArray.get([1]).get('name').setValue("");
