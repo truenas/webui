@@ -258,6 +258,9 @@ export class DockerVMWizardComponent {
         })
       });
       this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
+      ( < FormGroup > entityWizard.formArray.get([4])).get('size').valueChanges.subscribe((size) => {
+        this.summary[T('Raw file size')] = size + ' GiB';
+      });
     });
   }
   getRndInteger(min, max) {
