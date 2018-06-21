@@ -212,6 +212,7 @@ export class VmCardsComponent implements OnInit {
       memory:data.memory,
       //lazyLoaded: false,
       devices:data.devices,
+      vm_type: data.vm_type
     }   
 
     // Leave out properties not used for update requests
