@@ -23,9 +23,15 @@
 	height: 40px;
 }
 
-#spinner {
-    position: relative;
-    margin: 300px auto;
+#entity-spinner {
+    position: absolute;
+    top: 50%;
+    left: 40%;
+    text-align: center;
+    z-index: 10;
+    margin: 0 auto;
+    height: 120px;
+    padding: 25px 35px;
 }
 
 #footer {
@@ -34,4 +40,18 @@
 
 #footer-text {
     margin-left: 10px;
+}
+
+@media screen and (max-width: 500px) {
+    #entity-spinner {
+
+        left: 30%;
+    }
+}
+
+@media screen and (max-height: 600px) {
+    #entity-spinner {
+        top: 30%;
+
+    }
 }
