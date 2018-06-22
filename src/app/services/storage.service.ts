@@ -4,7 +4,7 @@ import { RestService } from './rest.service';
 
 @Injectable()
 export class StorageService {
-  protected diskResource: string = 'storage/disk';
+  protected diskResource: string = 'disk.query';
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
@@ -13,7 +13,7 @@ export class StorageService {
   }
 
   listDisks() {
-    return this.rest.get(this.diskResource, { limit: 50 });
+    return this.ws.call(this.diskResource, []);
   }
 
   // Sorts array by disk names into 'natural' order
