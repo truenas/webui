@@ -598,3 +598,10 @@ entity-form .form-card.mat-card{
 .datatable-scroll {
   min-width: 100%;
 }
+
+@media screen and (max-width: 685px) {
+.form-explorer {
+  //background-color:#ddd;
+  @include variable(background, --bg1, $bg1);
+}
+}

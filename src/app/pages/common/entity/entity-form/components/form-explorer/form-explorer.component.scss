@@ -2,15 +2,15 @@
     margin-bottom: 10px;
  }
 
-button {
-    display: inline-block;
-}
+ #box1 {
+     display: inline-block;
+     width: 17%;
+ }
 
-#formexinput {
-    max-width: 75%;
-    display: inline-block;
-    margin-left: 10px;
-}
+ #box2 {
+     display: inline-block;
+     width: 82%;
+ }
 
 #formexinput tooltip {
     position: relative;
@@ -19,15 +19,43 @@ button {
 }
   
 @media screen and (max-width: 685px) {
-    #formexinput {
+    #box2 {
       display: block;
       margin-left: 0;
       margin-top: 8px;
+      width: 97%;
     }
 
     .form-explorer {
-        border: 1px solid lightgrey;
         padding: 5px;
+        margin-bottom: 20px;
     }
 
+}
+
+@media screen and (min-width: 1100px) {
+    #box1 {
+        width: 13%;
+    }
+    #box2 {
+        width: 86%;
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    #box1 {
+        width: 10%;
+    }
+    #box2 {
+        width: 89%;
+    }
+}
+
+@media screen and (min-width: 1650px) {
+    #box1 {
+        width: 8%;
+    }
+    #box2 {
+        width: 91%;
+    }
 }
