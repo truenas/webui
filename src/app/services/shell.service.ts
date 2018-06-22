@@ -24,6 +24,7 @@ export class ShellService {
   //input and output and eventEmmitter
   private shellCmdOutput: any;
   @Output() shellOutput = new EventEmitter < any > ();
+  @Output() shellConnected = new EventEmitter < any > ();
 
   public subscriptions: Map < string, Array < any >> = new Map < string, Array < any >> ();
 
@@ -64,6 +65,7 @@ export class ShellService {
   onclose(event) {
     this.connected = false;
     this.onCloseSubject.next(true);
+    this.shellConnected.emit(this.connected);
   }
 
 
@@ -79,6 +81,7 @@ export class ShellService {
     if (data.msg === "connected") {
       this.connected = true;
       this.onconnect();
+      this.shellConnected.emit(this.connected);
       return;
     }
 
