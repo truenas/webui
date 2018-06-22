@@ -64,7 +64,6 @@ export class ShellService {
   onclose(event) {
     this.connected = false;
     this.onCloseSubject.next(true);
-    setTimeout(this.connect.bind(this), 5000);
   }
 
 
