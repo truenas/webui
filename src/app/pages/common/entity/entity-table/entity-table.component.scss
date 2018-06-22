@@ -26,7 +26,8 @@
 #entity-spinner {
     position: absolute;
     top: 50%;
-    left: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
     z-index: 10;
     margin: 0 auto;
@@ -42,16 +43,15 @@
     margin-left: 10px;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-height: 750px) {
     #entity-spinner {
-
-        left: 30%;
+        top: 35%;
     }
 }
 
 @media screen and (max-height: 600px) {
     #entity-spinner {
-        top: 30%;
+        top: 10%;
 
     }
 }
