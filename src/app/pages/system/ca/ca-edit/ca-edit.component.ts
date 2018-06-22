@@ -34,14 +34,12 @@ export class CertificateAuthorityEditComponent {
       type: 'textarea',
       name: 'certificate',
       placeholder: T('Certificate'),
-      tooltip: T('Copy and paste the contents of the certificate.'),
       readonly: true,
     },
     {
       type: 'textarea',
       name: 'privatekey',
       placeholder: T('Private Key'),
-      tooltip: T('Copy and paste the contents of the private key.'),
       readonly: true,
     },
   ];
