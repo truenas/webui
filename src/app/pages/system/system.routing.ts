@@ -28,6 +28,7 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
@@ -232,7 +233,13 @@ export const routes: Routes = [
         path: 'add',
         component: CertificateAuthorityAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
+      },
+      {
+        path: 'edit/:pk',
+        component: CertificateAuthorityEditComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' },
+      },
+      {
         path: 'sign/:pk',
         component: CertificateAuthoritySignComponent,
         data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },

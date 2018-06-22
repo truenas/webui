@@ -59,7 +59,15 @@ export class CertificateAuthorityListComponent {
   }
 
   getActions(row) {
-    return [{
+    return [
+      {
+        id: "Edit",
+        label: T("Edit"),
+        onClick: (row) => {
+          this.router.navigate(new Array('').concat(["system", "ca", "edit", row.id]))
+        }
+      },
+      {
         id: "sign",
         label: T("Sign CSR"),
         onClick: (row) => {
