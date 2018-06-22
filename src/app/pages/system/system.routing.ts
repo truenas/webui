@@ -249,9 +249,9 @@ export const routes: Routes = [
         component: CertificateAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, {
-        path: 'edit/:pk',
+        path: 'view/:pk',
         component: CertificateEditComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        data: { title: 'View', breadcrumb: 'View' },
       }]
     }, {
       path: 'support',
