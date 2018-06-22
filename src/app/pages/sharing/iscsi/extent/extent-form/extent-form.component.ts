@@ -222,29 +222,16 @@ export class ExtentFormComponent {
     });
 
     this.extent_disk_control = _.find(this.fieldConfig, {'name' : 'iscsi_target_extent_disk'});
-    //get all zvols
-    this.iscsiService.getVolumes().subscribe((res) => {
-      res.data.forEach((vol) => {
-        this.iscsiService.getZvols(vol.name).subscribe((res) => {
-          res.data.forEach((zvol) => {
-            let value = 'zvol/' + vol.name + '/' + zvol.name;
-            this.extent_disk_control.options.push({label: value, value: value});
-          });
-        });
-      })
-    });
-    //get all unused disks
-    this.iscsiService.getUnusedDisk().subscribe((res) => {
-      for(let i = 0; i < res.length; i++) {
-        let label = res[i].name + ' (' +  (<any>window).filesize(res[i].size, {standard : "iec"}) + ')';
-        this.extent_disk_control.options.push({label: label, value: res[i].name});
+    //get device options
+    this.iscsiService.getExtentDevices().subscribe((res) => {
+      for(let i in res) {
+        this.extent_disk_control.options.push({label: res[i], value: i});
       }
     })
     //show current value if isNew is false
     if (!this.isNew) {
       this.rest.get('/services/iscsi/extent/'+this.pk, {}).subscribe((res) =>{
         if (res.data) {
-          this.extent_disk_control.options.push({label: res.data.iscsi_target_extent_path.substring(5), value: res.data.iscsi_target_extent_path.substring(5)});
           this.entityForm.formGroup.controls['iscsi_target_extent_disk'].setValue(res.data.iscsi_target_extent_path.substring(5));
         }
       })
