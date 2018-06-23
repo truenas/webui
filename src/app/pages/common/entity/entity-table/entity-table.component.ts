@@ -204,7 +204,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           this.handleData(res);
         },
         (res) => {
-          new EntityUtils().handleError(this, res);
+          if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
+            this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
+          }
+          else {
+            new EntityUtils().handleError(this, res);
+          }
         }
       );
 
