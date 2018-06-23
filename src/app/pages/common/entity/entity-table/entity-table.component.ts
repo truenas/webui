@@ -199,9 +199,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
     this.busy =
-      this.getFunction.subscribe((res)=>{
-        this.handleData(res);
-      });
+      this.getFunction.subscribe(
+        (res) => {
+          this.handleData(res);
+        },
+        (res) => {
+          new EntityUtils().handleError(this, res);
+        }
+      );
 
   }
 
