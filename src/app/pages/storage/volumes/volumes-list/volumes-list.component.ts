@@ -272,7 +272,7 @@ export class VolumesListTableConfig implements InputTableConf {
             localDialogService = this.dialogService
 
           const conf: DialogFormConfiguration = { 
-            title: "Detatch pool: '" + row1.name + "'",
+            title: "Detach pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -334,6 +334,7 @@ export class VolumesListTableConfig implements InputTableConf {
               } else {
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
                   }).subscribe((res) => {
+                    entityDialog.dialogRef.close(true);
                     localLoader.close();
                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
                       T("'. All data on that pool was destroyed."));
