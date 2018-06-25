@@ -1,4 +1,4 @@
-<div id="entity-table-component" class="material mat-card mat-card-table">
+<div id="entity-table-component" class="material mat-card mat-card-table"> 
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
@@ -71,7 +71,39 @@
       [selectionType]="'checkbox'"
       [displayCheck]="displayCheck"
       [selected]='selected'
-      (select)='onSelect($event)'>
+      (select)='onSelect($event)'
+      #entityTable>
+
+      <ngx-datatable-footer>
+          <ng-template 
+            ngx-datatable-footer-template 
+            let-rowCount="rowCount"
+            let-selectedCount="selectedCount"
+            let-pageSize="pageSize"
+            let-curPage="curPage"
+            let-offset="offset"
+            >
+            <div id="footer">
+              <div id="footer-text">
+                {{offset * pageSize + 1}} - 
+                {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}} 
+                of {{rowCount}} 
+                <span *ngIf="selectedCount > 0"> | {{selectedCount}} selected</span>
+              </div>
+            </div>
+            <datatable-pager
+                [pagerLeftArrowIcon]="'datatable-icon-left'"
+                [pagerRightArrowIcon]="'datatable-icon-right'"
+                [pagerPreviousIcon]="'datatable-icon-prev'"
+                [pagerNextIcon]="'datatable-icon-skip'"
+                [page]="curPage"
+                [size]="pageSize"
+                [count]="rowCount"
+                [hidden]="!((rowCount / pageSize) > 1)"
+                (change)="entityTable.onFooterPage($event)">
+            </datatable-pager>
+          </ng-template>
+        </ngx-datatable-footer>
 
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">

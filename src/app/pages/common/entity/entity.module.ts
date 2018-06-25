@@ -16,7 +16,6 @@ import { RestService, WebSocketService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { EntityDeleteComponent } from './entity-delete/entity-delete.component';
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
 import { FormButtonComponent } from './entity-form/components/form-button/form-button.component';
@@ -70,7 +69,6 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     OverlayModule, A11yModule
   ],
   declarations: [
-    EntityDeleteComponent,
     EntityTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
@@ -111,7 +109,6 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     EntityDashboardComponent
   ],
   exports: [
-    EntityDeleteComponent,
     EntityTemplateDirective,
     EntityFormComponent,
     EntityFormEmbeddedComponent,

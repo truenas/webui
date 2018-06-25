@@ -88,7 +88,7 @@ export class UpdateComponent implements OnInit {
   onTrainChanged(event){
     const isValid = this.validUpdate(this.selectedTrain, event.value);
     if (isValid) {
-      this.dialogService.confirm("Switch Train", "Are you sure you want to switch trains?").subscribe((res)=>{
+      this.dialogService.confirm("Switch Train", "Do you want to switch trains?").subscribe((res)=>{
         if (res) {
           this.check();
           this.train = event.value;
@@ -97,7 +97,7 @@ export class UpdateComponent implements OnInit {
         }
       });
     } else {
-      this.dialogService.Info("Confirm", "Changing away from the train is not permitted, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train").subscribe(res => {
+      this.dialogService.Info("Confirm", "Changing away from the train is not permitted as it is considered a downgrade. Boot into an existing boot environment using the desired train to upgrade it.").subscribe(res => {
         this.train = this.selectedTrain;
       });
     }
@@ -159,7 +159,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             const ds  = this.dialogService.confirm(
-              "Download Update", "Do you want to continue?",true,"",true,"Apply updates after downloading (The system will reboot)","update.update",[{ train: this.train, reboot: false }]
+              "Download Update", "Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading)","update.update",[{ train: this.train, reboot: false }]
             )
             ds.afterClosed().subscribe((status)=>{
               if(status){
@@ -169,7 +169,7 @@ export class UpdateComponent implements OnInit {
                   this.dialogRef.componentInstance.submit();
                   this.dialogRef.componentInstance.success.subscribe((succ) => {
                     this.dialogRef.close(false);
-                    this.snackBar.open("Updates are successfully Downloaded",'close', { duration: 5000 });
+                    this.snackBar.open("Updates successfully downloaded",'close', { duration: 5000 });
                     this.pendingupdates();
                     
                   });
@@ -211,7 +211,7 @@ export class UpdateComponent implements OnInit {
   }
   ApplyPendingUpdate() {
     const apply_pending_update_ds  = this.dialogService.confirm(
-      "Apply Pending Updates", "Are you sure you want to continue? The system will be rebooted after updates are applied."
+      "Apply Pending Updates", "The system will be rebooted after updates are applied. Do you want to continue?"
     ).subscribe((res)=>{
       if(res){
        this.update();
@@ -278,7 +278,7 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + ":  Automatic update check failed, please check your network setting."
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + ":  Automatic update check failed. Please check system network settings."
         }, 
         () => {
         });

@@ -93,25 +93,25 @@ msgid "A scrub occurs on the selected months."
 msgstr ""
 
 msgid "ACL Type"
-msgstr ""
+msgstr "Typ ACL"
 
 msgid "AFP3 Unix Privs"
 msgstr ""
 
 msgid "About"
-msgstr ""
+msgstr "O software"
 
 msgid "Access Key"
-msgstr ""
+msgstr "Přístupový klíč"
 
 msgid "Account"
-msgstr ""
+msgstr "Účet"
 
 msgid "Account Key"
 msgstr ""
 
 msgid "Account Name"
-msgstr ""
+msgstr "Název účtu"
 
 msgid ""
 "Account to be used for guest access; default is       nobody; account must "
@@ -123,10 +123,10 @@ msgid "Acoustic Level"
 msgstr ""
 
 msgid "Activate "
-msgstr ""
+msgstr "Źapnout"
 
 msgid "Activate Jail Manager"
-msgstr ""
+msgstr "Zapnout správu ohraničených prostředí"
 
 msgid ""
 "Activates the process for ZFS to transparently reuse a single copy of "
@@ -136,25 +136,25 @@ msgid ""
 msgstr ""
 
 msgid "Active Directory"
-msgstr ""
+msgstr "Active Directory"
 
 msgid "Adapter Type"
-msgstr ""
+msgstr "Typ adaptéru"
 
 msgid "Add Additional Path"
 msgstr ""
 
 msgid "Add Cache"
-msgstr ""
+msgstr "Přidat mezipaměť"
 
 msgid "Add Data"
-msgstr ""
+msgstr "Přidat data"
 
 msgid "Add Dataset"
-msgstr ""
+msgstr "Přidat datovou sadu"
 
 msgid "Add Key"
-msgstr ""
+msgstr "Přidat klíč"
 
 msgid "Add Log"
 msgstr ""
@@ -163,13 +163,13 @@ msgid "Add Recovery Key"
 msgstr ""
 
 msgid "Add Spare"
-msgstr ""
+msgstr "Přidat náhradní"
 
 msgid "Add Zvol"
-msgstr ""
+msgstr "Přidat ZFS svazek"
 
 msgid "Add a name for the new snapshot"
-msgstr ""
+msgstr "Nazvat nový zachycený stav"
 
 msgid ""
 "Add an SSL certificate to be used for secure S3       connections. To "
@@ -183,7 +183,7 @@ msgid "Add any notes about this zvol."
 msgstr ""
 
 msgid "Add key to pool"
-msgstr ""
+msgstr "Přidat klíd do fondu"
 
 msgid ""
 "Add lines to the jail <ins>resolv.conf</ins> file. <b>Example:</b> "
@@ -259,22 +259,22 @@ msgid ""
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Adresa"
 
 msgid "Adds virtual file system modules to enhance functionality."
 msgstr ""
 
 msgid "Administration Password"
-msgstr ""
+msgstr "Heslo pro správu"
 
 msgid "Advanced"
-msgstr ""
+msgstr "Pokročilé"
 
 msgid "Advanced Mode"
-msgstr ""
+msgstr "Pokročilý režim"
 
 msgid "Advanced Power Management"
-msgstr ""
+msgstr "Pokročilá správa napájení"
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -296,7 +296,7 @@ msgid "All Disks"
 msgstr ""
 
 msgid "All dirs"
-msgstr ""
+msgstr "Všechny složky"
 
 msgid "Allow Anonymous Login"
 msgstr ""
@@ -459,25 +459,25 @@ msgid "Archive"
 msgstr ""
 
 msgid "Are you sure you want to delete?"
-msgstr ""
+msgstr "Opravdu toto chcete smazat?"
 
 msgid "Are you sure you want to delete? The data will be lost."
-msgstr ""
+msgstr "Opravdu toto chcete smazat? Data budou ztracena"
 
 msgid "Are you sure you want to wipe disk?"
 msgstr ""
 
 msgid "Are you sure you wish to reboot the system?"
-msgstr ""
+msgstr "Opravdu chcete systém restartovat?"
 
 msgid "Are you sure you wish to shut down the system?"
-msgstr ""
+msgstr "Opravdu chcete systém vypnout?"
 
 msgid "Arranges available disks in a system recommended formation."
 msgstr ""
 
 msgid "Associate an email address with the account"
-msgstr ""
+msgstr "Přiřadit k účtu e-mailovou adresu"
 
 msgid ""
 "At this time, the only supported role is as the domain       controller for "
@@ -500,7 +500,7 @@ msgid "Authorized Networks"
 msgstr ""
 
 msgid "Auto configure IPv6"
-msgstr ""
+msgstr "Automaticky nastavit IPv6"
 
 msgid ""
 "Auto-populates with information from the <b>Realm</b>       when the "
@@ -520,10 +520,10 @@ msgid ""
 msgstr ""
 
 msgid "Auxiliary Groups"
-msgstr ""
+msgstr "Další skupiny"
 
 msgid "Auxiliary Parameters"
-msgstr ""
+msgstr "Další parametry"
 
 msgid "Auxiliary Parameters(ups.conf)"
 msgstr ""
@@ -538,7 +538,7 @@ msgid "Available Disks"
 msgstr ""
 
 msgid "Available Themes"
-msgstr ""
+msgstr "Motivy vzhledu k dispozici"
 
 msgid "Available space threshold (%)"
 msgstr ""
@@ -547,10 +547,10 @@ msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr ""
 
 msgid "Back"
-msgstr ""
+msgstr "Zpět"
 
 msgid "Back to the Old UI"
-msgstr ""
+msgstr "Zpět do starého uživatelského rozhraní"
 
 msgid "Base Name"
 msgstr ""
@@ -607,7 +607,7 @@ msgid "Browsable to Network Clients"
 msgstr ""
 
 msgid "Browse"
-msgstr ""
+msgstr "Procházet"
 
 msgid ""
 "Browse to an <b>existing</b> directory to be used for       storage. Some "
@@ -665,7 +665,7 @@ msgid "Bucket"
 msgstr ""
 
 msgid "Burst"
-msgstr ""
+msgstr "Dávka"
 
 msgid ""
 "By convention, user accounts have an ID greater than  1000 and system "
@@ -704,10 +704,10 @@ msgid "CAs"
 msgstr ""
 
 msgid "CPU and Memory"
-msgstr ""
+msgstr "Procesor a oper. paměť"
 
 msgid "CPU and Memory configuration."
-msgstr ""
+msgstr "Nastavení pro procesor a oper. paměť"
 
 msgid ""
 "Can be used to specify which physical interface to     associate with the "
@@ -715,7 +715,7 @@ msgid ""
 msgstr ""
 
 msgid "Cancel"
-msgstr ""
+msgstr "Storno"
 
 msgid "Capitalized DNS realm name."
 msgstr ""
@@ -724,25 +724,25 @@ msgid "Capitalized domain name."
 msgstr ""
 
 msgid "Case Sensitivity"
-msgstr ""
+msgstr "Rozlišování velká/malá písmena"
 
 msgid "Category"
-msgstr ""
+msgstr "Kategorie"
 
 msgid "Certificate"
-msgstr ""
+msgstr "Certifikát"
 
 msgid "Certificates"
-msgstr ""
+msgstr "Certifikáty"
 
 msgid "Change Password"
-msgstr ""
+msgstr "Změnit heslo"
 
 msgid "Change User & Group Ownership"
 msgstr ""
 
 msgid "Change log"
-msgstr ""
+msgstr "Seznam změn"
 
 msgid ""
 "Change this default password. The new password cannot       contain a "
@@ -756,7 +756,7 @@ msgid "Check Now"
 msgstr ""
 
 msgid "Check Release Notes"
-msgstr ""
+msgstr "Přečtěte si poznámky k vydání"
 
 msgid ""
 "Check the       <a href=\"http://networkupstools.org/stable-hcl.html\" "
@@ -975,7 +975,7 @@ msgid "Check to start this VM when the system boots."
 msgstr ""
 
 msgid "Check to use DHCP to configure IP settings."
-msgstr ""
+msgstr "Zaškrtnutím bude pro IP protokol použito nastavení z DHCP."
 
 msgid ""
 "Check to use VirtIO to emulate network devices for this jail.  Check this "
@@ -1077,7 +1077,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose a color scheme."
-msgstr ""
+msgstr "Zvolte barevné schéma."
 
 msgid ""
 "Choose a compression algorithm. The <b>Storage/Volumes/Create "
@@ -1113,7 +1113,7 @@ msgid "Choose an existing datastore for the new Zvol."
 msgstr ""
 
 msgid "Choose an installation media"
-msgstr ""
+msgstr "Zvolte instalační médium"
 
 msgid ""
 "Choose how many log entries to create. Choices range       from the least "
@@ -1155,7 +1155,7 @@ msgid "Choose when the system must stop taking snapshots."
 msgstr ""
 
 msgid "Choose your language."
-msgstr ""
+msgstr "Zvolte svůj jazyk"
 
 msgid "Click <b>Browse</b> to select a location to store the uploaded ISO."
 msgstr ""
@@ -1164,13 +1164,13 @@ msgid "Click <b>Browse</b> to select the path to the installation media."
 msgstr ""
 
 msgid "Clients"
-msgstr ""
+msgstr "Klienti"
 
 msgid "Cloned"
 msgstr ""
 
 msgid "Close"
-msgstr ""
+msgstr "Zavřít"
 
 msgid "Cloud Credentials"
 msgstr ""
@@ -1213,7 +1213,7 @@ msgid ""
 msgstr ""
 
 msgid "Command"
-msgstr ""
+msgstr "Příkaz"
 
 msgid ""
 "Commands to run in the prison environment before a jail is removed and "
@@ -1229,28 +1229,28 @@ msgid ""
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Komentář"
 
 msgid "Comments"
-msgstr ""
+msgstr "Komentáře"
 
 msgid "Common Name"
 msgstr ""
 
 msgid "Community"
-msgstr ""
+msgstr "Komunita"
 
 msgid "Compress"
-msgstr ""
+msgstr "Komprimovat"
 
 msgid "Compress Connections"
-msgstr ""
+msgstr "Komprimovat připojení"
 
 msgid "Compression level"
-msgstr ""
+msgstr "Míra komprese"
 
 msgid "Compression level:"
-msgstr ""
+msgstr "Míra komprese:"
 
 msgid ""
 "Configures network or internet access for the jail. Type the IPv4 address "
@@ -1275,7 +1275,7 @@ msgid ""
 msgstr ""
 
 msgid "Confirm"
-msgstr ""
+msgstr "Potvrdit"
 
 msgid "Confirm Options"
 msgstr ""
@@ -1320,7 +1320,7 @@ msgid ""
 msgstr ""
 
 msgid "Copies"
-msgstr ""
+msgstr "Kopie"
 
 msgid ""
 "Copy/paste with <b>Ctrl + C/V</b> or   <b>Command + C/V</b>.<br>   Many "
@@ -1340,16 +1340,16 @@ msgid ""
 msgstr ""
 
 msgid "Country"
-msgstr ""
+msgstr "Země"
 
 msgid "Country Code"
-msgstr ""
+msgstr "Kód země"
 
 msgid "Create"
-msgstr ""
+msgstr "Vytvořit"
 
 msgid "Create Pool"
-msgstr ""
+msgstr "Vytvořit fond"
 
 msgid "Create Pool Key"
 msgstr ""
@@ -1358,37 +1358,37 @@ msgid "Create Recovery Key"
 msgstr ""
 
 msgid "Create a Pool "
-msgstr ""
+msgstr "Vytvořit fond "
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Vytvořit nový fond."
 
 msgid "Create a new Primary Group for the user."
 msgstr ""
 
 msgid "Create new Pool"
-msgstr ""
+msgstr "Vytvořit nový fond"
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "Vytvořit nový obraz disku"
 
 msgid "Credential"
-msgstr ""
+msgstr "Přihlašovací údaj"
 
 msgid "Critical"
-msgstr ""
+msgstr "Kritické"
 
 msgid "Cron Jobs"
-msgstr ""
+msgstr "Naplánované (cron) úlohy"
 
 msgid "Current Password"
-msgstr ""
+msgstr "Stávající heslo"
 
 msgid "Custom Properties"
 msgstr ""
 
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 msgid "DHCP autoconfigure IPv4"
 msgstr ""
@@ -1400,7 +1400,7 @@ msgid "DOS Charset"
 msgstr ""
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Přehled"
 
 msgid "Data VDevs"
 msgstr ""
@@ -1412,19 +1412,19 @@ msgid "Datastore"
 msgstr ""
 
 msgid "Day of month"
-msgstr ""
+msgstr "Den v měsíci"
 
 msgid "Day of week"
-msgstr ""
+msgstr "Den v týdnu"
 
 msgid "Decrypt Exported Pools"
 msgstr ""
 
 msgid "Decrypt Pool"
-msgstr ""
+msgstr "Rozšifrovat fond"
 
 msgid "Dedicated User"
-msgstr ""
+msgstr "Vyhrazený uživatel"
 
 msgid "Dedicated User Enabled"
 msgstr ""
@@ -1592,22 +1592,22 @@ msgid ""
 msgstr ""
 
 msgid "Delay Updates"
-msgstr ""
+msgstr "Odložit aktualizace"
 
 msgid "Delete"
-msgstr ""
+msgstr "Smazat"
 
 msgid "Delete Dataset"
-msgstr ""
+msgstr "Smazat datovou sadu"
 
 msgid "Delete Recovery Key"
-msgstr ""
+msgstr "Smazat obnovovací klíč"
 
 msgid "Delete Stale Snapshots on Remote System"
 msgstr ""
 
 msgid "Delete Zvol"
-msgstr ""
+msgstr "Smazat ZFS svazek"
 
 msgid ""
 "Delete files in destination directory that do not exist         in sending "
@@ -1635,31 +1635,31 @@ msgid "Deny list"
 msgstr ""
 
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 msgid "Description of interface."
-msgstr ""
+msgstr "Popis rozhraní"
 
 msgid "Designate a time to begin replication."
 msgstr ""
 
 msgid "Destination"
-msgstr ""
+msgstr "Cíl"
 
 msgid "Destination Path"
-msgstr ""
+msgstr "Cílové umístění"
 
 msgid "Destroy the pool's data?"
 msgstr ""
 
 msgid "Detach"
-msgstr ""
+msgstr "Odpojit"
 
 msgid "Detach/Delete"
-msgstr ""
+msgstr "Odpojit/smazat"
 
 msgid "Detach/Delete Pool"
-msgstr ""
+msgstr "Odpojit/Smazat fond"
 
 msgid ""
 "Determine which information processes in a jail are able to obtain about "
@@ -1693,19 +1693,19 @@ msgid ""
 msgstr ""
 
 msgid "Device"
-msgstr ""
+msgstr "Zařízení"
 
 msgid "Difference"
-msgstr ""
+msgstr "Rozdíl"
 
 msgid "Digest Algorithm"
 msgstr ""
 
 msgid "Direction"
-msgstr ""
+msgstr "Směr"
 
 msgid "Directory"
-msgstr ""
+msgstr "Složka"
 
 msgid "Directory Mask"
 msgstr ""
@@ -1714,7 +1714,7 @@ msgid "Directory Permission"
 msgstr ""
 
 msgid "Directory Service"
-msgstr ""
+msgstr "Adresářová služba"
 
 msgid ""
 "Directory or dataset on the FreeNAS system which will be accessed by the "
@@ -1768,7 +1768,7 @@ msgid "Display Login"
 msgstr ""
 
 msgid "Display System Processes"
-msgstr ""
+msgstr "Zobrazit systémové procesy"
 
 msgid ""
 "Display console messages in real time at the bottom of the browser. Click "
@@ -1784,49 +1784,49 @@ msgid ""
 msgstr ""
 
 msgid "Domain"
-msgstr ""
+msgstr "Doména"
 
 msgid "Domain Logons"
-msgstr ""
+msgstr "Doménová přihlášení"
 
 msgid "Domain name"
-msgstr ""
+msgstr "Název domény"
 
 msgid "Download Encrypt Key"
-msgstr ""
+msgstr "Stáhnout šifrovací klíč"
 
 msgid "Driver"
-msgstr ""
+msgstr "Ovladač"
 
 msgid "Edit"
-msgstr ""
+msgstr "Upravit"
 
 msgid "Edit Interface"
-msgstr ""
+msgstr "Upravit rozhraní"
 
 msgid "Edit Options"
-msgstr ""
+msgstr "Volby úprav"
 
 msgid "Edit Permissions"
 msgstr ""
 
 msgid "Edit Zvol"
-msgstr ""
+msgstr "Upravit ZFS svazek"
 
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 msgid "Email Subject"
-msgstr ""
+msgstr "Předmět e-mailu"
 
 msgid "Email address of administrator."
-msgstr ""
+msgstr "E-mailová adresa správce."
 
 msgid "Email address of person or alias to receive S.M.A.R.T. alerts."
 msgstr ""
 
 msgid "Enable"
-msgstr ""
+msgstr "Zapnout"
 
 msgid "Enable Browser"
 msgstr ""
@@ -1922,10 +1922,10 @@ msgid ""
 msgstr ""
 
 msgid "Enable/disable secure connections"
-msgstr ""
+msgstr "Zapnout/vypnout zabezpečená spojení"
 
 msgid "Enabled"
-msgstr ""
+msgstr "Zapnuto"
 
 msgid ""
 "Enabled by default if the disk supports S.M.A.R.T. Unchecking this box will "
@@ -1960,13 +1960,13 @@ msgid ""
 msgstr ""
 
 msgid "Encryption"
-msgstr ""
+msgstr "Šifrování"
 
 msgid "Encryption Cipher"
 msgstr ""
 
 msgid "Encryption Key File"
-msgstr ""
+msgstr "Soubor s šifrovacím klíčem"
 
 msgid "Encryption Rekey"
 msgstr ""
@@ -1978,7 +1978,7 @@ msgid "Encryption type. Choices are <i>Plain, SSL</i>, or       <i>TLS</i>."
 msgstr ""
 
 msgid "End"
-msgstr ""
+msgstr "Konec"
 
 msgid "End Time"
 msgstr ""
@@ -2186,10 +2186,10 @@ msgid "Enter the location of the organization       (for example, city or town).
 msgstr ""
 
 msgid "Enter the location of the organization."
-msgstr ""
+msgstr "Zadejte umístění organizace."
 
 msgid "Enter the location of the script."
-msgstr ""
+msgstr "Zadejte umístění skriptu."
 
 msgid ""
 "Enter the mountpoint for the <b>jail_zfs_dataset</b>. <b>Example:</b> "
@@ -2249,7 +2249,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter the secret key generated."
-msgstr ""
+msgstr "Zadejte vytvořený tajný klíč."
 
 msgid "Enter the state or province of the       organization."
 msgstr ""
@@ -2277,13 +2277,13 @@ msgid ""
 msgstr ""
 
 msgid "Error Deleting Key"
-msgstr ""
+msgstr "Chyba při mazání klíče"
 
 msgid "Error Promoted dataset "
 msgstr ""
 
 msgid "Error Unlocking"
-msgstr ""
+msgstr "Chyba při odemykání"
 
 msgid "Error Upgrading Pool "
 msgstr ""
@@ -2298,10 +2298,10 @@ msgid "Error deleting dataset"
 msgstr ""
 
 msgid "Error deleting pool"
-msgstr ""
+msgstr "Chyba při mazání fondu"
 
 msgid "Error detaching pool"
-msgstr ""
+msgstr "Chyba při odpojování fondu"
 
 msgid "Error getting disk data"
 msgstr ""
@@ -2313,16 +2313,16 @@ msgid "Error getting volume/dataset data"
 msgstr ""
 
 msgid "Error importing pool"
-msgstr ""
+msgstr "Chyba při importu fondu"
 
 msgid "Error locking pool"
-msgstr ""
+msgstr "Chyba při zamykání fondu"
 
 msgid "Error re-keying pool"
 msgstr ""
 
 msgid "Error saving dataset"
-msgstr ""
+msgstr "Chyba při ukládání datové sady"
 
 msgid "Estimated raw capacity:"
 msgstr ""
@@ -2378,13 +2378,13 @@ msgid "File Permission"
 msgstr ""
 
 msgid "Filesystem type"
-msgstr ""
+msgstr "Typ souborového systému"
 
 msgid "Filter"
 msgstr ""
 
 msgid "Folder"
-msgstr ""
+msgstr "Složka"
 
 msgid ""
 "For more information about the available compression algorithms, refer to "
@@ -2407,10 +2407,10 @@ msgid "For security reasons, a minimum of <i>2048</i>       is recommended."
 msgstr ""
 
 msgid "Force"
-msgstr ""
+msgstr "Vynutit"
 
 msgid "Force size:"
-msgstr ""
+msgstr "Vynutit velikost:"
 
 msgid "Forced Update Period"
 msgstr ""
@@ -2427,16 +2427,16 @@ msgid "Form Invalid"
 msgstr ""
 
 msgid "From E-mail"
-msgstr ""
+msgstr "Z e-mailu"
 
 msgid "Full Name"
 msgstr ""
 
 msgid "Full with random data"
-msgstr ""
+msgstr "Vyplnit náhodnými daty"
 
 msgid "Full with zeros"
-msgstr ""
+msgstr "Vyplnit nulami"
 
 msgid "Fully qualified domain name (e.g.       <i>yourname.dyndns.org</i>)."
 msgstr ""
@@ -2448,7 +2448,7 @@ msgid "GUI SSL Certificate"
 msgstr ""
 
 msgid "Gateway"
-msgstr ""
+msgstr "Brána"
 
 msgid "Geli Passphrase"
 msgstr ""
@@ -2457,7 +2457,7 @@ msgid "Geli Passphrase must match above"
 msgstr ""
 
 msgid "General"
-msgstr ""
+msgstr "Obecné"
 
 msgid "Generating Debug File"
 msgstr ""
@@ -2481,13 +2481,13 @@ msgid ""
 msgstr ""
 
 msgid "Group"
-msgstr ""
+msgstr "Skupina"
 
 msgid "Group ID"
-msgstr ""
+msgstr "Identifikátor skupiny"
 
 msgid "Groups"
-msgstr ""
+msgstr "Skupiny"
 
 msgid "Guest Access"
 msgstr ""
@@ -2499,7 +2499,7 @@ msgid "Guest Operating System."
 msgstr ""
 
 msgid "Guide"
-msgstr ""
+msgstr "Příručka"
 
 msgid "HDD Standby"
 msgstr ""
@@ -2526,7 +2526,7 @@ msgid "Highlight disks to monitor."
 msgstr ""
 
 msgid "Home Directory"
-msgstr ""
+msgstr "Domovská složka"
 
 msgid "Home Directory Mode"
 msgstr ""
@@ -2535,7 +2535,7 @@ msgid "Host name data base"
 msgstr ""
 
 msgid "Hostname"
-msgstr ""
+msgstr "Název stroje"
 
 msgid "Hostname or IP address of SMTP server to use for       sending this email."
 msgstr ""
@@ -2550,7 +2550,7 @@ msgid "Hosts Deny"
 msgstr ""
 
 msgid "Hour"
-msgstr ""
+msgstr "Hodina"
 
 msgid "Hover to expand"
 msgstr ""
@@ -2570,7 +2570,7 @@ msgid "IBurst"
 msgstr ""
 
 msgid "IP Address"
-msgstr ""
+msgstr "IP adresa"
 
 msgid "IP Server"
 msgstr ""
@@ -2592,43 +2592,43 @@ msgid ""
 msgstr ""
 
 msgid "IP4 address"
-msgstr ""
+msgstr "IPv4 adresa"
 
 msgid "IP6 address"
-msgstr ""
+msgstr "IPv6 adresa"
 
 msgid "IPMI"
-msgstr ""
+msgstr "IPMI"
 
 msgid "IPv4 Address"
-msgstr ""
+msgstr "IPv4 adresa"
 
 msgid "IPv4 Addresses"
-msgstr ""
+msgstr "IPv4 adresy"
 
 msgid "IPv4 Default Gateway"
-msgstr ""
+msgstr "IPv4 výchozí brána"
 
 msgid "IPv4 Netmask"
-msgstr ""
+msgstr "IPv4 maska sítě"
 
 msgid "IPv6 Address"
-msgstr ""
+msgstr "IPv6 adresa"
 
 msgid "IPv6 Addresses"
-msgstr ""
+msgstr "IPv6 adresy"
 
 msgid "IPv6 Default Gateway"
-msgstr ""
+msgstr "IPv6 výchozí brána"
 
 msgid "IPv6 Prefix Length"
 msgstr ""
 
 msgid "ISNS Servers"
-msgstr ""
+msgstr "ISNS servery"
 
 msgid "Identifier"
-msgstr ""
+msgstr "Identifikátor"
 
 msgid ""
 "If <b>WebGUI HTTP -> HTTPS Redirect</b> is enabled in         <b>System -> "
@@ -2781,7 +2781,7 @@ msgid "Import Disk"
 msgstr ""
 
 msgid "Import Pools"
-msgstr ""
+msgstr "Importovat fondy"
 
 msgid "Imported Pool"
 msgstr ""
@@ -2829,7 +2829,7 @@ msgid ""
 msgstr ""
 
 msgid "Informational"
-msgstr ""
+msgstr "Pro informaci"
 
 msgid ""
 "Inhibit otherwise-useful syslog diagnostics to avoid some annoying error "
@@ -2844,10 +2844,10 @@ msgid "Initiator Group ID"
 msgstr ""
 
 msgid "Initiators"
-msgstr ""
+msgstr "Iniciátory"
 
 msgid "Input a name for the share."
-msgstr ""
+msgstr "Zadejte název pro sdílení."
 
 msgid ""
 "Input the port used by the SSH server on the remote         or destination "
@@ -2855,19 +2855,19 @@ msgid ""
 msgstr ""
 
 msgid "Installation Media"
-msgstr ""
+msgstr "Instalační médium"
 
 msgid "Interface"
-msgstr ""
+msgstr "Rozhraní"
 
 msgid "Interface Description"
-msgstr ""
+msgstr "Popis rozhraní"
 
 msgid "Interface Name"
-msgstr ""
+msgstr "Název rozhraní"
 
 msgid "Interfaces"
-msgstr ""
+msgstr "Rozhraní"
 
 msgid ""
 "Internal identifier of the certificate.       Only alphanumeric, underscore "
@@ -2875,7 +2875,7 @@ msgid ""
 msgstr ""
 
 msgid "Interval"
-msgstr ""
+msgstr "Interval"
 
 msgid "Invalid regex filter"
 msgstr ""
@@ -2919,10 +2919,10 @@ msgid "Kerberos Settings"
 msgstr ""
 
 msgid "Key Length"
-msgstr ""
+msgstr "Délka klíče"
 
 msgid "LDAP"
-msgstr ""
+msgstr "LDAP"
 
 msgid "LUN ID"
 msgstr ""
@@ -2940,7 +2940,7 @@ msgid "Lagg Protocol"
 msgstr ""
 
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
 msgid "Leave empty or select number of existing portal to use."
 msgstr ""
@@ -3006,7 +3006,7 @@ msgid "Locality"
 msgstr ""
 
 msgid "Location"
-msgstr ""
+msgstr "Umístění"
 
 msgid "Lock"
 msgstr ""
@@ -3015,7 +3015,7 @@ msgid "Lock user"
 msgstr ""
 
 msgid "Locked "
-msgstr ""
+msgstr "Uzamčeno"
 
 msgid "Log Level"
 msgstr ""
@@ -3024,10 +3024,10 @@ msgid "Log mountd(8) requests:"
 msgstr ""
 
 msgid "Log out"
-msgstr ""
+msgstr "Odhlásit"
 
 msgid "Log out of the WebUI?"
-msgstr ""
+msgstr "Odhlásit z webového rozhraní?"
 
 msgid "Log rpc.statd(8) and rpc.lockd(8)"
 msgstr ""
@@ -3036,7 +3036,7 @@ msgid "Logical block size"
 msgstr ""
 
 msgid "Login Attempts"
-msgstr ""
+msgstr "Pokusy o přihlášení"
 
 msgid "Login as Root with password"
 msgstr ""
@@ -3045,7 +3045,7 @@ msgid "MOTD Banner"
 msgstr ""
 
 msgid "Mac Address"
-msgstr ""
+msgstr "MAC adresa"
 
 msgid "Mail Server Port"
 msgstr ""
@@ -3056,7 +3056,7 @@ msgid ""
 msgstr ""
 
 msgid "Management"
-msgstr ""
+msgstr "Správa"
 
 msgid ""
 "Mandatory. Can only contain alphanumeric characters, dashes (-), or "
@@ -3152,7 +3152,7 @@ msgid "May reduce latency over slow networks."
 msgstr ""
 
 msgid "Media Status"
-msgstr ""
+msgstr "Stav média"
 
 msgid "Member Disk"
 msgstr ""
@@ -3161,10 +3161,10 @@ msgid "Members"
 msgstr ""
 
 msgid "Memory"
-msgstr ""
+msgstr "Operační paměť"
 
 msgid "Memory Size (MiB)"
-msgstr ""
+msgstr "Velikost operační paměti (MiB)"
 
 msgid ""
 "Message displayed to local login users after       authentication. Not "
@@ -3172,7 +3172,7 @@ msgid ""
 msgstr ""
 
 msgid "Method"
-msgstr ""
+msgstr "Metoda"
 
 msgid "Microsoft Account"
 msgstr ""
@@ -3184,13 +3184,13 @@ msgid "Minimum Passive Port"
 msgstr ""
 
 msgid "Minute"
-msgstr ""
+msgstr "Minuta"
 
 msgid "Mirror"
-msgstr ""
+msgstr "Zrcadlo"
 
 msgid "Mode"
-msgstr ""
+msgstr "Režim"
 
 msgid "Monitor Password"
 msgstr ""
@@ -3199,7 +3199,7 @@ msgid "Monitor User"
 msgstr ""
 
 msgid "Month"
-msgstr ""
+msgstr "Měsíc"
 
 msgid ""
 "Mount a <a "
@@ -3256,7 +3256,7 @@ msgid ""
 msgstr ""
 
 msgid "Name of the VM"
-msgstr ""
+msgstr "Název virt. stroje"
 
 msgid ""
 "Name of user account to create for CHAP authentication with the user on the "
@@ -3280,25 +3280,25 @@ msgid "NetBIOS Alias:"
 msgstr ""
 
 msgid "NetBIOS Name"
-msgstr ""
+msgstr "NetBIOS název"
 
 msgid "NetBIOS Name:"
-msgstr ""
+msgstr "NetBIOS název:"
 
 msgid "Netwait IP list"
 msgstr ""
 
 msgid "Network"
-msgstr ""
+msgstr "Síť"
 
 msgid "Network Interface"
-msgstr ""
+msgstr "Síťové rozhraní"
 
 msgid "Network Properties"
-msgstr ""
+msgstr "Vlastnosti sítě"
 
 msgid "New Password"
-msgstr ""
+msgstr "Nové heslo"
 
 msgid "Next"
 msgstr ""
@@ -3316,7 +3316,7 @@ msgid "No update has been found"
 msgstr ""
 
 msgid "No updates available"
-msgstr ""
+msgstr "Nejsou k dispozici žádné aktualizace"
 
 msgid ""
 "Not recommended. Enter an interval in seconds for the       system to force "
@@ -3327,10 +3327,10 @@ msgid "Note"
 msgstr ""
 
 msgid "Number of CPU"
-msgstr ""
+msgstr "Počet procesorů"
 
 msgid "Number of servers:"
-msgstr ""
+msgstr "Počet serverů"
 
 msgid "Obey Pam Restrictions"
 msgstr ""
@@ -3478,7 +3478,7 @@ msgid ""
 msgstr ""
 
 msgid "Optional."
-msgstr ""
+msgstr "Volitelné"
 
 msgid "Optional. Add any notes about the jail here."
 msgstr ""
@@ -3516,7 +3516,7 @@ msgid ""
 msgstr ""
 
 msgid "Options"
-msgstr ""
+msgstr "Volby"
 
 msgid ""
 "Options are <i>3</i>, <i>2</i>, <i>1</i>, <i>0</i>, and <i>-1</i>. Enter a "
@@ -3525,10 +3525,10 @@ msgid ""
 msgstr ""
 
 msgid "Organization"
-msgstr ""
+msgstr "Organizace"
 
 msgid "Outgoing Mail Server"
-msgstr ""
+msgstr "Server odchozí pošty"
 
 msgid ""
 "Overrides default directory creation mask of 0777       which grants "
@@ -3541,7 +3541,7 @@ msgid ""
 msgstr ""
 
 msgid "Passphrase"
-msgstr ""
+msgstr "Heslová fráze"
 
 msgid "Passphrase for encrypted private keys."
 msgstr ""
@@ -3553,7 +3553,7 @@ msgid "Passphrase2 must match above"
 msgstr ""
 
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 msgid "Password Confirmation"
 msgstr ""
@@ -3668,13 +3668,13 @@ msgid "Please enter your username again"
 msgstr ""
 
 msgid "Please wait"
-msgstr ""
+msgstr "Čekejte"
 
 msgid "Plugin Name"
-msgstr ""
+msgstr "Název zásuvného modulu"
 
 msgid "Plugins"
-msgstr ""
+msgstr "Zásuvné moduly"
 
 msgid "Pool Available Space Threshold (%)"
 msgstr ""
@@ -3689,7 +3689,7 @@ msgid "Pool/Dataset"
 msgstr ""
 
 msgid "Pools"
-msgstr ""
+msgstr "Fondy"
 
 msgid "Pools & Snapshots"
 msgstr ""
@@ -3726,7 +3726,7 @@ msgid "Prefer"
 msgstr ""
 
 msgid "Preferences"
-msgstr ""
+msgstr "Předvolby"
 
 msgid "Preserve extended attributes"
 msgstr ""
@@ -3746,16 +3746,16 @@ msgid "Preview JSON Service Account Key"
 msgstr ""
 
 msgid "Previous"
-msgstr ""
+msgstr "Předchozí"
 
 msgid "Primary Group"
-msgstr ""
+msgstr "Hlavní skupina"
 
 msgid "Privacy Passphrase"
 msgstr ""
 
 msgid "Private Key"
-msgstr ""
+msgstr "Soukromá část klíče"
 
 msgid "Proceed with locking the pool: "
 msgstr ""
@@ -3777,13 +3777,13 @@ msgid "Promote Dataset"
 msgstr ""
 
 msgid "Protocol"
-msgstr ""
+msgstr "Protokol"
 
 msgid "Provide a filename, this file will be created at user specific location"
 msgstr ""
 
 msgid "Provider"
-msgstr ""
+msgstr "Poskytovatel"
 
 msgid "Provides a pop-up window of diagnostic information if a fatal error occurs."
 msgstr ""
@@ -3808,7 +3808,7 @@ msgid ""
 msgstr ""
 
 msgid "Quota for this dataset"
-msgstr ""
+msgstr "Kvóta pro tuto datovou sadu"
 
 msgid "RAW file location"
 msgstr ""
@@ -3870,10 +3870,10 @@ msgid ""
 msgstr ""
 
 msgid "Read-Only"
-msgstr ""
+msgstr "Pouze pro čtení"
 
 msgid "Read-only"
-msgstr ""
+msgstr "Pouze pro čtení"
 
 msgid "Read-only value showing FreeBSD device name for disk."
 msgstr ""
@@ -3882,7 +3882,7 @@ msgid "Read-only value showing the serial numeber of the disk."
 msgstr ""
 
 msgid "Read/Write Access"
-msgstr ""
+msgstr "Přístup pro čtení/zápis"
 
 msgid "Realm"
 msgstr ""
@@ -3901,7 +3901,7 @@ msgid "Record Size"
 msgstr ""
 
 msgid "Recursive"
-msgstr ""
+msgstr "Rekurzivní"
 
 msgid "Recursively Replicate Child Dataset Snapshots"
 msgstr ""
@@ -3916,10 +3916,10 @@ msgid "Redirecting to download. Make sure pop-ups are enabled in the browser."
 msgstr ""
 
 msgid "Release"
-msgstr ""
+msgstr "Vydání"
 
 msgid "Release Notes"
-msgstr ""
+msgstr "Poznámky k vydání"
 
 msgid "Remote Auth Token"
 msgstr ""
@@ -4124,10 +4124,10 @@ msgid "SSH Public Key"
 msgstr ""
 
 msgid "Save"
-msgstr ""
+msgstr "Uložit"
 
 msgid "Script"
-msgstr ""
+msgstr "Skript"
 
 msgid "Scrub Status"
 msgstr ""
@@ -4145,10 +4145,10 @@ msgid "Secret (Confirm)"
 msgstr ""
 
 msgid "Secret Key"
-msgstr ""
+msgstr "Tajný klíč"
 
 msgid "Security"
-msgstr ""
+msgstr "Zabezpečení"
 
 msgid ""
 "See the \"Constructing iSCSI names using the iqn.format\" section of <a "
@@ -4171,7 +4171,7 @@ msgid "Select a datastore."
 msgstr ""
 
 msgid "Select a directory"
-msgstr ""
+msgstr "Vyberte složku"
 
 msgid "Select a keyboard layout."
 msgstr ""
@@ -4198,7 +4198,7 @@ msgid ""
 msgstr ""
 
 msgid "Select a time zone."
-msgstr ""
+msgstr "Vyberte časovou zónu"
 
 msgid ""
 "Select a user created in <b>Authorized Access</b> if the <b>Discovery Auth "
@@ -4218,7 +4218,7 @@ msgid "Select an existing ZFS volume, dataset, or zvol."
 msgstr ""
 
 msgid "Select an existing disk"
-msgstr ""
+msgstr "Vyberte stávající disk"
 
 msgid "Select an existing pool, dataset, or zvol."
 msgstr ""
@@ -4280,7 +4280,7 @@ msgid ""
 msgstr ""
 
 msgid "Select the country for the organization."
-msgstr ""
+msgstr "Vyberte zemi pro organizaci"
 
 msgid ""
 "Select the desired Protocol Type. <i>LACP</i> is preferred. If the network "
@@ -4290,7 +4290,7 @@ msgid ""
 msgstr ""
 
 msgid "Select the device to attach."
-msgstr ""
+msgstr "Vyberte zařízení které připojit"
 
 msgid ""
 "Select the group to control the volume/dataset. Note that groups manually "
@@ -4392,10 +4392,10 @@ msgid "Server Roll"
 msgstr ""
 
 msgid "Server Side Encryption"
-msgstr ""
+msgstr "Šifrování na straně serveru"
 
 msgid "Services"
-msgstr ""
+msgstr "Služby"
 
 msgid ""
 "Set a <b>value</b> for the variable. Choose value       carefully. Refer to "
@@ -4405,7 +4405,7 @@ msgid ""
 msgstr ""
 
 msgid "Set font size"
-msgstr ""
+msgstr "Nastavit velikost písma"
 
 msgid ""
 "Set resource limitations of the jail using the <a "
@@ -4451,13 +4451,13 @@ msgid ""
 msgstr ""
 
 msgid "Settings"
-msgstr ""
+msgstr "Nastavení"
 
 msgid "Setup Mode"
 msgstr ""
 
 msgid "Setup Users and Groups."
-msgstr ""
+msgstr "Nastavit uživatele a skupiny"
 
 msgid ""
 "Several providers are supported. If your provider is       not listed, "
@@ -4466,10 +4466,10 @@ msgid ""
 msgstr ""
 
 msgid "Share Name"
-msgstr ""
+msgstr "Název sdílení"
 
 msgid "Sharing"
-msgstr ""
+msgstr "Sdílení"
 
 msgid "Sharing Controls"
 msgstr ""
@@ -4478,10 +4478,10 @@ msgid "Shell"
 msgstr ""
 
 msgid "Short Description"
-msgstr ""
+msgstr "Stručný popis"
 
 msgid "Short description"
-msgstr ""
+msgstr "Stručný popis"
 
 msgid ""
 "Should only be used for <b>NTP</b> servers known to       be highly "
@@ -4489,7 +4489,7 @@ msgid ""
 msgstr ""
 
 msgid "Show Hidden Files"
-msgstr ""
+msgstr "Zobrazit skryté soubory"
 
 msgid "Show advanced fields by default"
 msgstr ""
@@ -4501,7 +4501,7 @@ msgid "Show tracebacks in case of fatal error"
 msgstr ""
 
 msgid "Shut down"
-msgstr ""
+msgstr "Vypnout"
 
 msgid "Shutdown Command"
 msgstr ""
@@ -4516,7 +4516,7 @@ msgid "Sidebar Controls"
 msgstr ""
 
 msgid "Sign in"
-msgstr ""
+msgstr "Přihlásit"
 
 msgid "Signing Certificate Authority"
 msgstr ""
@@ -4531,10 +4531,10 @@ msgid "Snapshot directory"
 msgstr ""
 
 msgid "Snapshots"
-msgstr ""
+msgstr "Zachycené stavy"
 
 msgid "Source"
-msgstr ""
+msgstr "Zdroj"
 
 msgid ""
 "Space delimited list of hostnames or IP addresses of ISNS servers with "
@@ -4602,37 +4602,37 @@ msgid "Speeds the initial synchronization       (seconds instead of minutes)."
 msgstr ""
 
 msgid "Start"
-msgstr ""
+msgstr "Spustit"
 
 msgid "Start on Boot"
-msgstr ""
+msgstr "Spouštět při zavádění systému"
 
 msgid "Starting job..."
-msgstr ""
+msgstr "Spouštění úlohy…"
 
 msgid "State"
-msgstr ""
+msgstr "Stav"
 
 msgid "Static Routes"
-msgstr ""
+msgstr "Statické trasy"
 
 msgid "Status"
-msgstr ""
+msgstr "Stav"
 
 msgid "Stop"
 msgstr ""
 
 msgid "Storage"
-msgstr ""
+msgstr "Úložiště"
 
 msgid "Storage & Groups"
-msgstr ""
+msgstr "Úložiště a skupiny"
 
 msgid "Stripe"
 msgstr ""
 
 msgid "Subject"
-msgstr ""
+msgstr "Předmět"
 
 msgid "Subject Alternate Names"
 msgstr ""
@@ -4641,7 +4641,7 @@ msgid "Submit"
 msgstr ""
 
 msgid "Success"
-msgstr ""
+msgstr "Úspěch"
 
 msgid "Successfully Promoted "
 msgstr ""
@@ -4680,7 +4680,7 @@ msgid "Suggest Layout"
 msgstr ""
 
 msgid "Support"
-msgstr ""
+msgstr "Podpora"
 
 msgid "Support >16 groups:"
 msgstr ""
@@ -4700,13 +4700,13 @@ msgid "Syslog server"
 msgstr ""
 
 msgid "System"
-msgstr ""
+msgstr "Systém"
 
 msgid "System Dataset"
-msgstr ""
+msgstr "Systémová datová sada"
 
 msgid "System Processes"
-msgstr ""
+msgstr "Systémové procesy"
 
 msgid "System domain name."
 msgstr ""
@@ -4718,10 +4718,10 @@ msgid "System is not yet available, please wait"
 msgstr ""
 
 msgid "System is rebooting..."
-msgstr ""
+msgstr "Systém se restartuje…"
 
 msgid "System is shutting down..."
-msgstr ""
+msgstr "Systém se vypíná…"
 
 msgid "TCP Port"
 msgstr ""
@@ -4772,13 +4772,13 @@ msgid "TLS Policy"
 msgstr ""
 
 msgid "Target"
-msgstr ""
+msgstr "Cíl"
 
 msgid "Target Alias"
 msgstr ""
 
 msgid "Target Name"
-msgstr ""
+msgstr "Název cíle"
 
 msgid "Task occurs on the selected months."
 msgstr ""
@@ -4787,7 +4787,7 @@ msgid "Tasks"
 msgstr ""
 
 msgid "Template"
-msgstr ""
+msgstr "Šablona"
 
 msgid "Tertiary DNS server"
 msgstr ""
@@ -4989,13 +4989,13 @@ msgid "Threshold days"
 msgstr ""
 
 msgid "Time Machine"
-msgstr ""
+msgstr "Time Machine"
 
 msgid "Time Machine Quota"
-msgstr ""
+msgstr "Kvóta pro Time Machine"
 
 msgid "Time Server For Domain"
-msgstr ""
+msgstr "Časový server pro doménu"
 
 msgid "Timeout"
 msgstr ""
@@ -5004,16 +5004,16 @@ msgid "Times"
 msgstr ""
 
 msgid "Timezone"
-msgstr ""
+msgstr "Časová zóna"
 
 msgid "To Email"
-msgstr ""
+msgstr "Na e-mail"
 
 msgid "Train"
 msgstr ""
 
 msgid "Transfer Mode"
-msgstr ""
+msgstr "Režim přenosu"
 
 msgid ""
 "Try checking this box if the client cannot connect and       it is "
@@ -5025,7 +5025,7 @@ msgid "Tunables"
 msgstr ""
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 msgid ""
 "Type <i>none</i> or a valid IP address. Setting this property to anything "
@@ -5161,10 +5161,10 @@ msgid "Unix Extensions"
 msgstr ""
 
 msgid "Unlock"
-msgstr ""
+msgstr "Odemknout"
 
 msgid "Unlock Pool"
-msgstr ""
+msgstr "Odemknout fond"
 
 msgid ""
 "Unmask used for newly created files. Defualt is <i>000</i> (anyone can "
@@ -5187,7 +5187,7 @@ msgid "Upgraded"
 msgstr ""
 
 msgid "Upload an ISO?"
-msgstr ""
+msgstr "Nahrát ISO soubor?"
 
 msgid ""
 "Use <b>Scan SSH Key</b> to retrieve the public host         key of the "
@@ -5210,7 +5210,7 @@ msgid "Use all disk space"
 msgstr ""
 
 msgid "Use as home share"
-msgstr ""
+msgstr "Použít jako domovské sdílení"
 
 msgid "Use existing disk image"
 msgstr ""
@@ -5239,7 +5239,7 @@ msgid ""
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "Uživatel"
 
 msgid "User Controls"
 msgstr ""
@@ -5248,22 +5248,22 @@ msgid "User ID"
 msgstr ""
 
 msgid "User name"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 msgid "User on VMware host with permission to snapshot virtual machines."
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 msgid "Username used to logon to the provider and update the       record."
 msgstr ""
 
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
 msgid "Users & Groups"
-msgstr ""
+msgstr "Uživatelé a skupiny"
 
 msgid "VFS Objects"
 msgstr ""
@@ -5275,13 +5275,13 @@ msgid "VLANs"
 msgstr ""
 
 msgid "VM Name"
-msgstr ""
+msgstr "Název virt. stroje"
 
 msgid "VM Snapshot"
 msgstr ""
 
 msgid "VMs"
-msgstr ""
+msgstr "Virt. stroje"
 
 msgid "VMware-Snapshots"
 msgstr ""
@@ -5290,10 +5290,10 @@ msgid "Validate Remote Path"
 msgstr ""
 
 msgid "Value"
-msgstr ""
+msgstr "Hodnota"
 
 msgid "Variable"
-msgstr ""
+msgstr "Proměnná"
 
 msgid "View Disks"
 msgstr ""
@@ -5302,13 +5302,13 @@ msgid "VirtIO Virtual Networking"
 msgstr ""
 
 msgid "Virtual CPUs"
-msgstr ""
+msgstr "Virtuální procesory"
 
 msgid "Virtualization"
-msgstr ""
+msgstr "Virtualizace"
 
 msgid "Volume"
-msgstr ""
+msgstr "Svazek"
 
 msgid ""
 "Volume name which appears in the <b>connect to server</b> dialog of the "
@@ -5319,13 +5319,13 @@ msgid "Volume to be scrubbed."
 msgstr ""
 
 msgid "Volume/Dataset"
-msgstr ""
+msgstr "Svazek / Datová sada"
 
 msgid "Warning"
-msgstr ""
+msgstr "Varování"
 
 msgid "WebDAV Shares"
-msgstr ""
+msgstr "WebDAV sdílení"
 
 msgid "WebGUI HTTP -> HTTPS Redirect"
 msgstr ""
@@ -5349,7 +5349,7 @@ msgid "Webdav SSL Certificate"
 msgstr ""
 
 msgid "When"
-msgstr ""
+msgstr "Kdy"
 
 msgid ""
 "When <b>Syslog server</b> is defined, only logs matching this level are "
@@ -5453,16 +5453,16 @@ msgid "You just closed User Tour!"
 msgstr ""
 
 msgid "ZFS Deduplication"
-msgstr ""
+msgstr "ZFS deduplikace"
 
 msgid "ZFS Deduplication:"
-msgstr ""
+msgstr "ZFS deduplikace:"
 
 msgid "ZFS Filesystem"
-msgstr ""
+msgstr "Souborový systém ZFS"
 
 msgid "ZFS deplication"
-msgstr ""
+msgstr "ZFS deduplikace"
 
 msgid ""
 "ZFS pools must conform to strict naming <a "
@@ -5523,13 +5523,13 @@ msgid "cifs_srv_min_protocol"
 msgstr ""
 
 msgid "close"
-msgstr ""
+msgstr "zavřít"
 
 msgid "comment"
 msgstr ""
 
 msgid "comments:"
-msgstr ""
+msgstr "komentáře:"
 
 msgid "coredumpsize"
 msgstr ""
@@ -5559,7 +5559,7 @@ msgid "devfs_ruleset"
 msgstr ""
 
 msgid "dhcp"
-msgstr ""
+msgstr "dhcp"
 
 msgid "enforce_statfs"
 msgstr ""
@@ -5625,16 +5625,16 @@ msgid "install"
 msgstr ""
 
 msgid "interfaces"
-msgstr ""
+msgstr "rozhraní"
 
 msgid "ip4"
-msgstr ""
+msgstr "IPv4"
 
 msgid "ip4_saddrsel"
 msgstr ""
 
 msgid "ip6"
-msgstr ""
+msgstr "IPv6"
 
 msgid "ip6_saddrsel"
 msgstr ""
@@ -5688,7 +5688,7 @@ msgid "msgqsize"
 msgstr ""
 
 msgid "name"
-msgstr ""
+msgstr "název"
 
 msgid "nmsgq"
 msgstr ""
@@ -5706,13 +5706,13 @@ msgid "openfiles"
 msgstr ""
 
 msgid "owner"
-msgstr ""
+msgstr "vlastník"
 
 msgid "passphrase"
-msgstr ""
+msgstr "heslová fráze"
 
 msgid "password"
-msgstr ""
+msgstr "heslo"
 
 msgid "pcpu"
 msgstr ""
@@ -5721,7 +5721,7 @@ msgid "please select a path for existing directory"
 msgstr ""
 
 msgid "priority"
-msgstr ""
+msgstr "priorita"
 
 msgid "pseudoterminals"
 msgstr ""

@@ -3,6 +3,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 7
 
+import function
 from source import *
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
@@ -52,11 +53,12 @@ class change_theme_test(unittest.TestCase):
     def test_01_theme1(self):
         try:
             self.theme_change(theme_name['theme1'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -65,11 +67,12 @@ class change_theme_test(unittest.TestCase):
     def test_02_theme2(self):
         try:
             self.theme_change(theme_name['theme2'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -78,11 +81,12 @@ class change_theme_test(unittest.TestCase):
     def test_03_theme3(self):
         try:
             self.theme_change(theme_name['theme3'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -91,11 +95,12 @@ class change_theme_test(unittest.TestCase):
     def test_04_theme4(self):
         try:
             self.theme_change(theme_name['theme4'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -104,11 +109,12 @@ class change_theme_test(unittest.TestCase):
     def test_05_theme5(self):
         try:
             self.theme_change(theme_name['theme5'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -117,11 +123,12 @@ class change_theme_test(unittest.TestCase):
     def test_06_theme6(self):
         try:
             self.theme_change(theme_name['theme6'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -130,11 +137,12 @@ class change_theme_test(unittest.TestCase):
     def test_07_theme7(self):
         try:
             self.theme_change(theme_name['theme7'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -143,11 +151,12 @@ class change_theme_test(unittest.TestCase):
     def test_08_theme8(self):
         try:
             self.theme_change(theme_name['theme8'])
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -179,15 +188,6 @@ class change_theme_test(unittest.TestCase):
             driver.find_element_by_xpath("//*[contains(text(), 'iX Blue')]").click()
             time.sleep(2)
 
-    def screenshot(self, count):
-        test_method_name = self._testMethodName
-        time.sleep(1)
-        text_path = os.path.dirname(os.path.realpath(__file__))
-        filename = str(__file__)
-        filename = filename[:-3]
-        final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + "-" + test_method_name)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
     @classmethod
     def tearDownClass(inst):

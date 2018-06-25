@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { RestService } from '../../../../services/rest.service';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -202,7 +202,8 @@ export class NFSFormComponent {
               protected entityFormService: EntityFormService,
               protected route: ActivatedRoute,
               protected userService: UserService,
-              protected rest: RestService ) {}
+              protected rest: RestService,
+              protected ws: WebSocketService, private dialog:DialogService) {}
 
   preInit(EntityForm: any) {
     this.arrayControl =
@@ -278,5 +279,45 @@ export class NFSFormComponent {
     }
     data.nfs_paths = paths;
     return data;
+  }
+
+  afterSave(entityForm) {
+    this.ws.call('service.query', [[]]).subscribe((res) => {
+      const service = _.find(res, {"service": "nfs"});
+      if (service.enable) {
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      } else {
+          this.dialog.confirm(T("Enable service"), 
+          T("Would you like to enable this service"), 
+          true, T("Enable Service")).subscribe((dialogRes) => {
+            if (dialogRes) {
+              entityForm.loader.open();
+              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+                this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+                  entityForm.loader.close();
+                  entityForm.snackBar.open(T("Service started"), T("close"));
+                  this.router.navigate(new Array('/').concat(
+                   this.route_success));
+                }, (err) => {
+                  entityForm.loader.close();
+                  this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+                  this.router.navigate(new Array('/').concat(
+                    this.route_success));
+                });
+               }, (err) => {
+                entityForm.loader.close();
+                this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+                this.router.navigate(new Array('/').concat(
+                  this.route_success));
+               });
+           } else {
+            this.router.navigate(new Array('/').concat(
+              this.route_success));
+            }
+        });
+      }
+
+    });
   }
 }

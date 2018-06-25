@@ -1,4 +1,4 @@
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
 
@@ -13,11 +13,12 @@ import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component'
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
-  providers: [EntityFormService]
+  providers: [EntityFormService, DatePipe]
 })
 export class EntityDialogComponent implements OnInit {
 
@@ -31,6 +32,7 @@ export class EntityDialogComponent implements OnInit {
   public detachButtonText: string;
   public getKeyButtonText: string;
   public error: string;
+  public formValue: any;
   
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
@@ -39,7 +41,9 @@ export class EntityDialogComponent implements OnInit {
     protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
-    public mdDialog: MatDialog) {}
+    public mdDialog: MatDialog,
+    public snackBar: MatSnackBar,
+    public datePipe: DatePipe) {}
 
   ngOnInit() {
     this.title = this.conf.title;
@@ -56,15 +60,15 @@ export class EntityDialogComponent implements OnInit {
 
   submit() {
     this.clearErrors();
-    let value = _.cloneDeep(this.formGroup.value);
+    this.formValue = _.cloneDeep(this.formGroup.value);
 
     if (this.conf.customSubmit) {
-      this.conf.customSubmit(value);
+      this.conf.customSubmit(this);
     } else {
       this.loader.open();
       if (this.conf.method_rest) {
         this.rest.post(this.conf.method_rest, {
-          body: JSON.stringify(value)
+          body: JSON.stringify(this.formValue)
         }).subscribe(
           (res) => {
             this.loader.close();

@@ -4,6 +4,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 1
 
+import function
 from source import *
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
@@ -67,10 +68,12 @@ class login_test(unittest.TestCase):
             if self.is_element_present(By.XPATH, '/html/body/div[5]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[5]/div[1]/button').click()
             driver.execute_script("document.body.style.zoom='50 %'")
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -86,16 +89,6 @@ class login_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
-
-    def screenshot(self, count):
-        test_method_name = self._testMethodName
-        time.sleep(1)
-        text_path = os.path.dirname(os.path.realpath(__file__))
-        filename = str(__file__)
-        filename = filename[:-3]
-        final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + "-" + test_method_name)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
     def error_check(self):
         if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
