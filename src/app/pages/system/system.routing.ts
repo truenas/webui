@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 //import {GeneralComponent} from './general/';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigSaveComponent } from './general/config-save/config-save.component';
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
@@ -55,10 +54,6 @@ export const routes: Routes = [
         path: '',
         component: GeneralComponent,
         data: { title: 'General', breadcrumb: 'General' },
-      }, {
-        path: 'config-save',
-        component: ConfigSaveComponent,
-        data: { title: 'Config Save', breadcrumb: 'Config Save' },
       }, {
         path: 'config-upload',
         component: ConfigUploadComponent,

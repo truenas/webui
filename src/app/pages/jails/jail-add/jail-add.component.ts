@@ -1101,7 +1101,7 @@ export class JailAddComponent implements OnInit {
 
     this.ws.call("jail.query", [
       [
-        ["jail", "=", "default"]
+        ["host_hostuuid", "=", "default"]
       ]
     ]).subscribe(
     (res) => {

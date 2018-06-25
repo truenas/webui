@@ -18,7 +18,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 })
 export class BootStatusListComponent {
 
-  public title = "Boot Status";
+  public title = "Boot Pool Status";
   protected queryCall = 'boot.get_state';
   protected entityList: any;
   public busy: Subscription;
