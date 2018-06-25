@@ -23,10 +23,9 @@ export class SideNavAccordionDirective implements OnInit {
 
   @HostListener('click', ['$event'])
   onClick($event) {
-    this.toggleTextDecor();
     var parentLi = domHelper.findClosest($event.target, 'mat-list-item');
     domHelper.addClass(parentLi, 'highlight')
-    setTimeout(() => {domHelper.removeClass(parentLi, 'highlight')}, 125);
+    setTimeout(() => {domHelper.removeClass(parentLi, 'highlight')}, 100);
     if (!domHelper.hasClass(parentLi, 'has-submenu')) {
       // PREVENTS CLOSING PARENT ITEM
       return;
@@ -63,11 +62,5 @@ export class SideNavAccordionDirective implements OnInit {
       domHelper.removeClass(parenMenuItems, 'open');
       domHelper.addClass(elem, 'open');
     }
-  }
-
-  private toggleTextDecor() {
-    let elem = this.el.nativeElement;
-    domHelper.addClass(elem, 'sidenav-clicked');
-    setTimeout(() => { domHelper.removeClass(elem, 'sidenav-clicked'); }, 200);
   }
 }

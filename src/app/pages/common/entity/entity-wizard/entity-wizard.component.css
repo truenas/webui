@@ -4,3 +4,7 @@
   margin-left: 0px;
   margin-right: 0px;
 }
+
+#goback_button, #noconfirm_button {
+  margin-right: 0px;
+}

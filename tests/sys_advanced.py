@@ -3,6 +3,7 @@
 # Location for tests  of FreeNAS new GUI
 # Test case count: 2
 
+import function
 from source import *
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
@@ -54,11 +55,12 @@ class conf_sysadvance_test(unittest.TestCase):
             print ("the Page now is: " + page_data)
             # assert response
             self.assertTrue("Advanced" in page_data)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -68,11 +70,12 @@ class conf_sysadvance_test(unittest.TestCase):
             # Close the System Tab
             driver.find_element_by_xpath(xpaths['navSystem']).click()
             time.sleep(5)
-            # Taking screenshot
-            self.screenshot("_")
+            #taking screenshot
+            function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            #taking screenshot
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
@@ -87,46 +90,6 @@ class conf_sysadvance_test(unittest.TestCase):
         try: driver.find_element(by=how, value=what)
         except NoSuchElementException: return False
         return True
-
-    def delete(self, name):
-        # Click User submenu
-        driver.find_element_by_xpath(xpaths['submenuUser']).click()
-        # click on the item per page option
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[3]/md-paginator/div[1]/md-select/div').click()
-        # click select the highest number i.e 100
-        driver.find_element_by_xpath("/html/body/div[3]/div[2]/div/div/md-option[4]").click()
-        # wait till the list is loaded
-        time.sleep(5)
-        index = 0
-        ui_text = "null"
-        for x in range(0, 5):
-            if self.is_element_present(By.XPATH, '/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/md-sidenav-container/div[6]/div/app-user-list/entity-table/div/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
-                ui_text = ui_element.text
-            if (ui_text == name):
-                index = x
-                break
-            ui_element = " "
-
-        # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(index) + ']/datatable-body-row/div[2]/datatable-body-cell[7]/div/app-entity-table-actions/div/md-icon').click()
-        # click on delete option
-        driver.find_element_by_xpath('/html/body/div[3]/div[3]/div/div/span[2]/button/div').click()
-        # click on confirmation checkbox
-        driver.find_element_by_xpath('/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div').click()
-        # click on Ok
-        driver.find_element_by_xpath("/html/body/div[3]/div[3]/div[2]/md-dialog-container/confirm-dialog/div[2]/button[1]").click()
-        print (newusernameuncheck + " deleted")
-
-    def screenshot(self, count):
-        test_method_name = self._testMethodName
-        time.sleep(1)
-        text_path = os.path.dirname(os.path.realpath(__file__))
-        filename = str(__file__)
-        filename = filename[:-4]
-        final_file = filename.replace(text_path + "/", '')
-        print ("Taking screenshot for " + final_file + "-" + test_method_name)
-        driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
 
     @classmethod

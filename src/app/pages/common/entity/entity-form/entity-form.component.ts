@@ -67,6 +67,8 @@ export interface Formconfiguration {
   customFilter?:any[];
   confirmSubmit?;
   confirmSubmitDialog?:Object;
+  afterSave?;
+  blurEvent?;
  
   afterSubmit?;
   beforeSubmit?;
@@ -337,6 +339,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
+    if (this.conf.blurEvent) {
+      this.conf.blurEvent(this);
+    }
     // ...but for entity forms that don't make a data request, this kicks in 
     setTimeout(() => { this.setShowDefaults(); }, 500);
   }
@@ -455,16 +460,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     .subscribe(
                         (res) => {
                           this.loader.close();
-                          if (this.conf.route_success) {
-                            this.router.navigate(new Array('/').concat(
-                                this.conf.route_success));
-                          } else {
-                            this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
-                            this.success = true;
-                          }
+                          if (this.conf.afterSave) {
+                            this.conf.afterSave(this);
+                          } else { 
+                            if (this.conf.route_success) {
+                              this.router.navigate(new Array('/').concat(
+                                  this.conf.route_success));
+                            } else {
+                              this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+                              this.success = true;
+                            }
 
-                          if (this.conf.afterSubmit) {
-                            this.conf.afterSubmit(value);
+                            if (this.conf.afterSubmit) {
+                              this.conf.afterSubmit(value);
+                            }
                           }
 
                         },

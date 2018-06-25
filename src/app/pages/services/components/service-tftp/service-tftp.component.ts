@@ -12,7 +12,8 @@ import {Subscription} from 'rxjs';
 import {
   RestService,
   SystemGeneralService,
-  WebSocketService
+  WebSocketService,
+  UserService
 } from '../../../../services/';
 import {
   FieldConfig
@@ -59,19 +60,17 @@ export class ServiceTFTPComponent {
       tooltip : T('Enter a UDP prort to listen for TFTP requests.'),
     },
     {
-      type : 'select',
+      type : 'combobox',
       name : 'tftp_username',
       placeholder : T('Username'),
       tooltip : T('Select the account to use for TFTP requests. This\
                    account must have permission to the <b>Directory</b>.'),
-      options : [
-        {label : '', value : ''},
-        {label : 'null', value : ''},
-      ]
+      options : []
     },
     {
       type : 'permissions',
       name : 'tftp_umask',
+      noexec: true,
       placeholder : T('File Permissions'),
       tooltip : T('Adjust the file permissions using the checkboxes.'),
     },
@@ -86,10 +85,12 @@ export class ServiceTFTPComponent {
     },
   ];
 
+  protected tftp_username: any;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              ) {}
+              protected userService: UserService) {}
 
   resourceTransformIncomingRestData(data: any) {
     let perm = parseInt(data['tftp_umask'], 8);
@@ -100,6 +101,18 @@ export class ServiceTFTPComponent {
     data['tftp_umask'] = mask;
 
     return data;
+  }
+
+  preInit(entityEdit: any) {
+    this.userService.listAllUsers().subscribe(res => {
+      let users = [];
+      let items = res.data.items;
+      for (let i = 0; i < items.length; i++) {
+        users.push({label: items[i].label, value: items[i].id});
+      }
+      this.tftp_username = _.find(this.fieldConfig, {'name' : 'tftp_username'});
+      this.tftp_username.options = users;
+    });
   }
 
   afterInit(entityEdit: any) { }

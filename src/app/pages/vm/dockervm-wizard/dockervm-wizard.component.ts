@@ -45,7 +45,7 @@ export class DockerVMWizardComponent {
           tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
           options: [
             {label: 'Virtual Machine (VM)', value: 'vm'},
-            {label: 'Docker', value: 'docker'},
+            {label: 'Docker Host', value: 'docker'},
           ],
           validation : [ Validators.required ],
           value: 'docker'
@@ -107,7 +107,7 @@ export class DockerVMWizardComponent {
         {
           name : 'NIC_type',
           placeholder : T('Adapter Type'),
-          tooltip : T('<i>Intel e82545 (e1000)</i> emulates the same\
+          tooltip : T('<i>Intel e82545 (e1000)</i> emulates an\
                        Intel ethernet card. This provides compatibility\
                        with most operating systems. <i>VirtIO</i>\
                        provides better performance when the operating\
@@ -121,8 +121,8 @@ export class DockerVMWizardComponent {
         {
           name : 'NIC_mac',
           placeholder : T('MAC Address'),
-          tooltip : T('Enter the desired address into the field to\
-                       override the randomized MAC address.'),
+          tooltip : T('A randomized MAC address is normally assigned. Enter\
+                       a value here to set a specific MAC address.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
@@ -130,8 +130,8 @@ export class DockerVMWizardComponent {
         {
           name : 'nic_attach',
           placeholder : T('Attach NIC'),
-          tooltip : T('Select the physical interface to associate with\
-                       the VM.'),
+          tooltip : T('Select the physical network interface to associate\
+                       with the virtual machine.'),
           type: 'select',
           options : [],
           validation : [ Validators.required ],
@@ -145,17 +145,17 @@ export class DockerVMWizardComponent {
         {
           type: 'input',
           name: 'raw_filename',
-          placeholder : T('RAW filename'),
-          tooltip: T('Name the new RAW file.'),
+          placeholder : T('Raw filename'),
+          tooltip: T('Name the new raw file.'),
           validation : [ Validators.required ],
           required: true
         },
         {
           type: 'input',
           name: 'size',
-          placeholder : T('RAW file size'),
+          placeholder : T('Raw file size'),
           tooltip: T('Allocate a number of gibibytes (GiB) to the new\
-                      RAW file.'),
+                      raw file.'),
           value: 10,
           inputType: 'number',
           min: 10,
@@ -165,9 +165,9 @@ export class DockerVMWizardComponent {
         {
           type: 'explorer',
           name: 'raw_file_directory',
-          placeholder: T('RAW file location'),
+          placeholder: T('Raw file location'),
           tooltip: T('Browse to an existing directory to store the new\
-                      RAW file.'),
+                      raw file.'),
           explorerType: "directory",
           initial: '/mnt',
           validation : [ Validators.required ],
@@ -177,7 +177,7 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'sectorsize',
           placeholder : T('Disk sector size'),
-          tooltip: T('Define the disk sector size in bytes. Enter\
+          tooltip: T('Disk sector size in bytes. Enter\
                       <i>0</i> to leave the sector size unset.'),
           value: 0,
           inputType: 'number',
@@ -238,10 +238,10 @@ export class DockerVMWizardComponent {
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('name')).valueChanges.subscribe((name) => {
       this.summary[T('Name')] = name;
-      this.summary[T('Number of CPU')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
+      this.summary[T('Number of CPUs')] = ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').value;
 
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
-        this.summary[T('Number of CPU')] = vcpus;
+        this.summary[T('Number of CPUs')] = vcpus;
       });
       this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' Mib';
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
@@ -249,15 +249,15 @@ export class DockerVMWizardComponent {
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
-          this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename)=>{
-          this.summary[T('RAW file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
+          this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
         })
       });
-      this.summary[T('RAW file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' Gib';
+      this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
     });
   }
   getRndInteger(min, max) {
