@@ -33,7 +33,8 @@
         </span>
       </div>
       <ng-template #defaultMultiActions>
-        <button mat-button matTooltip="Delete" matTooltipPosition="above" (click)="doMultiDelete(this.selected);">
+        <button mat-button matTooltip="Delete" matTooltipPosition="above" 
+          (click)="doMultiDelete(this.selected);">
           <mat-icon>delete</mat-icon>
         </button>
       </ng-template>
@@ -72,6 +73,7 @@
       [displayCheck]="displayCheck"
       [selected]='selected'
       (select)='onSelect($event)'
+      [scrollbarH]='true'
       #entityTable>
 
       <ngx-datatable-footer>
@@ -108,13 +110,19 @@
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
           <div class="headerCheckBox">
-            <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+            <mat-checkbox 
+              [checked]="allRowsSelected" 
+              (change)="selectFn(!allRowsSelected)">
+            </mat-checkbox>
           </div>
         </ng-template>
 
         <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
-            <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+            <mat-checkbox 
+              [checked]="isSelected" 
+              (change)="onCheckboxChangeFn($event)">
+            </mat-checkbox>
           </div>
         </ng-template>
       </ngx-datatable-column>

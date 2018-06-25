@@ -438,12 +438,29 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   onSelect({ selected }) {
-    console.log(selected)
+    // console.log(this.selected[0].realname)
+
+    // this.selected.forEach((i) => {
+    //   console.log(i.active);
+    // })
+
+    for (let i = 0; i < this.selected.length; i++) {
+      if (this.selected[i].active && this.selected[i].active !== '-') {
+        console.log(this.selected);
+        console.log(this.selected.splice(i, 1));
+        console.log(this.selected);
+      } 
+    }
+
+
+
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 
+
     if (this.conf.updateMultiAction) {
       this.conf.updateMultiAction(this.selected);
+      // console.log(this.selected)
     }
   }
 }

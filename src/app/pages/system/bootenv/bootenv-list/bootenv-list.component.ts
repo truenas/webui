@@ -54,8 +54,19 @@ export class BootEnvironmentListComponent {
     multiSelect: true
   };
 
-  // This module uses the default multi-action button (delete) from entity table
-
+  public multiActions: Array < any > = [
+   {
+      id: "mdelete",
+      label: "Delete",
+      icon: "delete",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
+      }
+    }
+  ];
+  
   public singleActions: Array < any > = [
     {
       id: "clone",
