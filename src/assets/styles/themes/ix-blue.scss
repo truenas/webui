@@ -601,7 +601,6 @@ entity-form .form-card.mat-card{
 
 @media screen and (max-width: 685px) {
 .form-explorer {
-  //background-color:#ddd;
   @include variable(background, --bg1, $bg1);
 }
 }

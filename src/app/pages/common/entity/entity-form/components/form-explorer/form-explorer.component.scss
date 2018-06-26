@@ -1,16 +1,16 @@
 .form-explorer {
     margin-bottom: 10px;
- }
+}
 
- #box1 {
-     display: inline-block;
-     width: 17%;
- }
+#box1 {
+    display: inline-block;
+    width: 17%;
+}
 
- #box2 {
-     display: inline-block;
-     width: 82%;
- }
+#box2 {
+    display: inline-block;
+    width: 82%;
+}
 
 #formexinput tooltip {
     position: relative;
@@ -19,18 +19,29 @@
 }
   
 @media screen and (max-width: 685px) {
-    #box2 {
-      display: block;
-      margin-left: 0;
-      margin-top: 8px;
-      width: 97%;
+    .flex-container {
+        display: flex;
+        flex-direction: column;
     }
 
     .form-explorer {
-        padding: 5px;
+        padding: 3px 10px 10px 10px;
         margin-bottom: 20px;
     }
 
+    #box1 {
+      order: 2;
+    }
+    #box2 {
+      margin-left: 0;
+      margin-top: 8px;
+      width: 100%;
+      order: 1
+    }
+    
+    #box3 {
+        order: 3;
+    }
 }
 
 @media screen and (min-width: 1100px) {
