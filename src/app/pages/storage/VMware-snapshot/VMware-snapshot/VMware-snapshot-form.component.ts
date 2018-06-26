@@ -17,6 +17,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services/dialog.service';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'vmware-snapshot-form',
@@ -25,9 +26,10 @@ import { DialogService } from 'app/services/dialog.service';
 
 export class VMwareSnapshotFormComponent {
 
-  protected resource_name: string = 'storage/vmwareplugin';
   protected route_success: string[] = ['storage', 'vmware-Snapshots'];
-  protected isEntity: boolean = true;
+  protected isEntity = true;
+  public queryCall = "vmware.query";
+  public addCall = "vmware.create";
   protected pk: any;
   public formGroup: FormGroup;
 
@@ -61,7 +63,10 @@ export class VMwareSnapshotFormComponent {
       tooltip: T('Enter the password associated with <b>Username</b>.'),
       inputType: 'password',
       validation: [Validators.required],
-      required: true
+      required: true,
+      blurStatus: true,
+      parent: this,
+      blurEvent: this.blurEvent,
     },
     {
       type: 'explorer',
@@ -81,7 +86,8 @@ export class VMwareSnapshotFormComponent {
                   <b>Password</b>, click <b>Fetch Datastores</b> and\
                   select the datastore to be synchronized.'),
       validation: [Validators.required],
-      required: true
+      required: true,
+      options: []
     },
 
   ]
@@ -92,7 +98,6 @@ export class VMwareSnapshotFormComponent {
       function: () => {
         this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
         this.datastore.type = 'select';
-        this.datastore.options = [];
 
         if (
           this.entityForm.formGroup.controls['hostname'].value === undefined ||
@@ -100,18 +105,7 @@ export class VMwareSnapshotFormComponent {
           this.entityForm.formGroup.controls['password'].value === undefined
         ) { this.dialogService.Info(T('VM Snapshot'), T("Please enter valid vmware ESXI/vsphere credentials to fetch datastores.")) }
         else {
-          const payload = {};
-          payload['hostname'] = this.entityForm.formGroup.controls['hostname'].value;
-          payload['username'] = this.entityForm.formGroup.controls['username'].value;
-          payload['password'] = this.entityForm.formGroup.controls['password'].value;
-          this.ws.call("vmware.get_datastores", [payload]).subscribe((res) => {
-            for (const key in res) {
-              const datastores = res[key]
-              for (const datastore in datastores) {
-                this.datastore.options.push({ label: datastore, value: datastore })
-              }
-            }
-          });
+          this.blurEvent(this);
         }
 
       }
@@ -126,12 +120,17 @@ export class VMwareSnapshotFormComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService) { }
+    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService, 
+    protected loader: AppLoaderService,) { }
 
 
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+    if(this.entityForm.pk){
+      this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
+      this.datastore.options.length = 0;
+    }
   }
 
   beforeSubmit(entityForm: any) {
@@ -139,4 +138,43 @@ export class VMwareSnapshotFormComponent {
       entityForm.filesystem = entityForm.filesystem.slice(5);
     }
   }
+
+  customEditCall(body){
+    this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res)=>{
+    },(error)=>{
+      this.dialogService.errorReport(error.error,error.reason, error.trace.formatted)
+    });
+  }
+
+  blurEvent(parent){
+    if(parent.entityForm){
+      this.datastore = _.find(parent.fieldConfig, {name:'datastore'});
+      const payload = {};
+      payload['hostname'] = parent.entityForm.formGroup.value.hostname;
+      payload['username'] = parent.entityForm.formGroup.value.username;
+      payload['password'] = parent.entityForm.formGroup.value.password;
+      parent.loader.open();
+      parent.ws.call("vmware.get_datastores", [payload]).subscribe((res) => {
+      if(this.datastore.options.length >0){
+        this.datastore.options.length = 0;
+      }
+        for (const key in res) {
+          const datastores = res[key]
+          for (const datastore in datastores) {
+            this.datastore.options.push({ label: datastore, value: datastore })
+          }
+        }
+        parent.loader.close();
+      }
+      ,
+      (error)=>{
+        this.datastore.options.length = 0;
+        parent.loader.close();
+        parent.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
+        parent.entityForm.formGroup.controls["password"].setValue("");
+      });
+    }
+
+    }
+
 }
