@@ -73,7 +73,7 @@ export class JailWizardComponent {
           type: 'checkbox',
           name: 'vnet',
           placeholder: T('VNET'),
-	  tooltip: T('Set to use <a \
+	        tooltip: T('Set to use <a \
                   href="https://www.freebsd.org/cgi/man.cgi?query=vnet&sektion=9"\
                   target="_blank">VNET(9)</a> to emulate network \
                   devices for the jail. \
@@ -82,6 +82,29 @@ export class JailWizardComponent {
           required: false,
           hasErrors: false,
           errors: '',
+          value: false,
+        },
+        {
+          type: 'select',
+          name: 'ip4_interface',
+          placeholder: T('IPv4 interface'),
+          tooltip: T('IPv4 interface for the jail.'),
+          options: [
+            {
+              label: 'vnet0',
+              value: 'vnet0',
+            }
+          ],
+          value: 'vnet0',
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          }],
+          class: 'inline',
+          width: '30%',
         },
         {
           type: 'input',
@@ -95,7 +118,25 @@ export class JailWizardComponent {
               name: 'dhcp',
               value: true,
             }]
-          }]
+          }],
+          class: 'inline',
+          width: '50%',
+        },
+        {
+          type: 'select',
+          name: 'ip4_netmask',
+          placeholder: T('IPv4 Netmask'),
+          tooltip: T('IPv4 Netmask for the jail.'),
+          options: [],
+          relation: [{
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          }],
+          class: 'inline',
+          width: '20%',
         },
         {
           type: 'input',
@@ -106,13 +147,21 @@ export class JailWizardComponent {
                       no IPv4 default route. <br>\
                       <b>A jail without a default route will not be \
                       able to access any networks.</b>'),
-          relation: [{
-            action: 'DISABLE',
-            when: [{
-              name: 'dhcp',
-              value: true,
-            }]
-          }]
+        },
+        {
+          type: 'select',
+          name: 'ip6_interface',
+          placeholder: T('IPv6 Interface'),
+          tooltip: T('IPv4 Interface for the jail.'),
+          options: [
+            {
+              label: 'vnet0',
+              value: 'vnet0',
+            }
+          ],
+          value: 'vnet0',
+          class: 'inline',
+          width: '30%',
         },
         {
           type: 'input',
@@ -120,6 +169,17 @@ export class JailWizardComponent {
           placeholder: T('IPv6 Address'),
           tooltip: T('IPv6 address for the jail.'),
           validation : [ regexValidator(this.networkService.ipv6_regex) ],
+          class: 'inline',
+          width: '30%',
+        },
+        {
+          type: 'select',
+          name: 'ip6_prefix',
+          placeholder: T('IPv6 Prefix'),
+          tooltip: T('IPv6 Prefix for the jail.'),
+          options: [],
+          class: 'inline',
+          width: '20%',
         },
         {
           type: 'input',
@@ -137,6 +197,10 @@ export class JailWizardComponent {
 
   protected releaseField: any;
   protected currentServerVersion: any;
+  protected ip4_interfaceField: any;
+  protected ip4_netmaskField: any;
+  protected ip6_interfaceField: any;
+  protected ip6_prefixField: any;
 
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
@@ -172,6 +236,32 @@ export class JailWizardComponent {
       (res) => {
         new EntityUtils().handleError(this, res);
       });
+
+    this.ip4_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_interface'});
+    this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
+    this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
+    this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
+    // get netmask/prefix for ipv4/6
+    let v4netmask = this.networkService.getV4Netmasks();
+    let v6prefix = this.networkService.getV6PrefixLength();
+    for (let i = 0; i < v4netmask.length; i++) {
+      this.ip4_netmaskField.options.push(v4netmask[i]);
+    }
+    for (let i = 0; i < v6prefix.length; i++) {
+      this.ip6_prefixField.options.push(v6prefix[i]);
+    }
+    // get interface options
+    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+      (res)=>{
+        for (let i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        }
+      },
+      (res)=>{
+        new EntityUtils().handleError(this, res);
+      }
+    );
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
