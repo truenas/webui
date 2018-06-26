@@ -147,6 +147,17 @@ export class JailWizardComponent {
                       no IPv4 default route. <br>\
                       <b>A jail without a default route will not be \
                       able to access any networks.</b>'),
+          relation: [{
+            action: 'DISABLE',
+            connective: 'OR',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }, {
+              name: 'vnet',
+              value: false,
+            }]
+          }]
         },
         {
           type: 'select',
