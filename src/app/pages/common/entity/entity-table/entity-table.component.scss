@@ -25,14 +25,18 @@
 
 #entity-spinner {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0; left: 0; bottom: 0; right: 0;
+    top: 30%;
+    margin: auto;
     text-align: center;
     z-index: 10;
     margin: 0 auto;
-    height: 120px;
-    padding: 25px 35px;
+    height: 125px;
+    width: 125px;
+}
+
+mat-spinner {
+    margin: 0 auto;
 }
 
 #footer {
@@ -43,9 +47,9 @@
     margin-left: 10px;
 }
 
-@media screen and (max-height: 750px) {
+@media screen and (max-height: 700px) {
     #entity-spinner {
-        top: 35%;
+        top: 20%;
     }
 }
 
