@@ -171,8 +171,8 @@ export class SmartFormComponent {
   constructor(protected router: Router, protected taskService: TaskService, protected storageService: StorageService, protected entityFormService: EntityFormService, ) {
     this.disk_field = _.find(this.fieldConfig, { 'name': 'smarttest_disks' });
     this.storageService.listDisks().subscribe((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        this.disk_field.options.push({ label: res.data[i].disk_name, value: '{devicename}' + res.data[i].disk_name })
+      for (let i in res) {
+        this.disk_field.options.push({ label: res[i].name, value: res[i].identifier })
       }
     });
 
