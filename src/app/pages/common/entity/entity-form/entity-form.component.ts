@@ -69,7 +69,6 @@ export interface Formconfiguration {
   confirmSubmitDialog?:Object;
   afterSave?;
   blurEvent?;
-  customEditCall?;
  
   afterSubmit?;
   beforeSubmit?;
@@ -451,10 +450,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
     if (this.conf.beforeSubmit) {
       this.conf.beforeSubmit(value);
-    }
-
-    if (this.conf.customEditCall) {
-      this.busy = this.conf.customEditCall(value);
     }
 
     if (this.conf.customSubmit) {
