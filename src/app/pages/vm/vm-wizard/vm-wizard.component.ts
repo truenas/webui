@@ -33,7 +33,7 @@ export class VMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "VM Summary";
-  
+
 
   protected wizardConfig: Wizard[] = [
 
@@ -56,8 +56,8 @@ export class VMWizardComponent {
         },
       ]
     },
-    
-    
+
+
     {
       label: T('Operating System'),
       fieldConfig: [
@@ -272,7 +272,7 @@ export class VMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    public messageService: MessageService,private router: Router, 
+    public messageService: MessageService,private router: Router,
     private dialogService: DialogService) {
 
   }
@@ -396,12 +396,10 @@ export class VMWizardComponent {
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
-    const payload = {}
     const vm_payload = {}
-    payload["name"] = hdd
-    payload["type"] = "VOLUME";
-    payload["volsize"] = value.volsize * 1024 * 1000 * 1000;
-    payload["volblocksize"] = "512";
+    vm_payload["zvol_name"] = hdd
+    vm_payload["zvol_type"] = "VOLUME";
+    vm_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
     vm_payload["vm_type"]= "Bhyve";
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
@@ -433,24 +431,23 @@ async customSubmit(value) {
     });
 
     } else {
-      this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
-        for (const device of vm_payload["devices"]){
-          if (device.dtype === "DISK"){
-            const orig_hdd = device.attributes.path;
-            device.attributes.path = '/dev/zvol/' + orig_hdd
-          };
+      vm_payload['create_zvol'] = true
+      for (const device of vm_payload["devices"]){
+        if (device.dtype === "DISK"){
+          const orig_hdd = device.attributes.path;
+          device.attributes.path = '/dev/zvol/' + orig_hdd
         };
-        this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-          this.loader.close();
-          this.router.navigate(['/vm']);
-        });
+      };
+      this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+        this.loader.close();
+        this.router.navigate(['/vm']);
       },(error) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error creating VM"), error.reason, error.trace.formatted);
       });
     }
+}
 
-  }
   async create_vnc_device(vm_payload: any) {
     await this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).toPromise().then( res=>{
       vm_payload["devices"].push(
