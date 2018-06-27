@@ -1240,6 +1240,9 @@ export class JailAddComponent implements OnInit {
     (res) => {
       for (let i in res[0]) {
         if (this.formGroup.controls[i]) {
+          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
+            this.formGroup.controls[i].setValue('');
+          }
           if (_.indexOf(this.TFfields, i) > 0) {
             if (res[0][i] == '1') {
               res[0][i] = true;
@@ -1317,13 +1320,16 @@ export class JailAddComponent implements OnInit {
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
-
-    if (value['ip4_addr'] != 'none' && value['ip4_addr'] != undefined && value['ip4_addr'] != '') {
+    if (value['ip4_addr'] == '') {
+      value['ip4_addr'] = 'none';
+    } else {
       value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
     }
     delete value['ip4_interface'];
     delete value['ip4_netmask'];
-    if (value['ip6_addr'] != 'none' && value['ip6_addr'] != undefined && value['ip6_addr'] != '') {
+    if (value['ip6_addr'] == '') {
+      value['ip6_addr'] = 'none';
+    } else {
       value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
     }
     delete value['ip6_interface'];
