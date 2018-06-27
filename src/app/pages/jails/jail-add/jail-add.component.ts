@@ -1242,6 +1242,7 @@ export class JailAddComponent implements OnInit {
         if (this.formGroup.controls[i]) {
           if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
             this.formGroup.controls[i].setValue('');
+            continue;
           }
           if (_.indexOf(this.TFfields, i) > 0) {
             if (res[0][i] == '1') {
