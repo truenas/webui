@@ -281,7 +281,6 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
     @include variable(color, #000, #000, !important);
 }
 
-
 .mat-drawer,
 .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
 .mat-card,.mat-paginator,
@@ -332,11 +331,20 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 }
 
 .mat-color-primary, 
+.mat-button.mat-primary,
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
 .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
 .mat-focused .mat-form-field-label{
   @include variable(color, --primary, $primary, !important);
+}
+
+.mat-button.mat-accent {
+  @include variable(color, --accent, $accent, !important);
+}
+
+.mat-button:disabled {
+  opacity: .38;
 }
 
 .mat-form-field-ripple{
