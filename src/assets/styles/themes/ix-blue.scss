@@ -387,7 +387,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .egret-swatch,
 .mat-checkbox-frame,
 { 
-  @include variable(border-color, --fg2, $fg2);
+  @include variable(border-color, --alt-fg1, $alt-fg1);
 }
 
 .spacer{
@@ -619,4 +619,16 @@ entity-form .form-card.mat-card{
 .node-content-wrapper:hover,
 .node-content-wrapper-focused{
     @include variable(background, --bg1, $bg1);
+}
+
+.vdev-action-btn {
+  @include variable(background, --bg1, $bg1);
+}
+
+.vdev-action-btn .arrow {
+  @include variable(color, --primary, $primary);
+}
+
+.vdev-action-btn:disabled {
+  opacity: 0.38;
 }
