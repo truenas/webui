@@ -59,9 +59,9 @@ export class VMwareSnapshotFormComponent {
       inputType: 'password',
       validation: [Validators.required],
       required: true,
-      blurStatus: true,
-      parent: this,
-      blurEvent: this.blurEvent,
+      // blurStatus: true,
+      // parent: this,
+      // blurEvent: this.blurEvent,
     },
     {
       type: 'explorer',
