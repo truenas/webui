@@ -1,12 +1,17 @@
 <div id="entity-table-component" class="material mat-card mat-card-table">
-  <mat-card id="entity-spinner" *ngIf="!showDefaults && showSpinner">
-  <mat-card-content>
-    <h4>Loading...</h4>
-      <!-- <mat-spinner></mat-spinner>  -->
-      <!-- <div class="pong-loader"></div> -->
-      <div class="pulse-loader"></div>    
-  </mat-card-content>
-</mat-card>
+  <!-- <mat-card id="entity-spinner" *ngIf="!showDefaults && showSpinner">
+    <mat-card-content>
+      <h4>Loading...</h4> -->
+      <mat-spinner 
+        [diameter]='50' 
+        id="entity-spinner"
+        *ngIf="!showDefaults && showSpinner">
+      </mat-spinner> 
+        <!-- <mat-spinner></mat-spinner>  -->
+        <!-- <div class="pong-loader"></div> -->
+        <!-- <div class="pulse-loader"></div>    
+    </mat-card-content>
+  </mat-card> -->
 
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>

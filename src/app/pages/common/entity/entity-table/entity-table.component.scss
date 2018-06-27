@@ -23,21 +23,6 @@
 	height: 40px;
 }
 
-#entity-spinner {
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    top: 30%;
-    margin: auto;
-    text-align: center;
-    z-index: 10;
-    margin: 0 auto;
-    height: 125px;
-    width: 125px;
-}
-
-.pulse-loader {
-    margin: 20px auto;
-}
 
 #footer {
     padding: 15px;
@@ -45,6 +30,16 @@
 
 #footer-text {
     margin-left: 10px;
+}
+
+// Small page-loading spinner for entity tables
+#entity-spinner {
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  top: 30%;
+  z-index: 10;
+  margin: 0 auto;
+  color: red;
 }
 
 @media screen and (max-height: 700px) {
