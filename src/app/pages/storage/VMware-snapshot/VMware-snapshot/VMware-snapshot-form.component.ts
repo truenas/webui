@@ -2,25 +2,20 @@ import {
   ApplicationRef,
   Component,
   Injector,
-  Input,
-  QueryList,
-  ViewChildren
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as moment from 'moment';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Rx';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
+import * as _ from 'lodash';
+
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { RestService, WebSocketService } from '../../../../services/';
-import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
-  selector: 'vmware-snapshot-form',
+  selector: 'app-vmware-snapshot-form',
   template: `<entity-form [conf]="this"></entity-form>`
 })
 
