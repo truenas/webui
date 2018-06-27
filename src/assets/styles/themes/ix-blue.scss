@@ -607,3 +607,8 @@ entity-form .form-card.mat-card{
 .ix-blue .mat-step-header .mat-step-label {
   color: gray;
 }
+ // Style file trees to be highlighted with a theme color
+.node-content-wrapper:hover,
+.node-content-wrapper-focused{
+    @include variable(background, --bg1, $bg1);
+}
