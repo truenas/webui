@@ -20,8 +20,19 @@ export const routes: Routes = [
         },
         {
           path: 'add',
-          component: JailAddComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
+          children: [
+            {
+              path: 'advanced',
+              component: JailAddComponent,
+              data: { title: 'Advanced Jail Creation', breadcrumb: 'Advanced Jail Creation' },
+            },
+            {
+              path: 'wizard',
+              component: JailWizardComponent,
+              data: { title: 'Wizard', breadcrumb: 'Wizard'},
+            }
+          ]
         }, {
           path: 'edit/:pk',
           component: JailEditComponent,
@@ -47,10 +58,6 @@ export const routes: Routes = [
               data: { title: 'Edit', breadcrumb: 'Edit' },
             },
           ]
-        }, {
-          path: 'wizard',
-          component: JailWizardComponent,
-          data: { title: 'Wizard', breadcrumb: 'Wizard'},
         }
       ]
     }
