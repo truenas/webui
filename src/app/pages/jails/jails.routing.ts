@@ -12,37 +12,47 @@ import { JailShellComponent } from './jail-shell/';
 export const routes: Routes = [
     {
       path: '',
-      component: JailListComponent,
-      data: { title: 'Jails', breadcrumb: 'Jails'}
-    }, {
-      path: 'add',
-      component: JailAddComponent,
-      data: { title: 'Add', breadcrumb: 'Add' },
-    }, {
-      path: 'edit/:pk',
-      component: JailEditComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit' },
-    }, {
-      path: 'shell/:pk',
-      component: JailShellComponent,
-      data: { title: 'Shell', breadcrumb: 'Shell' },
-    }, {
-      path: 'storage/:jail',
-      component: StorageListComponent,
-      data: { title: 'Mount Points', breadcrumb: 'Mount Points' },
-    }, {
-      path: 'storage/add/:jail',
-      component: StorageFormComponent,
-      data: { title: 'Add', breadcrumb: 'Add' },
-    }, {
-      path: 'storage/edit/:jail/:pk',
-      component: StorageFormComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit' },
-    },
-    {
-      path: 'wizard',
-      component: JailWizardComponent,
-      data: { title: 'Wizard', breadcrumb: 'Wizard'},
+      data: { title: 'Jails', breadcrumb: 'Jails'},
+      children: [
+        {
+          path: '',
+          component: JailListComponent
+        },
+        {
+          path: 'add',
+          component: JailAddComponent,
+          data: { title: 'Add', breadcrumb: 'Add' },
+        }, {
+          path: 'edit/:pk',
+          component: JailEditComponent,
+          data: { title: 'Edit', breadcrumb: 'Edit' },
+        }, {
+          path: 'shell/:pk',
+          component: JailShellComponent,
+          data: { title: 'Shell', breadcrumb: 'Shell' },
+        }, {
+          path: 'storage/:jail',
+          data: { title: 'Mount Points', breadcrumb: 'Mount Points' },
+          children: [
+            {
+              path: '',
+              component: StorageListComponent,
+            }, {
+              path: 'add',
+              component: StorageFormComponent,
+              data: { title: 'Add', breadcrumb: 'Add' },
+            }, {
+              path: 'edit/:pk',
+              component: StorageFormComponent,
+              data: { title: 'Edit', breadcrumb: 'Edit' },
+            },
+          ]
+        }, {
+          path: 'wizard',
+          component: JailWizardComponent,
+          data: { title: 'Wizard', breadcrumb: 'Wizard'},
+        }
+      ]
     }
 ];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
