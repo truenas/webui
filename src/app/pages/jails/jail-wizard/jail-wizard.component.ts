@@ -126,8 +126,14 @@ export class JailWizardComponent {
           type: 'select',
           name: 'ip4_netmask',
           placeholder: T('IPv4 Netmask'),
-          tooltip: T('IPv4 Netmask for the jail.'),
-          options: [],
+          tooltip: T('IPv4 netmask for the jail.'),
+          options: [
+            {
+              label: '------',
+              value: '',
+            }
+          ],
+          value: '',
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -135,6 +141,7 @@ export class JailWizardComponent {
               value: true,
             }]
           }],
+          required: false,
           class: 'inline',
           width: '20%',
         },
@@ -163,7 +170,7 @@ export class JailWizardComponent {
           type: 'select',
           name: 'ip6_interface',
           placeholder: T('IPv6 Interface'),
-          tooltip: T('IPv4 Interface for the jail.'),
+          tooltip: T('IPv4 interface for the jail.'),
           options: [
             {
               label: 'vnet0',
@@ -187,7 +194,7 @@ export class JailWizardComponent {
           type: 'select',
           name: 'ip6_prefix',
           placeholder: T('IPv6 Prefix'),
-          tooltip: T('IPv6 Prefix for the jail.'),
+          tooltip: T('IPv6 prefix for the jail.'),
           options: [],
           class: 'inline',
           width: '20%',
@@ -213,6 +220,8 @@ export class JailWizardComponent {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
 
+  public ipv4: any;
+  public ipv6: any;
   constructor(protected rest: RestService,
               protected ws: WebSocketService,
               protected jailService: JailService,
@@ -275,6 +284,34 @@ export class JailWizardComponent {
     );
   }
 
+  updateIpAddress(entityWizard, type) {
+    if (type == 'ipv4') {
+      let ip4_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'];
+      let ip4_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_addr'];
+      let ip4_netmask_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_netmask'];
+      if (ip4_address_control.value == undefined || ip4_address_control.value == '') {
+        delete this.summary[T('IPv4 Address')];
+        this.ip4_netmaskField.required = false;
+      } else {
+        this.ip4_netmaskField.required = true;
+        this.summary[T('IPv4 Address')] = ip4_interface_control.value + '|' + ip4_address_control.value + '/' + ip4_netmask_control.value;
+      }
+      this.ipv4 = this.summary[T('IPv4 Address')];
+    } else {
+      let ip6_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_interface'];
+      let ip6_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_addr'];
+      let ip6_prefix_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip6_prefix'];
+      if (ip6_address_control.value == undefined || ip6_address_control.value == '') {
+        delete this.summary[T('IPv6 Address')];
+        this.ip6_prefixField.required = false;
+      } else {
+        this.ip6_prefixField.required = true;
+        this.summary[T('IPv6 Address')] = ip6_interface_control.value + '|' + ip6_address_control.value + '/' + ip6_prefix_control.value;
+      }
+      this.ipv6 = this.summary[T('IPv6 Address')];
+    }
+  }
+
   afterInit(entityWizard: EntityWizardComponent) {
     ( < FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
       this.summary[T('Jail Name')] = res;
@@ -282,13 +319,17 @@ export class JailWizardComponent {
     ( < FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.subscribe((res) => {
       this.summary[T('Release')] = res;
     });
-    ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
-      if (res == undefined || res == '') {
-        delete this.summary[T('IPv4 Address')];
-      } else {
-        this.summary[T('IPv4 Address')] = res;
-      }
+    // update ipv4
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.subscribe((res) => {
+      this.updateIpAddress(entityWizard, 'ipv4');
     });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_netmask').valueChanges.subscribe((res) => {
+      this.updateIpAddress(entityWizard, 'ipv4');
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
+      this.updateIpAddress(entityWizard, 'ipv4');
+    });
+
     ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.subscribe((res) => {
       if (res == undefined || res == '') {
         delete this.summary[T('Default Router For IPv4')];
@@ -296,13 +337,17 @@ export class JailWizardComponent {
         this.summary[T('Default Router For IPv4')] = res;
       }
     });
-    ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
-      if (res == undefined || res == '') {
-        delete this.summary[T('IPv6 Address')];
-      } else {
-        this.summary[T('IPv6 Address')] = res;
-      }
+    // update ipv6
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.subscribe((res) => {
+      this.updateIpAddress(entityWizard, 'ipv6');
     });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_prefix').valueChanges.subscribe((res) => {
+      this.updateIpAddress(entityWizard, 'ipv6');
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
+      this.updateIpAddress(entityWizard, 'ipv6');
+    });
+
     ( < FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.subscribe((res) => {
       if (res == undefined || res == '') {
         delete this.summary[T('Default Router For IPv6')];
@@ -334,6 +379,12 @@ export class JailWizardComponent {
 
   beforeSubmit(value) {
     let property: any = [];
+    delete value['ip4_interface'];
+    delete value['ip4_netmask'];
+    value['ip4_addr'] = this.ipv4;
+    delete value['ip6_interface'];
+    delete value['ip6_prefix'];
+    value['ip6_addr'] = this.ipv6;
 
     for (let i in value) {
       if (value.hasOwnProperty(i)) {
