@@ -598,3 +598,12 @@ entity-form .form-card.mat-card{
 .datatable-scroll {
   min-width: 100%;
 }
+
+// Add rule for entity wizards to make text light on dark themes
+.ix-blue .mat-step-header .mat-step-label.mat-step-label-active, {
+  @include variable(color, --fg2, $fg2);
+}
+
+.ix-blue .mat-step-header .mat-step-label {
+  color: gray;
+}
