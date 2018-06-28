@@ -53,7 +53,7 @@ export class VMwareSnapshotFormComponent {
     },
     {
       type: 'input',
-      name: 'new_password2',
+      name: 'password',
       placeholder: T('Password'),
       tooltip: T('Enter the password associated with <b>Username</b>.'),
       inputType: 'password',
@@ -97,7 +97,7 @@ export class VMwareSnapshotFormComponent {
         if (
           this.entityForm.formGroup.controls['hostname'].value === undefined ||
           this.entityForm.formGroup.controls['username'].value === undefined ||
-          this.entityForm.formGroup.controls['new_password2'].value === undefined
+          this.entityForm.formGroup.controls['password'].value === undefined
         ) { this.dialogService.Info(T('VM Snapshot'), T("Please enter valid vmware ESXI/vsphere credentials to fetch datastores.")) }
         else {
           this.blurEvent(this);
@@ -135,24 +135,27 @@ export class VMwareSnapshotFormComponent {
   }
 
   customEditCall(body){
-    if (body.new_password2){
-      body.password = body.new_password2;
-      delete body.new_password2;
+    if(this.entityForm.pk){
+      this.entityForm.loader.open();
+      this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res)=>{
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success))
+      },(error)=>{
+        this.loader.close();
+        this.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
+      });
     }
-    this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res)=>{
-    },(error)=>{
-      this.dialogService.errorReport(error.error,error.reason, error.trace.formatted)
-    });
-  }
 
+  }
   blurEvent(parent){
     if(parent.entityForm){
       this.datastore = _.find(parent.fieldConfig, {name:'datastore'});
       const payload = {};
       payload['hostname'] = parent.entityForm.formGroup.value.hostname;
       payload['username'] = parent.entityForm.formGroup.value.username;
-      payload['password'] = parent.entityForm.formGroup.value.new_password2;
-      if(payload['password'] !== "") {
+      payload['password'] = parent.entityForm.formGroup.value.password;
+
+      if(payload['password'] !== "" && typeof(payload['password'])!== "undefined") {
         parent.loader.open();
         parent.ws.call("vmware.get_datastores", [payload]).subscribe((res) => {
         if(this.datastore.options.length >0){
