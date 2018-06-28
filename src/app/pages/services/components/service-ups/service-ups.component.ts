@@ -72,10 +72,10 @@ export class ServiceUPSComponent {
       validation : [ Validators.required ]
     },
     {
-      type : 'input', //fixme - this should be a select but we need api for options
+      type : 'select',
       name : 'ups_port',
       placeholder : T('Port'),
-      //options: [],
+      options: [],
       tooltip : T('Enter the serial or USB port the UPS is plugged into.'),
       required: true,
       validation : [ Validators.required ]
@@ -213,10 +213,17 @@ export class ServiceUPSComponent {
 
   afterInit(entityEdit: any) {
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
-    this.ws.call('notifier.choices', ['UPSDRIVER_CHOICES']).subscribe((res) => {
-      for (let item of res) {
-        this.ups_driver.options.push({ label: item[1], value: item[0] });
+    this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
+    this.ws.call('ups.driver_choices', []).subscribe((res) => {
+      for (const item in res) {
+        this.ups_driver.options.push({ label: res[item], value: item });
       }
+    });
+
+    this.ws.call('ups.port_choices', []).subscribe((res) => {
+      for (let i=0; i < res.length; i++) {
+        this.ups_port.options.push({label: res[i], value: res[i]});
+      } 
     });
   }
 }
