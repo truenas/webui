@@ -397,9 +397,14 @@ async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const vm_payload = {}
-    vm_payload["zvol_name"] = hdd
-    vm_payload["zvol_type"] = "VOLUME";
-    vm_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
+    const zvol_payload = {}
+
+    // zvol_payload only applies if the user is creating one
+    zvol_payload['create_zvol'] = true
+    zvol_payload["zvol_name"] = hdd
+    zvol_payload["zvol_type"] = "VOLUME";
+    zvol_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
+
     vm_payload["vm_type"]= "Bhyve";
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
@@ -431,11 +436,19 @@ async customSubmit(value) {
     });
 
     } else {
-      vm_payload['create_zvol'] = true
       for (const device of vm_payload["devices"]){
         if (device.dtype === "DISK"){
           const orig_hdd = device.attributes.path;
+          const create_zvol = zvol_payload['create_zvol']
+          const zvol_name = zvol_payload['zvol_name']
+          const zvol_type = zvol_payload['zvol_type']
+          const zvol_volsize = zvol_payload['zvol_volsize']
+
           device.attributes.path = '/dev/zvol/' + orig_hdd
+          device.attributes.create_zvol = create_zvol
+          device.attributes.zvol_name = zvol_name
+          device.attributes.zvol_type = zvol_type
+          device.attributes.zvol_volsize = zvol_volsize
         };
       };
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
