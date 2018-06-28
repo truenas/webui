@@ -610,17 +610,21 @@ entity-form .form-card.mat-card{
 // Add rule for entity wizards to make text light on dark themes
 .ix-blue .mat-step-header .mat-step-label.mat-step-label-active, {
   @include variable(color, --fg2, $fg2);
+  opacity: 1;
 }
 
 .ix-blue .mat-step-header .mat-step-label {
-  color: gray;
+  @include variable(color, --fg2, $fg2);
+  opacity: .38;
 }
+
  // Style file trees to be highlighted with a theme color
 .node-content-wrapper:hover,
 .node-content-wrapper-focused{
     @include variable(background, --bg1, $bg1);
 }
 
+// Give vdev arrow buttons theme colors
 .vdev-action-btn {
   @include variable(background, --bg1, $bg1);
 }
@@ -632,3 +636,15 @@ entity-form .form-card.mat-card{
 .vdev-action-btn:disabled {
   opacity: 0.38;
 }
+
+// style nav chevrons on datatable pager w/regard to theme
+.mat-button-wrapper .mat-paginator-decrement,
+.mat-button-wrapper .mat-paginator-increment {
+  @include variable(border-color, --fg1, $fg1);
+} 
+
+.mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
+.mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
+  @include variable(border-color, --fg1, $fg1);
+  opacity: .38;
+} 
