@@ -598,3 +598,7 @@ entity-form .form-card.mat-card{
 .datatable-scroll {
   min-width: 100%;
 }
+
+.mat-spinner circle {
+  @include variable(stroke, --primary, $primary, !important);
+} 
