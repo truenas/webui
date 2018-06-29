@@ -648,3 +648,13 @@ entity-form .form-card.mat-card{
   @include variable(border-color, --fg1, $fg1);
   opacity: .38;
 } 
+
+
+// style to make sure all radio buttons catch the theme color
+.ix-blue .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  @include variable(background-color, --accent, $accent !important);
+}
+
+.ix-blue .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+  @include variable(border-color, --accent, $accent !important);
+}
