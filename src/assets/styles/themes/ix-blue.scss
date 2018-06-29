@@ -658,3 +658,8 @@ entity-form .form-card.mat-card{
 .ix-blue .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
   @include variable(border-color, --accent, $accent !important);
 }
+
+// Fix icon color in notification area
+.notific-icon {
+  @include variable(color, --primary, $primary !important);
+}
