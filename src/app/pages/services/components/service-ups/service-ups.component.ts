@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -28,9 +28,14 @@ import { T } from '../../../../translate-marker';
   template : `<entity-form [conf]="this"></entity-form>`,
 })
 
-export class ServiceUPSComponent {
+export class ServiceUPSComponent implements OnDestroy {
   protected ups_driver: any;
+  protected ups_driver_fg: any;
   protected ups_port: any;
+  protected ups_hostname: any;
+  protected ups_driver_subscription: any;
+  protected entityForm: any;
+
   protected resource_name: string = 'services/ups';
   protected route_success: string[] = [ 'services' ];
 
@@ -79,6 +84,13 @@ export class ServiceUPSComponent {
       tooltip : T('Enter the serial or USB port the UPS is plugged into.'),
       required: true,
       validation : [ Validators.required ]
+    },
+    {
+      type: 'input',
+      name: 'ups_hostname',
+      placeholder: T('Hostname'),
+      tooltip: T('Enter the IP address or hostname for SNMP UPS.'),
+      required: true,
     },
     {
       type : 'textarea',
@@ -211,9 +223,51 @@ export class ServiceUPSComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
-  afterInit(entityEdit: any) {
+  resourceTransformIncomingRestData(data) {
+    if (this.isSNMP(data['ups_driver'])) {
+      data['ups_hostname'] = data['ups_port'];
+      delete data['ups_port'];
+    }
+    return data;
+  }
+
+  beforeSubmit(data) {
+    if (this.isSNMP(data['ups_driver'])) {
+      data['ups_port'] = data['ups_hostname'];
+    }
+    delete data['ups_hostname'];
+  }
+
+  isSNMP(value) {
+    if (value && value.indexOf('snmp-ups') !== -1) {
+      return true;
+    }
+    return false;
+  }
+
+  switchSNMP(value) {
+    const is_snmp = this.isSNMP(value);
+    this.ups_port.isHidden = is_snmp;
+    this.entityForm.setDisabled('ups_port', is_snmp);
+    this.ups_hostname.isHidden = !is_snmp;
+    this.entityForm.setDisabled('ups_hostname', !is_snmp);
+  }
+
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     this.ups_driver = _.find(this.fieldConfig, { name: 'ups_driver' });
     this.ups_port = _.find(this.fieldConfig, { name: 'ups_port' });
+    this.ups_driver_fg = entityForm.formGroup.controls['ups_driver'];
+    this.ups_hostname = _.find(this.fieldConfig, {name: 'ups_hostname'});
+
+   this.switchSNMP(this.ups_driver_fg.value);
+
+    this.ups_driver_subscription = this.ups_driver_fg.valueChanges.subscribe((value) => {
+      if (value) {
+        this.switchSNMP(value);
+      }
+    });
+
     this.ws.call('ups.driver_choices', []).subscribe((res) => {
       for (const item in res) {
         this.ups_driver.options.push({ label: res[item], value: item });
@@ -225,5 +279,9 @@ export class ServiceUPSComponent {
         this.ups_port.options.push({label: res[i], value: res[i]});
       } 
     });
+  }
+
+  ngOnDestroy() {
+    this.ups_driver_subscription.unsubscribe();
   }
 }
