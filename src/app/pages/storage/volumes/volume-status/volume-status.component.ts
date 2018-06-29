@@ -246,6 +246,9 @@ export class VolumeStatusComponent implements OnInit {
           _.find(item.actions, { label: "Online" }).isHidden = true;
           _.find(item.actions, { label: "Offline" }).isHidden = true;
           _.find(item.actions, { label: "Replace" }).isHidden = true;
+        } else if (category == "cache") {
+          _.find(item.actions, { label: "Online" }).isHidden = true;
+          _.find(item.actions, { label: "Offline" }).isHidden = true;
         }
       }
     }
