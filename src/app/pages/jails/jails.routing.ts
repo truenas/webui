@@ -23,6 +23,10 @@ export const routes: Routes = [
           data: { title: 'Add', breadcrumb: 'Add' },
           children: [
             {
+              path: '',
+              redirectTo: 'wizard',
+            },
+            {
               path: 'advanced',
               component: JailAddComponent,
               data: { title: 'Advanced Jail Creation', breadcrumb: 'Advanced Jail Creation' },
