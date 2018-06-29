@@ -19,7 +19,7 @@ interface ZvolFormData {
   comments: string;
   volsize: number;
   volsize_unit: string;
-  force: boolean;
+  force_size: boolean;
   sync: string;
   compression: string;
   deduplication: string;
@@ -121,7 +121,7 @@ export class ZvolFormComponent {
     },
     {
       type: 'checkbox',
-      name : 'force',
+      name : 'force_size',
       placeholder: T('Force size'),
       tooltip : T('By default, the system does not allow a zvol to be\
  created that brings the pool to over 80% capacity. Check this box to\
@@ -222,10 +222,8 @@ export class ZvolFormComponent {
         delete data.name;
         delete data.volblocksize;
         delete data.type;
-        delete data.force;
         delete data.sparse;
     } else {
-      delete data.force;
       data.name = this.parent + "/" + data.name;
     }
 
@@ -260,8 +258,8 @@ export class ZvolFormComponent {
     await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset)=>{
 
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
-
-
+        
+       
         const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
         const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
         const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
@@ -288,22 +286,16 @@ export class ZvolFormComponent {
           sparse.isHidden =true;
           volblocksize.isHidden =true;
           _.find(this.fieldConfig, {name:'sparse'}).isHidden=true;
-          _.find(this.fieldConfig, {name:'force'}).isHidden=true;
           this.customFilter = [[["id", "=", this.parent]]]
           this.isNew =false;
           let sync_collection = [{label:pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
           let compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
           let deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
   
-          const volumesize = pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[0-9]+/g)[0];
-          const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[0-9]+/g)[1];
+          const volumesize = pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+          const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
   
-          const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-          const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-          const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-          const volblocksize_inherit = [{label:`Inherit`, value: 'INHERIT'}];
   
-        
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
           if(pk_dataset[0].comments){
             entityForm.formGroup.controls['comments'].setValue(pk_dataset[0].comments.value);
@@ -312,7 +304,7 @@ export class ZvolFormComponent {
             entityForm.formGroup.controls['comments'].setValue('');
           }
           
-          entityForm.formGroup.controls['volsize'].setValue(volumesize);
+          entityForm.formGroup.controls['volsize'].setValue(Math.round(volumesize));
   
           entityForm.formGroup.controls['volsize_unit'].setValue(volumeunit);
 
