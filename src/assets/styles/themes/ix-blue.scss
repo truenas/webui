@@ -598,3 +598,8 @@ entity-form .form-card.mat-card{
 .datatable-scroll {
   min-width: 100%;
 }
+
+// Style the logo with the primary theme color
+.ix-logo {
+  @include variable(fill, --primary, $primary);
+}
