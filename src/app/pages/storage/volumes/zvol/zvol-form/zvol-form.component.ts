@@ -196,9 +196,9 @@ export class ZvolFormComponent {
         { label: '32K', value: '32K' },
         { label: '64K', value: '64K' },
         { label: '128K', value: '128K' },
-        { label: '256K', value: '256K' },
-        { label: '512K', value: '512K' },
-        { label: '1024K', value: '1024K' }
+        // { label: '256K', value: '256K' },
+        // { label: '512K', value: '512K' },
+        // { label: '1024K', value: '1024K' }
       ],
       isHidden: false
     },
@@ -379,7 +379,7 @@ export class ZvolFormComponent {
       delete(data.deduplication);
     }
     if (data.volblocksize !== 'INHERIT') {
-      const volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+      let volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
       
   
