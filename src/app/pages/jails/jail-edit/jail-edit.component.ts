@@ -184,7 +184,7 @@ export class JailEditComponent implements OnInit {
       type: 'select',
       name: 'ip6_interface',
       placeholder: T('IPv6 Interface'),
-      tooltip: T('IPv4 interface for the jail.'),
+      tooltip: T('IPv6 interface for the jail.'),
       options: [
         {
           label: 'vnet0',
