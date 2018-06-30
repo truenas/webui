@@ -169,7 +169,7 @@ export class CloudsyncFormComponent implements OnInit {
     isHidden: true,
   },
   {
-    type: 'input',
+    type: 'textarea',
     name: 'args',
     placeholder: T('Auxiliary arguments'),
     value: "",
