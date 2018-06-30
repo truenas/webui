@@ -378,6 +378,7 @@ export class ZvolFormComponent {
     if (data.deduplication === 'INHERIT') {
       delete(data.deduplication);
     }
+    data.volsize = Math.ceil(data.volsize);
     if (data.volblocksize !== 'INHERIT') {
       let volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
@@ -389,7 +390,7 @@ export class ZvolFormComponent {
         volblocksize_integer_value = volblocksize_integer_value * 1024
       }
 
-      data.volsize = Math.round(data.volsize);
+      
       data.volsize = data.volsize + (volblocksize_integer_value - data.volsize%volblocksize_integer_value)
 
        
