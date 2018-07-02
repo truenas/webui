@@ -593,11 +593,22 @@ export class VolumesListTableConfig implements InputTableConf {
           method_rest: "storage/snapshot",
           saveButtonText: "Create Snapshot",
         }
-        this.dialogService.dialogForm(conf).subscribe((res) => {
-          if (res) {
-            this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+        this.ws.call('vmware.query',[[["filesystem", "=", row.path]]]).subscribe((vmware_res)=>{
+          if(vmware_res.length !== 0){
+            const vmware_cb = {
+              type: 'checkbox',
+              name: 'vmware_sync',
+              placeholder: 'VMWare Sync',
+              tooltip: T(''),
+            }
+            conf.fieldConfig.push(vmware_cb);
           }
-        });
+          this.dialogService.dialogForm(conf).subscribe((res) => {
+            if (res) {
+              this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+            }
+          });
+        })
       }
     });
     return actions;
