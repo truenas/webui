@@ -11,6 +11,8 @@ import { T } from '../../../../../translate-marker';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { Observable, Observer } from 'rxjs';
+import { promise } from 'protractor';
 
 
 
@@ -403,7 +405,7 @@ export class ZvolFormComponent {
     return this.ws.call('pool.dataset.create', [ data ]);
   }
   editSubmit(body: any) {
-    this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
+     this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
       this.edit_data = this.sendAsBasicOrAdvanced(body);
       let volblocksize_integer_value = res[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
@@ -413,9 +415,15 @@ export class ZvolFormComponent {
         volblocksize_integer_value = volblocksize_integer_value * 1024
       }
       this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
-     
+      this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      }, (eres) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error saving dataset"), eres.reason, eres.trace.formatted);
+      });
     })
-    return this.ws.call('pool.dataset.update', [this.parent, this.edit_data]);
   }
 
   customSubmit(body: any) {
@@ -423,15 +431,19 @@ export class ZvolFormComponent {
 
     this.loader.open();
 
-     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
-      this.loader.close();
-      
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
-    }, (res) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
-    });
+    if(this.isNew === true){
+      this.addSubmit(body).subscribe((restPostResp) => {
+        this.loader.close();
+        
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      }, (res) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
+      });
+    } else{
+      this.editSubmit(body);
+    }
   }
 
 }
