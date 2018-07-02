@@ -213,6 +213,7 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'args',
     placeholder: T('Auxiliary arguments'),
     value: "",
+    isHidden: true,
   }, {
     type: 'select',
     name: 'repeat',
