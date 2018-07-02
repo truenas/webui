@@ -419,7 +419,7 @@ export class ZvolFormComponent {
           this.route_success));
       }, (eres) => {
         this.loader.close();
-        this.dialogService.errorReport(T("Error saving dataset"), eres.reason, eres.trace.formatted);
+        this.dialogService.errorReport(T("Error saving ZVOL"), eres.reason, eres.trace.formatted);
       });
     })
   }
@@ -437,7 +437,7 @@ export class ZvolFormComponent {
           this.route_success));
       }, (res) => {
         this.loader.close();
-        this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
+        this.dialogService.errorReport(T("Error saving ZVOL"), res.reason, res.trace.formatted);
       });
     } else{
       this.editSubmit(body);
