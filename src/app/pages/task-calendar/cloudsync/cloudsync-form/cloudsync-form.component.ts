@@ -611,6 +611,16 @@ export class CloudsyncFormComponent implements OnInit {
     if (_.isArray(value.month)) {
       value['month'] = value.month.join(",");
     }
+    // needed since middleware return array
+    if (_.isArray(value.minute)) {
+      value['minute'] = value.minute.join(",");
+    }
+    if (_.isArray(value.hour)) {
+      value['hour'] = value.hour.join(",");
+    }
+    if (_.isArray(value.daymonth)) {
+      value['daymonth'] = value.daymonth.join(",");
+    }
 
     value['credential'] = parseInt(value.credential);
 
