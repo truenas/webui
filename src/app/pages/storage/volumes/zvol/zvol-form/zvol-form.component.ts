@@ -51,6 +51,7 @@ export class ZvolFormComponent {
   public volid: string;
   public customFilter: any[] = [];
   public pk_dataset: any[] = [];
+  public edit_data: any;
 
   public custActions: Array<any> = [
     {
@@ -304,7 +305,7 @@ export class ZvolFormComponent {
             entityForm.formGroup.controls['comments'].setValue('');
           }
           
-          entityForm.formGroup.controls['volsize'].setValue(Math.round(volumesize));
+          entityForm.formGroup.controls['volsize'].setValue(volumesize);
   
           entityForm.formGroup.controls['volsize_unit'].setValue(volumeunit);
 
@@ -402,8 +403,19 @@ export class ZvolFormComponent {
     return this.ws.call('pool.dataset.create', [ data ]);
   }
   editSubmit(body: any) {
-    const data: any = this.sendAsBasicOrAdvanced(body);
-    return this.ws.call('pool.dataset.update', [this.parent, data]);
+    this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
+      this.edit_data = this.sendAsBasicOrAdvanced(body);
+      let volblocksize_integer_value = res[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+      volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
+      if (volblocksize_integer_value === 512){
+        volblocksize_integer_value = 512
+      } else {
+        volblocksize_integer_value = volblocksize_integer_value * 1024
+      }
+      this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
+     
+    })
+    return this.ws.call('pool.dataset.update', [this.parent, this.edit_data]);
   }
 
   customSubmit(body: any) {
@@ -411,7 +423,7 @@ export class ZvolFormComponent {
 
     this.loader.open();
 
-    return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
+     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       this.loader.close();
       
       this.router.navigate(new Array('/').concat(
