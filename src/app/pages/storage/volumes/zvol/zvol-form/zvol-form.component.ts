@@ -11,8 +11,6 @@ import { T } from '../../../../../translate-marker';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { Observable, Observer } from 'rxjs';
-import { promise } from 'protractor';
 
 
 
