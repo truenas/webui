@@ -1,72 +1,16 @@
 .form-explorer {
     margin-bottom: 10px;
+    padding: 10px;
+    width: 90%;
+    max-width: 700px;;
 }
 
-#box1 {
-    display: inline-block;
-    width: 17%;
-}
-
-#box2 {
-    display: inline-block;
-    width: 82%;
+#formexinput {
+    width: 95%;
 }
 
 #formexinput tooltip {
     position: relative;
     left: 28px;
     top: 20px;
-}
-  
-@media screen and (max-width: 685px) {
-    .flex-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-explorer {
-        padding: 3px 10px 10px 10px;
-        margin-bottom: 20px;
-    }
-
-    #box1 {
-      order: 2;
-    }
-    #box2 {
-      margin-left: 0;
-      margin-top: 8px;
-      width: 100%;
-      order: 1
-    }
-    
-    #box3 {
-        order: 3;
-    }
-}
-
-@media screen and (min-width: 1100px) {
-    #box1 {
-        width: 13%;
-    }
-    #box2 {
-        width: 86%;
-    }
-}
-
-@media screen and (min-width: 1400px) {
-    #box1 {
-        width: 10%;
-    }
-    #box2 {
-        width: 89%;
-    }
-}
-
-@media screen and (min-width: 1650px) {
-    #box1 {
-        width: 8%;
-    }
-    #box2 {
-        width: 91%;
-    }
 }
