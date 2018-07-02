@@ -599,7 +599,12 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
-// Style the logo with the primary theme color
+// Style the ix logo with the primary theme color
 .ix-logo {
   @include variable(fill, --primary, $primary);
+}
+
+// Color the small lock icon with theme colors
+.app-user-name .icon-xs {
+  @include variable(color, --fg2, $fg2, !important);
 }
