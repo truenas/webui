@@ -80,7 +80,7 @@ export class CloudCredentialsFormComponent {
       type: 'input',
       name: 'endpoint',
       placeholder: T('Endpoint URL'),
-      tooltip: T('Enter the entry point URL for the web service.'),
+      tooltip: T('Enter the Endpoint URL for the web service.'),
       isHidden: false,
     },
     {
