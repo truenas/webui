@@ -413,14 +413,20 @@ export class ZvolFormComponent {
         volblocksize_integer_value = volblocksize_integer_value * 1024
       }
       this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
-      this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
+      const rounded_vol_size  = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed%volblocksize_integer_value)
+      if(this.edit_data.volsize >= rounded_vol_size){
+        this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        }, (eres) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error saving ZVOL"), eres.reason, eres.trace.formatted);
+        });
+      } else{
         this.loader.close();
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
-      }, (eres) => {
-        this.loader.close();
-        this.dialogService.errorReport(T("Error saving ZVOL"), eres.reason, eres.trace.formatted);
-      });
+        this.dialogService.Info(T("Error saving ZVOL"), "You cannot shrink a ZVOL from gui this may lead to data loss.")
+      }
     })
   }
 
