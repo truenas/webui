@@ -598,3 +598,21 @@ entity-form .form-card.mat-card{
 .datatable-scroll {
   min-width: 100%;
 }
+
+// .mat-tab-label-active {
+//   @include variable(color, --primary, $primary, !important);
+// }
+
+.mat-ink-bar {
+  @include variable(background-color, --primary, $primary, !important);
+}
+
+// Align button and tooltip on Add Replication form
+#repl_remote_hostkey button {
+  left: 17px;
+}
+
+#repl_remote_hostkey .tooltip {
+  left: 135px;
+  top: -55px
+}
