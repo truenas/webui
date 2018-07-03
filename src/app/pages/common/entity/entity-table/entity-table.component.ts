@@ -242,9 +242,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       for (const attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
           if (rows[i][attr] === true) {
-            rows[i][attr] = 'yes';
+            this.translate.get('yes').subscribe((res) => {
+              rows[i][attr] = res;
+            })
           } else if (rows[i][attr] === false) {
-            rows[i][attr] = 'no';
+            this.translate.get('no').subscribe((res) => {
+              rows[i][attr] = res;
+            })
           } else {
             rows[i][attr] = this.rowValue(rows[i], attr);  
           }
