@@ -599,9 +599,10 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
-// .mat-tab-label-active {
-//   @include variable(color, --primary, $primary, !important);
-// }
+.mat-tab-label-active {
+  // @include variable(color, --primary, $primary, !important);
+  border-bottom: 2px solid map-get($md-primary, 500);
+}
 
 .mat-ink-bar {
   @include variable(background-color, --primary, $primary, !important);
@@ -615,4 +616,14 @@ entity-form .form-card.mat-card{
 #repl_remote_hostkey .tooltip {
   left: 135px;
   top: -55px
+}
+
+// Theme color for slider (Shell page and elsewhere)
+.mat-slider {
+  @include variable(color, --accent, $accent, !important);
+}
+
+.mat-slider-track-fill, .mat-slider-thumb {
+  @include variable(background-color, --accent, $accent, !important);
+
 }
