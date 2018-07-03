@@ -107,7 +107,7 @@ export class ServiceSMARTComponent {
               ) {}
 
   resourceTransformIncomingRestData(data) {
-    data['smart_email'] = data['smart_email'].replace(",", " ");
+    data['smart_email'] = data['smart_email'].replace(/,/g, " ");
     return data;
   }
 
