@@ -293,8 +293,9 @@ export class ZvolFormComponent {
           let compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
           let deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
   
-          const volumesize = pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+          let volumesize = pk_dataset[0].volsize.parsed;
           const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
+          volumesize = volumesize/this.byteMap[volumeunit];
   
   
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
@@ -379,7 +380,6 @@ export class ZvolFormComponent {
     if (data.deduplication === 'INHERIT') {
       delete(data.deduplication);
     }
-    data.volsize = Math.round(data.volsize);
     if (data.volblocksize !== 'INHERIT') {
       let volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
@@ -394,7 +394,7 @@ export class ZvolFormComponent {
       
       data.volsize = data.volsize + (volblocksize_integer_value - data.volsize%volblocksize_integer_value)
 
-       
+
     } else{
       delete(data.volblocksize);
     }
@@ -412,8 +412,15 @@ export class ZvolFormComponent {
       } else {
         volblocksize_integer_value = volblocksize_integer_value * 1024
       }
-      this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
-      const rounded_vol_size  = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed%volblocksize_integer_value)
+      if(this.edit_data.volsize%volblocksize_integer_value !== 0){
+        this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
+      }
+      let rounded_vol_size  = res[0].volsize.parsed
+
+      if(res[0].volsize.parsed%volblocksize_integer_value !== 0){
+        rounded_vol_size  = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed%volblocksize_integer_value)
+      }
+      
       if(this.edit_data.volsize >= rounded_vol_size){
         this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
           this.loader.close();
