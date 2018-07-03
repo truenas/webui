@@ -41,7 +41,8 @@
                 <div *ngFor="let set of diskSets; let s = index;" [ngStyle]="{width: 100/diskSets.length+'%'}" class="diskset">
                   <mat-grid-list  [cols]="gridCols" rowHeight="24px" role="list" [ngClass]="{'high-density': gridCols == 8}">
                     <mat-grid-tile *ngFor="let disk of diskSets[s]; let i=index" class="disk-tile" (click)="setSelectedDisk(i)" >
-                        <mat-icon class="disk-icon" role="img">local_laundry_service</mat-icon>
+                      <!--<mat-icon class="disk-icon" role="img">local_laundry_service</mat-icon>-->
+                        <mat-icon class="disk-icon" role="img" svgIcon="mdi:harddisk"></mat-icon>
                         <span class="disk-name">{{diskSets[s][i]}}</span>
                     </mat-grid-tile>
                   </mat-grid-list>
