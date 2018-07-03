@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
 
     this.matIconRegistry.addSvgIconSetInNamespace(
       "mdi",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
 
     if (this.detectBrowser("Safari")) {
