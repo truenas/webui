@@ -296,7 +296,7 @@ export class ZvolFormComponent {
           let volumesize = pk_dataset[0].volsize.parsed;
           const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
           volumesize = volumesize/this.byteMap[volumeunit];
-  
+          volumesize = volumesize.toFixed(3)
   
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
           if(pk_dataset[0].comments){
