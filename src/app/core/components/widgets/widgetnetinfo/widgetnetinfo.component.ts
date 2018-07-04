@@ -28,7 +28,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     this.configurable = false;
   }
 
-  ngOnInit(){
+  ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       this.defaultRoutes = evt.data.default_routes.toString();
       this.nameServers = evt.data.nameservers.toString();
@@ -54,7 +54,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     this.core.emit({name:"NetInfoRequest"});
   }
 
-  ngAfterViewInit(){
+  ngOnInit(){
   }
 
   trimRanges(a:string[]){

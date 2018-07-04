@@ -272,3 +272,12 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .legend-item-time{
   height:82px;
 }
+
+/* Split Layout Widgets */
+.widget.splitv, .widget.splith{
+  width:600px;
+  height:320px;
+}
+
+
+

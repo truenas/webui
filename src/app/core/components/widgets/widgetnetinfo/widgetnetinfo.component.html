@@ -3,21 +3,15 @@
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-evenly start">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar" >
         <h4 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h4>
-        <!--<button mat-icon-button [matMenuTriggerFor]="menu">
-          <mat-icon>more_vert</mat-icon>
-          </button>-->
       </mat-toolbar-row>
-      <!--<mat-menu #menu="matMenu" color="warn">
-        <button mat-menu-item (click)="toggleConfig()">
-        <mat-icon>settings</mat-icon>
-        <span>Configure</span>
-        </button>
-        </mat-menu>-->
         <mat-card-content fxLayout="column" fxLayoutAlign="space-between stretch" fxFlex="100">
-          <div fxFlex="100" fxAlign="center" *ngIf="!data">
+        <ng-template *ngIf="!data">
+          <div fxFlex="100" fxAlign="center">
             <h3 style="margin:0 auto;">{{"Retrieving Network Info" | translate}}</h3>
           </div>
-          <div fxFlex="100" *ngIf="data">
+        </ng-template>
+
+          <div fxFlex="100" *ngIf="data"> 
             <mat-list class="network-info">
               <mat-list-item class="subheader">
                 <h5>{{"Interfaces" | translate}}</h5>
@@ -48,7 +42,9 @@
             </mat-list>
           </div>
         </mat-card-content>
-        <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
+        <ng-template *ngIf="configurable">
+          <div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>
+        </ng-template>
     </mat-card>
     <mat-card class="back">
       <mat-card-content>
