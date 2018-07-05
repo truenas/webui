@@ -599,15 +599,6 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
-.mat-tab-label-active {
-  // @include variable(color, --primary, $primary, !important);
-  border-bottom: 2px solid map-get($md-primary, 500);
-}
-
-.mat-ink-bar {
-  @include variable(background-color, --primary, $primary, !important);
-}
-
 // Align button and tooltip on Add Replication form
 #repl_remote_hostkey button {
   left: 17px;
@@ -627,3 +618,22 @@ entity-form .form-card.mat-card{
   @include variable(background-color, --accent, $accent, !important);
 
 }
+
+// Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
+iscsi .mat-tab-label-active {
+  border-bottom: 2px solid;
+  @include variable(border-color, --primary, $primary);
+}
+//...by hiding ink bar, replacing it with a bottom border, above.
+iscsi .mat-ink-bar {
+  opacity: 0;
+}
+
+// .mat-button.mat-primary {
+//   @include variable(color, --primary, $primary, !important);
+// }
+
+
+// .mat-button.mat-primary:hover {
+//   @include variable(background-color, --primary, $primary, !important);
+// }
