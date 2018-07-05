@@ -629,11 +629,6 @@ iscsi .mat-ink-bar {
   opacity: 0;
 }
 
-// .mat-button.mat-primary {
-//   @include variable(color, --primary, $primary, !important);
-// }
-
-
-// .mat-button.mat-primary:hover {
-//   @include variable(background-color, --primary, $primary, !important);
-// }
+#idmap-actions {
+  margin-left: 0;
+}
