@@ -61,6 +61,7 @@ export class ExtentFormComponent {
                   or HAST device.'),
       options: [],
       isHidden: false,
+      disabled: false,
       required: true,
       validation : [ Validators.required ]
     },
@@ -73,6 +74,7 @@ export class ExtentFormComponent {
     },
     {
       type : 'explorer',
+      explorerType: 'file',
       initial: '/mnt',
       name: 'iscsi_target_extent_path',
       placeholder: T('Path to the extent'),
@@ -83,6 +85,9 @@ export class ExtentFormComponent {
                   Extents cannot be created inside the jail\
                   root directory.'),
       isHidden: false,
+      disabled: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -92,6 +97,9 @@ export class ExtentFormComponent {
                   already exist and the actual file size will be used.\
                   Otherwise, specify the size of the file to create.'),
       isHidden: false,
+      disabled: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'select',
@@ -275,11 +283,23 @@ export class ExtentFormComponent {
     this.fileFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = isDevice;
+      control.disabled = isDevice;
+      if (isDevice) {
+        this.entityForm.formGroup.controls[field].disable();
+      } else {
+        this.entityForm.formGroup.controls[field].enable();
+      }
     });
 
     this.deviceFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = !isDevice;
+      control.disabled = !isDevice;
+      if (!isDevice) {
+        this.entityForm.formGroup.controls[field].disable();
+      } else {
+        this.entityForm.formGroup.controls[field].enable();
+      }
     });
   }
 }
