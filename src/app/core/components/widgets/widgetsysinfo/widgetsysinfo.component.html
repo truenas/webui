@@ -46,6 +46,10 @@
           </div>
           </div>
         </div>
+
+        <div fxFlex="100" class="xs-footer">
+          <button class="update-btn" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+        </div>
       </mat-card-content>
       <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>

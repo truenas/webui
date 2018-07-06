@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, Input, ViewChild, OnChanges, OnDestroy } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Router } from '@angular/router';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
@@ -50,8 +51,8 @@ export interface VolumeData {
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
 
-  @ViewChild('zvol') chartZvol:ViewChartDonutComponent;
-  public title:string = T("Pool");
+  //@ViewChild('zvol') chartZvol:ViewChartDonutComponent;
+  public title:string = T("ZFS Pool");
   //public standalone:boolean = false;
   @Input() volumeData:VolumeData;
   public volumeName:string = "";
@@ -60,12 +61,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   public disks: string[] = [];
   public diskDetails:Disk[] = [];
   public selectedDisk:number = -1;
-  public gridCols:number = 4;
+  public gridCols:number = 8;
   public currentDiskSet:number = 0;
   //public _slideProps:any = {x:0,y:0};
   @Input() configurable:boolean;
 
-  constructor(public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService){
     super(translate);
   }
 
@@ -91,17 +92,18 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       if(evt.data.callArgs[0] == this.volumeData.id){
         //DEBUG: console.log("**** WidgetVolumeComponent DISKS ****");
         //DEBUG: console.log(evt.data);
+
         // Simulate massive array
-        for(let i = 0; i < 1; i++){
-          //this.disks.push("ada" + i);
-        }
+        /*for(let i = 0; i < 120; i++){
+          this.disks.push("ada" + i);
+        }*/
         this.disks = evt.data.data;
 
-        if(this.disks.length > 16){
+        /*if(this.disks.length > 16){
           this.gridCols = 8;
         }
         
-        if(this.disks.length > 32){
+        if(this.disks.length > 32){*/
           let total = Math.ceil(this.disks.length/32);
           let set = 0;
           let last = 32*total-1
@@ -117,9 +119,9 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
             }
 
           }
-        } else {
+        /*} else {
           this.diskSets[0] = this.disks;
-        }
+        }*/
         //DEBUG: console.log(this.diskSets);
         
         if(evt.data.length > 0){
@@ -163,7 +165,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });
 
     this.core.register({observerClass:this, eventName:"ThemeChanged"}).subscribe(() => {
-      this.chartZvol.refresh();
+      //this.chartZvol.refresh();
     });
 
     //this.core.emit({name:"PoolDataRequest"});
@@ -221,18 +223,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       data: [availableObj.value]
     };
 
-    this.chartZvol.units = 'GB';
-    this.chartZvol.title = this.volumeData.name;
-    this.chartZvol.data = [used,available];
     let percentage = this.volumeData.used_pct.split("%");
-    /*this.chartZvol.data = [{ 
-      legend: this.volumeData.vol_name,
-      data:[Number(percentage[0])]
-    }];*/
     //DEBUG: console.log(this.chartZvol.data);
-    this.chartZvol.width = this.chartSize;
-    this.chartZvol.height = this.chartSize;
-
     this.core.emit({name:"PoolDisksRequest",data:[this.volumeData.id]});
   };
 
@@ -263,7 +255,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   setCurrentDiskSet(num:number){
     //this.slideProps = num;
     this.currentDiskSet = num;
-    //console.log("Selected Disk Set = " + String(this.currentDiskSet));
+    console.log("Selected Disk Set = " + String(this.currentDiskSet));
   }
 
 }

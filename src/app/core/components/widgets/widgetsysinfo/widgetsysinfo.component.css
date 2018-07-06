@@ -16,22 +16,22 @@
 }
 
 /*.logo-bg{
-  padding: 24px;
-  border: solid #dedede 8px;
-  border-color:rgba(128,128,128,0.5);
-  box-shadow: 0 3px 5px rgba(0,0,0,0.55);
-  border-radius: 50%;
-  top: 28%;
-  left: 21%;
-  display: table;
-  position: absolute;
-  background-color: #999;
+padding: 24px;
+border: solid #dedede 8px;
+border-color:rgba(128,128,128,0.5);
+box-shadow: 0 3px 5px rgba(0,0,0,0.55);
+border-radius: 50%;
+top: 28%;
+left: 21%;
+display: table;
+position: absolute;
+background-color: #999;
 }*/
 
-.logo-bg .os-logo{
-  /*padding: 10px 10px 4px 14px;
-  width: 100px;
-  height: 100px;*/
+  .logo-bg .os-logo{
+    /*padding: 10px 10px 4px 14px;
+    width: 100px;
+    height: 100px;*/
   width:50%;
   margin-top:16%;
 }
@@ -106,6 +106,10 @@ p.value{
   font-weight:400;
 }
 
+.xs-footer{
+  display:none;
+}
+
 /* NARROW SCREENS */
 .xs.widget.double-height{
   width:100%;
@@ -117,8 +121,9 @@ p.value{
 .xs .title-wrapper{
   position: absolute;
   width: 100%;
-  bottom: -100%;
+  /*bottom: -100%;*/
   height:72px;
+  top:0;
 }
 
 .xs .platform-logo img{
@@ -134,4 +139,16 @@ p.value{
 }
 .xs .data-container{
   margin-top:16px;
+}
+
+.xs .xs-footer{
+  display: block;
+  background-color: rgba(0,0,0,0.5);
+  width: 100%;
+  max-height: 68px !important;
+  color: #fff;
+}
+
+.xs .title-wrapper .update-btn{
+  display:none;
 }
