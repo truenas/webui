@@ -168,7 +168,7 @@ export class StatsService {
 
   //private sourcesRealtime: StatSource[] = [];
   //private sources: StatSource[] = [];
-  private debug:boolean = false;
+  private debug:boolean = true;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
   private listeners: any[] = [];
@@ -202,7 +202,7 @@ export class StatsService {
       if(this.debug){
         //DEBUG: .log("**** StatsSources ****");
         //DEBUG: .log(evt.data);
-        //DEBUG: .warn(this.sources);
+        console.warn(this.sources);
       }
       //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
       }); 
