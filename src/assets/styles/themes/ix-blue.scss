@@ -603,3 +603,8 @@ entity-form .form-card.mat-card{
 .ngx-datatable .datatable-body {
   margin-bottom: -6px;
 }
+
+// ...with an exception for the vm table
+vm-table .ngx-datatable .datatable-body {
+  margin-bottom: 0px;
+}
