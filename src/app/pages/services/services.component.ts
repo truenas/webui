@@ -11,6 +11,8 @@ import { RestService, WebSocketService } from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';
+import { T } from '../../translate-marker';
+
 
 @Component({
   selector: 'services',
@@ -138,10 +140,24 @@ export class Services implements OnInit {
   updateService(rpc, service) {
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
+        if (service.state === "RUNNING" && rpc === 'service.stop') {
+          this.dialog.Info(T("Service failed to stop"), 
+              this.name_MAP[service.title] + " " +  T("service failed to stop"));
+        }
         service.state = 'RUNNING';
       } else {
+        if (service.state === 'STOPPED' && rpc === 'service.start') {
+          this.dialog.Info(T("Service failed to start"), 
+              this.name_MAP[service.title] + " " +  T("service failed to start"));
+        }
         service.state = 'STOPPED';
       }
+    }, (res) => {
+      let message = T("Error starting service ");
+      if (rpc === 'service.stop') {
+        message = T("Error stopping service ");
+      }
+      this.dialog.errorReport(message + this.name_MAP[service.title], res.message, res.stack);
     });
   }
 

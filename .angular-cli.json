@@ -35,7 +35,7 @@
           "../node_modules/devextreme/dist/css/dx.common.css",
           "../node_modules/devextreme/dist/css/dx.light.css",
           "../node_modules/angular-tree-component/dist/angular-tree-component.css",
-          "vendor/pace/pace-theme-min.css",
+          
           "assets/styles/themes/egret-dark-purple.scss",
           "assets/styles/themes/egret-dark-pink.scss",
           "assets/styles/themes/egret-blue.scss",
@@ -49,7 +49,7 @@
           "assets/styles/egret_overrides.css"
         ],
         "scripts": [
-          "vendor/pace/pace.min.js",
+
           "../node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",
           "../node_modules/hopscotch/dist/js/hopscotch.min.js",
           "../node_modules/hammerjs/hammer.js",
