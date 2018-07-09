@@ -34,7 +34,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'certificate',
       placeholder: T('Certificate'),
-      tooltip: T('Copy and paste the contents of the certificate.'),
       isHidden: false,
       readonly: true,
     },
@@ -42,7 +41,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'privatekey',
       placeholder: T('Private Key'),
-      tooltip: T('Copy and paste the contents of the private key.'),
       isHidden: false,
       readonly: true,
     },
@@ -50,7 +48,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'CSR',
       placeholder: T('Signing Request'),
-      tooltip: T('Copy and paste the contents of the CSR.'),
       isHidden: false,
       readonly: true,
     }

@@ -63,10 +63,10 @@ export class CertificateListComponent {
 
   getActions(row) {
     return [{
-        id: "Edit",
-        label: T("Edit"),
+        id: "View",
+        label: T("View"),
         onClick: (row) => {
-          this.router.navigate(new Array('').concat(["system", "certificates", "edit", row.id]))
+          this.router.navigate(new Array('').concat(["system", "certificates", "view", row.id]))
         }
       },
       {
