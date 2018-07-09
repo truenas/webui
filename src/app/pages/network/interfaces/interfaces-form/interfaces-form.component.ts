@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import {Validators, FormArray} from '@angular/forms';
 
-import { NetworkService, RestService } from '../../../../services';
+import { NetworkService, RestService, DialogService } from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -227,7 +227,7 @@ export class InterfacesFormComponent implements OnDestroy {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
-              protected networkService: NetworkService) {}
+              protected networkService: NetworkService, protected dialog: DialogService) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_aliases'] <= this.initialCount_default['ipv4_aliases']) {
@@ -258,6 +258,19 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    if (entityForm.isNew) {
+      this.rest.get(this.resource_name, []).subscribe((res) => {
+        if (res.data.length === 0) {
+          this.dialog.confirm(T("Warning"), T("Please configure the Web UI \
+          interface before adding another interface. This prevents losing \
+          connection to the Web UI." )).subscribe((confirm) => {
+            if (!confirm) {
+              entityForm.goBack();
+            }
+          });
+        }
+      });
+    }
     this.ipv4formArray = entityForm.formGroup.controls['ipv4_aliases'];
     this.ipv6formArray = entityForm.formGroup.controls['ipv6_aliases'];
     this.int_ipv4address = _.find(this.fieldConfig, {'name': 'int_ipv4address'});
