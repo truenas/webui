@@ -9,6 +9,9 @@ import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 import {  DialogService } from '../../../../services/';
+import {
+  regexValidator
+} from '../../../common/entity/entity-form/validators/regex-validation';
 
 import {
   RestService,
@@ -64,7 +67,8 @@ export class ServiceS3Component implements OnInit {
       placeholder : T('Access Key'),
       tooltip: T('Enter the S3 username.'),
       required: true,
-      validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required]
+      validation: [Validators.minLength(5), Validators.maxLength(20), Validators.required,
+                             regexValidator(/^\w+$/)]
     },
     {
       type : 'input',
@@ -74,7 +78,8 @@ export class ServiceS3Component implements OnInit {
                   systems.'),
       inputType : 'password',
       required : true,
-      validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required]
+      validation: [Validators.minLength(8), Validators.maxLength(40), Validators.required, 
+                            regexValidator(/^\w+$/)]
     },
     {
       type : 'input',
@@ -82,7 +87,8 @@ export class ServiceS3Component implements OnInit {
       placeholder : T('Confirm Secret Key'),
       inputType : 'password',
       required: true,
-      validation : [ matchOtherValidator('secret_key'), Validators.required ],
+      validation : [ matchOtherValidator('secret_key'), Validators.required,
+                               regexValidator(/^\w+$/)],
     },
     {
       type : 'explorer',
