@@ -662,4 +662,13 @@ entity-form .form-card.mat-card{
 // Fix icon color in notification area
 .notific-icon {
   @include variable(color, --primary, $primary !important);
+
+// Removes extra space at the bottom of datatables
+.ngx-datatable .datatable-body {
+  margin-bottom: -6px;
+}
+
+// ...with an exception for the vm table
+vm-table .ngx-datatable .datatable-body {
+  margin-bottom: 0px;
 }
