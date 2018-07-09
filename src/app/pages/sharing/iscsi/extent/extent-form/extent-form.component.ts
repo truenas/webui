@@ -61,6 +61,7 @@ export class ExtentFormComponent {
                   or HAST device.'),
       options: [],
       isHidden: false,
+      disabled: false,
       required: true,
       validation : [ Validators.required ]
     },
@@ -73,6 +74,7 @@ export class ExtentFormComponent {
     },
     {
       type : 'explorer',
+      explorerType: 'file',
       initial: '/mnt',
       name: 'iscsi_target_extent_path',
       placeholder: T('Path to the extent'),
@@ -83,6 +85,9 @@ export class ExtentFormComponent {
                   Extents cannot be created inside the jail\
                   root directory.'),
       isHidden: false,
+      disabled: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -92,6 +97,9 @@ export class ExtentFormComponent {
                   already exist and the actual file size will be used.\
                   Otherwise, specify the size of the file to create.'),
       isHidden: false,
+      disabled: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'select',
@@ -222,29 +230,19 @@ export class ExtentFormComponent {
     });
 
     this.extent_disk_control = _.find(this.fieldConfig, {'name' : 'iscsi_target_extent_disk'});
-    //get all zvols
     this.iscsiService.getVolumes().subscribe((res) => {
       res.data.forEach((vol) => {
-        this.iscsiService.getZvols(vol.name).subscribe((res) => {
-          res.data.forEach((zvol) => {
-            let value = 'zvol/' + vol.name + '/' + zvol.name;
-            this.extent_disk_control.options.push({label: value, value: value});
-          });
+        this.iscsiService.getZvols().subscribe((res) => {
+          for (let i in res) {
+            this.extent_disk_control.options.push({label: res[i], value: i});
+          }
         });
       })
     });
-    //get all unused disks
-    this.iscsiService.getUnusedDisk().subscribe((res) => {
-      for(let i = 0; i < res.length; i++) {
-        let label = res[i].name + ' (' +  (<any>window).filesize(res[i].size, {standard : "iec"}) + ')';
-        this.extent_disk_control.options.push({label: label, value: res[i].name});
-      }
-    })
     //show current value if isNew is false
     if (!this.isNew) {
       this.rest.get('/services/iscsi/extent/'+this.pk, {}).subscribe((res) =>{
         if (res.data) {
-          this.extent_disk_control.options.push({label: res.data.iscsi_target_extent_path.substring(5), value: res.data.iscsi_target_extent_path.substring(5)});
           this.entityForm.formGroup.controls['iscsi_target_extent_disk'].setValue(res.data.iscsi_target_extent_path.substring(5));
         }
       })
@@ -275,11 +273,23 @@ export class ExtentFormComponent {
     this.fileFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = isDevice;
+      control.disabled = isDevice;
+      if (isDevice) {
+        this.entityForm.formGroup.controls[field].disable();
+      } else {
+        this.entityForm.formGroup.controls[field].enable();
+      }
     });
 
     this.deviceFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = !isDevice;
+      control.disabled = !isDevice;
+      if (!isDevice) {
+        this.entityForm.formGroup.controls[field].disable();
+      } else {
+        this.entityForm.formGroup.controls[field].enable();
+      }
     });
   }
 }

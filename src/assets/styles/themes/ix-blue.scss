@@ -607,4 +607,13 @@ entity-form .form-card.mat-card{
 // Color the small lock icon with theme colors
 .app-user-name .icon-xs {
   @include variable(color, --fg2, $fg2, !important);
+
+// Removes extra space at the bottom of datatables
+.ngx-datatable .datatable-body {
+  margin-bottom: -6px;
+}
+
+// ...with an exception for the vm table
+vm-table .ngx-datatable .datatable-body {
+  margin-bottom: 0px;
 }
