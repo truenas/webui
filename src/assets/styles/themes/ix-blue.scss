@@ -599,8 +599,19 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
-// @media screen and (max-width: 685px) {
-  .form-explorer {
-    @include variable(background, --bg1, $bg1);
-  }
-// }
+
+// Background visually links the items in the form-explorer 
+.form-explorer {
+  @include variable(background, --bg1, $bg1);
+}
+
+// Removes extra space at the bottom of datatables
+.ngx-datatable .datatable-body {
+  margin-bottom: -6px;
+}
+
+// ...with an exception for the vm table
+vm-table .ngx-datatable .datatable-body {
+  margin-bottom: 0px;
+}
+
