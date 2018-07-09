@@ -624,6 +624,7 @@ iscsi .mat-tab-label-active {
   border-bottom: 2px solid;
   @include variable(border-color, --primary, $primary);
 }
+
 //...by hiding ink bar, replacing it with a bottom border, above.
 iscsi .mat-ink-bar {
   opacity: 0;
@@ -632,4 +633,13 @@ iscsi .mat-ink-bar {
 // Properly align buttons on Dir Services / Idmap
 #idmap-actions {
   margin-left: 0;
+  
+// Removes extra space at the bottom of datatables
+.ngx-datatable .datatable-body {
+  margin-bottom: -6px;
+}
+
+// ...with an exception for the vm table
+vm-table .ngx-datatable .datatable-body {
+  margin-bottom: 0px;
 }
