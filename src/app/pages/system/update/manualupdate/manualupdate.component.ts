@@ -46,6 +46,7 @@ export class ManualUpdateComponent {
       this.router.navigate([this.router.url+'/saveconfig']);
     }
   }]
+  public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'select',

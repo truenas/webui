@@ -31,11 +31,11 @@ export class JailListComponent implements OnInit {
   protected route_add_tooltip = "Add Jail";
 
   public columns: Array < any > = [
-    { name: 'Jail', prop: 'host_hostuuid' },
+    { name: 'Jail', prop: 'host_hostuuid', always_display: true },
     { name: 'IPv4 Address', prop: 'ip4_addr' },
     { name: 'IPv6 Address', prop: 'ip6_addr' },
     { name: 'Status', prop: 'state' },
-    { name: 'Type', prop: 'type' },
+    { name: 'Type', prop: 'type', hidden: true },
     { name: 'Release', prop: 'release' },
   ];
   public config: any = {
