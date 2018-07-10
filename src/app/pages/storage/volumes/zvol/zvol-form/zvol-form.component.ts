@@ -178,7 +178,7 @@ export class ZvolFormComponent {
     {
       type: 'checkbox',
       name : 'sparse',
-      placeholder: T('Sparse Pool'),
+      placeholder: T('Sparse'),
       tooltip : T(''),
       isHidden: false
     },
