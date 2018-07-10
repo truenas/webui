@@ -600,9 +600,9 @@ entity-form .form-card.mat-card{
 }
 
 // Background visually links the items in the form-explorer 
-.form-explorer {
-  @include variable(background, --bg1, $bg1);
-}
+// .form-explorer {
+//   @include variable(background, --bg1, $bg1);
+// }
 
 // Align button and tooltip on Add Replication form
 #repl_remote_hostkey button {
@@ -649,3 +649,10 @@ vm-table .ngx-datatable .datatable-body {
   margin-bottom: 0px;
 }
 
+@media screen and (max-width: 768px) {
+  .form-explorer {
+    @include variable(background-color, --bg1, $bg1);
+    padding: 0 10px;
+    width: 90%;
+  }
+} 
