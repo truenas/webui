@@ -145,9 +145,14 @@ export class VolumeStatusComponent implements OnInit {
       }, {
         label: "Offline",
         onClick: (row) => {
+          let name = row.name;
+          // if use path as name, show the full path
+          if (!_.startsWith(name, '/')) {
+            name = _.split(row.name, 'p')[0];
+          }
           this.dialogService.confirm(
             "Offline",
-            "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
+            "Are you sure you want to offline the disk " + name,
           ).subscribe((res) => {
             if (res) {
               this.loader.open();

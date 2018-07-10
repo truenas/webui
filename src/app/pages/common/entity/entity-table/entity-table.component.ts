@@ -201,12 +201,25 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
-    // this.loader.open();
+
     this.busy =
       this.getFunction.subscribe((res)=>{
         this.handleData(res);
-        // this.loader.close();
       });
+
+      this.getFunction.subscribe(
+        (res) => {
+          this.handleData(res);
+        },
+        (res) => {
+          if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
+            this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
+          }
+          else {
+            new EntityUtils().handleError(this, res);
+          }
+        }
+      );
   }
 
   handleData(res): any {
