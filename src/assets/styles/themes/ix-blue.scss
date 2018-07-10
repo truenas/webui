@@ -682,6 +682,10 @@ entity-form .form-card.mat-card{
   @include variable(color, --primary, $primary !important);
 }
 
+.mat-spinner circle {
+  @include variable(stroke, --primary, $primary, !important);
+} 
+
 // Align button and tooltip on Add Replication form
 #repl_remote_hostkey button {
   left: 17px;
