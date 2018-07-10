@@ -601,6 +601,7 @@ entity-form .form-card.mat-card{
 
 .mat-spinner circle {
   @include variable(stroke, --primary, $primary, !important);
+}
 
 // Removes extra space at the bottom of datatables
 .ngx-datatable .datatable-body {
