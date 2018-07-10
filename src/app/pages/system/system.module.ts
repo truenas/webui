@@ -34,6 +34,7 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
@@ -77,6 +78,7 @@ import { AlertConfigComponent } from './alert/alert.component';
     CloudCredentialsFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityAddComponent,
+    CertificateAuthorityEditComponent,
     CertificateAuthoritySignComponent,
     CertificateListComponent,
     CertificateAddComponent,

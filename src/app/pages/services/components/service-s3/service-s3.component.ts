@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, Injector, OnInit} from '@angular/core';
+import {ApplicationRef, Component, Injector, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -32,7 +32,7 @@ import { T } from '../../../../translate-marker';
   providers : [ SystemGeneralService ]
 })
 
-export class ServiceS3Component implements OnInit {
+export class ServiceS3Component implements OnDestroy {
   //protected resource_name: string = 'services/s3';
   protected queryCall: string = 's3.config';
   protected addCall: string = 's3.update';
@@ -126,15 +126,29 @@ export class ServiceS3Component implements OnInit {
       options : []
     },
   ];
+  protected storage_path: any;
+  protected storage_path_subscription: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService, private dialog:DialogService ) {}
 
-  ngOnInit() {}
+  ngOnDestroy() {
+    this.storage_path_subscription.unsubscribe();
+  }
 
   afterInit(entityForm: any) {
+    this.storage_path = entityForm.formGroup.controls['storage_path'];
+    this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res) => {
+      if(res.split('/').length < 4) {
+        this.dialog.confirm(T("Warning"), T("Assigning a directory to Minio changes the permissions \
+                                             of that directory and every directory in it to \
+                                             minio:minio, overriding any previous permissions. \
+                                             Creating a separate dataset just for Minio is strongly \
+                                             recommended."), true);
+      }
+    });
     this.systemGeneralService.getCertificates().subscribe((res)=>{
       this.certificate = _.find(this.fieldConfig, {name:'certificate'});
       if (res.length > 0) {

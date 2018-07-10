@@ -21,6 +21,35 @@
     </mat-paginator>
   </div>
 
+
+<!-- Selected columns checkbox ----------------- -->
+<div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
+  <div id="select-all-checkbox-and-label">
+    Toggle
+    <mat-checkbox
+      type="checkbox"
+      [id]="check-all"
+      [checked]="checkLength()"
+      (change)="checkAll()">
+    </mat-checkbox> 
+    
+  </div>
+  <ul>
+    <li *ngFor="let col of allColumns">
+      <div>
+        <mat-checkbox
+          type="checkbox"
+          class="colselect"
+          [id]="col.name"
+          (change)="toggle(col)"
+          [checked]="isChecked(col)"></mat-checkbox>
+        <label [attr.for]="col.name">{{col.name}}</label>
+      </div>
+    </li>
+  </ul>
+</div>
+<!-- End checkbox ------------------------------ -->
+
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton">
     <div *ngIf="selected.length > 0 ? true : false" >
       <div *ngIf="conf.multiActions; else defaultMultiActions" fxFlex="100">
@@ -58,6 +87,7 @@
       [selectionType]="'multiClick'"
       [selected]='selected'
       (select)='onSelect($event)'
+      [scrollbarH]='true'
       #entityTable>
 
       <ngx-datatable-footer>
@@ -103,6 +133,18 @@
             <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
           </div>
         </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column
+          *ngFor="let col of alwaysDisplayedCols"
+          prop="{{col.prop}}"
+          name="{{col.name | translate}}">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div id="{{col.prop}}_{{row[col.prop]}}" 
+                 title="{{row[col.prop]}}">
+              {{row[col.prop]}}
+            </div>
+          </ng-template>
       </ngx-datatable-column>
 
       <ngx-datatable-column

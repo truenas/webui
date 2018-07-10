@@ -603,6 +603,42 @@ entity-form .form-card.mat-card{
   @include variable(stroke, --primary, $primary, !important);
 }
 
+// Align button and tooltip on Add Replication form
+#repl_remote_hostkey button {
+  left: 17px;
+}
+
+#repl_remote_hostkey .tooltip {
+  left: 135px;
+  top: -55px
+}
+
+// Theme color for slider (Shell page and elsewhere)
+.mat-slider {
+  @include variable(color, --accent, $accent, !important);
+}
+
+.mat-slider-track-fill, .mat-slider-thumb {
+  @include variable(background-color, --accent, $accent, !important);
+
+}
+
+// Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
+iscsi .mat-tab-label-active {
+  border-bottom: 2px solid;
+  @include variable(border-color, --primary, $primary);
+}
+
+//...by hiding ink bar, replacing it with a bottom border, above.
+iscsi .mat-ink-bar {
+  opacity: 0;
+}
+
+// Properly align buttons on Dir Services / Idmap
+#idmap-actions {
+  margin-left: 0;
+}
+  
 // Removes extra space at the bottom of datatables
 .ngx-datatable .datatable-body {
   margin-bottom: -6px;

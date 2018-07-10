@@ -19,7 +19,7 @@ export class GroupListComponent {
   protected entityList: any;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name : 'Group', prop : 'bsdgrp_group'},
+    {name : 'Group', prop : 'bsdgrp_group', always_display: true},
     {name : 'GID', prop : 'bsdgrp_gid'},
     {name : 'Builtin', prop : 'bsdgrp_builtin'},
     {name : 'Permit Sudo', prop : 'bsdgrp_sudo'},

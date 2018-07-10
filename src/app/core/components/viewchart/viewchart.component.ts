@@ -51,6 +51,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   public chartColors: string[];
   public maxLabels: number;
   public units: string;
+  public max: number;
   @Input() width: number;
   @Input() height: number;
   /*
@@ -286,6 +287,10 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       conf.data.onmouseout = (d) => {
         this.showLegendValues = false;
       }
+    }
+
+    if(conf.axis && conf.axis.y && this.max){
+      conf.axis.y.max = this.max;
     }
 
     //DEBUG: console.log("GENERATING DATA FROM ...");
