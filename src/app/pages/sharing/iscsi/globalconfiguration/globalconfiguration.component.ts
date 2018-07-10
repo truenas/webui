@@ -5,6 +5,9 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { Validators } from '@angular/forms';
+import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
+import * as _ from 'lodash';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-iscsi-globalconfiguration',
@@ -49,7 +52,32 @@ export class GlobalconfigurationComponent {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute) {}
+  protected service: any;
 
-  afterInit(entityEdit: any) {}
+  constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
+              protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {}
+
+  afterSubmit(data) {
+    this.ws.call('service.query', [[]]).subscribe((service_res) => {
+      if (_.find(service_res, {"service": "iscsitarget"}).state != 'RUNNING') {
+        this.dialogService.confirm('', T('Do you want to start iSCSI service now?'), true).subscribe((dialog_res) =>{
+          if (dialog_res) {
+            this.loader.open();
+            this.ws.call('service.start', ['iscsitarget']).subscribe(
+              (res) => {
+                this.loader.close();
+                if (res) {
+                  this.snackBar.open(T('iSCSI service started.'), 'close', { duration: 5000 });
+                }
+              },
+              (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error starting service iSCSI"), res.message, res.stack);
+              }
+            );
+          }
+        });
+      }
+    });
+  }
 }
