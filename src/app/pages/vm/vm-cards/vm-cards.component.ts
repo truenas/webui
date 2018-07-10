@@ -212,6 +212,7 @@ export class VmCardsComponent implements OnInit {
       memory:data.memory,
       //lazyLoaded: false,
       devices:data.devices,
+      vm_type: data.vm_type
     }   
 
     // Leave out properties not used for update requests
@@ -249,11 +250,9 @@ export class VmCardsComponent implements OnInit {
   setVmList(res:CoreEvent, init?:string) {
     //const cacheLength = this.cache.length
     let scroll:boolean = false;
-    console.log("CARDS LENGTH = " + this.cards.length +  " && CACHE-LENGTH = " + this.cache.length + " && DATA-LENGTH = " + res.data.length );
     if(this.cache.length != 0 && this.cache.length < res.data.length){;
       // Put window scroll stuff here
       scroll = true;
-      console.log("Setting Scroll to TRUE!");
     }
 
     this.cache = [];
@@ -268,13 +267,9 @@ export class VmCardsComponent implements OnInit {
       this.updateCards();
     }
     this.checkStatus();
-    console.log("CARDS LENGTH = " + this.cards.length);
     if(scroll && this.cards.length == res.data.length){
       setTimeout(()=>{
       let test = (<any>document).querySelector('.vm-card-' + this.cards[this.cards.length-1].id);
-      console.log("SENDING SCROLLTO EVENT...");
-      console.log('.vm-card-' + this.cards[this.cards.length-1].id);
-      console.log(test);
       this.scrollTo(String('.vm-card-' + this.cards[this.cards.length-1].id));
       //this.scrollTo('#animation-target');
       },1000);
@@ -335,7 +330,6 @@ export class VmCardsComponent implements OnInit {
     }
 
     this.cards = result;
-    console.log("UPDATE CARDS METHOD");
   }
 
   refreshVM(index,id:any){
