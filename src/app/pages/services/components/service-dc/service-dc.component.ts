@@ -97,8 +97,9 @@ export class ServiceDCComponent {
       inputType : 'password',
       placeholder : T('Administrator Password'),
       tooltip: T('Enter the password to be used for the\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
-                  target="_blank">Active Directory</a> administrator account.'),
+                  <a href="..//docs/directoryservice.html#active-directory"\
+                  target=”_blank”>Active Directory</a> administrator
+                  account.'),
       validation :
           [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ]
     },
