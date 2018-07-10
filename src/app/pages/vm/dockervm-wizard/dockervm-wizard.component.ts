@@ -14,6 +14,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { MatDialog } from '@angular/material';
 import { validateBasis } from '@angular/flex-layout';
 import { T } from '../../../translate-marker';
+import { DialogService } from '../../../services/dialog.service';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class DockerVMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "Docker Summary";
+  entityWizard: any;
 
   protected wizardConfig: Wizard[] = [
     {
@@ -61,6 +63,9 @@ export class DockerVMWizardComponent {
         tooltip : T('Enter a name for this Docker VM.'),
         validation : [ Validators.required ],
         required: true,
+        blurStatus: true,
+        blurEvent: this.blurEvent,
+        parent: this
       },
       { type: 'checkbox',
         name : 'autostart',
@@ -156,9 +161,9 @@ export class DockerVMWizardComponent {
           placeholder : T('Raw file size (GiB)'),
           tooltip: T('Allocate a number of gibibytes (GiB) to the new\
                       raw file.'),
-          value: 10,
+          value: 20,
           inputType: 'number',
-          min: 10,
+          min: 20,
           validation : [ Validators.required ],
           required: true
         },
@@ -199,8 +204,11 @@ export class DockerVMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    private router: Router) {
+    private router: Router, private dialogService: DialogService) {
 
+  }
+  preInit(entityWizard: EntityWizardComponent){
+    this.entityWizard = entityWizard;
   }
 
 
@@ -210,6 +218,9 @@ export class DockerVMWizardComponent {
       if (res === 'vm') {
         this.router.navigate(new Array('/').concat(['vm','wizard']))
       }
+    });
+    ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+      this.summary[T('Name')] = name;
     });
 
     this.networkService.getAllNicChoices().subscribe((res) => {
@@ -258,10 +269,24 @@ export class DockerVMWizardComponent {
         })
       });
       this.summary[T('Raw file size')] = ( < FormGroup > entityWizard.formArray.get([4])).get('size').value + ' GiB';
+      ( < FormGroup > entityWizard.formArray.get([4])).get('size').valueChanges.subscribe((size) => {
+        this.summary[T('Raw file size')] = size + ' GiB';
+      });
     });
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+blurEvent(parent){
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.query', [[["name","=",vm_name], ["vm_type", "=", "Container Provider"]]]).subscribe((vm_wizard_res)=>{
+    if(vm_wizard_res.length > 0){
+      parent.dialogService.Info("Error", `docker container ${vm_wizard_res[0].name} already exists, please use a different name`).subscribe(()=>{
+        parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
 }
 
 async customSubmit(value) {
@@ -273,6 +298,7 @@ async customSubmit(value) {
     vm_payload["name"] = value.name;
     vm_payload["vcpus"] = String(value.vcpus);
     vm_payload["bootloader"] = 'GRUB';
+    vm_payload["autostart"] = value.autostart;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "RAW", "attributes": {"path": path, "type": "AHCI", "rootpwd":"docker", "boot": true, "size": value.size, sectorsize: 0}},

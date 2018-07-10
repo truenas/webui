@@ -28,8 +28,8 @@ export class CronListComponent {
     { name: 'Day of Month', prop: 'cron_daymonth' },
     { name: 'Month', prop: 'cron_month' },
     { name: 'Day of Week', prop: 'cron_dayweek' },
-    { name: 'Redirect Stdout', prop: 'cron_stdout' },
-    { name: 'Redirect Stderr', prop: 'cron_stderr' },
+    { name: 'Redirect Stdout', prop: 'cron_stdout', hidden: true },
+    { name: 'Redirect Stderr', prop: 'cron_stderr', hidden: true },
     { name: 'Enabled', prop: 'cron_enabled' },
   ];
   public config: any = {

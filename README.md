@@ -44,7 +44,7 @@ Run the environment configuration script
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.js -i <ip address>
+$ ./setup_env.js -i <ip address or FQDN of the server where FreeNAS is running>
 ```
 
 To start run
@@ -60,6 +60,21 @@ To test AOT in dev mode run
 To run the production build, run
 
 ```npm run build:prod:aot```
+
+Getting errors about missing packages?
+
+```npm install```
+
+Getting permission errors or Failed messages when trying to run `npm start`?
+
+From the webui repo
+```
+rm -rf node_modules (may need root)
+rm package-lock.json
+npm cache clear --force
+npm install
+```
+This should bring the npm environment back to a useable state.
 
 # Translating Text to Other Languages
 

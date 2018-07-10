@@ -3,14 +3,14 @@
   It's role is management of data and creating/destroying
   views. 
 -->
-<mat-card class="card-filter">
-  <mat-card-header>
+<mat-card id="filter-control-card" class="card-filter">
+  <mat-card-header id="vm-header">
     <!--
       This is the filter bar which shares an mat-card 
       with the table view
     -->
     <div class="filter-field">
-      <mat-icon role="img">search</mat-icon>
+      <mat-icon id="search-icon" role="img">search</mat-icon>
       <div class="card-filter-field">
         <mat-input-container floatPlaceholder="Filter VMs">
           <input matInput #filter placeholder="Filter VM List" [ngModel]="searchTerm" (ngModelChange)="displayFilter('name',$event)">
@@ -30,7 +30,7 @@
             <button mat-fab><mat-icon>list</mat-icon></button>
         </smd-fab-trigger>
         <smd-fab-actions> -->
-          <button *ngFor="let action of actions" mat-mini-fab (click)="action.onClick()" matTooltip="{{action.label | translate}}">
+          <button id="add-vm-button" *ngFor="let action of actions" mat-mini-fab (click)="action.onClick()" matTooltip="{{action.label | translate}}">
             <mat-icon>{{action.icon}}</mat-icon>
           </button>
         <!-- </smd-fab-actions>
@@ -110,6 +110,8 @@
             <button *ngIf="cards[i].state == 'running'" mat-menu-item (click)="toggleVmState(i,true)">Power Off</button>
             <button *ngIf="cards[i].state == 'stopped'" mat-menu-item disabled>Power Off</button>
             <button mat-menu-item (click)="deleteVM(i)">Delete</button>
+            <button mat-menu-item color="primary" (click)="goToDevices(i)">Devices</button>
+            <button mat-menu-item color="primary" [disabled]="(cards[i].state == 'running')" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
           </mat-menu>
 
           <button mat-fab 
@@ -128,6 +130,7 @@
         <div class="stats-info">
           <table><tbody>
               <tr><td class="stat-label">Description:</td><td class="stat"> {{ cards[i].description }}</td></tr>
+              <tr><td class="stat-label">Type</td><td class="stat">{{ cards[i].vm_type }}</td></tr>
               <tr><td class="stat-label">Autostart:</td><td class="stat"> {{ cards[i].autostart }}</td></tr>
               <tr><td class="stat-label">Virtual CPUs:</td><td class="stat"> {{ cards[i].vcpus }}</td></tr>
               <tr><td class="stat-label">Memory:</td><td class="stat">{{ cards[i].memory }}</td></tr>
@@ -148,12 +151,12 @@
                   <button mat-menu-item color="primary" [disabled]="(cards[i].state === 'stopped')" (click)="serial(i)">Serial</button>
                 </mat-menu>
                 
-          <span matTooltip="Edit Devices" matTooltipPosition="above">
+          <!-- <span matTooltip="Edit Devices" matTooltipPosition="above">
            <button mat-raised-button color="primary" (click)="goToDevices(i)">Devices</button>
           </span>
           <span matTooltip="{{(cards[i].state == 'running') ? 'Cannot edit VM if running' : 'Edit VM'}}" matTooltipPosition="above">
             <button mat-raised-button color="primary" [disabled]="(cards[i].state == 'running')" (click)="toggleForm(true,cards[i],'edit');">Edit</button>
-          </span>
+          </span> -->
         </div>
       </div>
     </ng-template>

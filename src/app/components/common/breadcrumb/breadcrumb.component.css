@@ -31,3 +31,15 @@
   position: absolute;
   right: 4px;
 }
+
+@media screen and (max-width: 400px) {
+  .copyright-txt {
+    font-size: 75%;
+  }
+}
+
+@media screen and (max-width: 348px) {
+  .copyright-txt {
+    font-size: 65%;
+  }
+}

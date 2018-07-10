@@ -13,7 +13,7 @@ export class ISCSI implements OnInit {
 
   public activedTab: string = 'configuration';
   public navLinks: Array < any > = [{
-      label: 'Global Configuration',
+      label: 'Target Global Configuration',
       path: '/sharing/iscsi/configuration',
     },
     {
