@@ -272,7 +272,7 @@ export class VolumesListTableConfig implements InputTableConf {
             localDialogService = this.dialogService
 
           const conf: DialogFormConfiguration = { 
-            title: "Detatch pool: '" + row1.name + "'",
+            title: "Detach pool: '" + row1.name + "'",
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
@@ -334,6 +334,7 @@ export class VolumesListTableConfig implements InputTableConf {
               } else {
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
                   }).subscribe((res) => {
+                    entityDialog.dialogRef.close(true);
                     localLoader.close();
                     localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
                       T("'. All data on that pool was destroyed."));
@@ -593,11 +594,22 @@ export class VolumesListTableConfig implements InputTableConf {
           method_rest: "storage/snapshot",
           saveButtonText: "Create Snapshot",
         }
-        this.dialogService.dialogForm(conf).subscribe((res) => {
-          if (res) {
-            this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+        this.ws.call('vmware.query',[[["filesystem", "=", row.path]]]).subscribe((vmware_res)=>{
+          if(vmware_res.length !== 0){
+            const vmware_cb = {
+              type: 'checkbox',
+              name: 'vmware_sync',
+              placeholder: 'VMWare Sync',
+              tooltip: T(''),
+            }
+            conf.fieldConfig.push(vmware_cb);
           }
-        });
+          this.dialogService.dialogForm(conf).subscribe((res) => {
+            if (res) {
+              this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+            }
+          });
+        })
       }
     });
     return actions;
