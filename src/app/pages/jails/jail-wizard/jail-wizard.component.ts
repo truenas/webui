@@ -31,7 +31,7 @@ export class JailWizardComponent {
     name: "Advanced Jail Creation",
     function: () => {
       this.router.navigate(
-        new Array('').concat(["jails", "add"])
+        new Array('').concat(["jails", "add", "advanced"])
       );
     }
   }];
