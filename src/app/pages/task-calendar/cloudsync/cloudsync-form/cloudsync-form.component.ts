@@ -208,13 +208,15 @@ export class CloudsyncFormComponent implements OnInit {
          }]
       }
     ]
-  }, {
-    type: 'input',
+  },
+  {
+    type: 'textarea',
     name: 'args',
     placeholder: T('Auxiliary arguments'),
     value: "",
     isHidden: true,
-  }, {
+  },
+  {
     type: 'select',
     name: 'repeat',
     placeholder: T('Quick Schedule'),
