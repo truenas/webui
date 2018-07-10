@@ -599,6 +599,16 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
+// Style the ix logo with the primary theme color
+.ix-logo {
+  @include variable(fill, --primary, $primary);
+}
+
+// Color the small lock icon with theme colors
+.app-user-name .icon-xs {
+  @include variable(color, --fg2, $fg2, !important);
+}
+
 // Align button and tooltip on Add Replication form
 #repl_remote_hostkey button {
   left: 17px;
