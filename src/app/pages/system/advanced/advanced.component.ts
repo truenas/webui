@@ -289,11 +289,6 @@ export class AdvancedComponent implements OnInit {
         )}
       
     });
-    entityEdit.ws.call('device.get_info', ['SERIAL']).subscribe((res) => {
-      res.forEach((item) => {
-        this.adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
-      });
-    });
 
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
       const adv_periodic_notifyuser =
