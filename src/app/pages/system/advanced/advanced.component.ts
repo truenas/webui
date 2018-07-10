@@ -71,7 +71,7 @@ export class AdvancedComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'consolemenu',
-    placeholder: T('Enable Console Menu'),
+    placeholder: T('Show Text Console without Password Prompt'),
     tooltip: T('Uncheck this to add a login prompt to the system before\
                 the console menu is shown.')
   }, {
