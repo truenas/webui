@@ -35,7 +35,7 @@ mat-card.card-filter .view-controls{
   width:22%;
   position:relative;
 /*  text-align:right;*/
-  min-width: 274px;
+  min-width: 285px;
   margin-right: 16px;
   margin-top:10px;
 }
@@ -208,4 +208,34 @@ mat-chip.vm-state-on,
   bottom: 90px;
   left: 116px;
   position: fixed;
+}
+
+/* Fix layout on Ffx, adujst on Webkit */
+#add-vm-button {
+  vertical-align: text-top;
+  transform: none;
+  -moz-transform:translateY(-20px);
+}
+
+/* Change VM header layout at smaller sizes*/
+@media screen and (max-width: 650px) {
+  #filter-control-card {
+    max-width: 483px;
+    min-width: 400px;
+  }
+  .filter-field {
+    margin-left: -15px;
+  }
+  #vm-header {
+    display: inline-block;
+    margin: 3% 17%; 
+  }
+  #search-icon {
+    margin-top: 12px;
+  }
+
+  .view-controls {
+    margin-top: -15px !important;
+  }
+  
 }

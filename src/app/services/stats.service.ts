@@ -60,7 +60,7 @@ export class StatsService {
       keys:["any"],
       properties:[],
       available:[],
-      realtime:true,
+      realtime:false,
       listeners:[]
     },
     {
@@ -174,8 +174,8 @@ export class StatsService {
   private listeners: any[] = [];
   private queue:any[] = [];
   private started:boolean = false;
-  private bufferSize:number = 60000;// milliseconds
-  private bufferSizeRealtime:number = 15000;// milliseconds
+  private bufferSize:number = 10000;// milliseconds
+  private bufferSizeRealtime:number = 5000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
 
@@ -193,16 +193,19 @@ export class StatsService {
     });
 
     this.core.register({observerClass:this,eventName:"StatsData"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: .log(evt);
+      if(this.debug){
+        console.log("**** STATSDATA ****");
+        console.log(evt);
+      }
     });
 
     this.core.register({observerClass:this,eventName:"StatsSources"}).subscribe((evt:CoreEvent) => {
       //this.checkAvailability(evt.data);
       this.updateSources(evt.data);
       if(this.debug){
-        //DEBUG: .log("**** StatsSources ****");
-        //DEBUG: .log(evt.data);
-        //DEBUG: .warn(this.sources);
+        console.log("**** StatsSources ****");
+        console.log(evt.data);
+        console.warn(this.sources);
       }
       //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
       }); 
@@ -352,17 +355,17 @@ export class StatsService {
 
   jobExec(job){
     if(this.debug){
-      //DEBUG: .log("JOB STARTING...");
+     console.log("JOB STARTING...");
     }
     for(let i  = 0; i < job.length; i++){
       let message = job[i];
       if(this.debug){
-        //DEBUG: .log(message);
+        console.log(message);
       }
       this.core.emit(message);
     }
     if(this.debug){
-      //DEBUG: .log("JOB FINISHED")
+      console.log("JOB FINISHED")
     }
   }
 
