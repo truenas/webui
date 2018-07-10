@@ -56,3 +56,10 @@ def screenshot(driver, self):
     print ("Taking screenshot for " + final_file + "-" + test_method_name)
     driver.save_screenshot(cwd + "/screenshot/"  + "screenshot-" + final_file + "-" + test_method_name + ".png")
 
+# status check for services
+def status_check(driver, which):
+    ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
+    # get the status data
+    status_data=ui_element_status.text
+    print ("current status is: " + status_data)
+
