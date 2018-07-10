@@ -39,7 +39,7 @@ export class BootEnvironmentListComponent {
   public scrub_interval: number; 
 
   public columns: Array<any> = [
-    {name: 'Name', prop: 'name'},
+    {name: 'Name', prop: 'name', always_display: true},
     {name: 'Active', prop: 'active'},
     {name: 'Created', prop: 'created'},
     {name: 'Space', prop: 'space'},
