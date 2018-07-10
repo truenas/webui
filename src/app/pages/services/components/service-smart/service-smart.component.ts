@@ -106,5 +106,10 @@ export class ServiceSMARTComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               ) {}
 
+  resourceTransformIncomingRestData(data) {
+    data['smart_email'] = data['smart_email'].replace(/,/g, " ");
+    return data;
+  }
+
   afterInit(entityEdit: any) {  }
 }

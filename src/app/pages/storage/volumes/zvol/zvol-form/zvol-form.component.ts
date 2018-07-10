@@ -19,7 +19,7 @@ interface ZvolFormData {
   comments: string;
   volsize: number;
   volsize_unit: string;
-  force: boolean;
+  force_size: boolean;
   sync: string;
   compression: string;
   deduplication: string;
@@ -51,6 +51,7 @@ export class ZvolFormComponent {
   public volid: string;
   public customFilter: any[] = [];
   public pk_dataset: any[] = [];
+  public edit_data: any;
 
   public custActions: Array<any> = [
     {
@@ -121,7 +122,7 @@ export class ZvolFormComponent {
     },
     {
       type: 'checkbox',
-      name : 'force',
+      name : 'force_size',
       placeholder: T('Force size'),
       tooltip : T('By default, the system does not allow a zvol to be\
  created that brings the pool to over 80% capacity. Check this box to\
@@ -177,7 +178,7 @@ export class ZvolFormComponent {
     {
       type: 'checkbox',
       name : 'sparse',
-      placeholder: T('Sparse volume'),
+      placeholder: T('Sparse Pool'),
       tooltip : T(''),
       isHidden: false
     },
@@ -196,9 +197,9 @@ export class ZvolFormComponent {
         { label: '32K', value: '32K' },
         { label: '64K', value: '64K' },
         { label: '128K', value: '128K' },
-        { label: '256K', value: '256K' },
-        { label: '512K', value: '512K' },
-        { label: '1024K', value: '1024K' }
+        // { label: '256K', value: '256K' },
+        // { label: '512K', value: '512K' },
+        // { label: '1024K', value: '1024K' }
       ],
       isHidden: false
     },
@@ -222,10 +223,8 @@ export class ZvolFormComponent {
         delete data.name;
         delete data.volblocksize;
         delete data.type;
-        delete data.force;
         delete data.sparse;
     } else {
-      delete data.force;
       data.name = this.parent + "/" + data.name;
     }
 
@@ -260,8 +259,8 @@ export class ZvolFormComponent {
     await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset)=>{
 
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
-
-
+        
+       
         const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
         const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
         const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
@@ -288,22 +287,17 @@ export class ZvolFormComponent {
           sparse.isHidden =true;
           volblocksize.isHidden =true;
           _.find(this.fieldConfig, {name:'sparse'}).isHidden=true;
-          _.find(this.fieldConfig, {name:'force'}).isHidden=true;
           this.customFilter = [[["id", "=", this.parent]]]
           this.isNew =false;
           let sync_collection = [{label:pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
           let compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
           let deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
   
-          const volumesize = pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[0-9]+/g)[0];
-          const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[0-9]+/g)[1];
+          let volumesize = pk_dataset[0].volsize.parsed;
+          const volumeunit =  pk_dataset[0].volsize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[1];
+          volumesize = volumesize/this.byteMap[volumeunit];
+          volumesize = volumesize.toFixed(3)
   
-          const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-          const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-          const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-          const volblocksize_inherit = [{label:`Inherit`, value: 'INHERIT'}];
-  
-        
           entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
           if(pk_dataset[0].comments){
             entityForm.formGroup.controls['comments'].setValue(pk_dataset[0].comments.value);
@@ -386,7 +380,22 @@ export class ZvolFormComponent {
     if (data.deduplication === 'INHERIT') {
       delete(data.deduplication);
     }
-    if (data.volblocksize === 'INHERIT') {
+    if (data.volblocksize !== 'INHERIT') {
+      let volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+      volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
+      
+  
+      if (volblocksize_integer_value === 512){
+        volblocksize_integer_value = 512
+      } else {
+        volblocksize_integer_value = volblocksize_integer_value * 1024
+      }
+
+      
+      data.volsize = data.volsize + (volblocksize_integer_value - data.volsize%volblocksize_integer_value)
+
+
+    } else{
       delete(data.volblocksize);
     }
 
@@ -394,8 +403,38 @@ export class ZvolFormComponent {
     return this.ws.call('pool.dataset.create', [ data ]);
   }
   editSubmit(body: any) {
-    const data: any = this.sendAsBasicOrAdvanced(body);
-    return this.ws.call('pool.dataset.update', [this.parent, data]);
+     this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
+      this.edit_data = this.sendAsBasicOrAdvanced(body);
+      let volblocksize_integer_value = res[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+      volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
+      if (volblocksize_integer_value === 512){
+        volblocksize_integer_value = 512
+      } else {
+        volblocksize_integer_value = volblocksize_integer_value * 1024
+      }
+      if(this.edit_data.volsize%volblocksize_integer_value !== 0){
+        this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize%volblocksize_integer_value)
+      }
+      let rounded_vol_size  = res[0].volsize.parsed
+
+      if(res[0].volsize.parsed%volblocksize_integer_value !== 0){
+        rounded_vol_size  = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed%volblocksize_integer_value)
+      }
+      
+      if(this.edit_data.volsize >= rounded_vol_size){
+        this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
+          this.loader.close();
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        }, (eres) => {
+          this.loader.close();
+          this.dialogService.errorReport(T("Error saving ZVOL"), eres.reason, eres.trace.formatted);
+        });
+      } else{
+        this.loader.close();
+        this.dialogService.Info(T("Error saving ZVOL"), "You cannot shrink a ZVOL from gui this may lead to data loss.")
+      }
+    })
   }
 
   customSubmit(body: any) {
@@ -403,15 +442,19 @@ export class ZvolFormComponent {
 
     this.loader.open();
 
-    return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
-      this.loader.close();
-      
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
-    }, (res) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
-    });
+    if(this.isNew === true){
+      this.addSubmit(body).subscribe((restPostResp) => {
+        this.loader.close();
+        
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      }, (res) => {
+        this.loader.close();
+        this.dialogService.errorReport(T("Error saving ZVOL"), res.reason, res.trace.formatted);
+      });
+    } else{
+      this.editSubmit(body);
+    }
   }
 
 }

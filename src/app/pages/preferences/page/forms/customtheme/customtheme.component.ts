@@ -400,7 +400,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
         switch(evt.name){
           case "FormSubmitted":
             let valid:boolean = this.validateForm(evt.data);
-            if(valid){
+             if(valid){
+              evt.data.labelSwatch = evt.data.labelSwatch.slice(6, -1);
               evt.data.accentColors = ['blue', 'orange','green', 'violet','cyan', 'magenta', 'yellow','red'];
               this.core.emit({name:"AddCustomThemePreference",data:evt.data});
               this.globalPreview = false;

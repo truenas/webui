@@ -33,6 +33,7 @@ export class VMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "VM Summary";
+  entityWizard: any;
   
 
   protected wizardConfig: Wizard[] = [
@@ -80,6 +81,9 @@ export class VMWizardComponent {
         tooltip : T('Enter an alphanumeric name for the virtual machine.'),
         validation : [ Validators.required ],
         required: true,
+        blurStatus: true,
+        blurEvent: this.blurEvent,
+        parent: this
       },
       { type: 'select',
         name : 'bootloader',
@@ -277,7 +281,9 @@ export class VMWizardComponent {
 
   }
 
-
+  preInit(entityWizard: EntityWizardComponent){
+    this.entityWizard = entityWizard;
+  }
   afterInit(entityWizard: EntityWizardComponent) {
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
@@ -289,6 +295,9 @@ export class VMWizardComponent {
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
       this.summary[T('Guest Operating System')] = res;
+      ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+        this.summary[T('Name')] = name;
+      });
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
@@ -392,6 +401,17 @@ export class VMWizardComponent {
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
+blurEvent(parent){
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.query', [[["name","=",vm_name],["vm_type", "=", "Bhyve"]]]).subscribe((vm_wizard_res)=>{
+    if(vm_wizard_res.length > 0){
+      parent.dialogService.Info("Error", `virtual machine ${vm_wizard_res[0].name} already exists, please use a diffrent name`).subscribe(()=>{
+        parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
+}
 
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')
@@ -409,6 +429,7 @@ async customSubmit(value) {
     vm_payload["memory"] = value.memory;
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
+    vm_payload["autostart"] = value.autostart;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},

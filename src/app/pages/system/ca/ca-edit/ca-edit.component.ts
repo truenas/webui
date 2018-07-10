@@ -10,14 +10,14 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
-  selector: 'app-certificate-edit',
+  selector: 'app-ca-edit',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class CertificateEditComponent {
+export class CertificateAuthorityEditComponent {
 
-  protected queryCall: string = 'certificate.query';
-  protected editCall = 'certificate.update';
-  protected route_success: string[] = ['system', 'certificates'];
+  protected queryCall: string = 'certificateauthority.query';
+  protected editCall = 'certificateauthority.update';
+  protected route_success: string[] = ['system', 'ca'];
   protected isEntity: boolean = true;
   protected queryCallOption: Array<any> = [["id", "="]];
 
@@ -34,40 +34,27 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'certificate',
       placeholder: T('Certificate'),
-      isHidden: false,
       readonly: true,
     },
     {
       type: 'textarea',
       name: 'privatekey',
       placeholder: T('Private Key'),
-      isHidden: false,
       readonly: true,
     },
-    {
-      type: 'textarea',
-      name: 'CSR',
-      placeholder: T('Signing Request'),
-      isHidden: false,
-      readonly: true,
-    }
   ];
 
   private pk: any;
-  protected certificateField: any;
-  protected privatekeyField: any;
-  protected CSRField: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected loader: AppLoaderService) {}
 
   preInit() {
-    this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
-    this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
-    this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
     this.route.params.subscribe(params => {
-      if (params['pk']) {
+      if (params['pk']) { 
+        // fixme: entity-form should do this automatically but the logic appears broken
+        // and i don't know what fixing it will break, tbf after release
         this.queryCallOption[0].push(parseInt(params['pk']));
       }
     });
@@ -76,24 +63,8 @@ export class CertificateEditComponent {
   afterInit(entityEdit: any) {
     this.route.params.subscribe(params => {
       if (params['pk']) {
+        // see above, this should just be handled properly by entity-form
         this.pk = parseInt(params['pk']);
-        this.ws.call(this.queryCall, [
-          [
-            ["id", "=", this.pk]
-          ]
-        ]).subscribe((res) => {
-          if (res[0]) {
-            if (res[0].CSR != null) {
-              this.CSRField.isHidden = false;
-              this.certificateField.isHidden = true;
-              this.privatekeyField.isHidden = true;
-            } else {
-              this.CSRField.isHidden = true;
-              this.certificateField.isHidden = false;
-              this.privatekeyField.isHidden = false;
-            }
-          }
-        });
       }
     });
   }

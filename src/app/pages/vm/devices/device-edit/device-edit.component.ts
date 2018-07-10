@@ -133,7 +133,7 @@ export class DeviceEditComponent implements OnInit {
         },
         {
           name : 'nic_attach',
-          placeholder : 'Nic to attach:',
+          placeholder : 'NIC to attach:',
           tooltip : 'Select a physical interface to associate with the\
                      VM.',
           type: 'select',

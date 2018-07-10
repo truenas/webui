@@ -76,7 +76,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @ViewChild('filter') filter: ElementRef;
  
   // MdPaginator Inputs
-  public paginationPageSize = 20;
+  public paginationPageSize = 10;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
@@ -226,9 +226,19 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
     this.busy =
-      this.getFunction.subscribe((res)=>{
-        this.handleData(res);
-      });
+      this.getFunction.subscribe(
+        (res) => {
+          this.handleData(res);
+        },
+        (res) => {
+          if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
+            this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
+          }
+          else {
+            new EntityUtils().handleError(this, res);
+          }
+        }
+      );
 
   }
 
@@ -273,9 +283,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       for (const attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
           if (rows[i][attr] === true) {
-            rows[i][attr] = 'yes';
+            this.translate.get('yes').subscribe((res) => {
+              rows[i][attr] = res;
+            })
           } else if (rows[i][attr] === false) {
-            rows[i][attr] = 'no';
+            this.translate.get('no').subscribe((res) => {
+              rows[i][attr] = res;
+            })
           } else {
             rows[i][attr] = this.rowValue(rows[i], attr);  
           }
