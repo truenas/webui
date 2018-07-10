@@ -168,7 +168,13 @@ export class CloudsyncFormComponent implements OnInit {
                 Losing the salt value can result in data loss.'),
     isHidden: true,
   },
-
+  {
+    type: 'textarea',
+    name: 'args',
+    placeholder: T('Auxiliary arguments'),
+    value: "",
+    isHidden: true,
+  },
   {
     type: 'select',
     name: 'repeat',

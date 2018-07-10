@@ -20,6 +20,8 @@ interface ApiDefinition {
 @Injectable()
 export class ApiService {
 
+  public debug:boolean = false;
+
   private apiDefinitions = {
     UserDataRequest:{
       apiCall:{
@@ -529,8 +531,10 @@ export class ApiService {
       let call = cloneDef.apiCall;//this.parseEventRest(evt);
       call.args = evt.data;
       this.rest[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(res)
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(res)
+        }
 
         // PostProcess
         if(def.postProcessor){
@@ -548,8 +552,10 @@ export class ApiService {
       let call = cloneDef.apiCall;//this.parseEventRest(evt);
       call.args = evt.data;
       this.rest[call.operation](baseUrl + call.namespace,{}, false).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(call);
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(call);
+        }
 
         // PostProcess
         if(def.postProcessor){
@@ -575,15 +581,19 @@ export class ApiService {
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(call)
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(call)
+        }
 
         // PostProcess
         if(def.postProcessor){
           res = def.postProcessor(res,evt.data,this.core);
         }
-        //DEBUG: console.log(call.responseEvent);
-        //DEBUG: console.log(res);
+        if(this.debug){
+          console.log(call.responseEvent);
+          console.log(res);
+        }
         //this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
         if(call.responseEvent){
           this.core.emit({name:call.responseEvent, data:res, sender: this});
@@ -597,8 +607,10 @@ export class ApiService {
 
       let call = cloneDef.apiCall;//this.parseEventWs(evt);
       this.ws.call(call.namespace).subscribe((res) => {
-        //DEBUG: console.log("*** API Response:");
-        //DEBUG: console.log(call);
+        if(this.debug){
+          console.log("*** API Response:");
+          console.log(call);
+        }
 
         // PostProcess
         if(def.postProcessor){
