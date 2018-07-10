@@ -10,7 +10,9 @@ import { MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 import { RestService, WebSocketService } from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
+import * as _ from 'lodash';
 import { T } from '../../translate-marker';
+
 
 @Component({
   selector: 'services',
@@ -85,7 +87,9 @@ export class Services implements OnInit {
           const card = this.parseResponse(item);
           this.cards.push(card);
           this.cache.push(card);
-        })
+        });
+        this.cards = _.sortBy(this.cards, [function(i) {return i.label.toLowerCase()}]);
+        this.cache = _.sortBy(this.cache, [function(i) {return i.label.toLowerCase()}]);
       });
   }
 

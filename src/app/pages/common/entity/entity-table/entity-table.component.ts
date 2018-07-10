@@ -151,9 +151,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
               let value: any = dataElement[dataElementProp.prop];
               
               if( typeof(value) === "boolean" || typeof(value) === "number") {
-                value = String(value);
+                value = String(value).toLowerCase();
               }
-              if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
+              if (typeof (value) === "string" && value.length > 0 && 
+                (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
                 newData.push(dataElement);
                 break;
               }

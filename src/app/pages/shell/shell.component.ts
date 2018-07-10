@@ -53,6 +53,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
                             and examples.');
 
   clearLine = "\u001b[2K\r"
+  public shellConnected: boolean = false;
 
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
@@ -138,10 +139,18 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.ss.connect();
+
+    this.ss.shellConnected.subscribe((res)=> {
+      this.shellConnected = res;
+    })
   }
 
   getAuthToken() {
     return this.ws.call('auth.generate_token');
+  }
+
+  reconnect() {
+    this.ss.connect();
   }
 
   constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {
