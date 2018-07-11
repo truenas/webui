@@ -36,7 +36,7 @@ export class SMBFormComponent implements OnDestroy {
       type: 'input',
       name: 'cifs_name',
       placeholder: T('Name'),
-      tooltip: T('Mandatory. Enter a name for the share.')
+      tooltip: T('Enter a name for the share.')
     },
     {
       type: 'checkbox',
@@ -44,7 +44,7 @@ export class SMBFormComponent implements OnDestroy {
       placeholder: T('Use as home share'),
       tooltip: T('Set to allow this share to hold user home\
                   directories. Only one share can be\
-                  the homes share.')
+                  the <i>homes</i> share.')
     },
     {
       type: 'checkbox',
@@ -52,7 +52,7 @@ export class SMBFormComponent implements OnDestroy {
       placeholder: T('Default Permissions'),
       tooltip: T('When enabled, the ACLs grant read and write access for\
                   owner or group and read-only for others.\
-                  <b>Only</b> leave unset if creating a share on a\
+                  <b>Only</b> leave unset when creating a share on a\
                   system that already has custom\
                   ACLs configured.'),
       value: false
@@ -96,16 +96,15 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_guestok',
       placeholder: T('Allow Guest Access'),
       tooltip: T('Set to allow access to this share without a password.\
-                  See <a\
-                  href="http://doc.freenas.org/11/services.html#smb"\
-                  target="_blank"> SMB</a> service for more information\
-                  about guest user permissions.')
+                  See the <a href="..//docs/services.html#smb"\
+                  target="_blank">SMB</a> service documentation for more\
+                  information about guest user permissions.')
     },
     {
       type: 'checkbox',
       name: 'cifs_guestonly',
       placeholder: T('Only Allow Guest Access'),
-      tooltip: T('Requires <b>Allow guest access</b> to also be checked.\
+      tooltip: T('Requires <b>Allow guest access</b> to also be set.\
                   Forces guest access for all connections.')
     },
     {
@@ -121,17 +120,18 @@ export class SMBFormComponent implements OnDestroy {
       placeholder: T('Hosts Deny'),
       tooltip: T('Enter a list of denied hostnames or IP addresses.\
                   Separate entries with a comma, space, or tab.\
-                  Specify <i>ALL</i> and list any hosts from <b>Hosts Allow</b>\
-                  to have those hosts take precedence.')
+                  Specify <i>ALL</i> and list any hosts from\
+                  <b>Hosts Allow</b> to have those hosts take\
+                  precedence.')
     },
     {
       type: 'select',
       name: 'cifs_vfsobjects',
       placeholder: T('VFS Objects'),
-      tooltip: T('Adds virtual file system modules to enhance functionality.\
-                  <a href="https://doc.freenas.org/11/sharing.html#avail-vfs-modules-tab"\
-                  target="blank">Table 10.4.2</a>\
-                  summarizes the available modules.'),
+      tooltip: T('Adds <a\
+                  href="..//docs/sharing.html#avail-vfs-modules-tab"\
+                  target="blank">virtual file system modules</a> to\
+                  enhance functionality.'),
       options: [],
       multiple: true,
     },
@@ -140,16 +140,16 @@ export class SMBFormComponent implements OnDestroy {
       name: 'cifs_storage_task',
       placeholder: 'Periodic Snapshot Task',
       tooltip: T('Used to configure directory shadow copies on a\
-                per-share basis. Select the pre-configured periodic\
-                snapshot task to use for the shadow copies of this share.\
-                Periodic snapshot must be recursive.'),
+                  per-share basis. Select the pre-configured periodic\
+                  snapshot task to use for the shadow copies of this\
+                  share. Periodic snapshots must be recursive.'),
       options: []
     },
     {
       type: 'textarea',
       name: 'cifs_auxsmbconf',
       placeholder: T('Auxiliary Parameters'),
-      tooltip: T('Additional <b>smb5.conf</b> parameter not covered by\
+      tooltip: T('Additional <b>smb5.conf</b> parameters not covered by\
                   other option fields.'),
     },
   ];
@@ -201,8 +201,8 @@ export class SMBFormComponent implements OnDestroy {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(T("Enable service"), 
-          T("Would you like to enable this service"), 
+          this.dialog.confirm(T("Enable service"),
+          T("Would you like to enable this service"),
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();
@@ -260,7 +260,7 @@ export class SMBFormComponent implements OnDestroy {
     if (entityForm.isNew) {
       entityForm.formGroup.controls['cifs_vfsobjects'].setValue(['zfs_space','zfsacl','streams_xattr']);
       entityForm.formGroup.controls['cifs_browsable'].setValue(true);
-    } 
+    }
   }
 
   resourceTransformIncomingRestData(data) {

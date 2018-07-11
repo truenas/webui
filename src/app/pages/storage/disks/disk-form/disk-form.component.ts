@@ -71,7 +71,7 @@ export class DiskFormComponent {
       placeholder : T('Enable S.M.A.R.T.'),
       tooltip : T('Set by default if the disk supports S.M.A.R.T.\
                    Unset to disable any configured <a\
-                   href="http://doc.freenas.org/11/tasks.html#s-m-a-r-t-tests"\
+                   href="..//docs/tasks.html#s-m-a-r-t-tests"\
                    target="_blank">S.M.A.R.T. tests</a>.'),
     },
     {
