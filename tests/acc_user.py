@@ -89,7 +89,7 @@ class create_user_test(unittest.TestCase):
         try:
             print (" creating a new user with create new primary group")
             # cancelling the tour
-            if self.is_element_present(By.XPATH, '/html/body/div[6]/div[1]/button'):
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
@@ -246,7 +246,7 @@ class create_user_test(unittest.TestCase):
             # Click User submenu
             driver.find_element_by_xpath(xpaths['submenuUser']).click()
             # cancelling the tour
-            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
@@ -301,17 +301,6 @@ class create_user_test(unittest.TestCase):
 
     # Next step-- To check if the new user is present in the list via automation
 
-
-    #method to test if an element is present
-    def is_element_present(self, how, what):
-        """
-        Helper method to confirm the presence of an element on page
-        :params how: By locator type
-        :params what: locator value
-        """
-        try: driver.find_element(by=how, value=what)
-        except NoSuchElementException: return False
-        return True
 
     def error_check(self):
         if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
