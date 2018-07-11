@@ -101,6 +101,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   public showDefaults: boolean = false;
+  public showSpinner: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -170,6 +171,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
 
+
+      setTimeout(() => { this.setShowSpinner(); }, 500);
+
       // Next section sets the checked/displayed columns
       if (this.conf.columns && this.conf.columns.length > 10) {
         this.conf.columns = [];
@@ -186,11 +190,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         // End of checked/display section ------------
         
       setTimeout(() => { this.setShowDefaults(); }, 1000);
+
     
   }
 
   setShowDefaults() {
     this.showDefaults = true;
+  }
+
+  setShowSpinner() {
+    this.showSpinner = true;
   }
   
   ngAfterViewInit(): void {
@@ -199,7 +208,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     
   }
 
-  getData() {
+  getData() { 
+    
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -217,6 +227,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
+    
     if (this.conf.queryCall) {
       if (this.conf.queryCallOption) {
         this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
@@ -226,7 +237,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
+
     this.busy =
+      this.getFunction.subscribe((res)=>{
+        this.handleData(res);
+      });
+
       this.getFunction.subscribe(
         (res) => {
           this.handleData(res);
@@ -240,7 +256,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           }
         }
       );
-
   }
 
   handleData(res): any {
