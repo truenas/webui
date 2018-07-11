@@ -194,6 +194,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     
   }
 
+  setShowDefaults() {
+    this.showDefaults = true;
+  }
+
   setShowSpinner() {
     this.showSpinner = true;
   }
