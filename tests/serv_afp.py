@@ -85,6 +85,7 @@ class conf_afp_test(unittest.TestCase):
         try:
             print (" check if afp turned on")
             time.sleep(2)
+            #status check
             function.status_check(driver, "1")
             #taking screenshot
             function.screenshot(driver, self)
@@ -115,6 +116,7 @@ class conf_afp_test(unittest.TestCase):
         try:
             print (" check if afp turned off")
             time.sleep(2)
+            # status check
             function.status_check(driver, "1")
             time.sleep(10)
             #taking screenshot
