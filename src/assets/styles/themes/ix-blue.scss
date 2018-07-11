@@ -599,6 +599,11 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
+// Add a visual effect when any sidenav menu item is clicked
+.highlight  {
+  opacity: 0.5;
+}
+
 // Align button and tooltip on Add Replication form
 #repl_remote_hostkey button {
   left: 17px;
@@ -616,7 +621,6 @@ entity-form .form-card.mat-card{
 
 .mat-slider-track-fill, .mat-slider-thumb {
   @include variable(background-color, --accent, $accent, !important);
-
 }
 
 // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
