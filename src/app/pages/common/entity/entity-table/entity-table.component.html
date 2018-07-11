@@ -101,7 +101,7 @@
             >
             <div id="footer">
               <div id="footer-text">
-                {{offset * pageSize + 1}} - 
+                {{rowCount > 0 ? offset * pageSize + 1 : 0}} - 
                 {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}} 
                 of {{rowCount}} 
                 <span *ngIf="selectedCount > 0"> | {{selectedCount}} selected</span>
