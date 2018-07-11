@@ -1,4 +1,4 @@
-// @import "../../../../../assets/styles/themes/ix-blue.scss";
+@import "../../../../../assets/styles/themes/ix-blue.scss";
 
 .padding_all {
     padding: 20px;
@@ -48,3 +48,12 @@
 #footer-text {
     margin-left: 10px;
 }
+
+// Small page-loading spinner for entity tables
+#entity-spinner {
+  position: absolute;
+  top: 10px; left: 0; bottom: 0; right: 0;
+  z-index: 10;
+  margin: 0 auto;
+}
+
