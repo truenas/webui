@@ -40,8 +40,9 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
   public chart: any;
+  public maxY: number = 100; // Highest number in data
 
-  public startTime;
+    public startTime;
   public endTime;
 
   constructor(public router: Router, public translate: TranslateService){
@@ -80,73 +81,90 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
   }
 
   chartSetup(){
-    this.chart = c3.generate({
-      bindto: '#' + this.chartId,
-      size: {
-        height:176
-      },
-      data: {
-        x: "x",
-        columns: [
-          ['x'],
-          ['user']
-        ],
-        type: 'spline',
-        colors: {
-          user:"var(--primary)"
-        },
-        onmouseout: (d) => {
-          this.showLegendValues = false;
-        }
-      },
-      axis: {
-        x: {
-          show:false,
-          type: 'timeseries',
-          tick: {
-            count: 2,
-            fit:true,
-            format: '%H:%M'
-          }
-        },
-        y: {
-          show:true,
-          inner:true,
-          //max: 100,
-          tick: {
-            count:2,
-            values: [0, 100],
-            format: (y) => { return y + "%" }
-          }
-        }
-      },
-      legend: {
-        show: false
-      },
-      tooltip: {
-        //show: false,
-        contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
-          if(!this.showLegendValues){
-           this.showLegendValues = true;
-          }
-          this.altTitle = raw[0].value + "% CPU";
-          this.altSubtitle = raw[0].x;
-          
-          //console.log("******** TOOLTIP VALUES ********");
-          /*for(let index = 0; index < this.legend.length; index++){
+    // Generate Regions
+    /*let generatedRegions = [];
+     for(let i = 0; i < 100; i++){
+       let vent = i % 20;
+       if(vent == 0){
+         generatedRegions.push({axis: 'y', start: i+10, end: i + 20, class: 'regionEven'})
+       }
+     }*/
+
+     this.chart = c3.generate({
+       bindto: '#' + this.chartId,
+       size: {
+         height:176
+       },
+       data: {
+         x: "x",
+         columns: [
+           ['x'],
+           ['user']
+         ],
+         type: 'spline',
+         colors: {
+           user:"var(--primary)"
+         },
+         onmouseout: (d) => {
+           this.showLegendValues = false;
+         }
+       },
+       axis: {
+         x: {
+           show:false,
+           type: 'timeseries',
+           tick: {
+             count: 2,
+             fit:true,
+             format: '%HH:%M:%S'
+           }
+         },
+         y: {
+           show:true,
+           inner:true,
+           max: 100,
+           tick: {
+             count:3,
+             values: [25, 50, 75, 100],
+             format: (y) => { return y + "%" }
+           }
+         }
+       },
+       legend: {
+         show: false
+       },
+       grid: {
+         x: {
+           show: true
+         },
+         y: {
+           show: true
+         }
+       },
+       tooltip: {
+         //show: false,
+         contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+           if(!this.showLegendValues){
+             this.showLegendValues = true;
+           }
+           this.altTitle = "CPU " + raw[0].value + "%";
+           this.altSubtitle = raw[0].x;
+
+           //console.log("******** TOOLTIP VALUES ********");
+           /*for(let index = 0; index < this.legend.length; index++){
             //console.log("Looking for value");
             for(let i = 0; i < raw.length; i++){
               if(this.legend[index].name == raw[i].name){
                 this.legend[index].value = raw[i].value;
                 //DEBUG: console.log(this.legend);
-              }
+                }
             }
             this.legend[index].x = time;
-          }*/
-          return '<div style="display:none">' + raw[0].x + '</div>';
-        }
-      }
-    });
+           }*/
+           return '<div style="display:none">' + raw[0].x + '</div>';
+         }
+       }
+     });
   }
 
   setCPUData(evt:CoreEvent){
@@ -179,6 +197,14 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
 
     console.log(xColumn);
     console.log(parsedData[0].data);
+
+    /*
+     // Possible Y axis substitute
+     this.chart.ygrids.remove();
+     this.maxY = Math.max(...parsedData[0].data.slice(1));
+     this.chart.ygrids.add({value: 1, text: this.maxY.toString() + '%', axis: 'y2', position: 'start'})
+     console.warn(this.maxY);
+     */
 
     this.chart.load({
       columns: [
@@ -237,8 +263,9 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
   }*/
 
   timeFromDate(date:Date){
-    let hh = date.getUTCHours().toString();
-    let mm = date.getUTCMinutes().toString();
+    let hh = date.getHours().toString();
+    let mm = date.getMinutes().toString();
+    let ss = date.getSeconds().toString();
 
     if(hh.length < 2){
       hh = "0" + hh
@@ -246,7 +273,10 @@ export class WidgetCpuHistoryComponent extends WidgetComponent implements AfterV
     if(mm.length < 2){
       mm = "0" + mm
     }
-    return hh + ":" + mm;
+    if(ss.length < 2){
+      ss = "0" + ss
+    }
+    return hh + ":" + mm + ":" + ss;
   }
 
   setPreferences(form:NgForm){

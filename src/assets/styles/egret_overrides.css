@@ -292,6 +292,12 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   visibility:hidden;
 }
 
+/* Max Y axis*/
+.widget .c3 g.c3-axis-y g.tick tspan{
+  font-family:Roboto;
+  font-weight:500;
+}
+
 /* Split Layout Widgets */
 .widget.splitv, .widget.splith{
   width:600px;

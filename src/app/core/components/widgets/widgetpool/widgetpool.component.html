@@ -70,6 +70,12 @@
             <!--</ng-template>-->
 
           <div class="disk-details" fxLayout="row wrap" fxLayoutAlign="space-between stretch">
+            <ng-container *ngIf="selectedDisk == -1">
+              <div class="zero-state">
+                <h4>Select a Disk</h4>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="selectedDisk !== -1 && disks.length > 0 ">
             <div class="disk-detail disk-detail-header" fxFlex="60" fxLayout="row wrap" fxLayoutAlign="space-between stretch" *ngIf="selectedDisk > -1">
               <!--<span fxFlex="100" class="disk-detail-title">{{diskDetails[selectedDisk].name}}</span>-->
               <div class="disk-detail-section">
@@ -129,6 +135,7 @@
                 <div class="temps-bar-label boil" fxFlex="50" style="text-align:right;">100</div>
               </div>
             </div>
+            </ng-container>
           </div>
 
         </div>

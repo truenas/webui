@@ -25,6 +25,7 @@
 
 .chart-wrapper{
   position:relative;
+  width:100%;
 }
 
 .x-axis .start-time, 
@@ -32,6 +33,9 @@
     font-size: 75%;
     position: absolute;
     bottom: 0;
+    font-weight:500;
+    font-family:Roboto;
+    opacity:0.5;
 }
 
 .x-axis .start-time{
@@ -41,9 +45,9 @@
   right:8px;
 }
 
-:host ::ng-deep .c3-axis-y g:nth-child(2n){
+/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
   visibility:hidden;
-}
+}*/
 
 /* MARKER */
 :host ::ng-deep .c3-chart-line .c3-circles circle._expanded_{

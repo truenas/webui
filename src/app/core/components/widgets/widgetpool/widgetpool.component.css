@@ -246,6 +246,10 @@ span.disk-detail-subtitle {
   background-color:var(--green);
 }
 
+.zero-state h4 {
+  margin:8px 0 0 8px;
+}
+
 /* Mobile */
 .disk-array-ui.column{
   width:100%;
