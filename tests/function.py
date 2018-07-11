@@ -28,7 +28,7 @@ except ImportError:
     import unittest
 
     #method to test if an element is present
-def is_element_present(self, how, what):
+def is_element_present(driver, self, how, what):
     """
     Helper method to confirm the presence of an element on page
     :params how: By locator type
