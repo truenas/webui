@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-import { JailService, NetworkService } from '../../../services/';
+import { JailService, NetworkService, DialogService } from '../../../services/';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'
@@ -226,7 +226,8 @@ export class JailWizardComponent {
               protected ws: WebSocketService,
               protected jailService: JailService,
               protected router: Router,
-              protected networkService: NetworkService) {
+              protected networkService: NetworkService,
+              protected dialogService: DialogService) {
 
   }
 
@@ -234,24 +235,32 @@ export class JailWizardComponent {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'release' });
     this.ws.call('system.info').subscribe((res) => {
         this.currentServerVersion = Number(_.split(res.version, '-')[1]);
-        this.jailService.getLocalReleaseChoices().subscribe((res_local) => {
-          for (let j in res_local) {
-            let rlVersion = Number(_.split(res_local[j], '-')[0]);
-            if (this.currentServerVersion >= Math.floor(rlVersion)) {
-              this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
-            }
-          }
-          this.jailService.getRemoteReleaseChoices().subscribe((res_remote) => {
-            for (let i in res_remote) {
-              if (_.indexOf(res_local, res_remote[i]) < 0) {
-                let rmVersion = Number(_.split(res_remote[i], '-')[0]);
-                if (this.currentServerVersion >= Math.floor(rmVersion)) {
-                  this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
-                }
+        this.jailService.getLocalReleaseChoices().subscribe(
+          (res_local) => {
+            for (let j in res_local) {
+              let rlVersion = Number(_.split(res_local[j], '-')[0]);
+              if (this.currentServerVersion >= Math.floor(rlVersion)) {
+                this.releaseField.options.push({ label: res_local[j] + '(fetched)', value: res_local[j] });
               }
             }
+            this.jailService.getRemoteReleaseChoices().subscribe(
+              (res_remote) => {
+                for (let i in res_remote) {
+                  if (_.indexOf(res_local, res_remote[i]) < 0) {
+                    let rmVersion = Number(_.split(res_remote[i], '-')[0]);
+                    if (this.currentServerVersion >= Math.floor(rmVersion)) {
+                      this.releaseField.options.push({ label: res_remote[i], value: res_remote[i] });
+                    }
+                  }
+                }
+              },
+              (res_remote) => {
+                this.dialogService.errorReport('Error ' + res_remote.error + ': Get remote release choices failed', res_remote.reason, res_remote.trace.formatted);
+              });
+          },
+          (res_local) => {
+            this.dialogService.errorReport('Error: Get local fetched release choices failed', res_local.reason, res_local.trace.formatted);
           });
-        });
       },
       (res) => {
         new EntityUtils().handleError(this, res);
