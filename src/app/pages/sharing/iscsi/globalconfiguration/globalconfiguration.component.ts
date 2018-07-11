@@ -52,30 +52,31 @@ export class GlobalconfigurationComponent {
     },
   ];
 
-  protected service: any;
-
   constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
               protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {}
 
   afterSubmit(data) {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
-      if (_.find(service_res, {"service": "iscsitarget"}).state != 'RUNNING') {
-        this.dialogService.confirm('', T('Do you want to start iSCSI service now?'), true).subscribe((dialog_res) =>{
-          if (dialog_res) {
-            this.loader.open();
-            this.ws.call('service.start', ['iscsitarget']).subscribe(
-              (res) => {
+      const service = _.find(service_res, {"service": "iscsitarget"});
+      if (!service.enable) {
+        this.dialogService.confirm(T("Enable service"),
+          T("Would you like to enable this service"),
+          true, T("Enable Service")).subscribe((dialogRes) => {
+            if (dialogRes) {
+              this.loader.open();
+              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+                this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+                  this.loader.close();
+                  this.snackBar.open(T("Service started"), T("close"));
+                }, (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
+                });
+               }, (err) => {
                 this.loader.close();
-                if (res) {
-                  this.snackBar.open(T('iSCSI service started.'), 'close', { duration: 5000 });
-                }
-              },
-              (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error starting service iSCSI"), res.message, res.stack);
-              }
-            );
-          }
+                this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
+               });
+           }
         });
       }
     });
