@@ -28,7 +28,7 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-replication-form',
-  templateUrl : './replication-form.component.html'
+  template: '<entity-form [conf]="this"></entity-form>'
 })
 export class ReplicationFormComponent implements AfterViewInit {
 
