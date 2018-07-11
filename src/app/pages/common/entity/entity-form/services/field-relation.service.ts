@@ -5,6 +5,8 @@ import {FieldConfig} from "../models/field-config.interface";
 import {
   ACTION_DISABLE,
   ACTION_ENABLE,
+  ACTION_SHOW,
+  ACTION_HIDE,
   CONNECTION_AND,
   CONNECTION_OR,
   FieldRelation,
@@ -18,7 +20,9 @@ export class FieldRelationService {
 
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
     return relGroups.find(rel => rel.action === ACTION_DISABLE ||
-                                 rel.action === ACTION_ENABLE);
+                                 rel.action === ACTION_ENABLE ||
+                                 rel.action === ACTION_SHOW ||
+                                 rel.action === ACTION_HIDE);
   }
 
   getRelatedFormControls(model: FieldConfig,
@@ -63,6 +67,41 @@ export class FieldRelationService {
             }
             if (index > 0 && relGroup.connective === CONNECTION_OR &&
                 !toBeDisabled) {
+              return false;
+            }
+            return !(rel.value === control.value ||
+                     rel.status === control.status);
+          }
+          return false;
+        },
+        false);
+  }
+
+  isFormControlToBeHide(relGroup: RelationGroup,
+                            formGroup: FormGroup): boolean {
+    return relGroup.when.reduce(
+        (toBeHide: boolean, rel: FieldRelation, index: number) => {
+          let control = formGroup.get(rel.name);
+
+          if (control && relGroup.action === ACTION_HIDE) {
+            if (index > 0 && relGroup.connective === CONNECTION_AND &&
+                !toBeHide) {
+              return false;
+            }
+            if (index > 0 && relGroup.connective === CONNECTION_OR &&
+                toBeHide) {
+              return true;
+            }
+            return rel.value === control.value || rel.status === control.status;
+          }
+
+          if (control && relGroup.action === ACTION_SHOW) {
+            if (index > 0 && relGroup.connective === CONNECTION_AND &&
+                toBeHide) {
+              return true;
+            }
+            if (index > 0 && relGroup.connective === CONNECTION_OR &&
+                !toBeHide) {
               return false;
             }
             return !(rel.value === control.value ||

@@ -27,7 +27,7 @@ export class JailListComponent implements OnInit {
   protected wsDelete = 'jail.do_delete';
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
-  protected route_add = ["jails", "wizard"];
+  protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
 
   public columns: Array < any > = [

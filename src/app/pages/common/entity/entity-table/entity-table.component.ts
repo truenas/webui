@@ -101,6 +101,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   public showDefaults: boolean = false;
+  public showSpinner: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -151,9 +152,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
               let value: any = dataElement[dataElementProp.prop];
               
               if( typeof(value) === "boolean" || typeof(value) === "number") {
-                value = String(value);
+                value = String(value).toLowerCase();
               }
-              if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
+              if (typeof (value) === "string" && value.length > 0 && 
+                (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
                 newData.push(dataElement);
                 break;
               }
@@ -168,6 +170,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
+
+
+      setTimeout(() => { this.setShowSpinner(); }, 500);
 
       // Next section sets the checked/displayed columns
       if (this.conf.columns && this.conf.columns.length > 10) {
@@ -185,11 +190,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         // End of checked/display section ------------
         
       setTimeout(() => { this.setShowDefaults(); }, 1000);
+
     
   }
 
   setShowDefaults() {
     this.showDefaults = true;
+  }
+
+  setShowSpinner() {
+    this.showSpinner = true;
   }
   
   ngAfterViewInit(): void {
@@ -198,7 +208,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     
   }
 
-  getData() {
+  getData() { 
+    
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -216,6 +227,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
+    
     if (this.conf.queryCall) {
       if (this.conf.queryCallOption) {
         this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
@@ -225,7 +237,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
+
     this.busy =
+      this.getFunction.subscribe((res)=>{
+        this.handleData(res);
+      });
+
       this.getFunction.subscribe(
         (res) => {
           this.handleData(res);
@@ -239,7 +256,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
           }
         }
       );
-
   }
 
   handleData(res): any {
