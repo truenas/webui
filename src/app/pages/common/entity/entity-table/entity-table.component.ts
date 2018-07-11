@@ -186,11 +186,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
         this.currentPreferredCols = this.conf.columns;
       }
-        // End of checked/display section ------------
-        
-      setTimeout(() => { this.setShowDefaults(); }, 1000);
-
-    
+        // End of checked/display section ------------    
   }
 
   setShowSpinner() {
