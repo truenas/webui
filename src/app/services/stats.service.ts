@@ -149,7 +149,7 @@ export class StatsService {
       name:"Memory",
       prefix: "",
       legendPrefix:"/memory-",
-      keys:["memory"],
+      keys:["memory"],//["inactive","wired","laundry","free","active", "cache"],
       properties:[],
       available:[],
       realtime:false,
@@ -200,8 +200,8 @@ export class StatsService {
       //this.checkAvailability(evt.data);
       this.updateSources(evt.data);
       if(this.debug){
-        //DEBUG: .log("**** StatsSources ****");
-        //DEBUG: .log(evt.data);
+        console.log("**** StatsSources ****");
+        console.log(evt.data);
         console.warn(this.sources);
       }
       //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
@@ -357,7 +357,7 @@ export class StatsService {
     for(let i  = 0; i < job.length; i++){
       let message = job[i];
       if(this.debug){
-        //DEBUG: .log(message);
+        console.log(message);
       }
       this.core.emit(message);
     }

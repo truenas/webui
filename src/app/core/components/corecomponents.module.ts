@@ -19,6 +19,7 @@ import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.compone
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { WidgetNetInfoComponent } from 'app/core/components/widgets/widgetnetinfo/widgetnetinfo.component';
 import { WidgetCpuHistoryComponent } from 'app/core/components/widgets/widgetcpuhistory/widgetcpuhistory.component';
@@ -67,6 +68,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewChartGaugeComponent,
     ViewChartLineComponent,
     WidgetComponent,
+    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
     WidgetCpuHistoryComponent,
@@ -98,6 +100,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewControllerComponent,
     CardComponent,
     WidgetComponent,
+    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
     WidgetCpuHistoryComponent,
@@ -123,6 +126,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ViewControllerComponent,
     CardComponent,
     WidgetComponent,
+    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNetInfoComponent,
     WidgetCpuHistoryComponent,
