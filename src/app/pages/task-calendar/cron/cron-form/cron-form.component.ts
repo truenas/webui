@@ -23,7 +23,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['cron-form.component.css'],
   providers: [UserService]
 })
-export class CronFormComponent implements AfterViewInit {
+export class CronFormComponent {
 
    protected resource_name: string = 'tasks/cronjob';
    public route_success: string[] = ['tasks', 'cron'];
@@ -61,14 +61,14 @@ export class CronFormComponent implements AfterViewInit {
            tooltip: T('Enter the full path to the command or script to be run.'),
          }, 
          {
-           type: 'select',
+           type: 'combobox',
            name: 'cron_user',
            placeholder: T('Run As User'),
            tooltip: T('Choose a user account to run the <b>Command</b>. The\
              user must have permission to run the <b>Command</b>.'),
-             options: [],
-             required: true,
-             validation : [ Validators.required ],
+           options: [],
+           required: true,
+           validation : [ Validators.required ],
          }, 
          {
            type: 'scheduler',
@@ -76,7 +76,9 @@ export class CronFormComponent implements AfterViewInit {
            placeholder: T('Schedule a Cron Job'),
            tooltip: T('Choose one of the convenient presets\
              or choose <b>Custom</b> to trigger the advanced scheduler UI'),
-             required: true
+           validation: [ Validators.required ],
+           required: true,
+           value: "0 0 * * *"
          }, 
          {
            type: 'checkbox',
@@ -84,7 +86,7 @@ export class CronFormComponent implements AfterViewInit {
            placeholder: T('Redirect Standard Output'),
            tooltip: T('Set to disable emailing standard output (stdout) to the\
              <i>root</i> user account.'),
-             value: true,
+           value: true,
          }, 
          {
            type: 'checkbox',
@@ -92,7 +94,7 @@ export class CronFormComponent implements AfterViewInit {
            placeholder: T('Redirect Errors'),
            tooltip: T('Set to disable emailing errors (stderr) to the\
              <i>root</i> user account.'),
-             value: false,
+           value: false,
          }, 
          {
            type: 'checkbox',
@@ -117,11 +119,7 @@ export class CronFormComponent implements AfterViewInit {
      private core:CoreService
    ){}
 
-   ngAfterViewInit(){
-     this.init();
-   }
-
-   init(){
+   preInit(entityForm){
      // Setup user field options
      this.userService.listUsers().subscribe((res) => {
        res.data.forEach((item) => {
@@ -130,110 +128,30 @@ export class CronFormComponent implements AfterViewInit {
        });
      });
 
-     this.aroute.params.subscribe(params => {
-       if (this.resource_name && !this.resource_name.endsWith('/')) {
-         this.resource_name = this.resource_name + '/';
-       }
-       if (this.isEntity) {
-         this.pk = params['pk'];
-         if (this.pk && !this.isNew) {
-           // only enable advanced mode
-         } else {
-           this.isNew = true;
-         }
-         this.postFetch();
-       }
-      });
     }
 
-   postFetch(){
-     let cron_field = _.find(this.fieldSets[0].config, {'name': 'cron_picker'});
-     if(this.pk){
-       //console.log("Task ID = " + this.pk);
-       // Setup initial value
-       this.rest.get(this.resource_name + '/' + this.pk, {}).subscribe((res) => {
-         console.log("RESPONSE!");
-         console.log(res);
-         //this.form.formGroup.value.cron_picker = res.data.cron_minute + " " + res.data.cron_hour + " " + res.data.cron_daymonth + " " + res.data.cron_month + " " + res.data.cron_dayweek;
-         let newValue = res.data.cron_minute + " " + res.data.cron_hour + " " + res.data.cron_daymonth + " " + res.data.cron_month + " " + res.data.cron_dayweek;
-         let clone = Object.assign({}, this.form.formGroup.value);
-         //this.form.formGroup.value.cron_id = res.data.id;
-         this.form.formGroup.controls.cron_command.setValue(res.data.cron_command);
-         this.form.formGroup.controls.cron_description.setValue(res.data.cron_description);
-         this.form.formGroup.controls.cron_enabled.setValue(res.data.cron_enabled);
-         this.form.formGroup.controls.cron_picker.setValue(newValue);
-         this.form.formGroup.controls.cron_stderr.setValue(res.data.cron_stderr);
-         this.form.formGroup.controls.cron_stdout.setValue(res.data.cron_stdout);
-         this.form.formGroup.controls.cron_user.setValue(res.data.cron_user);
-         
-         //console.log(this.form.formGroup.value);
-         this.generateFieldConfig();
-       });
-     } else {
-       cron_field.value = "0 0 * * *";
-       this.generateFieldConfig();
-     }
 
+   resourceTransformIncomingRestData(data) {
+     data['cron_picker'] = data.cron_minute + " " + 
+                           data.cron_hour + " " + 
+                           data.cron_daymonth + " " + 
+                           data.cron_month + " " + 
+                           data.cron_dayweek;
+     return data;
    }
 
-   generateFieldConfig(){
-     for(let i in this.fieldSets){
-       for(let ii in this.fieldSets[i].config){
-         this.fieldConfig.push(this.fieldSets[i].config[ii]);
-       }
-     }
+
+   afterInit(entityForm){ 
    }
 
-   customSubmit(value) {
-     this.error = null;
-
-     let body = this.buildBody(value);
-
-     this.loader.open();
-     if (this.isNew) {
-       this.rest.post(this.resource_name + '/', {
-         body: JSON.stringify(body)
-       }, true).subscribe(
-         (res) => {
-           this.loader.close();
-           this.router.navigate(new Array('/').concat(this.route_success));
-         },
-         (res) => {
-           this.loader.close();
-           console.log(res);
-         });
-     } else {
-       this.rest.put(this.resource_name + '/' + this.pk, {
-         body: JSON.stringify(body)
-       }, true).subscribe(
-         (res) => {
-           this.loader.close();
-           this.router.navigate(new Array('/').concat(this.route_success));
-         },
-         (res) => {
-           this.loader.close();
-           console.log(res);
-         });
-     }
-
-   }
-
-   buildBody(value){
+   beforeSubmit(value){
      let spl = value.cron_picker.split(" ");
-     let body = {
-       cron_minute: spl[0],
-       cron_hour: spl[1],
-       cron_daymonth: spl[2],
-       cron_month: spl[3],
-       cron_dayweek: spl[4],
-       cron_command: value.cron_command,
-       cron_description: value.cron_description,
-       cron_enabled: value.cron_enabled,
-       cron_stderr: value.cron_stderr,
-       cron_stdout: value.cron_stdout,
-       cron_user: value.cron_user
-     }
-     return body;
+     delete value.cron_picker;
+     value['cron_minute'] = spl[0];
+     value['cron_hour'] = spl[1];
+     value['cron_daymonth'] = spl[2];
+     value['cron_month'] = spl[3];
+     value['cron_dayweek'] = spl[4];
    }
 
 }

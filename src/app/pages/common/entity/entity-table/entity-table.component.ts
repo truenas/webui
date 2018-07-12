@@ -87,6 +87,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public columns: Array<any> = [];
 
   public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public filterColumns: Array<any> = []; // Need this for the filter function
   public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
   public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
   public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
@@ -128,6 +129,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       }
     });
     
+    this.filterColumns = this.conf.columns;
     this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
 
     this.displayedColumns.push("action");
@@ -148,7 +150,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
         if (filterValue.length > 0) {
           this.rows.forEach((dataElement) => {
-            for (const dataElementProp of this.conf.columns) {
+            for (const dataElementProp of this.filterColumns) {
               let value: any = dataElement[dataElementProp.prop];
               
               if( typeof(value) === "boolean" || typeof(value) === "number") {

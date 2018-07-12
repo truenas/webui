@@ -36,12 +36,12 @@ export class PortalAddComponent {
       type : 'select',
       name : 'iscsi_target_portal_discoveryauthmethod',
       placeholder : T('Discovery Auth Method'),
-      tooltip: T('<a href="http://doc.freenas.org/11/sharing.html#block-iscsi"\
-                  target="_blank">iSCSI</a> supports multiple authentication\
-                  methods that are used by the target to discover valid\
-                  devices. <i>None</i> allows anonymous discovery while\
-                  <i>CHAP</i> and <i>Mutual CHAP</i> both require\
-                  authentication.'),
+      tooltip: T('<a href="..//docs/sharing.html#block-iscsi"\
+                  target="_blank">iSCSI</a> supports multiple\
+                  authentication methods that are used by the target to\
+                  discover valid devices. <i>None</i> allows anonymous\
+                  discovery while <i>CHAP</i> and <i>Mutual CHAP</i>\
+                  require authentication.'),
       options : [
         {
           label : 'NONE',
@@ -63,8 +63,8 @@ export class PortalAddComponent {
       name : 'iscsi_target_portal_discoveryauthgroup',
       placeholder : T('Discovery Auth Group'),
       tooltip: T('Select a user created in <b>Authorized Access</b> if\
-                  the <b>Discovery Auth Method</b> is set to <i>CHAP</i> or\
-                  <i>Mutual CHAP</i>.'),
+                  the <b>Discovery Auth Method</b> is set to\
+                  <i>CHAP</i> or <i>Mutual CHAP</i>.'),
       options : [ {
         label : 'NONE',
         value : '',

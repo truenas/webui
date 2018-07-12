@@ -67,8 +67,9 @@ export class ServiceDCComponent {
       name : 'dc_dns_forwarder',
       label : 'DNS Forwarder',
       placeholder : T('DNS Forwarder'),
-      tooltip: T('Enter the IP address of a DNS forwarder. Required for recursive\
-                  queries when <i>SAMBA_INTERNAL</i> is selected.'),
+      tooltip: T('Enter the IP address of a DNS forwarder. Required for\
+                  recursive queries when <i>SAMBA_INTERNAL</i> is\
+                  selected.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -97,8 +98,9 @@ export class ServiceDCComponent {
       inputType : 'password',
       placeholder : T('Administrator Password'),
       tooltip: T('Enter the password to be used for the\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
-                  target="_blank">Active Directory</a> administrator account.'),
+                  <a href="..//docs/directoryservice.html#active-directory"\
+                  target=”_blank”>Active Directory</a> administrator\
+                  account.'),
       validation :
           [ Validators.minLength(8), matchOtherValidator('dc_passwd2') ]
     },
