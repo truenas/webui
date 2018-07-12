@@ -13,7 +13,7 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'scrub-task-add',
-  template: `<entity-task [conf]="this"></entity-task>`,
+  template: `<entity-form [conf]="this"></entity-form>`,
   providers: [TaskService, UserService, EntityFormService]
 })
 export class ScrubFormComponent {
@@ -32,6 +32,7 @@ export class ScrubFormComponent {
       options: [],
       required: true,
       validation : [ Validators.required ],
+      value: '',
     }, {
       type: 'input',
       inputType: 'number',
@@ -52,116 +53,12 @@ export class ScrubFormComponent {
       placeholder: T('Description'),
       tooltip : T('Describe the scrub task.'),
     }, {
-      type: 'select',
-      name: 'scrub_repeat',
-      placeholder: T('Quick Schedule'),
-      tooltip: T('Choose how often to run the task. Choose the\
-                  empty value to define a custom schedule.'),
-      options: [
-        { label: '----------', value: 'none' },
-        { label: 'Hourly', value: 'hourly' },
-        { label: 'Daily', value: 'daily' },
-        { label: 'Weekly', value: 'weekly' },
-        { label: 'Monthly', value: 'monthly' },
-      ],
-      value: 'once',
-    }, {
-      type: 'input',
-      name: 'scrub_minute',
-      placeholder: T('Minute'),
-      tooltip : T('Define the minute to run the task.'),
-      value: '*',
-      isHidden: false,
-    }, {
-      type: 'input',
-      name: 'scrub_hour',
-      placeholder: T('Hour'),
-      tooltip : T('Define the hour to run the task.'),
-      value: '*',
-      isHidden: false,
-    }, {
-      type: 'input',
-      name: 'scrub_daymonth',
-      placeholder: T('Day of month'),
-      tooltip : T('Define the day of the month to run the task.'),
-      value: '*',
-      isHidden: false,
-    }, {
-      type: 'select',
-      name: 'scrub_month',
-      placeholder: T('Month'),
-      tooltip : T('Define which months to run the task.'),
-      multiple: true,
-      options: [{
-        label: 'January',
-        value: '1',
-      }, {
-        label: 'February',
-        value: '2',
-      }, {
-        label: 'March',
-        value: '3',
-      }, {
-        label: 'April',
-        value: '4',
-      }, {
-        label: 'May',
-        value: '5',
-      }, {
-        label: 'June',
-        value: '6',
-      }, {
-        label: 'July',
-        value: '7',
-      }, {
-        label: 'August',
-        value: '8',
-      }, {
-        label: 'September',
-        value: '9',
-      }, {
-        label: 'October',
-        value: '10',
-      }, {
-        label: 'November',
-        value: '11',
-      }, {
-        label: 'December',
-        value: '12',
-      }],
-      value: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-      isHidden: false,
-    }, {
-      type: 'select',
-      name: 'scrub_dayweek',
-      placeholder: T('Day of week'),
-      tooltip : T('Choose which days of the week to run the test. The\
-                   default is Sunday to minimize user impact.'),
-      multiple: true,
-      options: [{
-        label: 'Monday',
-        value: '1',
-      }, {
-        label: 'Tuesday',
-        value: '2',
-      }, {
-        label: 'Wednesday',
-        value: '3',
-      }, {
-        label: 'Thursday',
-        value: '4',
-      }, {
-        label: 'Friday',
-        value: '5',
-      }, {
-        label: 'Saturday',
-        value: '6',
-      }, {
-        label: 'Sunday',
-        value: '7',
-      }],
-      value: ['7'],
-      isHidden: false,
+      type: 'scheduler',
+      name: 'scrub_picker',
+      placeholder: T('Schedule the Scrub Task'),
+      tooltip: T('Choose one of the convenient presets\
+        or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+      required: true,
     }, {
       type: 'checkbox',
       name: 'scrub_enabled',
@@ -185,9 +82,43 @@ export class ScrubFormComponent {
   preInit() {
     this.volume_field = _.find(this.fieldConfig, { 'name': 'scrub_volume' });
     this.taskService.getVolumeList().subscribe((res) => {
-      res.data.forEach((item) => {
-        this.volume_field.options.push({ label: item.vol_name, value: item.id });
-      });
+      for (let i in res.data) {
+        this.volume_field.options.push({ label: res.data[i].vol_name, value: res.data[i].id });
+      };
     });
+  }
+
+
+  afterInit(entityForm) {
+    entityForm.formGroup.controls['scrub_volume'].valueChanges.subscribe((res) => {
+      if (!Number.isInteger(res)) {
+        this.taskService.getVolumeList().subscribe((list) => {
+          for (let i in list.data) {
+            if (list.data[i].vol_name == res) {
+              entityForm.formGroup.controls['scrub_volume'].setValue(list.data[i].id);
+            }
+          }
+        });
+      }
+    });
+  }
+
+  beforeSubmit(value){
+    let spl = value.scrub_picker.split(" ");
+    delete value.scrub_picker;
+    value['scrub_minute'] = spl[0];
+    value['scrub_hour'] = spl[1];
+    value['scrub_daymonth'] = spl[2];
+    value['scrub_month'] = spl[3];
+    value['scrub_dayweek'] = spl[4];
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['scrub_picker'] = data.scrub_minute + " " + 
+                          data.scrub_hour + " " + 
+                          data.scrub_daymonth + " " + 
+                          data.scrub_month + " " + 
+                          data.scrub_dayweek;
+    return data;
   }
 }
