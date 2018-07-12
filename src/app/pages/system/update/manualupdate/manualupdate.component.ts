@@ -62,13 +62,14 @@ export class ManualUpdateComponent {
       name: 'filename',
       placeholder: T('Update file to be installed'),
       tooltip: T(''),
-      validation : [ ],
+      validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      hideButton:true
+      hideButton:true,
+      required: true
     },
   ];
 
@@ -146,6 +147,7 @@ updater(file: any, parent: any){
     }));
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
+    console.log(this)
   }
 }
 
