@@ -30,25 +30,29 @@
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
   <div id="select-all-checkbox-and-label">
-    Toggle
+    <label>Toggle
     <mat-checkbox
-      type="checkbox"
-      [id]="check-all"
-      [checked]="checkLength()"
-      (change)="checkAll()">
-    </mat-checkbox> 
+        type="checkbox"
+        [id]="check-all"
+        [checked]="checkLength()"
+        (change)="checkAll()">
+      </mat-checkbox> 
+    </label>
     
   </div>
   <ul>
     <li *ngFor="let col of allColumns">
       <div>
-        <mat-checkbox
-          type="checkbox"
-          class="colselect"
-          [id]="col.name"
-          (change)="toggle(col)"
-          [checked]="isChecked(col)"></mat-checkbox>
-        <label [attr.for]="col.name">{{col.name}}</label>
+        <label>
+          <mat-checkbox
+            type="checkbox"
+            class="colselect"
+            [id]="col.name"
+            (change)="toggle(col)"
+            [checked]="isChecked(col)">
+          </mat-checkbox>
+          {{col.name}}
+        </label>
       </div>
     </li>
   </ul>
@@ -89,7 +93,7 @@
       [offset]="paginationPageIndex"
       (page)='paginationUpdate($event)'
       (sort)='reorderEvent($event)'
-      [selectionType]="'multiClick'"
+      [selectionType]="'checkbox'"
       [selected]='selected'
       (select)='onSelect($event)'
       [scrollbarH]='true'
