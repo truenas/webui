@@ -255,11 +255,11 @@ export class JailWizardComponent {
                 }
               },
               (res_remote) => {
-                this.dialogService.errorReport('Error ' + res_remote.error + ': Get remote release choices failed', res_remote.reason, res_remote.trace.formatted);
+                this.dialogService.errorReport(T('Error: Get remote release choices failed'), res_remote.reason, res_remote.trace.formatted);
               });
           },
           (res_local) => {
-            this.dialogService.errorReport('Error: Get local fetched release choices failed', res_local.reason, res_local.trace.formatted);
+            this.dialogService.errorReport(T('Error: Get local fetched release choices failed'), res_local.reason, res_local.trace.formatted);
           });
       },
       (res) => {
