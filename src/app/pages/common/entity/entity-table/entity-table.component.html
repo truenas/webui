@@ -1,6 +1,11 @@
-<div id="entity-table-component" class="material mat-card mat-card-table"> 
+<div id="entity-table-component" class="material mat-card mat-card-table">
   <div class="mat-toolbar mat-card-toolbar" *ngIf="hideTopActions === false">
     <div class="mat-card-title-text">{{ title | translate }}</div>
+        <mat-spinner 
+          [diameter]='40' 
+          id="entity-spinner"
+          *ngIf="!showDefaults && showSpinner">
+        </mat-spinner> 
     <app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions>
   </div>
   <div>
@@ -25,25 +30,29 @@
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
   <div id="select-all-checkbox-and-label">
-    Toggle
+    <label>Toggle
     <mat-checkbox
-      type="checkbox"
-      [id]="check-all"
-      [checked]="checkLength()"
-      (change)="checkAll()">
-    </mat-checkbox> 
+        type="checkbox"
+        [id]="check-all"
+        [checked]="checkLength()"
+        (change)="checkAll()">
+      </mat-checkbox> 
+    </label>
     
   </div>
   <ul>
     <li *ngFor="let col of allColumns">
       <div>
-        <mat-checkbox
-          type="checkbox"
-          class="colselect"
-          [id]="col.name"
-          (change)="toggle(col)"
-          [checked]="isChecked(col)"></mat-checkbox>
-        <label [attr.for]="col.name">{{col.name}}</label>
+        <label>
+          <mat-checkbox
+            type="checkbox"
+            class="colselect"
+            [id]="col.name"
+            (change)="toggle(col)"
+            [checked]="isChecked(col)">
+          </mat-checkbox>
+          {{col.name}}
+        </label>
       </div>
     </li>
   </ul>
@@ -84,7 +93,7 @@
       [offset]="paginationPageIndex"
       (page)='paginationUpdate($event)'
       (sort)='reorderEvent($event)'
-      [selectionType]="'multiClick'"
+      [selectionType]="'checkbox'"
       [selected]='selected'
       (select)='onSelect($event)'
       [scrollbarH]='true'
@@ -101,7 +110,7 @@
             >
             <div id="footer">
               <div id="footer-text">
-                {{offset * pageSize + 1}} - 
+                {{rowCount > 0 ? offset * pageSize + 1 : 0}} - 
                 {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}} 
                 of {{rowCount}} 
                 <span *ngIf="selectedCount > 0"> | {{selectedCount}} selected</span>

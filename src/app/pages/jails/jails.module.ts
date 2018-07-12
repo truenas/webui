@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
@@ -18,7 +19,7 @@ import { JailShellComponent } from './jail-shell/';
 
 @NgModule({
   imports : [
-    CommonModule, FormsModule, ReactiveFormsModule, routing, EntityModule, MaterialModule, TranslateModule
+    CommonModule, FormsModule, ReactiveFormsModule, routing, EntityModule, MaterialModule, TranslateModule, FlexLayoutModule
   ],
   declarations : [
     JailListComponent,

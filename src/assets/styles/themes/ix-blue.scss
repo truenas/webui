@@ -281,7 +281,6 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
     @include variable(color, #000, #000, !important);
 }
 
-
 .mat-drawer,
 .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
 .mat-card,.mat-paginator,
@@ -332,11 +331,20 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 }
 
 .mat-color-primary, 
+.mat-button.mat-primary,
 .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span, 
 .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a,
 .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
 .mat-focused .mat-form-field-label{
   @include variable(color, --primary, $primary, !important);
+}
+
+.mat-button.mat-accent {
+  @include variable(color, --accent, $accent, !important);
+}
+
+.mat-button:disabled {
+  opacity: .38;
 }
 
 .mat-form-field-ripple{
@@ -379,7 +387,7 @@ div.hopscotch-bubble .hopscotch-nav-button.next,
 .egret-swatch,
 .mat-checkbox-frame,
 { 
-  @include variable(border-color, --fg2, $fg2);
+  @include variable(border-color, --alt-fg1, $alt-fg1);
 }
 
 .spacer{
@@ -599,10 +607,84 @@ entity-form .form-card.mat-card{
   min-width: 100%;
 }
 
-// Background visually links the items in the form-explorer 
-// .form-explorer {
-//   @include variable(background, --bg1, $bg1);
-// }
+// Style the ix logo with the primary theme color
+.ix-logo {
+  @include variable(fill, --primary, $primary);
+}
+
+// Color the small lock icon with theme colors
+.app-user-name .icon-xs {
+  @include variable(color, --fg2, $fg2, !important);
+}
+
+.mat-spinner circle {
+    @include variable(stroke, --primary, $primary, !important);
+}
+
+// Add a visual effect when any sidenav menu item is clicked
+.highlight  {
+  opacity: 0.5;
+}
+
+// Add rule for entity wizards to make text light on dark themes
+.ix-blue .mat-step-header .mat-step-label.mat-step-label-active, {
+  @include variable(color, --fg2, $fg2);
+  opacity: 1;
+}
+
+.ix-blue .mat-step-header .mat-step-label {
+  @include variable(color, --fg2, $fg2);
+  opacity: .38;
+}
+
+ // Style file trees to be highlighted with a theme color
+.node-content-wrapper:hover,
+.node-content-wrapper-focused{
+    @include variable(background, --bg1, $bg1);
+}
+
+// Give vdev arrow buttons theme colors
+.vdev-action-btn {
+  @include variable(background, --bg1, $bg1);
+}
+
+.vdev-action-btn .arrow {
+  @include variable(color, --primary, $primary);
+}
+
+.vdev-action-btn:disabled {
+  opacity: 0.38;
+}
+
+// style nav chevrons on datatable pager w/regard to theme
+.mat-button-wrapper .mat-paginator-decrement,
+.mat-button-wrapper .mat-paginator-increment {
+  @include variable(border-color, --fg1, $fg1);
+} 
+
+.mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
+.mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
+  @include variable(border-color, --fg1, $fg1);
+  opacity: .38;
+} 
+
+// style to make sure all radio buttons catch the theme color
+.ix-blue .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  @include variable(background-color, --accent, $accent !important);
+}
+
+.ix-blue .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+  @include variable(border-color, --accent, $accent !important);
+}
+
+// Fix icon color in notification area
+.notific-icon {
+  @include variable(color, --primary, $primary !important);
+}
+
+.mat-spinner circle {
+  @include variable(stroke, --primary, $primary, !important);
+} 
 
 // Align button and tooltip on Add Replication form
 #repl_remote_hostkey button {
@@ -649,6 +731,11 @@ vm-table .ngx-datatable .datatable-body {
   margin-bottom: 0px;
 }
 
+// Background visually links the items in the form-explorer 
+.form-explorer {
+  @include variable(background, --bg1, $bg1);
+}
+
 @media screen and (max-width: 768px) {
   .form-explorer {
     @include variable(background-color, --bg1, $bg1);
@@ -656,3 +743,8 @@ vm-table .ngx-datatable .datatable-body {
     width: 90%;
   }
 } 
+
+// Background visually links the items in the form-explorer 
+.form-explorer {
+  @include variable(background, --bg1, $bg1);
+}

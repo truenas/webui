@@ -230,15 +230,12 @@ export class ExtentFormComponent {
     });
 
     this.extent_disk_control = _.find(this.fieldConfig, {'name' : 'iscsi_target_extent_disk'});
-    this.iscsiService.getVolumes().subscribe((res) => {
-      res.data.forEach((vol) => {
-        this.iscsiService.getZvols().subscribe((res) => {
-          for (let i in res) {
-            this.extent_disk_control.options.push({label: res[i], value: i});
-          }
-        });
-      })
-    });
+    //get device options
+    this.iscsiService.getExtentDevices().subscribe((res) => {
+      for(let i in res) {
+        this.extent_disk_control.options.push({label: res[i], value: i});
+      }
+    })
     //show current value if isNew is false
     if (!this.isNew) {
       this.rest.get('/services/iscsi/extent/'+this.pk, {}).subscribe((res) =>{
