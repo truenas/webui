@@ -732,19 +732,6 @@ vm-table .ngx-datatable .datatable-body {
 }
 
 // Background visually links the items in the form-explorer 
-.form-explorer {
-  @include variable(background, --bg1, $bg1);
-}
-
-@media screen and (max-width: 768px) {
-  .form-explorer {
-    @include variable(background-color, --bg1, $bg1);
-    padding: 0 10px;
-    width: 90%;
-  }
-} 
-
-// Background visually links the items in the form-explorer 
-.form-explorer {
+.form-ex-flex-container {
   @include variable(background, --bg1, $bg1);
 }

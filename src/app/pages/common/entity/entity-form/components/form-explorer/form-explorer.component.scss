@@ -1,25 +1,38 @@
+.form-ex-flex-container {
+    max-width: 630px;
+    padding: 7px;
+    margin-left: -4px;
+}
+
 .form-explorer {
     margin-bottom: 10px;
+    width: 90%;
 }
 
 #box1 {
     display: inline-block;
     width: 10%;
     max-width: 45px;
+    margin-right: 5px;
 }
 
 #box2 {
     display: inline-block;
-    width: 80%;
+    width: 87%;
 }
 
 .form-ex-folder {
     font-size: 36px;
-    vertical-align: -webkit-baseline-middle;
+    position: relative;
+    top: 10px;
 
     &:hover {
         cursor: pointer;
     }
+}
+
+#form-ex-input {
+    width: 100%;
 }
 
 #formexinput tooltip {
@@ -29,9 +42,10 @@
 }
   
 @media screen and (max-width: 768px) {
-    .flex-container {
+    .form-ex-flex-container {
         display: flex;
         flex-direction: column;
+        margin-left: -10px;
     }
 
     .form-explorer {

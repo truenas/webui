@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-    <div class="flex-container" id="flex-container">
+    <div class="form-ex-flex-container" id="form-ex-flex-container">
         <div id="box1">
             <!-- <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
             <i class="material-icons form-ex-folder" (click)="toggleTree()">folder</i>
@@ -12,7 +12,7 @@
             </mat-input-container>
         </div>
 
-        <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3">
+        <tree-root #tree id="form-ex-input" *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3">
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
                 <mat-icon>folder</mat-icon>
                 <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
