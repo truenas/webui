@@ -147,7 +147,6 @@ updater(file: any, parent: any){
     }));
     formData.append('file', fileBrowser.files[0]);
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
-    console.log(this)
   }
 }
 
