@@ -731,3 +731,10 @@ vm-table .ngx-datatable .datatable-body {
   margin-bottom: 0px;
 }
 
+.ngx-datatable.scroll-horz {
+  @include variable(background-color, --alt-bg1, $alt-bg1);
+}
+
+.ngx-datatable.scroll-thumb {
+  background-color: red !important;
+}

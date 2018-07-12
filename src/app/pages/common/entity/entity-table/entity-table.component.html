@@ -43,16 +43,14 @@
   <ul>
     <li *ngFor="let col of allColumns">
       <div>
-        <label>
-          <mat-checkbox
-            type="checkbox"
-            class="colselect"
-            [id]="col.name"
-            (change)="toggle(col)"
-            [checked]="isChecked(col)">
-          </mat-checkbox>
+        <mat-checkbox
+          type="checkbox"
+          class="colselect"
+          [id]="col.name"
+          (change)="toggle(col)"
+          [checked]="isChecked(col)">
           {{col.name}}
-        </label>
+        </mat-checkbox>
       </div>
     </li>
   </ul>
