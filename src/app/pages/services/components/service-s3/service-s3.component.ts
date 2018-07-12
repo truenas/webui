@@ -169,6 +169,8 @@ export class ServiceS3Component implements OnDestroy {
       entityForm.formGroup.controls['bindip'].setValue(res.bindip);
       entityForm.formGroup.controls['bindport'].setValue(res.bindport);
       entityForm.formGroup.controls['access_key'].setValue(res.access_key);
+      entityForm.formGroup.controls['secret_key'].setValue(res.secret_key);
+      entityForm.formGroup.controls['secret_key2'].setValue(res.secret_key);
       entityForm.formGroup.controls['storage_path'].setValue(res.storage_path);
       entityForm.formGroup.controls['browser'].setValue(res.browser);
       //entityForm.formGroup.controls['mode'].setValue(res.mode);
