@@ -5,12 +5,12 @@
   </div>
   <div *ngIf="config.hideButton;else showButton">
       <mat-card-content>
-          <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)">
+          <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
       </mat-card-content>
   </div>
   <ng-template #showButton>
       <mat-card-content>
-          <input type="file" #fileInput accept="{{config.acceptedFiles}}">
+          <input type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
       </mat-card-content>
       <mat-card-actions class="buttons">
           <button mat-raised-button type="button" (click)="upload(config.fileLocation)">Upload</button>
