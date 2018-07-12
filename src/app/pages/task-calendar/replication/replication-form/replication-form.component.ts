@@ -224,20 +224,23 @@ export class ReplicationFormComponent implements AfterViewInit {
         validation : [Validators.min(0)]
       },
       {
-        type : 'select',
+        type: 'scheduler',
         name : 'repl_begin',
         placeholder : T('Begin Time'),
         tooltip : T('Define a time to start the replication task.'),
-        options : this.times
+        // options : this.times,
+        value: "0 0 * * *"
+        
       },
       {
-        type : 'select',
+        type : 'scheduler',
         name : 'repl_end',
         placeholder : T('End Time'),
         tooltip : T('Define the point in time by which replication must\
                      start. A started replication task continues until\
                      it is finished.'),
-        options : this.times
+        // options : this.times,
+        value: "0 0 * * *"
       },
       {
         type : 'checkbox',
@@ -383,8 +386,8 @@ export class ReplicationFormComponent implements AfterViewInit {
     });
     if (entityForm.isNew){
       entityForm.formGroup.controls['repl_remote_mode'].setValue('MANUAL');
-      entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
-      entityForm.formGroup.controls['repl_end'].setValue('23:59:00');
+      // entityForm.formGroup.controls['repl_begin'].setValue('00:00:00');
+      // entityForm.formGroup.controls['repl_end'].setValue('23:59:00');
       entityForm.formGroup.controls['repl_remote_cipher'].setValue('standard');
       entityForm.formGroup.controls['repl_compression'].setValue('lz4');
     }
@@ -437,6 +440,59 @@ export class ReplicationFormComponent implements AfterViewInit {
       this.loader.close();
     });
 
+
+  }
+
+  resourceTransformIncomingRestData(data) {
+
+    const repl_begin_data =  data.repl_begin.split(":")
+    data['repl_begin'] = parseInt(repl_begin_data[0], 10) + " " + 
+                         parseInt(repl_begin_data[1], 10) + " " + 
+                          "*" + " " + 
+                          "*"  + " " + 
+                          "*";
+    const repl_end_data =  data.repl_end.split(":")
+    data['repl_end'] = parseInt(repl_end_data[1], 10) + " " +
+                       parseInt(repl_end_data[0], 10) + " " +
+                          "*" + " " + 
+                          "*"  + " " + 
+                          "*";
+    return data;
+  }
+
+  beforeSubmit(value){
+    const repl_begin_data = value.repl_begin.split(" ");
+    const repl_end_data = value.repl_end.split(" ");
+
+    if(repl_begin_data[0]==="0" && repl_begin_data[1]==="0"){
+      value.repl_begin = "00:00:00"
+    } else if(repl_begin_data[0]==="0"){
+      value.repl_begin = `00:${repl_begin_data[1]}0:00`
+
+    }
+    else if(repl_begin_data[1]==="0"){
+      value.repl_begin = `${repl_begin_data[0]}0:00:00`
+
+    }
+    else{
+      value.repl_begin = `${repl_begin_data[0]}:${repl_begin_data[1]}:00`
+
+    }
+    if(repl_end_data[0]==="0" && repl_end_data[1]==="0"){
+      value.repl_end = "00:00:00"
+    } else if(repl_end_data[0]==="0"){
+      value.repl_end = `${repl_end_data[0]}:00:00`
+      
+    }
+    else if(repl_end_data[1]==="0"){
+      value.repl_end = `00:${repl_end_data[1]}:00`
+      
+
+    }
+    else {
+      value.repl_end = `${repl_end_data[1]}:${repl_end_data[0]}:00`
+
+    }
 
   }
 
