@@ -44,9 +44,8 @@ export class GlobalconfigurationComponent {
       tooltip: T('Enter the percentage of free space to remain\
                   in the pool. When this percentage is reached,\
                   the system issues an alert, but only if zvols are used.\
-                  See\
-                  <a href="http://doc.freenas.org/11/vaai.html#vaai"\
-                  target="_blank"> VAAI Threshold Warning</a> for more\
+                  See <a href="..//docs/vaai.html#vaai"\
+                  target="_blank">VAAI Threshold Warning</a> for more\
                   information.'),
       inputType: 'number',
     },
