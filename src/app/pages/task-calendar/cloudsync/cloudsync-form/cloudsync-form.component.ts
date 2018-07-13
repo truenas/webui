@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService } from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -18,7 +18,7 @@ import { ValueValidator } from '../../../common/entity/entity-form/validators/va
   selector: 'cloudsync-add',
   templateUrl: './cloudsync-form.component.html',
   styleUrls: ['./cloudsync-form.component.css'],
-  providers: [EntityFormService, FieldRelationService]
+  providers: [EntityFormService, FieldRelationService, CloudCredentialService]
 })
 export class CloudsyncFormComponent implements OnInit {
 
@@ -217,116 +217,14 @@ export class CloudsyncFormComponent implements OnInit {
     isHidden: true,
   },
   {
-    type: 'select',
-    name: 'repeat',
-    placeholder: T('Quick Schedule'),
-    tooltip: T('Choose how often to run the task. An empty\
-                value allows defining a custom schedule.'),
-    options: [
-      { label: '----------', value: 'none' },
-      { label: 'Hourly', value: 'hourly' },
-      { label: 'Daily', value: 'daily' },
-      { label: 'Weekly', value: 'weekly' },
-      { label: 'Monthly', value: 'monthly' },
-    ],
-    value: 'once',
-  }, {
-    type: 'input',
-    name: 'minute',
-    placeholder: T('Minute'),
-    tooltip: T('Minute to run the task.'),
-    value: '*',
-    isHidden: false,
-  }, {
-    type: 'input',
-    name: 'hour',
-    placeholder: T('Hour'),
-    tooltip: T('Hour to run the task.'),
-    value: '*',
-    isHidden: false,
-  }, {
-    type: 'input',
-    name: 'dom',
-    placeholder: T('Day of month'),
-    tooltip: T('Day of the month to run the task.'),
-    value: '*',
-    isHidden: false,
-  }, {
-    type: 'select',
-    name: 'month',
-    placeholder: T('Month'),
-    tooltip: T('Months when the task runs.'),
-    multiple: true,
-    options: [{
-      label: 'January',
-      value: '1',
-    }, {
-      label: 'February',
-      value: '2',
-    }, {
-      label: 'March',
-      value: '3',
-    }, {
-      label: 'April',
-      value: '4',
-    }, {
-      label: 'May',
-      value: '5',
-    }, {
-      label: 'June',
-      value: '6',
-    }, {
-      label: 'July',
-      value: '7',
-    }, {
-      label: 'August',
-      value: '8',
-    }, {
-      label: 'September',
-      value: '9',
-    }, {
-      label: 'October',
-      value: '10',
-    }, {
-      label: 'November',
-      value: '11',
-    }, {
-      label: 'December',
-      value: '12',
-    }],
-    value: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-    isHidden: false,
-  }, {
-    type: 'select',
-    name: 'dow',
-    placeholder: T('Day of week'),
-    tooltip: T('Days of the week to run the task.'),
-    multiple: true,
-    options: [{
-      label: 'Monday',
-      value: '1',
-    }, {
-      label: 'Tuesday',
-      value: '2',
-    }, {
-      label: 'Wednesday',
-      value: '3',
-    }, {
-      label: 'Thursday',
-      value: '4',
-    }, {
-      label: 'Friday',
-      value: '5',
-    }, {
-      label: 'Saturday',
-      value: '6',
-    }, {
-      label: 'Sunday',
-      value: '7',
-    }],
-    value: ['1', '2', '3', '4', '5', '6', '7'],
-    isHidden: false,
-  }, {
+    type: 'scheduler',
+    name: 'cloudsync_picker',
+    placeholder: T('Schedule the Cloud Sync Task'),
+    tooltip: T('Choose one of the convenient presets\
+      or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+      required: true
+  },
+  {
     type: 'checkbox',
     name: 'enabled',
     placeholder: T('Enabled'),
@@ -352,13 +250,20 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
   protected cloudcredential_query = 'cloudsync.credentials.query';
 
+  protected providers: any;
+
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
-    protected ws: WebSocketService) {}
+    protected ws: WebSocketService,
+    protected cloudcredentialService: CloudCredentialService) {
+    this.cloudcredentialService.getProviders().subscribe((res) => {
+      this.providers = res;
+    });
+  }
 
   getBuckets(credential) {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
@@ -411,15 +316,8 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    let date = new Date();
-    this.month_field = _.find(this.fieldConfig, { 'name': 'month' });
-    this.day_field = _.find(this.fieldConfig, { 'name': 'dow' });
-    this.dom_field = _.find(this.fieldConfig, { 'name': 'dom' });
-    this.hour_field = _.find(this.fieldConfig, { 'name': 'hour' });
-    this.mintue_field = _.find(this.fieldConfig, { 'name': 'minute' });
     this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
-
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
@@ -434,23 +332,27 @@ export class CloudsyncFormComponent implements OnInit {
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            this.loader.open();
-            this.getBuckets(item).subscribe(
-              (res) => {
-                this.loader.close();
-                this.bucket_field.options = [{label: '----------', value: ''}];
-                if (res) {
-                  res.forEach((item) => {
-                    this.bucket_field.options.push({ label: item.Name, value: item.Path });
-                  });
+            if (_.find(this.providers, {"name": item.provider}).buckets) {
+              this.loader.open();
+              this.getBuckets(item).subscribe(
+                (res) => {
+                  this.loader.close();
+                  this.bucket_field.options = [{label: '----------', value: ''}];
+                  if (res) {
+                    res.forEach((item) => {
+                      this.bucket_field.options.push({ label: item.Name, value: item.Path });
+                    });
+                  }
+                },
+                (err) => {
+                  this.loader.close();
+                  this.setDisabled('bucket', true, true);
+                  this.dialog.errorReport(T('Error: ') + err.error, err.reason, err.trace.formatted);
                 }
-              },
-              (res) => {
-                // provider don't use bucket, hide bucket field
-                this.loader.close();
-                this.setDisabled('bucket', true, true);
-              }
-            );
+              );
+            } else {
+              this.setDisabled('bucket', true, true);
+            }
           }
         });
       }
@@ -477,74 +379,12 @@ export class CloudsyncFormComponent implements OnInit {
           this.isNew = true;
         }
       }
-      this.formGroup.controls['repeat'].valueChanges.subscribe((res) => {
-        if (res == 'none') {
-          this.month_field.isHidden = false;
-          this.day_field.isHidden = false;
-          this.dom_field.isHidden = false;
-          this.hour_field.isHidden = false;
-          this.mintue_field.isHidden = false;
-
-          if (this.isNew) {
-            this.formGroup.controls['month'].setValue([date.getMonth().toString()]);
-            this.formGroup.controls['dow'].setValue([date.getDay().toString()]);
-            this.formGroup.controls['dom'].setValue(date.getDate().toString());
-            this.formGroup.controls['hour'].setValue(date.getHours().toString());
-            this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
-          }
-        } else if (res == 'hourly') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = true;
-          this.dom_field.isHidden = true;
-          this.hour_field.isHidden = true;
-          this.mintue_field.isHidden = false;
-
-          if (this.isNew) {
-            this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
-          }
-        } else if (res == 'daily') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = true;
-          this.dom_field.isHidden = true;
-          this.hour_field.isHidden = false;
-          this.mintue_field.isHidden = false;
-
-          if (this.isNew) {
-            this.formGroup.controls['hour'].setValue(date.getHours().toString());
-            this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
-          }
-        } else if (res == 'weekly') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = false;
-          this.dom_field.isHidden = true;
-          this.hour_field.isHidden = false;
-          this.mintue_field.isHidden = false;
-
-          if (this.isNew) {
-            this.formGroup.controls['dow'].setValue([date.getDay().toString()]);
-            this.formGroup.controls['hour'].setValue(date.getHours().toString());
-            this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
-          }
-        } else if (res == 'monthly') {
-          this.month_field.isHidden = true;
-          this.day_field.isHidden = true;
-          this.dom_field.isHidden = false;
-          this.hour_field.isHidden = false;
-          this.mintue_field.isHidden = false;
-
-          if (this.isNew) {
-            this.formGroup.controls['dom'].setValue(date.getDate().toString());
-            this.formGroup.controls['hour'].setValue(date.getHours().toString());
-            this.formGroup.controls['minute'].setValue(date.getMinutes().toString());
-          }
-        }
-      })
     });
 
     if (!this.isNew) {
       this.ws.call('cloudsync.query', [this.pk]).subscribe((res) => {
         if (res) {
-          this.data = res[0];
+          this.data = this.resourceTransformIncomingRestData(res[0]);
           for (let i in this.data) {
             let fg = this.formGroup.controls[i];
             if (fg) {
@@ -559,47 +399,6 @@ export class CloudsyncFormComponent implements OnInit {
             this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
             this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
           }
-          // corn fields
-          if (this.data.schedule) {
-            for (let i in this.data.schedule) {
-              let fg = this.formGroup.controls[i];
-              if (fg) {
-                let current_field = this.fieldConfig.find((control) => control.name === i);
-                if (current_field.name == "month" || current_field.name == "dow") {
-                  // multiple select
-                  if (this.data.schedule[i] == '*') {
-                    let human_value = [];
-                    for (let i in current_field.options) {
-                      human_value.push(current_field.options[i].value);
-                    }
-                    fg.setValue(human_value);
-                  } else {
-                    fg.setValue(this.data.schedule[i].split(','));
-                  }
-                } else {
-                  fg.setValue(this.data.schedule[i]);
-                }
-              }
-            }
-          }
-
-          if (_.isEqual(this.formGroup.controls['month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
-            if (_.isEqual(this.formGroup.controls['dow'].value, ['1', '2', '3', '4', '5', '6', '7'])) {
-              if (this.formGroup.controls['dom'].value == '*') {
-                if (this.formGroup.controls['hour'].value == '*') {
-                  this.formGroup.controls['repeat'].setValue('hourly');
-                } else {
-                  this.formGroup.controls['repeat'].setValue('daily');
-                }
-              } else {
-                this.formGroup.controls['repeat'].setValue('monthly');
-              }
-            } else {
-              if (this.formGroup.controls['dom'].value == '*') {
-                this.formGroup.controls['repeat'].setValue('weekly');
-              }
-            }
-          }
         }
       });
     }
@@ -608,6 +407,15 @@ export class CloudsyncFormComponent implements OnInit {
 
   goBack() {
     this.router.navigate(new Array('').concat(this.route_success));
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['cloudsync_picker'] = data.schedule.minute + " " +
+                          data.schedule.hour + " " +
+                          data.schedule.dom + " " +
+                          data.schedule.month + " " +
+                          data.schedule.dow;
+    return data;
   }
 
   onSubmit(event: Event) {
@@ -626,41 +434,13 @@ export class CloudsyncFormComponent implements OnInit {
     delete value.folder;
     value['attributes'] = attributes;
 
-    schedule['dow'] = value.dow;
-    schedule['month'] = value.month;
-    schedule['dom'] = value.dom;
-    schedule['hour'] = value.hour;
-    schedule['minute'] = value.minute;
-
-    if (value['repeat'] == 'hourly') {
-      schedule['dow'] = '*';
-      schedule['month'] = '*';
-      schedule['dom'] = '*';
-      schedule['hour'] = '*';
-    } else if (value['repeat'] == 'daily') {
-      schedule['dow'] = '*';
-      schedule['month'] = '*';
-      schedule['dom'] = '*';
-    } else if (value['repeat'] == 'weekly') {
-      schedule['month'] = '*';
-      schedule['dom'] = '*';
-    } else if (value['repeat'] == 'monthly') {
-      schedule['dow'] = '*';
-      schedule['month'] = '*';
-    }
-    delete value.repeat;
-
-    if (_.isArray(schedule['dow'])) {
-      schedule['dow'] = schedule['dow'].join(",");
-    }
-    if (_.isArray(schedule['month'])) {
-      schedule['month'] = schedule['month'].join(",");
-    }
-    delete value.dow;
-    delete value.month;
-    delete value.dom;
-    delete value.hour;
-    delete value.minute;
+    let spl = value.cloudsync_picker.split(" ");
+    delete value.cloudsync_picker;
+    schedule['minute'] = spl[0];
+    schedule['hour'] = spl[1];
+    schedule['dom'] = spl[2];
+    schedule['month'] = spl[3];
+    schedule['dow'] = spl[4];
 
     value['schedule'] = schedule;
 
