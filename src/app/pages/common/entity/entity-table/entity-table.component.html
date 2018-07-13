@@ -30,15 +30,14 @@
 <!-- Selected columns checkbox ----------------- -->
 <div id="col-select-box" class="selected-columns" *ngIf="allColumns.length > 10 ? true : false">
   <div id="select-all-checkbox-and-label">
-    <label>Toggle
     <mat-checkbox
-        type="checkbox"
-        [id]="check-all"
-        [checked]="checkLength()"
-        (change)="checkAll()">
-      </mat-checkbox> 
-    </label>
-    
+      type="checkbox"
+      [id]="check-all"
+      [checked]="checkLength()"
+      (change)="checkAll()"
+      labelPosition = 'before'>
+      Toggle
+     </mat-checkbox> 
   </div>
   <ul>
     <li *ngFor="let col of allColumns">
