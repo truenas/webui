@@ -167,21 +167,28 @@ export class SupportComponent  {
       if(parent.entityEdit){
         this.username  = parent.entityEdit.formGroup.controls['username'].value;
         this.password  = parent.entityEdit.formGroup.controls['password'].value;
-      }
-      if(this.category.options.length > 0){
-        this.category.options = [];
-      }
-      if(this.category.options.length === 0 ){
-        parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
-          for (const property in res) {
-            if (res.hasOwnProperty(property)) {
-              this.category.options.push({label : property, value : res[property]});
-            }
-          }},(error)=>{
-            if(parent.dialogService){
-              parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
-            }
-          });
+        if(
+          !this.username && !this.password ||
+          !this.username && this.password ||
+          this.username && !this.password ||
+          this.username === "" && this.password === "" ){
+          return;
+        }
+          if(this.category.options.length > 0){
+            this.category.options = [];
+          }
+          if(this.category.options.length === 0 ){
+            parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+              for (const property in res) {
+                if (res.hasOwnProperty(property)) {
+                  this.category.options.push({label : property, value : res[property]});
+                }
+              }},(error)=>{
+                if(parent.dialogService){
+                    parent.dialogService.errorReport(error.error, error.reason,error.trace.formatted);
+                }
+              });
+          }
       }
   }
 
