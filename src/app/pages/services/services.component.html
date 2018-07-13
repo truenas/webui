@@ -37,9 +37,14 @@
             <mat-chip class="service-state">{{ card.state }}</mat-chip>
           </div>
           <div class="stats-info">
-            <label matLine class="mr-1"><strong>Auto-start:</strong>
-              <mat-checkbox [(ngModel)]="card.enable" (change)="enableToggle($event, card)"></mat-checkbox>
-            </label>
+            <mat-checkbox 
+              [(ngModel)]="card.enable" 
+              (change)="enableToggle($event, card)" 
+              matLine class="mr-1"
+              labelPosition = 'before'>
+                <strong id="start-label">Auto-start:</strong>
+            </mat-checkbox>
+
           </div>
           <div class="service-controls">
             <button mat-raised-button color="primary" (click)="editService(card.title)">Configure</button>
