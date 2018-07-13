@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService } from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -18,7 +18,7 @@ import { ValueValidator } from '../../../common/entity/entity-form/validators/va
   selector: 'cloudsync-add',
   templateUrl: './cloudsync-form.component.html',
   styleUrls: ['./cloudsync-form.component.css'],
-  providers: [EntityFormService, FieldRelationService]
+  providers: [EntityFormService, FieldRelationService, CloudCredentialService]
 })
 export class CloudsyncFormComponent implements OnInit {
 
@@ -352,13 +352,20 @@ export class CloudsyncFormComponent implements OnInit {
   protected pid: any;
   protected cloudcredential_query = 'cloudsync.credentials.query';
 
+  protected providers: any;
+
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
-    protected ws: WebSocketService) {}
+    protected ws: WebSocketService,
+    protected cloudcredentialService: CloudCredentialService) {
+    this.cloudcredentialService.getProviders().subscribe((res) => {
+      this.providers = res;
+    });
+  }
 
   getBuckets(credential) {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
@@ -434,23 +441,27 @@ export class CloudsyncFormComponent implements OnInit {
       if (res!=null) {
         this.credentials_list.forEach((item)=>{
           if (item.id == res) {
-            this.loader.open();
-            this.getBuckets(item).subscribe(
-              (res) => {
-                this.loader.close();
-                this.bucket_field.options = [{label: '----------', value: ''}];
-                if (res) {
-                  res.forEach((item) => {
-                    this.bucket_field.options.push({ label: item.Name, value: item.Path });
-                  });
+            if (_.find(this.providers, {"name": item.provider}).buckets) {
+              this.loader.open();
+              this.getBuckets(item).subscribe(
+                (res) => {
+                  this.loader.close();
+                  this.bucket_field.options = [{label: '----------', value: ''}];
+                  if (res) {
+                    res.forEach((item) => {
+                      this.bucket_field.options.push({ label: item.Name, value: item.Path });
+                    });
+                  }
+                },
+                (err) => {
+                  this.loader.close();
+                  this.setDisabled('bucket', true, true);
+                  this.dialog.errorReport(T('Error: ') + err.error, err.reason, err.trace.formatted);
                 }
-              },
-              (res) => {
-                // provider don't use bucket, hide bucket field
-                this.loader.close();
-                this.setDisabled('bucket', true, true);
-              }
-            );
+              );
+            } else {
+              this.setDisabled('bucket', true, true);
+            }
           }
         });
       }
