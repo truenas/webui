@@ -303,15 +303,15 @@ class create_user_test(unittest.TestCase):
 
 
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
-            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
             driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
-            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
@@ -321,7 +321,7 @@ class create_user_test(unittest.TestCase):
 
     def selectlist(self, element):
         for i in range(0,10):
-            if self.is_element_present(By.XPATH, '/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']'):
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']'):
                 dropdown_el = driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']')
                 dropdown_text = dropdown_el.text
                 if dropdown_text == element:
