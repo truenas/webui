@@ -89,7 +89,7 @@ class create_user_test(unittest.TestCase):
         try:
             print (" creating a new user with create new primary group")
             # cancelling the tour
-            if self.is_element_present(By.XPATH, '/html/body/div[6]/div[1]/button'):
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
@@ -246,7 +246,7 @@ class create_user_test(unittest.TestCase):
             # Click User submenu
             driver.find_element_by_xpath(xpaths['submenuUser']).click()
             # cancelling the tour
-            if self.is_element_present(By.XPATH,'/html/body/div[6]/div[1]/button'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[6]/div[1]/button'):
                 driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
             # scroll down to find hover tab
             driver.find_element_by_tag_name('html').send_keys(Keys.END)
@@ -302,27 +302,16 @@ class create_user_test(unittest.TestCase):
     # Next step-- To check if the new user is present in the list via automation
 
 
-    #method to test if an element is present
-    def is_element_present(self, how, what):
-        """
-        Helper method to confirm the presence of an element on page
-        :params how: By locator type
-        :params what: locator value
-        """
-        try: driver.find_element(by=how, value=what)
-        except NoSuchElementException: return False
-        return True
-
     def error_check(self):
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
-            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
             driver.find_element_by_xpath('//*[contains(text(), "Close")]').click()
             print ("Duplicate user cannot be created")
-        if self.is_element_present(By.XPATH, '//*[contains(text(), "Close")]'):
-            if self.is_element_present(By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
+        if function.is_element_present(driver, self, By.XPATH, '//*[contains(text(), "Close")]'):
+            if function.is_element_present(driver, self, By.XPATH,'/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1'):
                 ui_element=driver.find_element_by_xpath('/html/body/div[5]/div[2]/div/mat-dialog-container/error-dialog/h1')
                 error_element=ui_element.text
                 print (error_element)
@@ -332,7 +321,7 @@ class create_user_test(unittest.TestCase):
 
     def selectlist(self, element):
         for i in range(0,10):
-            if self.is_element_present(By.XPATH, '/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']'):
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']'):
                 dropdown_el = driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/md-option[' + str(i) + ']')
                 dropdown_text = dropdown_el.text
                 if dropdown_text == element:

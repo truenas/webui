@@ -30,9 +30,9 @@ export class ExtentFormComponent {
       type : 'input',
       name : 'iscsi_target_extent_name',
       placeholder : T('Extent name'),
-      tooltip: T('Enter the extent name. If the <b>Extent size</b> is not\
-                  <i>0</i>, it cannot be an existing file\
-                  within the pool or dataset.'),
+      tooltip: T('Enter the extent name. The name cannot be an existing\
+                  file within the pool or dataset when the\
+                  <b>Extent size</b> is something other than <i>0</i>.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -131,8 +131,8 @@ export class ExtentFormComponent {
       type: 'checkbox',
       name: 'iscsi_target_extent_pblocksize',
       placeholder: T('Disable physical block size reporting'),
-      tooltip: T('Set if the initiator does not support physical block size\
-                  values over 4K (MS SQL).'),
+      tooltip: T('Set if the initiator does not support physical block\
+                  size values over 4K (MS SQL).'),
     },
     {
       type: 'input',
@@ -141,23 +141,25 @@ export class ExtentFormComponent {
       tooltip: T('Only appears if a <i>File</i> or zvol is selected. When\
                   the specified percentage of free space is reached,\
                   the system issues an alert.\
-                  See <a href="http://doc.freenas.org/11/vaai.html#vaai"\
+                  See <a href="..//docs/vaai.html#vaai"\
                   target="_blank">VAAI</a> Threshold Warning.'),
     },
     {
       type : 'input',
       name : 'iscsi_target_extent_comment',
       placeholder : T('Comment'),
-      tooltip: T('Optional.'),
+      tooltip: T('Enter any notes.'),
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_insecure_tpc',
       placeholder: T('Enable TPC'),
-      tooltip: T('If selected, an initiator can bypass normal access\
+      tooltip: T('Set to allow an initiator to bypass normal access\
                   control and access any scannable target. This allows\
-                  <b>xcopy</b> operations which are otherwise blocked\
-                  by access control.'),
+                  <a\
+                  href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc771254(v=ws.11)"\
+                  target="_blank">xcopy</a> operations which are\
+                  otherwise blocked by access control.'),
       value: true,
     },
     {
@@ -182,8 +184,8 @@ export class ExtentFormComponent {
       type: 'checkbox',
       name: 'iscsi_target_extent_ro',
       placeholder: T('Read-only'),
-      tooltip: T('Set to prevent the initiator from\
-                  initializing this LUN.'),
+      tooltip: T('Set to prevent the initiator from initializing this\
+                  LUN.'),
     },
   ];
 
@@ -199,7 +201,7 @@ export class ExtentFormComponent {
   protected extent_disk_control: any;
   protected pk: string;
 
-  constructor(protected router: Router, 
+  constructor(protected router: Router,
               protected aroute: ActivatedRoute,
               protected iscsiService: IscsiService,
               protected rest: RestService) {}
@@ -256,7 +258,7 @@ export class ExtentFormComponent {
 
   formUpdate (type) {
     let isDevice = type == 'File' ? false : true;
-    
+
     //resetValue if editing zvol extent
     if (type == 'ZVOL') {
       this.extent_type_control.setValue('Disk');

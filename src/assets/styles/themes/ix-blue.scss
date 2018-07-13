@@ -731,10 +731,7 @@ vm-table .ngx-datatable .datatable-body {
   margin-bottom: 0px;
 }
 
-.ngx-datatable.scroll-horz {
-  @include variable(background-color, --alt-bg1, $alt-bg1);
-}
-
-.ngx-datatable.scroll-thumb {
-  background-color: red !important;
+// Background visually links the items in the form-explorer 
+.form-ex-flex-container {
+  @include variable(background, --bg1, $bg1);
 }
