@@ -731,3 +731,7 @@ vm-table .ngx-datatable .datatable-body {
   margin-bottom: 0px;
 }
 
+// Background visually links the items in the form-explorer 
+.form-ex-flex-container {
+  @include variable(background, --bg1, $bg1);
+}

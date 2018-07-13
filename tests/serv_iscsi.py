@@ -71,7 +71,8 @@ class conf_iscsi_test(unittest.TestCase):
         try:
             print (" check if iscsi turned on")
             time.sleep(2)
-            self.status_check("6")
+            #status check
+            function.status_check(driver, "6")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -101,7 +102,8 @@ class conf_iscsi_test(unittest.TestCase):
         try:
             print (" check if iscsi turned off")
             time.sleep(2)
-            self.status_check("6")
+            #status check
+            function.status_check(driver, "6")
             time.sleep(10)
             #taking screenshot
             function.screenshot(driver, self)
@@ -150,13 +152,6 @@ class conf_iscsi_test(unittest.TestCase):
                     driver.find_element_by_xpath(xpaths['turnoffConfirm']).click()
             else:
                 print ("the status is already" + status_data)
-
-
-    def status_check(self, which):
-        ui_element_status=driver.find_element_by_xpath('/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/services/div/div[' + str(which) + ']/entity-card/div[1]/div/mat-card[1]/div/div[2]/div[1]/mat-chip')
-        # get the status data
-        status_data=ui_element_status.text
-        print ("current status is: " + status_data)
 
 
     @classmethod

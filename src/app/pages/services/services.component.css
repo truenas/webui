@@ -185,3 +185,8 @@ mat-chip.service-state-on,
   left: 114.5px;
   position: fixed;
 }
+
+#start-label {
+  position: relative;
+  top: -3px;
+}
