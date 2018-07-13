@@ -6,7 +6,7 @@
 <div mat-dialog-content id="confirm-msg">
   <span *ngIf="secondaryCheckBox">
       <mat-checkbox class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)">
-      <label id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</label> </mat-checkbox>
+      <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
       <br><br>
   </span>
   <span [innerHTML]="message"></span>
