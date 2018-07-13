@@ -207,9 +207,13 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     return hh + ":" + mm + ":" + ss;
   }
 
-  aggregateData(wanted:string[], parsedData:ChartData[]){
+  aggregateData(wanted:string[], parsedData:ChartData[], operation?:string){
+    // operation options: total(default) or average
+    if(!operation){
+      operation = "total";
+    }
     let result:ChartData = {
-      legend:"total",
+      legend:operation,
       data:[]
     }
     result.data.length = parsedData[0].data.length;
@@ -218,16 +222,24 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     for(let index = 0; index < parsedData.length; index++){
       let stat = parsedData[index].data;
       let isWanted = wanted.indexOf(parsedData[index].legend);
-      console.log("Wanted?? ...   " + isWanted)
       if(isWanted !== -1){
         for(let i = 0; i < stat.length; i++){
           let newNumber = Number(result.data[i]) + Number(stat[i]);
           result.data[i] = newNumber.toFixed(2);
-          console.log(result.data[i])
         }
       }
     }
-    return result
+
+    if(operation && operation == "average"){
+     let average: any[] = [];
+     for(let a = 0; a < result.data.length; a++ ){
+       let dataPoint = result.data[a] / wanted.length;
+       average.push(Number(dataPoint).toFixed(2))
+     }
+     result.data = average;
+    }
+    //console.warn(result)
+    return result;
   }
 
   makeColumns(parsedData:ChartData[]){
