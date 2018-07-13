@@ -5,6 +5,9 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { Validators } from '@angular/forms';
+import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
+import * as _ from 'lodash';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-iscsi-globalconfiguration',
@@ -41,15 +44,40 @@ export class GlobalconfigurationComponent {
       tooltip: T('Enter the percentage of free space to remain\
                   in the pool. When this percentage is reached,\
                   the system issues an alert, but only if zvols are used.\
-                  See\
-                  <a href="http://doc.freenas.org/11/vaai.html#vaai"\
-                  target="_blank"> VAAI Threshold Warning</a> for more\
+                  See <a href="..//docs/vaai.html#vaai"\
+                  target="_blank">VAAI Threshold Warning</a> for more\
                   information.'),
       inputType: 'number',
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute) {}
+  constructor(protected router: Router, protected route: ActivatedRoute, protected dialogService: DialogService,
+              protected ws: WebSocketService, protected snackBar: MatSnackBar, protected loader: AppLoaderService) {}
 
-  afterInit(entityEdit: any) {}
+  afterSubmit(data) {
+    this.ws.call('service.query', [[]]).subscribe((service_res) => {
+      const service = _.find(service_res, {"service": "iscsitarget"});
+      if (!service.enable) {
+        this.dialogService.confirm(T("Enable service"),
+          T("Would you like to enable this service"),
+          true, T("Enable Service")).subscribe((dialogRes) => {
+            if (dialogRes) {
+              this.loader.open();
+              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+                this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+                  this.loader.close();
+                  this.snackBar.open(T("Service started"), T("close"));
+                }, (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
+                });
+               }, (err) => {
+                this.loader.close();
+                this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
+               });
+           }
+        });
+      }
+    });
+  }
 }

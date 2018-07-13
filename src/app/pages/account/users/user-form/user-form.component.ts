@@ -151,6 +151,7 @@ export class UserFormComponent {
       config:[
         {
           type : 'explorer',
+          class : 'meExplorer',
           initial: '/mnt',
           explorerType: 'directory',
           name: 'home',

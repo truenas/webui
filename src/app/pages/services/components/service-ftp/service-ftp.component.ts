@@ -218,7 +218,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Enable TLS'),
       tooltip: T('Set to enable encrypted connections. Requires a certificate\
                   to be created or imported using\
-                  <a href="http://doc.freenas.org/11/system.html#certificates"\
+                  <a href="..//docs/system.html#certificates"\
                   target="_blank">Certificates</a>'),
     },
     {

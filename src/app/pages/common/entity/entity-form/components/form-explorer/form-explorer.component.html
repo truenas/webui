@@ -1,21 +1,29 @@
 <div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-    <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button>
-    <tree-root #tree *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true">
-        <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
-            <mat-icon>folder</mat-icon>
-            <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
-        </ng-template>
-        <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'file') || !config.explorerType">
-            <mat-icon *ngIf="node.data.hasChildren">folder</mat-icon>
-            <mat-icon *ngIf="!node.data.hasChildren">insert_drive_file</mat-icon>
-            <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
-        </ng-template>
-    </tree-root>
-    <pre>
-    </pre>  
-    <mat-input-container class="full-width">
-        <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
-        <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
-    </mat-input-container>
+    <div class="form-ex-flex-container" id="form-ex-flex-container">
+        <div id="box1">
+            <!-- <button mat-raised-button (click)="toggleTree()" type="button">{{"Browse" | translate}}</button> -->
+            <i class="material-icons form-ex-folder" (click)="toggleTree()">folder</i>
+        </div>
+
+        <div id="box2">
+            <mat-input-container class="full-width" id="formexinput">
+                <tooltip style="float: right;" *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
+                <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required">
+            </mat-input-container>
+        </div>
+
+        <tree-root #tree id="form-ex-input" *ngIf="treeVisible" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3">
+            <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
+                <mat-icon>folder</mat-icon>
+                <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
+            </ng-template>
+            <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'directory') || (config.explorerType == 'file') || !config.explorerType">
+                <mat-icon *ngIf="node.data.hasChildren">folder</mat-icon>
+                <mat-icon *ngIf="!node.data.hasChildren">insert_drive_file</mat-icon>
+                <span title="{{node.data.name}}">{{ node.data.subTitle }}</span>
+            </ng-template>
+        </tree-root>
+    </div>
+    
     <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>

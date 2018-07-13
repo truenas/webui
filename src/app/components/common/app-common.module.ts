@@ -36,6 +36,8 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { LineChartComponent } from './lineChart';
 import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
+import { HttpClientModule } from '@angular/common/http';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
 @NgModule({
   imports: [
@@ -60,7 +62,9 @@ import { LanguageService } from '../../services/language.service';
     MatDialogModule,
     CommonDirectivesModule,
     TranslateModule,
-    ChartistModule
+    ChartistModule,
+    HttpClientModule,
+    AngularSvgIconModule
   ],
   declarations: [
     AdminLayoutComponent,
