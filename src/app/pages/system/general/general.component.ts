@@ -46,10 +46,10 @@ export class GeneralComponent implements OnDestroy {
       placeholder: T('GUI SSL Certificate'),
       tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
                   the certificate to use for encrypted connections. If\
-                  there are no certificates, create a\
-                  <a href="http://doc.freenas.org/11/system.html#cas"\
+                  there are no certificates, create a <a\
+                  href="..//docs/system.html#cas"\
                   target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="http://doc.freenas.org/11/system.html#certificates"\
+                  the <a href="..//docs/system.html#certificates"\
                   target="_blank">Certificate</a>.'),
       options: [
         { label: '---', value: null }
@@ -153,8 +153,8 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_sysloglevel',
       placeholder: T('Syslog level'),
-      tooltip: T('When <b>Syslog server</b> is defined, only logs matching\
-                  this level are sent.'),
+      tooltip: T('When <b>Syslog server</b> is defined, only logs\
+                  matching this level are sent.'),
       options: []
     },
     {
@@ -215,7 +215,7 @@ export class GeneralComponent implements OnDestroy {
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
 
-  constructor(protected rest: RestService, protected router: Router, 
+  constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService) {}
 

@@ -61,9 +61,9 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('Workgroup'),
       tooltip: T('Must match Windows workgroup\
                   name. This setting is ignored if the\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+                  <a href="..//docs/directoryservice.html#active-directory"\
                   target="_blank">Active Directory</a> or <a\
-                  href="http://doc.freenas.org/11/directoryservice.html#ldap"\
+                  href="..//docs/directoryservice.html#ldap"\
                   target="_blank">LDAP</a> service is running.'),
       required: true,
       validation : [ Validators.required ]
@@ -230,7 +230,7 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: T('Unselect this option to allow cross-domain\
                   authentication, users and groups to be managed on\
                   another forest, and permissions to be delegated from\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+                  <a href="..//docs/directoryservice.html#active-directory"\
                   target="_blank">Active Directory</a>\
                   users and groups to domain admins on another forest.'),
     },

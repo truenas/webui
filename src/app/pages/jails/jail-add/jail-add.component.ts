@@ -16,13 +16,14 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { EntityUtils } from '../../common/entity/utils';
-import { DialogService } from '../../../services/dialog.service';
+import { DialogService, NetworkService } from '../../../services';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector: 'jail-add',
   templateUrl: './jail-add.component.html',
-  providers: [JailService, EntityFormService, FieldRelationService]
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  providers: [JailService, EntityFormService, FieldRelationService, NetworkService]
 })
 export class JailAddComponent implements OnInit {
 
@@ -85,6 +86,28 @@ export class JailAddComponent implements OnInit {
                   protocol independent fashion.'),
     },
     {
+      type: 'select',
+      name: 'ip4_interface',
+      placeholder: T('IPv4 interface'),
+      tooltip: T('IPv4 interface for the jail.'),
+      options: [
+        {
+          label: 'vnet0',
+          value: 'vnet0',
+        }
+      ],
+      value: 'vnet0',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
+      }],
+      class: 'inline',
+      width: '30%',
+    },
+    {
       type: 'input',
       name: 'ip4_addr',
       placeholder: T('IPv4 Address'),
@@ -100,13 +123,39 @@ export class JailAddComponent implements OnInit {
                   <b>[interface|]ip-address[/netmask],[interface|]\
                   ip-address[/netmask]</b>.<br>\
                   Example: <b>192.168.0.10/24,vnet3|192.168.10.50</b>'),
+      validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation: [{
       action: 'DISABLE',
       when: [{
         name: 'dhcp',
         value: true,
        }]
-      }]
+      }],
+      class: 'inline',
+      width: '50%',
+    },
+    {
+      type: 'select',
+      name: 'ip4_netmask',
+      placeholder: T('IPv4 Netmask'),
+      tooltip: T('IPv4 netmask for the jail.'),
+      options: [
+        {
+          label: '---------',
+          value: '',
+        }
+      ],
+      value: '',
+      relation: [{
+        action: 'DISABLE',
+        when: [{
+          name: 'dhcp',
+          value: true,
+        }]
+      }],
+      required: false,
+      class: 'inline',
+      width: '20%',
     },
     {
       type: 'input',
@@ -119,11 +168,30 @@ export class JailAddComponent implements OnInit {
                   able to access any networks.</b>'),
       relation: [{
         action: 'DISABLE',
+        connective: 'OR',
         when: [{
           name: 'dhcp',
           value: true,
+        },  {
+          name: 'vnet',
+          value: false,
         }]
       }]
+    },
+    {
+      type: 'select',
+      name: 'ip6_interface',
+      placeholder: T('IPv6 Interface'),
+      tooltip: T('IPv6 interface for the jail.'),
+      options: [
+        {
+          label: 'vnet0',
+          value: 'vnet0',
+        }
+      ],
+      value: 'vnet0',
+      class: 'inline',
+      width: '30%',
     },
     {
       type: 'input',
@@ -140,6 +208,24 @@ export class JailAddComponent implements OnInit {
                   [/netmask],[interface|]ip-address[/netmask]</b>.<br>\
                   Example: <b>re1|2607:f0d0:1002:51:0000:0000:0000:0004,\
                   re5|2001:db8:85a3::8a2e:370:7334/24</b>'),
+      validation : [ regexValidator(this.networkService.ipv6_regex) ],
+      class: 'inline',
+      width: '50%',
+    },
+    {
+      type: 'select',
+      name: 'ip6_prefix',
+      placeholder: T('IPv6 Prefix'),
+      tooltip: T('IPv6 prefix for the jail.'),
+      options: [
+        {
+          label: '---------',
+          value: '',
+        }
+      ],
+      required: false,
+      class: 'inline',
+      width: '20%',
     },
     {
       type: 'input',
@@ -1023,6 +1109,11 @@ export class JailAddComponent implements OnInit {
   ];
 
   protected currentServerVersion: any;
+  protected ip4_interfaceField: any;
+  protected ip4_netmaskField: any;
+  protected ip6_interfaceField: any;
+  protected ip6_prefixField: any;
+
   constructor(protected router: Router,
     protected jailService: JailService,
     protected ws: WebSocketService,
@@ -1030,7 +1121,8 @@ export class JailAddComponent implements OnInit {
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     public translate: TranslateService,
-    protected dialogService: DialogService) {}
+    protected dialogService: DialogService,
+    protected networkService: NetworkService) {}
 
   ngOnInit() {
     this.releaseField = _.find(this.basicfieldConfig, { 'name': 'release' });
@@ -1058,6 +1150,32 @@ export class JailAddComponent implements OnInit {
     (res) => {
       new EntityUtils().handleError(this, res);
     });
+
+    this.ip4_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip4_interface'});
+    this.ip4_netmaskField = _.find(this.basicfieldConfig, {'name': 'ip4_netmask'});
+    this.ip6_interfaceField = _.find(this.basicfieldConfig, {'name': 'ip6_interface'});
+    this.ip6_prefixField = _.find(this.basicfieldConfig, {'name': 'ip6_prefix'});
+    // get netmask/prefix for ipv4/6
+    let v4netmask = this.networkService.getV4Netmasks();
+    let v6prefix = this.networkService.getV6PrefixLength();
+    for (let i = 0; i < v4netmask.length; i++) {
+      this.ip4_netmaskField.options.push(v4netmask[i]);
+    }
+    for (let i = 0; i < v6prefix.length; i++) {
+      this.ip6_prefixField.options.push(v6prefix[i]);
+    }
+    // get interface options
+    this.ws.call('interfaces.query', [[["name", "rnin", "vnet0:"]]]).subscribe(
+      (res)=>{
+        for (let i in res) {
+          this.ip4_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+          this.ip6_interfaceField.options.push({ label: res[i].name, value: res[i].name});
+        }
+      },
+      (res)=>{
+        new EntityUtils().handleError(this, res);
+      }
+    );
 
     this.formFileds = _.concat(this.basicfieldConfig, this.jailfieldConfig, this.networkfieldConfig, this.customConfig, this.rctlConfig);
     this.formGroup = this.entityFormService.createFormGroup(this.formFileds);
@@ -1099,6 +1217,21 @@ export class JailAddComponent implements OnInit {
       }
     });
 
+    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
+      if (res == undefined || res == 'none' || res == '') {
+        this.ip4_netmaskField.required = false;
+      } else {
+        this.ip4_netmaskField.required = true;
+      }
+    });
+    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
+      if (res == undefined || res == 'none' || res == '') {
+        this.ip6_prefixField.required = false;
+      } else {
+        this.ip6_prefixField.required = true;
+      }
+    });
+
     this.ws.call("jail.query", [
       [
         ["host_hostuuid", "=", "default"]
@@ -1107,6 +1240,10 @@ export class JailAddComponent implements OnInit {
     (res) => {
       for (let i in res[0]) {
         if (this.formGroup.controls[i]) {
+          if ((i == 'ip4_addr' || i == 'ip6_addr') && res[0][i] == 'none') {
+            this.formGroup.controls[i].setValue('');
+            continue;
+          }
           if (_.indexOf(this.TFfields, i) > 0) {
             if (res[0][i] == '1') {
               res[0][i] = true;
@@ -1184,6 +1321,20 @@ export class JailAddComponent implements OnInit {
     this.error = null;
     let property: any = [];
     let value = _.cloneDeep(this.formGroup.value);
+    if (value['ip4_addr'] == '') {
+      value['ip4_addr'] = 'none';
+    } else {
+      value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+    }
+    delete value['ip4_interface'];
+    delete value['ip4_netmask'];
+    if (value['ip6_addr'] == '') {
+      value['ip6_addr'] = 'none';
+    } else {
+      value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
+    }
+    delete value['ip6_interface'];
+    delete value['ip6_prefix'];
 
     for (let i in value) {
       if (value.hasOwnProperty(i)) {

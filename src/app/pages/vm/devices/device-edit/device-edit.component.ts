@@ -382,8 +382,13 @@ export class DeviceEditComponent implements OnInit {
   }
 
   setgetValues(data, lookupTable) {
+    let fg: any
     for (const i in data) {
-      const fg = this.formGroup.controls[lookupTable[i]];
+      if(this.formGroup.controls[lookupTable[i]]){
+        fg = this.formGroup.controls[lookupTable[i]];
+      } else if(this.formGroup.controls[i]){
+        fg = this.formGroup.controls[i];
+      }
       if (fg) {
         fg.setValue(data[i]);
       }
