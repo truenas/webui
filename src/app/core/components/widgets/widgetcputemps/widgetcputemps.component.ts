@@ -45,7 +45,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     this._subtitle = val;
   }
 
-  public widgetColorCssVar = "var(--orange)";
+  public widgetColorCssVar = "var(--cyan)";
   private chartData:CoreEvent;
 
   constructor(public router: Router, public translate: TranslateService){
@@ -154,7 +154,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
            ],
            type: 'spline',
            colors: {
-             average:"var(--orange)"// Cant use this.widgetColorCssVar
+             average: this.widgetColorCssVar //"var(--orange)"// Cant use this.widgetColorCssVar
            },
            onmouseout: (d) => {
              this.showLegendValues = false;

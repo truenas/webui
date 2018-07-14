@@ -1,5 +1,5 @@
 .title-wrapper{
-  background-color:var(--orange);
+  background-color:var(--cyan);
   color:#333;
   height:45%;
   text-align: left;
@@ -51,7 +51,7 @@
 
 /* MARKER */
 :host ::ng-deep .c3-chart-line .c3-circles circle._expanded_{
-  stroke:var(--orange) !important;
+  stroke:var(--cyan) !important;
 }
 :host ::ng-deep .c3-chart-line circle.c3-circle{
   fill:var(--bg2) !important;

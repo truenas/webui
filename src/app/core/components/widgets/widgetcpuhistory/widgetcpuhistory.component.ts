@@ -37,7 +37,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
   public subtitle:string = T("% of all cores");
   //public altTitle: string = '';
   //public altSubtitle: string = '';
-  public widgetColorCssVar = "var(--primary)";
+  public widgetColorCssVar = "var(--blue)";
   //public showLegendValues:boolean = false;
   //public chartId = "chart-" + UUID.UUID();
   //public chart: any;
@@ -88,7 +88,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
          ],
          type: 'spline',
          colors: {
-           total:"var(--primary)"
+           total: this.widgetColorCssVar
          },
          onmouseout: (d) => {
            this.showLegendValues = false;
