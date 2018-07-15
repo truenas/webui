@@ -162,7 +162,7 @@ export class ThemeService {
 
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService) {
     console.log("*** New Instance of Theme Service ***");
-    
+
     // Set default list
     this.allThemes = this.freenasThemes;
     this.themesMenu = this.freenasThemes;
@@ -178,7 +178,7 @@ export class ThemeService {
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
-      
+
       //this.globalPreview = !this.globalPreview;
       if(evt.data){
         this.globalPreview = true;
@@ -200,11 +200,11 @@ export class ThemeService {
         this.customThemes = evt.data.customThemes;
       }
 
-      if(evt.data.userTheme !== this.activeTheme){
+      //if(evt.data.userTheme !== this.activeTheme){
         this.activeTheme = evt.data.userTheme;
         this.setCssVars(this.findTheme(this.activeTheme));
         this.core.emit({name:'ThemeChanged'});
-      }
+      //}
 
       if(evt.data.showTooltips){
         (<any>document).documentElement.style.setProperty("--tooltip","inline");
@@ -234,7 +234,7 @@ export class ThemeService {
     //console.log("THEME SERVICE THEMECHANGE: changing to " + theme + " theme");
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
     //this.core.emit({name:'ThemeChanged'});
-  }
+    }
 
   saveCurrentTheme(){
     //console.log("SAVING CURRENT THEME");
@@ -246,12 +246,73 @@ export class ThemeService {
     let palette = Object.keys(theme);
     palette.splice(0,7);
 
-    palette.forEach(function(color){
+    palette.forEach((color) => {
       let swatch = theme[color];
+      
+      // Generate aux. text styles
+      if(theme.accentColors.indexOf(color) !== -1){
+        let txtColor = this.textContrast(theme[color], theme["bg2"]);
+        (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
+      }
+
       (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
     });
     (<any>document).documentElement.style.setProperty("--primary",theme["primary"]);
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
+  }
+
+  textContrast(cssVar, bgVar){
+    let txtColor = '';
+    // Convert hex value to RGB
+    let props = this.hexToRGB(cssVar); 
+
+    // Find the average value to determine brightness
+    let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
+    // Find a good threshold for when to have light text color
+    if(brightest < 144){
+      txtColor = "#ffffff"
+    } else if(brightest > 191) {
+      txtColor = "#333333"
+    } else {
+      // RGB averages between 144-197 are to be 
+      // matched to bg2 css variable.
+      let bgProp = this.hexToRGB(bgVar);
+      let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
+      if(bgAvg < 127){
+        txtColor = "#333333";
+      } else {
+        txtColor = "#ffffff";
+      }
+    }
+
+
+    return txtColor;
+  }
+
+  hexToRGB(str) {
+    console.log("Running hexToRGB...");
+    console.log(str);
+    var spl = str.split('#');
+    var hex = spl[1];
+    if(hex.length == 3){
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+
+    var value = '';
+    var rgb = [];
+    for(let i = 0; i < 6; i++){
+      let mod = i % 2;
+      let even = 0;
+      value += hex[i];
+      if(mod !== even){
+        rgb.push(parseInt(value, 16))
+        value = '';
+      }
+    }
+    return {
+      hex:hex,
+      rgb:rgb
+    }
   }
 
   get customThemes(){

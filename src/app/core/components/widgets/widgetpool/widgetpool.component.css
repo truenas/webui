@@ -251,6 +251,7 @@ span.disk-detail-subtitle {
 .card-bg-wrapper{
   height:100%;
   background-color:var(--green);
+  color:var(--green-txt);
 }
 
 .zero-state h4 {
@@ -346,7 +347,7 @@ height:calc(100% - 48px);
   padding:8px;
   width:100%;
   display:table;
-  color:#fff;
+  /*color:#fff;*/
 }
 
 .pool-data{
@@ -360,8 +361,9 @@ height:calc(100% - 48px);
 }
 
 .title-wrapper{
-  background-color:rgba(0,0,0,0.5);
-  color:#fff;
+  /*background-color:rgba(0,0,0,0.5);
+  color:#fff;*/
+  background-color:rgba(0,0,0,0.1);
   height:45%;
   text-align: left;
   padding: 16px;
