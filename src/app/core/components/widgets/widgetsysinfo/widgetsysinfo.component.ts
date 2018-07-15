@@ -34,6 +34,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   public connectionIp = environment.remote
   public manufacturer:string = '';
   public buildDate:string;
+  public loader:boolean = false;
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
@@ -44,6 +45,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log("******** SysInfo ********");
       //DEBUG: console.log(evt.data);
+      this.loader = false;
       this.data = evt.data;
 
       let build = new Date(this.data.buildtime[0]['$date']);

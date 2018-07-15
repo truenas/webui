@@ -2,6 +2,7 @@
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
+        <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
         <!-- Summary Section -->
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
           <!--

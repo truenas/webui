@@ -62,7 +62,7 @@ export class WidgetLoadComponent extends WidgetChartComponent implements AfterVi
       this.setChartData(evt);
     });
 
-    this.chartSetup()
+    this.chartSetup();
   }
 
   chartSetup(){
@@ -146,6 +146,7 @@ export class WidgetLoadComponent extends WidgetChartComponent implements AfterVi
     console.log("SET LOAD AVG");
     console.log(evt.data);
 
+    this.dataRcvd = true;
     let parsedData = [];
     let dataTypes = [];
     //dataTypes = evt.data.meta.legend;

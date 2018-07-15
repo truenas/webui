@@ -10,6 +10,7 @@
       <mat-card-content fxLayout="column" fxLayoutAlign="center start" fxFlex="100">
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
+        <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
         <div class="chart-wrapper">
           <div [id]="chartId"></div>
           <div class="x-axis">

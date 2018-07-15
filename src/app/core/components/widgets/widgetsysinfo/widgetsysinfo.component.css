@@ -65,6 +65,12 @@ background-color: #999;
   font-size:85%;
 }
 
+.widget-loader{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+}
 
 /* SUMMARY (LEFT SIDE) */
 .platform-image img{

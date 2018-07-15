@@ -145,6 +145,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
     console.log("SET CPU DATA");
     console.log(evt.data);
 
+    this.dataRcvd = true;
     let parsedData = [];
     let dataTypes = [];
     dataTypes = evt.data.meta.legend;

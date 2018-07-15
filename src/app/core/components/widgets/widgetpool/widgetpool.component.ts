@@ -51,7 +51,18 @@ export interface VolumeData {
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
 
-  //@ViewChild('zvol') chartZvol:ViewChartDonutComponent;
+  public loader:boolean = false;
+  private _dataRcvd:boolean = false;
+  get dataRcvd(){
+    return this._dataRcvd;
+  }
+  set dataRcvd(val){
+    this._dataRcvd = val;
+    if(this.loader){
+      this.loader = false;
+    }
+  }
+
   public title:string = T("ZFS Pool");
   //public standalone:boolean = false;
   @Input() volumeData:VolumeData;
@@ -68,6 +79,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
+    setTimeout(() => {
+        if(!this.dataRcvd){
+          this.loader = true;
+        }
+    }, 5000);
   }
 
   ngOnChanges(changes){
@@ -161,6 +177,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log(evt);
+      this.dataRcvd = true;
       this.setDisksData(evt);
     });
 

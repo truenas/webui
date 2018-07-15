@@ -38,6 +38,19 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   public altSubtitle: string = '';
   public widgetColorCssVar: string = 'var(--warn)';
 
+  // Loader
+  public loader:boolean = false;
+  private _dataRcvd:boolean = false;
+  get dataRcvd(){
+    return this._dataRcvd;
+  }
+  set dataRcvd(val){
+    this._dataRcvd = val;
+    if(val){
+      this.loader = false;
+    }
+  }
+
   // Chart Options
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
@@ -48,6 +61,13 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
+
+    setTimeout(() => {
+      if(!this.dataRcvd){
+        this.loader = true;
+        console.log("DATA NOT RECEIVED YET");
+      }
+    }, 5000)
   }
 
   ngOnDestroy(){

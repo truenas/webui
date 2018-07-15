@@ -92,6 +92,7 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     let temps = data.data.map( value => value/100);
 
     if(keys.length == (this.totalCores - 1) && !this.collectedTemps["cpu-" + cpu]){
+      this.dataRcvd = true;
       this.collectedTemps["cpu-" + cpu] = temps;
       let md = this.mergeData();
       this.setChartData({

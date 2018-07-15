@@ -11,7 +11,7 @@
         <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
         <!-- Chart -->
         <div class="chart-wrapper">
-          <div [id]="chartId"></div>
+          <div [id]="chartId" [ngClass]="{'invisible': !dataRcvd}"></div>
           <div class="x-axis">
             <div class="start-time">{{startTime}}</div>
             <div class="end-time">{{endTime}}</div>
@@ -20,6 +20,7 @@
 
         <!-- DETAILS -->
         <div class="title-wrapper" fxFlex="100">
+          <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
           <ng-container *ngIf="showLegendValues">
             <p class="title">{{altTitle}}</p>
             <p class="subtitle">{{altSubtitle}}</p>

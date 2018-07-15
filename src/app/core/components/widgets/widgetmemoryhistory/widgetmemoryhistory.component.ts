@@ -157,6 +157,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
     console.log("SET MEMORY DATA");
     console.log(evt.data);
 
+    this.dataRcvd = true;
     let parsedData = [];
     let dataTypes = [];
     dataTypes = evt.data.meta.legend;

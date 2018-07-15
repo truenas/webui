@@ -1,6 +1,7 @@
 <div class="widget splitv" ngClass.xs="double-height xs">
   <div class="card-container  front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+    <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
       <!--<mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between center" fxFlex="100" class="mat-card-toolbar">
         <span class="mat-card-title-text">
           <div class="card-title-text">

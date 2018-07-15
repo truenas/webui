@@ -4,6 +4,10 @@
   display:none;
 }
 
+.invisible{
+  opacity:0;
+}
+
 /* Navigation shorter and fixed to Top */
 topbar, app-breadcrumb{
   position:fixed;
