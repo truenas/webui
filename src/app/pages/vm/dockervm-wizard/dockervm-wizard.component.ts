@@ -88,7 +88,7 @@ export class DockerVMWizardComponent {
                       the number of CPUs.'),
           inputType: 'number',
           min: 1,
-          validation : [ Validators.required,  Validators.min(1)],
+          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
           value: 1,
           required: true,
         },
