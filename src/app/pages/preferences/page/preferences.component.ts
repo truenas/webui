@@ -19,9 +19,9 @@ import { Subject } from 'rxjs/Subject';
   </mat-toolbar-row>
   <mat-divider></mat-divider>
   <mat-card-content fxLayout="row wrap" fxLayoutAlign="space-between start" style="margin-top:32px;">
-    <general-preferences-form fxFlex="100" fxFlex.gt-xs="300px" class="prefs-form"></general-preferences-form>
-    <custom-theme-manager-form fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)" class="prefs-form"></custom-theme-manager-form>
-      <div fxFlex="100" fxFlex.gt-xs="calc(100% - 300px)"></div>
+    <general-preferences-form fxFlex="100" fxFlex.gt-sm="300px" class="prefs-form"></general-preferences-form>
+    <custom-theme-manager-form fxFlex="100" fxFlex.gt-sm="calc(100% - 300px)" class="prefs-form"></custom-theme-manager-form>
+      <div fxFlex="100" fxFlex.gt-sm="calc(100% - 300px)"></div>
         </mat-card-content>
         </mat-card>
         `
