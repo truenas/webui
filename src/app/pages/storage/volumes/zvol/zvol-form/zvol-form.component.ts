@@ -133,12 +133,12 @@ export class ZvolFormComponent {
       type: 'select',
       name: 'sync',
       placeholder: T('Sync'),
-      tooltip: T('Sets the data write synchronization. *Inherit*\
+      tooltip: T('Sets the data write synchronization. <i>Inherit</i>\
                   takes the sync settings from the parent dataset,\
-                  *Standard* uses the settings that have been requested\
-                  by the client software, *Always* waits for data writes\
-                  to complete, and *Disabled* never waits for writes to\
-                  complete.'),
+                  <i>Standard</i> uses the settings that have been\
+                  requested by the client software, <i>Always</i> waits\
+                  for data writes to complete, and <i>Disabled</i> never\
+                  waits for writes to complete.'),
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
