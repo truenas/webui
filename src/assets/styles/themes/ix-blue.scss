@@ -735,3 +735,9 @@ vm-table .ngx-datatable .datatable-body {
 .form-ex-flex-container {
   @include variable(background, --bg1, $bg1);
 }
+
+// Align buttons on UI Prefs form
+.prefs-form .mat-card-actions {
+  text-align: left !important;
+  padding-left: 10px;
+}
