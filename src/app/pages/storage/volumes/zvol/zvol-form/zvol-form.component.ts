@@ -133,9 +133,12 @@ export class ZvolFormComponent {
       type: 'select',
       name: 'sync',
       placeholder: T('Sync'),
-      tooltip: T('Read the section on <a href="..//docs/storage.html#sync"\
-                  target="_blank">sync</a> before making a change to\
-                  this setting.'),
+      tooltip: T('Sets the data write synchronization. <i>Inherit</i>\
+                  takes the sync settings from the parent dataset,\
+                  <i>Standard</i> uses the settings that have been\
+                  requested by the client software, <i>Always</i> waits\
+                  for data writes to complete, and <i>Disabled</i> never\
+                  waits for writes to complete.'),
       options: [
         { label: 'Standard', value: 'STANDARD' },
         { label: 'Always', value: 'ALWAYS' },
@@ -146,7 +149,8 @@ export class ZvolFormComponent {
       type: 'select',
       name: 'compression',
       placeholder: T('Compression level'),
-      tooltip: T('Choose a <a href="..//docs/storage.html#compression"\
+      tooltip: T('Automatically compress data written to the zvol.\
+                  Choose a <a href="..//docs/storage.html#compression"\
                   target="_blank">compression algorithm</a>.'),
       options: [
         {label : 'Off', value : "OFF"},
