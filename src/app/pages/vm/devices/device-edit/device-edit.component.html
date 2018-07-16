@@ -31,8 +31,9 @@
                 <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
-                <span *ngFor="let custBtn of conf.custActions">
-                  <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+                <span *ngFor="let custBtn of custActions">
+                  <button id="cust_button_{{custBtn.name}}" mat-button type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+
                 </span>
                 <button mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
                 <!-- </div> -->
