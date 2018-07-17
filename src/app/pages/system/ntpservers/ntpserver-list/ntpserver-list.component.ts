@@ -1,4 +1,7 @@
 import {Component} from '@angular/core';
+import { T } from '../../../../translate-marker';
+import {Router} from '@angular/router';
+
 
 @Component({
   selector : 'app-ntpserver-list',
@@ -25,5 +28,33 @@ export class NTPServerListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
+
+  constructor(private router: Router) {};
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Edit"),
+      id: "edit",
+      enable: true,
+      onClick : (server) => {
+        console.log(server)
+        this.route_edit.concat(server[0].id);
+        console.log(this.route_edit)
+        this.router.navigate(new Array('/').concat(
+          [ "system", "ntpservers", "edit", server[0].id ]));
+      }
+
+    }, 
+    {
+      label : T("Delete"),
+      id: "delete",
+      enable: true,
+      onClick : (server) => {
+        console.log(server);
+        // this.entityList.doDelete(users_edit[0].id );
+      }
+    }
+  ];
 }

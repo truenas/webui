@@ -27,6 +27,7 @@ export class GroupListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
 
   constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
@@ -37,6 +38,36 @@ export class GroupListComponent {
     }
     return true;
   }
+
+  public singleActions: Array < any > = [
+    {
+      id: "members",
+      label: T("Members"),
+      enable: true,
+      onClick : (members) => {
+        this._router.navigate(new Array('/').concat(
+          [ "account", "groups", "members", members[0].id ]));
+      }
+    }, // when to push these two??? - and what about the multidelete???
+    {
+      id: "edit",
+      label: T("Edit"),
+      enable: true,
+      onClick : (members_edit) => {
+        this._router.navigate(new Array('/').concat(
+          [ "account", "groups", "edit", members_edit[0].id ]));
+      }
+    },
+    {
+      id: "delete",
+      label: T("Delete"),
+      enable: true,
+      onClick : (members_delete) => {
+        this.entityList.doDelete(members_delete[0].id );
+      },
+    }
+  ];
+
 
   getActions(row) {
     const actions = [];

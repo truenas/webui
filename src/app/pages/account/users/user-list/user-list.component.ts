@@ -41,6 +41,7 @@ export class UserListComponent implements OnInit {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -58,6 +59,27 @@ export class UserListComponent implements OnInit {
               protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService){
     this.getUserList()
   }
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Edit"),
+      id: "edit",
+      enable: true,
+      onClick : (users_edit) => {
+        this.router.navigate(new Array('/').concat(
+          [ "account", "users", "edit", users_edit[0].id ]));
+      }
+
+    }, // When to push this one???
+    {
+      label : T("Delete"),
+      id: "delete",
+      enable: true,
+      onClick : (users_edit) => {
+        this.entityList.doDelete(users_edit[0].id );
+      }
+    }
+  ];
 
   ngOnInit() {
     this.ws.call('user.query').subscribe((user_list)=>{
