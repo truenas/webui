@@ -145,7 +145,6 @@ export class VolumesListTableConfig implements InputTableConf {
 
             const conf: DialogFormConfiguration = {
               title: "Unlock Pool: " + row1.name,
-              //parent: this,
               fieldConfig: [{
                 type : 'input',
                 inputType: 'password',
