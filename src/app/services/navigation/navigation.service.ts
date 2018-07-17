@@ -49,7 +49,7 @@ export class NavigationService {
         //{name: 'Information', state: 'information'},
         { name: T('General'), state: 'general' },
         { name: T('NTP Servers'), state: 'ntpservers' },
-        { name: T('Boot'), state: 'bootenv' },
+        { name: T('Boot Environments'), state: 'bootenv' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Email'), state: 'email'},
         { name: T('System Dataset'), state: 'dataset'},
