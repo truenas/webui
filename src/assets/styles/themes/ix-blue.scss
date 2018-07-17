@@ -736,6 +736,12 @@ vm-table .ngx-datatable .datatable-body {
   @include variable(background, --bg1, $bg1);
 }
 
+// Fill in space above horz scrollbar on entity tables
+.datatable-body {
+  @include variable(background-color, --alt-bg1, $alt-bg1);
+
+}
+
 // Align buttons on UI Prefs form
 .prefs-form .mat-card-actions {
   text-align: left !important;
@@ -756,3 +762,4 @@ vm-table .ngx-datatable .datatable-body {
     margin-top: 30px !important;
   }
 }
+
