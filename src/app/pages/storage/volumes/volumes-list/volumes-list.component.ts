@@ -145,28 +145,42 @@ export class VolumesListTableConfig implements InputTableConf {
 
             const conf: DialogFormConfiguration = {
               title: "Unlock Pool: " + row1.name,
+              //parent: this,
               fieldConfig: [{
                 type : 'input',
                 inputType: 'password',
                 name : 'passphrase',
                 placeholder: T('Passphrase'),
-                validation: [Validators.required],
-                required: true
-              }],
+              },
+              {
+                type: 'input',
+                name: 'recovery_key',
+                placeholder: T('Recovery Key'),
+                tooltip: T('Click <b>Browse</b> to select a recovery key to\
+                            upload. This allows the system to decrypt the\
+                            disks.'),
+                inputType: 'file',
+                fileType: 'binary'
+              },
+              ],
 
               saveButtonText: "Unlock",
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue;
                 localLoader.open();
-                return localRest.post("storage/volume/" + row1.name + "/unlock/", { body: JSON.stringify({passphrase: 
-                  value.passphrase}) }).subscribe((restPostResp) => {
+                return localRest.post("storage/volume/" + row1.name + "/unlock/", 
+                  { body: JSON.stringify({
+                     passphrase: value.passphrase,
+                     recovery_key: value.recovery_key 
+                    }) 
+                  }).subscribe((restPostResp) => {
                   entityDialog.dialogRef.close(true);
                   localLoader.close();
                   localParentVol.repaintMe();     
                   localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
                 }, (res) => {
                   localLoader.close();
-                  localDialogService.errorReport(T("Error Unlocking"), res.message, res.stack);
+                  localDialogService.errorReport(T("Error Unlocking"), res.error, res.stack);
                 });
               }
             }
@@ -175,15 +189,17 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-      actions.push({
-        label: T("Change Passphrase"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "changekey", row1.id]));
-        }
-      });
+      if (rowData.is_decrypted) {
+        actions.push({
+          label: T("Change Passphrase"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "pools", "changekey", row1.id]));
+          }
+        });
+      }
 
-    } else if (rowData.vol_encrypt === 1) {
+    } else if (rowData.vol_encrypt === 1 && rowData.is_decrypted) {
       actions.push({
         label: T("Create Passphrase"),
         onClick: (row1) => {
@@ -193,53 +209,56 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    actions.push({
-      label: T("Add Recovery Key"),
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "addkey", row1.id]));
-      }
-    });
+    if (rowData.is_decrypted) {
 
-    actions.push({
-      label: T("Delete Recovery Key"),
-      onClick: (row1) => {
-        this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for volume: ") + row1.name).subscribe((confirmResult) => {
-          if (confirmResult === true) {
-            this.loader.open();
+      actions.push({
+        label: T("Add Recovery Key"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "addkey", row1.id]));
+        }
+      });
 
-            this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
-              this.loader.close();
+      actions.push({
+        label: T("Delete Recovery Key"),
+        onClick: (row1) => {
+          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for volume: ") + row1.name).subscribe((confirmResult) => {
+            if (confirmResult === true) {
+              this.loader.open();
 
-              this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for pool ") + row1.name).subscribe((infoResult) => {
-                this.parentVolumesListComponent.repaintMe();
+              this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
+                this.loader.close();
+
+                this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for pool ") + row1.name).subscribe((infoResult) => {
+                  this.parentVolumesListComponent.repaintMe();
+                });
+              }, (res) => {
+                this.loader.close();
+                this.dialogService.errorReport(T("Error Deleting Key"), res.message, res.stack);
               });
-            }, (res) => {
-              this.loader.close();
-              this.dialogService.errorReport(T("Error Deleting Key"), res.message, res.stack);
-            });
-          }
-        });
-      }
-    });
+            }
+          });
+        }
+      });
 
-    actions.push({
-      label: T("Encryption Rekey"),
-      onClick: (row1) => {
-        this._router.navigate(new Array('/').concat(
-          ["storage", "pools", "rekey", row1.id]));
+      actions.push({
+        label: T("Encryption Rekey"),
+        onClick: (row1) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "pools", "rekey", row1.id]));
 
-      }
-    });
+        }
+      });
 
-    actions.push({
-      label: T("Download Encrypt Key"),
-      onClick: (row1) => {
-        const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-        dialogRef.componentInstance.volumeId = row1.id;
+      actions.push({
+        label: T("Download Encrypt Key"),
+        onClick: (row1) => {
+          const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+          dialogRef.componentInstance.volumeId = row1.id;
 
-      }
-    });
+        }
+      });
+    }
 
     return actions;
   }
