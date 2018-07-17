@@ -41,14 +41,10 @@ export class IscsiService {
   getVolumes() {
     return this.rest.get(this.volumeResource, {});
   };
-  getUnusedDisk() {
-    return this.ws.call('disk.get_unused',[]);
-  };
 
-  getZvols(volume) {
-    let rs = this.volumeResource + '/' + volume + '/zvols';
-    return this.rest.get(rs, {});
-  }
+  getExtentDevices() {
+    return this.ws.call('iscsi.extent.disk_choices',[]);
+  };
 
   getExtents() {
     return this.rest.get(this.iscsiExtentResource, {});

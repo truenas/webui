@@ -3,10 +3,10 @@
 
 
 
-<div mat-dialog-content>
+<div mat-dialog-content id="confirm-msg">
   <span *ngIf="secondaryCheckBox">
-      <mat-checkbox class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)"></mat-checkbox>
-      {{ secondaryCheckBoxMsg | translate }}
+      <mat-checkbox class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)">
+      <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
       <br><br>
   </span>
   <span [innerHTML]="message"></span>

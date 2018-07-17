@@ -73,7 +73,8 @@ class conf_smb_test(unittest.TestCase):
         try:
             print (" check if smb turned on")
             time.sleep(2)
-            self.status_check("2")
+            #status check
+            function.status_check(driver, "2")
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -103,7 +104,8 @@ class conf_smb_test(unittest.TestCase):
         try:
             print (" check if smb turned off")
             time.sleep(2)
-            self.status_check("2")
+            #status check
+            function.status_check(driver, "2")
             time.sleep(10)
             #taking screenshot
             function.screenshot(driver, self)

@@ -67,6 +67,7 @@ export class DeviceEditComponent implements OnInit {
   private RAW_boot: any;
   private RAW_rootpwd: any;
   private RAW_size: any;
+  public custActions: any[];
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -133,7 +134,7 @@ export class DeviceEditComponent implements OnInit {
         },
         {
           name : 'nic_attach',
-          placeholder : 'Nic to attach:',
+          placeholder : 'NIC to attach:',
           tooltip : 'Select a physical interface to associate with the\
                      VM.',
           type: 'select',
@@ -360,6 +361,17 @@ export class DeviceEditComponent implements OnInit {
           }
         });
         this.setgetValues(device[0].attributes, nic_lookup_table);
+        this.custActions = [
+          {
+            id: 'generate_mac_address',
+            name: 'Generate MAC Address',
+            function: () => {
+              this.ws.call('vm.random_mac').subscribe((random_mac) => {
+                this.formGroup.controls['NIC_mac'].setValue(random_mac);
+              })
+            }
+          }
+        ];
       }
       else if (device[0].dtype === 'DISK'){
         this.DISK_zvol = _.find(this.fieldSets[0].config, {name:'DISK_zvol'});
@@ -382,8 +394,13 @@ export class DeviceEditComponent implements OnInit {
   }
 
   setgetValues(data, lookupTable) {
+    let fg: any
     for (const i in data) {
-      const fg = this.formGroup.controls[lookupTable[i]];
+      if(this.formGroup.controls[lookupTable[i]]){
+        fg = this.formGroup.controls[lookupTable[i]];
+      } else if(this.formGroup.controls[i]){
+        fg = this.formGroup.controls[i];
+      }
       if (fg) {
         fg.setValue(data[i]);
       }

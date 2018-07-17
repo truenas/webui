@@ -33,7 +33,8 @@ export class VMWizardComponent {
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = "VM Summary";
-  
+
+  entityWizard: any;
 
   protected wizardConfig: Wizard[] = [
 
@@ -56,8 +57,8 @@ export class VMWizardComponent {
         },
       ]
     },
-    
-    
+
+
     {
       label: T('Operating System'),
       fieldConfig: [
@@ -80,6 +81,9 @@ export class VMWizardComponent {
         tooltip : T('Enter an alphanumeric name for the virtual machine.'),
         validation : [ Validators.required ],
         required: true,
+        blurStatus: true,
+        blurEvent: this.blurEvent,
+        parent: this
       },
       { type: 'select',
         name : 'bootloader',
@@ -272,12 +276,14 @@ export class VMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    public messageService: MessageService,private router: Router, 
+    public messageService: MessageService,private router: Router,
     private dialogService: DialogService) {
 
   }
 
-
+  preInit(entityWizard: EntityWizardComponent){
+    this.entityWizard = entityWizard;
+  }
   afterInit(entityWizard: EntityWizardComponent) {
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
@@ -289,6 +295,9 @@ export class VMWizardComponent {
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
       this.summary[T('Guest Operating System')] = res;
+      ( < FormGroup > entityWizard.formArray.get([1])).get('name').valueChanges.subscribe((name) => {
+        this.summary[T('Name')] = name;
+      });
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
@@ -392,16 +401,30 @@ export class VMWizardComponent {
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
+blurEvent(parent){
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.query', [[["name","=",vm_name],["vm_type", "=", "Bhyve"]]]).subscribe((vm_wizard_res)=>{
+    if(vm_wizard_res.length > 0){
+      parent.dialogService.Info("Error", `virtual machine ${vm_wizard_res[0].name} already exists, please use a different name`).subscribe(()=>{
+        parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
+}
 
 async customSubmit(value) {
     value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
-    const payload = {}
     const vm_payload = {}
-    payload["name"] = hdd
-    payload["type"] = "VOLUME";
-    payload["volsize"] = value.volsize * 1024 * 1000 * 1000;
-    payload["volblocksize"] = "512";
+    const zvol_payload = {}
+
+    // zvol_payload only applies if the user is creating one
+    zvol_payload['create_zvol'] = true
+    zvol_payload["zvol_name"] = hdd
+    zvol_payload["zvol_type"] = "VOLUME";
+    zvol_payload["zvol_volsize"] = value.volsize * 1024 * 1000 * 1000;
+
     vm_payload["vm_type"]= "Bhyve";
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;
@@ -409,6 +432,7 @@ async customSubmit(value) {
     vm_payload["memory"] = value.memory;
     vm_payload["bootloader"] = value.bootloader;
     vm_payload["autoloader"] = value.autoloader;
+    vm_payload["autostart"] = value.autostart;
     vm_payload["devices"] = [
       {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
       {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
@@ -433,24 +457,31 @@ async customSubmit(value) {
     });
 
     } else {
-      this.ws.call('pool.dataset.create', [payload]).subscribe(res => {
-        for (const device of vm_payload["devices"]){
-          if (device.dtype === "DISK"){
-            const orig_hdd = device.attributes.path;
-            device.attributes.path = '/dev/zvol/' + orig_hdd
-          };
+      for (const device of vm_payload["devices"]){
+        if (device.dtype === "DISK"){
+          const orig_hdd = device.attributes.path;
+          const create_zvol = zvol_payload['create_zvol']
+          const zvol_name = zvol_payload['zvol_name']
+          const zvol_type = zvol_payload['zvol_type']
+          const zvol_volsize = zvol_payload['zvol_volsize']
+
+          device.attributes.path = '/dev/zvol/' + orig_hdd
+          device.attributes.create_zvol = create_zvol
+          device.attributes.zvol_name = zvol_name
+          device.attributes.zvol_type = zvol_type
+          device.attributes.zvol_volsize = zvol_volsize
         };
-        this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-          this.loader.close();
-          this.router.navigate(['/vm']);
-        });
+      };
+      this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
+        this.loader.close();
+        this.router.navigate(['/vm']);
       },(error) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error creating VM"), error.reason, error.trace.formatted);
       });
     }
+}
 
-  }
   async create_vnc_device(vm_payload: any) {
     await this.ws.call('interfaces.ip_in_use', [{"ipv4": true}]).toPromise().then( res=>{
       vm_payload["devices"].push(

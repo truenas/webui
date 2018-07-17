@@ -30,9 +30,9 @@ export class ExtentFormComponent {
       type : 'input',
       name : 'iscsi_target_extent_name',
       placeholder : T('Extent name'),
-      tooltip: T('Enter the extent name. If the <b>Extent size</b> is not\
-                  <i>0</i>, it cannot be an existing file\
-                  within the pool or dataset.'),
+      tooltip: T('Enter the extent name. The name cannot be an existing\
+                  file within the pool or dataset when the\
+                  <b>Extent size</b> is something other than <i>0</i>.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -61,6 +61,7 @@ export class ExtentFormComponent {
                   or HAST device.'),
       options: [],
       isHidden: false,
+      disabled: false,
       required: true,
       validation : [ Validators.required ]
     },
@@ -73,6 +74,7 @@ export class ExtentFormComponent {
     },
     {
       type : 'explorer',
+      explorerType: 'file',
       initial: '/mnt',
       name: 'iscsi_target_extent_path',
       placeholder: T('Path to the extent'),
@@ -83,6 +85,9 @@ export class ExtentFormComponent {
                   Extents cannot be created inside the jail\
                   root directory.'),
       isHidden: false,
+      disabled: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'input',
@@ -92,6 +97,9 @@ export class ExtentFormComponent {
                   already exist and the actual file size will be used.\
                   Otherwise, specify the size of the file to create.'),
       isHidden: false,
+      disabled: false,
+      required: true,
+      validation : [ Validators.required ]
     },
     {
       type: 'select',
@@ -123,8 +131,8 @@ export class ExtentFormComponent {
       type: 'checkbox',
       name: 'iscsi_target_extent_pblocksize',
       placeholder: T('Disable physical block size reporting'),
-      tooltip: T('Set if the initiator does not support physical block size\
-                  values over 4K (MS SQL).'),
+      tooltip: T('Set if the initiator does not support physical block\
+                  size values over 4K (MS SQL).'),
     },
     {
       type: 'input',
@@ -133,23 +141,25 @@ export class ExtentFormComponent {
       tooltip: T('Only appears if a <i>File</i> or zvol is selected. When\
                   the specified percentage of free space is reached,\
                   the system issues an alert.\
-                  See <a href="http://doc.freenas.org/11/vaai.html#vaai"\
+                  See <a href="..//docs/vaai.html#vaai"\
                   target="_blank">VAAI</a> Threshold Warning.'),
     },
     {
       type : 'input',
       name : 'iscsi_target_extent_comment',
       placeholder : T('Comment'),
-      tooltip: T('Optional.'),
+      tooltip: T('Enter any notes.'),
     },
     {
       type: 'checkbox',
       name: 'iscsi_target_extent_insecure_tpc',
       placeholder: T('Enable TPC'),
-      tooltip: T('If selected, an initiator can bypass normal access\
+      tooltip: T('Set to allow an initiator to bypass normal access\
                   control and access any scannable target. This allows\
-                  <b>xcopy</b> operations which are otherwise blocked\
-                  by access control.'),
+                  <a\
+                  href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc771254(v=ws.11)"\
+                  target="_blank">xcopy</a> operations which are\
+                  otherwise blocked by access control.'),
       value: true,
     },
     {
@@ -174,8 +184,8 @@ export class ExtentFormComponent {
       type: 'checkbox',
       name: 'iscsi_target_extent_ro',
       placeholder: T('Read-only'),
-      tooltip: T('Set to prevent the initiator from\
-                  initializing this LUN.'),
+      tooltip: T('Set to prevent the initiator from initializing this\
+                  LUN.'),
     },
   ];
 
@@ -191,7 +201,7 @@ export class ExtentFormComponent {
   protected extent_disk_control: any;
   protected pk: string;
 
-  constructor(protected router: Router, 
+  constructor(protected router: Router,
               protected aroute: ActivatedRoute,
               protected iscsiService: IscsiService,
               protected rest: RestService) {}
@@ -222,29 +232,16 @@ export class ExtentFormComponent {
     });
 
     this.extent_disk_control = _.find(this.fieldConfig, {'name' : 'iscsi_target_extent_disk'});
-    //get all zvols
-    this.iscsiService.getVolumes().subscribe((res) => {
-      res.data.forEach((vol) => {
-        this.iscsiService.getZvols(vol.name).subscribe((res) => {
-          res.data.forEach((zvol) => {
-            let value = 'zvol/' + vol.name + '/' + zvol.name;
-            this.extent_disk_control.options.push({label: value, value: value});
-          });
-        });
-      })
-    });
-    //get all unused disks
-    this.iscsiService.getUnusedDisk().subscribe((res) => {
-      for(let i = 0; i < res.length; i++) {
-        let label = res[i].name + ' (' +  (<any>window).filesize(res[i].size, {standard : "iec"}) + ')';
-        this.extent_disk_control.options.push({label: label, value: res[i].name});
+    //get device options
+    this.iscsiService.getExtentDevices().subscribe((res) => {
+      for(let i in res) {
+        this.extent_disk_control.options.push({label: res[i], value: i});
       }
     })
     //show current value if isNew is false
     if (!this.isNew) {
       this.rest.get('/services/iscsi/extent/'+this.pk, {}).subscribe((res) =>{
         if (res.data) {
-          this.extent_disk_control.options.push({label: res.data.iscsi_target_extent_path.substring(5), value: res.data.iscsi_target_extent_path.substring(5)});
           this.entityForm.formGroup.controls['iscsi_target_extent_disk'].setValue(res.data.iscsi_target_extent_path.substring(5));
         }
       })
@@ -261,7 +258,7 @@ export class ExtentFormComponent {
 
   formUpdate (type) {
     let isDevice = type == 'File' ? false : true;
-    
+
     //resetValue if editing zvol extent
     if (type == 'ZVOL') {
       this.extent_type_control.setValue('Disk');
@@ -275,11 +272,23 @@ export class ExtentFormComponent {
     this.fileFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = isDevice;
+      control.disabled = isDevice;
+      if (isDevice) {
+        this.entityForm.formGroup.controls[field].disable();
+      } else {
+        this.entityForm.formGroup.controls[field].enable();
+      }
     });
 
     this.deviceFieldGroup.forEach(field => {
       let control: any = _.find(this.fieldConfig, {'name': field});
       control.isHidden = !isDevice;
+      control.disabled = !isDevice;
+      if (!isDevice) {
+        this.entityForm.formGroup.controls[field].disable();
+      } else {
+        this.entityForm.formGroup.controls[field].enable();
+      }
     });
   }
 }

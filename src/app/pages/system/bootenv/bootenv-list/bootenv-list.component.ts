@@ -42,7 +42,7 @@ export class BootEnvironmentListComponent {
   public scrub_interval: number; 
 
   public columns: Array<any> = [
-    {name: 'Name', prop: 'name'},
+    {name: 'Name', prop: 'name', always_display: true},
     {name: 'Active', prop: 'active'},
     {name: 'Created', prop: 'created'},
     {name: 'Space', prop: 'space'},
@@ -184,7 +184,7 @@ export class BootEnvironmentListComponent {
 
   rowValue(row, attr) {
     if (attr === 'created'){
-      return row.created.$date
+      return moment(row.created.$date).format('MMMM Do YYYY, h:mm:ss a')
     }
     if (attr === 'active'){
       if (row.active === 'N'){
