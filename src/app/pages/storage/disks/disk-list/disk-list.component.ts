@@ -14,18 +14,18 @@ export class DiskListComponent {
 	protected queryCall = "disk.query";
 
 	public columns: Array<any> = [
-	    { name: 'Name', prop: 'name', always_display: true },
-	    { name: 'Pool', prop: "pool" },
-	    { name: 'Serial', prop: 'serial' },
-	    { name: 'Disk Size', prop: 'readable_size' },
-	    { name: 'Description', prop: 'description', hidden: true },
-	    { name: 'Transfer Mode', prop: 'transfermode', hidden: true },
-	    { name: 'HDD Standby', prop: 'hddstandby', hidden: true },
-	    { name: 'Adv. Power Management', prop: 'advpowermgmt' },
-	    { name: 'Acoustic Level', prop: 'acousticlevel' },
-	    { name: 'Enable S.M.A.R.T.', prop: 'togglesmart' },
-	    { name: 'S.M.A.R.T. extra options', prop: 'smartoptions', hidden: true },
-	    { name: 'Password for SED', prop: 'passwd', hidden: true },
+	    { name: T('Name'), prop: 'name', always_display: true },
+	    { name: T('Pool'), prop: "pool" },
+	    { name: T('Serial'), prop: 'serial' },
+	    { name: T('Disk Size'), prop: 'readable_size' },
+	    { name: T('Description'), prop: 'description', hidden: true },
+	    { name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
+	    { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
+	    { name: T('Adv. Power Management'), prop: 'advpowermgmt' },
+	    { name: T('Acoustic Level'), prop: 'acousticlevel' },
+	    { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart' },
+	    { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
+	    { name: T('Password for SED'), prop: 'passwd', hidden: true },
 	];
 	public config: any = {
 		paging: true,
