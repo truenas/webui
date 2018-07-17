@@ -735,3 +735,31 @@ vm-table .ngx-datatable .datatable-body {
 .form-ex-flex-container {
   @include variable(background, --bg1, $bg1);
 }
+
+// Fill in space above horz scrollbar on entity tables
+.datatable-body {
+  @include variable(background-color, --alt-bg1, $alt-bg1);
+
+}
+
+// Align buttons on UI Prefs form
+.prefs-form .mat-card-actions {
+  text-align: left !important;
+  padding-left: 10px;
+}
+
+// Keeps buttons on UI prefs form from overflowing page
+@media (min-width: 600px) and (max-width:715px) {
+  .prefs-form button {
+    display: block;
+    margin-bottom: 10px !important;
+  }
+}
+
+// Adds space above Manage Themes section in 1 col view on UI Pref
+@media (max-width: 599px) {
+  custom-theme-manager-form {
+    margin-top: 30px !important;
+  }
+}
+
