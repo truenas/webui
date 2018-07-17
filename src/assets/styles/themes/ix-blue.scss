@@ -735,3 +735,8 @@ vm-table .ngx-datatable .datatable-body {
 .form-ex-flex-container {
   @include variable(background, --bg1, $bg1);
 }
+
+.datatable-body {
+  @include variable(background-color, --alt-bg1, $alt-bg1);
+
+}
