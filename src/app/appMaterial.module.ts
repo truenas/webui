@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { HttpClientModule } from "@angular/common/http";
 
 import {
   MatCheckboxModule,
@@ -36,6 +38,7 @@ import {
 
 @NgModule({
   imports: [
+    HttpClientModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatFormFieldModule,

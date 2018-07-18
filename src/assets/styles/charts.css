@@ -124,7 +124,7 @@
 }
 
 .c3-xgrid {
-  stroke-opacity:0 !important;
+  /*stroke-opacity:0 !important;*/
 }
 .c3-ygrid, .c3-xgrid {
   stroke-dasharray:none!important;
@@ -215,4 +215,7 @@ g.c3-brush + g{
   font-size:24px;
 }
 
+.widget .c3 .c3-axis g.tick tspan{
+  fill-opacity:0.5;
+}
 

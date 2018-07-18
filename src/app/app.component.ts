@@ -14,6 +14,8 @@ import { AnimationService } from 'app/core/services/animation.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
+import { DomSanitizer } from "@angular/platform-browser";
+import { MatIconRegistry } from "@angular/material/icon";
 
 @Component({
   selector: 'app-root',
@@ -37,7 +39,14 @@ export class AppComponent implements OnInit {
     private animations: AnimationService,
     private core: CoreService,
     public preferencesService: PreferencesService,
-    public themeservice: ThemeService) {
+    public themeservice: ThemeService,
+    public domSanitizer: DomSanitizer,
+    public matIconRegistry: MatIconRegistry) {
+
+    this.matIconRegistry.addSvgIconSetInNamespace(
+      "mdi",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
+    );
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";

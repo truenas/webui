@@ -4,19 +4,18 @@
        fxLayoutAlign="center center"
        fxLayoutAlign.gt-sm="space-around center">
 
-    <widget-sysinfo fxFlex.lt-lg="90" fxFlex.gt-md="60" fxFlex.xl="48" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-sysinfo>
-    <widget-netinfo fxFlex.lt-lg="90" fxFlex.gt-md="30" fxFlex.xl="48" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-netinfo>
+    <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-sysinfo>
+    <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-netinfo>
 
-    <!--<widget-storage-collection style="display:none;" #storageCollection fxFlex="90" [widgetSize]="medium" [widgetFlex]="100" [collectionLayout]="'row'"></widget-storage-collection>-->
       <ng-container  *ngFor="let volume of volumes; let i=index">
-        <widget-pool [volumeData]="volumes[i]" style="max-width:928px;"  fxFlex.xl="48" fxFlex.lt-xl="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-pool>
-        </ng-container>
-    
+        <widget-pool [volumeData]="volumes[i]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-pool>
+      </ng-container>
 
-    <widget-cpu-temps fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-temps>
-    <widget-cpu-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-history>
-    <widget-memory-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"configurable="false"></widget-memory-history>
-      <widget-load-history fxFlex.xl="48" fxFlex.gt-sm="48" fxFlex.lt-md="90" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-load-history>
+    <widget-memory-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"configurable="false"></widget-memory-history>
+    <widget-cpu-history fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-history>
+    <widget-cpu-temps fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-cpu-temps>
+    <widget-load fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-load>
+
 
 
     <!--<widget-notes-collection fxFlex="98" [widgetSize]="medium" [widgetFlex]="noteFlex" [collectionLayout]="'row'"></widget-notes-collection>-->
