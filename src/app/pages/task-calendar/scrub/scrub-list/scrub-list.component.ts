@@ -5,8 +5,6 @@ import * as _ from 'lodash';
 
 import { RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
-import { T } from '../../../../translate-marker';
-
 
 @Component({
   selector: 'app-scrub-list',
@@ -20,7 +18,6 @@ export class ScrubListComponent {
   protected route_add: string[] = ['tasks', 'scrub', 'add'];
   protected route_add_tooltip = "Add Scrub Task";
   protected route_edit: string[] = ['tasks', 'scrub', 'edit'];
-  protected entityList: any;
 
   public columns: Array < any > = [
     { name: 'Pool', prop: 'scrub_volume' },
@@ -43,44 +40,7 @@ export class ScrubListComponent {
     protected rest: RestService,
     protected taskService: TaskService) {}
 
-  afterInit(entityList: any) { this.entityList = entityList; }
-
-  public multiActions: Array < any > = [
-    // {
-    //   id: "mdelete",
-    //   label: "Delete",
-    //   icon: "delete",
-    //   enable: true,
-    //   ttpos: "above",
-    //   onClick: (selected) => {
-    //     this.entityList.doMultiDelete(selected);
-    //   }
-    // } multidelete not available in the middleware
-  ];
-
-  public singleActions: Array < any > = [
-    {
-      label : T("Edit"),
-      id: "edit",
-      icon: "create",
-      ttpos: "above",
-      enable: true,
-      onClick : (selected) => {
-        this.router.navigate(new Array('/').concat(
-          ["tasks", "scrub", "edit", selected[0].id]));
-      }
-    },
-    {
-      label : T("Delete"),
-      id: "delete",
-      icon: "delete",
-      ttpos: "above",
-      enable: true,
-      onClick : (selected) => {
-        this.entityList.doDelete(selected[0].id );
-      }
-    }
-  ];
+  public multiActions: Array < any > = [];
 
 }
 

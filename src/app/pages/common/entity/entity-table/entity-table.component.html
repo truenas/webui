@@ -87,6 +87,16 @@
             </button>
           </span>
         </div>
+        <ng-template #defaultSingleActions>
+          <button mat-button matTooltip="Edit" matTooltipPosition="above" 
+            (click)="doEdit(this.selected[0].id);">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-button matTooltip="Delete" matTooltipPosition="above" 
+            (click)="doDelete(this.selected[0].id);">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
       </div>    
     </div>
   </div>
