@@ -1,4 +1,4 @@
-// @import "../../../../../assets/styles/themes/ix-blue.scss";
+@import "../../../../../assets/styles/themes/ix-blue.scss";
 
 .padding_all {
     padding: 20px;
@@ -23,6 +23,24 @@
 	height: 40px;
 }
 
+#col-select-box {
+    margin-left: 20px;
+
+    li {
+       list-style: none;
+       display: inline-block;
+       margin: 2px;
+       padding: 0;
+       width: 220px;
+    }   
+}
+
+ #select-all-checkbox-and-label {
+     max-width: 100px;
+     font-weight: 700;
+     margin-left: 4px;
+ }
+ 
 #footer {
     padding: 15px;
 }
@@ -30,3 +48,12 @@
 #footer-text {
     margin-left: 10px;
 }
+
+// Small page-loading spinner for entity tables
+#entity-spinner {
+  position: absolute;
+  top: 10px; left: 0; bottom: 0; right: 0;
+  z-index: 10;
+  margin: 0 auto;
+}
+

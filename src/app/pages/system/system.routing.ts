@@ -203,11 +203,11 @@ export const routes: Routes = [
       ]
     },{
       path: 'cloudcredentials',
-      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials', icon: 'cloud_circle' },
+      data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials', icon: 'cloud_circle' },
       children: [{
           path: '',
           component: CloudCredentialsListComponent,
-          data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+          data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials' },
         },
         {
           path: 'add',

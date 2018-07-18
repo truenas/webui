@@ -7,8 +7,12 @@
           {{"Basic Properties" | translate}}
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div>
-        <ng-container *ngFor="let field of basicfieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+      <div class="form-wrap">
+        <ng-container *ngFor="let field of basicfieldConfig;">
+          <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{j}}" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)">
+            <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+            </div>
+          </div>
         </ng-container>
       </div>
       <mat-action-row>

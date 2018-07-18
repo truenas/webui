@@ -68,18 +68,6 @@ class logout_test(unittest.TestCase):
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
 
 
-    #method to test if an element is present
-    def is_element_present(self, how, what):
-        """
-        Helper met:hod to confirm the presence of an element on page
-        :params how: By locator type
-        :params what: locator value
-        """
-        try: driver.find_element(by=how, value=what)
-        except NoSuchElementException: return False
-        return True
-
-
     @classmethod
     def tearDownClass(inst):
         driver.close()
