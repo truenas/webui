@@ -251,6 +251,7 @@ export class CloudsyncFormComponent implements OnInit {
   protected cloudcredential_query = 'cloudsync.credentials.query';
 
   protected providers: any;
+  public validCredential: boolean = false;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -343,14 +344,18 @@ export class CloudsyncFormComponent implements OnInit {
                       this.bucket_field.options.push({ label: item.Name, value: item.Path });
                     });
                   }
+                  this.validCredential = true;
                 },
                 (err) => {
                   this.loader.close();
                   this.setDisabled('bucket', true, true);
+                  this.validCredential = false;
+                  this.formGroup.controls['credentials'].setErrors(err.reason);
                   this.dialog.errorReport(T('Error: ') + err.error, err.reason, err.trace.formatted);
                 }
               );
             } else {
+              this.validCredential = true;
               this.setDisabled('bucket', true, true);
             }
           }
