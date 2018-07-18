@@ -13,7 +13,8 @@ interface StatSource {
   realtime:boolean;
   messages?:any;
   keysAsDatasets:boolean;
-  datasetsType?:string; // Use this if keysAsDatasets == true
+  datasetsType?:string; // Use this if keysAsDatasets == true 
+  bidirectional?:string; // Use strings like eg. "rx/tx" or "read/write"
 }
 
 interface ListenerRegistration {
@@ -132,16 +133,6 @@ export class StatsService {
       keysAsDatasets: false
     },
     {
-      name:"NIC",
-      prefix: "interface-",
-      keys:["any"],
-      properties:[],
-      available:[],
-      realtime:false,
-      listeners:[],
-      keysAsDatasets: false
-    },
-    {
       name:"System",
       prefix: "",
       keys:["load", "processes", "uptime","swap"],
@@ -161,6 +152,17 @@ export class StatsService {
       listeners:[],
       keysAsDatasets: true,
       datasetsType:"load"
+    },
+    {
+      name:"NIC",
+      prefix: "interface-",
+      keys:["any"],
+      properties:[],
+      available:[],
+      realtime:true,
+      listeners:[],
+      keysAsDatasets: false,
+      bidirectional:"rx/tx"
     },
     {
       name:"Processes",
@@ -205,7 +207,7 @@ export class StatsService {
   private queue:any[] = [];
   private started:boolean = false;
   private bufferSize:number = 60000;// milliseconds
-  private bufferSizeRealtime:number = 15000;// milliseconds
+  private bufferSizeRealtime:number = 5000;// milliseconds
   private broadcastId:number;
   private broadcastRealtimeId:number;
 
@@ -369,6 +371,19 @@ export class StatsService {
           dataset:source.properties[prop]
         });
         //console.warn(dataList)
+      } else if(source.bidirectional){
+        // This is for rx/tx and read/write stats
+        let direction = source.bidirectional.split("/");
+        dataList.push({
+          source:src,//"aggregation-cpu-sum",
+          type:source.properties[prop],
+          dataset: direction[0]
+        });
+        dataList.push({
+          source:src,//"aggregation-cpu-sum",
+          type:source.properties[prop],
+          dataset:direction[1]
+        });
       } else {
         dataList.push({
           source:src,//"aggregation-cpu-sum",
@@ -380,10 +395,14 @@ export class StatsService {
     let messageData;
     if(source.legendPrefix){
       messageData = {responseEvent:eventName, legendPrefix: src + source.legendPrefix, args: [dataList, options ]};
+    } else if(source.bidirectional) {
+      messageData = {responseEvent:eventName, args: [dataList, options]};
     } else {
       messageData = {responseEvent:eventName, args: [dataList, options ]};
     }
     let message =  { name:"StatsRequest", data: messageData};
+console.log("**************************************************************************");
+console.log(messageData);
     return message;
   }
 
@@ -429,7 +448,8 @@ export class StatsService {
         //console.log(dataSources);
         available.push(source.datasetsType);
         source.properties = source.keys;
-      } //else {
+      } 
+     
         source.keys.forEach((item,index) => {
           // WildCard
           if(source.keys[0] == "any"){
@@ -446,7 +466,7 @@ export class StatsService {
             }
           }
         });
-      //}
+      
       source.available = available;
 
        // Store properties

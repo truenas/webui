@@ -5,7 +5,7 @@
        fxLayoutAlign.gt-sm="space-around center">
 
     <widget-sysinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-sysinfo>
-    <!--<widget-netinfo fxFlex.lt-lg="90" fxFlex.gt-md="30" fxFlex.xl="48" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-netinfo>-->
+    <widget-netinfo fxFlex="600px" fxFlex.xs="100" [widgetSize]="medium" animate [animation]="animation" [shake]="shake"></widget-netinfo>
 
       <ng-container  *ngFor="let volume of volumes; let i=index">
         <widget-pool [volumeData]="volumes[i]" fxFlex.xs="100" fxFlex="600px" [widgetSize]="medium" animate [animation]="animation" [shake]="shake" configurable="false"></widget-pool>

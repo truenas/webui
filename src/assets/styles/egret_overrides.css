@@ -240,8 +240,8 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 .widget .mat-button{
-  text-transform:capitalize;
-  font-weight:500;
+  text-transform:uppercase !important;
+  font-weight:500 !important;
 }
 
 .widget-fullscreen .mat-card,

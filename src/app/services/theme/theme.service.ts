@@ -178,7 +178,7 @@ export class ThemeService {
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
-
+      console.log("GlobalPreview callback")
       //this.globalPreview = !this.globalPreview;
       if(evt.data){
         this.globalPreview = true;
@@ -243,14 +243,15 @@ export class ThemeService {
   }
 
   setCssVars(theme:Theme){ 
+    console.log("Setting CSS vars ...");
     let palette = Object.keys(theme);
     palette.splice(0,7);
 
     palette.forEach((color) => {
       let swatch = theme[color];
       
-      // Generate aux. text styles
-      if(theme.accentColors.indexOf(color) !== -1){
+      // Generate aux. text styles 
+      if(this.freenasThemes[0].accentColors.indexOf(color) !== -1){
         let txtColor = this.textContrast(theme[color], theme["bg2"]);
         (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
       }
@@ -290,8 +291,6 @@ export class ThemeService {
   }
 
   hexToRGB(str) {
-    console.log("Running hexToRGB...");
-    console.log(str);
     var spl = str.split('#');
     var hex = spl[1];
     if(hex.length == 3){
