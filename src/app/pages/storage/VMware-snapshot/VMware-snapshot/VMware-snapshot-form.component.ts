@@ -125,7 +125,7 @@ export class VMwareSnapshotFormComponent {
     if(this.entityForm.pk){
       this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
       this.datastore.options.length = 0;
-    }
+    } 
   }
 
   beforeSubmit(entityForm: any) {
@@ -144,6 +144,16 @@ export class VMwareSnapshotFormComponent {
         this.loader.close();
         this.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
       });
+    } else {
+      this.entityForm.loader.open();
+      this.ws.call('vmware.create', [body]).subscribe((res)=>{
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success))
+      },(error)=>{
+        this.loader.close();
+        this.dialogService.errorReport(error.error,error.reason, error.trace.formatted);
+      });
+
     }
 
   }
