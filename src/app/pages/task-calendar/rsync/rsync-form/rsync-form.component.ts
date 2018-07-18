@@ -187,7 +187,7 @@ export class RsyncFormComponent {
         value: true,
       }, {
         type: 'textarea',
-        name: 'extra',
+        name: 'rsync_extra',
         placeholder: T('Extra options'),
         tooltip: T('Add any other <a\
                     href="https://rsync.samba.org/ftp/rsync/rsync.html"\
