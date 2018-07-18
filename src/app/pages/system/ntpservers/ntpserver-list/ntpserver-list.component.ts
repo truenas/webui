@@ -39,9 +39,7 @@ export class NTPServerListComponent {
       id: "edit",
       enable: true,
       onClick : (server) => {
-        console.log(server)
-        this.route_edit.concat(server[0].id);
-        console.log(this.route_edit)
+        // But this was being done already, without the router here, or actions...?
         this.router.navigate(new Array('/').concat(
           [ "system", "ntpservers", "edit", server[0].id ]));
       }
