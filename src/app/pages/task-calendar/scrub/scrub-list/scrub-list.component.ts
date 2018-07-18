@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { RestService } from '../../../../services';
 import { TaskService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
 
 
 @Component({
@@ -35,9 +36,24 @@ export class ScrubListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(protected router: Router,
     protected rest: RestService,
     protected taskService: TaskService) {}
+
+    public singleActions: Array < any > = [
+      {
+        label : T("Edit"),
+        id: "edit",
+        enable: true,
+        onClick : (row) => {
+          this.router.navigate(new Array('/').concat(
+            ["tasks", "scrub", "edit", row[0].id]));
+        }
+      }
+    ];
+
 }
+

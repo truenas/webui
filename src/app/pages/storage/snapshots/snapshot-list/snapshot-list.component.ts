@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { WebSocketService } from 'app/services';
+import { T } from '../../../../translate-marker';
+
 
 @Component({
   selector: 'app-snapshot-list',
@@ -25,7 +27,7 @@ export class SnapshotListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true,
+    multiSelect: true
   };
 
   protected wsMultiDelete = 'core.bulk';
@@ -45,6 +47,28 @@ export class SnapshotListComponent {
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
+
+    public singleActions: Array < any > = [
+      {
+        label : T("Clone"),
+        id: "clone",
+        enable: true,
+        onClick : (snapshot) => {
+          this._router.navigate(new Array('/').concat(
+            [ "storage", "snapshots", "clone", snapshot[0].id ]));
+        }
+  
+      },
+      {
+        label : T("Rollback"),
+        id: "rollback",
+        enable: true,
+        onClick : (snapshot) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "snapshots", "rollback", snapshot[0].id]));
+        }
+      }
+    ];
 
   rowValue(row, attr) {
     switch (attr) {

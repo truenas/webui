@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { T } from '../../../../translate-marker';
 import { RestService, WebSocketService } from '../../../../services/';
 
 @Component({
@@ -24,8 +25,21 @@ export class AlertServiceListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute) { }
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Edit"),
+      id: "edit",
+      enable: true,
+      onClick : (service) => {
+        this.router.navigate(new Array('/').concat(
+          ["system", "alertservice", "edit", service[0].id]));
+      }
+    }
+  ];
 
 }

@@ -59,6 +59,7 @@ export class DisksListConfig implements InputTableConf {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(
@@ -77,6 +78,28 @@ export class DisksListConfig implements InputTableConf {
       this.resource_name += "/" + this._classId;
     }
   }
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Edit"),
+      id: "edit",
+      enable: true,
+      onClick : (disk) => {
+        this._router.navigate(new Array('/').concat(
+          [ "storage", "disks", "edit", disk[0].disk_identifier ]));
+      }
+
+    },
+    {
+      label : T("Wipe"),
+      id: "wipe",
+      enable: true,
+      onClick : (disk) => {
+        this._router.navigate(new Array('/').concat(
+          [ "storage", "disks", "wipe", disk[0].disk_name ]));
+      }
+    }
+  ];
 
   getActions(row) {
     const actions = [];

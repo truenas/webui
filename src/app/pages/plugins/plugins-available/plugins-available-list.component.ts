@@ -27,6 +27,7 @@ export class PluginsAvailabelListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   public isPoolActivated: boolean = true;
@@ -49,11 +50,23 @@ export class PluginsAvailabelListComponent {
     this.getAvailablePools();
   }
 
+  public singleActions: Array < any > = [
+    {
+      label : T("Install"),
+      id: "install",
+      enable: true,
+      onClick : (plugin) => {
+        this.router.navigate(new Array('/').concat(
+          [ "plugins", "add", plugin[0][2] ]));
+      }
+    }
+  ];
+
   getActions(parentRow) {
     return [{
         id: "install",
         label: T("install"),
-        onClick: (row) => {
+        onClick: (row) => { console.log(row)
           this.router.navigate(
             new Array('').concat(["plugins", "add", row[2]]));
         }
