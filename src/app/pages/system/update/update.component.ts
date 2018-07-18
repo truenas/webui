@@ -37,6 +37,13 @@ export class UpdateComponent implements OnInit {
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
+  public train_msg = {
+    "NIGHTLY_DOWNGRADE": "You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
+    "MINOR_DOWNGRADE": "Changing minor version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
+    "MAJOR_DOWNGRADE": "Changing major version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
+    "SDK": "Changing SDK version is not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
+    "NIGHTLY_UPGRADE": "Changing to a nightly train is a one way street. Changing back to stable is not supported!"
+  }
  
   public busy: Subscription;
   public busy2: Subscription;
@@ -45,6 +52,112 @@ export class UpdateComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
+  }
+  parseTrainName(name) {
+    const version = []
+    let sw_version = "";
+    let branch = "";
+    let split = ""
+    let sdk = ""
+    if (name.match(/-SDK$/)){
+      split = name.split('-');
+      sw_version = split[1];
+      branch = split[2];
+      sdk = split[3];
+      version.push(sw_version);
+      version.push(branch);
+      version.push(sdk);
+    }
+    else {
+      split = name.split('-');
+      sw_version = split[1];
+      branch = split[2];
+      version.push(sw_version);
+      version.push(branch);
+    }
+
+    
+    return version;
+  }
+
+  compareTrains(t1, t2) {
+    const v1 = this.parseTrainName(t1)
+    const v2 = this.parseTrainName(t2);
+    
+    try {
+      if(v1[0] !== v2[0] ) {
+
+        const version1 = v1[0].split('.'); 
+        const version2 = v2[0].split('.');
+        const branch1 = v1[1].toLowerCase();
+        const branch2 = v2[1].toLowerCase();
+        
+
+
+        if(branch1 !== branch2) {
+
+          if(branch2 === "nightlies") {
+            return "NIGHTLY_UPGRADE";
+          } else if(branch1 === "nightlies") {
+            return "NIGHTLY_DOWNGRADE";
+          }
+        } else {
+          if(version2[0] ==="HEAD"){
+            return "ALLOWED"
+          }
+        }
+
+        if (version1[0] === version2[0]){
+          // comparing '11' .1 with '11' .2
+          if(version1[1] && version2[1]){
+            //comparing '.1' with '.2'
+            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+          }
+          if(version1[1]){
+            //handling a case where '.1' is compared with 'undefined'
+            return "MINOR_DOWNGRADE"
+          }
+          if(version2[1]){
+            //comparing '.1' with '.2'
+            return "MINOR_UPGRADE"
+          }
+
+        } else {
+          // comparing '9' .10 with '11' .2
+          return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
+        }
+
+
+      } else {
+        if(v1[0] === v2[0]&&v1[1] !== v2[1]){
+          const branch1 = v1[1].toLowerCase();
+          const branch2 = v2[1].toLowerCase();
+          if(branch1 !== branch2) {
+
+            if(branch2 === "nightlies") {
+              return "NIGHTLY_UPGRADE";
+            } else if(branch1 === "nightlies") {
+              return "NIGHTLY_DOWNGRADE";
+            }
+          } else {
+            if(branch2 === "nightlies" && branch1 === "nightlies") {
+  
+            }
+  
+          }
+          
+        }
+        else {
+          if(v2[2]||v1[2]){
+            return "SDK"
+          }
+        }
+
+
+      }
+    } catch (e) {
+      console.error("Failed to compare trains", e);
+    }
   }
 
   ngOnInit() {
@@ -65,41 +178,32 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  validUpdate(originalVersion, newVersion) {
-    const oriVer = originalVersion.split('-')[1];
-    const oriTrain = originalVersion.split('-')[2];
-    const newVer = newVersion.split('-')[1];
-    const newTrain = newVersion.split('-')[2];
-    if ((!isNaN(oriVer) && !isNaN(newVer)) && (newVer >= oriVer)) {
-      if (oriTrain === newTrain) {
-        return true;
-      } else if ((oriTrain === 'STABLE') && (newTrain === 'Nightlies')) {
-        return true;
-      } else {
-        return false
-      }
-    } else if((!isNaN(oriVer) && isNaN(newVer)) && (newVer >= oriVer) && (oriTrain === newTrain)){
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   onTrainChanged(event){
-    const isValid = this.validUpdate(this.selectedTrain, event.value);
-    if (isValid) {
-      this.dialogService.confirm("Switch Train", "Do you want to switch trains?").subscribe((res)=>{
-        if (res) {
+    const compare = this.compareTrains(this.selectedTrain, event.value);
+    if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
+      this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
+        this.train = this.selectedTrain;
+      })
+    } else if(compare === "NIGHTLY_UPGRADE"){
+        this.dialogService.confirm("Warning", this.train_msg[compare]).subscribe((res)=>{
+          if (res){
+            this.check();
+            this.train = event.value;
+          } else {
+            this.train = this.selectedTrain;
+          }
+        })
+    } else if (compare === "ALLOWED") {
+      this.dialogService.confirm("Switch Train", "Do you want to switch trains?").subscribe((train_res)=>{
+        if(train_res){
           this.check();
           this.train = event.value;
-        }else {
-          this.train = this.selectedTrain;
+
         }
-      });
-    } else {
-      this.dialogService.Info("Confirm", "Changing away from the train is not permitted as it is considered a downgrade. Boot into an existing boot environment using the desired train to upgrade it.").subscribe(res => {
-        this.train = this.selectedTrain;
-      });
+
+      })
+
     }
   }
 
