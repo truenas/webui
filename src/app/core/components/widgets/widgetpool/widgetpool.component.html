@@ -45,9 +45,14 @@
                 <span class="disk-grid-header">{{"Disks in Use" | translate}}</span>
                 <ng-container *ngIf="diskSets.length > 1">
                   <div class="disk-grid-controls">
-                    <button class="previous" mat-icon-button [disabled]="currentDiskSet < 1"  (click)="setCurrentDiskSet(currentDiskSet - 1)"><mat-icon>keyboard_arrow_left</mat-icon></button>
-                    <button class="next" mat-icon-button [disabled]="currentDiskSet >= (diskSets.length - 1)" (click)="setCurrentDiskSet(currentDiskSet + 1)"><mat-icon>keyboard_arrow_right</mat-icon></button>
+                    <button class="previous" mat-icon-button [disabled]="currentDiskSet < 1"  (click)="setCurrentDiskSet(currentDiskSet - 1)">
+                      <mat-icon>keyboard_arrow_left</mat-icon>
+                    </button>
                     <!--<span *ngFor="let set of diskSets; let i = index;" class="disk-grid-control" (click)="setCurrentDiskSet(i)">{{i+1}}</span>-->
+                    <span class="page">{{(currentDiskSet+1)}}/{{diskSets.length}}</span>
+                    <button class="next" mat-icon-button [disabled]="currentDiskSet >= (diskSets.length - 1)" (click)="setCurrentDiskSet(currentDiskSet + 1)">
+                      <mat-icon>keyboard_arrow_right</mat-icon>
+                    </button>
                   </div>
                 </ng-container>
               </mat-grid-tile>

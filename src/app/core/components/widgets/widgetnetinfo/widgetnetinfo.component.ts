@@ -65,13 +65,11 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   }
 
   ngOnInit(){
-    this.core.emit({name:"StatsAddListener", data:{name:"NIC", obj:this} });
 
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       this.defaultRoutes = evt.data.default_routes.toString();
       this.nameServers = evt.data.nameservers.toString();
-      console.warn(evt.data);
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
@@ -94,6 +92,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         if(primary){
           this.primaryNIC = nic;
         }
+        // Now that we have the Primary NIC, register as a listener for the stat.
+        this.core.emit({name:"StatsAddListener", data:{name:"NIC", obj:this, key:this.primaryNIC} });
       }
 
     });
@@ -105,14 +105,11 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   }
 
   registerObservers(nic){
-    //for(let i = 0; i < cores; i++){
-      this.core.register({observerClass:this,eventName:"StatsNIC" + nic}).subscribe((evt:CoreEvent) => {
-        //this.collectData(i, evt.data);
+      let Nic = nic.charAt(0).toUpperCase() + nic.slice(1); // Capitalize first letter
+      this.core.register({observerClass:this,eventName:"StatsNIC" + Nic}).subscribe((evt:CoreEvent) => {
         this.data = evt.data.data;
-        console.log(evt.data);
         this.collectData(evt);
       });
-    //}
   }
 
   trimRanges(a:string[]){
@@ -153,7 +150,6 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
   isPrimary(ip:string):boolean{
     let def = this.getSubnet(this.data.default_routes[0]);
-    //DEBUG: console.warn(ip);
     let subnet = this.getSubnet(ip);
     if(subnet == def){
       return true;
@@ -181,11 +177,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
 
     // Get the most current values (ignore undefined)
     for(let i = data.length - 1; i >= 0; i--){
-      //console.log(i);
-      //console.log(data[i]);
       if(!data[i]){continue;}
-      //console.log(data[i][rxIndex]);
-      //console.log(data[i][txIndex]);
       if(rx.length > 0 && tx.length > 0){
         this.loader = false;
         break;
@@ -193,7 +185,6 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       // RX
       if(data[i] && rx.length == 0 && data[i][rxIndex]){
         rx.push(data[i][rxIndex]);
-        console.log("rx = " + rx);
         continue;
       } else if(!data[i][rxIndex]){
         rx = [];
@@ -202,7 +193,6 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       // TX
       if(data[i] && tx.length == 0 && data[i][txIndex]){
         tx.push(data[i][txIndex]);
-        console.log("tx = " + tx);
         continue;
       } else if(!data[i][txIndex]){
         tx = [];

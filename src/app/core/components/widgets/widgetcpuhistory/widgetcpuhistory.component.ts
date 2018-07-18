@@ -18,13 +18,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
 
-/*interface TimeData {
-  start: number;
-  end: number;
-  step: number;
-  legend?: string;
-}*/
-
 @Component({
   selector: 'widget-cpu-history',
   templateUrl:'./widgetcpuhistory.component.html',
@@ -35,16 +28,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
   //@ViewChild('chartCpu') chartCpu: ViewChartLineComponent;
   public title:string = T("CPU Usage");
   public subtitle:string = T("% of all cores");
-  //public altTitle: string = '';
-  //public altSubtitle: string = '';
   public widgetColorCssVar = "var(--blue)";
-  //public showLegendValues:boolean = false;
-  //public chartId = "chart-" + UUID.UUID();
-  //public chart: any;
-  //public maxY: number = 100; // Highest number in data
-
-  //public startTime;
-  //public endTime;
 
   constructor(public router: Router, public translate: TranslateService){
     super(router, translate);
@@ -58,7 +42,6 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
     this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate",key:"average", obj:this} });
 
     this.core.register({observerClass:this,eventName:"StatsCpuAggregateAverage"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       this.setChartData(evt);
     });
 
@@ -66,14 +49,6 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
   }
 
   chartSetup(){
-    // Generate Regions
-    /*let generatedRegions = [];
-     for(let i = 0; i < 100; i++){
-       let vent = i % 20;
-       if(vent == 0){
-         generatedRegions.push({axis: 'y', start: i+10, end: i + 20, class: 'regionEven'})
-       }
-     }*/
 
      this.chart = c3.generate({
        bindto: '#' + this.chartId,
@@ -142,14 +117,10 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
   }
 
   setChartData(evt:CoreEvent){
-    console.log("SET CPU DATA");
-    console.log(evt.data);
-
     this.dataRcvd = true;
     let parsedData = [];
     let dataTypes = [];
     dataTypes = evt.data.meta.legend;
-    //dataTypes.push(evt.data.meta.legend[0]);
 
     for(let index in dataTypes){
       let chartData:ChartData = {
@@ -162,24 +133,11 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
       parsedData.push(chartData);
     }
 
-    //console.log(parsedData);
     let xColumn = this.makeTimeAxis(evt.data.meta, parsedData);
-    //parsedData[0].data.unshift("user");
 
     this.startTime = this.timeFromDate(xColumn[1]);
 
     this.endTime = this.timeFromDate(xColumn[xColumn.length - 1]);
-
-    //console.log(xColumn);
-    //console.log(parsedData[0].data);
-
-    /*
-     // Possible Y axis substitute
-     this.chart.ygrids.remove();
-     this.maxY = Math.max(...parsedData[0].data.slice(1));
-     this.chart.ygrids.add({value: 1, text: this.maxY.toString() + '%', axis: 'y2', position: 'start'})
-     console.warn(this.maxY);
-     */
 
     let finalStat = this.aggregateData(["user","system","nice","interrupt"], parsedData);
     let cols = this.makeColumns([finalStat]);
@@ -187,19 +145,11 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
     this.chart.load({
       columns: cols
     });
-    /*this.chart.load({
-      columns: [
-        xColumn,
-        parsedData[0].data
-      ]
-    });*/
-    //console.warn(this.chart)
   }
 
   protected makeTimeAxis(td:TimeData, data:any,  axis?: string):any[]{
     if(!axis){ axis = 'x';}
       let labels: any[] = [axis];
-    console.log(td);
     data[0].data.forEach((item, index) =>{
       let date = new Date(td.start * 1000 + index * td.step * 1000);
       labels.push(date);
@@ -207,41 +157,6 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
 
     return labels;
   }
-
-  /*setCPUData(evt:CoreEvent){
-   console.log("SET CPU DATA");
-   console.log(evt.data);
-   let cpuUserObj = evt.data;
-
-   let parsedData = [];
-   let dataTypes = [];
-   //dataTypes = evt.data.meta.legend;
-   console.log(xColumn);
-   dataTypes.push(evt.data.meta.legend[0]);
-
-   for(let index in dataTypes){
-     let chartData:ChartData = {
-       legend: dataTypes[index],
-       data:[]
-     }
-     for(let i in evt.data.data){
-       chartData.data.push(evt.data.data[i][index])
-     }
-     parsedData.push(chartData);
-   }
-
-   this.chartCpu.chartType = 'spline';
-   this.chartCpu.units = '%';
-   this.chartCpu.timeSeries = true;
-   this.chartCpu.timeFormat = '%H:%M';// eg. %m-%d-%Y %H:%M:%S.%L
-     this.chartCpu.timeData = evt.data.meta;
-   this.chartCpu.data = parsedData;//[cpuUser];
-   //this.chartCpu.width = this.chartSize;
-   //this.chartCpu.height = 160;
-
-   this.chartCpu.refresh();
-   console.log(this.chartCpu);
-  }*/
 
   timeFromDate(date:Date){
     let hh = date.getHours().toString();

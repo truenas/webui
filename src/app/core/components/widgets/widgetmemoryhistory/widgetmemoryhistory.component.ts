@@ -51,8 +51,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
     this.core.emit({name:"StatsAddListener", data:{name:"Memory",key:"memory", obj:this} });
 
     this.core.register({observerClass:this,eventName:"StatsMemory"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
-      // if we don't know installed memory, store the chartData.
+      // if installed memory data hasn't arrived yet, store the chartData.
       if(this.totalMemory){
         this.setChartData(evt);
       } else {
@@ -73,14 +72,6 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
   }
 
   chartSetup(){
-    // Generate Regions
-    /*let generatedRegions = [];
-     for(let i = 0; i < 100; i++){
-       let vent = i % 20;
-       if(vent == 0){
-         generatedRegions.push({axis: 'y', start: i+10, end: i + 20, class: 'regionEven'})
-       }
-     }*/
 
      this.chart = c3.generate({
        bindto: '#' + this.chartId,
@@ -95,7 +86,7 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
          ],
          type: 'spline',
          colors: {
-           total:this.widgetColorCssVar//"var(--yellow)"// Cant use this.widgetColorCssVar
+           total:this.widgetColorCssVar
          },
          onmouseout: (d) => {
            this.showLegendValues = false;
@@ -139,7 +130,6 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
          }
        },
        tooltip: {
-         //show: false,
          contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
            if(!this.showLegendValues){
              this.showLegendValues = true;
@@ -154,9 +144,6 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
   }
 
   setChartData(evt:CoreEvent){
-    console.log("SET MEMORY DATA");
-    console.log(evt.data);
-
     this.dataRcvd = true;
     let parsedData = [];
     let dataTypes = [];
@@ -170,44 +157,30 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
       }
       for(let i in evt.data.data){
         let bytes = evt.data.data[i][index];
-        let gigs = bytes/1024/1024/1024 //OLD bytes/1073741824;
+        let gigs = bytes/1024/1024/1024
         chartData.data.push(Number(gigs.toFixed(2)))
       }
       parsedData.push(chartData);
     }
 
 
-    //console.log(parsedData);
     let xColumn = this.makeTimeAxis(evt.data.meta, parsedData);
-    //parsedData[4].data.unshift("active");
     let finalStat = this.aggregateData(["laundry","wired","active","cache"], parsedData);
 
     this.startTime = this.timeFromDate(xColumn[1]);
 
     this.endTime = this.timeFromDate(xColumn[xColumn.length - 1]);
-
-    //console.log(xColumn);
-    //console.log(parsedData[4].data);
     
     let cols = this.makeColumns([finalStat]);
     cols.unshift(xColumn);
-    //console.log(cols);
     this.chart.load({
       columns:cols
     })
-    /*this.chart.load({
-      columns: [
-        xColumn,
-        //parsedData[4].data
-        finalStats
-      ]
-    });*/
   }
 
   protected makeTimeAxis(td:TimeData, data:any,  axis?: string):any[]{
     if(!axis){ axis = 'x';}
       let labels: any[] = [axis];
-    //console.log(td);
     data[0].data.forEach((item, index) =>{
       let date = new Date(td.start * 1000 + index * td.step * 1000);
       labels.push(date);
@@ -245,9 +218,9 @@ export class WidgetMemoryHistoryComponent extends WidgetChartComponent implement
   formatMemory(physmem:number, units:string){
     let result:string; 
     if(units == "MB"){
-      result = Number(physmem / 1024 / 1024).toFixed(0)// + ' MB';
+      result = Number(physmem / 1024 / 1024).toFixed(0)
     } else if(units == "GB"){
-      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)// + ' GB';
+      result = Number(physmem / 1024 / 1024 / 1024).toFixed(0)
     }
     return Number(result)
   }

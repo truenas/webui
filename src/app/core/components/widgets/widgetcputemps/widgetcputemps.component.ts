@@ -60,11 +60,6 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     this.core.emit({name:"SysInfoRequest"});
     this.core.emit({name:"StatsAddListener", data:{name:"CpuTemp", obj:this} });
 
-    /*this.core.register({observerClass:this,eventName:"StatsCpuTemp"}).subscribe((evt:CoreEvent) => {
-     this.setChartData(evt);
-     this.chartData = evt;
-    });*/
-
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
       this.totalCores = evt.data.cores;
       this.chartSetup();
@@ -99,7 +94,6 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
           name:"",
           data: md
         });
-      //console.warn(this.collectedMeta);
       this.collectedTemps = {};
       this.collectedMeta = {};
       } else if(keys.length < this.totalCores && !this.collectedTemps["cpu-" + cpu]){
@@ -123,7 +117,6 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       mergedData.push(dp);
     }
     let meta = Object.assign({}, this.collectedMeta);
-    console.log(meta)
     meta.legend = legend;
     let result:any = {
       data: mergedData,
@@ -133,14 +126,6 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
   }
 
     chartSetup(){
-      // Generate Regions
-      /*let generatedRegions = [];
-       for(let i = 0; i < 100; i++){
-         let vent = i % 20;
-         if(vent == 0){
-           generatedRegions.push({axis: 'y', start: i+10, end: i + 20, class: 'regionEven'})
-         }
-       }*/
 
        this.chart = c3.generate({
          bindto: '#' + this.chartId,
@@ -209,8 +194,6 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
     }
 
     setChartData(evt:CoreEvent){
-      console.log("SET CPU TEMPS DATA");
-      console.log(evt.data);
 
       let parsedData = [];
       let dataTypes = [];
@@ -228,39 +211,23 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
         parsedData.push(chartData);
       }
 
-
-      console.log(parsedData);
       let xColumn = this.makeTimeAxis(evt.data.meta, parsedData);
-      //parsedData[4].data.unshift("active");
       let finalStat = this.aggregateData(evt.data.meta.legend, parsedData, "average");
 
       this.startTime = this.timeFromDate(xColumn[1]);
 
       this.endTime = this.timeFromDate(xColumn[xColumn.length - 1]);
 
-      //console.log(xColumn);
-      //console.log(parsedData[4].data);
-
       let cols = this.makeColumns([finalStat]);
       cols.unshift(xColumn);
-      console.log(cols);
       this.chart.load({
         columns:cols
       })
-      /*this.chart.load({
-       columns: [
-         xColumn,
-         //parsedData[4].data
-         finalStats
-       ]
-      });*/
-      console.warn(this.chart)
     }
 
     protected makeTimeAxis(td:TimeData, data:any,  axis?: string):any[]{
       if(!axis){ axis = 'x';}
         let labels: any[] = [axis];
-      console.log(td);
       data[0].data.forEach((item, index) =>{
         let date = new Date(td.start * 1000 + index * td.step * 1000);
         labels.push(date);

@@ -91,10 +91,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   }
   
   ngOnInit(){
-    //console.log(this.el.nativeElement.children);
-    /*setTimeout(()=>{
-      this.core.emit({name:"AnimateColorLoopStart", data:{element:'#widget-sysinfo-logo-bg', colors:this.themeAccentColors}});
-    }, 3000);*/
   }
 
   getCardBg(){

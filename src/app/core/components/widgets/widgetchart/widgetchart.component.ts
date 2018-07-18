@@ -65,24 +65,15 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     setTimeout(() => {
       if(!this.dataRcvd){
         this.loader = true;
-        console.log("DATA NOT RECEIVED YET");
       }
     }, 5000)
   }
 
   ngOnDestroy(){
-    //this.core.emit({name:"StatsRemoveListener", data:{name:"CpuAggregate", obj:this}});
-    }
+  }
 
   ngAfterViewInit(){ 
-    /*this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate",key:"average", obj:this} });
-     this.core.register({observerClass:this,eventName:"StatsCpuAggregateAverage"}).subscribe((evt:CoreEvent) => {
-       //DEBUG: console.log(evt);
-       this.setChartData(evt);
-     });*/
-
-     //this.chartSetup()
-     }
+  }
 
   //Override this method in subclasses
   chartSetup(){
@@ -162,45 +153,11 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   }
 
   setChartData(evt:CoreEvent){
-    /*console.log("SET CHART DATA");
-     console.log(evt.data);
-
-     let parsedData = [];
-     let dataTypes = [];
-     dataTypes = evt.data.meta.legend;
-
-     for(let index in dataTypes){
-       let chartData:ChartData = {
-         legend: dataTypes[index],
-         data:[]
-       }
-       for(let i in evt.data.data){
-         chartData.data.push(evt.data.data[i][index])
-       }
-       parsedData.push(chartData);
-     }
-
-     console.log(parsedData);
-     let xColumn = this.makeTimeAxis(evt.data.meta, parsedData);
-     parsedData[0].data.unshift("user");
-
-     this.startTime = this.timeFromDate(xColumn[1]);
-
-     this.endTime = this.timeFromDate(xColumn[xColumn.length - 1]);
-
-     this.chart.load({
-       columns: [
-         xColumn,
-         parsedData[0].data
-       ]
-     });
-     console.warn(this.chart)*/
   }
 
   protected makeTimeAxis(td:TimeData, data:any,  axis?: string):any[]{
     if(!axis){ axis = 'x';}
       let labels: any[] = [axis];
-    console.log(td);
     data[0].data.forEach((item, index) =>{
       let date = new Date(td.start * 1000 + index * td.step * 1000);
       labels.push(date);
@@ -258,7 +215,6 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
      }
      result.data = average;
     }
-    //console.warn(result)
     return result;
   }
 
@@ -272,6 +228,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     return columns;
   }
 
+  // Will be used for back of flip card
   setPreferences(form:NgForm){
     let filtered: string[] = [];
     for(let i in form.value){

@@ -198,9 +198,7 @@ export class StatsService {
     }
   ];
 
-  //private sourcesRealtime: StatSource[] = [];
-  //private sources: StatSource[] = [];
-  private debug:boolean = true;
+  private debug:boolean = false;
   private messages: any[] = [];
   private messagesRealtime: any[] = [];
   private listeners: any[] = [];
@@ -212,7 +210,9 @@ export class StatsService {
   private broadcastRealtimeId:number;
 
   constructor(private core:CoreService, private api:ApiService) {
-    //DEBUG: .log("*** New Instance of Stats Service ***");
+    if(this.debug){
+      console.log("*** New Instance of Stats Service ***");
+    }
 
     this.core.emit({name:"StatsSourcesRequest"});
 
@@ -230,15 +230,13 @@ export class StatsService {
     });
 
     this.core.register({observerClass:this,eventName:"StatsSources"}).subscribe((evt:CoreEvent) => {
-      //this.checkAvailability(evt.data);
       this.updateSources(evt.data);
       if(this.debug){
         console.log("**** StatsSources ****");
         console.log(evt.data);
         console.warn(this.sources);
       }
-      //this.core.emit({ name:"StatsRequest", data:[[{source:'aggregation-cpu-sum',type:'cpu-user', 'dataset':'value'}],{step:'10',start:'now-10m'}] });
-      }); 
+    }); 
 
   }
 
@@ -249,7 +247,7 @@ export class StatsService {
   startBroadcast(){
     this.started = true;
     if(this.debug){
-      //DEBUG: .log("Starting Broadcast...");
+      console.log("Starting Broadcast...");
     }
     
     this.broadcast(this.messages, this.bufferSize); 
@@ -259,13 +257,12 @@ export class StatsService {
   stopBroadcast(messageList?){
     this.started = false;
     if(this.debug){
-      //DEBUG: .log("Stopping Broadcast!");
+      console.log("Stopping Broadcast!");
     }
     if(messageList && messageList == this.messagesRealtime){
       clearInterval(this.broadcastRealtimeId);
     } else if(messageList && messageList == this.messages){
       clearInterval(this.broadcastId);
-      //DEBUG: .log(this.broadcastId);
     } else {
       clearInterval(this.broadcastRealtimeId);
       clearInterval(this.broadcastId);
@@ -275,7 +272,7 @@ export class StatsService {
 
   broadcast(messages:CoreEvent[],buffer){
     if(messages.length == 0){
-      //DEBUG: .warn("Timer only runs when message list is not empty");
+      console.warn("Timer only runs when message list is not empty");
       return ;
     }
 
@@ -334,15 +331,12 @@ export class StatsService {
 
   dispatchAllMessages(messages){
     for(let i = 0; i < messages.length; i++){
-      //console.log("MESSAGE DISPATCH");
-      //console.log(messages[i]);
       let job = messages[i];
       this.jobExec(job);
     }
   }
 
   buildMessage(key,source):CoreEvent{
-    //console.log("******** BUILDING MESSAGE ********");
     let options = {step:'10',start:'now-10m'}
     let dataList = [];
     let src = source.prefix + key;
@@ -401,8 +395,6 @@ export class StatsService {
       messageData = {responseEvent:eventName, args: [dataList, options ]};
     }
     let message =  { name:"StatsRequest", data: messageData};
-console.log("**************************************************************************");
-console.log(messageData);
     return message;
   }
 
@@ -414,7 +406,8 @@ console.log(messageData);
 
   jobExec(job){
     if(this.debug){
-      //DEBUG: .log("JOB STARTING...");
+      console.log("JOB STARTING...");
+      console.log(this.messagesRealtime);
     }
     for(let i  = 0; i < job.length; i++){
       let message = job[i];
@@ -424,7 +417,7 @@ console.log(messageData);
       this.core.emit(message);
     }
     if(this.debug){
-      //DEBUG: .log("JOB FINISHED")
+      console.log("JOB FINISHED")
     }
   }
 
@@ -440,18 +433,16 @@ console.log(messageData);
     this.messagesRealtime = [];
 
     for(let i = 0; i < this.sources.length; i++){
-      //DEBUG: console.log("UpdateSources Loop");
       let source = this.sources[i];
       let available = [];
 
       if(source.keysAsDatasets && dataSources.indexOf(source.datasetsType) !== -1){
-        //console.log(dataSources);
         available.push(source.datasetsType);
         source.properties = source.keys;
       } 
      
         source.keys.forEach((item,index) => {
-          // WildCard
+          // WildCards
           if(source.keys[0] == "any"){
             let matches = dataSources.filter((x)=> {
               return x.startsWith(source.prefix);
@@ -471,7 +462,6 @@ console.log(messageData);
 
        // Store properties
        if(source.available.length > 0 && !source.keysAsDatasets){
-         //DEBUG: console.log("UpdateSources Setting Properties");
          source.properties = data[source.available[0]];
        }
 
@@ -517,6 +507,9 @@ console.log(messageData);
       
       let reg = source.listeners[i];
 
+      if(source.bidirectional){
+        source.keys = this.keysFromAvailable(source);
+      }
       // Abort if data source not available
       if(reg.key && source.keys.indexOf(reg.key) == -1){
         reg.message = null;
@@ -565,15 +558,14 @@ console.log(messageData);
 
   removeListener(obj:any){
     if(this.debug){
-      //DEBUG: .warn("REMOVING LISTENER")
-      //DEBUG: .log(obj);
+      console.warn("REMOVING LISTENER")
+      console.log(obj);
     }
     let messageList;
      // Remove from sources
      for(let i = 0; i < this.sources.length; i++){
        for(let index = 0; index < this.sources[i].listeners.length; index++){
          if(this.sources[i].listeners[index].obj == obj){
-           //this.sources[i].listeners.splice(index,1);
            if(this.sources[i].realtime){
             messageList = this.messagesRealtime;
            } else {
@@ -585,7 +577,6 @@ console.log(messageData);
      }
 
      if(messageList.length == 0){
-       //DEBUG: .log("REMOVE LISTENER METHOD STOPPING BROADCAST");
        this.stopBroadcast(messageList);
      }
   }
@@ -633,6 +624,16 @@ console.log(messageData);
       }
     }
     return -1;
+  }
+
+  keysFromAvailable(source){
+    let clone= Object.assign([], source.available);
+    let keychain = clone.map((x) =>{
+        if(source.prefix){
+          return x.replace(source.prefix,"");
+        }
+      });
+    return keychain;
   }
 
 }

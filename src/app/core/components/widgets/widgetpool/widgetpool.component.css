@@ -23,29 +23,27 @@
   margin-left: 16px;
 }
 
-.disk-grid-controls{
-  text-align: right;
-  margin-right: 16px;
-}
-
 .disk-grid-header,
 .disk-grid-controls{
   width: 100%;
   font-weight: 500;
 }
 
-.disk-grid-controls button{
-  position:absolute;
-  top:-9px;
+.disk-grid-controls{
+  text-align:right;
 }
 
-.disk-grid-controls button.previous{
+.disk-grid-controls button{
+  margin-top: -7px;
+}
+
+/*.disk-grid-controls button.previous{
   right:56px;
 }
 
 .disk-grid-controls button.next{
   right:16px;
-}
+}*/
 
 .disk-grid-control{
   border-radius: 2px;

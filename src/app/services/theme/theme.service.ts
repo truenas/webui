@@ -243,7 +243,6 @@ export class ThemeService {
   }
 
   setCssVars(theme:Theme){ 
-    console.log("Setting CSS vars ...");
     let palette = Object.keys(theme);
     palette.splice(0,7);
 
