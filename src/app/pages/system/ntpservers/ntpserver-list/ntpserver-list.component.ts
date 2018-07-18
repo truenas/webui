@@ -16,6 +16,7 @@ export class NTPServerListComponent {
   protected route_edit: string[] = [ 'system', 'ntpservers', 'edit' ];
   protected route_delete: string[] = [ 'system', 'ntpservers', 'delete' ];
   protected route_success: string[] = [ 'system', 'ntpservers' ];
+  protected entityList: any;
   
   public columns: Array<any> = [
     {name : 'Address', prop : 'ntp_address', always_display: true},
@@ -33,15 +34,30 @@ export class NTPServerListComponent {
 
   constructor(private router: Router) {};
 
+  afterInit(entityList: any) { this.entityList = entityList; }
+
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
   public singleActions: Array < any > = [
     {
       label : T("Edit"),
       id: "edit",
       enable: true,
-      onClick : (server) => {
+      onClick : (selected) => {
         // But this was being done already, without the router here, or actions...?
         this.router.navigate(new Array('/').concat(
-          [ "system", "ntpservers", "edit", server[0].id ]));
+          [ "system", "ntpservers", "edit", selected[0].id ]));
       }
 
     }, 
@@ -49,9 +65,8 @@ export class NTPServerListComponent {
       label : T("Delete"),
       id: "delete",
       enable: true,
-      onClick : (server) => {
-        console.log(server);
-        // this.entityList.doDelete(users_edit[0].id );
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
       }
     }
   ];

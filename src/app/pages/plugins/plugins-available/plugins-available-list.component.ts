@@ -50,6 +50,8 @@ export class PluginsAvailabelListComponent {
     this.getAvailablePools();
   }
 
+  public multiActions: Array < any > = [];
+
   public singleActions: Array < any > = [
     {
       label : T("Install"),

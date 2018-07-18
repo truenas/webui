@@ -79,14 +79,27 @@ export class DisksListConfig implements InputTableConf {
     }
   }
 
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
   public singleActions: Array < any > = [
     {
       label : T("Edit"),
       id: "edit",
       enable: true,
-      onClick : (disk) => {
+      onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
-          [ "storage", "disks", "edit", disk[0].disk_identifier ]));
+          [ "storage", "disks", "edit", selected[0].disk_identifier ]));
       }
 
     },
@@ -94,9 +107,9 @@ export class DisksListConfig implements InputTableConf {
       label : T("Wipe"),
       id: "wipe",
       enable: true,
-      onClick : (disk) => {
+      onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
-          [ "storage", "disks", "wipe", disk[0].disk_name ]));
+          [ "storage", "disks", "wipe", selected[0].disk_name ]));
       }
     }
   ];

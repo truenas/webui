@@ -60,14 +60,27 @@ export class UserListComponent implements OnInit {
     this.getUserList()
   }
 
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
   public singleActions: Array < any > = [
     {
       label : T("Edit"),
       id: "edit",
       enable: true,
-      onClick : (users_edit) => {
+      onClick : (selected) => {
         this.router.navigate(new Array('/').concat(
-          [ "account", "users", "edit", users_edit[0].id ]));
+          [ "account", "users", "edit", selected[0].id ]));
       }
 
     }, // When to push this one???
@@ -75,8 +88,8 @@ export class UserListComponent implements OnInit {
       label : T("Delete"),
       id: "delete",
       enable: true,
-      onClick : (users_edit) => {
-        this.entityList.doDelete(users_edit[0].id );
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
       }
     }
   ];

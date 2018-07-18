@@ -31,31 +31,32 @@ export class SnapshotListComponent {
   };
 
   protected wsMultiDelete = 'core.bulk';
-  public multiActions: Array < any > = [
-    {
-      id: "mdelete",
-      label: "Delete",
-      icon: "delete",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
-      }
-    }
-  ];
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
+
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
 
     public singleActions: Array < any > = [
       {
         label : T("Clone"),
         id: "clone",
         enable: true,
-        onClick : (snapshot) => {
+        onClick : (selected) => {
           this._router.navigate(new Array('/').concat(
-            [ "storage", "snapshots", "clone", snapshot[0].id ]));
+            [ "storage", "snapshots", "clone", selected[0].id ]));
         }
   
       },
@@ -63,9 +64,18 @@ export class SnapshotListComponent {
         label : T("Rollback"),
         id: "rollback",
         enable: true,
-        onClick : (snapshot) => {
+        onClick : (selected) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "snapshots", "rollback", snapshot[0].id]));
+            ["storage", "snapshots", "rollback", selected[0].id]));
+        }
+      },
+      { // doesnt seem to be the right delete function
+        label : T("Delete"),
+        id: "delete",
+        enable: true,
+        onClick : (selected) => {
+          console.log(selected)
+          this.entityList.doDelete(selected[0].id );
         }
       }
     ];

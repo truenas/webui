@@ -39,31 +39,44 @@ export class GroupListComponent {
     return true;
   }
 
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
   public singleActions: Array < any > = [
     {
       id: "members",
       label: T("Members"),
       enable: true,
-      onClick : (members) => {
+      onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
-          [ "account", "groups", "members", members[0].id ]));
+          [ "account", "groups", "members", selected[0].id ]));
       }
     }, // when to push these two??? - and what about the multidelete???
     {
       id: "edit",
       label: T("Edit"),
       enable: true,
-      onClick : (members_edit) => {
+      onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
-          [ "account", "groups", "edit", members_edit[0].id ]));
+          [ "account", "groups", "edit", selected[0].id ]));
       }
     },
     {
       id: "delete",
       label: T("Delete"),
       enable: true,
-      onClick : (members_delete) => {
-        this.entityList.doDelete(members_delete[0].id );
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
       },
     }
   ];

@@ -43,17 +43,40 @@ export class ScrubListComponent {
     protected rest: RestService,
     protected taskService: TaskService) {}
 
-    public singleActions: Array < any > = [
-      {
-        label : T("Edit"),
-        id: "edit",
-        enable: true,
-        onClick : (row) => {
-          this.router.navigate(new Array('/').concat(
-            ["tasks", "scrub", "edit", row[0].id]));
-        }
+  afterInit(entityList: any) { this.entityList = entityList; }
+
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Edit"),
+      id: "edit",
+      enable: true,
+      onClick : (selected) => {
+        this.router.navigate(new Array('/').concat(
+          ["tasks", "scrub", "edit", selected[0].id]));
       }
-    ];
+    },
+    {
+      label : T("Delete"),
+      id: "delete",
+      enable: true,
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
+      }
+    }
+  ];
 
 }
 
