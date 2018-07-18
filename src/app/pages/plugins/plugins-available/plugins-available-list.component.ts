@@ -56,6 +56,8 @@ export class PluginsAvailabelListComponent {
     {
       label : T("Install"),
       id: "install",
+      icon: "build",
+      ttpos: "above",
       enable: true,
       onClick : (plugin) => {
         this.router.navigate(new Array('/').concat(
@@ -68,7 +70,7 @@ export class PluginsAvailabelListComponent {
     return [{
         id: "install",
         label: T("install"),
-        onClick: (row) => { console.log(row)
+        onClick: (row) => {
           this.router.navigate(
             new Array('').concat(["plugins", "add", row[2]]));
         }

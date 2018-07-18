@@ -62,6 +62,8 @@ export class ScrubListComponent {
     {
       label : T("Edit"),
       id: "edit",
+      icon: "create",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.router.navigate(new Array('/').concat(
@@ -71,6 +73,8 @@ export class ScrubListComponent {
     {
       label : T("Delete"),
       id: "delete",
+      icon: "delete",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.entityList.doDelete(selected[0].id );

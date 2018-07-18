@@ -77,6 +77,8 @@ export class UserListComponent implements OnInit {
     {
       label : T("Edit"),
       id: "edit",
+      icon: "edit",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.router.navigate(new Array('/').concat(
@@ -87,6 +89,8 @@ export class UserListComponent implements OnInit {
     {
       label : T("Delete"),
       id: "delete",
+      icon: "delete",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.entityList.doDelete(selected[0].id );

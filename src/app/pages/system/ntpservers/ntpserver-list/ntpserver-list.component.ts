@@ -53,6 +53,8 @@ export class NTPServerListComponent {
     {
       label : T("Edit"),
       id: "edit",
+      icon: "edit",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         // But this was being done already, without the router here, or actions...?
@@ -64,6 +66,8 @@ export class NTPServerListComponent {
     {
       label : T("Delete"),
       id: "delete",
+      icon: "delete",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.entityList.doDelete(selected[0].id );

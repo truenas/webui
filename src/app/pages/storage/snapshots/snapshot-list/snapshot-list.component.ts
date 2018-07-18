@@ -53,6 +53,8 @@ export class SnapshotListComponent {
       {
         label : T("Clone"),
         id: "clone",
+        icon: "group",
+        ttpos: "above",
         enable: true,
         onClick : (selected) => {
           this._router.navigate(new Array('/').concat(
@@ -63,6 +65,8 @@ export class SnapshotListComponent {
       {
         label : T("Rollback"),
         id: "rollback",
+        icon: "keyboard_backspace",
+        ttpos: "above",
         enable: true,
         onClick : (selected) => {
           this._router.navigate(new Array('/').concat(
@@ -72,6 +76,8 @@ export class SnapshotListComponent {
       { // doesnt seem to be the right delete function
         label : T("Delete"),
         id: "delete",
+        icon: "delete",
+        ttpos: "above",
         enable: true,
         onClick : (selected) => {
           console.log(selected)

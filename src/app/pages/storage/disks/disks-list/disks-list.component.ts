@@ -96,6 +96,8 @@ export class DisksListConfig implements InputTableConf {
     {
       label : T("Edit"),
       id: "edit",
+      icon: "create",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
@@ -106,6 +108,8 @@ export class DisksListConfig implements InputTableConf {
     {
       label : T("Wipe"),
       id: "wipe",
+      icon: "delete_sweep",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this._router.navigate(new Array('/').concat(

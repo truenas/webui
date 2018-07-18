@@ -56,6 +56,8 @@ export class GroupListComponent {
     {
       id: "members",
       label: T("Members"),
+      icon: "list",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
@@ -65,6 +67,8 @@ export class GroupListComponent {
     {
       id: "edit",
       label: T("Edit"),
+      icon: "edit",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this._router.navigate(new Array('/').concat(
@@ -74,6 +78,8 @@ export class GroupListComponent {
     {
       id: "delete",
       label: T("Delete"),
+      icon: "delete",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.entityList.doDelete(selected[0].id );

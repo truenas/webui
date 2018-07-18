@@ -71,6 +71,8 @@ export class BootEnvironmentListComponent {
     {
       id: "clone",
       label: "Clone",
+      icon: "group",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this._router.navigate(new Array('').concat(
@@ -80,6 +82,8 @@ export class BootEnvironmentListComponent {
     {
       id: "rename",
       label: "Rename",
+      icon: "redo",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this._router.navigate(new Array('').concat(
@@ -90,6 +94,8 @@ export class BootEnvironmentListComponent {
     {
       id: "activate",
       label: "Activate",
+      icon: "play_arrow",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.doActivate(selected[0].id);

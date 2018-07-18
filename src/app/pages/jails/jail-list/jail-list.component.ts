@@ -131,8 +131,10 @@ export class JailListComponent implements OnInit {
   ];
   public singleActions: Array < any > = [
     {
-      id: "medit",
+      id: "edit",
       label: "Edit",
+      icon: "edit",
+      ttpos: "above",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -143,6 +145,8 @@ export class JailListComponent implements OnInit {
     {
       id: "mmount",
       label: "Mnt Pts",
+      icon: "save",
+      ttpos: "above",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -153,6 +157,8 @@ export class JailListComponent implements OnInit {
     {
       id: "shell",
       label: "Shell",
+      icon: "dvr",
+      ttpos: "above",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);

@@ -50,6 +50,8 @@ export class AlertServiceListComponent {
     {
       label : T("Edit"),
       id: "edit",
+      icon: "create",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         console.log(selected)
@@ -60,6 +62,8 @@ export class AlertServiceListComponent {
     {
       label : T("Delete"),
       id: "delete",
+      icon: "delete",
+      ttpos: "above",
       enable: true,
       onClick : (selected) => {
         this.entityList.doDelete(selected[0].id );
