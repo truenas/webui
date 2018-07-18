@@ -39,7 +39,6 @@ export class C3ChartComponent implements AfterViewInit {
        this.showLegendValues = true;
       }*/
       let time = raw[0].x;
-      console.log(time)
       for(let index = 0; index < this.legend.length; index++){
         //DEBUG: console.log("Looking for value");
         for(let i = 0; i < raw.length; i++){
