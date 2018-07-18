@@ -7,6 +7,7 @@ import {
   ViewChildren,
   AfterViewInit,
 } from '@angular/core';
+import * as _ from 'lodash';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
@@ -59,6 +60,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public nameFilter: RegExp;
   public capacityFilter: RegExp;
   public dirty = false;
+  protected existing_pools = [];
+  public poolError = null;
 
   public submitTitle = T("Create");
   protected extendedSubmitTitle = T("Extend");
@@ -224,6 +227,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
       this.getPoolData();
+    } else {
+      this.ws.call('pool.query', []).subscribe((res) => {
+        if (res) {
+          this.existing_pools = res;
+        }
+      });
     }
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
@@ -366,6 +375,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.needs_disk) {
       return false;
     }
+    if (this.poolError) {
+      return false;
+    }
     return true;
   }
 
@@ -442,8 +454,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                   res.error[i].forEach(
                     (error) => { this.error += error + '<br />'; });
                 }
-              } else {
-                this.dialog.errorReport(res.code, res.error.error_message, res.error.error_message)
+              } else { 
+                this.dialog.errorReport(T('Error creating pool'), res.error.error_message, res.error.traceback);
               }
             });
           }
@@ -546,6 +558,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     while (this.suggestable_disks.length > 0) {
        this.removeDisk(this.suggestable_disks[0]);
        this.suggestable_disks.shift();
+    }
+  }
+
+  checkPoolName() {
+    if(_.find(this.existing_pools, {"name": this.name})) {
+      this.poolError = T("A pool with that name already exists."); 
+    } else {
+      this.poolError = null;
     }
   }
 }
