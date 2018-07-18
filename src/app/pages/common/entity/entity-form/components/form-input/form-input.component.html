@@ -1,4 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
+	<!-- need to prevent browser autofill :/ -->
+	<input name = "DummyUsername" type="text" style="display:none;">
+	<input name = "DummyPassword" type="password" style="display:none;">
 	<mat-input-container class="full-width" *ngIf="config.inputType != 'file' else elseBlock">
 		<input matInput [type]="config.inputType ? config.inputType : 'text'"
 			[placeholder]="config.placeholder | translate"
@@ -7,7 +10,9 @@
 			[readonly]="config.readonly"
 			[required]="config.required"
 			[max]="config.max"
-			[min]="config.min">
+			[min]="config.min"
+			(blur)="blurEvent()"
+			autocomplete="new-password">
 	</mat-input-container>
 	<ng-template #elseBlock>
 		<span>{{config.placeholder | translate}}</span>

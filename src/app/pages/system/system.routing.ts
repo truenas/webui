@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 //import {GeneralComponent} from './general/';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigSaveComponent } from './general/config-save/config-save.component';
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
@@ -29,6 +28,7 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
@@ -55,10 +55,6 @@ export const routes: Routes = [
         path: '',
         component: GeneralComponent,
         data: { title: 'General', breadcrumb: 'General' },
-      }, {
-        path: 'config-save',
-        component: ConfigSaveComponent,
-        data: { title: 'Config Save', breadcrumb: 'Config Save' },
       }, {
         path: 'config-upload',
         component: ConfigUploadComponent,
@@ -207,11 +203,11 @@ export const routes: Routes = [
       ]
     },{
       path: 'cloudcredentials',
-      data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials', icon: 'cloud_circle' },
+      data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials', icon: 'cloud_circle' },
       children: [{
           path: '',
           component: CloudCredentialsListComponent,
-          data: { title: 'CloudCredentials', breadcrumb: 'CloudCredentials' },
+          data: { title: 'Cloud Credentials', breadcrumb: 'Cloud Credentials' },
         },
         {
           path: 'add',
@@ -237,7 +233,13 @@ export const routes: Routes = [
         path: 'add',
         component: CertificateAuthorityAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
+      },
+      {
+        path: 'view/:pk',
+        component: CertificateAuthorityEditComponent,
+        data: { title: 'View', breadcrumb: 'View' },
+      },
+      {
         path: 'sign/:pk',
         component: CertificateAuthoritySignComponent,
         data: { title: 'Sign CSR', breadcrumb: 'Sign CSR' },
@@ -254,9 +256,9 @@ export const routes: Routes = [
         component: CertificateAddComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, {
-        path: 'edit/:pk',
+        path: 'view/:pk',
         component: CertificateEditComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
+        data: { title: 'View', breadcrumb: 'View' },
       }]
     }, {
       path: 'support',

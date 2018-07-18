@@ -272,5 +272,4 @@ export class WidgetCpuTempsComponent extends WidgetChartComponent implements Aft
       return Number(result)
     }
 
-  }
-
+}

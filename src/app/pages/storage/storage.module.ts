@@ -28,7 +28,7 @@ import { routing } from './storage.routing';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form'
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
-import { DisksListComponent } from './disks/disks-list/';
+import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -68,7 +68,7 @@ import { MessageService } from '../common/entity/entity-form/services/message.se
     DatasetPermissionsComponent,
     VMwareSnapshotFormComponent,
     VMwareSnapshotListComponent,
-    DisksListComponent,
+    DiskListComponent,
     VolumeStatusComponent,
     DiskFormComponent,
     DiskWipeComponent

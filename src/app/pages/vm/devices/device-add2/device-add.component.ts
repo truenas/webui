@@ -351,7 +351,6 @@ export class DeviceAddComponent implements OnInit {
     this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm)=>{
       if (vm[0].bootloader == 'GRUB'){
         let dtypeField = _.find(this.fieldConfig, {name: "dtype"});
-        console.log(dtypeField);
         for (let i in dtypeField.options) {
           if (dtypeField.options[i].label == 'VNC') {
             _.pull(dtypeField.options, dtypeField.options[i]);
@@ -385,7 +384,6 @@ export class DeviceAddComponent implements OnInit {
     let device = _.cloneDeep(this.formGroup.value);
     let deviceValue = _.cloneDeep(this.activeFormGroup.value);
 
-    console.log(device, deviceValue);
     device['attributes'] = deviceValue;
     payload['devices'].push(device);
 

@@ -11,7 +11,6 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigSaveComponent } from './general/config-save/config-save.component';
 import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
@@ -35,6 +34,7 @@ import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentia
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { CertificateAuthorityListComponent } from './ca/ca-list/';
 import { CertificateAuthorityAddComponent } from './ca/ca-add/';
+import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
 import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
@@ -56,7 +56,6 @@ import { AlertConfigComponent } from './alert/alert.component';
     GeneralComponent,
     ConfigUploadComponent,
     ConfigResetComponent,
-    ConfigSaveComponent,
     AdvancedComponent,
     DatasetComponent,
     BootEnvironmentListComponent,
@@ -79,6 +78,7 @@ import { AlertConfigComponent } from './alert/alert.component';
     CloudCredentialsFormComponent,
     CertificateAuthorityListComponent,
     CertificateAuthorityAddComponent,
+    CertificateAuthorityEditComponent,
     CertificateAuthoritySignComponent,
     CertificateListComponent,
     CertificateAddComponent,

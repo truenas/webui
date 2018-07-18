@@ -31,6 +31,8 @@ import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { UserService } from '../../services/user.service';
+
 @NgModule({
   imports : [ CommonModule, FormsModule, EntityModule, routing, MaterialModule, AppConfirmModule, NgxDatatableModule, TranslateModule ],
   declarations : [
@@ -41,7 +43,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ServiceCIFSComponent, ServiceSMBComponent, ServiceSNMPComponent,
     ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent
   ],
-  providers : []
+  providers : [UserService]
 })
 export class ServicesModule {
 }

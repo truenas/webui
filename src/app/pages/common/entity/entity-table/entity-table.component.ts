@@ -16,8 +16,8 @@ import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { EntityUtils } from '../utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services';
-import { ErdService } from 'app/services/erd.service';
+import { DialogService } from '../../../../services';
+import { ErdService } from '../../../../services/erd.service';
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -62,8 +62,6 @@ export interface TableConfig {
   sorting: SortingConfig;
 }
 
-
-
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
@@ -78,7 +76,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   @ViewChild('filter') filter: ElementRef;
  
   // MdPaginator Inputs
-  public paginationPageSize = 20;
+  public paginationPageSize = 10;
   public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
   public paginationPageIndex = 0;
   public paginationPageEvent: any;
@@ -87,6 +85,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   public displayedColumns: string[] = [];
   public busy: Subscription;
   public columns: Array<any> = [];
+
+  public allColumns: Array<any> = []; // Need this for the checkbox headings
+  public filterColumns: Array<any> = []; // Need this for the filter function
+  public alwaysDisplayedCols: Array<any> = []; // For cols the user can't turn off
+  public presetDisplayedCols: Array<any> = []; // to store only the index of preset cols
+  public currentPreferredCols: Array<any> = []; // to store current choice of what cols to view
+  public anythingClicked: boolean = false; // stores a pristine/touched state for checkboxes
+
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
   public seenRows: any[] = [];
@@ -96,6 +102,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     sorting: { columns: this.columns },
   };
   public showDefaults: boolean = false;
+  public showSpinner: boolean = false;
 
   protected loaderOpen = false;
   public selected = [];
@@ -115,7 +122,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }   
     this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
+      if (!column.always_display) {
+        this.allColumns.push(column); // Make array of optionally-displayed cols
+      } else {
+        this.alwaysDisplayedCols.push(column); // Make an array of required cols
+      }
     });
+    
+    this.filterColumns = this.conf.columns;
+    this.conf.columns = this.allColumns; // Remove any alwaysDisplayed cols from the official list
+
     this.displayedColumns.push("action");
     if (this.conf.changeEvent) {
       this.conf.changeEvent(this);
@@ -134,13 +150,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
         if (filterValue.length > 0) {
           this.rows.forEach((dataElement) => {
-            for (const dataElementProp of this.conf.columns) {
+            for (const dataElementProp of this.filterColumns) {
               let value: any = dataElement[dataElementProp.prop];
               
               if( typeof(value) === "boolean" || typeof(value) === "number") {
-                value = String(value);
+                value = String(value).toLowerCase();
               }
-              if (typeof (value) === "string" && value.length > 0 && (<string>value).indexOf(filterValue) >= 0) {
+              if (typeof (value) === "string" && value.length > 0 && 
+                (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
                 newData.push(dataElement);
                 break;
               }
@@ -156,22 +173,45 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
 
+
+      setTimeout(() => { this.setShowSpinner(); }, 500);
+
+      // Next section sets the checked/displayed columns
+      if (this.conf.columns && this.conf.columns.length > 10) {
+        this.conf.columns = [];
+  
+        for (let item of this.allColumns) {
+          if (!item.hidden) {
+            this.conf.columns.push(item);
+            this.presetDisplayedCols.push(item);
+          }
+        }
+
+        this.currentPreferredCols = this.conf.columns;
+      }
+        // End of checked/display section ------------
+        
       setTimeout(() => { this.setShowDefaults(); }, 1000);
+
     
   }
 
   setShowDefaults() {
     this.showDefaults = true;
   }
-  
 
+  setShowSpinner() {
+    this.showSpinner = true;
+  }
+  
   ngAfterViewInit(): void {
 
     this.erdService.attachResizeEventToElement("entity-table-component");
     
   }
 
-  getData() {
+  getData() { 
+    
     const sort: Array<String> = [];
     let options: Object = new Object();
 
@@ -189,6 +229,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
+    
     if (this.conf.queryCall) {
       if (this.conf.queryCallOption) {
         this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
@@ -198,11 +239,20 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     } else {
       this.getFunction = this.rest.get(this.conf.resource_name, options);
     }
-    this.busy =
-      this.getFunction.subscribe((res)=>{
-        this.handleData(res);
-      });
 
+    this.getFunction.subscribe(
+      (res) => {
+        this.handleData(res);
+      },
+      (res) => {
+        if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
+          this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
+        }
+        else {
+          new EntityUtils().handleError(this, res);
+        }
+      }
+    );
   }
 
   handleData(res): any {
@@ -238,10 +288,24 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.queryRes = rows;
     }
 
+    if (this.conf.queryRes) {
+      this.conf.queryRes = rows;
+    }
+
     for (let i = 0; i < rows.length; i++) {
       for (const attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
-          rows[i][attr] = this.rowValue(rows[i], attr);
+          if (rows[i][attr] === true) {
+            this.translate.get('yes').subscribe((res) => {
+              rows[i][attr] = res;
+            })
+          } else if (rows[i][attr] === false) {
+            this.translate.get('no').subscribe((res) => {
+              rows[i][attr] = res;
+            })
+          } else {
+            rows[i][attr] = this.rowValue(rows[i], attr);  
+          }
         }
       }
     }
@@ -445,4 +509,43 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
       this.conf.updateMultiAction(this.selected);
     }
   }
+
+  // Next section operates the checkboxes to show/hide columns 
+  toggle(col) {
+    const isChecked = this.isChecked(col);
+    this.anythingClicked = true;
+
+    if(isChecked) {
+      this.conf.columns = this.conf.columns.filter(c => { 
+        return c.name !== col.name; 
+      });
+    } else {
+      this.conf.columns = [...this.conf.columns, col];
+    }
+  }
+
+  isChecked(col:any) {
+    return this.conf.columns.find(c => {
+      return c.name === col.name;
+    }) !=undefined;
+  }
+
+  // Toggle between all cols selected and the current stored preference
+  checkAll() {
+    this.anythingClicked = true;
+    if (this.conf.columns.length < this.allColumns.length) {
+
+      this.conf.columns = this.allColumns;
+      return this.conf.columns
+    } else {
+      return this.conf.columns = this.currentPreferredCols;
+    }
+  }
+
+  // Used by the select all checkbox to determine whether it should be checked
+  checkLength() {
+    return this.conf.columns.length === this.allColumns.length; 
+  }
+
+  // End checkbox section -----------------------
 }

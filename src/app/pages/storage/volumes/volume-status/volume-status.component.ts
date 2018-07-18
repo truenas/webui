@@ -145,9 +145,14 @@ export class VolumeStatusComponent implements OnInit {
       }, {
         label: "Offline",
         onClick: (row) => {
+          let name = row.name;
+          // if use path as name, show the full path
+          if (!_.startsWith(name, '/')) {
+            name = _.split(row.name, 'p')[0];
+          }
           this.dialogService.confirm(
             "Offline",
-            "Are your sure you want to offline the disk " + _.split(row.name, 'p')[0],
+            "Are you sure you want to offline the disk " + name,
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
@@ -246,6 +251,9 @@ export class VolumeStatusComponent implements OnInit {
           _.find(item.actions, { label: "Online" }).isHidden = true;
           _.find(item.actions, { label: "Offline" }).isHidden = true;
           _.find(item.actions, { label: "Replace" }).isHidden = true;
+        } else if (category == "cache") {
+          _.find(item.actions, { label: "Online" }).isHidden = true;
+          _.find(item.actions, { label: "Offline" }).isHidden = true;
         }
       }
     }

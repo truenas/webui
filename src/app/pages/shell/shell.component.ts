@@ -53,6 +53,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
                             and examples.');
 
   clearLine = "\u001b[2K\r"
+  public shellConnected: boolean = false;
 
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
@@ -76,7 +77,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   };
 
   onResize(event){
-    this.resizeTerm();
+    // this.resizeTerm();
   }
 
   resetDefault() {
@@ -111,8 +112,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm = new (<any>window).Terminal({
       'cursorBlink': false,
       'tabStopWidth': 8,
-      'cols': parseInt(colNum.toFixed(),10),
-      'rows': parseInt(rowNum.toFixed(),10),
+      // 'cols': parseInt(colNum.toFixed(),10),
+      // 'rows': parseInt(rowNum.toFixed(),10),
       'focus': true
     });
     this.xterm.open(this.container.nativeElement);
@@ -138,10 +139,18 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.ss.connect();
+
+    this.ss.shellConnected.subscribe((res)=> {
+      this.shellConnected = res;
+    })
   }
 
   getAuthToken() {
     return this.ws.call('auth.generate_token');
+  }
+
+  reconnect() {
+    this.ss.connect();
   }
 
   constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService) {

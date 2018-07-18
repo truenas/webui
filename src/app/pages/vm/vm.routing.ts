@@ -1,7 +1,6 @@
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {DeviceDeleteComponent} from './devices/device-delete/';
 import {DeviceEditComponent} from './devices/device-edit/';
 import {DeviceListComponent} from './devices/device-list/';
 import {VmFormComponent} from './vm-form/';
@@ -77,11 +76,6 @@ export const routes: Routes = [
       path : ':vmid/devices/:name/edit/:pk/:dtype',
       component : DeviceEditComponent,
       data: {title: 'Edit Device', breadcrumb: 'Edit Device'}
-     },
-     {
-      path : ':vmid/devices/:name/delete/:pk',
-      component : DeviceDeleteComponent,
-      data: {title: 'Delete Device', breadcrumb: 'Delete Device'}
      },
     ]
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

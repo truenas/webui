@@ -46,6 +46,7 @@ export class ManualUpdateComponent {
       this.router.navigate([this.router.url+'/saveconfig']);
     }
   }]
+  public saveSubmitText ="Apply Update";
   protected fieldConfig: FieldConfig[] = [
     {
       type: 'select',
@@ -61,13 +62,14 @@ export class ManualUpdateComponent {
       name: 'filename',
       placeholder: T('Update file to be installed'),
       tooltip: T(''),
-      validation : [ ],
+      validation : [ Validators.required],
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar',
       updater: this.updater,
       parent: this,
-      hideButton:true
+      hideButton:true,
+      required: true
     },
   ];
 

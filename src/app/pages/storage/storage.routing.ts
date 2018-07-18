@@ -15,7 +15,7 @@ import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { DisksListComponent } from './disks/disks-list/';
+import { DiskListComponent } from './disks/disk-list/';
 import { DiskFormComponent } from './disks/disk-form/';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
@@ -147,7 +147,7 @@ export const routes: Routes = [
         data: { title: 'Disks', breadcrumb: 'Disks', icon: 'view_stream' },
         children: [
           {
-            path: '', component: DisksListComponent,
+            path: '', component: DiskListComponent,
             data: { title: 'Disks', breadcrumb: 'Disks' }
           },
           {

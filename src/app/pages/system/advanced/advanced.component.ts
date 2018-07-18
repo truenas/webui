@@ -71,7 +71,7 @@ export class AdvancedComponent implements OnInit {
   public fieldConfig: FieldConfig[] = [{
     type: 'checkbox',
     name: 'consolemenu',
-    placeholder: T('Enable Console Menu'),
+    placeholder: T('Show Text Console without Password Prompt'),
     tooltip: T('Uncheck this to add a login prompt to the system before\
                 the console menu is shown.')
   }, {
@@ -288,11 +288,6 @@ export class AdvancedComponent implements OnInit {
           }
         )}
       
-    });
-    entityEdit.ws.call('device.get_info', ['SERIAL']).subscribe((res) => {
-      res.forEach((item) => {
-        this.adv_serialport.options.push({ label: item.name + ' (' + item.start + ')', value: item.start });
-      });
     });
 
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {

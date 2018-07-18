@@ -15,6 +15,7 @@ import {AppLoaderService} from '../../../services/app-loader/app-loader.service'
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'app-general',
@@ -45,10 +46,10 @@ export class GeneralComponent implements OnDestroy {
       placeholder: T('GUI SSL Certificate'),
       tooltip: T('Required for <i>HTTPS</i>. Browse to the location of\
                   the certificate to use for encrypted connections. If\
-                  there are no certificates, create a\
-                  <a href="http://doc.freenas.org/11/system.html#cas"\
+                  there are no certificates, create a <a\
+                  href="..//docs/system.html#cas"\
                   target="_blank">Certificate Authority (CA)</a> then\
-                  the <a href="http://doc.freenas.org/11/system.html#certificates"\
+                  the <a href="..//docs/system.html#certificates"\
                   target="_blank">Certificate</a>.'),
       options: [
         { label: '---', value: null }
@@ -152,8 +153,8 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_sysloglevel',
       placeholder: T('Syslog level'),
-      tooltip: T('When <b>Syslog server</b> is defined, only logs matching\
-                  this level are sent.'),
+      tooltip: T('When <b>Syslog server</b> is defined, only logs\
+                  matching this level are sent.'),
       options: []
     },
     {
@@ -165,11 +166,27 @@ export class GeneralComponent implements OnDestroy {
                   console and remote server.'),
     }
   ];
+  protected saveConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'secretseed',
+      placeholder: 'Export Password Secret Seed'
+    }
+  ];
+  public saveConfigFormConf: DialogFormConfiguration = {
+    title: "Save Config",
+    fieldConfig: this.saveConfigFieldConf,
+    method_ws: 'core.download',
+    saveButtonText: 'Ok',
+    customSubmit: this.saveCofigSubmit,
+  }
   public custActions: Array<any> = [
   {
     id : 'save_config',
     name : T('Save Config'),
-    function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-save']))}
+    function : () => {
+      this.dialog.dialogForm(this.saveConfigFormConf);
+    }
   },{
     id : 'upload_config',
     name: T('Upload Config'),
@@ -198,7 +215,7 @@ export class GeneralComponent implements OnDestroy {
   //private hostname: '(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])';
   private entityForm: any;
 
-  constructor(protected rest: RestService, protected router: Router, 
+  constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
     protected dialog: DialogService, protected loader: AppLoaderService) {}
 
@@ -361,5 +378,37 @@ export class GeneralComponent implements OnDestroy {
         });
     }
     this.language.setLang(value.stg_language);
+  }
+
+  saveCofigSubmit(entityDialog) {
+    entityDialog.ws.call('system.info', []).subscribe((res) => {
+      let fileName = "";
+      if (res) {
+        let hostname = res.hostname.split('.')[0];
+        let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+        fileName = hostname + '-' + res.version + '-' + date;
+        if (entityDialog.formValue['secretseed']) {
+          fileName += '.tar';
+        } else {
+          fileName += '.db';
+        }
+      }
+
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+        .subscribe(
+          (res) => {
+            entityDialog.snackBar.open("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success" , {
+              duration: 5000
+            });
+            window.open(res[1]);
+            entityDialog.dialogRef.close();
+          },
+          (err) => {
+            entityDialog.snackBar.open("Please check your network connection", "Failed" , {
+              duration: 5000
+            });
+          }
+        );
+    });
   }
 }

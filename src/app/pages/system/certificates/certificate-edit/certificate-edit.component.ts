@@ -34,7 +34,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'certificate',
       placeholder: T('Certificate'),
-      tooltip: T('Enter or paste the contents of the certificate.'),
       isHidden: false,
       readonly: true,
     },
@@ -42,7 +41,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'privatekey',
       placeholder: T('Private Key'),
-      tooltip: T('Enter or paste the contents of the private key.'),
       isHidden: false,
       readonly: true,
     },
@@ -50,7 +48,6 @@ export class CertificateEditComponent {
       type: 'textarea',
       name: 'CSR',
       placeholder: T('Signing Request'),
-      tooltip: T('Paste the contents of the CSR here.'),
       isHidden: false,
       readonly: true,
     }
@@ -71,7 +68,7 @@ export class CertificateEditComponent {
     this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
     this.route.params.subscribe(params => {
       if (params['pk']) {
-        this.queryCallOption[0].push(params['pk']);
+        this.queryCallOption[0].push(parseInt(params['pk']));
       }
     });
   }
@@ -79,10 +76,10 @@ export class CertificateEditComponent {
   afterInit(entityEdit: any) {
     this.route.params.subscribe(params => {
       if (params['pk']) {
-        this.pk = params['pk'];
+        this.pk = parseInt(params['pk']);
         this.ws.call(this.queryCall, [
           [
-            ["id", "=", params['pk']]
+            ["id", "=", this.pk]
           ]
         ]).subscribe((res) => {
           if (res[0]) {

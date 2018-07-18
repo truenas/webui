@@ -1,6 +1,7 @@
 import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
 import { Router,ActivatedRoute } from '@angular/router';
 import {Validators} from '@angular/forms';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -209,7 +210,8 @@ export class AFPFormComponent implements OnDestroy {
     }
   ];
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute,
+              protected ws: WebSocketService, private dialog:DialogService) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -243,5 +245,45 @@ export class AFPFormComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.afp_timemachine_subscription.unsubscribe();
+  }
+
+  afterSave(entityForm) {
+    this.ws.call('service.query', [[]]).subscribe((res) => {
+      const service = _.find(res, {"service": "afp"});
+      if (service.enable) {
+        this.router.navigate(new Array('/').concat(
+          this.route_success));
+      } else {
+          this.dialog.confirm(T("Enable service"), 
+          T("Would you like to enable this service"), 
+          true, T("Enable Service")).subscribe((dialogRes) => {
+            if (dialogRes) {
+              entityForm.loader.open();
+              this.ws.call('service.update', [service.id, { enable: true }]).subscribe((updateRes) => {
+                this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+                  entityForm.loader.close();
+                  entityForm.snackBar.open(T("Service started"), T("close"));
+                  this.router.navigate(new Array('/').concat(
+                   this.route_success));
+                }, (err) => {
+                  entityForm.loader.close();
+                  this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+                  this.router.navigate(new Array('/').concat(
+                    this.route_success));
+                });
+               }, (err) => {
+                entityForm.loader.close();
+                this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+                this.router.navigate(new Array('/').concat(
+                  this.route_success));
+               });
+           } else {
+            this.router.navigate(new Array('/').concat(
+              this.route_success));
+            }
+        });
+      }
+
+    });
   }
 }

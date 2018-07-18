@@ -384,6 +384,19 @@ export class DatasetFormComponent implements Formconfiguration{
     'M': 1048576,
     'K': 1024,
   };
+  protected recordSizeMap: Object= {
+    '512': '512',
+    '1024': '1K',
+    '2048': '2K',
+    '4096': '4K',
+    '8192': '8K',
+    '16384': '32K',
+    '65536': '64K',
+    '131072': '128K',
+    '262144': '256K',
+    '524288': '512K',
+    '1048576': '1024K',
+  };
 
   public sendAsBasicOrAdvanced(data: DatasetFormData): DatasetFormData {
 
@@ -571,7 +584,7 @@ export class DatasetFormComponent implements Formconfiguration{
             edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
             if (pk_dataset[0].recordsize.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT"){
-              edit_recordsize_collection = [{label:`Inherit (${pk_dataset[0].recordsize.rawvalue})`, value: pk_dataset[0].recordsize.value}];
+              edit_recordsize_collection = [{label:`Inherit (${this.recordSizeMap[pk_dataset[0].recordsize.rawvalue]})`, value: pk_dataset[0].recordsize.value}];
 
             } else {
               edit_recordsize_collection = [{label:`Inherit (${this.parent_dataset.recordsize.value})`, value: 'INHERIT'}];
@@ -639,10 +652,10 @@ export class DatasetFormComponent implements Formconfiguration{
      };
 
      // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
-     if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
-       const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
-       returnValue.recordsize = "" + ( 1024 * value ) + "K";
-     }
+    //  if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
+    //    const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
+    //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
+    //  }
 
      if (quota || refquota || refreservation || reservation) {
        this.isBasicMode = false;
@@ -664,6 +677,9 @@ export class DatasetFormComponent implements Formconfiguration{
     }
     if (data.reservation === 0) {
       data.reservation = null;
+    }
+    if (data.recordsize === "1M") {
+      data.recordsize = "1024K";
     }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }

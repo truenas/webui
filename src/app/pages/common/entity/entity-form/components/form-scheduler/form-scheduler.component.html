@@ -1,5 +1,5 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden">
-  <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above">
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config.isHidden" >
+  <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let preset of presets" [value]="preset.value">
         {{ preset.label }}
@@ -13,17 +13,29 @@
     <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
 </div>
 
-<ng-template 
+<ng-template (backdropClick)="backdropClicked($event)"
+    [hasBackdrop]="isOpen"
     cdkConnectedOverlay
     [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="isOpen">
-  <div  class="mat-card advanced-date-picker">
+  <div  class="mat-card advanced-date-picker" role="dialog">
     <div class="mat-calendar-content">
-      <h4 class="preview-label">Generated Schedule</h4>
+      <h4 class="preview-label">Schedule Preview
+        <div class="controls">
+          <button mat-icon-button [disabled]="disablePrevious" (click)="setCalendar('previous')">
+            <mat-icon aria-label="Previous Month">keyboard_arrow_left</mat-icon>
+          </button>
+          <button mat-icon-button (click)="setCalendar('next')">
+            <mat-icon aria-label="Next Month" >keyboard_arrow_right</mat-icon>
+          </button>
+        </div>
+      </h4>
       <mat-divider></mat-divider>
-      <mat-month-view #calendar
+      <div class="calendar-wrapper">
+        <mat-month-view #calendar
           [activeDate]="activeDate">
-      </mat-month-view>
+        </mat-month-view>
+      </div>
       <mat-divider></mat-divider>
       <ul class="schedule-list">
         <ng-container *ngFor="let date of generatedSchedule;">
@@ -47,18 +59,18 @@
       <mat-divider></mat-divider>
 
       <section style="text-align:left;" class="m-h-d">
-        <h4 class="preview-label">Seconds/Minutes/Hours/Days</h4>
-        <mat-form-field >
+        <h4 class="preview-label">Minutes/Hours/Days</h4>
+        <!--<mat-form-field >
           <input matInput placeholder="Seconds">
-        </mat-form-field>
+          </mat-form-field>-->
           <mat-form-field>
-            <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes">
+            <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
           </mat-form-field>
           <mat-form-field>
-            <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours">
+            <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
           </mat-form-field>
           <mat-form-field>
-            <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days">
+            <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
           </mat-form-field>
       </section>
       <mat-divider></mat-divider>
@@ -145,7 +157,7 @@
 
       <mat-divider></mat-divider>
 
-      <button mat-button color="accent" (click)="onPopupSave()" style="margin:9px;">Save Schedule</button>
+      <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">Done</button>
     </div>
   </div>
 </ng-template>

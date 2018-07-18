@@ -12,7 +12,7 @@ import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector : 'custom-theme-manager-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="300px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="320px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
 })
 export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
 

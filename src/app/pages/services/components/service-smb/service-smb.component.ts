@@ -61,9 +61,9 @@ export class ServiceSMBComponent implements OnInit {
       placeholder: T('Workgroup'),
       tooltip: T('Must match Windows workgroup\
                   name. This setting is ignored if the\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+                  <a href="..//docs/directoryservice.html#active-directory"\
                   target="_blank">Active Directory</a> or <a\
-                  href="http://doc.freenas.org/11/directoryservice.html#ldap"\
+                  href="..//docs/directoryservice.html#ldap"\
                   target="_blank">LDAP</a> service is running.'),
       required: true,
       validation : [ Validators.required ]
@@ -190,7 +190,7 @@ export class ServiceSMBComponent implements OnInit {
       name: 'cifs_srv_smb_options',
       placeholder: T('Auxiliary Parameters'),
       tooltip: T('Enter additional <b>smb.conf</b> options. See the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
-                  target="_blank">Samba Guide </a>\
+                  target="_blank">Samba Guide</a>\
                   for more information on these settings.'),
     },
     {
@@ -230,7 +230,7 @@ export class ServiceSMBComponent implements OnInit {
       tooltip: T('Unselect this option to allow cross-domain\
                   authentication, users and groups to be managed on\
                   another forest, and permissions to be delegated from\
-                  <a href="http://doc.freenas.org/11/directoryservice.html#active-directory"\
+                  <a href="..//docs/directoryservice.html#active-directory"\
                   target="_blank">Active Directory</a>\
                   users and groups to domain admins on another forest.'),
     },
@@ -238,9 +238,13 @@ export class ServiceSMBComponent implements OnInit {
       type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
       placeholder: T('NTLMv1 Auth'),
-      tooltip: T('Set to allow NTLMv1 authentication.\
-                  Required by Windows XP clients and some clients in later\
-                  versions of Windows.'),
+      tooltip: T('Off by default. When set,\
+                  <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\
+                  attempts to authenticate users with the insecure\
+                  and vulnerable NTLMv1 encryption. This setting allows\
+                  backward compatibility with older versions of Windows,\
+                  but is not recommended and should not be used on\
+                  untrusted networks.'),
     },
     {
       type: 'select',

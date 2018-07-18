@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService, UserService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
@@ -14,7 +14,7 @@ import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'rsync-task-add',
-  template: `<entity-task [conf]="this"></entity-task>`,
+  template: `<entity-form [conf]="this"></entity-form>`,
   providers: [TaskService, UserService, EntityFormService]
 })
 export class RsyncFormComponent {
@@ -25,7 +25,14 @@ export class RsyncFormComponent {
   protected isEntity: boolean = true;
 
   protected preTaskName: string = 'rsync';
-  public fieldConfig: FieldConfig[] = [
+  public fieldConfig: FieldConfig[] = []
+  public fieldSets: FieldSet[] = [
+    {
+      name:'Rsync Task',
+      class:'add-rsync',
+      label:true,
+      width:'300px',
+      config: [
       {
         type : 'explorer',
         initial: '/mnt',
@@ -37,7 +44,7 @@ export class RsyncFormComponent {
         required: true,
         validation : [ Validators.required ]
       }, {
-        type: 'select',
+        type: 'combobox',
         name: 'rsync_user',
         placeholder: T('User'),
         tooltip: T('The chosen user must have permission to write to the\
@@ -100,6 +107,8 @@ export class RsyncFormComponent {
         placeholder: T('Direction'),
         tooltip: T('Direct the flow of data to the remote host.'),
         options: [],
+        required: true,
+        validation : [ Validators.required ]
       }, {
         type: 'input',
         name: 'rsync_description',
@@ -107,115 +116,12 @@ export class RsyncFormComponent {
         tooltip: T('Optional. Enter an informative description of the\
                     new rsync task.'),
       }, {
-        type: 'select',
-        name: 'rsync_repeat',
-        placeholder: T('Quick Schedule'),
-        tooltip: T('Choose how often to run the task. Choose the\
-                    empty value to define a custom schedule.'),
-        options: [
-          { label: '----------', value: 'none' },
-          { label: 'Hourly', value: 'hourly' },
-          { label: 'Daily', value: 'daily' },
-          { label: 'Weekly', value: 'weekly' },
-          { label: 'Monthly', value: 'monthly' },
-        ],
-        value: 'once',
-      }, {
-        type: 'input',
-        name: 'rsync_minute',
-        placeholder: T('Minute'),
-        tooltip: T('Define the minute of the hour to run the task.'),
-        value: '*',
-        isHidden: false,
-      }, {
-        type: 'input',
-        name: 'rsync_hour',
-        placeholder: T('Hour'),
-        tooltip: T('Define the hour to run the task.'),
-        value: '*',
-        isHidden: false,
-      }, {
-        type: 'input',
-        name: 'rsync_daymonth',
-        placeholder: T('Day of month'),
-        tooltip: T('Define the day of the month to run the task.'),
-        value: '*',
-        isHidden: false,
-      }, {
-        type: 'select',
-        name: 'rsync_month',
-        placeholder: T('Month'),
-        tooltip: T('Define which months to run the task.'),
-        multiple: true,
-        options: [{
-          label: 'January',
-          value: '1',
-        }, {
-          label: 'February',
-          value: '2',
-        }, {
-          label: 'March',
-          value: '3',
-        }, {
-          label: 'April',
-          value: '4',
-        }, {
-          label: 'May',
-          value: '5',
-        }, {
-          label: 'June',
-          value: '6',
-        }, {
-          label: 'July',
-          value: '7',
-        }, {
-          label: 'August',
-          value: '8',
-        }, {
-          label: 'September',
-          value: '9',
-        }, {
-          label: 'October',
-          value: '10',
-        }, {
-          label: 'November',
-          value: '11',
-        }, {
-          label: 'December',
-          value: '12',
-        }],
-        value: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-        isHidden: false,
-      }, {
-        type: 'select',
-        name: 'rsync_dayweek',
-        placeholder: T('Day of week'),
-        tooltip: T('Choose which days of the week to run the task.'),
-        multiple: true,
-        options: [{
-          label: 'Monday',
-          value: '1',
-        }, {
-          label: 'Tuesday',
-          value: '2',
-        }, {
-          label: 'Wednesday',
-          value: '3',
-        }, {
-          label: 'Thursday',
-          value: '4',
-        }, {
-          label: 'Friday',
-          value: '5',
-        }, {
-          label: 'Saturday',
-          value: '6',
-        }, {
-          label: 'Sunday',
-          value: '7',
-        }],
-        value: ['1', '2', '3', '4', '5', '6', '7'],
-        isHidden: false,
+        type: 'scheduler',
+        name: 'rsync_picker',
+        placeholder: T('Schedule the Rsync Task'),
+        tooltip: T('Choose one of the convenient presets\
+          or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+          required: true
       }, {
         type: 'checkbox',
         name: 'rsync_recursive',
@@ -281,7 +187,7 @@ export class RsyncFormComponent {
         value: true,
       }, {
         type: 'textarea',
-        name: 'extra',
+        name: 'rsync_extra',
         placeholder: T('Extra options'),
         tooltip: T('Add any other <a\
                     href="https://rsync.samba.org/ftp/rsync/rsync.html"\
@@ -299,7 +205,8 @@ export class RsyncFormComponent {
                     option is unset.'),
         value: true,
       }
-    ];
+    ]
+  }];
 
   protected hide_fileds: Array<any>;
   protected rsync_module_field: Array<any> = [
@@ -322,21 +229,21 @@ export class RsyncFormComponent {
   preInit() {
     this.hide_fileds = this.rsync_ssh_field;
 
-    this.user_field = _.find(this.fieldConfig, { 'name': 'rsync_user' });
+    this.user_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_user' });
     this.userService.listUsers().subscribe((res) => {
       res.data.forEach((item) => {
         this.user_field.options.push({ label: item.bsdusr_username, value: item.bsdusr_username })
       });
     });
 
-    this.rsync_mode_field = _.find(this.fieldConfig, { 'name': 'rsync_mode' });
+    this.rsync_mode_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_mode' });
     this.taskService.getRsyncModeChoices().subscribe((res) => {
       res.forEach((item) => {
         this.rsync_mode_field.options.push({ label: item[1], value: item[0] });
       });
     });
 
-    this.rsync_direction_field = _.find(this.fieldConfig, { 'name': 'rsync_direction' });
+    this.rsync_direction_field = _.find(this.fieldSets[0].config, { 'name': 'rsync_direction' });
     this.taskService.getRsyncDirectionChoices().subscribe((res) => {
       res.forEach((item) => {
         this.rsync_direction_field.options.push({ label: item[1], value: item[0] });
@@ -344,8 +251,8 @@ export class RsyncFormComponent {
     });
   }
 
-  afterInit(entityTask: EntityTaskComponent) {
-    entityTask.formGroup.controls['rsync_mode'].valueChanges.subscribe((res) => {
+  afterInit(entityForm) {
+    entityForm.formGroup.controls['rsync_mode'].valueChanges.subscribe((res) => {
       if( res === "ssh" ){
         this.hide_fileds = this.rsync_module_field;
       }
@@ -353,5 +260,24 @@ export class RsyncFormComponent {
         this.hide_fileds = this.rsync_ssh_field;
       }
     });
+  }
+
+  beforeSubmit(value){
+    let spl = value.rsync_picker.split(" ");
+    delete value.rsync_picker;
+    value['rsync_minute'] = spl[0];
+    value['rsync_hour'] = spl[1];
+    value['rsync_daymonth'] = spl[2];
+    value['rsync_month'] = spl[3];
+    value['rsync_dayweek'] = spl[4];
+  }
+
+  resourceTransformIncomingRestData(data) {
+    data['rsync_picker'] = data.rsync_minute + " " + 
+                          data.rsync_hour + " " + 
+                          data.rsync_daymonth + " " + 
+                          data.rsync_month + " " + 
+                          data.rsync_dayweek;
+    return data;
   }
 }

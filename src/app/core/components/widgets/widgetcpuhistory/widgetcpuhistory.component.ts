@@ -43,6 +43,7 @@ export class WidgetCpuHistoryComponent extends WidgetChartComponent implements A
 
     this.core.register({observerClass:this,eventName:"StatsCpuAggregateAverage"}).subscribe((evt:CoreEvent) => {
       this.setChartData(evt);
+
     });
 
     this.chartSetup()
