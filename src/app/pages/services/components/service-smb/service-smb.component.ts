@@ -190,7 +190,7 @@ export class ServiceSMBComponent implements OnInit {
       name: 'cifs_srv_smb_options',
       placeholder: T('Auxiliary Parameters'),
       tooltip: T('Enter additional <b>smb.conf</b> options. See the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
-                  target="_blank">Samba Guide </a>\
+                  target="_blank">Samba Guide</a>\
                   for more information on these settings.'),
     },
     {
@@ -238,9 +238,13 @@ export class ServiceSMBComponent implements OnInit {
       type: 'checkbox',
       name: 'cifs_srv_ntlmv1_auth',
       placeholder: T('NTLMv1 Auth'),
-      tooltip: T('Set to allow NTLMv1 authentication.\
-                  Required by Windows XP clients and some clients in later\
-                  versions of Windows.'),
+      tooltip: T('Off by default. When set,\
+                  <a href="https://www.freebsd.org/cgi/man.cgi?query=smbd" target="_blank">smbd(8)</a>\
+                  attempts to authenticate users with the insecure\
+                  and vulnerable NTLMv1 encryption. This setting allows\
+                  backward compatibility with older versions of Windows,\
+                  but is not recommended and should not be used on\
+                  untrusted networks.'),
     },
     {
       type: 'select',

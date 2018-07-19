@@ -4,6 +4,10 @@
   display:none;
 }
 
+.invisible{
+  opacity:0;
+}
+
 /* Navigation shorter and fixed to Top */
 topbar, app-breadcrumb{
   position:fixed;
@@ -208,9 +212,9 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 
-.xs .widget.double-height .mat-card,
-.xs .widget.double-height, 
-.xs .widget.double-height .card-container{
+.xs .widget.splitv.double-height .mat-card,
+.xs .widget.splitv.double-height, 
+.xs .widget.splitv.double-height .card-container{
   height:840px;
 }
 
@@ -233,6 +237,11 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .widget .mat-button{
   backface-visibility: hidden;
 
+}
+
+.widget .mat-button{
+  text-transform:uppercase !important;
+  font-weight:500 !important;
 }
 
 .widget-fullscreen .mat-card,
@@ -272,3 +281,32 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .legend-item-time{
   height:82px;
 }
+
+.widget .c3 .tick text{
+  fill: var(--fg2);
+  font-weight: 500;
+  opacity: 0.8;
+}
+.widget .c3 g.c3-axis{
+  opacity:0.75;
+}
+
+.widget .c3 g.c3-axis-y g.tick:first-child{
+  opacity:0;
+  visibility:hidden;
+}
+
+/* Max Y axis*/
+.widget .c3 g.c3-axis-y g.tick tspan{
+  font-family:Roboto;
+  font-weight:500;
+}
+
+/* Split Layout Widgets */
+.widget.splitv, .widget.splith{
+  width:600px;
+  height:320px;
+}
+
+
+

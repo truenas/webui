@@ -251,13 +251,16 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this.render();
   }
 
-  render(){
+  render(conf?:any){
     if(this.data.length == 0){
       //DEBUG: console.log("NO DATA FOUND");
       return -1;
     }
 
-    let conf = this.makeConfig();
+    if(!conf){
+      conf = this.makeConfig();
+    }
+
     let colors = this.colorsFromTheme();
     //DEBUG: console.log(colors);
     if(colors){

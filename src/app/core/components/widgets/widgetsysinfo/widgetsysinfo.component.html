@@ -1,37 +1,61 @@
-<div class="widget widget-{{widgetSize}}" ngClass.xs="double-height xs">
+<div class="widget splitv" ngClass.xs="double-height xs">
   <div class="card-container front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between center" fxFlex="100">
+        <mat-progress-bar class="widget-loader" *ngIf="loader" mode="indeterminate"></mat-progress-bar>
+        <!-- Summary Section -->
         <div fxFlex="100" fxFlex.gt-xs="40" class="card-bg-wrapper">
+          <!--
           <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
           <div class="logo-bg" id="widget-sysinfo-logo-bg"  *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>
-          <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'" animate [colorLoop]="themeAccentColors"><img class="os-logo" src="assets/images/logo.svg"></div>-->
-          <!--<div class="logo-bg" *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
-        </div>
-        <div fxFlex="100" fxFlex.gt-xs="60">
-        <div  *ngIf="data" class="data-container">
-          <div *ngIf="!data.system_product"><h1>FreeNAS</h1></div>
-          <div *ngIf="data.system_product && manufacturer == 'ixsystems' "><h2>{{data.system_product}}</h2></div>
-          <div  *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
-            <div class="label bold"><strong>{{"Serial Number" | translate}}:</strong> </div><p class="value">{{data.system_serial}}</p>
+          -->
+          <div class="platform-image">
+            <!--<img src="assets/images/{{cardBg}}">-->
+            <!--<div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}" *ngIf="cardBg !== 'logo.svg'"></div>
+              <div class="logo-bg" id="widget-sysinfo-logo-bg"  *ngIf="cardBg == 'logo.svg'"><img class="os-logo" src="assets/images/logo.svg"></div>-->
+            <div class="card-bg" [ngStyle]="{'background-image': 'url(assets/images/' + cardBg + ')'}"></div>
           </div>
+          <div class="title-wrapper">
+            <p class="platform-logo"><img src="assets/images/light-logo-full.svg"></p>
+            <p class="subtitle">System Information</p>
+            <button class="update-btn" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
+          </div>
+        </div>
+
+        <!-- Details Section -->
+        <div fxFlex.gt-xs="60" fxFlex.xs="100">
+        <div  *ngIf="data" class="data-container">
+          <div *ngIf="!data.system_product"><h3>FreeNAS</h3></div>
+          <div *ngIf="data.system_product && manufacturer == 'ixsystems' "><h3>{{data.system_product}}</h3></div>
           <div  *ngIf="data.license"><span class="label bold"><strong>{{"License" | translate}}:</strong> </span>  <p class="value">{{data.license}}</p></div>
           <div class="data-row"><span class="label bold"><strong>{{"OS Version" | translate}}:</strong> </span>  <p class="value">{{data.version}}</p><p class="build-date">(Build Date: {{buildDate}})</p></div>
           <div class="data-row"><span class="label bold"><strong>{{"Processor" | translate}}:</strong> </span>  <p class="value">{{data.model}} ({{data.cores}} cores)</p></div>
-          <div class="data-row"><span class="label bold"><strong>{{"Memory" | translate}}:</strong> </span>  <p class="value">{{memory}}</p></div>
+
+          <div class="data-row">
+            <div class="data-inline"><span class="label bold"><strong>{{"Memory" | translate}}:</strong> </span>  <p class="value">{{memory}}</p></div>
+            <div  class="data-inline" *ngIf="data.system_serial && manufacturer == 'ixsystems' ">
+              <div class="label bold"><strong>{{"Serial Number" | translate}}:</strong> </div><p class="value">{{data.system_serial}}</p>
+            </div>
+          </div>
+
           <div class="data-row">
             <div class="data-inline"><span class="label bold"><strong>{{"HostName" | translate}}:</strong> </span>  <p class="value">{{data.hostname}}</p></div>
             <div class="data-inline"><span class="label bold"><strong>{{"IP Address" | translate}}:</strong> </span>  <p class="value">{{connectionIp}}</p></div>
           </div>
           <div class="data-row"><span class="label bold"><strong>{{"Uptime" | translate}}:</strong> </span>  <p class="value">{{data.uptime}}</p></div>
           <div class="data-row">
-            <button class="update-btn" mat-raised-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
           </div>
           </div>
+        </div>
+
+        <div fxFlex="100" class="xs-footer">
+          <button class="update-btn" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
         </div>
       </mat-card-content>
       <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
+
+    <!-- Flip Side -->
     <mat-card class="back">
       <mat-card-content>
         <h3>Form goes here</h3>

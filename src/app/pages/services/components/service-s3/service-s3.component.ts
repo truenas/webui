@@ -141,7 +141,7 @@ export class ServiceS3Component implements OnDestroy {
   afterInit(entityForm: any) {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
     this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res) => {
-      if(res.split('/').length < 4) {
+      if(res && res.split('/').length < 4) {
         this.dialog.confirm(T("Warning"), T("Assigning a directory to Minio changes the permissions \
                                              of that directory and every directory in it to \
                                              minio:minio, overriding any previous permissions. \
