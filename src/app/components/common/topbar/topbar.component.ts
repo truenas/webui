@@ -147,7 +147,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   signOut() {
     this.translate.get('Log out').subscribe((logout: string) => {
       this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
-        this.dialogService.confirm("Log Out", "Log out of the WebUI?", true).subscribe((res) => {
+        this.dialogService.confirm("Log Out", "Log out of the WebUI?", true, "Log Out").subscribe((res) => {
           if (res) {
             this.ws.logout();
           }
@@ -159,7 +159,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onShutdown() {
     this.translate.get('Shut down').subscribe((shutdown: string) => {
       this.translate.get('Are you sure you wish to shut down the system?').subscribe((shutdown_prompt: string) => {
-        this.dialogService.confirm(shutdown, shutdown_prompt).subscribe((res) => {
+        this.dialogService.confirm(shutdown, shutdown_prompt, false, 'Shut Down').subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/shutdown']);
           }
@@ -171,7 +171,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onReboot() {
     this.translate.get('Restart').subscribe((reboot: string) => {
       this.translate.get('Are you sure you wish to restart the system?').subscribe((reboot_prompt: string) => {
-        this.dialogService.confirm(reboot, reboot_prompt).subscribe((res) => {
+        this.dialogService.confirm(reboot, reboot_prompt, false, 'Restart').subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/reboot']);
           }
@@ -209,7 +209,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   onGoToLegacy() {
     this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
       this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true).subscribe((res) => {
+        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true, "Switch").subscribe((res) => {
           if (res) {
             window.location.href = '/legacy/';
           }

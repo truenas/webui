@@ -276,7 +276,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                                              already in the pool. This\
                                              operation cannot be reversed.\
                                              Are you sure you wish to\
-                                             continue?")).subscribe((res) => {
+                                             continue?"), false, "Continue").subscribe((res) => {
           if (!res) {
             this.goBack();
           }

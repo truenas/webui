@@ -383,7 +383,7 @@ export class VolumesListTableConfig implements InputTableConf {
             if (res[0]) {
               if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
                 const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
+                this.dialogService.confirm("Scrub Pool", message, false, "Start").subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
@@ -399,7 +399,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 });
               } else {
                 const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
+                this.dialogService.confirm("Scrub Pool", message, false, "Start").subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
