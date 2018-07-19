@@ -7,7 +7,7 @@
   <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 
   <div class="">
-    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap">
+    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm" class="form-wrap">
       <div class="fieldset-container fieldset-display-{{ fieldSetDisplay }}"> 
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
           <div [ngClass]="fieldSet.class" class="fieldset" 
@@ -23,7 +23,7 @@
       </div>
       <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
       <mat-card-actions>
-        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary">{{saveSubmitText | translate}}</button>
+        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
         <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-raised-button color="accent">Cancel</button> 
         <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name | translate}}</button>
