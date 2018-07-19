@@ -120,7 +120,12 @@ export class AdvancedComponent implements OnInit {
         }]
       }
     ],
-  }, {
+  }, 
+  {
+    // Serves as a label to identify the swap drive input, below
+    type: 'paragraph', name:'label', paraText:'Swap Size:'
+  },
+  {
     type: 'input',
     name: 'swapondrive',
     placeholder: T('Swap size on each drive in GiB, affects new disks\
@@ -129,11 +134,6 @@ export class AdvancedComponent implements OnInit {
     tooltip: T('By default, all data disks are created with this amount\
                 of swap. This setting does not affect log or cache\
                 devices as they are created without swap.')
-  }, {
-    type: 'checkbox',
-    name: 'consolescreensaver',
-    placeholder: T('Enable Console Screensaver'),
-    tooltip: T('Enable or disable the console screensaver.')
   }, {
     type: 'checkbox',
     name: 'powerdaemon',
