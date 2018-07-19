@@ -1,14 +1,8 @@
 import { Component, AfterViewInit, Input, ViewChild, OnChanges, OnDestroy } from '@angular/core';
-<<<<<<< HEAD
-import { CoreServiceInjector } from '../../../services/coreserviceinjector';
-import { CoreService, CoreEvent } from '../../../services/core.service';
-import { MaterialModule } from '../../../../appMaterial.module';
-=======
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'app/appMaterial.module';
->>>>>>> master
 import { NgForm } from '@angular/forms';
 import { ChartData } from '../../viewchart/viewchart.component';
 import { ViewChartDonutComponent } from '../../viewchartdonut/viewchartdonut.component';

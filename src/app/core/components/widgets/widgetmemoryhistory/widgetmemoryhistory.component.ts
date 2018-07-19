@@ -3,16 +3,6 @@ import { CoreServiceInjector } from '../../../services/coreserviceinjector';
 import { CoreService, CoreEvent } from '../../../services/core.service';
 import { MaterialModule } from '../../../../appMaterial.module';
 import { NgForm } from '@angular/forms';
-<<<<<<< HEAD
-import { ChartData } from '../../viewchart/viewchart.component';
-import { ViewChartDonutComponent } from '../../viewchartdonut/viewchartdonut.component';
-import { ViewChartPieComponent } from '../../viewchartpie/viewchartpie.component';
-import { ViewChartLineComponent } from '../../viewchartline/viewchartline.component';
-import { AnimationDirective } from '../../../directives/animation.directive';
-import filesize from 'filesize';
-import { WidgetComponent } from '../widget/widget.component';
-
-=======
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 
 import { Router } from '@angular/router';
@@ -23,7 +13,6 @@ import * as c3 from 'c3';
 import { AnimationDirective } from 'app/core/directives/animation.directive';
 import filesize from 'filesize';
 import { WidgetChartComponent, TimeData } from 'app/core/components/widgets/widgetchart/widgetchart.component';
->>>>>>> master
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';

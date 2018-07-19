@@ -1,22 +1,13 @@
-<<<<<<< HEAD
-import { Component, OnInit, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
-import { CoreServiceInjector } from '../../../services/coreserviceinjector';
-=======
 import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
->>>>>>> master
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from '../../../services/core.service';
 import { MaterialModule } from '../../../../appMaterial.module';
 import { AnimationDirective } from '../../../directives/animation.directive';
 import filesize from 'filesize';
-<<<<<<< HEAD
-import { WidgetComponent } from '../widget/widget.component';
-=======
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';
 
->>>>>>> master
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
