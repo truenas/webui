@@ -12,7 +12,7 @@ import { regexValidator } from '../../../common/entity/entity-form/validators/re
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
-  selector : 'device-add2',
+  selector : 'app-device-add2',
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
@@ -23,7 +23,7 @@ export class DeviceAddComponent implements OnInit {
   public vmid: any;
   public vmname: any;
   public fieldSets: any;
-  public isCustActionVisible: boolean = false;
+  public isCustActionVisible = false;
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -319,19 +319,19 @@ export class DeviceAddComponent implements OnInit {
     this.activeFormGroup = this.cdromFormGroup;
     this.formGroup.controls['dtype'].valueChanges.subscribe((res) => {
       this.selectedType = res;
-      if (res == 'CDROM') {
+      if (res === 'CDROM') {
         this.activeFormGroup = this.cdromFormGroup;
         this.isCustActionVisible = false;
-      } else if (res == 'NIC') {
+      } else if (res === 'NIC') {
         this.activeFormGroup = this.nicFormGroup;
         this.isCustActionVisible = true;
-      } else if (res == 'DISK') {
+      } else if (res === 'DISK') {
         this.activeFormGroup = this.diskFormGroup;
         this.isCustActionVisible = false;
-      } else if (res == 'RAW') {
+      } else if (res === 'RAW') {
         this.activeFormGroup = this.rawfileFormGroup;
         this.isCustActionVisible = false;
-      } else if (res == 'VNC') {
+      } else if (res === 'VNC') {
         this.activeFormGroup = this.vncFormGroup;
         this.isCustActionVisible = false;
       }
@@ -349,10 +349,10 @@ export class DeviceAddComponent implements OnInit {
   afterInit() {
     // if bootloader == 'GRUB', hidde VNC option
     this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm)=>{
-      if (vm[0].bootloader == 'GRUB'){
-        let dtypeField = _.find(this.fieldConfig, {name: "dtype"});
-        for (let i in dtypeField.options) {
-          if (dtypeField.options[i].label == 'VNC') {
+      if (vm[0].bootloader === 'GRUB'){
+        const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
+        for (const i in dtypeField.options) {
+          if (dtypeField.options[i].label === 'VNC') {
             _.pull(dtypeField.options, dtypeField.options[i]);
           }
         }
@@ -381,8 +381,8 @@ export class DeviceAddComponent implements OnInit {
       'devices': [],
     };
 
-    let device = _.cloneDeep(this.formGroup.value);
-    let deviceValue = _.cloneDeep(this.activeFormGroup.value);
+    const device = _.cloneDeep(this.formGroup.value);
+    const deviceValue = _.cloneDeep(this.activeFormGroup.value);
 
     device['attributes'] = deviceValue;
     payload['devices'].push(device);
