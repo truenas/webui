@@ -1,19 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { RestService, WebSocketService } from '../../../services/';
-import { MarkdownModule } from 'angular2-markdown';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
-import * as _ from 'lodash';
-import { environment } from '../../../../environments/environment';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-update',
@@ -38,11 +33,11 @@ export class UpdateComponent implements OnInit {
   public general_update_error;
   public update_downloaded=false;
   public train_msg = {
-    "NIGHTLY_DOWNGRADE": "You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
-    "MINOR_DOWNGRADE": "Changing minor version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
-    "MAJOR_DOWNGRADE": "Changing major version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
-    "SDK": "Changing SDK version is not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train.",
-    "NIGHTLY_UPGRADE": "Changing to a nightly train is a one way street. Changing back to stable is not supported!"
+    "NIGHTLY_DOWNGRADE": T("You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "MINOR_DOWNGRADE": T("Changing minor version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "MAJOR_DOWNGRADE": T("Changing major version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "SDK": T("Changing SDK version is not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "NIGHTLY_UPGRADE": T("Changing to a nightly train is a one way street. Changing back to stable is not supported!")
   }
  
   public busy: Subscription;
