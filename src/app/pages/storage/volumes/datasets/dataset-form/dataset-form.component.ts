@@ -678,6 +678,9 @@ export class DatasetFormComponent implements Formconfiguration{
     if (data.reservation === 0) {
       data.reservation = null;
     }
+    if (data.recordsize === "1M") {
+      data.recordsize = "1024K";
+    }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 

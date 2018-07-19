@@ -16,6 +16,7 @@
       <mat-input-container floatPlaceholder="never">
         <input matInput #filter placeholder="{{'Filter' | translate}} {{title | translate}}">
       </mat-input-container>
+      <tooltip message="{{'Show only entries that contain this text' | translate}}"></tooltip>
 
       <span *ngFor="let custBtn of conf.custActions">
           <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>

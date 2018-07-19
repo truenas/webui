@@ -28,22 +28,24 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
   public imagePath:string = "assets/images/";
   public cardBg:string = "";
   public updateAvailable:boolean = false;
-  private _updateBtnStatus:string = "primary";
-  public updateBtnLabel:string = T("Check for Updates...")
+  private _updateBtnStatus:string = "default";
+  public updateBtnLabel:string = T("Check for Updates")
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
   public manufacturer:string = '';
   public buildDate:string;
+  public loader:boolean = false;
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
     this.configurable = false;
   }
 
-  ngOnInit(){
+  ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"SysInfo"}).subscribe((evt:CoreEvent) => {
       //DEBUG: console.log("******** SysInfo ********");
       //DEBUG: console.log(evt.data);
+      this.loader = false;
       this.data = evt.data;
 
       let build = new Date(this.data.buildtime[0]['$date']);
@@ -88,11 +90,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
     this.core.emit({name:"UpdateCheck"});
   }
   
-  ngAfterViewInit(){
-    //console.log(this.el.nativeElement.children);
-    setTimeout(()=>{
-      this.core.emit({name:"AnimateColorLoopStart", data:{element:'#widget-sysinfo-logo-bg', colors:this.themeAccentColors}});
-    }, 3000);
+  ngOnInit(){
   }
 
   getCardBg(){
@@ -110,8 +108,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, A
 
   get updateBtnStatus(){
     if(this.updateAvailable){
-      this._updateBtnStatus = "warn";
-      this.updateBtnLabel = T("Updates Available...");
+      this._updateBtnStatus = "default";
+      this.updateBtnLabel = T("Updates Available");
     }
     return this._updateBtnStatus;
   }
