@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { IscsiService, RestService } from '../../../../../services/';
+import { IscsiService, RestService } from '../../../../../services';
 import { T } from '../../../../../translate-marker';
 import {Validators} from '@angular/forms';
 

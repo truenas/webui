@@ -1,12 +1,12 @@
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {DeviceEditComponent} from './devices/device-edit/';
-import {DeviceListComponent} from './devices/device-list/';
-import {VmFormComponent} from './vm-form/';
-import {VmListComponent} from './vm-list/';
-import {VMWizardComponent} from './vm-wizard/';
-import { DockerVMWizardComponent } from './dockervm-wizard/';
+import {DeviceEditComponent} from './devices/device-edit';
+import {DeviceListComponent} from './devices/device-list';
+import {VmFormComponent} from './vm-form';
+import {VmListComponent} from './vm-list';
+import {VMWizardComponent} from './vm-wizard';
+import { DockerVMWizardComponent } from './dockervm-wizard';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
 import { DeviceAddComponent } from './devices/device-add2';
 

@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormGroup, Validator } from '@angular/forms
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgFileSelectDirective, UploadInput, UploadFile, UploadStatus } from 'ngx-uploader';
 import { Observable, Observer, Subscription } from 'rxjs';
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { Location } from '@angular/common';
 

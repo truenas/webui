@@ -14,12 +14,12 @@ import {
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-import { DialogService } from 'app/services/dialog.service';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { DialogService } from '../../../../services/dialog.service';
+import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 

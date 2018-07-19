@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { CoreEvent } from 'app/core/services/core.service';
-import { ViewControl } from 'app/core/classes/viewcontrol';
+import { CoreEvent } from '../../services/core.service';
+import { ViewControl } from '../../classes/viewcontrol';
 
 @Component({
   selector: 'viewcontrol',

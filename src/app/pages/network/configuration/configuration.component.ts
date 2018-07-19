@@ -7,7 +7,7 @@ import {
   RestService,
   TooltipsService,
   WebSocketService
-} from '../../../services/';
+} from '../../../services';
 import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
   FieldConfig

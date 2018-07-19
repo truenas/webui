@@ -6,9 +6,9 @@ import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { JailService } from '../../../services/';
+import { JailService } from '../../../services';
 
-import { WebSocketService } from '../../../services/';
+import { WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 import { EntityFormComponent } from '../../common/entity/entity-form';

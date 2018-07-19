@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 

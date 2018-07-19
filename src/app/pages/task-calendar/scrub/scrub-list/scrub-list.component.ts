@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { RestService } from '../../../../services';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 
 @Component({
   selector: 'app-scrub-list',

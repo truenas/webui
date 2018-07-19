@@ -13,7 +13,7 @@ import {
   NetworkService,
   RestService,
   WebSocketService
-} from '../../../../services/';
+} from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';

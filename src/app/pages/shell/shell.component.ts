@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { WebSocketService, ShellService } from '../../services/';
+import { WebSocketService, ShellService } from '../../services';
 import { TranslateService } from '@ngx-translate/core';
 import {TooltipComponent} from '../common/entity/entity-form/components/tooltip/tooltip.component';
 import { T } from '../../translate-marker';

@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
 import { T } from '../../../../translate-marker';
 import {
   FieldConfig

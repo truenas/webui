@@ -3,16 +3,16 @@ import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from './services/theme/theme.service';
 
 import { RoutePartsService } from "./services/route-parts/route-parts.service";
 import { MatSnackBar } from '@angular/material';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
-import { ApiService } from 'app/core/services/api.service';
-import { AnimationService } from 'app/core/services/animation.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { ApiService } from './core/services/api.service';
+import { AnimationService } from './core/services/animation.service';
+import { CoreService, CoreEvent } from './core/services/core.service';
+import { PreferencesService } from './core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
 
 @Component({

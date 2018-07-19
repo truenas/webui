@@ -3,14 +3,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 import { MaterialModule } from '../../../appMaterial.module';
-import {  DialogService } from '../../../services/';
+import {  DialogService } from '../../../services';
 
 import {
   RestService,
   TooltipsService,
   WebSocketService,
   NetworkService
-} from '../../../services/';
+} from '../../../services';
 import {
   FormGroup,
 } from '@angular/forms';

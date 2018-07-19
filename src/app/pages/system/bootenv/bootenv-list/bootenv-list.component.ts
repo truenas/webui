@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services';
+import { DialogService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
 import * as _ from 'lodash';

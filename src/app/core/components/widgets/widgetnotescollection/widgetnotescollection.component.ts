@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, ViewChild, OnChanges } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widgetnote.component';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import {RestService,WebSocketService} from 'app/services/';
+import { CoreServiceInjector } from '../../../services/coreserviceinjector';
+import { CoreService, CoreEvent } from '../../../services/core.service';
+import { WidgetNoteComponent } from '../widgetnote/widgetnote.component';
+import { WidgetComponent } from '../widget/widget.component';
+import {RestService,WebSocketService} from '../../../../services';
 
 import { TranslateService } from '@ngx-translate/core';
 

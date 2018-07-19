@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
-import { RestService, WebSocketService } from '../../../../services/';
-import {  DialogService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
+import {  DialogService } from '../../../../services';
 
 
 @Component({

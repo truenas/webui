@@ -1,13 +1,13 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { JailListComponent } from './jail-list/';
-import { StorageListComponent } from './storages/storage-list/';
-import { StorageFormComponent } from './storages/storage-form/';
-import { JailAddComponent } from './jail-add/';
-import { JailEditComponent } from './jail-edit/';
-import { JailWizardComponent } from './jail-wizard/';
-import { JailShellComponent } from './jail-shell/';
+import { JailListComponent } from './jail-list';
+import { StorageListComponent } from './storages/storage-list';
+import { StorageFormComponent } from './storages/storage-form';
+import { JailAddComponent } from './jail-add';
+import { JailEditComponent } from './jail-edit';
+import { JailWizardComponent } from './jail-wizard';
+import { JailShellComponent } from './jail-shell';
 
 export const routes: Routes = [
     {

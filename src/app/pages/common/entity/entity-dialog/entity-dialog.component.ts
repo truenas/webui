@@ -2,7 +2,7 @@ import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
 
-import { EntityFormService } from '../entity-form//services/entity-form.service';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { FormGroup } from '@angular/forms';

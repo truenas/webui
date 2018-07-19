@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
+import { RestService } from '../../../../services';
 
 import { T } from '../../../../translate-marker';
 

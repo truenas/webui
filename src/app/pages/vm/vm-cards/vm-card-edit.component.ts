@@ -3,8 +3,8 @@ import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import {RestService, WebSocketService} from '../../../services/';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import {RestService, WebSocketService} from '../../../services';
+import { CoreService, CoreEvent } from '../../../core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 @Component({

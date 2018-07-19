@@ -14,12 +14,12 @@ import {
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Rx';
+import {Subscription} from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService} from '../../../../services/';
-import { CoreEvent } from 'app/core/services/core.service';
+import {RestService, WebSocketService} from '../../../../services';
+import { CoreEvent } from '../../../../core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
@@ -29,7 +29,7 @@ import {FieldConfig} from './models/field-config.interface';
 import {FieldSet} from './models/fieldset.interface';
 import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
-import {  DialogService } from '../../../../services/';
+import {  DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';

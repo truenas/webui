@@ -3,11 +3,11 @@ import { Subscription } from 'rxjs';
 import { MatGridListModule } from '@angular/material';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment } from 'environments/environment';
 import { AppConfirmService } from "../../services/app-confirm/app-confirm.service";
 import { MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 
-import { RestService, WebSocketService } from '../../services/';
+import { RestService, WebSocketService } from '../../services';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';

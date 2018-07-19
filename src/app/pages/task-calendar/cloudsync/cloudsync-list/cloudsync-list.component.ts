@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 
 @Component({
   selector: 'app-cloudsync-list',

@@ -1,5 +1,5 @@
 import { Injectable, ElementRef  } from '@angular/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from './core.service';
 import { tween, styler, keyframes, physics } from 'popmotion';
 import  scroll  from 'stylefire/scroll';
 import  css  from 'stylefire/css';

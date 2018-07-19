@@ -13,7 +13,7 @@ import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
 import {EntityUtils} from '../../../common/entity/utils';
 
 import * as _ from 'lodash';

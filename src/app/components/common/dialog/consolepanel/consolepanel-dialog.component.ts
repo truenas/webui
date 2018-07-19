@@ -1,6 +1,6 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter } from '@angular/core';
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services';
 
 @Component({
   selector: 'consolepanel-dialog',

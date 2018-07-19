@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core'
 //import * as fit from 'vscode-xterm/lib/addons/fit';
 //import * as attach from 'vscode-xterm/lib/addons/attach';
 
-import { WebSocketService, ShellService } from '../../../../services/';
+import { WebSocketService, ShellService } from '../../../../services';
 import { TooltipComponent } from '../../../common/entity/entity-form/components/tooltip/tooltip.component';
 
 @Component({

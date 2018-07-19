@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { IscsiService, RestService } from '../../../../../services/';
+import { IscsiService, RestService } from '../../../../../services';
 import { EntityUtils } from '../../../../common/entity/utils';
 
 import { DynamicFieldDirective } from '../../../../common/entity/entity-form/components/dynamic-field/dynamic-field.directive';

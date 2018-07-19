@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { EntityTaskComponent } from '../../../common/entity/entity-task';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService } from '../../../../services/';
+import { TaskService, UserService } from '../../../../services';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../../translate-marker';

@@ -1,27 +1,27 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/'
-import { SnapshotAddComponent } from './snapshots/snapshot-add/';
-import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
-import { SnapshotListComponent } from './snapshots/snapshot-list/';
-import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback/';
-import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
-import { ManagerComponent } from './volumes/manager/';
+import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions'
+import { SnapshotAddComponent } from './snapshots/snapshot-add';
+import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
+import { SnapshotListComponent } from './snapshots/snapshot-list';
+import { SnapshotRollbackComponent } from './snapshots/snapshot-rollback';
+import { DatasetFormComponent } from './volumes/datasets/dataset-form';
+import { ManagerComponent } from './volumes/manager';
 // import { VolumesEditComponent } from './volumes-edit/index';
-import { VolumeDeleteComponent } from './volumes/volume-delete/index';
-import { VolumesListComponent } from './volumes/volumes-list/';
-import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
+import { VolumeDeleteComponent } from './volumes/volume-delete';
+import { VolumesListComponent } from './volumes/volumes-list';
+import { ZvolFormComponent } from './volumes/zvol/zvol-form';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { DisksListComponent } from './disks/disks-list/';
-import { DiskFormComponent } from './disks/disk-form/';
+import { DiskListComponent } from './disks/disk-list/';
+import { DiskFormComponent } from './disks/disk-form';
 import { DiskWipeComponent } from './disks/disk-wipe/disk-wipe.component';
-import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
-import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
-import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
-import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
+import { VolumeAddkeyFormComponent } from './volumes/volumeaddkey-form';
+import { VolumeRekeyFormComponent } from './volumes/volumerekey-form';
+import { VolumeCreatekeyFormComponent } from './volumes/volumecreatekey-form';
+import { VolumeChangekeyFormComponent } from './volumes/volumechangekey-form';
 import { VolumeImportWizardComponent} from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
@@ -147,7 +147,7 @@ export const routes: Routes = [
         data: { title: 'Disks', breadcrumb: 'Disks', icon: 'view_stream' },
         children: [
           {
-            path: '', component: DisksListComponent,
+            path: '', component: DiskListComponent,
             data: { title: 'Disks', breadcrumb: 'Disks' }
           },
           {

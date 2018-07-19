@@ -10,9 +10,9 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
-import { DiskComponent } from './disk/';
-import { VdevComponent } from './vdev/';
+import { RestService, WebSocketService, DialogService } from '../../../../services';
+import { DiskComponent } from './disk';
+import { VdevComponent } from './vdev';
 import { MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { TranslateService } from '@ngx-translate/core';

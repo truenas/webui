@@ -3,7 +3,7 @@ import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { IscsiService } from '../../../../../services/';
+import { IscsiService } from '../../../../../services';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
 import { T } from '../../../../../translate-marker';

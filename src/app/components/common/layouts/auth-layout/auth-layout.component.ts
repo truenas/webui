@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../../../services/language.service';
-import { Theme } from 'app/services/theme/theme.service';
+import { Theme } from '../../../../services/theme/theme.service';
 
 @Component({
   selector: 'app-auth-layout',

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { ApiService } from 'app/core/services/api.service';
+import { CoreService, CoreEvent } from '../core/services/core.service';
+import { ApiService } from '../core/services/api.service';
 
 interface StatSource {
   name:string;

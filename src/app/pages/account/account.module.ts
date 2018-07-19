@@ -9,11 +9,11 @@ import { EntityModule } from '../common/entity/entity.module';
 import { StorageService } from '../../services/storage.service';
 
 import { routing } from './account.routing';
-import { GroupListComponent } from './groups/group-list/';
-import { GroupFormComponent } from './groups/group-form/';
-import { UserListComponent } from './users/user-list/';
-import { UserFormComponent } from './users/user-form/';
-import { ChangePasswordComponent } from './users/change-password/';
+import { GroupListComponent } from './groups/group-list';
+import { GroupFormComponent } from './groups/group-form';
+import { UserListComponent } from './users/user-list';
+import { UserFormComponent } from './users/user-form';
+import { ChangePasswordComponent } from './users/change-password';
 import { MembersComponent } from './groups/members/members.component';
 
 @NgModule({

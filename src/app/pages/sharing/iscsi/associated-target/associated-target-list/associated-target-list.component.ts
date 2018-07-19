@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { IscsiService } from '../../../../../services/';
+import { IscsiService } from '../../../../../services';
 import * as _ from 'lodash';
 
 @Component({

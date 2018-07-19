@@ -1,16 +1,16 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { CoreServiceInjector } from '../../../services/coreserviceinjector';
 import { Router } from '@angular/router';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { MaterialModule } from 'app/appMaterial.module';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+import { CoreService, CoreEvent } from '../../../services/core.service';
+import { MaterialModule } from '../../../../appMaterial.module';
+import { ChartData } from '../../viewchart/viewchart.component';
+import { ViewChartDonutComponent } from '../../viewchartdonut/viewchartdonut.component';
+import { ViewChartPieComponent } from '../../viewchartpie/viewchartpie.component';
+import { ViewChartLineComponent } from '../../viewchartline/viewchartline.component';
+import { AnimationDirective } from '../../../directives/animation.directive';
 import filesize from 'filesize';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { environment } from 'app/../environments/environment';
+import { WidgetComponent } from '../widget/widget.component';
+import { environment } from 'environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';
 

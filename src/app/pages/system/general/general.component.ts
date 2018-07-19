@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services/';
+import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services';
 import {AppLoaderService} from '../../../services/app-loader/app-loader.service';
 import {
   FieldConfig

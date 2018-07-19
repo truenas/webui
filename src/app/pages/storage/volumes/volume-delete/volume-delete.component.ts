@@ -8,11 +8,11 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { RestService } from '../../../../services/rest.service';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
 import { Validators } from '@angular/forms';
 

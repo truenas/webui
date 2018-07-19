@@ -12,7 +12,7 @@ import { NgUploaderModule } from 'ngx-uploader';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { RestService, WebSocketService } from '../../../services/index';
+import { RestService, WebSocketService } from '../../../services';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 

@@ -3,8 +3,8 @@ import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 
 
-import {RestService, WebSocketService} from '../../../services/';
-import {EntityTableComponent} from '../../common/entity/entity-table/';
+import {RestService, WebSocketService} from '../../../services';
+import {EntityTableComponent} from '../../common/entity/entity-table';
 
 @Component({
   selector : 'app-vm-list',

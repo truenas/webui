@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogService } from '../../../../app/services';
+import { DialogService } from '../../../services';
 import { T } from '../../../translate-marker';
 
 

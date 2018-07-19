@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';

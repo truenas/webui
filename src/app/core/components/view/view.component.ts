@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { CoreServiceInjector } from '../../services/coreserviceinjector';
+import { ThemeService } from '../../../services/theme/theme.service';
 import { Subject } from 'rxjs/Subject';
-import { CoreEvent } from 'app/core/services/core.service';
-import { View } from 'app/core/classes/view';
+import { CoreEvent } from '../../services/core.service';
+import { View } from '../../classes/view';
 
 // This makes the metadata available globally
 // Deal Breaker: Angular injects the component's

@@ -9,13 +9,13 @@ import {
   RestService,
   WebSocketService,
   StorageService
-} from '../../../../services/';
+} from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import {
   matchOtherValidator
 } from '../../../common/entity/entity-form/validators/password-validation';
-import {  DialogService } from '../../../../services/';
+import {  DialogService } from '../../../../services';
 import {Validators} from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 

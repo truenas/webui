@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
+import { ViewChartComponent, ViewChartMetadata } from '../viewchart/viewchart.component';
 import * as d3 from 'd3';
 
 interface TimeData {

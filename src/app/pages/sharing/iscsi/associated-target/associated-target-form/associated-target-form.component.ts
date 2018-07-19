@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { IscsiService } from '../../../../../services/';
+import { IscsiService } from '../../../../../services';
 import { T } from '../../../../../translate-marker';
 
 @Component({

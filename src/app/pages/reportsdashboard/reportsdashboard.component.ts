@@ -6,9 +6,9 @@ import {
   RestService,
   SystemGeneralService,
   WebSocketService
-} from '../../services/';
+} from '../../services';
 import { PageEvent } from '@angular/material';
-import { ErdService } from 'app/services/erd.service';
+import { ErdService } from '../../services/erd.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../translate-marker';
 

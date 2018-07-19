@@ -5,7 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';
 import { CoreService, CoreEvent } from './core.service';
 import { ApiService } from './api.service';
-import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import { ThemeService, Theme } from '../../services/theme/theme.service';
 import * as moment from 'moment';
 
 export interface UserPreferences {

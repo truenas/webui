@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';

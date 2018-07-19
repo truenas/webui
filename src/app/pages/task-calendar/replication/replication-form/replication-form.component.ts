@@ -16,13 +16,13 @@ import {
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
-import {RestService, WebSocketService} from '../../../../services/';
-import { DialogService } from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
+import { DialogService } from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
-import { ReplicationService } from 'app/pages/task-calendar/replication/replication.service';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { ReplicationService } from '../replication.service';
+import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 

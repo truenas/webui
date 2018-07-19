@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
-import {environment} from '../../../environments/environment';
+import {environment} from 'environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({

@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, Renderer2, ElementRef } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { CoreServiceInjector } from '../../../services/coreserviceinjector';
 import { Router } from '@angular/router';
 //import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { MaterialModule } from 'app/appMaterial.module';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { MaterialModule } from '../../../../appMaterial.module';
+import { AnimationDirective } from '../../../directives/animation.directive';
+import { WidgetComponent } from '../widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';

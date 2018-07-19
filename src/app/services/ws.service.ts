@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
 import {LocalStorage} from 'ngx-webstorage';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject, Subscription} from 'rxjs';
 
-import {environment} from '../../environments/environment';
+import {environment} from 'environments/environment';
 
 @Injectable()
 export class WebSocketService {

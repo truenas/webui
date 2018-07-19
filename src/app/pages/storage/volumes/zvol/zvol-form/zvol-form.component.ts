@@ -4,9 +4,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../../services/';
+import { RestService, WebSocketService } from '../../../../../services';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from '../../../../../services/dialog.service';
 import { T } from '../../../../../translate-marker';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';

@@ -26,19 +26,19 @@ import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
 
-import { ENV_PROVIDERS } from '../environments/environment';
+import { ENV_PROVIDERS } from 'environments/environment';
 import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 import { AppLoaderModule } from './services/app-loader/app-loader.module';
-import { NotificationsService } from 'app/services/notifications.service';
+import { NotificationsService } from './services/notifications.service';
 import { MarkdownModule } from 'angular2-markdown';
 
 // Core Application Services and Service Injector
-import { CoreServices} from 'app/core/services/coreservices.module';
-import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { StatsService } from 'app/services/stats.service';
+import { CoreServices} from './core/services/coreservices.module';
+import { setCoreServiceInjector } from './core/services/coreserviceinjector';
+import { CoreComponents } from './core/components/corecomponents.module';
+import { StatsService } from './services/stats.service';
 
-import { ErdService } from 'app/services/erd.service';
+import { ErdService } from './services/erd.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';

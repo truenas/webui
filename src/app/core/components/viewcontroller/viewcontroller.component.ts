@@ -1,9 +1,9 @@
 import { Component,ComponentRef, AfterViewInit, ViewChild } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { Display } from 'app/core/components/display/display.component';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { ViewController } from 'app/core/classes/viewcontroller';
-import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
+import { CoreServiceInjector } from '../../services/coreserviceinjector';
+import { Display } from '../display/display.component';
+import { CoreService, CoreEvent } from '../../services/core.service';
+import { ViewController } from '../../classes/viewcontroller';
+import { LayoutContainer, LayoutChild } from '../../classes/layouts';
 import { Subject } from 'rxjs/Subject';
 
 export const ViewControllerMetadata = {

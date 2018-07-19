@@ -1,7 +1,7 @@
 import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DecimalPipe } from '@angular/common';
-import { WebSocketService, RestService } from '../../../../services/';
+import { WebSocketService, RestService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 import { Http } from '@angular/http';
 

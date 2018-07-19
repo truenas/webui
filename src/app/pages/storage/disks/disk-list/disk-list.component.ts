@@ -1,20 +1,20 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
+import { RestService } from '../../../../services';
 import { debug } from 'util';
 import { EntityUtils } from '../../../common/entity/utils';
-import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { EntityTableComponent, InputTableConf } from '../../../common/entity/entity-table/entity-table.component';
+import { DialogService } from '../../../../services/dialog.service';
+import { WebSocketService } from '../../../../services/ws.service';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
-import { ZfsPoolData, VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
-import { ErdService } from 'app/services/erd.service';
+import { ZfsPoolData, VolumesListTableConfig } from '../../volumes/volumes-list/volumes-list.component';
+import { ErdService } from '../../../../services/erd.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 
-export class DisksListConfig implements InputTableConf {
+export class DiskListConfig implements InputTableConf {
 
 
   public static BOOT_POOL: string = T("Boot Pool");
@@ -26,8 +26,8 @@ export class DisksListConfig implements InputTableConf {
   static createRootNodeVolume(): ZfsPoolData {
 
     const zfsRootPool: ZfsPoolData = {
-      id: DisksListConfig.BOOT_POOL,
-      name: DisksListConfig.BOOT_POOL,
+      id: DiskListConfig.BOOT_POOL,
+      name: DiskListConfig.BOOT_POOL,
       path: "/"
 
     };
@@ -71,9 +71,9 @@ export class DisksListConfig implements InputTableConf {
     protected dialogService: DialogService,
     protected rest: RestService) {
 
-    if (DisksListConfig.BOOT_POOL === this._classId) {
+    if (DiskListConfig.BOOT_POOL === this._classId) {
       this.resource_name = "";
-      this.queryCall = DisksListConfig.getRootPoolDisksQueryCall;
+      this.queryCall = DiskListConfig.getRootPoolDisksQueryCall;
     } else if (this._classId !== undefined && this._classId !== "") {
       this.resource_name += "/" + this._classId;
     }
@@ -178,7 +178,7 @@ export class DisksListConfig implements InputTableConf {
     const returnData: any[] = [];
 
     for (let i = 0; i < data.length; i++) {
-      const poolName = (this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DisksListConfig.DISK_NOT_IN_POOL;
+      const poolName = (this.diskPoolMapParent.diskPoolMap.has(data[i].disk_name) === true) ? this.diskPoolMapParent.diskPoolMap.get(data[i].disk_name) : DiskListConfig.DISK_NOT_IN_POOL;
       data[i].poolName = poolName;
       data[i].status = "";
       data[i].diskLabel = "";
@@ -231,9 +231,9 @@ interface DiskPoolMapParent {
 
 @Component({
   selector: 'app-disks-list',
-  templateUrl: './disks-list.component.html'
+  templateUrl: './disk-list.component.html'
 })
-export class DisksListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMapParent {
+export class DiskListComponent extends EntityTableComponent implements OnInit, AfterViewInit, DiskPoolMapParent {
 
   public lockRefCount = 0;
 
@@ -253,7 +253,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
   public poolNamePoolDataMap: Map<string, any> = new Map<string, any>();
 
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: DisksListConfig;
+  conf: DiskListConfig;
   public readonly ALL_DISKS = T("All Disks");
   public selectedKeyName;
   public repaintIt = true;
@@ -264,7 +264,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService, protected snackBar: MatSnackBar) {
     super(rest, router, ws, _eRef, dialogService, loader, erdService, translate, snackBar);
-    this.conf = new DisksListConfig(this.router, "", "All", this, this.loader, this.dialogService, this.rest);
+    this.conf = new DiskListConfig(this.router, "", "All", this, this.loader, this.dialogService, this.rest);
   }
 
 
@@ -290,16 +290,16 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
       // RootNode Volume is treated just a bit specially
       // (uses boot.get_disks from WS instead of storage/disks from api/v1.0. 
-      res.data.push(DisksListConfig.createRootNodeVolume());
+      res.data.push(DiskListConfig.createRootNodeVolume());
 
       res.data.forEach((volume) => {
         this.poolNamePoolDataMap.set(volume.name, volume);
 
-        volume.disksListConfig = new DisksListConfig(this.router, "", volume.name, this, this.loader, this.dialogService, this.rest);
+        volume.disksListConfig = new DiskListConfig(this.router, "", volume.name, this, this.loader, this.dialogService, this.rest);
         volume.type = 'zpool';
         volume.isReady = false;
 
-        if (volume.id !== DisksListConfig.BOOT_POOL) {
+        if (volume.id !== DiskListConfig.BOOT_POOL) {
           try {
             volume.avail = (<any>window).filesize(volume.avail, { standard: "iec" });
           } catch (error) {
@@ -318,7 +318,7 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
 
         this.zfsPoolRows.push(volume);
 
-        if( volume.name !== DisksListConfig.BOOT_POOL) {
+        if( volume.name !== DiskListConfig.BOOT_POOL) {
           this.addRef("VOL_STATS");
           this.rest.get("storage/volume/" + volumeId + "/status", {}).subscribe((volumeStatusResponse) => {
             volume.driveStatusdata = volumeStatusResponse.data[0];
@@ -331,15 +331,15 @@ export class DisksListComponent extends EntityTableComponent implements OnInit, 
         }
 
 
-        let callQuery = (DisksListConfig.BOOT_POOL === volume.id) ? DisksListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
-        let args = (DisksListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
+        let callQuery = (DiskListConfig.BOOT_POOL === volume.id) ? DiskListConfig.getRootPoolDisksQueryCall : "pool.get_disks";
+        let args = (DiskListConfig.BOOT_POOL === volume.id) ? [] : [volumeId];
 
         this.addRef("WS");
 
         this.ws.call(callQuery, args).subscribe((resGetDisks) => {
           resGetDisks.forEach((driveName) => {
             this.diskPoolMap.set(driveName, volume.name);
-            (<DisksListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
+            (<DiskListConfig>volumeObj.disksListConfig).diskMap.set(driveName, driveName);
           });
 
           this.releaseRef("WS");

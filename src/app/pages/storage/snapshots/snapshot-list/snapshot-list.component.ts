@@ -2,7 +2,7 @@ import { Component, ElementRef, Injector, ApplicationRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 

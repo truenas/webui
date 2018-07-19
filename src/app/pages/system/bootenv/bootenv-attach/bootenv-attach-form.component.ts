@@ -11,11 +11,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Rx';
+import {Subscription} from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
 import { T } from '../../../../translate-marker';
 import {EntityUtils} from '../../../common/entity/utils';
 import { debounce } from 'rxjs/operator/debounce';

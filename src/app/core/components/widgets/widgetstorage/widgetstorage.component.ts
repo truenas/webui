@@ -1,17 +1,17 @@
 import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { Display } from 'app/core/components/display/display.component';
-import { ViewControllerComponent, ViewConfig, ViewControllerMetadata } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { CoreServiceInjector } from '../../../services/coreserviceinjector';
+import { CoreService, CoreEvent } from '../../../services/core.service';
+import { Display } from '../../display/display.component';
+import { ViewControllerComponent, ViewConfig, ViewControllerMetadata } from '../../viewcontroller/viewcontroller.component';
 //import { CardComponentMetadata } from 'app/core/components/card/card.component';
-import { MaterialModule } from 'app/appMaterial.module';
+import { MaterialModule } from '../../../../appMaterial.module';
 import { NgForm } from '@angular/forms';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+import { ChartData } from '../../viewchart/viewchart.component';
+import { ViewChartDonutComponent } from '../../viewchartdonut/viewchartdonut.component';
+import { ViewChartPieComponent } from '../../viewchartpie/viewchartpie.component';
+import { AnimationDirective } from '../../../directives/animation.directive';
 //import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import {CardComponent, CardComponentMetadata} from 'app/core/components/card/card.component';
+import {CardComponent, CardComponentMetadata} from '../../card/card.component';
 import filesize from 'filesize';
 
 import { TranslateService } from '@ngx-translate/core';
