@@ -241,14 +241,14 @@ export class GeneralComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.stg_guicertificate =
+    _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
     entityEdit.ws.call('certificate.query', [
         [
           ['CSR', '=', null]
         ]
       ])
       .subscribe((res) => {
-        this.stg_guicertificate =
-          _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
         res.forEach((item) => {
           this.stg_guicertificate.options.push({ label: item.name, value: item.id });
         });
