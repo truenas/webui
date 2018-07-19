@@ -12,6 +12,13 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
 
+interface NetIfInfo {
+  name:string;
+  primary:string;
+  aliases?: string;
+}
+
+
 @Component({
   selector: 'widget-netinfo',
   templateUrl:'./widgetnetinfo.component.html',
@@ -41,6 +48,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   public primaryIp:string = '';
   public rx:string = '';
   public tx:string = '';
+  public primaryNicInfo:NetIfInfo;
   private _primaryNIC:string = '';
   get primaryNIC(){
     return this._primaryNIC;
@@ -73,8 +81,8 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
+      console.log(this.data);
       for(let nic in netInfo){
-
         let ipv4 = netInfo[nic]["IPV4"];
         let ips = this.trimRanges(ipv4);
         let nicInfo:any = {
@@ -83,6 +91,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
           aliases: ips.aliases.toString()
         }
         this.nics.push(nicInfo);
+        console.log(nicInfo);
 
         // Match the UI connection address
         let primary = ipv4.find((x) => {
@@ -90,6 +99,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
           return addr[0] == this.connectionIp;
         });
         if(primary){
+          this.primaryNicInfo = nicInfo;
           this.primaryNIC = nic;
         }
         // Now that we have the Primary NIC, register as a listener for the stat.
