@@ -179,7 +179,7 @@ export class BootEnvironmentListComponent {
   }
 
   doActivate(id) {
-    this.dialog.confirm("Activate", "Are you sure you want to activate it?").subscribe((res) => {
+    this.dialog.confirm("Activate", "Are you sure you want to activate it?", false, "Activate").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -198,7 +198,7 @@ export class BootEnvironmentListComponent {
   }
   toggleKeep(id, status) {
     if (!status){
-      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?").subscribe((res) => {
+      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?", false, "Set Keep Flag").subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
