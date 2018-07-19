@@ -181,7 +181,7 @@ export class UpdateComponent implements OnInit {
         this.train = this.selectedTrain;
       })
     } else if(compare === "NIGHTLY_UPGRADE"){
-        this.dialogService.confirm("Warning", this.train_msg[compare]).subscribe((res)=>{
+        this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
           if (res){
             this.check();
             this.train = event.value;
@@ -190,7 +190,7 @@ export class UpdateComponent implements OnInit {
           }
         })
     } else if (compare === "ALLOWED") {
-      this.dialogService.confirm("Switch Train", "Do you want to switch trains?").subscribe((train_res)=>{
+      this.dialogService.confirm(T("Switch Train"), T("Do you want to switch trains?")).subscribe((train_res)=>{
         if(train_res){
           this.check();
           this.train = event.value;
@@ -258,17 +258,17 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             const ds  = this.dialogService.confirm(
-              "Download Update", "Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading)","update.update",[{ train: this.train, reboot: false }]
+              T("Download Update"), T("Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading"),"update.update",[{ train: this.train, reboot: false }]
             )
             ds.afterClosed().subscribe((status)=>{
               if(status){
                 if (!ds.componentInstance.data[0].reboot){
-                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
+                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                   this.dialogRef.componentInstance.setCall('update.download');
                   this.dialogRef.componentInstance.submit();
                   this.dialogRef.componentInstance.success.subscribe((succ) => {
                     this.dialogRef.close(false);
-                    this.snackBar.open("Updates successfully downloaded",'close', { duration: 5000 });
+                    this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                     this.pendingupdates();
                     
                   });
@@ -285,7 +285,7 @@ export class UpdateComponent implements OnInit {
               
             })
           } else if (res.status === 'UNAVAILABLE'){
-            this.dialogService.Info('Check Now', 'No updates available')
+            this.dialogService.Info(T('Check Now'), T('No updates available'))
           }
         },
         (err) => {
@@ -310,7 +310,7 @@ export class UpdateComponent implements OnInit {
   }
   ApplyPendingUpdate() {
     const apply_pending_update_ds  = this.dialogService.confirm(
-      "Apply Pending Updates", "The system will be rebooted after updates are applied. Do you want to continue?"
+      T("Apply Pending Updates"), T("The system will be rebooted after updates are applied. Do you want to continue?")
     ).subscribe((res)=>{
       if(res){
        this.update();
@@ -377,7 +377,7 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + ":  Automatic update check failed. Please check system network settings."
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(":  Automatic update check failed. Please check system network settings.")
         }, 
         () => {
         });
