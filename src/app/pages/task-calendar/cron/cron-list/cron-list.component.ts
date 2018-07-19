@@ -38,6 +38,7 @@ export class CronListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   protected month_choice: any;
@@ -45,6 +46,54 @@ export class CronListComponent {
     protected taskService: TaskService, protected dialog: DialogService) {}
 
   afterInit(entityList: any) { this.entityList = entityList; }
+
+  public multiActions: Array < any > = [];
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Run Now"),
+      id: "run",
+      icon: "play_arrow",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.dialog.confirm(T("Run Now"), T(" Would you like to run this cron job now?"), true).subscribe((run) => {
+          if (run) {
+            this.rest.post(this.resource_name + '/' + selected[0].id + '/run/', {} ).subscribe((res) => {
+              this.translate.get("close").subscribe((close) => {
+                this.entityList.snackBar.open(res.data, close, { duration: 5000 });
+              });
+            }, (err) => {
+              new EntityUtils().handleError(this, err);
+            });
+          }
+        });
+      }
+
+    },
+    {
+      label : T("Edit"),
+      id: "edit",
+      icon: "edit",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.router.navigate(new Array('/').concat(
+          [ "tasks", "cron", "edit", selected[0].id ]));
+      }
+
+    },
+    {
+      label : T("Delete"),
+      id: "delete",
+      icon: "delete",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
+      }
+    }
+  ];
 
   getActions(row) {
     const actions = [];

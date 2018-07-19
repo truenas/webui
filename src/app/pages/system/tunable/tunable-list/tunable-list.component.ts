@@ -37,7 +37,10 @@ export class TunableListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   }
+
+  public multiActions: Array < any > = [];
 
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {});

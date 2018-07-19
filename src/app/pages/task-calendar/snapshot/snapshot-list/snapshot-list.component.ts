@@ -74,9 +74,12 @@ export class SnapshotListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService) {}
+
+  public multiActions: Array <any> = [];
 
   dataHandler(EntityTable: any) {
     for (let i = 0; i < EntityTable.rows.length; i++) {

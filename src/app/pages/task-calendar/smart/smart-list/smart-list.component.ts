@@ -30,6 +30,7 @@ export class SmartListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   protected month_choice: any;
@@ -40,6 +41,8 @@ export class SmartListComponent {
       this.type_choice = res;
     });
   }
+
+  public multiActions: Array <any> = [];
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {

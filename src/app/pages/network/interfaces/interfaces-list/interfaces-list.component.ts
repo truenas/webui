@@ -32,9 +32,12 @@ export class InterfacesListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
 
   constructor(_rest: RestService, _router: Router) {}
+
+  public multiActions: Array <any> = [];
 
   rowValue(row, attr) {
     if (attr == 'ipv4_addresses' || attr == 'ipv6_addresses') {

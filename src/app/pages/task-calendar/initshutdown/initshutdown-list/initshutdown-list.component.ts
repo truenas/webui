@@ -29,7 +29,10 @@ export class InitshutdownListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
+
+  public multiActions: Array <any> = [];
 
   protected month_choice: any;
   constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService) {}
