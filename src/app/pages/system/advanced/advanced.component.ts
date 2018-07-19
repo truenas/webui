@@ -131,11 +131,6 @@ export class AdvancedComponent implements OnInit {
                 devices as they are created without swap.')
   }, {
     type: 'checkbox',
-    name: 'consolescreensaver',
-    placeholder: T('Enable Console Screensaver'),
-    tooltip: T('Enable or disable the console screensaver.')
-  }, {
-    type: 'checkbox',
     name: 'powerdaemon',
     placeholder: T('Enable Power Saving Daemon'),
     tooltip: T('<a\
