@@ -19,7 +19,9 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 
 @Component({
   selector: 'app-general',
-  templateUrl: './general.component.html'
+  template: `<entity-form [conf]="this"></entity-form>`,
+  styleUrls: ['./general.component.css'],
+
 })
 export class GeneralComponent implements OnDestroy {
 
