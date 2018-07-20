@@ -1,4 +1,3 @@
-<style>
 .mat-fab-bottom-right-1 {
   top: auto !important;
   right: 30px !important;
@@ -34,6 +33,3 @@
   position: fixed !important;
   z-index: 2;
 }
-
-</style>
-<entity-form [conf]="this"></entity-form>

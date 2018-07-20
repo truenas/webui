@@ -1,6 +1,8 @@
 <h1 mat-dialog-title> {{ title | translate }} </h1>
 
 <div mat-dialog-content>
+  <span [innerHTML]="conf.message"></span>
+  <br>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
   </ng-container>
 </div>
