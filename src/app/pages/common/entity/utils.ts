@@ -59,7 +59,6 @@ export class EntityUtils {
   }
 
   handleWSError(entity: any, res: any) {
-    console.log("foo");
     if (res.extra) {
       let scroll = false;
       for (let i = 0; i < res.extra.length; i++) {
@@ -89,6 +88,7 @@ export class EntityUtils {
       if (res.trace && res.trace.formatted && entity.dialog) {
         entity.dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
       } else {
+        // if it can't print the error at least put it on the console.
         console.log(res);
       }
     }

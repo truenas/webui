@@ -106,7 +106,6 @@ export class CertificateEditComponent {
     if (value.CSR != null) {
       payload['certificate'] = value.certificate;
     }
-    console.log(payload);
 
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, payload]).subscribe(
