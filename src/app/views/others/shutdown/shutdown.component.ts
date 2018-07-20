@@ -10,11 +10,17 @@ import { DialogService } from '../../../services/dialog.service';
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.css']
 })
-export class ShutdownComponent implements OnInit {
+export class ShutdownComponent implements OnInit {    
+  
+  public is_freenas: Boolean = false;
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService) {
+      this.ws = ws;
+      this.ws.call('system.is_freenas').subscribe((res)=>{
+        this.is_freenas = res;
+      });
   }
 
   ngOnInit() {

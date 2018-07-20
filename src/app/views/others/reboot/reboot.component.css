@@ -1,3 +1,27 @@
-.copyright-txt {
+.copyright-txt, #message, #logo {
     text-align: center;
+}
+
+#logo {
+    width: 80%;
+}
+
+.copyright-txt {
+    margin-top: 10px;
+}
+
+#wrapper {
+    height: 100%;
+
+    background-color: #0095d5;
+}
+
+#shutdown-card {
+    width: 275px;
+    position: relative;
+    margin: 60px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
