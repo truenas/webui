@@ -3,10 +3,10 @@ node('FreeNAS-webui-yarn') {
       checkout scm
     }
     stage('yarn Install') {
-      echo 'NPM Install...'
+      echo 'Yarn Install...'
       sh 'yarn install'
     }
-    stage('NPM Build') {
+    stage('Yarn Build') {
       echo 'yarn run build:prod:aot'
       sh 'yarn run build:prod:aot'
     }
