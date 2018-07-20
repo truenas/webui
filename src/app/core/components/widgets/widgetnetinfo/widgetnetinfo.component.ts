@@ -81,7 +81,6 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
-      console.log(this.data);
       for(let nic in netInfo){
         let ipv4 = netInfo[nic]["IPV4"];
         let ips = this.trimRanges(ipv4);
@@ -91,7 +90,6 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
           aliases: ips.aliases.toString()
         }
         this.nics.push(nicInfo);
-        console.log(nicInfo);
 
         // Match the UI connection address
         let primary = ipv4.find((x) => {
