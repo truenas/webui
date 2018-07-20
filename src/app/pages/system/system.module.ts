@@ -44,12 +44,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
+import { DxTreeListModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule, DxTreeListModule
   ],
   declarations: [
     GeneralComponent,
