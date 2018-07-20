@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -57,10 +57,11 @@ export class CertificateEditComponent {
   protected certificateField: any;
   protected privatekeyField: any;
   protected CSRField: any;
+  protected entityForm: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService, protected dialog: DialogService) {}
 
   preInit() {
     this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
@@ -74,6 +75,7 @@ export class CertificateEditComponent {
   }
 
   afterInit(entityEdit: any) {
+    this.entityForm = entityEdit;
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.pk = parseInt(params['pk']);
@@ -85,7 +87,7 @@ export class CertificateEditComponent {
           if (res[0]) {
             if (res[0].CSR != null) {
               this.CSRField.isHidden = false;
-              this.certificateField.isHidden = true;
+              this.certificateField.readonly = false;
               this.privatekeyField.isHidden = true;
             } else {
               this.CSRField.isHidden = true;
@@ -101,6 +103,10 @@ export class CertificateEditComponent {
   customSubmit(value) {
     let payload = {};
     payload['name'] = value.name;
+    if (value.CSR != null) {
+      payload['certificate'] = value.certificate;
+    }
+    console.log(payload);
 
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, payload]).subscribe(
@@ -110,7 +116,7 @@ export class CertificateEditComponent {
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleError(this, res);
+        new EntityUtils().handleWSError(this.entityForm, res);
       }
     );
   }
