@@ -66,7 +66,7 @@ export class EntityUtils {
         const field = res.extra[i][0].split('.').pop();
         const error = res.extra[i][1];
         const fc = _.find(entity.fieldConfig, {'name' : field});
-        if (fc) {
+        if (fc && !fc.isHidden) {
           const element = document.getElementById(field);
           if (element) {
             if (entity.conf && entity.conf.advanced_field && 
