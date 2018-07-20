@@ -71,7 +71,9 @@ export class ActiveDirectoryComponent {
       placeholder : T('Domain Account Name'),
       tooltip : T('Enter Active Directory administrator account name.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      disabled: false,
+      isHidden:true
     },
     {
       type : 'input',
@@ -80,7 +82,9 @@ export class ActiveDirectoryComponent {
       tooltip : T('Enter the administrator account password.'),
       inputType : 'password',
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required ],
+      disabled: false,
+      isHidden:true
     },
     {
       type : 'input',
@@ -230,7 +234,9 @@ export class ActiveDirectoryComponent {
       placeholder : T('Kerberos Principal'),
       tooltip : T('Select the keytab created in <a href="guide"\
                  target="_blank">Kerberos Keytabs</a>.'),
-      options : []
+      options : [
+        {label : '---', value : ""},
+      ]
     },
     {
       type : 'input',
@@ -399,7 +405,7 @@ export class ActiveDirectoryComponent {
     });
 
     entityEdit.formGroup.controls['ad_idmap_backend'].valueChanges.subscribe((res)=> {
-      if ((this.idmapBacked != null) && (this.idmapBacked != res)) {
+      if ((this.idmapBacked != null) && (this.idmapBacked !== res)) {
         this.dialogservice.confirm(T("Active Directory IDMAP change!"),
           T("<font color='red'>STOP</font>: Do you know what you are doing? <br><br>\
           The idmap_ad plugin provides a way for Winbind to read id mappings from \
@@ -424,5 +430,28 @@ export class ActiveDirectoryComponent {
         this.idmapBacked = res;
       }
     });
+
+    entityEdit.formGroup.controls['ad_kerberos_principal'].valueChanges.subscribe((res)=>{
+      if(res){
+        entityEdit.setDisabled('ad_bindname', true);
+        entityEdit.setDisabled('ad_bindpw', true);
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = true;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = true;
+
+      } else {
+        entityEdit.setDisabled('ad_bindname', false);
+        entityEdit.setDisabled('ad_bindpw', false);
+        _.find(this.fieldConfig, {'name' : 'ad_bindname'}).isHidden = false;
+        _.find(this.fieldConfig, {'name' : 'ad_bindpw'}).isHidden = false;
+      }
+
+    })
+  }
+
+  beforeSubmit(data){
+    if(data.ad_kerberos_principal){
+      data.ad_bindname = ""
+      data.ad_bindpw = ""
+    }
   }
 }
