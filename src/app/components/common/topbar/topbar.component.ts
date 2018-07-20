@@ -134,6 +134,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     domHelper.toggleClass(appBody, 'collapsed-menu');
     domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
+
+    // Fix for sidebar
+    if(!domHelper.hasClass(appBody, 'collapsed-menu')) {
+      (<HTMLElement>document.querySelector('mat-sidenav-content')).style.marginLeft = '240px';
+      // this.toggleSidenav();
+    }
   }
 
   onShowAbout() {
