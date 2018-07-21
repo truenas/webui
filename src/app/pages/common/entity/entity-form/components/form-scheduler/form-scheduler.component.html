@@ -59,16 +59,17 @@
       <mat-divider></mat-divider>
 
       <section style="text-align:left;" class="m-h-d">
-        <h4 class="preview-label">Minutes/Hours/Days</h4>
+        <h4 class="preview-label"><span *ngIf="!config.noMinutes">Minutes/</span>Hours/Days</h4>
         <!--<mat-form-field >
           <input matInput placeholder="Seconds">
           </mat-form-field>-->
-          <mat-form-field>
+          <mat-form-field *ngIf="!config.noMinutes">
             <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
           </mat-form-field>
           <mat-form-field>
             <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
           </mat-form-field>
+          <br *ngIf="config.noMinutes"/>
           <mat-form-field>
             <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
           </mat-form-field>
