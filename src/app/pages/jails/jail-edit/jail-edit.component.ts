@@ -1121,6 +1121,8 @@ export class JailEditComponent implements OnInit {
   protected ip6_prefixField: any;
 
   public exception_error: boolean = false;
+  public exception_error_message = T("Not able to edit dhcp, jail_zfs or template while jails is running. \
+                                      Please stop jail first.");
   protected pk_dhcp: any;
   protected pk_jail_zfs: any;
   protected pk_template: any;

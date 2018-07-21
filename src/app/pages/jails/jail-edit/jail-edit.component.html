@@ -80,9 +80,9 @@
     </mat-expansion-panel> -->
     <mat-card-actions>
       <p *ngIf="exception_error">
-        <font color="red"> {{"Not able to edit dhcp, jail_zfs or template while jails is running. Please stop jail first." | translate }} </font>
+        <font color="red"> {{ exception_error_message | translate }} </font>
       </p>
-      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!formGroup.valid">{{ "Save" | translate }}</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!formGroup.valid || exception_error">{{ "Save" | translate }}</button>
       <button *ngIf="route_success" (click)="goBack()" mat-raised-button color="accent" type="button">{{ "Cancel" | translate }}</button>
     </mat-card-actions>
   </form>
