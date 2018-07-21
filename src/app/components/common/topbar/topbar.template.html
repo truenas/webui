@@ -5,7 +5,7 @@
       <mat-icon>menu</mat-icon>
     </button>
     <!-- Sidenav toggle collapse -->
-    <button mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" matTooltip="Toggle Collapse" class="toggle-collapsed">
+    <button *ngIf="sidenav.opened" mat-icon-button id="collapseToggle" fxHide.lt-mat="true" (click)="toggleCollapse()" matTooltip="Toggle Collapse" class="toggle-collapsed">
       <mat-icon>chevron_left</mat-icon>
     </button>
     <!-- Search form
