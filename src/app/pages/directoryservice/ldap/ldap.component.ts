@@ -278,6 +278,11 @@ export class LdapComponent {
               protected systemGeneralService: SystemGeneralService,
               private dialogservice: DialogService) {}
 
+  resourceTransformIncomingRestData(data) {
+    delete data['ldap_bindpw'];
+    return data;
+  }
+
   afterInit(entityEdit: any) {
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'ldap_kerberos_realm'});

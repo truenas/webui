@@ -347,6 +347,11 @@ export class ActiveDirectoryComponent {
               protected systemGeneralService: SystemGeneralService,
               private dialogservice: DialogService) {}
 
+  resourceTransformIncomingRestData(data) {
+    delete data['ad_bindpw'];
+    return data;
+  }
+
   afterInit(entityEdit: any) {
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {
       this.ad_kerberos_realm = _.find(this.fieldConfig, {name : 'ad_kerberos_realm'});
