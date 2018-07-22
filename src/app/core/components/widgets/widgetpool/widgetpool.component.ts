@@ -97,6 +97,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
+      console.log(evt.data);
       if(evt.data.callArgs[0] == this.volumeData.id){
 
         // Simulate massive array

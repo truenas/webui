@@ -50,12 +50,10 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
     console.log("******** Dashboard Initializing... ********");
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       this.setPoolData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       this.setDisksData(evt);
     });
 

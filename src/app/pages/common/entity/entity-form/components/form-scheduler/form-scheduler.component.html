@@ -2,10 +2,10 @@
   <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let preset of presets" [value]="preset.value">
-        {{ preset.label }}
+        {{ preset.label }} <em class="crontab">({{preset.value}})</em>
       </mat-option>
       <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="crontab">
-        Custom
+        Custom <em class="crontab">({{crontab}})</em>
       </mat-option>
       </mat-select>
     </mat-form-field>
@@ -37,7 +37,7 @@
         </mat-month-view>
       </div>
       <mat-divider></mat-divider>
-      <ul class="schedule-list">
+      <ul class="schedule-list" #preview>
         <ng-container *ngFor="let date of generatedSchedule;">
           <li>{{date}}</li>
         </ng-container>
