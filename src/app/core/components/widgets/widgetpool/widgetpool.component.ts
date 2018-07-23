@@ -113,14 +113,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
           let set = 0;
           let last = 32*total-1
           for(let i = 0; i < (32*total); i++ ){
-              //console.log("Set " + set);
             let modulo = i % 32;
             this.diskSets[set].push(this.disks[i]);
             if(modulo == 31){
               set++
 
               if(i < last){this.diskSets.push([]);}
-              //console.log("New Set #" + set);
             }
 
           }
