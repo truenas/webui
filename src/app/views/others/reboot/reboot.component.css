@@ -1,3 +1,19 @@
+#wrapper {
+    height: 100%;
+    background-color: #0095d5;
+}
+
+#shutdown-card {
+    width: 275px;
+    position: relative;
+    margin: auto;
+    top: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 .copyright-txt, #message, #logo {
     text-align: center;
 }
@@ -10,18 +26,15 @@
     margin-top: 10px;
 }
 
-#wrapper {
-    height: 100%;
+@media screen and (max-height: 700px) {
+    #shutdown-card {
+        width: 225px;
+        font-size: 80%;
+        top: 20px;
+    }
 
-    background-color: #0095d5;
-}
-
-#shutdown-card {
-    width: 275px;
-    position: relative;
-    margin: 60px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    .mat-dialog-container {
+        height: 100px;
+        width: 100px;
+    }
 }
