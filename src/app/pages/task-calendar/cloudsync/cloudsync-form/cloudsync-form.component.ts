@@ -351,7 +351,12 @@ export class CloudsyncFormComponent implements OnInit {
                   this.setDisabled('bucket', true, true);
                   this.validCredential = false;
                   this.formGroup.controls['credentials'].setErrors(err.reason);
-                  this.dialog.errorReport(T('Error: ') + err.error, err.reason, err.trace.formatted);
+                  this.dialog.confirm(T('Error: ') + err.error, err.reason, true, T('Fix Credential')).subscribe(
+                    (res) => {
+                      if (res) {
+                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', item.id]));
+                      }
+                    })
                 }
               );
             } else {
