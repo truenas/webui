@@ -16,6 +16,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { T } from '../../../translate-marker';
 
 interface VmProfile {
   name?:string;
@@ -145,6 +146,15 @@ export class VmCardsComponent implements OnInit {
 
       const cacheIndex = this.getCardIndex('id',evt.data.id,true);
       this.cache[cacheIndex].state = 'running';
+    });
+
+    this.core.register({observerClass:this,eventName:"VmStartFailed"}).subscribe((evt:CoreEvent) => {
+      this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
+      const cardIndex = this.getCardIndex('id',evt.data.id[0]);
+      this.cards[cardIndex].state = 'stopped';
+
+      const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
+      this.cache[cacheIndex].state = 'stopped';
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
