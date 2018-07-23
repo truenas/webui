@@ -6,6 +6,7 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 import {RestService, WebSocketService} from '../../../services';
 import { CoreService, CoreEvent } from '../../../core/services/core.service';
 import { Subject } from 'rxjs/Subject';
+import { Validators } from '../../../../../node_modules/@angular/forms';
 
 @Component({
   selector : 'vm-card-edit',
@@ -35,6 +36,8 @@ export class VmCardEditComponent implements OnChanges {
             width:'100%',
             placeholder: 'Name',
             tooltip: 'Enter a name for the VM.',
+            required: true,
+            validation:[Validators.required]
           },
           { type: 'input',
             name : 'description',
@@ -64,7 +67,9 @@ export class VmCardEditComponent implements OnChanges {
                       <b>UEFI-CSM</b> (Compatibility Support Mode) for\
                       older operating systems that only support BIOS\
                       booting.',
-            options: [] , class:'inline'}
+            options: [] , class:'inline',
+            required: true,
+            validation:[Validators.required]}
         ]
       },
       {
@@ -82,14 +87,19 @@ export class VmCardEditComponent implements OnChanges {
                       also have operational or licensing restrictions on\
                       the number of CPUs.',
 
-            class:'inline'},
+            class:'inline',
+            required: true,
+            validation:[Validators.required, Validators.min(1), Validators.max(16)]},
           {
             type: 'input',
             name: 'memory',
             width:'60%',
             placeholder: 'Memory Size (MiB)',
             tooltip: 'Allocate a number of mebibytes of RAM to the VM.',
-            class:'inline'}
+            class:'inline',
+            required: true,
+            validation:[Validators.required]
+          }
         ]
       }
     ];

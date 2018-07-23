@@ -120,20 +120,14 @@ export class AdvancedComponent implements OnInit {
         }]
       }
     ],
-  }, {
+  }, 
+  {
     type: 'input',
     name: 'swapondrive',
-    placeholder: T('Swap size on each drive in GiB, affects new disks\
- only. Setting this to 0 disables swap creation completely (STRONGLY\
- DISCOURAGED).'),
+    placeholder: T('Swap size in GiB'),
     tooltip: T('By default, all data disks are created with this amount\
                 of swap. This setting does not affect log or cache\
                 devices as they are created without swap.')
-  }, {
-    type: 'checkbox',
-    name: 'consolescreensaver',
-    placeholder: T('Enable Console Screensaver'),
-    tooltip: T('Enable or disable the console screensaver.')
   }, {
     type: 'checkbox',
     name: 'powerdaemon',

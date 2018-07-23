@@ -51,20 +51,20 @@
 
           <!-- DETAILS -->
           <div fxFlex.xs="100" fxFlex.gt-xs="55" class="details" ngClass.xs="column">
-            <div *ngFor="let nic of nics;let i = index; " class="data-container">
+            <div class="data-container" *ngIf="primaryNicInfo">
               <div><h3>{{"Primary NIC" | translate}}:</h3></div>
 
               <div class="data-row">
                 <span class="label bold"><strong>{{"Name" | translate}}:</strong></span>
-                <p class="value nic-name">{{nics[i].name}}:</p>
+                <p class="value nic-name">{{primaryNicInfo.name}}:</p>
               </div>
               <div class="data-row">
                 <span class="label bold"><strong>{{"IP Address" | translate}}:</strong></span>
-                <p class="value nic.primary ">{{nics[i].primary}}</p>
+                <p class="value nic.primary ">{{primaryNicInfo.primary}}</p>
               </div>
               <div class="data-row">
                 <span class="label bold"><strong>{{"Aliases" | translate}}:</strong></span>
-                <p class="value nic-aliases">{{nics[i].aliases}}</p>
+                <p class="value nic-aliases">{{primaryNicInfo.aliases}}</p>
               </div>
               <div class="data-row">
                 <span class="label bold"><strong>{{"Default Routes" | translate}}:</strong></span>

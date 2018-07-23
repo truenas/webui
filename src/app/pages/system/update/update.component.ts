@@ -1,19 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
+<<<<<<< HEAD
 import { RestService, WebSocketService } from '../../../services';
 import { MarkdownModule } from 'angular2-markdown';
+=======
+import { RestService, WebSocketService } from '../../../services/';
+>>>>>>> master
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
+<<<<<<< HEAD
 import * as _ from 'lodash';
 import { environment } from 'environments/environment';
+=======
+>>>>>>> master
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-update',
@@ -37,6 +42,13 @@ export class UpdateComponent implements OnInit {
   public selectedTrain;
   public general_update_error;
   public update_downloaded=false;
+  public train_msg = {
+    "NIGHTLY_DOWNGRADE": T("You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "MINOR_DOWNGRADE": T("Changing minor version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "MAJOR_DOWNGRADE": T("Changing major version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "SDK": T("Changing SDK version is not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
+    "NIGHTLY_UPGRADE": T("Changing to a nightly train is a one way street. Changing back to stable is not supported!")
+  }
  
   public busy: Subscription;
   public busy2: Subscription;
@@ -45,6 +57,112 @@ export class UpdateComponent implements OnInit {
   constructor(protected router: Router, protected route: ActivatedRoute, protected snackBar: MatSnackBar,
     protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog, 
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService) {
+  }
+  parseTrainName(name) {
+    const version = []
+    let sw_version = "";
+    let branch = "";
+    let split = ""
+    let sdk = ""
+    if (name.match(/-SDK$/)){
+      split = name.split('-');
+      sw_version = split[1];
+      branch = split[2];
+      sdk = split[3];
+      version.push(sw_version);
+      version.push(branch);
+      version.push(sdk);
+    }
+    else {
+      split = name.split('-');
+      sw_version = split[1];
+      branch = split[2];
+      version.push(sw_version);
+      version.push(branch);
+    }
+
+    
+    return version;
+  }
+
+  compareTrains(t1, t2) {
+    const v1 = this.parseTrainName(t1)
+    const v2 = this.parseTrainName(t2);
+    
+    try {
+      if(v1[0] !== v2[0] ) {
+
+        const version1 = v1[0].split('.'); 
+        const version2 = v2[0].split('.');
+        const branch1 = v1[1].toLowerCase();
+        const branch2 = v2[1].toLowerCase();
+        
+
+
+        if(branch1 !== branch2) {
+
+          if(branch2 === "nightlies") {
+            return "NIGHTLY_UPGRADE";
+          } else if(branch1 === "nightlies") {
+            return "NIGHTLY_DOWNGRADE";
+          }
+        } else {
+          if(version2[0] ==="HEAD"){
+            return "ALLOWED"
+          }
+        }
+
+        if (version1[0] === version2[0]){
+          // comparing '11' .1 with '11' .2
+          if(version1[1] && version2[1]){
+            //comparing '.1' with '.2'
+            return version1[1] > version2[1] ? "MINOR_UPGRADE":"MINOR_DOWNGRADE";
+          }
+          if(version1[1]){
+            //handling a case where '.1' is compared with 'undefined'
+            return "MINOR_DOWNGRADE"
+          }
+          if(version2[1]){
+            //comparing '.1' with '.2'
+            return "MINOR_UPGRADE"
+          }
+
+        } else {
+          // comparing '9' .10 with '11' .2
+          return version1[0] > version2[0] ? "MAJOR_UPGRADE":"MAJOR_DOWNGRADE";
+        }
+
+
+      } else {
+        if(v1[0] === v2[0]&&v1[1] !== v2[1]){
+          const branch1 = v1[1].toLowerCase();
+          const branch2 = v2[1].toLowerCase();
+          if(branch1 !== branch2) {
+
+            if(branch2 === "nightlies") {
+              return "NIGHTLY_UPGRADE";
+            } else if(branch1 === "nightlies") {
+              return "NIGHTLY_DOWNGRADE";
+            }
+          } else {
+            if(branch2 === "nightlies" && branch1 === "nightlies") {
+  
+            }
+  
+          }
+          
+        }
+        else {
+          if(v2[2]||v1[2]){
+            return "SDK"
+          }
+        }
+
+
+      }
+    } catch (e) {
+      console.error("Failed to compare trains", e);
+    }
   }
 
   ngOnInit() {
@@ -65,41 +183,32 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  validUpdate(originalVersion, newVersion) {
-    const oriVer = originalVersion.split('-')[1];
-    const oriTrain = originalVersion.split('-')[2];
-    const newVer = newVersion.split('-')[1];
-    const newTrain = newVersion.split('-')[2];
-    if ((!isNaN(oriVer) && !isNaN(newVer)) && (newVer >= oriVer)) {
-      if (oriTrain === newTrain) {
-        return true;
-      } else if ((oriTrain === 'STABLE') && (newTrain === 'Nightlies')) {
-        return true;
-      } else {
-        return false
-      }
-    } else if((!isNaN(oriVer) && isNaN(newVer)) && (newVer >= oriVer) && (oriTrain === newTrain)){
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   onTrainChanged(event){
-    const isValid = this.validUpdate(this.selectedTrain, event.value);
-    if (isValid) {
-      this.dialogService.confirm("Switch Train", "Do you want to switch trains?").subscribe((res)=>{
-        if (res) {
+    const compare = this.compareTrains(this.selectedTrain, event.value);
+    if(compare === "NIGHTLY_DOWNGRADE" || compare === "MINOR_DOWNGRADE" || compare === "MAJOR_DOWNGRADE" || compare ==="SDK") {
+      this.dialogService.Info("Error", this.train_msg[compare]).subscribe((res)=>{
+        this.train = this.selectedTrain;
+      })
+    } else if(compare === "NIGHTLY_UPGRADE"){
+        this.dialogService.confirm(T("Warning"), this.train_msg[compare]).subscribe((res)=>{
+          if (res){
+            this.check();
+            this.train = event.value;
+          } else {
+            this.train = this.selectedTrain;
+          }
+        })
+    } else if (compare === "ALLOWED") {
+      this.dialogService.confirm(T("Switch Train"), T("Do you want to switch trains?")).subscribe((train_res)=>{
+        if(train_res){
           this.check();
           this.train = event.value;
-        }else {
-          this.train = this.selectedTrain;
+
         }
-      });
-    } else {
-      this.dialogService.Info("Confirm", "Changing away from the train is not permitted as it is considered a downgrade. Boot into an existing boot environment using the desired train to upgrade it.").subscribe(res => {
-        this.train = this.selectedTrain;
-      });
+
+      })
+
     }
   }
 
@@ -159,17 +268,17 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             const ds  = this.dialogService.confirm(
-              "Download Update", "Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading)","update.update",[{ train: this.train, reboot: false }]
+              "Download Update", "Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading","update.update",[{ train: this.train, reboot: false }]
             )
             ds.afterClosed().subscribe((status)=>{
               if(status){
                 if (!ds.componentInstance.data[0].reboot){
-                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: false });
+                  this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
                   this.dialogRef.componentInstance.setCall('update.download');
                   this.dialogRef.componentInstance.submit();
                   this.dialogRef.componentInstance.success.subscribe((succ) => {
                     this.dialogRef.close(false);
-                    this.snackBar.open("Updates successfully downloaded",'close', { duration: 5000 });
+                    this.snackBar.open(T("Updates successfully downloaded"),'close', { duration: 5000 });
                     this.pendingupdates();
                     
                   });
@@ -186,7 +295,7 @@ export class UpdateComponent implements OnInit {
               
             })
           } else if (res.status === 'UNAVAILABLE'){
-            this.dialogService.Info('Check Now', 'No updates available')
+            this.dialogService.Info(T('Check Now'), T('No updates available'))
           }
         },
         (err) => {
@@ -211,7 +320,7 @@ export class UpdateComponent implements OnInit {
   }
   ApplyPendingUpdate() {
     const apply_pending_update_ds  = this.dialogService.confirm(
-      "Apply Pending Updates", "The system will be rebooted after updates are applied. Do you want to continue?"
+      T("Apply Pending Updates"), T("The system will be rebooted after updates are applied. Do you want to continue?")
     ).subscribe((res)=>{
       if(res){
        this.update();
@@ -278,7 +387,7 @@ export class UpdateComponent implements OnInit {
           }
         },
         (err) => {
-          this.general_update_error =  err.reason.replace('>', '').replace('<','') + ":  Automatic update check failed. Please check system network settings."
+          this.general_update_error =  err.reason.replace('>', '').replace('<','') + T(":  Automatic update check failed. Please check system network settings.")
         }, 
         () => {
         });

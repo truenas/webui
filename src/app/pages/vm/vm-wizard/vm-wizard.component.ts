@@ -117,7 +117,7 @@ export class VMWizardComponent {
           placeholder: T('Virtual CPUs'),
           inputType: 'number',
           min: 1,
-          validation : [ Validators.required, Validators.min(1) ],
+          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: T('Number of virtual CPUs to allocate to the virtual\
                       machine. The maximum is 16, or fewer if the host\
                       CPU limits the maximum. The VM operating system\

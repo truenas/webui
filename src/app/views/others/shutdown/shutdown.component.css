@@ -1,3 +1,23 @@
-.copyright-txt {
+.copyright-txt, #shutdown-message, #shark, #signin-link {
     text-align: center;
+}
+
+.copyright-txt {
+    margin-top: 10px;
+}
+
+#wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0095d5;
+}
+
+#shutdown-card {
+    width: 275px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }

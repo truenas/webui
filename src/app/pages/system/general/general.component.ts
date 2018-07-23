@@ -10,22 +10,23 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services';
-import {AppLoaderService} from '../../../services/app-loader/app-loader.service';
-import {
-  FieldConfig
-} from '../../common/entity/entity-form/models/field-config.interface';
+import { RestService, UserService, WebSocketService, LanguageService, DialogService } from '../../../services/';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { RequestOptions, Http } from '@angular/http';
 
 @Component({
   selector: 'app-general',
-  templateUrl: './general.component.html'
+  template: `<entity-form [conf]="this"></entity-form>`,
+  styleUrls: ['./general.component.css'],
 })
 export class GeneralComponent implements OnDestroy {
 
   protected resource_name: string = 'system/settings';
 
-  public fieldConfig: FieldConfig[] = [{
+  public fieldConfig: FieldConfig[] = [
+    {
       type: 'select',
       name: 'stg_guiprotocol',
       placeholder: T('Protocol'),
@@ -180,6 +181,29 @@ export class GeneralComponent implements OnDestroy {
     saveButtonText: 'Ok',
     customSubmit: this.saveCofigSubmit,
   }
+
+  protected uploadConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'upload',
+      name: 'upload_config',
+      placeholder : T('New config to be installed'),
+      tooltip: '',
+      fileLocation: '',
+      hideButton: true,
+      updater: this.updater,
+      parent: this,
+    }
+  ];
+  public uploadConfigFormConf: DialogFormConfiguration = {
+    title: "Upload Config",
+    fieldConfig: this.uploadConfigFieldConf,
+    method_ws: 'config.upload',
+    saveButtonText: 'Ok',
+    customSubmit: this.uploadConfigSubmit,
+    message: '<p>The system will reboot to perform this operation!</p>\
+              <p><font color="red">If the uploaded configuration database file was saved \
+              without the Password Secret Seed, all passwords will be reset.</font></p>',
+  }
   public custActions: Array<any> = [
   {
     id : 'save_config',
@@ -190,7 +214,9 @@ export class GeneralComponent implements OnDestroy {
   },{
     id : 'upload_config',
     name: T('Upload Config'),
-    function : () => {this.router.navigate(new Array('').concat(['system', 'general', 'config-upload']))}
+    function : () => {
+      this.dialog.dialogForm(this.uploadConfigFormConf);
+    }
   },{
     id : 'reset_config',
     name: T('Reset Config'),
@@ -217,7 +243,8 @@ export class GeneralComponent implements OnDestroy {
 
   constructor(protected rest: RestService, protected router: Router,
     protected language: LanguageService, protected ws: WebSocketService,
-    protected dialog: DialogService, protected loader: AppLoaderService) {}
+    protected dialog: DialogService, protected loader: AppLoaderService,
+    public http: Http) {}
 
   resourceTransformIncomingRestData(value) {
     this.protocol = value['stg_guiprotocol'];
@@ -241,14 +268,14 @@ export class GeneralComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.stg_guicertificate =
+    _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
     entityEdit.ws.call('certificate.query', [
         [
           ['CSR', '=', null]
         ]
       ])
       .subscribe((res) => {
-        this.stg_guicertificate =
-          _.find(this.fieldConfig, { 'name': 'stg_guicertificate' });
         res.forEach((item) => {
           this.stg_guicertificate.options.push({ label: item.name, value: item.id });
         });
@@ -410,5 +437,36 @@ export class GeneralComponent implements OnDestroy {
           }
         );
     });
+  }
+
+  updater(file: any, parent: any){
+    const fileBrowser = file.fileInput.nativeElement;
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+    }
+  }
+
+  uploadConfigSubmit(entityDialog) {
+    const parent = entityDialog.conf.fieldConfig[0].parent;
+    const formData: FormData = new FormData();
+
+    parent.loader.open();
+    formData.append('data', JSON.stringify({
+      "method": "config.upload",
+      "params": []
+    }));
+    formData.append('file', parent.subs.file);
+
+    parent.http.post(parent.subs.apiEndPoint, formData).subscribe(
+      (data) => {
+        parent.loader.close();
+        entityDialog.dialogRef.close();
+        parent.router.navigate(['/others/reboot']);
+      },
+      (err) => {
+        parent.loader.close();
+        this.dialog.errorReport(err.status, err.statusText, err._body);
+      }
+    );
   }
 }
