@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../services/';
+import { TaskService } from '../../../services';
 import { FormGroup, Validators } from '@angular/forms';
 import { T } from '../../../translate-marker';
 

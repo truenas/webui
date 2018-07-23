@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
+import { RestService } from '../../../../services';
 
 @Component({
   selector: 'app-kerberos-keytabs-list',
@@ -21,6 +21,7 @@ export class KerberosKeytabsListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(protected rest: RestService, private router: Router) {}
@@ -28,6 +29,21 @@ export class KerberosKeytabsListComponent {
   afterInit(entityList: any) {
     this.entityList = entityList;
   }
+
+  public multiActions: Array <any> = [];
+
+  public singleActions: Array <any> = [
+    {
+      label : "Delete",
+      id: "delete",
+      icon: "delete",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
+      }
+    }
+  ];
 
   getActions(parentRow) {
     return [{

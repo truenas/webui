@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { CardComponent } from 'app/core/components/card/card.component';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { Display } from 'app/core/components/display/display.component';
+import { ViewControllerComponent } from '../viewcontroller/viewcontroller.component';
+import { CardComponent } from '../card/card.component';
+import { CoreService, CoreEvent } from '../../services/core.service';
+import { CoreServiceInjector } from '../../services/coreserviceinjector';
+import { Display } from '../display/display.component';
 
 export interface PageOptions {
   data: any[];

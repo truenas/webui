@@ -9,9 +9,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from '../../../../services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({

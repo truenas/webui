@@ -2,9 +2,9 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import {
   WebSocketService
-} from '../../../../services/';
+} from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import {environment} from '../../../../../environments/environment';
+import {environment} from 'environments/environment';
 
 @Component({
   selector: 'downloadkey-dialog',

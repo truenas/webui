@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { RestService, WebSocketService, DialogService } from '../../../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../../../services';
 import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
 import { EntityJobComponent } from '../../../entity-job/entity-job.component';
 import { TooltipComponent } from '../tooltip/tooltip.component';

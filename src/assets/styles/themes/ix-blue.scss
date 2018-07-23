@@ -799,3 +799,7 @@ iscsi .mat-ink-bar {
   @include variable(background-color, --yellow, $yellow);
   @include variable(color, --yellow-txt, $yellow-txt);
 }
+
+.mat-dialog-container, .mat-dialog-content {
+  overflow: visible !important;
+}

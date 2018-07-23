@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-import { JailService, NetworkService, DialogService } from '../../../services/';
+import { JailService, NetworkService, DialogService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../translate-marker'

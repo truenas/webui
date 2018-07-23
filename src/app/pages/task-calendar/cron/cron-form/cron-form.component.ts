@@ -6,15 +6,15 @@ import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { EntityFormEmbeddedComponent, FormConfig } from '../../../common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { TaskService, UserService } from '../../../../services/';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { TaskService, UserService } from '../../../../services';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup, Validators } from '@angular/forms';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from '../../../../core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 import { T } from '../../../../translate-marker';
-import {RestService, WebSocketService} from 'app/services/';
+import {RestService, WebSocketService} from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

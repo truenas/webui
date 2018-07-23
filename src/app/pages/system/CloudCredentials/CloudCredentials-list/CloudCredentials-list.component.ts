@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -25,9 +25,12 @@ export class CloudCredentialsListComponent {
     public config: any = {
       paging : true,
       sorting : {columns : this.columns},
+      multiSelect: true
     };
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
      protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
+
+  public multiActions: Array < any > = [];
 }

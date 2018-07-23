@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService } from '../../../../services/';
+import { RestService } from '../../../../services';
 import { T } from '../../../../translate-marker';
-import { DialogService } from 'app/services';
+import { DialogService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import * as _ from 'lodash';
@@ -41,6 +41,7 @@ export class UserListComponent implements OnInit {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -58,6 +59,44 @@ export class UserListComponent implements OnInit {
               protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService){
     this.getUserList()
   }
+
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
+  public singleActions: Array < any > = [
+    {
+      label : T("Edit"),
+      id: "edit",
+      icon: "edit",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.router.navigate(new Array('/').concat(
+          [ "account", "users", "edit", selected[0].id ]));
+      }
+
+    }, // When to push this one???
+    {
+      label : T("Delete"),
+      id: "delete",
+      icon: "delete",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
+      }
+    }
+  ];
 
   ngOnInit() {
     this.ws.call('user.query').subscribe((user_list)=>{

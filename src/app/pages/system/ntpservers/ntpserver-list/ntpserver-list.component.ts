@@ -25,5 +25,8 @@ export class NTPServerListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
+
+  public multiActions: Array < any > = [];
 }

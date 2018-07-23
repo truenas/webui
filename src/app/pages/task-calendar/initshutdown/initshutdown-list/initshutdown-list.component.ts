@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 
 @Component({
   selector: 'app-initshutdown-list',
@@ -29,7 +29,10 @@ export class InitshutdownListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
+
+  public multiActions: Array <any> = [];
 
   protected month_choice: any;
   constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService) {}

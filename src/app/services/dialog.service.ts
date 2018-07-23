@@ -1,13 +1,13 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
 import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
 import { MatDialogRef, MatDialog, MatDialogConfig } from '@angular/material';
 import { Injectable } from '@angular/core';
-import {WebSocketService} from '../services/ws.service';
+import {WebSocketService} from './ws.service';
 import { MatSnackBar } from '@angular/material';
-import { AppLoaderService } from '../services/app-loader/app-loader.service';
+import { AppLoaderService } from './app-loader/app-loader.service';
 import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 
 @Injectable()

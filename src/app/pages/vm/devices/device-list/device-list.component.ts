@@ -3,8 +3,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 
 
-import {RestService, WebSocketService} from '../../../../services/';
-import { DialogService } from 'app/services';
+import {RestService, WebSocketService} from '../../../../services';
+import { DialogService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { ChangeDetectorRef } from '@angular/core';

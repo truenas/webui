@@ -3,8 +3,8 @@ import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
-import {EntityFormService} from '../../pages/common/entity/entity-form/services/entity-form.service';
-import {MessageService} from '../../pages/common/entity/entity-form/services/message.service';
+import {EntityFormService} from '../common/entity/entity-form/services/entity-form.service';
+import {MessageService} from '../common/entity/entity-form/services/message.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 //import { BrowserModule } from '@angular/platform-browser';
@@ -15,18 +15,18 @@ import {
 } from '../../services'
 import {EntityModule} from '../common/entity/entity.module';
 
-import {DeviceEditComponent} from './devices/device-edit/';
+import {DeviceEditComponent} from './devices/device-edit';
 import {DeviceListComponent} from './devices/device-list';
-import {VmFormComponent} from './vm-form/';
-import {VmListComponent} from './vm-list/';
+import {VmFormComponent} from './vm-form';
+import {VmListComponent} from './vm-list';
 import {VmCardsComponent} from './vm-cards/vm-cards.component';
 import {VmCardEditComponent} from './vm-cards/vm-card-edit.component';
 import {VmTableComponent} from './vm-cards/vm-table.component';
 import {routing} from './vm.routing';
 import { VmSummaryComponent } from './vm-cards/vm-summary.component';
-import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { VMWizardComponent } from './vm-wizard/';
-import { DockerVMWizardComponent } from './dockervm-wizard/';
+import { CoreComponents } from '../../core/components/corecomponents.module';
+import { VMWizardComponent } from './vm-wizard';
+import { DockerVMWizardComponent } from './dockervm-wizard';
 import {VMSerialShellComponent} from './vm-cards/vm-serial-shell';
 import { DeviceAddComponent } from './devices/device-add2';
 

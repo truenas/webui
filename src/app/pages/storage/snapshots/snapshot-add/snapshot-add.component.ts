@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../../translate-marker';

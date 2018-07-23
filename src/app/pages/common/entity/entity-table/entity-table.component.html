@@ -69,9 +69,36 @@
         </span>
       </div>
       <ng-template #defaultMultiActions>
-        <button mat-button (click)="doMultiDelete(this.selected);">
+        <button mat-button matTooltip="Delete" matTooltipPosition="above" 
+          (click)="doMultiDelete(this.selected);">
+          <mat-icon>delete</mat-icon>
         </button>
       </ng-template>
+    </div>
+
+    <div class="singleActionsButton">
+      <div *ngIf="selected.length === 1 ? true : false" >
+        <div *ngIf="conf.singleActions; else defaultSingleActions" fxFlex="100">
+          <span *ngFor="let action of conf.singleActions">
+            <button id="{{ action.id }}" 
+              mat-button matTooltip="{{ action.label | translate }}" [matTooltipPosition]=action.ttpos 
+              *ngIf="action.enable" (click)="action.onClick(this.selected);">
+              <mat-icon>{{ action.icon }}</mat-icon>
+              <span>{{ action?.label | translate }}</span>
+            </button>
+          </span>
+        </div>
+        <ng-template #defaultSingleActions>
+          <button mat-button matTooltip="Edit" matTooltipPosition="above" 
+            (click)="doEdit(this.selected[0].id);">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-button matTooltip="Delete" matTooltipPosition="above" 
+            (click)="doDelete(this.selected[0].id);">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+      </div>    
     </div>
   </div>
 
@@ -92,6 +119,7 @@
       (page)='paginationUpdate($event)'
       (sort)='reorderEvent($event)'
       [selectionType]="'checkbox'"
+      [displayCheck]="displayCheck"
       [selected]='selected'
       (select)='onSelect($event)'
       [scrollbarH]='true'
@@ -131,13 +159,19 @@
       <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="80" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
         <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
           <div class="headerCheckBox">
-            <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+            <mat-checkbox 
+              [checked]="allRowsSelected" 
+              (change)="selectFn(!allRowsSelected)">
+            </mat-checkbox>
           </div>
         </ng-template>
 
         <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
           <div>
-            <mat-checkbox [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+            <mat-checkbox 
+              [checked]="isSelected" 
+              (change)="onCheckboxChangeFn($event)">
+            </mat-checkbox>
           </div>
         </ng-template>
       </ngx-datatable-column>
@@ -161,20 +195,20 @@
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div id="{{col.prop}}_{{row[col.prop]}}" 
                title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
-            <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
+          <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/> 
             {{row[col.prop]}}
           </div>
         </ng-template>
       </ngx-datatable-column>
 
-      <ngx-datatable-column>
+      <ngx-datatable-column >
         <ng-template let-row="row" ngx-datatable-cell-template>
           <app-entity-table-actions [entity]="this" [row]="row">
           </app-entity-table-actions>
         </ng-template>
       </ngx-datatable-column>
 
-    </ngx-datatable>
+    </ngx-datatable> 
   </div>
 
 </div>

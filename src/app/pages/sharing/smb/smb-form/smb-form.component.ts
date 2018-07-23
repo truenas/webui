@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import {Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 

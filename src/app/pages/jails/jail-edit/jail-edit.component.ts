@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { JailService, DialogService, NetworkService, WebSocketService, AppLoaderService } from '../../../services/';
+import { JailService, DialogService, NetworkService, WebSocketService, AppLoaderService } from '../../../services';
 
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';

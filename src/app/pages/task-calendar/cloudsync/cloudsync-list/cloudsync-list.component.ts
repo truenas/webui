@@ -3,9 +3,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
+<<<<<<< HEAD
+import { TaskService } from '../../../../services';
+=======
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
+>>>>>>> master
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -37,6 +41,7 @@ export class CloudsyncListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(protected router: Router,
@@ -82,6 +87,8 @@ export class CloudsyncListComponent {
       },
     }]
   }
+
+  public multiActions: Array <any> = [];
 
   dataHandler(entityList: any) {
     for (let i = 0; i < entityList.rows.length; i++) {

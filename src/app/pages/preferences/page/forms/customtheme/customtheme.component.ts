@@ -2,16 +2,16 @@ import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnIni
 import { NgModel }   from '@angular/forms';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import {RestService, WebSocketService} from 'app/services/';
-import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import { FormConfig } from '../../../../common/entity/entity-form/entity-form-embedded.component';
+import {RestService, WebSocketService} from '../../../../../services';
+import { ThemeService, Theme } from '../../../../../services/theme/theme.service';
+import { CoreEvent, CoreService } from '../../../../../core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
-import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
+import { DialogService } from '../../../../../services/dialog.service';
+import { T } from '../../../../../translate-marker';
 
 interface FormSnapshot {
   theme:any;

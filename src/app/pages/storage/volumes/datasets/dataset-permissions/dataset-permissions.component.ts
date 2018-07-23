@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
-import {RestService, WebSocketService, StorageService, DialogService} from '../../../../../services/';
+import {RestService, WebSocketService, StorageService, DialogService} from '../../../../../services';
 import {EntityUtils} from '../../../../common/entity/utils';
 import {
   FieldConfig

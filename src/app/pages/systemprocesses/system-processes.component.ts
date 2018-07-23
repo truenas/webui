@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { WebSocketService, ShellService } from '../../services/';
+import { WebSocketService, ShellService } from '../../services';
 //import { Terminal } from 'vscode-xterm';
 //import * as fit from 'vscode-xterm/lib/addons/fit';
 //import * as attach from 'vscode-xterm/lib/addons/attach';

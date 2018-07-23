@@ -1,6 +1,6 @@
 import { Component, ViewChild, Input, OnInit } from '@angular/core';
-import { Display } from 'app/core/components/display/display.component';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { Display } from '../display/display.component';
+import { ViewControllerComponent } from '../viewcontroller/viewcontroller.component';
 import { MaterialModule } from '../../../appMaterial.module';
 
 /*

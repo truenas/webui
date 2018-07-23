@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { WebSocketService, RestService } from '../../../services/';
+import { WebSocketService, RestService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 import { EntityFormComponent } from '../../common/entity/entity-form';

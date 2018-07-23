@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';

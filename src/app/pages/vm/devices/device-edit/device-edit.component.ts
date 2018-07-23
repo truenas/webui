@@ -18,12 +18,12 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 
-import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services/';
+import {WebSocketService, NetworkService, SystemGeneralService} from '../../../../services';
 import {VmService} from '../../../../services/vm.service';
 import {EntityUtils} from '../../../common/entity/utils';
-import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
-import { EntityFormComponent, Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import {EntityFormService} from '../../../common/entity/entity-form/services/entity-form.service';
+import { EntityFormComponent, Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import {EntityTemplateDirective} from '../../../common/entity/entity-template.directive';
 import {regexValidator} from '../../../common/entity/entity-form/validators/regex-validation';
 

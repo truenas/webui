@@ -2,10 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
+<<<<<<< HEAD
+import { RestService, WebSocketService } from '../../../services';
+import { MarkdownModule } from 'angular2-markdown';
+=======
 import { RestService, WebSocketService } from '../../../services/';
+>>>>>>> master
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogService } from '../../../services/dialog.service';
+<<<<<<< HEAD
+import * as _ from 'lodash';
+import { environment } from 'environments/environment';
+=======
+>>>>>>> master
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';

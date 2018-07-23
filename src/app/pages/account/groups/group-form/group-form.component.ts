@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 import {Validators} from '@angular/forms';
 import { T } from '../../../../translate-marker';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import {  DialogService } from '../../../../services/';
+import {  DialogService } from '../../../../services';
 
 @Component({
   selector: 'app-group-form',

@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 @Component({

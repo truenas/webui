@@ -8,11 +8,11 @@ import {
   RestService,
   SystemGeneralService,
   WebSocketService
-} from '../../../services/';
+} from '../../../services';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
-import {  DialogService } from '../../../services/';
+import {  DialogService } from '../../../services';
 
 import { T } from '../../../translate-marker';
 

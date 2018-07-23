@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 
-import { WebSocketService } from '../../../../../services/';
+import { WebSocketService } from '../../../../../services';
 import { MatSnackBar } from '@angular/material';
 import { Location } from '@angular/common';
 

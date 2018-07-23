@@ -1,9 +1,9 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ActiveDirectoryComponent } from './activedirectory/';
-import { LdapComponent } from './ldap/';
-import { NISComponent } from './nis/';
+import { ActiveDirectoryComponent } from './activedirectory';
+import { LdapComponent } from './ldap';
+import { NISComponent } from './nis';
 import { IdmapComponent } from './idmap';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';

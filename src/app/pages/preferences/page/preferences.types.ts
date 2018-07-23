@@ -1,4 +1,4 @@
-import { Theme } from 'app/services/theme/theme.service';
+import { Theme } from '../../../services/theme/theme.service';
 
 export interface UserPreferences {
   platform:string; // FreeNAS || TrueNAS

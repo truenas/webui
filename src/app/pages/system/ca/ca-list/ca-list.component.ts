@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { MatSnackBar } from '@angular/material';
 import { EntityUtils } from '../../../common/entity/utils';

@@ -7,7 +7,7 @@ import { FieldConfig } from '../common/entity/entity-form/models/field-config.in
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 
-import { RestService, WebSocketService } from '../../services/';
+import { RestService, WebSocketService } from '../../services';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../common/entity/utils';

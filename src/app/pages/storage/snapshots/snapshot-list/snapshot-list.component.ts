@@ -2,7 +2,9 @@ import { Component, ElementRef, Injector, ApplicationRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService } from '../../../../services/rest.service';
 import { Subscription } from 'rxjs';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from '../../../../services';
+import { T } from '../../../../translate-marker';
+
 
 @Component({
   selector: 'app-snapshot-list',
@@ -25,26 +27,64 @@ export class SnapshotListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true,
+    multiSelect: true
   };
 
   protected wsMultiDelete = 'core.bulk';
-  public multiActions: Array < any > = [
-    {
-      id: "mdelete",
-      label: "Delete",
-      icon: "delete",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
-      }
-    }
-  ];
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) { }
+
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
+    public singleActions: Array < any > = [
+      {
+        label : T("Clone"),
+        id: "clone",
+        icon: "group",
+        ttpos: "above",
+        enable: true,
+        onClick : (selected) => {
+          this._router.navigate(new Array('/').concat(
+            [ "storage", "snapshots", "clone", selected[0].id ]));
+        }
+  
+      },
+      {
+        label : T("Rollback"),
+        id: "rollback",
+        icon: "keyboard_backspace",
+        ttpos: "above",
+        enable: true,
+        onClick : (selected) => {
+          this._router.navigate(new Array('/').concat(
+            ["storage", "snapshots", "rollback", selected[0].id]));
+        }
+      },
+      { // doesnt seem to be the right delete function
+        label : T("Delete"),
+        id: "delete",
+        icon: "delete",
+        ttpos: "above",
+        enable: true,
+        onClick : (selected) => {
+          console.log(selected)
+          this.entityList.doDelete(selected[0].id );
+        }
+      }
+    ];
 
   rowValue(row, attr) {
     switch (attr) {

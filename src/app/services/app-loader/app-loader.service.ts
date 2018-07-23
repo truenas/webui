@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { AppLoaderComponent } from './app-loader.component';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../translate-marker';

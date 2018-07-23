@@ -385,6 +385,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   doDelete(id) {
+    console.log(id)
     let dialog = {};
     if (this.conf.checkbox_confirm && this.conf.checkbox_confirm_show && this.conf.checkbox_confirm_show(id)) {
       this.conf.checkbox_confirm(id);
@@ -479,9 +480,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
-        if (this.conf.wsMultiDelete) {
+        if (this.conf.wsMultiDelete) 
           // ws to do multi-delete
-          if (this.conf.wsMultiDeleteParams) {
+          if (this.conf.wsMultiDeleteParams) { {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
                   this.getData();
@@ -502,11 +503,29 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
   }
 
   onSelect({ selected }) {
+    // console.log(this.selected[0].realname)
+
+    // this.selected.forEach((i) => {
+    //   console.log(i.active);
+    // })
+
+    for (let i = 0; i < this.selected.length; i++) {
+      if (this.selected[i].active && this.selected[i].active !== '-') {
+        console.log(this.selected);
+        console.log(this.selected.splice(i, 1));
+        console.log(this.selected);
+      } 
+    }
+
+
+
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
 
+
     if (this.conf.updateMultiAction) {
       this.conf.updateMultiAction(this.selected);
+      // console.log(this.selected)
     }
   }
 

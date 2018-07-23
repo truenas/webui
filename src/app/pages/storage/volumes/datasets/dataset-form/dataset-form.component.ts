@@ -4,14 +4,14 @@ import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
-import { RestService, WebSocketService } from '../../../../../services/';
+import { RestService, WebSocketService } from '../../../../../services';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { AnimationKeyframesSequenceMetadata } from '@angular/animations';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from '../../../../../services/dialog.service';
 import { T } from '../../../../../translate-marker';
 
 

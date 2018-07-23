@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
@@ -30,7 +30,7 @@ import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Formconfiguration } from './entity-form.component';
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent } from '../../../../core/services/core.service';
 import { Subject } from 'rxjs/Subject';
 
 export interface FormConfig {

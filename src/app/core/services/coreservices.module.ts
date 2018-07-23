@@ -1,10 +1,10 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from 'app/core/services/api.service';
-import { AnimationService } from 'app/core/services/animation.service';
-import { CoreService } from 'app/core/services/core.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { ApiService } from './api.service';
+import { AnimationService } from './animation.service';
+import { CoreService } from './core.service';
+import { ThemeService } from '../../services/theme/theme.service';
+import { PreferencesService } from './preferences.service';
 
 
 /*

@@ -2,12 +2,12 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { MaterialModule } from '../../appMaterial.module';
 import { CommonModule } from '@angular/common';
 
-import { PageComponent } from 'app/core/components/page/page.component';
-import { ViewComponent } from 'app/core/components/view/view.component';
-import { CardComponent } from 'app/core/components/card/card.component';
-import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Display,DisplayContainer } from 'app/core/components/display/display.component';
+import { PageComponent } from './page/page.component';
+import { ViewComponent } from './view/view.component';
+import { CardComponent } from './card/card.component';
+import { ViewControlComponent } from './viewcontrol/viewcontrol.component';
+import { ViewControllerComponent } from './viewcontroller/viewcontroller.component';
+import { Display,DisplayContainer } from './display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
@@ -33,7 +33,7 @@ import { WidgetNoteComponent } from 'app/core/components/widgets/widgetnote/widg
 import { WidgetNotesCollectionComponent } from 'app/core/components/widgets/widgetnotescollection/widgetnotescollection.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 
-import { AnimationDirective } from 'app/core/directives/animation.directive';
+import { AnimationDirective } from '../directives/animation.directive';
 
 import { TranslateModule } from '@ngx-translate/core';
 

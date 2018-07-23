@@ -9,7 +9,7 @@ import {
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService} from '../../../../services';
 import {EntityUtils} from '../../../common/entity/utils';
 
 @Component({

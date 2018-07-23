@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs';
 import {Observable} from 'rxjs/Observable';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import {RestService, WebSocketService} from '../../../services/';
+import {RestService, WebSocketService} from '../../../services';
 import { MaterialModule } from '../../../appMaterial.module';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 

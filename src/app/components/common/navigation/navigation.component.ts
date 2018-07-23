@@ -1,6 +1,6 @@
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import { NavigationService } from "../../../services/navigation/navigation.service";
-import { WebSocketService } from "../../../services/";
+import { WebSocketService } from "../../../services";
 import {Router} from "@angular/router";
 import * as _ from 'lodash';
 

@@ -3,10 +3,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService, RestService } from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { EntityFormComponent } from '../entity-form';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
+import { TaskService, UserService, RestService } from '../../../../services';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';

@@ -6,14 +6,14 @@ import * as _ from 'lodash';
 import {
   RestService,
   WebSocketService
-} from '../../../services/';
+} from '../../../services';
 import {EntityFormComponent} from '../../common/entity/entity-form';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from '../../../services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../translate-marker';

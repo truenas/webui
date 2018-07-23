@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import { T } from '../../../../translate-marker';
-import { DialogService } from 'app/services';
+import { DialogService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 
@@ -27,6 +27,7 @@ export class GroupListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
 
   constructor(private _router: Router, protected dialogService: DialogService, protected loader: AppLoaderService,protected ws: WebSocketService) { }
@@ -37,6 +38,55 @@ export class GroupListComponent {
     }
     return true;
   }
+
+  public multiActions: Array < any > = [
+    // {
+    //   id: "mdelete",
+    //   label: "Delete",
+    //   icon: "delete",
+    //   enable: true,
+    //   ttpos: "above",
+    //   onClick: (selected) => {
+    //     this.entityList.doMultiDelete(selected);
+    //   }
+    // } multidelete not available in the middleware
+  ];
+
+  public singleActions: Array < any > = [
+    {
+      id: "members",
+      label: T("Members"),
+      icon: "list",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this._router.navigate(new Array('/').concat(
+          [ "account", "groups", "members", selected[0].id ]));
+      }
+    }, // when to push these two??? - and what about the multidelete???
+    {
+      id: "edit",
+      label: T("Edit"),
+      icon: "edit",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this._router.navigate(new Array('/').concat(
+          [ "account", "groups", "edit", selected[0].id ]));
+      }
+    },
+    {
+      id: "delete",
+      label: T("Delete"),
+      icon: "delete",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.entityList.doDelete(selected[0].id );
+      },
+    }
+  ];
+
 
   getActions(row) {
     const actions = [];

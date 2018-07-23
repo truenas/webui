@@ -4,8 +4,7 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { RestService } from '../../../../services';
-import { TaskService } from '../../../../services/';
-
+import { TaskService } from '../../../../services';
 
 @Component({
   selector: 'app-scrub-list',
@@ -19,7 +18,6 @@ export class ScrubListComponent {
   protected route_add: string[] = ['tasks', 'scrub', 'add'];
   protected route_add_tooltip = "Add Scrub Task";
   protected route_edit: string[] = ['tasks', 'scrub', 'edit'];
-  protected entityList: any;
 
   public columns: Array < any > = [
     { name: 'Pool', prop: 'scrub_volume' },
@@ -35,9 +33,14 @@ export class ScrubListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
   constructor(protected router: Router,
     protected rest: RestService,
     protected taskService: TaskService) {}
+
+  public multiActions: Array < any > = [];
+
 }
+

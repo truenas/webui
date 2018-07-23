@@ -4,9 +4,13 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
+<<<<<<< HEAD
+import { TaskService } from '../../../../services';
+=======
 import { TaskService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+>>>>>>> master
 
 @Component({
   selector: 'app-rsync-list',
@@ -31,10 +35,17 @@ export class RsyncListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   };
 
+<<<<<<< HEAD
+  public multiActions: Array <any> = [];
+
+  constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService) {}
+=======
   constructor(protected router: Router, protected rest: RestService, protected taskService: TaskService,
               protected dialog: DialogService, protected translate: TranslateService) {}
+>>>>>>> master
 
   afterInit(entityList: any) { this.entityList = entityList; }
 

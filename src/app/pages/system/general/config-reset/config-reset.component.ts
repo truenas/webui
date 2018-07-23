@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { MatSnackBar } from '@angular/material';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({

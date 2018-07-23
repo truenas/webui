@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
-import { RestService, WebSocketService } from 'app/services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { ApiService } from 'app/core/services/api.service';
+import { RestService, WebSocketService } from '..';
+import { CoreService, CoreEvent } from '../../core/services/core.service';
+import { ApiService } from '../../core/services/api.service';
 
 export interface Theme {
   name: string;

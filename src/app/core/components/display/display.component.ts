@@ -1,8 +1,8 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input, Renderer2, ViewContainerRef,ComponentRef,ComponentFactory, ComponentFactoryResolver } from '@angular/core';
-import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
-import { ViewConfig } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { LayoutContainer, LayoutChild } from '../../classes/layouts';
+import { ViewConfig } from '../viewcontroller/viewcontroller.component';
 import { Subject } from 'rxjs/Subject';
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent } from '../../services/core.service';
 
 @Component({
   selector:'[displayContainer]',

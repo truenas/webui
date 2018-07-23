@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, Input, AfterViewInit, OnDestroy } from '@
 import { MatSidenav } from '@angular/material';
 import { Router, NavigationEnd } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
+import { NotificationsService, NotificationAlert } from '../../../services/notifications.service';
 
 
 

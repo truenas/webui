@@ -1,7 +1,7 @@
 import { Component, ViewContainerRef, OnDestroy } from '@angular/core';
 import { Router,ActivatedRoute } from '@angular/router';
 import {Validators} from '@angular/forms';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';

@@ -2,7 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 
 @Component({
   selector: 'system-tunables-list',
@@ -37,7 +37,10 @@ export class TunableListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
+    multiSelect: true
   }
+
+  public multiActions: Array < any > = [];
 
   preInit(entityList: any) {
     this.sub = this.aroute.params.subscribe(params => {});

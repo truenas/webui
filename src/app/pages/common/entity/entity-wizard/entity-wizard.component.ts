@@ -5,15 +5,15 @@ import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators } from '
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
-import { FieldConfig } from '../../entity/entity-form/models/field-config.interface';
-import { EntityFormService } from '../../entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from '../../entity/entity-form/services/field-relation.service';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
+import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 import { MatSnackBar } from '@angular/material';
-import { DialogService } from '../../../../services/';
+import { DialogService } from '../../../../services';
 import { EntityUtils } from '../utils';
 
 @Component({

@@ -8,8 +8,8 @@ import {
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import * as _ from 'lodash';
 
-import {RestService, UserService, WebSocketService} from '../../../services/';
-import {  DialogService } from '../../../services/';
+import {RestService, UserService, WebSocketService} from '../../../services';
+import {  DialogService } from '../../../services';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';

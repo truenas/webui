@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { RestService, WebSocketService } from 'app/services';
+import { RestService, WebSocketService } from '.';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';

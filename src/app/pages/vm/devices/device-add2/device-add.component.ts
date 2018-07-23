@@ -3,10 +3,10 @@ import {Validators} from '@angular/forms';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
-import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
+import {EntityFormService} from '../../../common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services/';
+import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services';
 import {EntityUtils} from '../../../common/entity/utils';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';

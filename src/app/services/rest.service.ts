@@ -1,4 +1,4 @@
-import 'rxjs/Rx';
+import 'rxjs';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
@@ -14,7 +14,7 @@ import {
 } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { environment } from '../../environments/environment';
+import { environment } from 'environments/environment';
 
 import { WebSocketService } from './ws.service';
 

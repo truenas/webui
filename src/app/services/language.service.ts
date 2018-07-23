@@ -2,7 +2,7 @@ import 'rxjs/add/operator/map';
 
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject, Subscription} from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 

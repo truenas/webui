@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { ActivatedRoute, Router } from '@angular/router';
 import * as domHelper from '../../../helpers/dom.helper';
 import { ThemeService, Theme } from '../../../services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from '../../../core/services/core.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';

@@ -1,12 +1,12 @@
 import { Component, AfterViewInit, Input, ViewChild, OnChanges } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreServiceInjector } from '../../../services/coreserviceinjector';
+import { CoreService, CoreEvent } from '../../../services/core.service';
 //import { MaterialModule } from 'app/appMaterial.module';
 //import { NgForm } from '@angular/forms';
 //import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 //import { AnimationDirective } from 'app/core/directives/animation.directive';
-import { WidgetPoolComponent, Disk, VolumeData } from 'app/core/components/widgets/widgetpool/widgetpool.component';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { WidgetPoolComponent, Disk, VolumeData } from '../widgetpool/widgetpool.component';
+import { WidgetComponent } from '../widget/widget.component';
 import filesize from 'filesize';
 
 import { TranslateService } from '@ngx-translate/core';

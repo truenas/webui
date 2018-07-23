@@ -7,9 +7,10 @@ import { Observable } from 'rxjs/Observable';
 import {RestService} from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services';
+import { DialogService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
+import * as _ from 'lodash';
 import { stringify } from '@angular/core/src/util';
 
 @Component({
@@ -29,6 +30,8 @@ export class BootEnvironmentListComponent {
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
   protected loaderOpen: boolean = false;
+  protected wsDelete = 'bootenv.delete';
+  protected wsMultiDelete = 'core.bulk';
   public busy: Subscription;
   public size_consumed: string;
   public condition: string;
@@ -48,7 +51,103 @@ export class BootEnvironmentListComponent {
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
+    multiSelect: true
   };
+
+  public multiActions: Array < any > = [
+   {
+      id: "mdelete",
+      label: "Delete",
+      icon: "delete",
+      enable: true,
+      ttpos: "above",
+      onClick: (selected) => {
+        this.entityList.doMultiDelete(selected);
+      }
+    }
+  ];
+  
+  public singleActions: Array < any > = [
+    {
+      id: "clone",
+      label: "Clone",
+      icon: "group",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "clone", selected[0].id ]));
+      }
+    },
+    {
+      id: "rename",
+      label: "Rename",
+      icon: "redo",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this._router.navigate(new Array('').concat(
+            [ "system", "bootenv", "rename", selected[0].id ]));
+      }
+
+    },
+    {
+      id: "activate",
+      label: "Activate",
+      icon: "play_arrow",
+      ttpos: "above",
+      enable: true,
+      onClick : (selected) => {
+        this.doActivate(selected[0].id);
+      }
+    },
+    {
+      id: "unkeep",
+      label: "Unkeep",
+      enable: true,
+      onClick : (selected) => {
+        this.toggleKeep(selected[0].id, selected[0].keep);
+      }
+    },
+    {
+      id: "keep",
+      label: "Keep",
+      enable: true,
+      onClick : (selected) => {
+        this.toggleKeep(selected[0].id, selected[0].keep);
+      }
+    } 
+  ];
+
+  getSelectedNames(selectedEnvs) {
+    let selected: any = [];
+    for (let i in selectedEnvs) {
+      if (selectedEnvs[i].active === '-') {
+      selected.push([selectedEnvs[i].name]);
+      }
+    }
+    return selected;
+  }
+
+  wsMultiDeleteParams(selected: any) {
+    let params: Array<any> = ['bootenv.delete'];
+    params.push(this.getSelectedNames(selected));
+    return params;
+  }
+
+  updateMultiAction(selected: any) {
+    if (_.find(selected, ['keep', false])) {
+     _.find(this.singleActions, {'id': 'keep'})['enable'] = true;
+    } else {
+      _.find(this.singleActions, {'id': 'keep'})['enable'] = false;
+    }
+
+    if (_.find(selected, ['keep', true])) {
+     _.find(this.singleActions, {'id': 'unkeep'})['enable'] = true;
+    } else {
+      _.find(this.singleActions, {'id': 'unkeep'})['enable'] = false;
+    }
+  }
 
   preInit(){
     this._rest.get('system/advanced/',{}).subscribe(res=>{

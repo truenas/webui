@@ -7,7 +7,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services/';
+import { WebSocketService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';

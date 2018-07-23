@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
-import { WebSocketService, CloudCredentialService } from '../../../../services/';
+import { WebSocketService, CloudCredentialService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 
