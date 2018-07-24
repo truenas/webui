@@ -13,9 +13,9 @@
   <span *ngFor="let custBtn of conf.custActions">
     <button id="cust_button_{{custBtn.id}}" mat-button 
       *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button" 
-      (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+      (click)="custBtn['function']()">{{custBtn.name | translate | uppercase}}</button>
   </span>
-  <button class="mat-button mat-accent" (click)="cancel()">{{cancelButtonText | translate}}</button>
+  <button class="mat-button mat-accent" (click)="cancel()">{{cancelButtonText | translate | uppercase}}</button>
   <button class="mat-button mat-primary" (click)="submit()" [disabled]="!formGroup.valid" 
-    *ngIf="saveButtonText">{{saveButtonText | translate}}</button>
+    *ngIf="saveButtonText">{{saveButtonText | translate | uppercase}}</button>
 </div>
