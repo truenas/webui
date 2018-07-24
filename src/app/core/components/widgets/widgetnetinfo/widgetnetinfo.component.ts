@@ -77,7 +77,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       this.defaultRoutes = evt.data.default_routes.toString();
-      this.nameServers = evt.data.nameservers.toString();
+      this.nameServers = evt.data.nameservers.toString().replace(/,/g, " , ");
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
