@@ -152,7 +152,7 @@ export class VolumeStatusComponent implements OnInit {
           }
           this.dialogService.confirm(
             "Offline",
-            "Are you sure you want to offline the disk " + name,
+            "Are you sure you want to offline the disk " + name, false, 'Offline'
           ).subscribe((res) => {
             if (res) {
               this.loader.open();
