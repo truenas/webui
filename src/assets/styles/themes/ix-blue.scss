@@ -569,7 +569,7 @@ entity-form .form-card.mat-card{
 }
 
 #cust_button_download_key {
-  background-color: #f44336;
+  @include variable(background-color, --red, $red);
   color: white;
   margin-right: 7px;
 }
@@ -807,4 +807,15 @@ vm-table .ngx-datatable .datatable-body {
 .fn-theme-yellow{
   @include variable(background-color, --yellow, $yellow);
   @include variable(color, --yellow-txt, $yellow-txt);
+}
+
+
+.mat-dialog-container .mat-button {
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+}
+
+.mat-dialog-container .mat-button.mat-primary {
+  @include variable(background-color, --primary, $primary);
+  color: white !important;
 }
