@@ -55,7 +55,7 @@ export class CloudsyncListComponent {
       onClick: (row) => {
         this.dialog.confirm(T("Run Now"), T(" Would you like to run this cloud sync task now?"), true).subscribe((res) => {
           if (res) {
-            this.ws.call('cloudsync.sync', [parentrow.id]).subscribe(
+            this.ws.call('cloudsync.sync', [row.id]).subscribe(
               (res) => {
                 this.translateService.get("close").subscribe((close) => {
                   this.entityList.snackBar.open(T('The cloud sync task has started.'), close, { duration: 5000 });
@@ -71,14 +71,14 @@ export class CloudsyncListComponent {
       id: "edit",
       label: T("Edit"),
       onClick: (row) => {
-        this.route_edit.push(parentrow.id);
+        this.route_edit.push(row.id);
         this.router.navigate(this.route_edit);
       },
     }, {
       id: "delete",
       label: T("Delete"),
       onClick: (row) => {
-        this.entityList.doDelete(parentrow.id);
+        this.entityList.doDelete(row.id);
       },
     }]
   }
