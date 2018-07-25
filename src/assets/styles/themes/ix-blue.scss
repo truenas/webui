@@ -799,3 +799,12 @@ iscsi .mat-ink-bar {
   @include variable(background-color, --yellow, $yellow);
   @include variable(color, --yellow-txt, $yellow-txt);
 }
+
+
+.sidebar-panel.mat-sidenav .navigation-hold {
+  position: static !important;
+
+}
+ .mat-drawer {
+   overflow-y: hidden !important;
+ }
