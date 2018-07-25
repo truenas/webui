@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
 import { AbstractControl, FormArray, FormGroup, Validators } from '@angular/forms';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -7,6 +7,7 @@ import { AppLoaderService } from "../../../services/app-loader/app-loader.servic
 import { DialogService } from "../../../services/dialog.service";
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { EntityUtils } from '../../common/entity/utils';
 import { RestService, UserService, WebSocketService } from '../../../services/';
 import {AdminLayoutComponent} from '../../../components/common/layouts/admin-layout/admin-layout.component';
 import { matchOtherValidator } from '../../common/entity/entity-form/validators/password-validation';
@@ -22,7 +23,7 @@ import {
   styleUrls: ['advanced.component.css']
 })
 
-export class AdvancedComponent implements OnInit {
+export class AdvancedComponent implements OnDestroy {
   //protected resource_name: string = 'system/advanced';
   public job: any = {};
   protected queryCall = 'system.advanced.config';
@@ -31,6 +32,9 @@ export class AdvancedComponent implements OnInit {
   public adv_serialport: any;
   public adv_serialspeed: any;
   public adv_periodic_notifyuser: any;
+  public swapondrive: any;
+  public swapondrive_subscription: any;
+  public entityForm: any;
   public custActions: Array < any > = [{
     id: 'save_debug',
     name: 'Save Debug',
@@ -127,7 +131,10 @@ export class AdvancedComponent implements OnInit {
     placeholder: T('Swap size in GiB'),
     tooltip: T('By default, all data disks are created with this amount\
                 of swap. This setting does not affect log or cache\
-                devices as they are created without swap.')
+                devices as they are created without swap.'),
+    inputType: 'number',
+    validation : [ Validators.required, Validators.min(0), Validators.max(99) ],
+    required: true,
   }, {
     type: 'checkbox',
     name: 'powerdaemon',
@@ -255,11 +262,23 @@ export class AdvancedComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnDestroy() {
+    this.swapondrive_subscription.unsubscribe();
+  }
 
 
   afterInit(entityEdit: any) {
-     this.ws.call(this.queryCall).subscribe((adv_values)=>{
+    this.entityForm = entityEdit;
+    this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
+    this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+      if (parseInt(value) === 0) {
+        this.swapondrive.warnings = T("Swap size of 0 is STRONGLY DISCOURAGED.");
+      } else {
+        this.swapondrive.warnings = null;
+      }
+    });
+
+    this.ws.call(this.queryCall).subscribe((adv_values)=>{
       entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
     }) 
     this.adv_serialport =
@@ -305,7 +324,7 @@ export class AdvancedComponent implements OnInit {
       
     }, (res) => {
       this.load.close();
-      this.dialog.errorReport(T("Error saving"), res.reason, res.trace.formatted);
+      new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
 
