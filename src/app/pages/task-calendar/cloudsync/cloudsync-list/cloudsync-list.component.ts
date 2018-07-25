@@ -23,18 +23,18 @@ export class CloudsyncListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: 'Description', prop: 'description' },
-    { name: 'Direction', prop: 'direction'},
-    { name: 'Path', prop: 'path'},
-    { name: 'Status', prop: 'status'},
-    { name: 'Minute', prop: 'minute' },
-    { name: 'Hour', prop: 'hour' },
-    { name: 'Day of Month', prop: 'daymonth' },
-    { name: 'Month', prop: 'month' },
-    { name: 'Day of Week', prop: 'dayweek' },
-    // { name: 'Auxiliary arguments', prop: 'args' },
-    { name: 'Credential', prop: 'credential' },
-    { name: 'Enabled', prop: 'enabled' },
+    { name: T('Description'), prop: 'description' },
+    { name: T('Direction'), prop: 'direction'},
+    { name: T('Path'), prop: 'path'},
+    { name: T('Status'), prop: 'status'},
+    { name: T('Minute'), prop: 'minute' },
+    { name: T('Hour'), prop: 'hour' },
+    { name: T('Day of Month'), prop: 'daymonth' },
+    { name: T('Month'), prop: 'month' },
+    { name: T('Day of Week'), prop: 'dayweek' },
+    // { name: T('Auxiliary arguments'), prop: 'args' },
+    { name: T('Credential'), prop: 'credential' },
+    { name: T('Enabled'), prop: 'enabled' },
   ];
   public config: any = {
     paging: true,
@@ -116,7 +116,7 @@ export class CloudsyncListComponent {
       entityList.rows[i].dayweek = entityList.rows[i].schedule['dow'];
       entityList.rows[i].credential = entityList.rows[i].credentials['name'];
       if (entityList.rows[i].job == null) {
-        entityList.rows[i].status = "Not run since last boot";
+        entityList.rows[i].status = T("Not run since last boot");
       } else {
         entityList.rows[i].status = entityList.rows[i].job.state;
         if (entityList.rows[i].job.error) {
