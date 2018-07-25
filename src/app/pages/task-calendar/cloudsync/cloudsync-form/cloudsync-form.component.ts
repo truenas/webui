@@ -80,6 +80,8 @@ export class CloudsyncFormComponent implements OnInit {
          }]
       }
     ],
+    required: true,
+    validation : [ Validators.required ],
   }, {
     type: 'input',
     name: 'bucket_input',
@@ -87,6 +89,8 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: T('Input the pre-defined S3 bucket to use.'),
     isHidden: true,
     disabled: true,
+    required: true,
+    validation : [ Validators.required ],
   }, {
     type: 'input',
     name: 'folder',
