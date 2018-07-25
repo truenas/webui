@@ -1,6 +1,6 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 
@@ -10,7 +10,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
-import { stringify } from '@angular/core/src/util';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -21,14 +20,14 @@ export class BootEnvironmentListComponent {
   @ViewChild('scrubIntervalEvent') scrubIntervalEvent: ElementRef;
 
   public title = "Boot Environments";
-  protected resource_name: string = 'system/bootenv';
+  protected resource_name = 'system/bootenv';
   protected queryCall = 'bootenv.query';
   protected route_add: string[] = ['system', 'bootenv', 'create']
   protected route_delete: string[] = [ 'system', 'bootenv', 'delete' ];
   protected entityList: any;
   protected wsActivate = 'bootenv.activate';
   protected wsKeep = 'bootenv.set_attribute';
-  protected loaderOpen: boolean = false;
+  protected loaderOpen = false;
   public busy: Subscription;
   public size_consumed: string;
   public condition: string;
@@ -116,52 +115,52 @@ export class BootEnvironmentListComponent {
   }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId == 'edit' || actionId == 'add') {
+    if (actionId === 'edit' || actionId === 'add') {
       return false;
     }
     return true;
   }
 
   getActions(row) {
-    let actions = [];
+    const actions = [];
     if (row.active === '-'){
       actions.push({
         label : "Delete",
         id: "delete",
-        onClick : (row) => {
-          this.entityList.doDelete(row.id);
+        onClick : (delete_row) => {
+          this.entityList.doDelete(delete_row.id);
         }
       });
     }
     actions.push({
       label : "Clone",
       id: "clone",
-      onClick : (row) => {
+      onClick : (clone_row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "clone", row.id ]));
+            [ "system", "bootenv", "clone", clone_row.id ]));
       }
     });
     actions.push({
       label : "Rename",
       id: "rename",
-      onClick : (row) => {
+      onClick : (rename_row) => {
         this._router.navigate(new Array('').concat(
-            [ "system", "bootenv", "rename", row.id ]));
+            [ "system", "bootenv", "rename", rename_row.id ]));
       }
     });
     actions.push({
       label : "Activate",
       id: "activate",
-      onClick : (row) => {
-        this.doActivate(row.id);
+      onClick : (activate_row) => {
+        this.doActivate(activate_row.id);
       }
     });
     if (row.keep === true){
       actions.push({
         label : "Unkeep",
         id: "keep",
-        onClick : (row) => {
-          this.toggleKeep(row.id, row.keep);
+        onClick : (unkeep_row) => {
+          this.toggleKeep(unkeep_row.id, unkeep_row.keep);
         }
       });
 
@@ -169,8 +168,8 @@ export class BootEnvironmentListComponent {
       actions.push({
         label : "Keep",
         id: "keep",
-        onClick : (row) => {
-          this.toggleKeep(row.id, row.keep);
+        onClick : (keep_row) => {
+          this.toggleKeep(keep_row.id, keep_row.keep);
         }
       });
     }
@@ -182,14 +181,13 @@ export class BootEnvironmentListComponent {
     this.dialog.confirm("Activate", "Are you sure you want to activate it?").subscribe((res) => {
       if (res) {
         this.loader.open();
-        this.loaderOpen = true;
-        let data = {};
+        this.loaderOpen = true; 
         this.busy = this.ws.call(this.wsActivate, [id]).subscribe(
-          (res) => { 
+          () => { 
             this.entityList.getData();
             this.loader.close(); },
-          (res) => {
-            new EntityUtils().handleError(this, res);
+          (e_res) => {
+            new EntityUtils().handleError(this, e_res);
             this.loader.close();
           }
           );
@@ -202,13 +200,12 @@ export class BootEnvironmentListComponent {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
-          let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
-            (res) => { this.entityList.getData();
+            () => { this.entityList.getData();
               this.loader.close(); 
             },
-            (res) => {
-              new EntityUtils().handleError(this, res);
+            (e_res) => {
+              new EntityUtils().handleError(this, e_res);
               this.loader.close();
             }
             );
@@ -217,15 +214,15 @@ export class BootEnvironmentListComponent {
     } else {
       this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?").subscribe((res) => {
         if (res) {
+          console.log(res);
           this.loader.open();
           this.loaderOpen = true;
-          let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : false }]).subscribe(
-            (res) => { this.entityList.getData();
+            () => { this.entityList.getData();
               this.loader.close();
             },
-            (res) => {
-              new EntityUtils().handleError(this, res);
+            (e_res) => {
+              new EntityUtils().handleError(this, e_res);
               this.loader.close();
             }
             );
@@ -246,13 +243,12 @@ export class BootEnvironmentListComponent {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        let data = {};
-        this.busy = this.ws.call('boot.scrub').subscribe((res) => {
+        this.busy = this.ws.call('boot.scrub').subscribe(() => {
           this.loader.close();
           this.snackBar.open('Scrub started',"OK", {duration: 5000});
           },
-          (res) => {
-            this.dialog.errorReport(res.error, res.reason, res);
+          (e_res) => {
+            this.dialog.errorReport(e_res.error, e_res.reason, res);
             this.loader.close();
           }
           );
