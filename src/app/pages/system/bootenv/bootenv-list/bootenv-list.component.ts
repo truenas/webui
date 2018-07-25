@@ -155,7 +155,7 @@ export class BootEnvironmentListComponent {
         this.doActivate(activate_row.id);
       }
     });
-    if (row.keep === true){
+    if (row.keep === "yes"){
       actions.push({
         label : "Unkeep",
         id: "keep",
@@ -195,6 +195,7 @@ export class BootEnvironmentListComponent {
     })
   }
   toggleKeep(id, status) {
+    status = status === "no" ? false: true;
     if (!status){
       this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?").subscribe((res) => {
         if (res) {
