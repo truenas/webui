@@ -808,3 +808,10 @@ iscsi .mat-ink-bar {
 .mat-drawer {
   overflow-y: hidden !important;
 }
+
+
+// rough draft pw show button - positioned correctly only on Users/Add
+#show-pw {
+  @include variable(background-color, --primary, $primary);
+  color: white;
+}

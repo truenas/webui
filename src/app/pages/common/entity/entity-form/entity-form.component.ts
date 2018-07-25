@@ -624,4 +624,18 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.sub.unsubscribe(); 
     }
   }
+
+  // rough draft pw show button - positioned correctly only on Users/Add
+  onPW() {
+    let inputs = document.getElementsByTagName('input');
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].placeholder === 'Password' || inputs[i].placeholder === 'Confirm Password') {
+        if (inputs[i].type === 'password') {
+          inputs[i].type = 'text';
+        } else {
+          inputs[i].type = 'password';
+        }
+      }
+    }
+  }
 }

@@ -92,3 +92,10 @@
 .fieldset-container.fieldset-display-default .fieldset{
   margin:0;
 }
+
+// rough draft pw show button - positioned correctly only on Users/Add
+#show-pw {
+  position: absolute;
+  right: 25px;
+  top: 300px;
+}

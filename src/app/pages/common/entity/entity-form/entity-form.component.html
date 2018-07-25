@@ -4,6 +4,8 @@
 </p>
 <mat-card class="form-card">
     <div class="mat-content">
+            <!-- rough draft pw show button - positioned correctly only on Users/Add -->
+        <button mat-raised-button id="show-pw" (click)="onPW()">View/Hide Passwords</button>
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm" *ngIf="showDefaults">
            <!-- <ng-container *ngFor="let field of fieldConfig; let i = index">
                 <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{i}}">
