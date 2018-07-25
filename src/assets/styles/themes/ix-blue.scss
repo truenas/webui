@@ -800,11 +800,11 @@ iscsi .mat-ink-bar {
   @include variable(color, --yellow-txt, $yellow-txt);
 }
 
-
+// Fix for overscrolling problem with sidenav
 .sidebar-panel.mat-sidenav .navigation-hold {
   position: static !important;
 
 }
- .mat-drawer {
-   overflow-y: hidden !important;
- }
+.mat-drawer {
+  overflow-y: hidden !important;
+}
