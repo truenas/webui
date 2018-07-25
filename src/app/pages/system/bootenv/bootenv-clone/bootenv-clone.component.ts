@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -7,6 +6,7 @@ import { T } from '../../../../translate-marker';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'app-bootenv-add',
@@ -15,10 +15,10 @@ import {
 export class BootEnvironmentCloneComponent {
 
   protected route_success: string[] = [ 'system', 'bootenv' ];
-  protected resource_name: string = 'system/bootenv';
+  protected resource_name  = 'system/bootenv';
   protected pk: any;
-  protected isNew: boolean = true;
-  protected isEntity: boolean = true;
+  protected isNew = true;
+  protected isEntity = true;
 
   protected fieldConfig: FieldConfig[];
 
@@ -35,6 +35,8 @@ export class BootEnvironmentCloneComponent {
           placeholder: T('Name'),
           tooltip: T('Enter a name for the clone of this boot\
                       environment.'),
+          validation : [ regexValidator(/^[^\/ *\'"?@!#$%^&()+=~<>;`\\]+$/)],
+          required: true
         },
         {
           type: 'input',

@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {RestService, WebSocketService} from '../../../../services/';
@@ -7,6 +6,7 @@ import { T } from '../../../../translate-marker';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'app-bootenv-create',
@@ -15,10 +15,10 @@ import {
 export class BootEnvironmentCreateComponent {
 
   protected route_success: string[] = [ 'system', 'bootenv' ];
-  protected addCall: string = 'bootenv.create';
+  protected addCall = 'bootenv.create';
   protected pk: any;
-  protected isNew: boolean = false;
-  protected isEntity: boolean = true;
+  protected isNew = false;
+  protected isEntity = true;
   protected entityForm: any;
 
   protected fieldConfig: FieldConfig[];
@@ -35,6 +35,8 @@ export class BootEnvironmentCreateComponent {
           name: 'name',
           placeholder: T('Name'),
           tooltip: T('Enter the name of the boot entry.'),
+          validation : [ regexValidator(/^[^\/ *\'"?@!#$%^&()+=~<>;`\\]+$/)],
+          required: true
         },
       ];
     });
