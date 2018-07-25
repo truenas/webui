@@ -65,11 +65,23 @@ export class CoreService {
 
   private dispatchTable = [];
 
-  public register(reg:Registration){
+  public register(reg:Registration, multiplereg = true){
     reg.observable = new Subject();
     this.dispatchTable.push(reg);
     //DEBUG: console.log("CORESERVICE: New Registration");
     //DEBUG: console.log(reg);
+    let multipleregcount = 0
+    for(let i = 0; i < this.dispatchTable.length; i++){
+      const registration = this.dispatchTable[i];
+      if(registration.eventName === reg.eventName && !multiplereg){
+        multipleregcount = multipleregcount + 1
+        while(multipleregcount > 1){
+          this.dispatchTable.splice(i,1);
+          multipleregcount = multipleregcount - 1
+        }
+        console.log(this.dispatchTable)
+      }
+          }
     return reg.observable;
   }
 

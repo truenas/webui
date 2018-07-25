@@ -148,7 +148,7 @@ export class VmCardsComponent implements OnInit {
       this.cache[cacheIndex].state = 'running';
     });
 
-    this.core.register({observerClass:this,eventName:"VmStartFailed"}).subscribe((evt:CoreEvent) => {
+    this.core.register({observerClass:this,eventName:"VmStartFailed"},false).subscribe((evt:CoreEvent) => {
       this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
       const cardIndex = this.getCardIndex('id',evt.data.id[0]);
       this.cards[cardIndex].state = 'stopped';
