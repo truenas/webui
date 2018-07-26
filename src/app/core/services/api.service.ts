@@ -9,7 +9,6 @@ interface ApiCall {
   args?: any;
   operation?: string;
   responseEvent ?: any;// The event name of the response this service will send
-  responseFailedEvent ?: any;
 }
 
 interface ApiDefinition { 
@@ -164,8 +163,7 @@ export class ApiService {
         version:"1",
         namespace:"vm.start",
         args:[],
-        responseEvent:"VmStarted",
-        responseFailedEvent: "VmStartFailed"
+        responseEvent:"VmStarted"
       },
       postProcessor(res,callArgs){
         let cloneRes = Object.assign({},res);
@@ -602,10 +600,8 @@ export class ApiService {
         }
       },
       (error)=>{
-        if(call.responseFailedEvent){
           error.id = call.args;
-          this.core.emit({name:call.responseFailedEvent, data:error, sender: this});
-        }
+          this.core.emit({name:call.responseEvent, data:error, sender: this});
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
