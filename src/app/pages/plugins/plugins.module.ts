@@ -4,6 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgUploaderModule} from 'ngx-uploader';
 import { MaterialModule } from '../../appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {EntityModule} from '../common/entity/entity.module';
 
@@ -15,7 +16,8 @@ import { PluginsInstalledListComponent } from './plugins-installed/plugins-insta
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgUploaderModule, routing, MaterialModule, TranslateModule
+    ReactiveFormsModule, NgUploaderModule, routing, MaterialModule, TranslateModule,
+    FlexLayoutModule
   ],
   declarations : [
   	PluginsAvailabelListComponent,
