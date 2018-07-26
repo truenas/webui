@@ -174,7 +174,7 @@ export class EmailComponent implements OnDestroy {
         },
       ],
       required : true,
-      hideButton : false,
+      hideButton : true,
       validation : [ Validators.required ]
     },
   ];
@@ -209,11 +209,13 @@ afterInit(entityEdit: any) {
     this.em_user.isHidden = !this.em_smtp.value;
     this.em_pass1.isHidden = !this.em_smtp.value;
     this.em_pass2.isHidden = !this.em_smtp.value;
+    this.em_pass2.hideButton = !this.em_smtp.value;
 
     this.em_smtp_subscription = this.em_smtp.valueChanges.subscribe((value) => {
       this.em_user.isHidden = !value;
       this.em_pass1.isHidden = !value;
       this.em_pass2.isHidden = !value;
+      this.em_pass2.hideButton = !value;
     });
   }
 
