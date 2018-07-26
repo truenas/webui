@@ -173,7 +173,8 @@ export class EmailComponent implements OnDestroy {
           } ]
         },
       ],
-      required: true,
+      required : true,
+      hideButton : false,
       validation : [ Validators.required ]
     },
   ];

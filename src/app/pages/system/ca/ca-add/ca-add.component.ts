@@ -202,7 +202,8 @@ export class CertificateAuthorityAddComponent {
       name : 'Passphrase2',
       inputType : 'password',
       placeholder : T('Confirm Passphrase'),
-      isHidden: true,
+      isHidden : true,
+      hideButton : false
     },
   ];
 

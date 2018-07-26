@@ -237,6 +237,7 @@ export class AdvancedComponent implements OnInit {
     placeholder: T('Confirm SED Password'),
     tooltip: T(''),
     inputType: 'password',
+    hideButton: false,
     validation : [ matchOtherValidator('sed_passwd') ],
 
   },
