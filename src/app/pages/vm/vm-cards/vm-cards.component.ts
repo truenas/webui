@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit,OnDestroy, Input, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaterialModule } from '../../../appMaterial.module';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -43,7 +43,7 @@ interface VmProfile {
   templateUrl: './vm-cards.component.html',
   styleUrls: ['./vm-cards.component.css'],
 })
-export class VmCardsComponent implements OnInit {
+export class VmCardsComponent implements OnInit,OnDestroy {
 
   @ViewChild('filter') filter: ElementRef;
   @Input() searchTerm = '';
@@ -81,6 +81,10 @@ export class VmCardsComponent implements OnInit {
   constructor(protected ws: WebSocketService,protected rest: RestService,private core:CoreService, 
     private dialog: DialogService,protected loader: AppLoaderService,protected router: Router,
     protected matdialog: MatDialog){}
+
+  ngOnDestroy(){
+    this.core.unregister({observerClass:this});
+  }
     
   ngOnInit() {
     this.viewMode.value = "cards";
@@ -141,20 +145,20 @@ export class VmCardsComponent implements OnInit {
     });
 
     this.core.register({observerClass:this,eventName:"VmStarted"}).subscribe((evt:CoreEvent) => {
-      const cardIndex = this.getCardIndex('id',evt.data.id);
-      this.cards[cardIndex].state = 'running';
+      if(typeof evt.data.id == "string"){
+        const cardIndex = this.getCardIndex('id',evt.data.id);
+        this.cards[cardIndex].state = 'running';
 
-      const cacheIndex = this.getCardIndex('id',evt.data.id,true);
-      this.cache[cacheIndex].state = 'running';
-    });
+        const cacheIndex = this.getCardIndex('id',evt.data.id,true);
+        this.cache[cacheIndex].state = 'running';
+      } else {
+        this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
+        const cardIndex = this.getCardIndex('id',evt.data.id[0]);
+        this.cards[cardIndex].state = 'stopped';
 
-    this.core.register({observerClass:this,eventName:"VmStartFailed"},false).subscribe((evt:CoreEvent) => {
-      this.dialog.errorReport(T('VM failed to start') , evt.data.reason, evt.data.trace.formatted)
-      const cardIndex = this.getCardIndex('id',evt.data.id[0]);
-      this.cards[cardIndex].state = 'stopped';
-
-      const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
-      this.cache[cacheIndex].state = 'stopped';
+        const cacheIndex = this.getCardIndex('id',evt.data.id[0],true);
+        this.cache[cacheIndex].state = 'stopped';
+      }
     });
 
     this.core.register({observerClass:this,eventName:"VmStopped"}).subscribe((evt:CoreEvent) => {
