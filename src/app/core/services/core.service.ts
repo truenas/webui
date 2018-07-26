@@ -68,34 +68,26 @@ export class CoreService {
   public register(reg:Registration){
     reg.observable = new Subject();
     this.dispatchTable.push(reg);
+    //DEBUG: console.log("CORESERVICE: New Registration");
+    //DEBUG: console.log(reg);
     return reg.observable;
   }
 
   public unregister(reg: Registration){
-    let clone = [];// New Dispatch Table
     if(!reg.eventName){
       for(var i = 0; i < this.dispatchTable.length; i++){
 	let registration = this.dispatchTable[i];
 	if(registration.observerClass == reg.observerClass){
-	  continue;
-	} else {
-          clone.push(registration)
-        }
+	  this.dispatchTable.splice(i,1);
+	}
       }
     } else {
       for(var i = 0; i < this.dispatchTable.length; i++){
 	let registration = this.dispatchTable[i];
 	if(registration.observerClass == reg.observerClass && registration.eventName == reg.eventName){
-          continue;
-	} else {
-	  clone.push(registration);
-        }
+	  this.dispatchTable.splice(i,1);
+	}
       }
-    }
-    this.dispatchTable = clone;
-    if(this.debug && this.debug_show_dispatch_table){
-      console.log("UNREGISTER: DISPATCH = ");
-      console.log(this.dispatchTable);
     }
   }
 
