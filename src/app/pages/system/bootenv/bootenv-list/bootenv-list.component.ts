@@ -215,7 +215,7 @@ export class BootEnvironmentListComponent {
         }
       })
     } else {
-      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?").subscribe((res) => {
+      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?", false, "Remove Keep Flag").subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -249,7 +249,7 @@ export class BootEnvironmentListComponent {
         let data = {};
         this.busy = this.ws.call('boot.scrub').subscribe((res) => {
           this.loader.close();
-          this.snackBar.open('Scrub started',"OK", {duration: 5000});
+          this.snackBar.open('Scrub started',"close", {duration: 5000});
           },
           (res) => {
             this.dialog.errorReport(res.error, res.reason, res);

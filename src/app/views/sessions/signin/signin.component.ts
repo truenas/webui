@@ -95,7 +95,7 @@ export class SigninComponent implements OnInit {
       message = 'Token expired, please log back in.';
       this.ws.token = null;
     }
-    this.translate.get('Retry').subscribe((ok: string) => {
+    this.translate.get('close').subscribe((ok: string) => {
       this.translate.get(message).subscribe((res: string) => {
         this.snackBar.open(res, ok, {duration: 4000});
       });
