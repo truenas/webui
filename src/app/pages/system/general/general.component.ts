@@ -177,7 +177,7 @@ export class GeneralComponent implements OnDestroy {
     title: "Save Config",
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
-    saveButtonText: 'Ok',
+    saveButtonText: 'Save',
     customSubmit: this.saveCofigSubmit,
   }
   public custActions: Array<any> = [

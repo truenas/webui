@@ -90,12 +90,12 @@ export class SigninComponent implements OnInit {
     this.signinData.password = '';
     let message = '';
     if (this.ws.token === null) {
-      message = 'Username or Password is incorrect';
+      message = 'Username or Password is incorrect.';
     } else {
-      message = 'Token expired, please log back in';
+      message = 'Token expired, please log back in.';
       this.ws.token = null;
     }
-    this.translate.get('Ok').subscribe((ok: string) => {
+    this.translate.get('Retry').subscribe((ok: string) => {
       this.translate.get(message).subscribe((res: string) => {
         this.snackBar.open(res, ok, {duration: 4000});
       });
@@ -105,7 +105,7 @@ export class SigninComponent implements OnInit {
   onGoToLegacy() {
     this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
       this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true).subscribe((res) => {
+        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true, 'Switch').subscribe((res) => {
           if (res) {
             window.location.href = '/legacy/';
           }
