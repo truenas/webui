@@ -102,11 +102,11 @@ export const routes: Routes = [
       }]
     }, {
       path: 'iscsi',
-      data: { title: 'ISCSI', breadcrumb: 'ISCSI', icon: 'share'},
+      data: { title: 'iSCSI', breadcrumb: 'iSCSI', icon: 'share'},
       children: [
       {
         path: '',
-        data: { title: 'ISCSI', breadcrumb: 'ISCSI'},
+        data: { title: 'iSCSI', breadcrumb: 'iSCSI'},
         children: [
         {
           path: '',
@@ -143,7 +143,7 @@ export const routes: Routes = [
           }]
         }, {
           path: 'auth',
-          data: { title: 'Auth', breadcrumb: 'Auth'},
+          data: { title: 'Authorized Access', breadcrumb: 'Authorized Access'},
           children: [{
             path: 'add',
             component: AuthorizedAccessFormComponent,
@@ -156,7 +156,7 @@ export const routes: Routes = [
         },
         {
           path: 'target',
-          data: { title: 'Target', breadcrumb: 'Target'},
+          data: { title: 'Targets', breadcrumb: 'Targets'},
           children: [{
             path: 'add',
             component: TargetAddComponent,
@@ -169,7 +169,7 @@ export const routes: Routes = [
         },
         {
           path: 'extent',
-          data: { title: 'Extent', breadcrumb: 'Extent'},
+          data: { title: 'Extents', breadcrumb: 'Extents'},
           children: [{
             path: 'add',
             component: ExtentFormComponent,
@@ -182,7 +182,7 @@ export const routes: Routes = [
         },
         {
           path: 'associatedtarget',
-          data: { title: 'Associate Target', breadcrumb: 'Associate Target'},
+          data: { title: 'Associated Targets', breadcrumb: 'Associated Targets'},
           children: [{
             path: 'add',
             component: AssociatedTargetFormComponent,
