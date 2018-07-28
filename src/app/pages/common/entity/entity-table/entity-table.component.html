@@ -162,7 +162,14 @@
           <div id="{{col.prop}}_{{row[col.prop]}}" 
                title="{{row[col.prop]}}" [ngClass]="col.icon ? 'IconCell' : ''">
             <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-            {{row[col.prop]}}
+            <button mat-icon-button *ngIf="col.state; else colInfo" (click)="conf.stateButton(row)">
+              <mat-spinner *ngIf="row[col.state] == 'RUNNING'" [diameter]='24'></mat-spinner>
+              <mat-icon *ngIf="row[col.state] == 'SUCCESS'" aria-label="row[col.prop]">done</mat-icon>
+              <mat-icon *ngIf="row[col.state] == 'FAILED'" aria-label="row[col.prop]">close</mat-icon>
+            </button>
+            <ng-template #colInfo>
+              {{row[col.prop]}}
+            </ng-template>
           </div>
         </ng-template>
       </ngx-datatable-column>
