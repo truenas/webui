@@ -1,4 +1,4 @@
-import { WebSocketService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService, JobService } from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
@@ -11,6 +11,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 @Component({
   selector: 'app-cloudsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  providers: [JobService],
 })
 export class CloudsyncListComponent {
 
@@ -26,7 +27,7 @@ export class CloudsyncListComponent {
     { name: T('Description'), prop: 'description' },
     { name: T('Direction'), prop: 'direction'},
     { name: T('Path'), prop: 'path'},
-    { name: T('Status'), prop: 'status'},
+    { name: T('Status'), prop: 'status', state: 'state'},
     { name: T('Minute'), prop: 'minute' },
     { name: T('Hour'), prop: 'hour' },
     { name: T('Day of Month'), prop: 'daymonth' },
@@ -44,23 +45,11 @@ export class CloudsyncListComponent {
   constructor(protected router: Router,
               protected ws: WebSocketService,
               protected translateService: TranslateService,
-              protected dialog: DialogService) {}
+              protected dialog: DialogService,
+              protected job: JobService) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-  }
-  getTaskStatus(job_id): Observable<any> {
-    let source = Observable.create((observer) => {
-        this.ws.subscribe("core.get_jobs").subscribe((res) => {
-          if (res.id == job_id) {
-            observer.next(res.fields);
-            if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
-              observer.complete();
-            }
-          }
-      });
-    });
-    return source;
   }
 
   getActions(parentrow) {
@@ -75,7 +64,9 @@ export class CloudsyncListComponent {
                 this.translateService.get("close").subscribe((close) => {
                   this.entityList.snackBar.open(T('The cloud sync task has started.'), close, { duration: 5000 });
                 });
-                this.getTaskStatus(res).subscribe((task)=> {
+                this.job.getJobStatus(res).subscribe((task) => {
+                  row.state = task.state;
+                  row.job.id = task.id;
                   row.status = task.state;
                   if (task.error) {
                     row.status += ":" + task.error;
@@ -118,11 +109,13 @@ export class CloudsyncListComponent {
       if (entityList.rows[i].job == null) {
         entityList.rows[i].status = T("Not run since last boot");
       } else {
+        entityList.rows[i].state = entityList.rows[i].job.state;
         entityList.rows[i].status = entityList.rows[i].job.state;
         if (entityList.rows[i].job.error) {
           entityList.rows[i].status += ":" + entityList.rows[i].job.error;
         }
-        this.getTaskStatus(entityList.rows[i].job.id).subscribe((task) => {
+        this.job.getJobStatus(entityList.rows[i].job.id).subscribe((task) => {
+          entityList.rows[i].state = entityList.rows[i].job.state;
           entityList.rows[i].status = task.state;
           if (task.error) {
             entityList.rows[i].status += ":" + task.error;
@@ -134,5 +127,9 @@ export class CloudsyncListComponent {
       } 
     }
 
+  }
+
+  stateButton(row) {
+    this.job.showLogs(row.job.id);
   }
 }
