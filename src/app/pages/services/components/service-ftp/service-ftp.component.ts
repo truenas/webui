@@ -150,7 +150,7 @@ export class ServiceFTPComponent implements OnInit {
       placeholder : T('Certificate'),
       tooltip: T('The SSL certificate to be used for TLS FTP connections.\
                   To create a certificate, use <b>System --> Certificates</b>.'),
-      options : [],
+      options : [{label:'-', value:null}],
     },
     {
       type : 'permissions',
