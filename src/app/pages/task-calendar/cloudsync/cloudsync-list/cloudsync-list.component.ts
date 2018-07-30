@@ -59,6 +59,7 @@ export class CloudsyncListComponent {
       onClick: (row) => {
         this.dialog.confirm(T("Run Now"), T(" Would you like to run this cloud sync task now?"), true).subscribe((res) => {
           if (res) {
+            row.state = 'RUNNING';
             this.ws.call('cloudsync.sync', [parentrow.id]).subscribe(
               (res) => {
                 this.translateService.get("close").subscribe((close) => {
