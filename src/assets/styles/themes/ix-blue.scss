@@ -799,3 +799,8 @@ iscsi .mat-ink-bar {
   @include variable(background-color, --yellow, $yellow);
   @include variable(color, --yellow-txt, $yellow-txt);
 }
+
+// Gets checkboxes in SMART tests to pick up theme color
+.ix-blue .mat-primary .mat-pseudo-checkbox-checked, .ix-blue .mat-primary .mat-pseudo-checkbox-indeterminate {
+  @include variable(background, --accent, $accent !important);
+}
