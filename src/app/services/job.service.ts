@@ -5,6 +5,7 @@ import { EntityUtils } from '../pages/common/entity/utils'
 import { WebSocketService } from './ws.service';
 import { DialogService } from './dialog.service';
 import { T } from '../translate-marker';
+import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class JobService {
@@ -13,7 +14,7 @@ export class JobService {
   protected accountAllUsersResource: string = 'account/all_users/';
   protected accountAllGroupsResource: string = 'account/all_groups/';
 
-  constructor(protected ws: WebSocketService, protected dialog: DialogService) {};
+  constructor(protected ws: WebSocketService, protected dialog: DialogService, protected snackBar: MatSnackBar) {};
 
   getJobStatus(job_id): Observable<any> {
     let source = Observable.create((observer) => {
@@ -34,9 +35,22 @@ export class JobService {
       for(var i = 0; i < res.length; i++) {
         if (res[i].id == job_id) {
           if (res[i].logs_path && res[i].logs_excerpt) {
+            let target_job = res[i];
             this.dialog.confirm(T('Logs'), res[i].logs_excerpt, true, T('Download Logs')).subscribe(
-              (res) => {
-                console.log(res);
+              (dialog_res) => {
+                if (dialog_res) {
+                  this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
+                    (snack_res) => {
+                      this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                        duration: 5000
+                      });
+                      window.open(snack_res[1]);
+                    },
+                    (snack_res) => {
+                      new EntityUtils().handleError(this, snack_res);
+                    }
+                  );
+                }
               });
           }
         }
