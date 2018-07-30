@@ -149,7 +149,7 @@
           <ng-template let-row="row" ngx-datatable-cell-template>
             <div id="{{col.prop}}_{{row[col.prop]}}" 
                  title="{{row[col.prop]}}">
-              {{row[col.prop]}}
+              {{convertDisplayValue(row[col.prop])}}
             </div>
           </ng-template>
       </ngx-datatable-column>
@@ -168,7 +168,7 @@
               <mat-icon *ngIf="row[col.state] == 'FAILED'" aria-label="row[col.prop]">close</mat-icon>
             </button>
             <ng-template #colInfo>
-              {{row[col.prop]}}
+              {{convertDisplayValue(row[col.prop])}}
             </ng-template>
           </div>
         </ng-template>
