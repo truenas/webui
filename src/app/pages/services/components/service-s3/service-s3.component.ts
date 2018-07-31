@@ -61,7 +61,7 @@ export class ServiceS3Component implements OnDestroy {
       tooltip: T('Enter the TCP port which provides the S3 service.'),
       value: '9000',
       required: true,
-      validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^\d+$/)]
+      validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]
     },
     {
       type : 'input',
