@@ -51,6 +51,7 @@ export class Services implements OnInit {
   }
 
   public cache = [];
+  public showSpinner: boolean = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private confirmService: AppConfirmService, private dialog: DialogService) {}
@@ -90,6 +91,7 @@ export class Services implements OnInit {
         });
         this.cards = _.sortBy(this.cards, [function(i) {return i.label.toLowerCase()}]);
         this.cache = _.sortBy(this.cache, [function(i) {return i.label.toLowerCase()}]);
+        this.showSpinner = false;
       });
   }
 
