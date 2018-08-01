@@ -41,7 +41,6 @@ export class JailEditComponent implements OnInit {
       type: 'input',
       name: 'host_hostuuid',
       placeholder: T('UUID'),
-      disabled: true,
       tooltip: T('The numeric <i>UUID</i> or <i>custom name</i> of the \
                  jail.'),
       required: true,
@@ -1360,13 +1359,15 @@ export class JailEditComponent implements OnInit {
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
 
-    if (value['ip4_addr'] == '') {
-      value['ip4_addr'] = 'none';
-    } else {
-      value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+    if (value['ip4_addr']) {
+      if (value['ip4_addr'] == '') {
+        value['ip4_addr'] = 'none';
+      } else {
+        value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+      }
+      delete value['ip4_interface'];
+      delete value['ip4_netmask'];
     }
-    delete value['ip4_interface'];
-    delete value['ip4_netmask'];
     if (value['ip6_addr'] == '') {
       value['ip6_addr'] = 'none';
     } else {
@@ -1407,6 +1408,16 @@ export class JailEditComponent implements OnInit {
           }
         }
       }
+    }
+
+    if (value['host_hostuuid']) {
+      if (this.wsResponse['type'] == 'jail') {
+        value['plugin'] = false;
+      } else {
+        value['plugin'] = true;
+      }
+      value['name'] = value['host_hostuuid'];
+      delete value['host_hostuuid'];
     }
 
     this.loader.open();
