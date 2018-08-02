@@ -44,6 +44,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
   public drawTabs = false;
   public tabChartsMappingDataArray: TabChartsMappingData[] = [];
   public tabChartsMappingDataSelected: TabChartsMappingData;
+  public showSpinner: boolean = true;
   
 
 
@@ -65,15 +66,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
 
     tabChartsMappingDataSelected.paginatedChartConfigData = paginationChartData;
 
-
     this.paginationLength = this.tabChartsMappingDataSelected.chartConfigData.length;
+    
   }
 
   ngOnInit() { 
     this._lineChartService.getChartConfigData(this);
-
-    
-
   }
 
   ngOnDestroy() {
@@ -177,7 +175,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
         const tab: TabChartsMappingData = map.get("ZFS");
         tab.chartConfigData.push(chartConfigDataItem);
 
-      }
+      } 
     });
 
     this.tabChartsMappingDataArray.splice(0, this.tabChartsMappingDataArray.length);
@@ -189,10 +187,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
       }
       this.tabChartsMappingDataArray.push(value);
     });
-    
-
+  
     this.drawTabs = true;
-
+    this.showSpinner = false;
   }
 
   tabSelectChangeHandler($event) {
@@ -201,7 +198,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.paginationPageIndex = 0;
     this.paginationPageSize = 5;
     this.setPaginationInfo( this.tabChartsMappingDataSelected );
-    
   }
   
   paginationUpdate($pageEvent: PageEvent) {
@@ -210,7 +206,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     this.paginationPageSize = this.paginationPageEvent.pageSize;
     this.setPaginationInfo( this.tabChartsMappingDataSelected );
   }
-
 
 
   private getTabChartsMappingDataByName(name: string): TabChartsMappingData {
@@ -229,6 +224,5 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, HandleChart
     }
     return foundTabChartsMappingData;
   }
-
 
 }
