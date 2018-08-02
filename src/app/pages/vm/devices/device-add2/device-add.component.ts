@@ -226,6 +226,7 @@ export class DeviceAddComponent implements OnInit {
                  characters.',
       type : 'input',
       inputType : 'password',
+      validation: [Validators.maxLength(8)]
     },
     {
       name : 'vnc_web',
