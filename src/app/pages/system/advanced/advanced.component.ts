@@ -57,7 +57,6 @@ export class AdvancedComponent implements OnDestroy {
                 }
               }, () => {
                 this.load.close();
-
               }, () => {
                 this.load.close();
                 if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
@@ -67,7 +66,7 @@ export class AdvancedComponent implements OnDestroy {
             } else {
               console.log("User canceled");
             }
-          });        
+          });
     }
   }
 ];
@@ -76,7 +75,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'consolemenu',
     placeholder: T('Show Text Console without Password Prompt'),
-    tooltip: T('Uncheck this to add a login prompt to the system before\
+    tooltip: T('Unset to add a login prompt to the system before\
                 the console menu is shown.')
   }, {
     type: 'checkbox',
@@ -91,8 +90,7 @@ export class AdvancedComponent implements OnDestroy {
     options: [
       { label: '---', value: null},
     ],
-    tooltip: T('Select the serial port address in\
-                hex.'),
+    tooltip: T('Select the serial port address in hex.'),
     relation: [
     {
       action : 'DISABLE',
@@ -129,9 +127,13 @@ export class AdvancedComponent implements OnDestroy {
     type: 'input',
     name: 'swapondrive',
     placeholder: T('Swap size in GiB'),
-    tooltip: T('By default, all data disks are created with this amount\
-                of swap. This setting does not affect log or cache\
-                devices as they are created without swap.'),
+    tooltip: T('By default, all data disks are created with the amount\
+                of swap specified. Changing the value does not affect\
+                the amount of swap on existing disks, only disks added\
+                <i>after</i> the change. Does not affect log or cache\
+                devices as they are created without swap. Setting to\
+                <i>0</i> disables swap creation completely. <b>STRONGLY\
+                DISCOURAGED</b>'),
     inputType: 'number',
     validation : [ Validators.required, Validators.min(0), Validators.max(99) ],
     required: true,
@@ -152,15 +154,15 @@ export class AdvancedComponent implements OnDestroy {
                 installed hardware. <b>Warning:</b> Autotuning is\
                 only used as a temporary measure and is not a\
                 permanent fix for system hardware issues. See the\
-                <a href="..//docs/system.html#autotune"\
+                <a href="../docs/system.html#autotune"\
                 target="_blank">Autotune section</a> of the guide for\
                 more information.')
   }, {
     type: 'checkbox',
     name: 'debugkernel',
     placeholder: T('Enable Debug Kernel'),
-    tooltip: T('When checked, the next system boot uses a debug version\
-                of the kernel.')
+    tooltip: T('Set to boot a debug kernel after the next system\
+                reboot.')
   }, {
     type: 'checkbox',
     name: 'consolemsg',
@@ -171,7 +173,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'textarea',
     name: 'motd',
     placeholder: T('MOTD Banner'),
-    tooltip: T('This message is shown when a user logs in with SSH.')
+    tooltip: T('The message to show when a user logs in with SSH.')
   }, {
     type: 'checkbox',
     name: 'traceback',
@@ -182,12 +184,12 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'advancedmode',
     placeholder: T('Show advanced fields by default'),
-    tooltip: T('Enabling this shows additional features by default.')
+    tooltip: T('Set to always show advanced fields when available.')
   }, {
     type: 'checkbox',
     name: 'uploadcrash',
     placeholder: T('Enable automatic upload of kernel crash dumps and\
- daily telemetry'),
+                    daily telemetry'),
     tooltip: T('Report kernel crash dumps and daily performance\
                 measurements to iXsystems.')
   }, {
@@ -195,8 +197,8 @@ export class AdvancedComponent implements OnDestroy {
     name: 'periodic_notifyuser',
     placeholder: T('Periodic Notification User'),
     options: [],
-    tooltip: T('Choose a user to receive security output emails. This\
-                output runs nightly, but only sends an email when the\
+    tooltip: T('Select a user to receive security output emails. This\
+                output runs nightly but only sends an email when the\
                 system reboots or encounters an error.')
   }, {
     type: 'input',
@@ -208,33 +210,46 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'fqdn_syslog',
     placeholder: T('Use FQDN for logging'),
-    tooltip: T('Check to include the Fully-Qualified Domain Name (FQDN)\
+    tooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
                 in logs to precisely identify systems with similar\
                 hostnames.')
   }, {
     type: 'checkbox',
     name: 'cpu_in_percentage',
     placeholder: T('Report CPU usage in percentage'),
-    tooltip: T('Check to display CPU usage as percentages in\
-                <b>Reporting</b>.')
+    tooltip: T('Set to display CPU usage as percentages in\
+               <b>Reporting</b>.')
+  },
+  {
+    type: 'paragraph',
+    name: 'sed_options_message',
+    paraText: T('<b>SED (<a href="../docs/system.html#self-encrypting-drives"\
+                 target="_blank">Self-Encrypting Drives</a>) Options</b>'),
+// This tooltip wraps to the next line when uncommented. 
+// Erin said it's more than likely the CSS. Commented out for now and
+// linking to the user guide from the test instead.
+//  tooltip: T('See the <a href="../docs/system.html#self-encrypting-drives"\
+//                target="_blank"> Self Encrypting Drives</a> section of\
+//                the user guide for more information.'),
+//
   },
   {
     type: 'select',
     name: 'sed_user',
     placeholder: T('ATA Security User'),
-    tooltip: T('User passed to camcontrol security -u for unlocking SEDs'),
+    tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
+                SEDs'),
     options: [
       {label:'user', value:'USER'},
       {label:'master', value:'MASTER'}
               ],
     value : 'USER'
-
   },
   {
     type: 'input',
     name: 'sed_passwd',
     placeholder: T('SED Password'),
-    tooltip: T('Global password to unlock SED disks.'),
+    tooltip: T('Global password to unlock SEDs.'),
     inputType: 'password',
 
   },
@@ -300,7 +315,6 @@ export class AdvancedComponent implements OnDestroy {
             label: serial_port_choices[i], value: serial_port_choices[i]
           }
         )}
-      
     });
 
     this.rest.get('account/users/', { limit: 0 }).subscribe((res) => {
@@ -321,7 +335,6 @@ export class AdvancedComponent implements OnDestroy {
       this.load.close();
       this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
       this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
-      
     }, (res) => {
       this.load.close();
       new EntityUtils().handleWSError(this.entityForm, res);
