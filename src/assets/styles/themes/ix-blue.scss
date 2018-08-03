@@ -809,12 +809,13 @@ iscsi .mat-ink-bar {
 .mat-dialog-container .mat-button.mat-primary {
   @include variable(background-color, --primary, $primary);
   color: white !important;
+}
 
 // Fix for overscrolling problem with sidenav
 .sidebar-panel.mat-sidenav .navigation-hold {
   position: static !important;
-
 }
+
 .mat-drawer {
   overflow-y: hidden !important;
 }
