@@ -86,7 +86,4 @@ export class GroupFormComponent {
       }
     });
   }
-  errorReport(res) {
-    this.dialog.errorReport(res.code, res.error.error_message, res.error.traceback);
-  }
 }
