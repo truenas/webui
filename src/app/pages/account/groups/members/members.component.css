@@ -21,3 +21,15 @@
   position: fixed !important;
   z-index: 1;
 }
+
+#group-member-spinner {
+  position: absolute;
+  left: 48%;
+  top: 25px;
+}
+
+.button-container {
+  position: relative;
+  bottom: 15px;
+  left: 31px;
+}

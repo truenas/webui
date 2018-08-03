@@ -1,5 +1,10 @@
 <mat-card>
   <mat-card-title *ngIf="groupName">{{'Members of' | translate}} {{groupName}} {{'group' | translate}}</mat-card-title>
+    <mat-spinner 
+      [diameter]='40' 
+      id="group-member-spinner"
+      *ngIf="showSpinner">
+    </mat-spinner> 
   <mat-card-content>
     <div class="padding-16" *ngIf="members.length > 0">
       <app-dual-listbox [items]="members" [(selectedItems)]="selectedMembers">
@@ -9,8 +14,8 @@
       </app-dual-listbox>
     </div>
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="updateUsers()">{{ 'Save' | translate }}</button>
-    <button mat-raised-button color="accent" (click)="cancel()">{{ 'Cancel' | translate }}</button>
+  <mat-card-actions class="button-container">
+    <button mat-button color="primary" (click)="updateUsers()">{{ 'Save' | translate }}</button>
+    <button mat-button color="accent" (click)="cancel()">{{ 'Cancel' | translate }}</button>
   </mat-card-actions>
 </mat-card>

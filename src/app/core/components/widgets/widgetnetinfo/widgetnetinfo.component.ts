@@ -77,7 +77,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       this.defaultRoutes = evt.data.default_routes.toString();
-      this.nameServers = evt.data.nameservers.toString();
+      this.nameServers = evt.data.nameservers.toString().replace(/,/g, " , ");
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
@@ -86,7 +86,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         let ips = this.trimRanges(ipv4);
         let nicInfo:any = {
           name: nic,
-          primary:ips.primary,
+          primary:"",//ips.primary,
           aliases: ips.aliases.toString()
         }
         this.nics.push(nicInfo);
@@ -94,7 +94,11 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         // Match the UI connection address
         let primary = ipv4.find((x) => {
           let addr = x.split("/");
-          return addr[0] == this.connectionIp;
+          let result =  addr[0] == this.connectionIp;
+          if(result){
+            nicInfo.primary = addr[0];
+          }
+          return result
         });
         if(primary){
           this.primaryNicInfo = nicInfo;

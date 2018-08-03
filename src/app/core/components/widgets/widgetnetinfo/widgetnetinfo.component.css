@@ -116,6 +116,7 @@ div.details{
 p.value{
   font-size:100%;
   font-weight:400;
+  word-wrap:break-word;
 }
 
 .data-container > div{

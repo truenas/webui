@@ -41,10 +41,6 @@ export class SnapshotFormComponent {
                 pool/dataset with <b>no</b> child datasets.'),
   }, {
     placeholder: T('Snapshot Lifetime'),
-    tooltip: T('Define a length of time to retain the snapshot on this\
-                system. After the time expires, the snapshot is removed.\
-                Snapshots which have been replicated to other systems\
-                are not affected.'),
     type: 'input',
     name: 'task_ret_count',
     inputType: 'number',
@@ -54,6 +50,10 @@ export class SnapshotFormComponent {
   }, {
     type: 'select',
     name: 'task_ret_unit',
+    tooltip: T('Define a length of time to retain the snapshot on this\
+                system. After the time expires, the snapshot is removed.\
+                Snapshots which have been replicated to other systems\
+                are not affected.'),
     options: [{
       label: 'Hours',
       value: 'hour',
