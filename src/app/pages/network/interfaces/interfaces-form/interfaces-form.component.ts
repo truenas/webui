@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import {Validators, FormArray} from '@angular/forms';
 
-import { NetworkService, RestService, DialogService } from '../../../../services';
+import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -173,6 +173,7 @@ export class InterfacesFormComponent implements OnDestroy {
   private int_v6netmaskbit: any;
   private int_ipv6address: any;
   private int_interface: any;
+  private int_interface_fg: any;
   private entityForm: any;
   protected ipv4formArray: FormArray;
   protected ipv6formArray: FormArray;
@@ -227,7 +228,8 @@ export class InterfacesFormComponent implements OnDestroy {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
-              protected networkService: NetworkService, protected dialog: DialogService) {}
+              protected networkService: NetworkService, protected dialog: DialogService,
+              protected ws: WebSocketService) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_aliases'] <= this.initialCount_default['ipv4_aliases']) {
@@ -258,14 +260,18 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
+
     if (entityForm.isNew) {
       this.rest.get(this.resource_name, []).subscribe((res) => {
         if (res.data.length === 0) {
-          this.dialog.confirm(T("Warning"), T("Please configure the Web UI \
-          interface before adding another interface. This prevents losing \
-          connection to the Web UI." )).subscribe((confirm) => {
-            if (!confirm) {
-              entityForm.goBack();
+          this.ws.call('interfaces.websocket_interface', []).subscribe((wsint) => {
+            this.int_interface.warnings = T("Please configure the Web UI \
+            interface before adding another interface. This prevents losing \
+            connection to the Web UI.");
+            if (wsint && wsint.name) {
+              this.int_interface_fg.setValue(wsint.name);
+              entityForm.formGroup.controls['int_name'].setValue(wsint.name);
             }
           });
         }
