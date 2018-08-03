@@ -16,3 +16,4 @@ export * from './language.service';
 export * from './app-loader/app-loader.service';
 export * from './cloudcredential.service';
 export * from './job.service';
+export * from './bootenv.service';

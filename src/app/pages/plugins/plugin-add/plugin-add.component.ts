@@ -12,6 +12,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-plugin-add',
@@ -187,7 +188,8 @@ export class PluginAddComponent implements OnInit {
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
-    protected networkService: NetworkService) {}
+    protected networkService: NetworkService,
+    protected snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.ip4_interfaceField = _.find(this.fieldConfig, {'name': 'ip4_interface'});
@@ -337,6 +339,7 @@ export class PluginAddComponent implements OnInit {
             }
           );
         } else {
+          this.snackBar.open(T("Plugin sucessfully installed"), T("Close"), { duration: 5000 });
           this.router.navigate(new Array('/').concat(this.route_success));
         }
       },

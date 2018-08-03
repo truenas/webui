@@ -97,6 +97,7 @@ export class DiskFormComponent {
       tooltip: T(''),
       inputType: 'password',
       validation : [ matchOtherValidator('disk_passwd') ],
+      hideButton: false
 
     },
   ];
