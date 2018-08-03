@@ -7,6 +7,9 @@ import { T } from '../../../../translate-marker';
 import { RestService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import {  DialogService } from '../../../../services/';
+import {
+  regexValidator
+} from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector: 'app-group-form',
@@ -27,7 +30,7 @@ export class GroupFormComponent {
                   with user accounts. Groups used by a service must have\
                   an ID that matches the default port number used by the\
                   service.'),
-      validation : [ Validators.required ],
+      validation : [ Validators.required, regexValidator(/^\d+$/) ],
       required: true,
     },
     {
@@ -35,7 +38,7 @@ export class GroupFormComponent {
       name: 'bsdgrp_group',
       placeholder: T('Name'),
       tooltip: T('Enter an alphanumeric name for the group.'),
-      validation : [ Validators.required ],
+      validation : [ Validators.required, regexValidator(/^\w+$/) ],
       required: true
     },
     {
@@ -85,8 +88,5 @@ export class GroupFormComponent {
         })
       }
     });
-  }
-  errorReport(res) {
-    this.dialog.errorReport(res.code, res.error.error_message, res.error.traceback);
   }
 }
