@@ -811,6 +811,11 @@ iscsi .mat-ink-bar {
   color: white !important;
 }
 
+// Bring tooltips to the front in dialogs
+.mat-dialog-container, .mat-dialog-content {
+    overflow: visible !important;
+}
+
 // Fix for overscrolling problem with sidenav
 .sidebar-panel.mat-sidenav .navigation-hold {
   position: static !important;
