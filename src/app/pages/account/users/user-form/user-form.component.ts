@@ -79,6 +79,7 @@ export class UserFormComponent {
           name : 'password_conf',
           placeholder : T('Confirm Password'),
           inputType : 'password',
+          hideButton : false,
           validation : [ matchOtherValidator('password') ],
         },
       ]

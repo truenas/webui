@@ -244,6 +244,7 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: T('Confirm SED Password'),
     tooltip: T(''),
     inputType: 'password',
+    hideButton: false,
     validation : [ matchOtherValidator('sed_passwd') ],
 
   },

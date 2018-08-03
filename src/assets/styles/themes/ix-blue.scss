@@ -808,3 +808,9 @@ iscsi .mat-ink-bar {
 .mat-drawer {
   overflow-y: hidden !important;
 }
+
+// pw show button on entity tables
+#show-pw {
+  @include variable(background-color, --primary, $primary);
+  color: white;
+}

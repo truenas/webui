@@ -64,6 +64,7 @@ export class AuthorizedAccessFormComponent {
       name : 'iscsi_target_auth_secret_confirm',
       placeholder : T('Secret (Confirm)'),
       inputType : 'password',
+      hideButton : false
     },
     {
       type : 'input',
