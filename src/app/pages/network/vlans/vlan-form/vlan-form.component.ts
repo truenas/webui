@@ -2,6 +2,9 @@ import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Validators} from '@angular/forms';
+import {
+  regexValidator
+} from '../../../common/entity/entity-form/validators/regex-validation';
 
 import {
   NetworkService,
@@ -58,7 +61,7 @@ export class VlanFormComponent {
       tooltip : 'Enter a number between 1 and 4095 which matches the\
                  numeric tag configured in the switched network.',
       required: true,
-      validation : [ Validators.required ]
+      validation: [Validators.min(1), Validators.max(4095), Validators.required, regexValidator(/^\d+$/)]
     },
     {
       type : 'input',
