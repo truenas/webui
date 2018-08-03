@@ -98,7 +98,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   ngAfterViewInit(){
     this.core.register({observerClass:this,eventName:"PoolDisks"}).subscribe((evt:CoreEvent) => {
       if(evt.data.callArgs[0] == this.volumeData.id){
-
         // Simulate massive array
         //this.simulateDiskArray = 600;
         if(this.simulateDiskArray){
@@ -113,14 +112,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
           let set = 0;
           let last = 32*total-1
           for(let i = 0; i < (32*total); i++ ){
-              //console.log("Set " + set);
             let modulo = i % 32;
             this.diskSets[set].push(this.disks[i]);
             if(modulo == 31){
               set++
 
               if(i < last){this.diskSets.push([]);}
-              //console.log("New Set #" + set);
             }
 
           }
@@ -214,7 +211,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   setCurrentDiskSet(num:number){
     this.currentDiskSet = num;
-    console.log("Selected Disk Set = " + String(this.currentDiskSet));
+    //console.log("Selected Disk Set = " + String(this.currentDiskSet));
   }
 
 }

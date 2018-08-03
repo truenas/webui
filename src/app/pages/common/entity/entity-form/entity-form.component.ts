@@ -351,6 +351,22 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.showDefaults = true;
   }
 
+  // rough draft pw show button - positioned correctly only on Users/Add
+  togglePW() {
+    let inputs = document.getElementsByTagName('input');
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i].placeholder.includes('Password') || 
+        inputs[i].placeholder.includes('Passphrase') ||
+        inputs[i].placeholder.includes('Secret')) {
+        if (inputs[i].type === 'password') {
+          inputs[i].type = 'text';
+        } else {
+          inputs[i].type = 'password';
+        }
+      }
+    }
+  }
+
   ngOnChanges() {
     if (this.formGroup) {
       const controls = Object.keys(this.formGroup.controls);
@@ -485,8 +501,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           this.loader.close();
                           if (this.conf.errorReport){
                             this.conf.errorReport(res);
-                          } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
-                            this.dialog.errorReport(res.type, res.reason, res.trace.formatted);
+                          } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace"))) {
+                            new EntityUtils().handleWSError(this, res); 
                           }
                           else {
                             new EntityUtils().handleError(this, res);

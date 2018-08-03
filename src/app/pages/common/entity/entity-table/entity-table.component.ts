@@ -295,17 +295,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < rows.length; i++) {
       for (const attr in rows[i]) {
         if (rows[i].hasOwnProperty(attr)) {
-          if (rows[i][attr] === true) {
-            this.translate.get('yes').subscribe((res) => {
-              rows[i][attr] = res;
-            })
-          } else if (rows[i][attr] === false) {
-            this.translate.get('no').subscribe((res) => {
-              rows[i][attr] = res;
-            })
-          } else {
-            rows[i][attr] = this.rowValue(rows[i], attr);  
-          }
+          rows[i][attr] = this.rowValue(rows[i], attr);  
         }
       }
     }
@@ -373,6 +363,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
     }
 
     return row[attr];
+  }
+
+  convertDisplayValue(value) {
+    let val;
+    if (value === true) {
+      this.translate.get('yes').subscribe((yes) => {
+        val = yes;
+      });
+    } else if (value === false) {
+      this.translate.get('no').subscribe((no) => {
+        val = no;
+      });
+    } else {
+      val = value;
+    }
+    return val;
   }
 
   doAdd() {

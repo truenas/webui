@@ -1,19 +1,16 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import {MessageService} from '../../common/entity/entity-form/services/message.service';
 import * as _ from 'lodash';
 
-import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
-import { validateBasis } from '@angular/flex-layout';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 
@@ -105,7 +102,8 @@ export class VMWizardComponent {
       placeholder : T('Enable VNC'),
       tooltip : T('Enable a VNC (Virtual Network Computing) remote\
                    connection. Requires <i>UEFI</i> booting.'),
-      value: true
+      value: true,
+      isHidden: false
     }
       ]
     },
@@ -117,7 +115,7 @@ export class VMWizardComponent {
           placeholder: T('Virtual CPUs'),
           inputType: 'number',
           min: 1,
-          validation : [ Validators.required, Validators.min(1) ],
+          validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: T('Number of virtual CPUs to allocate to the virtual\
                       machine. The maximum is 16, or fewer if the host\
                       CPU limits the maximum. The VM operating system\
@@ -292,6 +290,16 @@ export class VMWizardComponent {
       }
     });
 
+    ( < FormGroup > entityWizard.formArray.get([1]).get('bootloader')).valueChanges.subscribe((bootloader) => {
+      if(bootloader === "UEFI_CSM"){
+        _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'}).isHidden = true;
+      } else {
+        _.find(this.wizardConfig[1].fieldConfig, {name : 'enable_vnc'}).isHidden = false;
+      }
+
+
+    });
+
 
     ( < FormGroup > entityWizard.formArray.get([1]).get('os')).valueChanges.subscribe((res) => {
       this.summary[T('Guest Operating System')] = res;
@@ -403,7 +411,7 @@ export class VMWizardComponent {
 }
 blurEvent(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
-  parent.ws.call('vm.query', [[["name","=",vm_name],["vm_type", "=", "Bhyve"]]]).subscribe((vm_wizard_res)=>{
+  parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
       parent.dialogService.Info("Error", `virtual machine ${vm_wizard_res[0].name} already exists, please use a different name`).subscribe(()=>{
         parent.entityWizard.formArray.get([1]).get('name').setValue("");
@@ -438,7 +446,7 @@ async customSubmit(value) {
       {"dtype": "DISK", "attributes": {"path": hdd, "type": "AHCI", "sectorsize": 0}},
       {"dtype": "CDROM", "attributes": {"path": value.iso_path}},
     ]
-    if(value.enable_vnc){
+    if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
       await this.create_vnc_device(vm_payload);
     };
     this.loader.open();

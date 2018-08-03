@@ -11,7 +11,6 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { GeneralComponent } from './general/general.component';
-import { ConfigUploadComponent } from './general/config-upload/config-upload.component';
 import { ConfigResetComponent } from './general/config-reset/config-reset.component';
 import { AdvancedComponent } from './advanced/';
 import { DatasetComponent } from './dataset/';
@@ -45,16 +44,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
+import { DxTreeListModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgUploaderModule, routing,
-    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule
+    MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule, DxTreeListModule
   ],
   declarations: [
     GeneralComponent,
-    ConfigUploadComponent,
     ConfigResetComponent,
     AdvancedComponent,
     DatasetComponent,

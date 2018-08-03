@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { URLSearchParams, } from '@angular/http';
@@ -22,9 +22,8 @@ import { MatIconRegistry } from "@angular/material/icon";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
-  appTitle = 'FreeNAS Material UI';
-  pageTitle = '';
+export class AppComponent {
+  appTitle = 'FreeNAS';
   protected accountUserResource: string = 'account/users/1';
   protected user: any;
 
@@ -47,6 +46,7 @@ export class AppComponent implements OnInit {
       "mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
+    this.title.setTitle('FreeNAS - ' + window.location.hostname);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
@@ -65,25 +65,6 @@ export class AppComponent implements OnInit {
           document.body.className += " embedding-active";
         }
       }
-    });
-  }
-
-  ngOnInit() {
-    this.changePageTitle();
-  }
-
-  changePageTitle() {
-    this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
-      const routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-      if (!routeParts.length) {
-        return this.title.setTitle(this.appTitle);
-      }
-      // Extract title from parts;
-      this.pageTitle = routeParts
-        .map((part) => part.title)
-        .reduce((partA, partI) => { return `${partA} > ${partI}` });
-      this.pageTitle += ` | ${this.appTitle}`;
-      this.title.setTitle(this.pageTitle);
     });
   }
 

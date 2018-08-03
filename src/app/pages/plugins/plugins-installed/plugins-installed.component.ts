@@ -97,7 +97,7 @@ export class PluginsInstalledListComponent {
       return false;
     } else if (actionId === 'stop' && row[3] === "down") {
       return false;
-    } else if (actionId === 'management' && row[3] === "down") {
+    } else if (actionId === 'management' && (row[3] === "down" || row[9] == null)) {
       return false;
     }
     return true;

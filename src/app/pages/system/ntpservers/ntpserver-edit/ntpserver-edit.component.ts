@@ -28,8 +28,9 @@ export class NTPServerEditComponent {
       name: 'ntp_burst',
       placeholder: T('Burst'),
       tooltip: T('Recommended when <i>Max. Poll</i> is greater\
-       than 10; only use on your own servers. Do not use with\
-       a public NTP server.'),
+                  than 10. Only use on personal NTP servers or those\
+		  under direct control. <b>Do not</b> enable when\
+		  using public NTP servers.'),
     },
     {
       type: 'checkbox',

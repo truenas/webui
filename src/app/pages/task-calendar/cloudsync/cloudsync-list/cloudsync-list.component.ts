@@ -1,14 +1,15 @@
-import { WebSocketService } from '../../../../services';
+import { WebSocketService, DialogService } from '../../../../services';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { TaskService } from '../../../../services/';
+import { T } from '../../../../translate-marker';
+import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-cloudsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [TaskService]
 })
 export class CloudsyncListComponent {
 
@@ -38,7 +39,48 @@ export class CloudsyncListComponent {
     sorting: { columns: this.columns },
   };
 
-  constructor(protected router: Router, protected ws: WebSocketService, protected taskService: TaskService) {
+  constructor(protected router: Router,
+              protected ws: WebSocketService,
+              protected translateService: TranslateService,
+              protected dialog: DialogService) {}
+
+  afterInit(entityList: any) {
+    this.entityList = entityList;
+  }
+
+  getActions(parentrow) {
+    return [{
+      id: "run",
+      label: T("Run Now"),
+      onClick: (row) => {
+        this.dialog.confirm(T("Run Now"), T(" Would you like to run this cloud sync task now?"), true).subscribe((res) => {
+          if (res) {
+            this.ws.call('cloudsync.sync', [row.id]).subscribe(
+              (res) => {
+                this.translateService.get("close").subscribe((close) => {
+                  this.entityList.snackBar.open(T('The cloud sync task has started.'), close, { duration: 5000 });
+                })
+              },
+              (err) => {
+                new EntityUtils().handleError(this, err);
+              })
+          }
+        });
+      },
+    }, {
+      id: "edit",
+      label: T("Edit"),
+      onClick: (row) => {
+        this.route_edit.push(row.id);
+        this.router.navigate(this.route_edit);
+      },
+    }, {
+      id: "delete",
+      label: T("Delete"),
+      onClick: (row) => {
+        this.entityList.doDelete(row.id);
+      },
+    }]
   }
 
   dataHandler(entityList: any) {

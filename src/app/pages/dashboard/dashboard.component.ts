@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild,OnDestroy } from '@angular/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { StatsService } from 'app/services/stats.service';
 
@@ -13,7 +13,7 @@ import {RestService,WebSocketService} from '../../services/';
   selector: 'dashboard',
   templateUrl:'./dashboard.html'
 })
-export class DashboardComponent implements AfterViewInit,OnDestroy {
+export class DashboardComponent implements OnInit,OnDestroy {
  
   public large: string = "lg";
   public medium: string = "md";
@@ -39,7 +39,7 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
 
   }
 
-  ngAfterViewInit(){
+  ngOnInit(){
     this.init();
   }
 
@@ -50,12 +50,10 @@ export class DashboardComponent implements AfterViewInit,OnDestroy {
     console.log("******** Dashboard Initializing... ********");
 
     this.core.register({observerClass:this,eventName:"PoolData"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       this.setPoolData(evt);
     });
 
     this.core.register({observerClass:this,eventName:"DisksInfo"}).subscribe((evt:CoreEvent) => {
-      //DEBUG: console.log(evt);
       this.setDisksData(evt);
     });
 

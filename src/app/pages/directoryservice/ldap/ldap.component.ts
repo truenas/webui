@@ -90,7 +90,8 @@ export class LdapComponent {
       name : 'ldap_bindpw',
       placeholder : T('Bind Password'),
       tooltip: T('Enter the password for the <b>Bind DN</b>.'),
-      inputType : 'password'
+      inputType : 'password',
+      hideButton : false
     },
     {
       type : 'checkbox',
@@ -277,6 +278,11 @@ export class LdapComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
               private dialogservice: DialogService) {}
+
+  resourceTransformIncomingRestData(data) {
+    delete data['ldap_bindpw'];
+    return data;
+  }
 
   afterInit(entityEdit: any) {
     this.rest.get("directoryservice/kerberosrealm", {}).subscribe((res) => {

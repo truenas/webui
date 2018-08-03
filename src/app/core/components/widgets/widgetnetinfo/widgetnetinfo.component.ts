@@ -12,6 +12,13 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
 
+interface NetIfInfo {
+  name:string;
+  primary:string;
+  aliases?: string;
+}
+
+
 @Component({
   selector: 'widget-netinfo',
   templateUrl:'./widgetnetinfo.component.html',
@@ -41,6 +48,7 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
   public primaryIp:string = '';
   public rx:string = '';
   public tx:string = '';
+  public primaryNicInfo:NetIfInfo;
   private _primaryNIC:string = '';
   get primaryNIC(){
     return this._primaryNIC;
@@ -69,17 +77,16 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
     //Get Network info and determine Primary interface
     this.core.register({observerClass:this,eventName:"NetInfo"}).subscribe((evt:CoreEvent) => {
       this.defaultRoutes = evt.data.default_routes.toString();
-      this.nameServers = evt.data.nameservers.toString();
+      this.nameServers = evt.data.nameservers.toString().replace(/,/g, " , ");
       this.data = evt.data;
       let netInfo:any = evt.data.ips;
       let ipv4: string[] = [];
       for(let nic in netInfo){
-
         let ipv4 = netInfo[nic]["IPV4"];
         let ips = this.trimRanges(ipv4);
         let nicInfo:any = {
           name: nic,
-          primary:ips.primary,
+          primary:"",//ips.primary,
           aliases: ips.aliases.toString()
         }
         this.nics.push(nicInfo);
@@ -87,9 +94,14 @@ export class WidgetNetInfoComponent extends WidgetComponent implements OnInit, A
         // Match the UI connection address
         let primary = ipv4.find((x) => {
           let addr = x.split("/");
-          return addr[0] == this.connectionIp;
+          let result =  addr[0] == this.connectionIp;
+          if(result){
+            nicInfo.primary = addr[0];
+          }
+          return result
         });
         if(primary){
+          this.primaryNicInfo = nicInfo;
           this.primaryNIC = nic;
         }
         // Now that we have the Primary NIC, register as a listener for the stat.
