@@ -803,4 +803,18 @@ iscsi .mat-ink-bar {
 // Gets checkboxes in SMART tests to pick up theme color
 .ix-blue .mat-primary .mat-pseudo-checkbox-checked, .ix-blue .mat-primary .mat-pseudo-checkbox-indeterminate {
   @include variable(background, --accent, $accent !important);
+
+// Fix for overscrolling problem with sidenav
+.sidebar-panel.mat-sidenav .navigation-hold {
+  position: static !important;
+
+}
+.mat-drawer {
+  overflow-y: hidden !important;
+}
+
+// pw show button on entity tables
+#show-pw {
+  @include variable(background-color, --primary, $primary);
+  color: white;
 }

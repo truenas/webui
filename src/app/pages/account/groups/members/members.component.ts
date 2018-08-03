@@ -20,6 +20,7 @@ export class MembersComponent implements OnInit {
   };
   users: any[] = [];
   groupName= ""
+  public showSpinner: boolean = true;
 
 
   constructor(private loading: AppLoaderService,
@@ -67,6 +68,7 @@ export class MembersComponent implements OnInit {
         }
       }
     }, err => console.log(err));
+    this.showSpinner = false;
   }
 
   cancel() {

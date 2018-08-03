@@ -538,7 +538,7 @@ export class CloudCredentialsFormComponent {
     {
       type: 'select',
       name: 'vendor-WEBDAV',
-      placeholder: T('Name of the WebDAV site/service/software'),
+      placeholder: T('WebDAV service'),
       options: [
         {
           label: 'NEXTCLOUD',

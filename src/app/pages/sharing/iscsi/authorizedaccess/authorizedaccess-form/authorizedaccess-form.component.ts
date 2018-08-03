@@ -54,6 +54,7 @@ export class AuthorizedAccessFormComponent {
       required: true,
       validation : [
         Validators.minLength(12),
+        Validators.maxLength(16),
         Validators.required,
         matchOtherValidator('iscsi_target_auth_secret_confirm'),
       ],
@@ -63,6 +64,7 @@ export class AuthorizedAccessFormComponent {
       name : 'iscsi_target_auth_secret_confirm',
       placeholder : T('Secret (Confirm)'),
       inputType : 'password',
+      hideButton : false
     },
     {
       type : 'input',
