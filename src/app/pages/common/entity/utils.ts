@@ -59,7 +59,7 @@ export class EntityUtils {
   }
 
   handleWSError(entity: any, res: any) {
-    if (res.extra) {
+    if (res.extra && entity.fieldConfig) {
       let scroll = false;
       for (let i = 0; i < res.extra.length; i++) {
         const field = res.extra[i][0].split('.').pop();
