@@ -78,7 +78,7 @@ export class CloudsyncListComponent {
                 });
               },
               (err) => {
-                new EntityUtils().handleError(this, err);
+                new EntityUtils().handleWSError(this.entityList, err);
               })
           }
         });

@@ -47,7 +47,7 @@ export class JobService {
                       window.open(snack_res[1]);
                     },
                     (snack_res) => {
-                      new EntityUtils().handleError(this, snack_res);
+                      new EntityUtils().handleWSError(this, snack_res);
                     }
                   );
                 }
