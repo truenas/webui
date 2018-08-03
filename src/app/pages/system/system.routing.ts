@@ -66,7 +66,7 @@ export const routes: Routes = [
     },{
       path: 'dataset',
       component: DatasetComponent,
-      data: { title: 'Dataset', breadcrumb: 'Dataset', icon: 'storage' },
+      data: { title: 'System Dataset', breadcrumb: 'System Dataset', icon: 'storage' },
     }, {
       path: 'bootenv',
       data: { title: 'Boot Environments', breadcrumb: 'Boot Environments', icon: 'replay' },
@@ -107,11 +107,11 @@ export const routes: Routes = [
     ]
     }, {
       path: 'tunable',
-      data: { title: 'Tunable', breadcrumb: 'Tunable', icon: 'settings_overscan' },
+      data: { title: 'Tunables', breadcrumb: 'Tunables', icon: 'settings_overscan' },
       children: [{
           path: '',
           component: TunableListComponent,
-          data: { title: 'Tunable', breadcrumb: 'Tunable' },
+          data: { title: 'Tunables', breadcrumb: 'Tunables' },
         }, {
           path: 'add',
           component: TunableFormComponent,
