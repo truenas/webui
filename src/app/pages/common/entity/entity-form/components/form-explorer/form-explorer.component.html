@@ -26,4 +26,5 @@
     </div>
     
     <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>
+    <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
 </div>

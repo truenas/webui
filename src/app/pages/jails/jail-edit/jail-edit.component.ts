@@ -41,7 +41,6 @@ export class JailEditComponent implements OnInit {
       type: 'input',
       name: 'host_hostuuid',
       placeholder: T('UUID'),
-      disabled: true,
       tooltip: T('The numeric <i>UUID</i> or <i>custom name</i> of the \
                  jail.'),
       required: true,
@@ -1120,13 +1119,6 @@ export class JailEditComponent implements OnInit {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
 
-  public exception_error: boolean = false;
-  public exception_error_message = T("Not able to edit dhcp, jail_zfs or template while jails is running. \
-                                      Please stop jail first.");
-  protected pk_dhcp: any;
-  protected pk_jail_zfs: any;
-  protected pk_template: any;
-
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected jailService: JailService,
@@ -1219,7 +1211,6 @@ export class JailEditComponent implements OnInit {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = false;
          _.find(this.basicfieldConfig, { 'name': 'bpf' }).required = false;
       }
-      this.getExceptionError('dhcp', res);
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
@@ -1253,13 +1244,6 @@ export class JailEditComponent implements OnInit {
         this.ip6_prefixField.required = true;
       }
     });
-
-    this.formGroup.controls['jail_zfs'].valueChanges.subscribe((res) => {
-      this.getExceptionError('jail_zfs', res);
-    })
-    // this.formGroup.controls['template'].valueChanges.subscribe((res) => {
-    //   this.getExceptionError('template', res);
-    // })
 
     this.aroute.params.subscribe(params => {
       this.pk = params['pk'];
@@ -1317,17 +1301,6 @@ export class JailEditComponent implements OnInit {
                 res[0][i] = false;
               }
             }
-
-            if (i == 'dhcp') {
-              this.pk_dhcp = res[0][i];
-            }
-            if (i == 'jail_zfs') {
-              this.pk_jail_zfs = res[0][i];
-            }
-            // if (i == 'template') {
-            //   this.pk_template = res[0][i];
-            // }
-
             this.formGroup.controls[i].setValue(res[0][i]);
           }
         }
@@ -1386,13 +1359,15 @@ export class JailEditComponent implements OnInit {
     let newRelease: any;
     let value = _.cloneDeep(this.formGroup.value);
 
-    if (value['ip4_addr'] == '') {
-      value['ip4_addr'] = 'none';
-    } else {
-      value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+    if (value['ip4_addr']) {
+      if (value['ip4_addr'] == '') {
+        value['ip4_addr'] = 'none';
+      } else {
+        value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+      }
+      delete value['ip4_interface'];
+      delete value['ip4_netmask'];
     }
-    delete value['ip4_interface'];
-    delete value['ip4_netmask'];
     if (value['ip6_addr'] == '') {
       value['ip6_addr'] = 'none';
     } else {
@@ -1433,6 +1408,16 @@ export class JailEditComponent implements OnInit {
           }
         }
       }
+    }
+
+    if (value['host_hostuuid']) {
+      if (this.wsResponse['type'] == 'jail') {
+        value['plugin'] = false;
+      } else {
+        value['plugin'] = true;
+      }
+      value['name'] = value['host_hostuuid'];
+      delete value['host_hostuuid'];
     }
 
     this.loader.open();
@@ -1480,17 +1465,4 @@ export class JailEditComponent implements OnInit {
     this.step--;
   }
 
-  getExceptionError(key, value) {
-    if (this.wsResponse.state == 'up') {
-      if (key == 'dhcp') {
-        this.exception_error = this.pk_dhcp != value
-      }
-      if (key == 'jail_zfs') {
-        this.exception_error = this.pk_jail_zfs != value
-      }
-      // if (key == 'template') {
-      //   this.exception_error = this.pk_template != value
-      // }
-    }
-  }
 }

@@ -41,6 +41,7 @@ export class ChangePasswordComponent {
       name : 'bsdusr_password_conf',
       placeholder : T('Confirm Password'),
       inputType : 'password',
+      hideButton : false,
       validation : [ matchOtherValidator('bsdusr_password') ]
     },
   ];

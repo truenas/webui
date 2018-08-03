@@ -12,7 +12,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { T } from '../../../../translate-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
-import { ValueValidator } from '../../../common/entity/entity-form/validators/value-validation';
 
 @Component({
   selector: 'cloudsync-add',
@@ -60,7 +59,7 @@ export class CloudsyncFormComponent implements OnInit {
     }],
     value: null,
     required: true,
-    validation : [ Validators.required, ValueValidator()],
+    validation : [ Validators.required ],
   }, {
     type: 'select',
     name: 'bucket',
@@ -80,7 +79,18 @@ export class CloudsyncFormComponent implements OnInit {
           value: null,
          }]
       }
-    ]
+    ],
+    required: true,
+    validation : [ Validators.required ],
+  }, {
+    type: 'input',
+    name: 'bucket_input',
+    placeholder: T('Bucket'),
+    tooltip: T('Input the pre-defined S3 bucket to use.'),
+    isHidden: true,
+    disabled: true,
+    required: true,
+    validation : [ Validators.required ],
   }, {
     type: 'input',
     name: 'folder',
@@ -251,7 +261,6 @@ export class CloudsyncFormComponent implements OnInit {
   protected cloudcredential_query = 'cloudsync.credentials.query';
 
   protected providers: any;
-  public validCredential: boolean = false;
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -344,19 +353,24 @@ export class CloudsyncFormComponent implements OnInit {
                       this.bucket_field.options.push({ label: item.Name, value: item.Path });
                     });
                   }
-                  this.validCredential = true;
+                  this.setDisabled('bucket', false, false);
+                  this.setDisabled('bucket_input', true, true);
                 },
                 (err) => {
                   this.loader.close();
                   this.setDisabled('bucket', true, true);
-                  this.validCredential = false;
-                  this.formGroup.controls['credentials'].setErrors(err.reason);
-                  this.dialog.errorReport(T('Error: ') + err.error, err.reason, err.trace.formatted);
+                  this.setDisabled('bucket_input', false, false);
+                  this.dialog.confirm(T('Error: ') + err.error, err.reason, true, T('Fix Credential')).subscribe(
+                    (res) => {
+                      if (res) {
+                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', item.id]));
+                      }
+                    })
                 }
               );
             } else {
-              this.validCredential = true;
               this.setDisabled('bucket', true, true);
+              this.setDisabled('bucket_input', true, true);
             }
           }
         });
@@ -401,7 +415,12 @@ export class CloudsyncFormComponent implements OnInit {
             this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
           }
           if(this.data.attributes) {
-            this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+            if (this.formGroup.controls['bucket']) {
+              this.formGroup.controls['bucket'].setValue(this.data.attributes.bucket);
+            }
+            if (this.formGroup.controls['bucket_input']) {
+              this.formGroup.controls['bucket_input'].setValue(this.data.attributes.bucket);
+            }
             this.formGroup.controls['folder'].setValue(this.data.attributes.folder);
           }
         }
@@ -433,8 +452,14 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['credentials'] = parseInt(value.credentials);
 
-    attributes['bucket'] = value.bucket;
-    delete value.bucket;
+    if (value.bucket != undefined) {
+      attributes['bucket'] = value.bucket;
+      delete value.bucket;
+    }
+    if (value.bucket_input != undefined) {
+      attributes['bucket'] = value.bucket_input;
+      delete value.bucket_input;
+    }
     attributes['folder'] = value.folder;
     delete value.folder;
     value['attributes'] = attributes;

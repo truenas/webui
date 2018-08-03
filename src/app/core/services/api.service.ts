@@ -486,7 +486,7 @@ export class ApiService {
     },
   } 
 
-  constructor(protected core: CoreService, protected ws: WebSocketService,protected     rest: RestService) {
+  constructor(protected core: CoreService, protected ws: WebSocketService,protected rest: RestService) {
     this.ws.authStatus.subscribe((evt:any) =>{
       this.core.emit({name:"Authenticated",data:evt,sender:this});
     });
@@ -598,6 +598,10 @@ export class ApiService {
         if(call.responseEvent){
           this.core.emit({name:call.responseEvent, data:res, sender: this});
         }
+      },
+      (error)=>{
+          error.id = call.args;
+          this.core.emit({name:call.responseEvent, data:error, sender: this});
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
@@ -621,6 +625,12 @@ export class ApiService {
         if(call.responseEvent){
           this.core.emit({name:call.responseEvent, data:res, sender:this });
         }
+      },(error)=>{
+        if(call.responseFailedEvent){
+          error.id = call.args;
+          this.core.emit({name:call.responseFailedEvent, data:error, sender: this});
+        }
+        
       });
     }
   }

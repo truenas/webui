@@ -13,16 +13,22 @@ import { MatDialog } from '@angular/material';
 })
 export class RebootComponent implements OnInit {
 
+  public is_freenas: Boolean = false;
+
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
+      this.ws = ws;
+      this.ws.call('system.is_freenas').subscribe((res)=>{
+        this.is_freenas = res;
+      });
   }
 
   isWSConnected() {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
-      this.router.navigate(['/session/signin']);
+      window.location.href = '/session/signin';
     } else {
       setTimeout(() => {
         this.isWSConnected();

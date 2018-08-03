@@ -12,7 +12,8 @@ export interface FieldConfig {
   customEventActionLabel?: string, explorerType?: string, required?: boolean,
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string, 
   message?: any, updater?:any, parent?:any,hideButton?:boolean, paraText?: any,
-  noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean
+  noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
+  warnings?: string
   customEventMethod?(data:any), onChangeOption?(data:any), 
   
 }
