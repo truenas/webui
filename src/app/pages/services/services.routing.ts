@@ -84,7 +84,7 @@ export const routes: Routes = [
     ]
   },
   {
-    data: { title: 'SMARTD', breadcrumb: 'SMARTD'},
+    data: { title: 'S.M.A.R.T.', breadcrumb: 'S.M.A.R.T.'},
     path : 'smartd',
     component : ServiceSMARTComponent,
   },
