@@ -20,6 +20,7 @@ from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
 from acc_user import run_create_user_test
+from store_pool import run_create_pool_test
 from net_conf import run_conf_network_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
@@ -62,7 +63,7 @@ Mandatory Commands:
 Optional Commands:
 
 --test-name <test_name>    - name of tests targeted
-                            [account, system, guide, service, theme]
+                            [account, storage, system, guide, service, theme]
 
 --driver <d_v>             - version of the driver
                              [U]
@@ -125,6 +126,7 @@ except NameError:
     print ("Running: All Tests")
     run_create_user_test(runDriver)
     run_create_group_test(runDriver)
+    run_create_pool_test(runDriver)
     run_conf_network_test(runDriver)
     run_check_update_test(runDriver)
     run_conf_email_test(runDriver)
@@ -150,6 +152,8 @@ else:
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
 #        run_delete_test(runDriver)
+    if (test_name == "pool"):
+        run_create_pool_test(runDriver)
     elif (test_name == "network"):
         run_conf_network_test(runDriver)
     elif (test_name == "system"):
@@ -200,6 +204,9 @@ if path.exists('acc_user.pyc'):
 
 if path.exists('acc_group.pyc'):
     call(["rm", "acc_group.pyc"])
+
+if path.exists('store_pool.pyc'):
+    call(["rm", "store_pool.pyc"])
 
 if path.exists('serv_afp.pyc'):
     call(["rm", "serv_afp.pyc"])
