@@ -811,6 +811,11 @@ iscsi .mat-ink-bar {
   color: white !important;
 }
 
+// Gets checkboxes in SMART tests to pick up theme color
+.ix-blue .mat-primary .mat-pseudo-checkbox-checked, .ix-blue .mat-primary .mat-pseudo-checkbox-indeterminate {
+  @include variable(background, --accent, $accent !important);
+}
+
 // Bring tooltips to the front in dialogs
 .mat-dialog-container, .mat-dialog-content {
     overflow: visible !important;
