@@ -36,7 +36,13 @@ export class TunableFormComponent {
       type: 'input',
       name: 'tun_var',
       placeholder: T('Variable'),
-      tooltip: T('The name of the sysctl or driver to load.'),
+      tooltip: T('The name of the loader, sysctl, or rc.conf variable\
+                  to configure.<br>\
+                  <b>loader</b>: Tunables that can be set <b>only</b> at\
+                  boot and not later.<br>\
+                  <b>rc.conf</b>: Enable or disable system services and\
+                  daemons.<br>\
+                  <b>sysctl</b>: Tunables that can be set anytime.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -44,11 +50,13 @@ export class TunableFormComponent {
       type: 'textarea',
       name: 'tun_value',
       placeholder: T('Value'),
-      tooltip: T('Set a value for the variable. Refer to the man page\
-                  for the specific driver or the <a\
-                  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/"\
-                  target="_blank">FreeBSD Handbook</a> for suggested\
-                  values.'),
+      tooltip: T('Set a value to use for the <a\
+                  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/boot-introduction.html#boot-loader-commands"\
+                  target="_blank">loader</a>, <a\
+                  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/configtuning-sysctl.html"\
+                  target="_blank">sysctl</a>, or <a\
+                  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/config-tuning.html"\
+                  target="_blank">rc.conf</a> variable.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -56,30 +64,33 @@ export class TunableFormComponent {
       type: 'select',
       name: 'tun_type',
       placeholder: T('Type'),
-      tooltip: T('Creating or editing a <i>Sysctl</i> immediately\
-                  updates the <b>Variable</b>. A reboot is required when\
-                  a <i>Loader</i> or <i>rc.conf</i> value changes.\
-                  A tunable remains at boot and across upgrades unless\
-                  it is deleted or <b>Enabled</b> is unset.'),
+      tooltip: T('Creating or editing a <i>sysctl</i> immediately\
+                  updates the <b>Variable</b> to the configured\
+                  <b>Value</b>. When using a <i>loader</i> or\
+                   <i>rc.conf</i> tunable, a reboot is required to apply\
+                  the <b>Value</b> configured. Tunables configured\
+                  persist across reboots and upgrades until deleted or\
+                  <b>Enabled</b> is unset.'),
       options: [
-        { label: 'Loader', value: 'loader' },
+        { label: 'loader', value: 'loader' },
         { label: 'rc.conf', value: 'rc' },
-        { label: 'Sysctl', value: 'sysctl' },
+        { label: 'sysctl', value: 'sysctl' },
       ]
     },
     {
       type: 'input',
       name: 'tun_comment',
       placeholder: T('Comment'),
-      tooltip: T('Optional. Enter a substantive description or\
-                  explanation of this tunable.'),
-    },
-    {
+      tooltip: T('Enter a description of the tunable. What the tunable\
+                  does and why it\'s needed is helpful for future\
+                  reference.'),
+  },
+  {
       type: 'checkbox',
       name: 'tun_enabled',
       placeholder: T('Enabled'),
-      tooltip: T('Unset to disable this tunable without deleting it.'),
-    },
+      tooltip: T('Unset to disable but not delete the tunable.'),
+  },
   ];
 
 
