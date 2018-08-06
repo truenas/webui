@@ -77,7 +77,7 @@ if len(argument) == 1:
 
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
-testlist = ["account", "network", "system", "guide", "service", "theme"]
+testlist = ["account", "storage",  "network", "system", "guide", "service", "theme"]
 versionlist = ["U"]
 # look if all the argument are there.
 try:
@@ -152,7 +152,7 @@ else:
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
 #        run_delete_test(runDriver)
-    if (test_name == "pool"):
+    if (test_name == "storage"):
         run_create_pool_test(runDriver)
     elif (test_name == "network"):
         run_conf_network_test(runDriver)

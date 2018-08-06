@@ -33,14 +33,15 @@ except ImportError:
 
 xpaths = {
         'navStorage': '//*[@id="nav-5"]/div/a[1]',
-        'submenuPool': '//*[@id="5-1"]',
+        'submenuPool': '//*[@id="5-0"]',
         'addAction': '//*[@id="add_action_button"]',
-        'frowardButton': '//*[@id="goforward_button"]',
+        'forwardButton': '//*[@id="goforward_button"]',
         'newpoolName': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[1]/div/mat-input-container/div/div[1]/div/input',
         'disk1Checkbox': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[1]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[1]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div/mat-checkbox/label/div',
         'diskselectedmoveButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[2]/div/app-vdev/div/div[1]/button[1]',
         'createButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[4]/button[1]',
-        'confirmcheckbox': '/html/body/div[4]/div[2]/div/mat-dialog-container/confirm-dialog/div[2]/mat-checkbox/label/div',
+        #very important and useful
+        'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
         'okButton': '//*[contains(text(), "Ok")]'
         }
 
@@ -93,7 +94,7 @@ class create_pool_test(unittest.TestCase):
             # Click create Pool Button
             driver.find_element_by_xpath(xpaths['forwardButton']).click()
             # Enter User Full name
-            driver.find_element_by_xpath(xpaths['newPoolname']).send_keys(newppolname)
+            driver.find_element_by_xpath(xpaths['newpoolName']).send_keys("Pool1")
             # Select the disk
             driver.find_element_by_xpath(xpaths['disk1Checkbox']).click()
             # Select the disk
