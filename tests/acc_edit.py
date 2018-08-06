@@ -78,7 +78,7 @@ class edit_test(unittest.TestCase):
             print ("Check if the email has been registered ")
             time.sleep(2)
             #call edit funtion on the userNAS
-            self.edit("user", newusername)
+            function.edit(driver, self, "user", newusername)
             # get the ui element
             ui_email=driver.find_element_by_xpath('//*[@id="email"]/mat-input-container/div/div[1]/div/input')
             # get the weather data
@@ -103,6 +103,7 @@ class edit_test(unittest.TestCase):
             print ("Changing permission to sudo user ")
             # Changing permission to sudo
             ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
+            function.edit(driver, self, "user", newusername)
             driver.find_element_by_xpath('//*[@id="save_button"]').click()
             time.sleep(15)
             #taking screenshot
@@ -146,7 +147,7 @@ class edit_test(unittest.TestCase):
         try:
             print ("change permission of groupNAS to sudo")
             time.sleep(2)
-            self.edit("group", newgroupname)
+            function.edit("group", newgroupname)
             driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
             driver.find_element_by_xpath('//*[@id="save_button"]').click()
             time.sleep(20)
@@ -154,7 +155,7 @@ class edit_test(unittest.TestCase):
             function.screenshot(driver, self)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
