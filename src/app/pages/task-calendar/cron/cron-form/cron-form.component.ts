@@ -50,7 +50,7 @@ export class CronFormComponent {
            type: 'input',
            name: 'cron_description',
            placeholder: T('Description'),
-           tooltip: T('Optional. Describe the new task.'),
+           tooltip: T('Describe the new cron job to add.'),
          }, 
          {
            type: 'input',
@@ -64,8 +64,9 @@ export class CronFormComponent {
            type: 'combobox',
            name: 'cron_user',
            placeholder: T('Run As User'),
-           tooltip: T('Choose a user account to run the <b>Command</b>. The\
-             user must have permission to run the <b>Command</b>.'),
+	   tooltip: T('Select a user account to run the <i>Command</i>\
+	               specified. The user must have permission to run\
+		       the command or script.'),
            options: [],
            required: true,
            validation : [ Validators.required ],
@@ -74,8 +75,8 @@ export class CronFormComponent {
            type: 'scheduler',
            name: 'cron_picker',
            placeholder: T('Schedule a Cron Job'),
-           tooltip: T('Choose one of the convenient presets\
-             or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+	   tooltip: T('Select one of the convenient presets or <i>Custom</i>\
+	   to open the advanced cron job scheduler UI.'),
            validation: [ Validators.required ],
            required: true,
            value: "0 0 * * *"
@@ -84,16 +85,16 @@ export class CronFormComponent {
            type: 'checkbox',
            name: 'cron_stdout',
            placeholder: T('Redirect Standard Output'),
-           tooltip: T('Set to disable emailing standard output (stdout) to the\
-             <i>root</i> user account.'),
+	   tooltip: T('Set to discard stdout (standard output) instead\
+	               of emailing the user set to run the cron job.'),
            value: true,
          }, 
          {
            type: 'checkbox',
            name: 'cron_stderr',
            placeholder: T('Redirect Errors'),
-           tooltip: T('Set to disable emailing errors (stderr) to the\
-             <i>root</i> user account.'),
+           tooltip: T('Set to discard stderr (standard error) instead\
+                       of emailing the user set to run the cron job.'),
            value: false,
          }, 
          {

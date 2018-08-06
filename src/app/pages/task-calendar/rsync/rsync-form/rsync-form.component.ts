@@ -47,8 +47,9 @@ export class RsyncFormComponent {
         type: 'combobox',
         name: 'rsync_user',
         placeholder: T('User'),
-        tooltip: T('The chosen user must have permission to write to the\
-                    specified directory on the remote system.'),
+        tooltip: T('Select the user to run the rsync task as. The user\
+                    selected must have permissions to write to the\
+                    specified directory on the remote host.'),
         options: [],
         required: true,
         validation : [ Validators.required ],
@@ -73,9 +74,11 @@ export class RsyncFormComponent {
         type: 'select',
         name: 'rsync_mode',
         placeholder: T('Rsync mode'),
-        tooltip: T('Choose <a href="guide" target="_blank">Rsync\
-                    module</a> or <a href="guide" target="_blank">Rsync\
-                    over SSH</a>'),
+        tooltip: T('Choose <a \
+                    href="../docs/tasks.html#rsync-module-mode"\
+                    target="_blank">Rsync module</a> or <a \
+                    href="../docs/tasks.html#rsync-over-ssh-mode"\
+                    target="_blank">Rsync over SSH</a>'),
         options: [],
       }, {
         type: 'input',
@@ -113,21 +116,22 @@ export class RsyncFormComponent {
         type: 'input',
         name: 'rsync_description',
         placeholder: T('Short Description'),
-        tooltip: T('Optional. Enter an informative description of the\
-                    new rsync task.'),
+        tooltip: T('Enter an informative description of the new rsync\
+                    task.'),
       }, {
         type: 'scheduler',
         name: 'rsync_picker',
         placeholder: T('Schedule the Rsync Task'),
-        tooltip: T('Choose one of the convenient presets\
-          or choose <b>Custom</b> to trigger the advanced scheduler UI'),
-          required: true
+        tooltip: T('Choose one of the convenient presets or\
+                    <i>Custom</i> to open the advanced cron job\
+                    scheduler UI.'),
+        required: true
       }, {
         type: 'checkbox',
         name: 'rsync_recursive',
         placeholder: T('Recursive'),
         tooltip: T('Set to include all subdirectories of the specified\
-                    pool during the rsync task.'),
+                    location during the rsync task.'),
         value: true,
       }, {
         type: 'checkbox',
@@ -146,17 +150,18 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_archive',
         placeholder: T('Archive'),
-        tooltip: T('Equivalent to the <b>-rlptgoD</b> flag. This will\
-                    run the task as recursive, copy symlinks as symlinks,\
-                    preserve permissions, preserve modification times,\
-                    preserve group, preserve owner (root only), preserve\
-                    device files (root only), and preserve special files.'),
+        tooltip: T('Equivalent to passing the flags <b>-rlptgoD</b> to\
+                    rsync. When set, the rsync task is run as recursive,\
+                    copy symlinks as symlinks, preserve permissions,\
+                    preserve modification times, preserve group,\
+                    preserve owner (root only), preserve device files\
+                    (root only), and preserve special files.'),
       }, {
         type: 'checkbox',
         name: 'rsync_delete',
         placeholder: T('Delete'),
         tooltip: T('Set to delete files in the destination directory\
-                    that do not exist in the sending directory.'),
+                    that do not exist in the source directory.'),
       }, {
         type: 'checkbox',
         name: 'rsync_quiet',
@@ -173,9 +178,9 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_preserveattr',
         placeholder: T('Preserve extended attributes'),
-        tooltip: T('Both systems must support <a\
+        tooltip: T('Both systems <b>must</b> support <a\
                     href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
-                    target="_blank">extended attributes</a> to set.'),
+                    target="_blank">extended attributes</a>.'),
       }, {
         type: 'checkbox',
         name: 'rsync_delayupdates',
@@ -189,20 +194,21 @@ export class RsyncFormComponent {
         type: 'textarea',
         name: 'rsync_extra',
         placeholder: T('Extra options'),
-        tooltip: T('Add any other <a\
+        tooltip: T('Additional <a\
                     href="https://rsync.samba.org/ftp/rsync/rsync.html"\
-                    target="_blank">rsync(1)</a> options. The "*"\
-                    character must be escaped with a backslash (\\*.txt)\
-                    or used inside single quotes(\'*.txt\').'),
+                    target="_blank">rsync(1)</a> options to include.<br>\
+                    Note: The "*" character <b>must</b> be escaped with\
+                    a backslash (\\*.txt) or used inside single quotes\
+                    (\'*.txt\').'),
       }, {
         type: 'checkbox',
         name: 'rsync_enabled',
         placeholder: T('Enabled'),
         tooltip: T('Unset to disable the rsync task without deleting it.\
-                    When the <a href="..//docs/services.html#rsync"\
-                    target="_blank">Rsync service</a> is OFF, the rsync\
-                    task continues to look for the server unless this\
-                    option is unset.'),
+                    When the <a href="../docs/services.html#rsync"\
+                    target="_blank">Rsync service</a> is <b>OFF</b>,\
+                    the rsync task continues to look for the server\
+                    unless <i>Enabled</i> is unset.'),
         value: true,
       }
     ]
