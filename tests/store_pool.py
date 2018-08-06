@@ -38,6 +38,7 @@ xpaths = {
         'forwardButton': '//*[@id="goforward_button"]',
         'newpoolName': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[1]/div/mat-input-container/div/div[1]/div/input',
         'disk1Checkbox': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[1]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[1]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div/mat-checkbox/label/div',
+        'disk2Checkbox': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[1]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[2]/datatable-body-row/div[2]/datatable-body-cell[1]/div/div/mat-checkbox/label/div',
         'diskselectedmoveButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[2]/div[2]/div/app-vdev/div/div[1]/button[1]',
         'createButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[4]/button[1]',
         #very important and useful
@@ -115,6 +116,43 @@ class create_pool_test(unittest.TestCase):
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
+
+    def test_03_create_newpool2(self):
+        try:
+            print (" creating a new pool with 2 disk")
+            # cancelling the tour
+            if function.is_element_present(driver, self, By.XPATH, '/html/body/div[6]/div[1]/button'):
+                driver.find_element_by_xpath('/html/body/div[6]/div[1]/button').click()
+            time.sleep(1)
+            # Click create new pool option
+            driver.find_element_by_xpath(xpaths['addAction']).click()
+            # Click create Pool Button
+            driver.find_element_by_xpath(xpaths['forwardButton']).click()
+            # Enter User Full name
+            driver.find_element_by_xpath(xpaths['newpoolName']).send_keys("Pool2")
+            # Select the 2 disks
+            driver.find_element_by_xpath(xpaths['disk1Checkbox']).click()
+            driver.find_element_by_xpath(xpaths['disk2Checkbox']).click()
+            # Select the disk
+            driver.find_element_by_xpath(xpaths['diskselectedmoveButton']).click()
+            # Click on create new Pool button
+            driver.find_element_by_xpath(xpaths['createButton']).click()
+            # checkbox confirmation
+            driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+            # Click Ok Button
+            driver.find_element_by_xpath(xpaths['okButton']).click()
+            #taking screenshot
+            function.screenshot(driver, self)
+            self.error_check()
+        except Exception:
+            exc_info_p = traceback.format_exception(*sys.exc_info())
+            #taking screenshot
+            function.screenshot(driver, self)
+            for i in range(1,len(exc_info_p)):
+                print (exc_info_p[i])
+            self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+
 
 
     # Next step-- To check if the new user is present in the list via automation
