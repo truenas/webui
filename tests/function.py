@@ -111,3 +111,51 @@ def edit(driver, self, type, name):
     driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
 
 
+def delete(self, type, name):
+    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
+    # path plugs in the xpath of user or group , submenu{User/Group}
+    # num specifies the column of the 3 dots which is different in user/group
+    # delNum speifies the option number where del is after clicking on the 3 dots
+    if (type == "user"):
+        num = 6
+        delNum = 1
+        path = "User"
+        plug = "bsdusr_username"
+    elif (type == "group"):
+        num = 5
+        delNum = 2
+        path = "Group"
+        plug = "bsdgrp_group"
+
+    # Click User submenu
+    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
+    # wait till the list is loaded
+    time.sleep(2)
+    index = 1
+    ui_text = "null"
+    if (self.is_element_present(By.XPATH, '//*[@id="' + plug + '_' + name  + '\"]' )):
+        print ("username/groupname- " + name + " exists")
+        for x in range(0, 10):
+            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+                ui_text = ui_element.text
+            if (ui_text == name):
+                index = x
+                break
+            ui_element = " "
+        print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
+        time.sleep(1)
+        # click on the 3 dots
+        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+        time.sleep(1)
+        # click on delete option
+        driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
+        if (driver.find_element_by_xpath(xpaths['confirmCheckbox'])):
+            driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+            time.sleep(1)
+            print ("clicking delete once")
+            driver.find_element_by_xpath(xpaths['deleteButton']).click()
+            time.sleep(20)
+    else:
+        print ("username/groupname- " + name + " does not exists..skipping")
+
