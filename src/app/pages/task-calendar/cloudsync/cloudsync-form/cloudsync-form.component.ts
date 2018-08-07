@@ -32,7 +32,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'description',
     placeholder: T('Description'),
-    tooltip: T('Enter a descriptive name of this task.'),
+    tooltip: T('Enter a descriptive name for this task.'),
     required: true,
     validation : [ Validators.required ]
   }, {
