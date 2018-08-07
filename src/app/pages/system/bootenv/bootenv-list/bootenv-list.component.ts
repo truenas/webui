@@ -11,6 +11,7 @@ import { DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
 import { stringify } from '@angular/core/src/util';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-bootenv-list',
@@ -179,7 +180,7 @@ export class BootEnvironmentListComponent {
   }
 
   doActivate(id) {
-    this.dialog.confirm("Activate", "Are you sure you want to activate it?", false, "Activate").subscribe((res) => {
+    this.dialog.confirm("Activate", "Are you sure you want to activate it?", false, T("Activate")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
@@ -198,7 +199,7 @@ export class BootEnvironmentListComponent {
   }
   toggleKeep(id, status) {
     if (!status){
-      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?", false, "Set Keep Flag").subscribe((res) => {
+      this.dialog.confirm("Keep", "Do you want to set keep flag in this boot environment?", false, T("Set Keep Flag")).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -215,7 +216,7 @@ export class BootEnvironmentListComponent {
         }
       })
     } else {
-      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?", false, "Remove Keep Flag").subscribe((res) => {
+      this.dialog.confirm("Unkeep", "Do you want to remove keep flag in this boot environment?", false, T("Remove Keep Flag")).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
@@ -242,7 +243,7 @@ export class BootEnvironmentListComponent {
   }
 
   scrub() {
-    this.dialog.confirm("Scrub", "Do you want to start scrub?").subscribe((res) => {
+    this.dialog.confirm("Scrub", "Do you want to start scrub?", false, T("Start Scrub")).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

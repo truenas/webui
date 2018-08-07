@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar, MatButton, MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../translate-marker';
 
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -105,7 +106,7 @@ export class SigninComponent implements OnInit {
   onGoToLegacy() {
     this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
       this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true, 'Switch').subscribe((res) => {
+        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true, T('Switch')).subscribe((res) => {
           if (res) {
             window.location.href = '/legacy/';
           }
