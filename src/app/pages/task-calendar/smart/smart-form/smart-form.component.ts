@@ -57,7 +57,7 @@ export class SmartFormComponent {
         type: 'input',
         name: 'smarttest_desc',
         placeholder: T('Short description'),
-        tooltip : T('A short description of what the test is for.'),
+        tooltip : T('Enter a description of the S.M.A.R.T. test.'),
       },
       {
         type: 'scheduler',

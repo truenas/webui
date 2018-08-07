@@ -47,7 +47,7 @@ export class RsyncFormComponent {
         type: 'combobox',
         name: 'rsync_user',
         placeholder: T('User'),
-        tooltip: T('Select the user to run the rsync task as. The user\
+        tooltip: T('Select the user to run the rsync task. The user\
                     selected must have permissions to write to the\
                     specified directory on the remote host.'),
         options: [],
@@ -76,9 +76,9 @@ export class RsyncFormComponent {
         placeholder: T('Rsync mode'),
         tooltip: T('Choose <a \
                     href="../docs/tasks.html#rsync-module-mode"\
-                    target="_blank">Rsync module</a> or <a \
+                    target="_blank">rsync module mode</a> or <a \
                     href="../docs/tasks.html#rsync-over-ssh-mode"\
-                    target="_blank">Rsync over SSH</a>'),
+                    target="_blank">rsync over SSH mode</a>'),
         options: [],
       }, {
         type: 'input',
@@ -116,22 +116,21 @@ export class RsyncFormComponent {
         type: 'input',
         name: 'rsync_description',
         placeholder: T('Short Description'),
-        tooltip: T('Enter an informative description of the new rsync\
-                    task.'),
+        tooltip: T('Enter a description of the rsync task.'),
       }, {
         type: 'scheduler',
         name: 'rsync_picker',
         placeholder: T('Schedule the Rsync Task'),
-        tooltip: T('Choose one of the convenient presets or\
-                    <i>Custom</i> to open the advanced cron job\
-                    scheduler UI.'),
+        tooltip: T('Select a schedule preset or choose <i>Custom</i>\
+                    to open the advanced scheduler.'),
         required: true
       }, {
         type: 'checkbox',
         name: 'rsync_recursive',
         placeholder: T('Recursive'),
         tooltip: T('Set to include all subdirectories of the specified\
-                    location during the rsync task.'),
+                    directory. When unset, only the specified directory\
+                    is included.'),
         value: true,
       }, {
         type: 'checkbox',
@@ -150,17 +149,17 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_archive',
         placeholder: T('Archive'),
-        tooltip: T('Equivalent to passing the flags <b>-rlptgoD</b> to\
-                    rsync. When set, the rsync task is run as recursive,\
-                    copy symlinks as symlinks, preserve permissions,\
-                    preserve modification times, preserve group,\
-                    preserve owner (root only), preserve device files\
-                    (root only), and preserve special files.'),
+        tooltip: T('When set, rsync is run recursively, preserving\
+                    symlinks, permissions, modification times, group,\
+                    and special files. When run as root, owner, device\
+                    files, and special files are also preserved.\
+                    Equivalent to passing the flags <b>-rlptgoD</b> to\
+                    rsync.'),
       }, {
         type: 'checkbox',
         name: 'rsync_delete',
         placeholder: T('Delete'),
-        tooltip: T('Set to delete files in the destination directory\
+        tooltip: T('Delete files in the destination directory\
                     that do not exist in the source directory.'),
       }, {
         type: 'checkbox',
@@ -178,9 +177,9 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_preserveattr',
         placeholder: T('Preserve extended attributes'),
-        tooltip: T('Both systems <b>must</b> support <a\
-                    href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
-                    target="_blank">extended attributes</a>.'),
+        tooltip: T('<a\ href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
+                    target="_blank">Extended attributes</a> are\
+                    preserved, but must be supported by both systems.'),
       }, {
         type: 'checkbox',
         name: 'rsync_delayupdates',
@@ -197,8 +196,8 @@ export class RsyncFormComponent {
         tooltip: T('Additional <a\
                     href="https://rsync.samba.org/ftp/rsync/rsync.html"\
                     target="_blank">rsync(1)</a> options to include.<br>\
-                    Note: The "*" character <b>must</b> be escaped with\
-                    a backslash (\\*.txt) or used inside single quotes\
+                    Note: The "*" character must be escaped with a\
+                    backslash (\\*.txt) or used inside single quotes\
                     (\'*.txt\').'),
       }, {
         type: 'checkbox',

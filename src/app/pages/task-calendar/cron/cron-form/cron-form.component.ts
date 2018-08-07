@@ -50,7 +50,7 @@ export class CronFormComponent {
            type: 'input',
            name: 'cron_description',
            placeholder: T('Description'),
-           tooltip: T('Describe the new cron job to add.'),
+           tooltip: T('Enter a description of the cron job.'),
          }, 
          {
            type: 'input',
@@ -64,9 +64,9 @@ export class CronFormComponent {
            type: 'combobox',
            name: 'cron_user',
            placeholder: T('Run As User'),
-	   tooltip: T('Select a user account to run the <i>Command</i>\
-	               specified. The user must have permission to run\
-		       the command or script.'),
+           tooltip: T('Select a user account to run the command. The\
+                       user must have permissions allowing them to run\
+                       to run the command or script.'),
            options: [],
            required: true,
            validation : [ Validators.required ],
@@ -75,8 +75,8 @@ export class CronFormComponent {
            type: 'scheduler',
            name: 'cron_picker',
            placeholder: T('Schedule a Cron Job'),
-	   tooltip: T('Select one of the convenient presets or <i>Custom</i>\
-	   to open the advanced cron job scheduler UI.'),
+           tooltip: T('Select a schedule preset or choose <i>Custom</i>\
+                       to open the advanced scheduler.'),
            validation: [ Validators.required ],
            required: true,
            value: "0 0 * * *"
@@ -85,23 +85,26 @@ export class CronFormComponent {
            type: 'checkbox',
            name: 'cron_stdout',
            placeholder: T('Redirect Standard Output'),
-	   tooltip: T('Set to discard stdout (standard output) instead\
-	               of emailing the user set to run the cron job.'),
+           tooltip: T('Redirect stdout to /dev/null. When unset, output\
+                       from the command is mailed to the user running\
+                       the cron job.'),
            value: true,
          }, 
          {
            type: 'checkbox',
            name: 'cron_stderr',
-           placeholder: T('Redirect Errors'),
-           tooltip: T('Set to discard stderr (standard error) instead\
-                       of emailing the user set to run the cron job.'),
+           placeholder: T('Redirect Standard Error'),
+           tooltip: T('Redirect stderr to /dev/null. When unset, error\
+                       output from the command is mailed to the user\
+                       running the cron job.'),
            value: false,
          }, 
          {
            type: 'checkbox',
            name: 'cron_enabled',
            placeholder: T('Enabled'),
-           tooltip: T('Unset to disable the cron job without deleting it.'),
+	   tooltip: T('Enable this cron job. When unset, disable the\
+	               cron job without deleting it.'),
            value: true,
          }
        ]
