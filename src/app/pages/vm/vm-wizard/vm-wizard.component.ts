@@ -312,9 +312,29 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' Mib';
       });
+
       ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
         this.summary[T('Hard Disk Size')] = volsize + ' GiB';
       });
+
+      ( < FormGroup > entityWizard.formArray.get([3])).get('disk_radio').valueChanges.subscribe((disk_radio)=>{
+        if(this.summary[T('Hard Disk')] || this.summary[T('Hard Disk Size')]){
+          delete this.summary[T('Hard Disk')];
+          delete this.summary[T('Hard Disk Size')];
+        }
+        if(disk_radio) {
+          this.summary[T('Hard Disk Size')] = ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].value + ' Gib';
+            ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
+              this.summary[T('Hard Disk Size')] = volsize + ' GiB';
+            });
+        } else {
+          this.summary[T('Hard Disk')] = ( < FormGroup > entityWizard.formArray.get([3])).controls['hdd_path'].value;
+            ( < FormGroup > entityWizard.formArray.get([3])).get('hdd_path').valueChanges.subscribe((existing_hdd_path)=>{
+              this.summary[T('Hard Disk')] = existing_hdd_path;
+            })
+        }
+      });
+
       ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         this.summary[T('Installation Media')] = iso_path;
       });
