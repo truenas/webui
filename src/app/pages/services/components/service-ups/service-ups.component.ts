@@ -62,7 +62,7 @@ export class ServiceUPSComponent implements OnDestroy {
       tooltip : T('Describe the UPS device. It can contain alphanumeric,\
                    period, comma, hyphen, and underscore characters.'),
       required: true,
-      validation : [ Validators.required ]
+    validation : [ Validators.required, Validators.pattern(/^[\w|,|\.|\-|_]+$/) ]
     },
     {
       type : 'select',
@@ -171,6 +171,7 @@ export class ServiceUPSComponent implements OnDestroy {
       tooltip : T('Change the default password to improve system\
                    security. The new password cannot contain a\
                    space or <b>#</b> .'),
+      validation: [Validators.pattern(/^((?![\#|\s]).)*$/)]
     },
     {
       type : 'textarea',
@@ -247,10 +248,8 @@ export class ServiceUPSComponent implements OnDestroy {
 
   switchSNMP(value) {
     const is_snmp = this.isSNMP(value);
-    this.ups_port.isHidden = is_snmp;
-    this.entityForm.setDisabled('ups_port', is_snmp);
-    this.ups_hostname.isHidden = !is_snmp;
-    this.entityForm.setDisabled('ups_hostname', !is_snmp);
+    this.entityForm.setDisabled('ups_port', is_snmp, is_snmp);
+    this.entityForm.setDisabled('ups_hostname', !is_snmp, !is_snmp);
   }
 
   afterInit(entityForm: any) {
