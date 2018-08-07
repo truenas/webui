@@ -348,9 +348,11 @@ export class ReplicationFormComponent implements AfterViewInit {
         type : 'textareabutton',
         name : 'repl_remote_hostkey',
         placeholder : T('Remote Hostkey'),
-        tooltip : T('Use <b>Scan SSH Key</b> to retrieve the public host\
-                     key of the remote system and enter or paste the key\
-                     here.'),
+        tooltip : T('Paste the host key of the remote system configured\
+                     for the Replication Task.<br>\
+                     Use the <i>Scan SSH Key</i> button to\
+                     automatically retrieve the public host key of the\
+                     remote system.'),
         customEventActionLabel : 'Scan SSH Key',
         customEventMethod : function(data) {
           theThis.customEventMethod(data);
