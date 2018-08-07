@@ -76,7 +76,7 @@ export class JailListComponent implements OnInit {
       onClick: (selected) => {
         let dialog = {};
         this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
-          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true ).subscribe((res) => {
+          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res) => {
           if (res) {
             let selectedJails = this.getSelectedNames(selected);
             this.loader.open();
@@ -130,7 +130,7 @@ export class JailListComponent implements OnInit {
   ];
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
-    protected loader: AppLoaderService, protected dialogService: DialogService) {}
+    protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService) {}
 
   public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the iocage jail manager \
   to create a /iocage dataset in the selected pool. The '/iocage' dataset may not be visible \
@@ -222,7 +222,7 @@ export class JailListComponent implements OnInit {
         onClick: (row) => {
           let dialog = {};
           this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
-            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true ).subscribe((res) => {
+            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
             if (res) {
               this.entityList.busy =
                 this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(

@@ -39,7 +39,7 @@ export class AdvancedComponent implements OnDestroy {
     id: 'save_debug',
     name: 'Save Debug',
     function: () => {
-      this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?")).subscribe((res) => {
+      this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?"), true, T('Proceed')).subscribe((res) => {
             if (res) {
               this.load.open();
               this.ws.job('system.debug').subscribe((system_debug) => {
