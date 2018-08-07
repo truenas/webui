@@ -12,6 +12,7 @@ import {
 } from '../../../common/entity/entity-form/validators/regex-validation';
 import { T } from '../../../../translate-marker';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from '../../../common/entity/utils';
 
 
 @Component({
@@ -273,6 +274,8 @@ export class InterfacesFormComponent implements OnDestroy {
               this.int_interface_fg.setValue(wsint.name);
               entityForm.formGroup.controls['int_name'].setValue(wsint.name);
             }
+          }, (err) => {
+            new EntityUtils().handleWSError(entityForm, err);
           });
         }
       });
