@@ -80,12 +80,12 @@ def edit(driver, self, type, name):
         num = 6
         delNum = 1
         path = "User"
-       # ED = "EDIT"
+        #ED = "6"
     elif (type == "group"):
         num = 5
         delNum = 2
         path = "Group"
-       # ED = "Edit"
+        #ED = "5"
 
     # Click User submenu
     driver.find_element_by_xpath(xpaths['submenu' + path]).click()
@@ -94,8 +94,8 @@ def edit(driver, self, type, name):
     index = 1
     ui_text = "null"
     for x in range(0, 10):
-        if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-            ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+        if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+            ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
             ui_text = ui_element.text
             print (ui_text)
         if (ui_text == name):
@@ -105,7 +105,7 @@ def edit(driver, self, type, name):
     print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
     time.sleep(1)
     # click on the 3 dots
-    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
     time.sleep(1)
     # click on edit option
     driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()

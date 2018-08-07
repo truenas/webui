@@ -13,9 +13,9 @@ from os import path
 # user driverU, because of capabilities
 
 # from driver import webDriver
-# from driverU import webDriver
+from driverU import webDriver
 # Importing test
-# from autoflush import autoflush
+
 from login import run_login_test
 # from guide import run_guide_test
 from acc_group import run_create_group_test
@@ -39,6 +39,7 @@ from acc_edit import run_edit_test
 from acc_delete import run_delete_test
 from theme import run_change_theme_test
 from logout import run_logout_test
+
 if path.exists("/usr/local/etc/ixautomation.conf"):
     copyfile("/usr/local/etc/ixautomation.conf", "config.py")
     from config import *
@@ -151,7 +152,7 @@ else:
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
-#        run_delete_test(runDriver)
+        run_delete_test(runDriver)
     if (test_name == "storage"):
         run_create_pool_test(runDriver)
     elif (test_name == "network"):

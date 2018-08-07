@@ -34,7 +34,9 @@ except ImportError:
 xpaths = {
         'navAccount' : '//*[@id="nav-1"]/div/a[1]',
         'submenuUser' : '//*[@id="1-1"]',
-        'submenuGroup' : '//*[@id="1-0"]'
+        'submenuGroup' : '//*[@id="1-0"]',
+        'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
+        'deleteButton': '//*[contains(@name, "ok_button")]'
         }
 
 class delete_test(unittest.TestCase):
@@ -255,14 +257,14 @@ class delete_test(unittest.TestCase):
         # num specifies the column of the 3 dots which is different in user/group
         # delNum speifies the option number where del is after clicking on the 3 dots
         if (type == "user"):
-            num = 13
-            delNum = 2
+            num = 6
+            delNum = 1
             path = "User"
             plug = "bsdusr_username"
 #            ED_DEL = "DELETE"
         elif (type == "group"):
             num = 5
-            delNum = 3
+            delNum = 2
             path = "Group"
             plug = "bsdgrp_group"
 #            ED_DEL = "Delete"
@@ -276,9 +278,9 @@ class delete_test(unittest.TestCase):
         if (self.is_element_present(By.XPATH, '//*[@id="' + plug + '_' + name  + '\"]' )):
             print ("username/groupname- " + name + " exists")
 
-            for x in range(1, 10):
-                if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                    ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+            for x in range(0, 10):
+                if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                    ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                     ui_text = ui_element.text
                 if (ui_text == name):
                     index = x
@@ -289,37 +291,20 @@ class delete_test(unittest.TestCase):
             time.sleep(1)
 
             # click on the 3 dots
-            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[5]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+            driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
             time.sleep(1)
             # click on delete option
 
 
 #            driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
             driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()
-            # check confirmation checkbox
-            for i in range(0,10):
-                if (self.is_element_present(By.XPATH,'/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/mat-checkbox/label/div')):
-                    driver.find_element_by_xpath('/html/body/div[' + str(i) + ']/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/mat-checkbox/label/div').click()
-                    print ("loop-" + str(i))
-                    break
-            # click on confirmation button
-            time.sleep(1)
-            if (self.is_element_present(By.XPATH,'//*[contains(text(), "Delete")]')):
-                driver.find_element_by_xpath('//*[contains(text(), "Delete")]').click()
-                print ("Delete button clicked")
-                driver.find_element_by_xpath('//*[contains(text(), "Delete")]').click()
-                print ("Delete button clicked")
-                driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/mat-dialog-container/confirm-dialog/div[2]/button[2]').click()
 
-#                click_check =  driver.find_element_by_xpath(xpaths['submenu' + path])
-#                for i in range(1, 10):
-#                    if driver.element_to_be_clickable(By.XPATH, xpaths['submenu' + path]):
-#                        time.sleep(1)
-#                        print ("element clickable")
-#                        break
-#                    else:
-#                        time.sleep(5)
-#                        print ("waiting on element to be clickable")
+            if (driver.find_element_by_xpath(xpaths['confirmCheckbox'])):
+                driver.find_element_by_xpath(xpaths['confirmCheckbox']).click()
+                time.sleep(1)
+                print ("clicking delete once")
+                driver.find_element_by_xpath(xpaths['deleteButton']).click()
+                time.sleep(20)
         else:
             print ("username/groupname- " + name + " does not exists..skipping")
 
