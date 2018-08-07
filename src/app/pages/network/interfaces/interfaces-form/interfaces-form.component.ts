@@ -10,6 +10,7 @@ import {
 import {
   regexValidator
 } from '../../../common/entity/entity-form/validators/regex-validation';
+import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -175,6 +176,9 @@ export class InterfacesFormComponent implements OnDestroy {
   private int_ipv6address: any;
   private int_interface: any;
   private int_interface_fg: any;
+  private int_interface_fg_sub: any;
+  private int_interface_warning: string;
+  private wsint: string;
   private entityForm: any;
   protected ipv4formArray: FormArray;
   protected ipv6formArray: FormArray;
@@ -227,10 +231,13 @@ export class InterfacesFormComponent implements OnDestroy {
     }
   }];
 
+  int_warning = T("Please configure the Web UI interface (");
+  int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
-              protected ws: WebSocketService) {}
+              protected ws: WebSocketService, protected translate: TranslateService) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_aliases'] <= this.initialCount_default['ipv4_aliases']) {
@@ -267,10 +274,20 @@ export class InterfacesFormComponent implements OnDestroy {
       this.rest.get(this.resource_name, []).subscribe((res) => {
         if (res.data.length === 0) {
           this.ws.call('interfaces.websocket_interface', []).subscribe((wsint) => {
-            this.int_interface.warnings = T("Please configure the Web UI \
-            interface before adding another interface. This prevents losing \
-            connection to the Web UI.");
             if (wsint && wsint.name) {
+              this.wsint = wsint.name;
+              this.translate.get(this.int_warning).subscribe((int_warning) => {
+                this.translate.get(this.int_warning_2).subscribe((int_warning_2) => {
+                  this.int_interface_warning = int_warning + wsint.name + int_warning_2;
+                });
+              });
+              this.int_interface_fg_sub = this.int_interface_fg.valueChanges.subscribe((val) => {
+                if (val !== this.wsint) {
+                  this.int_interface.warnings = this.int_interface_warning;
+                } else {
+                  this.int_interface.warnings = null;
+                }
+              });
               this.int_interface_fg.setValue(wsint.name);
               entityForm.formGroup.controls['int_name'].setValue(wsint.name);
             }
@@ -369,5 +386,8 @@ export class InterfacesFormComponent implements OnDestroy {
   ngOnDestroy() {
     this.int_dhcp_subscription.unsubscribe();
     this.int_ipv6auto_subscription.unsubscribe();
+    if (this.int_interface_fg_sub) {
+      this.int_interface_fg_sub.unsubscribe();
+    }
   }
 }
