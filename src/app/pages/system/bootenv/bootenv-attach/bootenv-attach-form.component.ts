@@ -50,7 +50,8 @@ export class BootEnvAttachFormComponent {
       name: 'expand',
       placeholder: T('Use all disk space'),
       tooltip : T('Gives control of how much of the new device is made\
-       available to ZFS. When checked, the entire capacity of the new device is used.'),
+                   available to ZFS. Set to use the entire capacity of\
+                   the new device.'),
     },
 
   ]
@@ -76,7 +77,7 @@ preInit(entityForm: any) {
         this.diskChoice.options.push({label : item.name, value : item.name});
       });
     });
-    
+
   }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action , {
@@ -93,7 +94,7 @@ preInit(entityForm: any) {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogRef.close(false);
-      this.openSnackBar("Device successfully attached", "Success");
+      this.openSnackBar("Device attached.", "Success");
       this.router.navigate(
         new Array('').concat('system','bootenv')
       );

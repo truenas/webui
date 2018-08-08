@@ -90,7 +90,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws.call(this.editCall, [payload]).subscribe(
       (res) => {
         this.loader.close();
-        this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+        this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
       },
       (res) => {
         this.loader.close();
