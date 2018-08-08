@@ -732,7 +732,7 @@ export class DatasetFormComponent implements Formconfiguration{
         this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
+      this.dialogService.errorReport(T("Error saving dataset."), res.reason, res.trace.formatted);
     });
   }
 
