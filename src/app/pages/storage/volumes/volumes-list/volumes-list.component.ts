@@ -163,7 +163,7 @@ export class VolumesListTableConfig implements InputTableConf {
               },
               ],
 
-              saveButtonText: "Unlock",
+              saveButtonText: T("Unlock"),
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue;
                 localLoader.open();
@@ -325,7 +325,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 return true;
               }
             },
-            saveButtonText: 'Detach',
+            saveButtonText: T('Detach'),
             custActions: [
               {
                 id: 'download_key',
@@ -383,7 +383,7 @@ export class VolumesListTableConfig implements InputTableConf {
             if (res[0]) {
               if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
                 const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
+                this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.delete("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
@@ -399,7 +399,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 });
               } else {
                 const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
-                this.dialogService.confirm("Scrub Pool", message, false).subscribe((res) => {
+                this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                   if (res) {
                     this.loader.open();
                     this.rest.post("storage/volume/" + row1.id + "/scrub/", { body: JSON.stringify({}) }).subscribe(
@@ -598,7 +598,7 @@ export class VolumesListTableConfig implements InputTableConf {
               {
                 type: 'input',
                 name: 'name',
-                placeholder: 'Name',
+                placeholder: T('Name'),
                 tooltip: T('Add a name for the new snapshot'),
                 validation: [Validators.required],
                 required: true,
@@ -606,19 +606,19 @@ export class VolumesListTableConfig implements InputTableConf {
               {
                 type: 'checkbox',
                 name: 'recursive',
-                placeholder: 'Recursive',
+                placeholder: T('Recursive'),
                 tooltip: T('Set to include child datasets of the chosen dataset.'),
               }
             ],
             method_rest: "storage/snapshot",
-            saveButtonText: "Create Snapshot",
+            saveButtonText: T("Create Snapshot"),
           }
           this.ws.call('vmware.query',[[["filesystem", "=", row.path]]]).subscribe((vmware_res)=>{
             if(vmware_res.length !== 0){
               const vmware_cb = {
                 type: 'checkbox',
                 name: 'vmware_sync',
-                placeholder: 'VMWare Sync',
+                placeholder: T('VMWare Sync'),
                 tooltip: T(''),
               }
               conf.fieldConfig.push(vmware_cb);

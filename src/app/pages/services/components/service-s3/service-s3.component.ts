@@ -59,10 +59,9 @@ export class ServiceS3Component implements OnDestroy {
       name : 'bindport',
       placeholder : T('Port'),
       tooltip: T('Enter the TCP port which provides the S3 service.'),
-      inputType: 'number',
       value: '9000',
       required: true,
-      validation: [Validators.min(1), Validators.max(65535), Validators.required]
+      validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]
     },
     {
       type : 'input',

@@ -90,7 +90,8 @@ export class LdapComponent {
       name : 'ldap_bindpw',
       placeholder : T('Bind Password'),
       tooltip: T('Enter the password for the <b>Bind DN</b>.'),
-      inputType : 'password'
+      inputType : 'password',
+      hideButton : false
     },
     {
       type : 'checkbox',

@@ -18,7 +18,7 @@ export class NetworkService {
 
   getVlanNicChoices() {
     return this.ws.call('notifier.choices',
-                        [ 'NICChoices', [ false, true, false ] ]);
+                        [ 'NICChoices', [ false, true, true, true, false ] ]);
   }
 
   getInterfaceNicChoices() {

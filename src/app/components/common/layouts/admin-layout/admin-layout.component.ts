@@ -66,9 +66,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.currentTheme = this.themeService.currentTheme().name;
     // Initialize Perfect scrollbar for sidenav
     let navigationHold = document.getElementById('scroll-area');
-    Ps.initialize(navigationHold, {
-      suppressScrollX: true
-    });
+
+    // Delay needed to fix a init err with navbar vert scroll
+    setTimeout(() => {
+      Ps.initialize(navigationHold, {
+        suppressScrollX: true
+      });
+      console.log('get some')
+    }, 500);
+
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
       this.isSidenavOpen = false;
     }

@@ -68,9 +68,10 @@ export class SupportComponent  {
       tooltip : T('Enter the bug tracker account password.',),
       required: true,
       validation : [ Validators.required ],
-      blurStatus: true,
-      blurEvent: this.blurEvent,
-      parent: this
+      blurStatus : true,
+      blurEvent : this.blurEvent,
+      parent : this,
+      hideButton : false
     },
     {
       type : 'select',

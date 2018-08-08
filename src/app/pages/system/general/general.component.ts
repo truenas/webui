@@ -171,14 +171,14 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: 'Export Password Secret Seed'
+      placeholder: T('Export Password Secret Seed')
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
     title: "Save Config",
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
-    saveButtonText: 'Ok',
+    saveButtonText: T('Save'),
     customSubmit: this.saveCofigSubmit,
   }
 
@@ -198,7 +198,7 @@ export class GeneralComponent implements OnDestroy {
     title: "Upload Config",
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
-    saveButtonText: 'Ok',
+    saveButtonText: T('Upload'),
     customSubmit: this.uploadConfigSubmit,
     message: '<p>The system will reboot to perform this operation!</p>\
               <p><font color="red">If the uploaded configuration database file was saved \

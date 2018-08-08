@@ -1,6 +1,7 @@
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 import { WebSocketService } from '../../../../services/';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'consolepanel-dialog',
@@ -16,6 +17,7 @@ export class ConsolePanelModalDialog {
   onEventEmitter = new EventEmitter();
 
   constructor(
+    protected translate: TranslateService,
     public dialogRef: MatDialogRef<ConsolePanelModalDialog>,
     private ws: WebSocketService) { }
 
