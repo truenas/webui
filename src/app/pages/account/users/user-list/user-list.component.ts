@@ -94,7 +94,7 @@ export class UserListComponent implements OnInit {
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Delete the selected item?"), 
+      T("Delete the user?"), 
       false, T("Delete"),
       true,
       T('Keep user primary group'),
