@@ -395,6 +395,15 @@ export class DeviceEditComponent implements OnInit {
   }
 
   setgetValues(data, lookupTable) {
+    const tempdata = {}
+    for (const tempi in data){
+      for (const tempj in lookupTable){
+        if (tempi === tempj){
+          tempdata[tempi] = data[tempi]
+        }
+      }
+    }
+    data = tempdata;
     let fg: any
     for (const i in data) {
       if(this.formGroup.controls[lookupTable[i]]){
@@ -462,6 +471,7 @@ export class DeviceEditComponent implements OnInit {
             payload['attributes'] = {
                 'type' : formvalue.DISK_mode,
                 'path' : formvalue.DISK_zvol,
+                'sectorsize' : formvalue.DISK_sectorsize,
               }
             }
         if (this.dtype === 'CDROM') {
