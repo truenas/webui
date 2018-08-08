@@ -31,8 +31,16 @@ xpaths = {
         'navAccount' : '//*[@id="nav-1"]/div/a[1]',
         'submenuUser' : '//*[@id="1-1"]',
         'submenuGroup' : '//*[@id="1-0"]',
+        'navStorage' : '//*[@id="nav-5"]/div/a[1]',
+        'submenuPool' : '//*[@id="5-0"]',
+        'poolID' : '//*[@id="expansionpanel_zfs_',
+        'submenuDisks' : '//*[@id="5-3"]',
+        'poolDetach' : '//*[@id="action_button_Detach"]',
+        'pooldestroyCheckbox' : '//*[@id="destroy"]/mat-checkbox/label/div',
+        'poolconfirmdestroyCheckbox' : '//*[@id="confirm"]/mat-checkbox/label/div',
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        'deleteButton': '//*[contains(@name, "ok_button")]'
+        'deleteButton': '//*[contains(@name, "ok_button")]',
+        'detachButton': '//*[contains(@text, "Detach")]'
         }
 
 
@@ -160,4 +168,21 @@ def user_delete(driver, self, type, name):
             time.sleep(20)
     else:
         print ("username/groupname- " + name + " does not exists..skipping")
+
+def pool_detach(driver, self, name):
+    # path plugs in the xpath of user or group , submenu{User/Group}
+    # num specifies the column of the 3 dots which is different in user/group
+    # delNum speifies the option number where del is after clicking on the 3 dots
+
+    # Click Pool submenu
+    driver.find_element_by_xpath(xpaths['submenuPool']).click()
+    # wait till the list is loaded
+    driver.find_element_by_xpath(xpaths['poolID'] + name).click()
+    time.sleep(1)
+    driver.find_element_by_xpath(xpaths['poolID'] + name + "]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon").click()
+
+    driver.find_element_by_xpath(xpaths['poolDetach']).click()
+    driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
+    driver.find_element_by_xpath(xpaths['poolconfirmdestroycheckbox']).click()
+    driver.find_element_by_xpath(xpaths['detachButton']).click()
 
