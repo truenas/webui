@@ -63,7 +63,7 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res);
             });
       }
     },
@@ -91,7 +91,7 @@ export class JailListComponent implements OnInit {
                 },
                 (res) => {
                   this.loader.close();
-                  new EntityUtils().handleError(this, res);
+                  new EntityUtils().handleWSError(this, res);
                 });
           }
         })      
@@ -113,7 +113,7 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleError(this, res);      
+              new EntityUtils().handleWSError(this, res);
             });
       }
     },
@@ -209,10 +209,16 @@ export class JailListComponent implements OnInit {
         label: "Start",
         onClick: (row) => {
           this.entityList.busy =
+            this.loader.open();
             this.ws.call('jail.start', [row.host_hostuuid]).subscribe(
-              (res) => { row.state = 'up'; this.updateMultiAction([row]); },
               (res) => {
-                new EntityUtils().handleError(this, res);
+                this.loader.close();
+                row.state = 'up';
+                this.updateMultiAction([row]);
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, res);
               });
         }
       },
@@ -224,11 +230,17 @@ export class JailListComponent implements OnInit {
           this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
             dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
             if (res) {
+              this.loader.open();
               this.entityList.busy =
                 this.ws.call('jail.stop', [row.host_hostuuid]).subscribe(
-                  (res) => { row.state = 'down'; this.updateMultiAction([row]);},
                   (res) => {
-                    new EntityUtils().handleError(this, res);
+                    this.loader.close();
+                    row.state = 'down';
+                    this.updateMultiAction([row]);
+                  },
+                  (res) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this, res);
                   });
             }
           })
@@ -246,7 +258,7 @@ export class JailListComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleError(this, res);
+                new EntityUtils().handleWSError(this, res);
               });
         }
       },
