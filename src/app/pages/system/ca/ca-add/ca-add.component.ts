@@ -25,9 +25,7 @@ export class CertificateAuthorityAddComponent {
       type : 'input',
       name : 'name',
       placeholder : T('Identifier'),
-      tooltip: T('Enter a descriptive name for the CA using\
-                  only alphanumeric, underscore (_), and dash (-)\
-                  characters.'),
+      tooltip: T('Enter a description of the CA.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -46,8 +44,8 @@ export class CertificateAuthorityAddComponent {
       type : 'select',
       name : 'signedby',
       placeholder : T('Signing Certificate Authority'),
-      tooltip: T('Select the previously imported or created <a\
-                  href="..//docs/system.html#cas"\
+      tooltip: T('Select a previously imported or created <a\
+                  href="../docs/system.html#cas"\
                   target="_blank">CA</a>.'),
       options : [
         {label: '---', value: null}
@@ -129,7 +127,7 @@ export class CertificateAuthorityAddComponent {
       type : 'input',
       name : 'city',
       placeholder : T('Locality'),
-      tooltip: T('Enter the location of the organization. For example\
+      tooltip: T('Enter the location of the organization. For example,\
                   the city.'),
       required: true,
       validation: [Validators.required],
@@ -160,7 +158,7 @@ export class CertificateAuthorityAddComponent {
       placeholder : T('Common Name'),
       tooltip: T('Enter the <a href="https://kb.iu.edu/d/aiuv"\
                   target="_blank">fully-qualified hostname (FQDN)</a> of\
-                  the system. This name <b>must</b> be unique within a\
+                  the system. This name must be unique within a\
                   certificate chain.'),
       required: true,
       validation : [ Validators.required ],
@@ -171,9 +169,9 @@ export class CertificateAuthorityAddComponent {
       name : 'san',
       placeholder: T('Subject Alternate Names'),
       tooltip: T('Multi-domain support. Enter additional domains to\
-                  secure, separated by spaces. For example if the\
-                  primary domain is example.com, www.example.com can\
-                  be entered here to secure both addresses.'),
+                  secure, separated by spaces. For example, if the\
+                  primary domain is example.com, entering www.example.com\
+                  will secure both addresses.'),
       isHidden: false,
     },
     {
@@ -190,14 +188,14 @@ export class CertificateAuthorityAddComponent {
       name : 'privatekey',
       placeholder : T('Private Key'),
       tooltip : T('Paste the private key associated with the\
-                   <b>Certificate</b> when available.'),
+                   Certificate when available.'),
       isHidden: true,
     },
     {
       type : 'input',
       name : 'Passphrase',
       placeholder : T('Passphrase'),
-      tooltip : T('Enter the passphrase for the <b>Private Key</b>.'),
+      tooltip : T('Enter the passphrase for the Private Key.'),
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ],
       isHidden: true,
