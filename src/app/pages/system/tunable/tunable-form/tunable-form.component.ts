@@ -36,10 +36,10 @@ export class TunableFormComponent {
       type: 'input',
       name: 'tun_var',
       placeholder: T('Variable'),
-      tooltip: T('The name of the loader, sysctl, or rc.conf variable\
-                  to configure.<br>\
-                  <b>loader</b>: Tunables that can be set <b>only</b> at\
-                  boot and not later.<br>\
+      tooltip: T('Enter the name of the loader, sysctl, or rc.conf\
+                  variable to configure.<br>\
+                  <b>loader</b>: Tunables that can be set only at boot\
+                  and not later.<br>\
                   <b>rc.conf</b>: Enable or disable system services and\
                   daemons.<br>\
                   <b>sysctl</b>: Tunables that can be set anytime.'),
@@ -50,7 +50,7 @@ export class TunableFormComponent {
       type: 'textarea',
       name: 'tun_value',
       placeholder: T('Value'),
-      tooltip: T('Set a value to use for the <a\
+      tooltip: T('Enter a value to use for the <a\
                   href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/boot-introduction.html#boot-loader-commands"\
                   target="_blank">loader</a>, <a\
                   href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/configtuning-sysctl.html"\
@@ -81,15 +81,14 @@ export class TunableFormComponent {
       type: 'input',
       name: 'tun_comment',
       placeholder: T('Comment'),
-      tooltip: T('Enter a description of the tunable. What the tunable\
-                  does and why it\'s needed is helpful for future\
-                  reference.'),
+      tooltip: T('Enter a description of the tunable.'),
   },
   {
       type: 'checkbox',
       name: 'tun_enabled',
       placeholder: T('Enabled'),
-      tooltip: T('Unset to disable but not delete the tunable.'),
+      tooltip: T('Enable this tunable. Unset to disable this tunable\
+                  without deleting it.'),
   },
   ];
 
