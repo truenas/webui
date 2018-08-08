@@ -146,8 +146,8 @@ export class ServiceS3Component implements OnDestroy {
       if(res && res.split('/').length < 4) {
         this.dialog.confirm(T("Warning"), T("Assigning a directory to Minio changes the permissions \
                                              of that directory and every directory in it to \
-                                             minio:minio, overriding any previous permissions. \
-                                             Creating a separate dataset just for Minio is strongly \
+                                             minio:minio and overrides any previous permissions. \
+                                             Creating a separate dataset for Minio is strongly \
                                              recommended."), true);
       }
     });
