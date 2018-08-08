@@ -130,7 +130,7 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 128,
           validation : [ Validators.required, Validators.min(128)],
-          tooltip: T('Allocate a number of mebibytes of RAM for the VM.'),
+          tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
         },
       ]
     },
@@ -153,7 +153,7 @@ export class VMWizardComponent {
           type: 'input',
           name: 'volsize',
           placeholder : T('Define the size (GiB) for the zvol'),
-          tooltip: T('Allocate a number of gibibytes of space for the\
+          tooltip: T('Allocate a number of gigabytes of space for the\
                       new zvol.'),
           isHidden: false
         },
@@ -189,7 +189,7 @@ export class VMWizardComponent {
           name : 'NIC_type',
           placeholder : T('Adapter Type'),
           tooltip : T('<i>Intel e82545 (e1000)</i> emulates the same\
-                       Intel ethernet card. This provides compatibility\
+                       Intel Ethernet card. This provides compatibility\
                        with most operating systems. <i>VirtIO</i>\
                        provides better performance when the operating\
                        system installed in the VM supports VirtIO\
@@ -310,7 +310,7 @@ export class VMWizardComponent {
         this.summary[T('Number of CPUs')] = vcpus;
       });
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary[T('Memory')] = memory + ' Mib';
+        this.summary[T('Memory')] = memory + ' MiB';
       });
       ( < FormGroup > entityWizard.formArray.get([3])).get('volsize').valueChanges.subscribe((volsize) => {
         this.summary[T('Hard Disk Size')] = volsize + ' GiB';

@@ -47,7 +47,7 @@ export class VlanFormComponent {
       type : 'select',
       name : 'vlan_pint',
       placeholder : 'Parent Interface',
-      tooltip : 'Usually an ethernet card connected to a configured\
+      tooltip : 'Usually an Ethernet card connected to a configured\
                  switch port. Newly created link aggregations\
                  will not appear until the system is rebooted.',
       options : [],

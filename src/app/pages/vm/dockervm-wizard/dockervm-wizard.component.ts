@@ -96,7 +96,7 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'memory',
           placeholder: T('Memory Size (MiB)'),
-          tooltip: T('Allocate a number of mebibytes of RAM to the\
+          tooltip: T('Allocate a number of megabytes of RAM to the\
                       Docker VM.'),
           value: 2048,
           inputType: 'number',
@@ -113,7 +113,7 @@ export class DockerVMWizardComponent {
           name : 'NIC_type',
           placeholder : T('Adapter Type'),
           tooltip : T('<i>Intel e82545 (e1000)</i> emulates an\
-                       Intel ethernet card. This provides compatibility\
+                       Intel Ethernet card. This provides compatibility\
                        with most operating systems. <i>VirtIO</i>\
                        provides better performance when the operating\
                        system installed in the VM supports VirtIO\
@@ -159,7 +159,7 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'size',
           placeholder : T('Raw file size (GiB)'),
-          tooltip: T('Allocate a number of gibibytes (GiB) to the new\
+          tooltip: T('Allocate a number of gigabytes (GiB) to the new\
                       raw file.'),
           value: 20,
           inputType: 'number',
@@ -254,9 +254,9 @@ export class DockerVMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
-      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' Mib';
+      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' MiB';
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary[T('Memory')] = memory + ' Mib';
+        this.summary[T('Memory')] = memory + ' MiB';
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
