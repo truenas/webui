@@ -147,7 +147,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       this.entityForm.snackBar.open(T("Disk successfully imported"), T("Success"));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.entityForm.dialog.errorReport(res.error, res.reason, res.trace.formatted);
+      new EntityUtils().handleWSError(this.entityForm, res);
     });
 
   }
