@@ -75,7 +75,7 @@ export class EntityCardComponent implements OnInit {
   }
 
   toggle(row: any) {
-    
+
     let rpc: string;
 
     if (row[this.conf.toggleProp] !== this.conf.runnningState) {
@@ -159,7 +159,7 @@ export class EntityCardComponent implements OnInit {
       return [{
         id: "edit",
         label: "Edit",
-	onClick: (row) => { 
+	onClick: (row) => {
 	  this.editCard.emit(true);
 	  this.toggleFlip();
 	  this.lazyLoaded = true;
@@ -198,8 +198,8 @@ export class EntityCardComponent implements OnInit {
   }
 
   doDelete() {
-    
-    this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+
+    this.dialog.confirm("Delete", "Delete this?").subscribe((res) => {
       if (res) {
 	/*
         this.loader.open();
@@ -221,4 +221,3 @@ export class EntityCardComponent implements OnInit {
   this.conf.isFlipped = !this.conf.isFlipped;
   }
 }
-

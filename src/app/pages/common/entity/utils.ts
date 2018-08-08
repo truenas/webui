@@ -33,7 +33,7 @@ export class EntityUtils {
         if (fc) {
           const element = document.getElementById(i);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field && 
+            if (entity.conf && entity.conf.advanced_field &&
               _.indexOf(entity.conf.advanced_field, i) > 0 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
@@ -68,7 +68,7 @@ export class EntityUtils {
         if (fc && !fc.isHidden) {
           const element = document.getElementById(field);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field && 
+            if (entity.conf && entity.conf.advanced_field &&
               _.indexOf(entity.conf.advanced_field, field) > 0 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
