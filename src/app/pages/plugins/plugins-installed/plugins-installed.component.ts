@@ -52,7 +52,7 @@ export class PluginsInstalledListComponent {
               this.loader.close();
             },
             (res) => {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res);
               this.loader.close();
             });
       }
@@ -74,7 +74,7 @@ export class PluginsInstalledListComponent {
               this.loader.close();
             },
             (res) => {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res);
               this.loader.close();
             });
       }
@@ -108,11 +108,16 @@ export class PluginsInstalledListComponent {
         id: "start",
         label: T("Start"),
         onClick: (row) => {
+          this.loader.open();
           this.entityList.busy =
             this.ws.call('jail.start', [row[1]]).subscribe(
-              (res) => { row[3] = 'up'; },
               (res) => {
-                new EntityUtils().handleError(this, res);
+                this.loader.close();
+                row[3] = 'up';
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, res);
               });
         }
       },
@@ -120,11 +125,16 @@ export class PluginsInstalledListComponent {
         id: "stop",
         label: T("Stop"),
         onClick: (row) => {
+          this.loader.open();
           this.entityList.busy =
             this.ws.call('jail.stop', [row[1]]).subscribe(
-              (res) => { row[3] = 'down'; },
               (res) => {
-                new EntityUtils().handleError(this, res);
+                this.loader.close();
+                row[3] = 'down';
+              },
+              (res) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, res);
               });
         }
       },
