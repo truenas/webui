@@ -57,13 +57,13 @@ export class CloudsyncListComponent {
       id: "run",
       label: T("Run Now"),
       onClick: (row) => {
-        this.dialog.confirm(T("Run Now"), T(" Would you like to run this cloud sync task now?"), true).subscribe((res) => {
+        this.dialog.confirm(T("Run Now"), T("Run the cloud sync now?"), true).subscribe((res) => {
           if (res) {
             row.state = 'RUNNING';
             this.ws.call('cloudsync.sync', [row.id]).subscribe(
               (res) => {
                 this.translateService.get("close").subscribe((close) => {
-                  this.entityList.snackBar.open(T('The cloud sync task has started.'), close, { duration: 5000 });
+                  this.entityList.snackBar.open(T('Cloud sync has begun.'), close, { duration: 5000 });
                 });
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
@@ -125,7 +125,7 @@ export class CloudsyncListComponent {
             entityList.rows[i].status += ':' + task.progress.description;
           }
         });
-      } 
+      }
     }
 
   }

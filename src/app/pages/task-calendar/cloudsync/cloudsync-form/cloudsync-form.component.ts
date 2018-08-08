@@ -126,8 +126,8 @@ export class CloudsyncFormComponent implements OnInit {
     placeholder: T('Directory/Files'),
     value: '/mnt',
     tooltip: T('Select the directories or files to be sent to the cloud\
-                for *Push* syncs, or the destination to be written for\
-                *Pull* syncs. Be cautious about the destination of *Pull*\
+                for Push syncs, or the destination to be written for\
+                Pull syncs. Be cautious about the destination of Pull\
                 jobs to avoid overwriting existing files.'),
     required: true,
     validation : [ Validators.required ]
@@ -231,7 +231,7 @@ export class CloudsyncFormComponent implements OnInit {
     name: 'cloudsync_picker',
     placeholder: T('Schedule the Cloud Sync Task'),
     tooltip: T('Choose one of the convenient presets\
-      or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+      or choose <i>Custom</i> to trigger the advanced scheduler UI'),
       required: true
   },
   {
