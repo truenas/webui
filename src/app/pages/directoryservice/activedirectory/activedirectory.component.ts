@@ -61,7 +61,7 @@ export class ActiveDirectoryComponent {
       name : 'ad_domainname',
       placeholder : T('Domain Name'),
       tooltip : T('Enter the Active Directory domain (<i>example.com</i>)\
-                 or child domain (<i>sales.example.com</i>).'),
+                   or child domain (<i>sales.example.com</i>).'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -69,7 +69,7 @@ export class ActiveDirectoryComponent {
       type : 'input',
       name : 'ad_bindname',
       placeholder : T('Domain Account Name'),
-      tooltip : T('Enter Active Directory administrator account name.'),
+      tooltip : T('Enter the Active Directory administrator account name.'),
       required: true,
       validation : [ Validators.required ],
       disabled: false,
@@ -136,96 +136,96 @@ export class ActiveDirectoryComponent {
       name : 'ad_verbose_logging',
       placeholder : T('Verbose logging'),
       tooltip : T('Set to log attempts to join the domain to\
-                 <b>/var/log/messages</b>.'),
+                   /var/log/messages.'),
     },
     {
       type : 'checkbox',
       name : 'ad_unix_extensions',
       placeholder : T('UNIX extensions'),
-      tooltip : T('<b>Only</b> set if the AD server is explicitly\
-                 configured to map permissions for UNIX users. Setting\
-                 provides persistent UIDs and GUIDs. Leave unset to map\
-                 users and groups to the UID or GUID range configured in\
-                 Samba.'),
+      tooltip : T('Only set if the AD server is explicitly configured to \
+                   map permissions for UNIX users. Setting provides \
+                   persistent UIDs and GUIDs. Leave unset to map users \
+                   and groups to the UID or GUID range configured in \
+                   Samba.'),
     },
     {
       type : 'checkbox',
       name : 'ad_allow_trusted_doms',
       placeholder : T('Allow Trusted Domains'),
       tooltip : T('Set when the network has active <a\
-                 href="https://technet.microsoft.com/en-us/library/cc757352(WS.10).aspx"\
-                 target="_blank">domain/forest trusts</a> and managing\
-                 files on multiple domains is required. Setting will\
-                 generate more winbind traffic and slow down filtering\
-                 through user/group info.'),
+                   href="https://technet.microsoft.com/en-us/library/cc757352(WS.10).aspx"\
+                   target="_blank">domain/forest trusts</a> and managing\
+                   files on multiple domains is required. Setting will\
+                   generate more winbind traffic and slow down filtering\
+                   through user/group info.'),
     },
     {
       type : 'checkbox',
       name : 'ad_use_default_domain',
       placeholder : T('Use Default Domain'),
       tooltip : T('Unset to prepend the domain name to the username.\
-                 Unset to prevent name collisions when <b>Allow Trusted\
-                 Domains</b> is set and multiple domains use the same\
-                 username.'),
+                   Unset to prevent name collisions when Allow Trusted\
+                   Domains is set and multiple domains use the same\
+                   username.'),
     },
     {
       type : 'checkbox',
       name : 'ad_allow_dns_updates',
       placeholder : T('Allow DNS updates'),
       tooltip : T('Set to enable Samba to do DNS updates when joining a\
-                 domain.'),
+                   domain.'),
     },
     {
       type : 'checkbox',
       name : 'ad_disable_freenas_cache',
       placeholder : T('Disable FreeNAS Cache'),
       tooltip : T('Set to disable caching AD users and groups. This can\
-                 help when unable to bind to a domain with a large\
-                 number of users or groups.'),
+                   help when unable to bind to a domain with a large\
+                   number of users or groups.'),
     },
     {
       type : 'input',
       name : 'ad_userdn',
       placeholder : T('User Base'),
       tooltip : T('Enter the Distinguished Name (DN) of the user container\
-                 in the Active Directory.'),
+                   in the Active Directory.'),
     },
     {
       type : 'input',
       name : 'ad_groupdn',
       placeholder : T('Group Base'),
       tooltip : T('Enter the Distinguished Name (DN) of the group\
-                 container in the Active Directory.'),
+                   container in the Active Directory.'),
     },
     {
       type : 'input',
       name : 'ad_site',
       placeholder : T('Site Name'),
       tooltip : T('Enter the relative distinguished name of the\
-                 site object in the Active Directory.'),
+                   site object in the Active Directory.'),
     },
     {
       type : 'input',
       name : 'ad_dcname',
       placeholder : T('Domain Controller'),
       tooltip : T('This is automatically added to the SRV record for the\
-                 domain. When multiple controllers are specified, this\
-                 system selects the closest responding controller. Use a\
-                 short form of the FQDN: <i>exampleserver</i>.'),
+                   domain. When multiple controllers are specified, this\
+                   system selects the closest responding controller. Use\
+                   a short form of the FQDN: <i>exampleserver</i>.'),
     },
     {
       type : 'input',
       name : 'ad_gcname',
       placeholder : T('Global Catalog Server'),
-      tooltip : T('Ensure the hostname of the global catalog server to use\
-                 is resolvable.'),
+      tooltip : T('Ensure the hostname of the global catalog server to\
+                   use is resolvable.'),
     },
     {
       type : 'select',
       name : 'ad_kerberos_realm',
       placeholder : T('Kerberos Realm'),
       tooltip : T('Select the realm created in <a href="guide"\
-                 target="_blank">Kerberos Realms</a>.'),
+                   target="_blank">Kerberos Realms</a>.'),
       options : []
     },
     {
@@ -233,7 +233,7 @@ export class ActiveDirectoryComponent {
       name : 'ad_kerberos_principal',
       placeholder : T('Kerberos Principal'),
       tooltip : T('Select the keytab created in <a href="guide"\
-                 target="_blank">Kerberos Keytabs</a>.'),
+                   target="_blank">Kerberos Keytabs</a>.'),
       options : [
         {label : '---', value : ""},
       ]
@@ -243,23 +243,23 @@ export class ActiveDirectoryComponent {
       name : 'ad_timeout',
       placeholder : T('AD Timeout'),
       tooltip : T('Increase number of seconds before timeout if the AD\
-                 service does not immediately start after connecting to\
-                 the domain.'),
+                   service does not immediately start after connecting\
+                   to the domain.'),
     },
     {
       type : 'input',
       name : 'ad_dns_timeout',
       placeholder : T('DNS Timeout'),
       tooltip : T('Increase the number of seconds before a timeout occurs\
-                 if AD DNS queries timeout.'),
+                   if AD DNS queries timeout.'),
     },
     {
       type : 'select',
       name : 'ad_idmap_backend',
       placeholder : T('Idmap backend'),
       tooltip : T('Choose the backend to map Windows security\
-                 identifiers (SIDs) to UNIX UIDs and GIDs. Click\
-                 <b>Edit</b> to configure that backend.'),
+                   identifiers (SIDs) to UNIX UIDs and GIDs. Click\
+                   Edit to configure that backend.'),
       options : []
     },
     {
@@ -267,10 +267,10 @@ export class ActiveDirectoryComponent {
       name : 'ad_nss_info',
       placeholder : T('Winbind NSS Info'),
       tooltip : T('Choose the schema to use when querying AD for\
-                 user/group info. <i>rfc2307</i> uses the schema support\
-                 included in Windows 2003 R2, <i>sfu</i> is for\
-                 Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for\
-                 Service For Unix 2.0.'),
+                   user/group info. <i>rfc2307</i> uses the schema support\
+                   included in Windows 2003 R2, <i>sfu</i> is for\
+                   Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for\
+                   Service For Unix 2.0.'),
       options : []
     },
     {
@@ -278,10 +278,10 @@ export class ActiveDirectoryComponent {
       name : 'ad_ldap_sasl_wrapping',
       placeholder : T('SASL wrapping'),
       tooltip : T('Choose how LDAP traffic is transmitted. Choices are\
-                 <i>plain</i> (plain text), <i>sign</i> (signed only),\
-                 or <i>seal</i> (signed and encrypted). Windows 2000 SP3\
-                 and newer can be configured to enforce signed LDAP\
-                 connections.'),
+                   <i>plain</i> (plain text), <i>sign</i> (signed only),\
+                   or <i>seal</i> (signed and encrypted). Windows 2000 SP3\
+                   and newer can be configured to enforce signed LDAP\
+                   connections.'),
       options : []
     },
     {
@@ -294,8 +294,8 @@ export class ActiveDirectoryComponent {
       type : 'input',
       name : 'ad_netbiosname_a',
       placeholder : 'Netbios Name',
-      tooltip : T('Limited to 15 characters. It <b>must</b> differ from\
-                 the <i>Workgroup</i> name.'),
+      tooltip : T('Limited to 15 characters. It must differ from\
+                   the <i>Workgroup</i> name.'),
     },
     {
       type : 'input',
@@ -412,17 +412,17 @@ export class ActiveDirectoryComponent {
     entityEdit.formGroup.controls['ad_idmap_backend'].valueChanges.subscribe((res)=> {
       if ((this.idmapBacked != null) && (this.idmapBacked !== res)) {
         this.dialogservice.confirm(T("Active Directory IDMAP change!"),
-          T("<font color='red'>STOP</font>: Do you know what you are doing? <br><br>\
+          T("<font color='red'>STOP</font>:<br><br>\
           The idmap_ad plugin provides a way for Winbind to read id mappings from \
           an AD server that uses RFC2307/SFU schema extensions. This module \
           implements only the \"idmap\" API, and is READONLY. Mappings must be \
           provided in advance by the administrator by adding the uidNumber \
           attributes for users and gidNumber attributes for groups in the AD. \
           Winbind will only map users that have a uidNumber and whose primary \
-          group have a gidNumber attribute set. It is however recommended that \
+          group have a gidNumber attribute set. It is recommended that \
           all groups in use have gidNumber attributes assigned, otherwise they \
-          are not working. <br><br>\
-          <font color='red'>STOP</font>: If your Active Directory is not \
+          will not work. <br><br>\
+          <font color='red'>STOP</font>: If Active Directory is not \
           configured for this, it will not work. <br>")).subscribe(
         (confirm) => {
           if (confirm) {

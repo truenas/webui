@@ -36,24 +36,24 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_ad_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_ad_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     },
     {
       type: 'select',
       name: 'idmap_ad_schema_mode',
       placeholder: T('Schema mode'),
       tooltip: T('Choose the schema to use with LDAP authentication for\
-                SMB shares. The LDAP server must be configured with\
-                Samba attributes to use a Samba Schema.'),
+                  SMB shares. The LDAP server must be configured with\
+                  Samba attributes to use a Samba Schema.'),
       options: [{
         label: 'rfc2307',
         value: 'rfc2307',
@@ -71,38 +71,38 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_autorid_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_autorid_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_autorid_rangesize',
       placeholder: T('Range Size'),
       tooltip: T('Define the number of UIDS/GIDS available per domain\
-                range. The minimum is <i>2000</i> and the recommended\
-                default is <i>100000</i>.'),
+                  range. The minimum is <i>2000</i> and the recommended\
+                  default is <i>100000</i>.'),
     },
     {
       type: 'checkbox',
       name: 'idmap_autorid_readonly',
       placeholder: T('Read Only'),
       tooltip: T('Set the module as <i>read-only</i>. No new ranges are\
-                allocated or new mappings created in the idmap pool.'),
+                  allocated or new mappings created in the idmap pool.'),
     },
     {
       type: 'checkbox',
       name: 'idmap_autorid_ignore_builtin',
       placeholder: T('Ignore Builtin'),
       tooltip: T('Set to ignore mapping requests for the <i>BUILTIN</i>\
-                domain.'),
+                  domain.'),
     }];
   public fruitFieldConfig: FieldConfig[] = [
     {
@@ -110,16 +110,16 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_fruit_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_fruit_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     }];
   public ldapFieldConfig: FieldConfig[] = [
     {
@@ -127,41 +127,41 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_ldap_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_ldap_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_ldap_ldap_base_dn',
       placeholder: T('Base DN'),
       tooltip: T('Enter the directory base suffix to use for SID/uid/gid\
-                mapping entries. Example: dc=test,dc=org. When undefined\
-                <b>idmap_ldap</b> defaults to using the ldap idmap\
-                suffix option from <b>smb.conf</b>.'),
+                  mapping entries. Example: dc=test,dc=org. When undefined,\
+                  idmap_ldap defaults to using the ldap idmap\
+                  suffix option from smb.conf.'),
     },
     {
       type: 'input',
       name: 'idmap_ldap_ldap_user_dn',
       placeholder: T('User DN'),
       tooltip: T('Enter the user Distinguished Name (DN) to use for\
-                authentication.'),
+                  authentication.'),
     },
     {
       type: 'input',
       name: 'idmap_ldap_ldap_url',
       placeholder: T('URL'),
       tooltip: T('Enter the LDAP server to use for SID/uid/gid map\
-                entries. When undefined <b>idmap_ldap</b> uses\
-                ldap://localhost/. Example:\
-                <i>ldap://ldap.netscape.com/o=Airius.com</i>.'),
+                  entries. When undefined, idmap_ldap uses\
+                  ldap://localhost/. Example:\
+                  <i>ldap://ldap.netscape.com/o=Airius.com</i>.'),
     },
     {
       type: 'select',
@@ -184,11 +184,11 @@ export class IdmapComponent implements OnInit {
       name: '',
       placeholder: T('Certificate'),
       tooltip: T('Select the certificate of the Active Directory server if\
-                SSL connections are used. When no certificates are\
-                available, move to the Active Directory server and\
-                create a Certificate Authority and Certificate. Import\
-                the certificate to this system using the\
-                <b>System/Certificates</b> menu.'),
+                  SSL connections are used. When no certificates are\
+                  available, move to the Active Directory server and\
+                  create a Certificate Authority and Certificate. Import\
+                  the certificate to this system using the\
+                  System/Certificates menu.'),
       options: [],
     }];
   public nssFieldConfig: FieldConfig[] = [
@@ -197,16 +197,16 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_nss_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_nss_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     }];
   public rfcFieldConfig: FieldConfig[] = [
     {
@@ -214,24 +214,24 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_rfc2307_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_rfc2307_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     },
     {
       type: 'select',
       name: 'idmap_rfc2307_ldap_server',
       placeholder: T('LDAP Server'),
       tooltip: T('Select the type of LDAP server to use. This can be the\
-                LDAP server provided by the Active Directory server or a\
-                stand-alone LDAP server.'),
+                  LDAP server provided by the Active Directory server or a\
+                  stand-alone LDAP server.'),
       options: [],
     },
     {
@@ -239,56 +239,56 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_rfc2307_bind_path_user',
       placeholder: T('User Bind Path'),
       tooltip: T('Enter the search base where user objects can be\
-                found in the LDAP server.'),
+                  found in the LDAP server.'),
     },
     {
       type: 'input',
       name: 'idmap_rfc2307_bind_path_group',
       placeholder: T('Group Bind Path'),
       tooltip: T('Enter the search base where group objects can be\
-                found in the LDAP server.'),
+                  found in the LDAP server.'),
     },
     {
       type: 'checkbox',
       name: 'idmap_rfc2307_user_cn',
       placeholder: T('User CN'),
-      tooltip: T('Set to query the <b>cn</b> instead of <b>uid</b>\
-                attribute for the user name in LDAP.'),
+      tooltip: T('Set to query the cn instead of uid\
+                  attribute for the user name in LDAP.'),
     },
     {
       type: 'checkbox',
       name: 'idmap_rfc2307_cn_realm',
       placeholder: T('CN Realm'),
       tooltip: T('Append <i>@realm</i> to <i>cn</i> in LDAP queries for\
-                both groups and users when <b>User CN</b> is set).'),
+                  both groups and users when User CN is set).'),
     },
     {
       type: 'input',
       name: 'idmap_rfc2307_ldap_domain',
       placeholder: T('LDAP Domain'),
       tooltip: T('Enter the domain to access the Active Directory server\
-                when using the LDAP server inside the Active Directory\
-                server.'),
+                  when using the LDAP server inside the Active Directory\
+                  server.'),
     },
     {
       type: 'input',
       name: 'idmap_rfc2307_ldap_url',
       placeholder: T('LDAP URL'),
       tooltip: T('Enter the LDAP URL for accessing the LDAP server when\
-                using a stand-alone LDAP server.'),
+                  using a stand-alone LDAP server.'),
     },
     {
       type: 'input',
       name: 'idmap_rfc2307_ldap_user_dn',
       placeholder: T('LDAP User DN'),
       tooltip: T('Enter the user Distinguished Name to use for\
-                authentication.'),
+                  authentication.'),
     },
     {
       type: 'input',
       name: 'idmap_rfc2307_ldap_user_dn_password',
       placeholder: T('LDAP User DN Password'),
-      tooltip: T('Enter a password associated with the <b>LDAP User DN</b>.'),
+      tooltip: T('Enter a password associated with the LDAP User DN.'),
     },
     {
       type: 'input',
@@ -316,12 +316,12 @@ export class IdmapComponent implements OnInit {
       type: 'select',
       name: '',
       placeholder: T('Certificate'),
-      tooltip: T('Select the certificate of the Active Directory server if\
-                SSL connections are used. When no certificates are\
-                available, move to the Active Directory server and\
-                create a Certificate Authority and Certificate. Import\
-                the certificate to this system using the\
-                <b>System/Certificates</b> menu.'),
+      tooltip: T('Select the certificate of the Active Directory server\
+                  if SSL connections are used. When no certificates are\
+                  available, move to the Active Directory server and\
+                  create a Certificate Authority and Certificate. Import\
+                  the certificate to this system using the\
+                  System/Certificates menu.'),
       options: [],
     }];
   public ridFieldConfig: FieldConfig[] = [
@@ -330,16 +330,16 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_rid_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_rid_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     }];
   public scriptFieldConfig: FieldConfig[] = [
     {
@@ -347,24 +347,24 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_script_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_script_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_script_script',
       placeholder: T('Script'),
       tooltip: T('Configure an external program to perform id mapping. See\
-                <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
-                target="_blank">idmap_script(8)</a> for more details.'),
+                  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
+                  target="_blank">idmap_script(8)</a> for more details.'),
     }];
   public tdbFieldConfig: FieldConfig[] = [
     {
@@ -372,16 +372,16 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_tdb_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_tdb_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     }];
   public tdb2FieldConfig: FieldConfig[] = [
     {
@@ -389,25 +389,25 @@ export class IdmapComponent implements OnInit {
       name: 'idmap_tdb2_range_low',
       placeholder: T('Range Low'),
       tooltip: T('Enter the integer of the beginning UID/GID for which\
-                this system is authoritative. Any lower UID/GID is\
-                ignored.'),
+                  this system is authoritative. Any lower UID/GID is\
+                  ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_tdb2_range_high',
       placeholder: T('Range High'),
       tooltip: T('Enter the integer of the ending UID/GID for which this\
-                system is authoritative. Any UID/GID higher than this\
-                value is ignored.'),
+                  system is authoritative. Any UID/GID higher than this\
+                  value is ignored.'),
     },
     {
       type: 'input',
       name: 'idmap_tdb2_script',
       placeholder: T('Script'),
       tooltip: T('Configure an external program for id mapping instead of\
-                using the <i>tdb</i> counter. Mappings are stored in the\
-                <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html"\
-                target="_blank">idmap_tdb2</a> database'),
+                  using the <i>tdb</i> counter. Mappings are stored in the\
+                  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_tdb2.8.html"\
+                  target="_blank">idmap_tdb2</a> database'),
     }];
 
   protected props: any;
@@ -523,7 +523,7 @@ export class IdmapComponent implements OnInit {
     }
 
     if (new_range_low > new_range_high) {
-      this.error = "Range low larger than range high";
+      this.error = "Range low is greater than range high.";
     } else {
       if (new_range_low < this.defaultIdmap['idmap_tdb_range_low'] || new_range_low > this.defaultIdmap['idmap_tdb_range_high']) {
         if (new_range_high < this.defaultIdmap['idmap_tdb_range_low'] || new_range_high > this.defaultIdmap['idmap_tdb_range_high']) {
