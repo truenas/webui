@@ -255,11 +255,11 @@ export class JailWizardComponent {
                 }
               },
               (res_remote) => {
-                this.dialogService.errorReport(T('Error: Get remote release choices failed'), res_remote.reason, res_remote.trace.formatted);
+                this.dialogService.errorReport(T('Error: Display remote releases failed.'), res_remote.reason, res_remote.trace.formatted);
               });
           },
           (res_local) => {
-            this.dialogService.errorReport(T('Error: Get local fetched release choices failed'), res_local.reason, res_local.trace.formatted);
+            this.dialogService.errorReport(T('Error: Display local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
           });
       },
       (res) => {
@@ -378,7 +378,7 @@ export class JailWizardComponent {
 
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = '';
