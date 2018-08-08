@@ -38,6 +38,7 @@ export class PluginsInstalledListComponent {
   public multiActions: Array < any > = [{
       id: "mstart",
       label: T("Start"),
+      icon: "play_arrow",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -60,6 +61,7 @@ export class PluginsInstalledListComponent {
     {
       id: "mstop",
       label: T("Stop"),
+      icon: "stop",
       enable: true,
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
@@ -82,6 +84,7 @@ export class PluginsInstalledListComponent {
     {
       id: "mdelete",
       label: T("Delete"),
+      icon: "delete",
       enable: true,
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
