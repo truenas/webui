@@ -203,11 +203,8 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_enabled',
         placeholder: T('Enabled'),
-        tooltip: T('Unset to disable the rsync task without deleting it.\
-                    When the <a href="../docs/services.html#rsync"\
-                    target="_blank">Rsync service</a> is <b>OFF</b>,\
-                    the rsync task continues to look for the server\
-                    unless <i>Enabled</i> is unset.'),
+        tooltip: T('Enable this rsync task. Unset to disable this\
+                    rsync task without deleting it.'),
         value: true,
       }
     ]
