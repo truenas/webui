@@ -40,7 +40,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_name',
       placeholder : T('Interface Name'),
-      tooltip : T('Enter a description of interface.'),
+      tooltip : T('Enter a description of the interface.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -48,16 +48,15 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'checkbox',
       name : 'int_dhcp',
       placeholder : T('DHCP'),
-      tooltip : T('Only one interface can be configured for <b>DHCP</b>.\
-                   Leave unset to create a static IPv4 or IPv6\
-                   configuration.'),
+      tooltip : T('Use DHCP (Dynamic Host Configuration Protocol) to\
+                   obtain an IP address and other network settings.'),
     },
     {
       type : 'input',
       name : 'int_ipv4address',
       placeholder : T('IPv4 Address'),
       tooltip : T('Enter a static IP address in the format\
-                   <i>###.###.###.###</i> when <b>DHCP</b> is unset.'),
+                   <i>###.###.###.###</i> if DHCP is unset.'),
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -67,7 +66,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'select',
       name : 'int_v4netmaskbit',
       placeholder : T('IPv4 Netmask'),
-      tooltip : T('Enter a netmask when <b>DHCP</b> is unset.'),
+      tooltip : T('Enter a netmask if DHCP is unset.'),
       options : this.networkService.getV4Netmasks(),
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -86,8 +85,8 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_ipv6address',
       placeholder : T('IPv6 Address'),
-      tooltip : T('Enter a static IPv6 address when <b>DHCP</b> is unset.\
-                   Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
+      tooltip : T('Enter a static IPv6 address if DHCP is unset.\
+                   Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -120,14 +119,14 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'alias_address',
         placeholder: T('IPv4 Address'),
         tooltip: T('Enter a static IP address in the format\
-                    <i>###.###.###.###</i>'),
+                    <i>###.###.###.###</i> if DHCP is unset.'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv4_regex) ]
       },
       {
         name: 'alias_netmaskbit',
         placeholder: T('IPv4 Netmask'),
-        tooltip : T('Enter a netmask when <b>DHCP</b> is unset.'),
+        tooltip : T('Enter a netmask if DHCP is unset.'),
         type: 'select',
         options : this.networkService.getV4Netmasks()
       },
@@ -145,8 +144,8 @@ export class InterfacesFormComponent implements OnDestroy {
       formarray: [{
         name: 'alias_address',
         placeholder: T('IPv6 Address'),
-        tooltip: T('Enter a static IPv6 address. Example:\
-                    <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
+        tooltip: T('Enter a static IPv6 address if DHCP is unset.\
+                    Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
@@ -189,7 +188,7 @@ export class InterfacesFormComponent implements OnDestroy {
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
-    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    message: T("Network connectivity will be interrupted. Proceed?"),
     hideCheckbox: false
   }
 
