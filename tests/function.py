@@ -31,6 +31,8 @@ xpaths = {
         'navAccount' : '//*[@id="nav-1"]/div/a[1]',
         'submenuUser' : '//*[@id="1-1"]',
         'submenuGroup' : '//*[@id="1-0"]',
+        'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
+        'deleteButton': '//*[contains(@name, "ok_button")]'
         }
 
 
@@ -71,7 +73,7 @@ def status_check(driver, which):
     print ("current status is: " + status_data)
 
 
-def edit(driver, self, type, name):
+def user_edit(driver, self, type, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , submenu{User/Group}
     # num specifies the column of the 3 dots which is different in user/group
@@ -111,7 +113,7 @@ def edit(driver, self, type, name):
     driver.find_element_by_xpath('//*[@id="action_button_Edit"]').click()
 
 
-def delete(self, type, name):
+def user_delete(driver, self, type, name):
     # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
     # path plugs in the xpath of user or group , submenu{User/Group}
     # num specifies the column of the 3 dots which is different in user/group
@@ -136,8 +138,8 @@ def delete(self, type, name):
     if (self.is_element_present(By.XPATH, '//*[@id="' + plug + '_' + name  + '\"]' )):
         print ("username/groupname- " + name + " exists")
         for x in range(0, 10):
-            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
-                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+            if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+                ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
                 ui_text = ui_element.text
             if (ui_text == name):
                 index = x
@@ -146,7 +148,7 @@ def delete(self, type, name):
         print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
         time.sleep(1)
         # click on the 3 dots
-        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div[6]/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+        driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
         time.sleep(1)
         # click on delete option
         driver.find_element_by_xpath('//*[@id="action_button_Delete"]').click()

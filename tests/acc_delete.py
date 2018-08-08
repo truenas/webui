@@ -77,7 +77,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a user: " + newusername)
             time.sleep(2)
-            self.delete("user", newusername)
+            function.user_delete(driver, self, "user", newusername)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -94,7 +94,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a user: " + newusernameuncheck)
             time.sleep(2)
-            self.delete("user", newusernameuncheck)
+            function.user_delete(driver, self, "user", newusernameuncheck)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -111,7 +111,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a user: " + superusername)
             time.sleep(2)
-            self.delete("user", superusername)
+            function.user_delete(driver, self, "user", superusername)
             time.sleep(2)
             #taking screenshot
             function.screenshot(driver, self)
@@ -153,7 +153,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + newusername)
             time.sleep(2)
-#            self.delete("group", newusername)
+            function.user_delete(driver, self, "group", newusername)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -169,7 +169,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + superusername)
             time.sleep(2)
-#            self.delete("group", superusername)
+            function.user_delete(driver, self, "group", superusername)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -185,7 +185,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + newgroupname)
             time.sleep(2)
-#            self.delete("group", newgroupname)
+            function.user_delete(driver, self, "group", newgroupname)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
@@ -201,7 +201,7 @@ class delete_test(unittest.TestCase):
         try:
             print (" deleting a group: " + supergroupname)
             time.sleep(2)
-#            self.delete("group", supergroupname)
+            function.user_delete(driver, self, "group", supergroupname)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:

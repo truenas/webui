@@ -151,7 +151,7 @@ else:
         print ("Running: Accounts Test")
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
-        run_edit_test(runDriver)
+#        run_edit_test(runDriver)
         run_delete_test(runDriver)
     if (test_name == "storage"):
         run_create_pool_test(runDriver)

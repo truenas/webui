@@ -78,7 +78,7 @@ class edit_test(unittest.TestCase):
             print ("Change the email to test1@ixsystems.com ")
             time.sleep(2)
             #call edit funtion on the userNAS
-            function.edit(driver, self, "user", newusername)
+            function.user_edit(driver, self, "user", newusername)
             # get the ui element
             ui_email=driver.find_element_by_xpath('//*[@id="email"]/mat-input-container/div/div[1]/div/input')
             ui_email.clear()
@@ -100,7 +100,7 @@ class edit_test(unittest.TestCase):
             print ("Changing permission to sudo user ")
             # Changing permission to sudo
             ui_sudo=driver.find_element_by_xpath('//*[@id="sudo"]/mat-checkbox')
-            function.edit(driver, self, "user", newusername)
+            function.user_edit(driver, self, "user", newusername)
             driver.find_element_by_xpath('//*[@id="save_button"]').click()
             time.sleep(15)
             #taking screenshot
@@ -144,7 +144,7 @@ class edit_test(unittest.TestCase):
         try:
             print ("change permission of groupNAS to sudo")
             time.sleep(2)
-            function.edit(driver, self, "group", newgroupname)
+            function.user_edit(driver, self, "group", newgroupname)
             driver.find_element_by_xpath('//*[@id="bsdgrp_sudo"]/mat-checkbox/label/div').click()
             driver.find_element_by_xpath('//*[@id="save_button"]').click()
             time.sleep(20)
