@@ -153,7 +153,7 @@ export class EntityWizardComponent implements OnInit {
             if (this.conf.route_success) {
               this.router.navigate(new Array('/').concat(this.conf.route_success));
             } else {
-              this.snackBar.open("All settings are saved.", 'close', { duration: 5000 })
+              this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
             }
           }
         },
