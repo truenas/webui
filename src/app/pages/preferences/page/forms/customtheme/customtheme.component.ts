@@ -96,72 +96,78 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       class:'general',
       width:'300px',
       config:[
-        { 
-          type: 'input', 
-          name: 'name', 
+        {
+          type: 'input',
+          name: 'name',
           width:'100%',
           placeholder: 'Custom Theme Name',
           required:true,
-          tooltip: 'Enter a name to identify your new theme.',
+          tooltip: 'Enter a name to identify the new theme.',
         },
-        { 
-          type: 'input', 
-          name: 'label', 
+        {
+          type: 'input',
+          name: 'label',
           width:'100%',
           placeholder: 'Menu Label',
           required:true,
-          tooltip: 'Specify how the theme name should appear in the menu.',
+          tooltip: 'Enter how the theme name will appear in the menu.',
         },
-        { 
-          type: 'select', 
-          name: 'labelSwatch', 
+        {
+          type: 'select',
+          name: 'labelSwatch',
           width:'100%',
-          placeholder: 'Menu Swatch', 
+          placeholder: 'Menu Swatch',
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose which color from the palette will be used for the label swatch that appears left of the label in the menu.",
+          tooltip: "Choose which color from the palette will be used for \
+                    the label swatch that appears left of the label in \
+                    the menu.",
           class:'inline'
         },
-        { type: 'input', 
-          name : 'description', 
+        { type: 'input',
+          name : 'description',
           width:'100%',
           placeholder : 'Description',
-          tooltip: 'Enter a short description of your theme.',
+          tooltip: 'Enter a short description of the theme.',
         },
-        { 
-          type: 'checkbox', 
-          name: 'favorite', 
+        {
+          type: 'checkbox',
+          name: 'favorite',
           width:'100%',
-          placeholder: 'Add to Favorites', 
-          tooltip: 'When checked, this theme will be added to your favorites list. Favorites are always available on the top navigation bar.',
+          placeholder: 'Add to Favorites',
+          tooltip: 'Set to add this theme to the favorites list. \
+                    Favorites are always available on the top navigation \
+                    bar.',
           class:'inline'
         },
-        { 
-          type: 'checkbox', 
-          name: 'hasDarkLogo', 
+        {
+          type: 'checkbox',
+          name: 'hasDarkLogo',
           width:'100%',
-          placeholder: 'Choose Logo Type', 
+          placeholder: 'Choose Logo Type',
           tooltip: "Choose the logo type",
           class:'inline'
         },
-        { 
-          type: 'select', 
-          name: 'primary', 
+        {
+          type: 'select',
+          name: 'primary',
           width:'100%',
-          placeholder: 'Choose Primary', 
+          placeholder: 'Choose Primary',
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose which color from the palette will be the theme's primary color",
+          tooltip: "Choose a color from the palette to be primary theme \
+                    color.",
           class:'inline'
         },
-        { 
-          type: 'select', 
-          name: 'accent', 
+        {
+          type: 'select',
+          name: 'accent',
           width:'100%',
-          placeholder: 'Choose Accent', 
+          placeholder: 'Choose Accent',
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose which color from the palette will be the theme's accent color",
+          tooltip: "Choose a color from the palette to be the accent \
+                    theme color",
           class:'inline'
         },
       ]
@@ -172,147 +178,163 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       label: true,
       width:'calc(100% - 300px)',
       config:[
-        { 
-         type: 'colorpicker', 
-         name: 'bg1', 
+        {
+         type: 'colorpicker',
+         name: 'bg1',
          width: this.colorWidth,
          placeholder: 'Background 1',
-         tooltip: 'Pick a color, any color!',
+         tooltip: 'Click the swatch to pick a color or enter a color \
+                   hex value.',
          class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'bg2', 
+        {
+          type: 'colorpicker',
+          name: 'bg2',
           width: this.colorWidth,
           placeholder: 'Background 2',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'fg1', 
+        {
+          type: 'colorpicker',
+          name: 'fg1',
           width: this.colorWidth,
           placeholder: 'Foreground 1',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'fg2', 
+        {
+          type: 'colorpicker',
+          name: 'fg2',
           width: this.colorWidth,
           placeholder: 'Foreground 2',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'alt-bg1', 
+        {
+          type: 'colorpicker',
+          name: 'alt-bg1',
           width: this.colorWidth,
           placeholder: 'Alt Background 1',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'alt-bg2', 
+        {
+          type: 'colorpicker',
+          name: 'alt-bg2',
           width: this.colorWidth,
           placeholder: 'Alt Background 2',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'alt-fg1', 
+        {
+          type: 'colorpicker',
+          name: 'alt-fg1',
           width: this.colorWidth,
           placeholder: 'Alt Foreground 1',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'alt-fg2', 
+        {
+          type: 'colorpicker',
+          name: 'alt-fg2',
           width: this.colorWidth,
           placeholder: 'Alt Foreground 2',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'yellow', 
+        {
+          type: 'colorpicker',
+          name: 'yellow',
           width: this.colorWidth,
           placeholder: 'Yellow',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'orange', 
+        {
+          type: 'colorpicker',
+          name: 'orange',
           width: this.colorWidth,
           placeholder: 'Orange',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'red', 
+        {
+          type: 'colorpicker',
+          name: 'red',
           width: this.colorWidth,
           placeholder: 'Red',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'magenta', 
+        {
+          type: 'colorpicker',
+          name: 'magenta',
           width: this.colorWidth,
           placeholder: 'Magenta',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'violet', 
+        {
+          type: 'colorpicker',
+          name: 'violet',
           width: this.colorWidth,
           placeholder: 'Violet',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'blue', 
+        {
+          type: 'colorpicker',
+          name: 'blue',
           width: this.colorWidth,
           placeholder: 'Blue',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'cyan', 
+        {
+          type: 'colorpicker',
+          name: 'cyan',
           width: this.colorWidth,
           placeholder: 'Cyan',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         },
-        { 
-          type: 'colorpicker', 
-          name: 'green', 
+        {
+          type: 'colorpicker',
+          name: 'green',
           width: this.colorWidth,
           placeholder: 'Green',
           required:true,
-          tooltip: 'Pick a color, any color!',
+          tooltip: 'Click the swatch to pick a color or enter a color \
+                    hex value.',
           class:'inline'
         }
       ]
@@ -356,13 +378,13 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     ]
 
     constructor(
-      protected router: Router, 
+      protected router: Router,
       protected rest: RestService,
       protected ws: WebSocketService,
       private core: CoreService,
       private dialog: DialogService,
       protected matdialog: MatDialog,
-      protected _injector: Injector, 
+      protected _injector: Injector,
       protected _appRef: ApplicationRef,
       public themeService:ThemeService
     ) {}
@@ -375,7 +397,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnDestroy(){
-      this.core.unregister({observerClass:this}); 
+      this.core.unregister({observerClass:this});
     }
 
     init(){
@@ -386,7 +408,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
         let data = this.themeService.globalPreviewData;
         this.globalPreview = true;
         this.snapshot = {theme:data.theme};// ignore basetheme
-        this.loadValues(); 
+        this.loadValues();
       } else {
         this.baseTheme = this.themeService.activeTheme;
         this.loadValues(this.themeService.activeTheme);
@@ -431,7 +453,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
 
     afterInit(entityForm: any) {
     }
-    
+
     setupColorOptions(palette){
       for(let color in palette){
         this.colorOptions.push({label:this.colors[color], value:this.colorVars[color]});
@@ -439,8 +461,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     loadValues(themeName?:string){
-      
-      
+
+
       let values = Object.assign({},this.values);
       let theme:Theme;
       if(this.globalPreview){
@@ -450,7 +472,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         theme = this.themeService.findTheme(themeName);
       }
-      
+
       let ct = Object.assign({},theme);
       let palette = Object.keys(ct);
       palette.splice(0,6);
@@ -459,13 +481,13 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
         values[color] = ct[color];
       });
 
-      this.values = values; 
+      this.values = values;
     }
 
     updatePreview(theme:Theme){
       let palette = Object.keys(theme);
       palette.splice(0,5);
-      
+
       palette.forEach(function(color){
       let swatch = theme[color];
       (<any>document).querySelector('#theme-preview').style.setProperty("--" + color, theme[color]);
@@ -510,17 +532,17 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
         // Check for duplicate theme names and labels
         let dupeName = this.isDuplicateOf("name",data.name);
         if(dupeName){
-          messages.push("This theme name is already taken. Please choose another name.")
+          messages.push("This theme name is in use. Enter another name.")
         }
 
         let dupeLabel = this.isDuplicateOf("label",data.label);
         if(dupeLabel){
-          messages.push("This theme label is already taken. Please choose another label.")
+          messages.push("This theme label is in use. Choose another label.")
         }
       if(messages.length == 0){
         return true;
       }
-      
+
       this.invalidDialog(messages);
 
       return false;
