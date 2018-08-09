@@ -37,6 +37,7 @@ from sys_advanced import run_conf_sysadvance_test
 from guide import run_view_guide_test
 from acc_edit import run_edit_test
 from acc_delete import run_delete_test
+from store_delete import run_delete_pool_test
 from theme import run_change_theme_test
 from logout import run_logout_test
 
@@ -138,23 +139,24 @@ except NameError:
     run_conf_dns_test(runDriver)
     run_conf_ftp_test(runDriver)
     run_conf_iscsi_test(runDriver)
-# temporary shutdown
     run_conf_lldp_test(runDriver)
     run_conf_ssh_test(runDriver)
     run_conf_webdav_test(runDriver)
     run_view_guide_test(runDriver)
     run_edit_test(runDriver)
-#    run_delete_test(runDriver)
+    run_delete_test(runDriver)
+    run_delete_pool_test(runDriver)
     run_change_theme_test(runDriver)
 else:
     if (test_name == "account"):
         print ("Running: Accounts Test")
         run_create_user_test(runDriver)
         run_create_group_test(runDriver)
-#        run_edit_test(runDriver)
+        run_edit_test(runDriver)
         run_delete_test(runDriver)
     if (test_name == "storage"):
         run_create_pool_test(runDriver)
+        run_delete_pool_test(runDriver)
     elif (test_name == "network"):
         run_conf_network_test(runDriver)
     elif (test_name == "system"):
@@ -253,6 +255,9 @@ if path.exists('guide.pyc'):
 
 if path.exists('acc_delete.pyc'):
     call(["rm", "acc_delete.pyc"])
+
+if path.exists('store_delete.pyc'):
+    call(["rm", "store_delete.pyc"])
 
 if path.exists('theme.pyc'):
     call(["rm", "theme.pyc"])

@@ -40,7 +40,8 @@ xpaths = {
         'poolconfirmdestroyCheckbox' : '//*[@id="confirm"]/mat-checkbox/label/div',
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
         'deleteButton': '//*[contains(@name, "ok_button")]',
-        'detachButton': '//*[contains(@text, "Detach")]'
+        'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]',
+        'closeButton' : '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
         }
 
 
@@ -177,12 +178,13 @@ def pool_detach(driver, self, name):
     # Click Pool submenu
     driver.find_element_by_xpath(xpaths['submenuPool']).click()
     # wait till the list is loaded
-    driver.find_element_by_xpath(xpaths['poolID'] + name).click()
+    driver.find_element_by_xpath(xpaths['poolID'] + name + '"]').click()
     time.sleep(1)
-    driver.find_element_by_xpath(xpaths['poolID'] + name + "]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon").click()
-
+    driver.find_element_by_xpath(xpaths['poolID'] + name + '"]/div/div/div[1]/div/app-entity-table-actions/div/mat-icon').click()
     driver.find_element_by_xpath(xpaths['poolDetach']).click()
     driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
-    driver.find_element_by_xpath(xpaths['poolconfirmdestroycheckbox']).click()
+    driver.find_element_by_xpath(xpaths['poolconfirmdestroyCheckbox']).click()
     driver.find_element_by_xpath(xpaths['detachButton']).click()
+    time.sleep(32)
+    driver.find_element_by_xpath(xpaths['closeButton']).click()
 

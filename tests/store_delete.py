@@ -39,7 +39,7 @@ xpaths = {
         'deleteButton': '//*[contains(@name, "ok_button")]'
         }
 
-class detach_pool_test(unittest.TestCase):
+class delete_pool_test(unittest.TestCase):
     @classmethod
     def setUpClass(inst):
         driver.implicitly_wait(30)
@@ -147,8 +147,8 @@ class detach_pool_test(unittest.TestCase):
     def tearDownClass(inst):
         pass
 
-def run_detach_pool_test(webdriver):
+def run_delete_pool_test(webdriver):
     global driver
     driver = webdriver
-    suite = unittest.TestLoader().loadTestsFromTestCase(detach_pool_test)
+    suite = unittest.TestLoader().loadTestsFromTestCase(delete_pool_test)
     xmlrunner.XMLTestRunner(output=results_xml, verbosity=2).run(suite)
