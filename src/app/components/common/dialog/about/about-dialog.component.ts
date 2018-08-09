@@ -1,6 +1,8 @@
 import { MatDialog, MatDialogRef} from '@angular/material';
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
+
 import {
   RestService,
   SystemGeneralService,
@@ -21,6 +23,7 @@ export class AboutModalDialog {
   constructor(
     public dialogRef: MatDialogRef<AboutModalDialog>,
     private ws: WebSocketService,
+    protected translate: TranslateService,
     protected systemGeneralService: SystemGeneralService) { }
 
   ngOnInit() {

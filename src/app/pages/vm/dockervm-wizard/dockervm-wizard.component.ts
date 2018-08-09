@@ -126,8 +126,8 @@ export class DockerVMWizardComponent {
         {
           name : 'NIC_mac',
           placeholder : T('MAC Address'),
-          tooltip : T('A randomized MAC address is normally assigned. Enter\
-                       a value here to set a specific MAC address.'),
+          tooltip : T('A randomized MAC address is normally assigned. \
+                       Enter a value here to set a specific MAC address.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
@@ -281,7 +281,7 @@ blurEvent(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
-      parent.dialogService.Info("Error", `virtual machine ${vm_wizard_res[0].name} already exists, please use a different name`).subscribe(()=>{
+      parent.dialogService.Info("Error", `Virtual machine ${vm_wizard_res[0].name} already exists.`).subscribe(()=>{
         parent.entityWizard.formArray.get([1]).get('name').setValue("");
       })
 

@@ -19,7 +19,7 @@ export class LaggListComponent {
   protected editIds: any = {};
   protected entityList: any;
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. Do you want to delete the selected interface?"),
+    message: T("Network connectivity will be interrupted. Delete the selected interface?"),
   }
 
   constructor(protected rest: RestService, protected router: Router) {}

@@ -3,15 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import {Validators, FormArray} from '@angular/forms';
 
-import { NetworkService, RestService, DialogService } from '../../../../services';
+import { NetworkService, RestService, DialogService, WebSocketService } from '../../../../services';
 import {
   FieldConfig
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import {
   regexValidator
 } from '../../../common/entity/entity-form/validators/regex-validation';
+import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from '../../../common/entity/utils';
 
 
 @Component({
@@ -38,7 +40,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_name',
       placeholder : T('Interface Name'),
-      tooltip : T('Enter a description of interface.'),
+      tooltip : T('Enter a description of the interface.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -46,16 +48,15 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'checkbox',
       name : 'int_dhcp',
       placeholder : T('DHCP'),
-      tooltip : T('Only one interface can be configured for <b>DHCP</b>.\
-                   Leave unset to create a static IPv4 or IPv6\
-                   configuration.'),
+      tooltip : T('Use DHCP (Dynamic Host Configuration Protocol) to\
+                   obtain an IP address and other network settings.'),
     },
     {
       type : 'input',
       name : 'int_ipv4address',
       placeholder : T('IPv4 Address'),
       tooltip : T('Enter a static IP address in the format\
-                   <i>###.###.###.###</i> when <b>DHCP</b> is unset.'),
+                   <i>###.###.###.###</i> if DHCP is unset.'),
       validation : [ regexValidator(this.networkService.ipv4_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -65,7 +66,7 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'select',
       name : 'int_v4netmaskbit',
       placeholder : T('IPv4 Netmask'),
-      tooltip : T('Enter a netmask when <b>DHCP</b> is unset.'),
+      tooltip : T('Enter a netmask if DHCP is unset.'),
       options : this.networkService.getV4Netmasks(),
       relation : [
         {action : "DISABLE", when : [ {name : "int_dhcp", value : true} ]}
@@ -84,8 +85,8 @@ export class InterfacesFormComponent implements OnDestroy {
       type : 'input',
       name : 'int_ipv6address',
       placeholder : T('IPv6 Address'),
-      tooltip : T('Enter a static IPv6 address when <b>DHCP</b> is unset.\
-                   Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>.'),
+      tooltip : T('Enter a static IPv6 address if DHCP is unset.\
+                   Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
       validation : [ regexValidator(this.networkService.ipv6_regex) ],
       relation : [
         {action : "DISABLE", when : [ {name : "int_ipv6auto", value : true} ]}
@@ -118,14 +119,14 @@ export class InterfacesFormComponent implements OnDestroy {
         name: 'alias_address',
         placeholder: T('IPv4 Address'),
         tooltip: T('Enter a static IP address in the format\
-                    <i>###.###.###.###</i>'),
+                    <i>###.###.###.###</i> if DHCP is unset.'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv4_regex) ]
       },
       {
         name: 'alias_netmaskbit',
         placeholder: T('IPv4 Netmask'),
-        tooltip : T('Enter a netmask when <b>DHCP</b> is unset.'),
+        tooltip : T('Enter a netmask if DHCP is unset.'),
         type: 'select',
         options : this.networkService.getV4Netmasks()
       },
@@ -143,8 +144,8 @@ export class InterfacesFormComponent implements OnDestroy {
       formarray: [{
         name: 'alias_address',
         placeholder: T('IPv6 Address'),
-        tooltip: T('Enter a static IPv6 address. Example:\
-                    <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
+        tooltip: T('Enter a static IPv6 address if DHCP is unset.\
+                    Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
@@ -173,6 +174,10 @@ export class InterfacesFormComponent implements OnDestroy {
   private int_v6netmaskbit: any;
   private int_ipv6address: any;
   private int_interface: any;
+  private int_interface_fg: any;
+  private int_interface_fg_sub: any;
+  private int_interface_warning: string;
+  private wsint: string;
   private entityForm: any;
   protected ipv4formArray: FormArray;
   protected ipv6formArray: FormArray;
@@ -183,7 +188,7 @@ export class InterfacesFormComponent implements OnDestroy {
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
-    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    message: T("Network connectivity will be interrupted. Proceed?"),
     hideCheckbox: false
   }
 
@@ -225,9 +230,13 @@ export class InterfacesFormComponent implements OnDestroy {
     }
   }];
 
+  int_warning = T("Please configure the Web UI interface (");
+  int_warning_2 = T(") before configuring other interfaces to avoid losing connection to the user interface.");
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected entityFormService: EntityFormService,
-              protected networkService: NetworkService, protected dialog: DialogService) {}
+              protected networkService: NetworkService, protected dialog: DialogService,
+              protected ws: WebSocketService, protected translate: TranslateService) {}
 
   isCustActionVisible(actionId: string) {
     if (actionId == 'remove_ipv4_alias' && this.initialCount['ipv4_aliases'] <= this.initialCount_default['ipv4_aliases']) {
@@ -258,15 +267,31 @@ export class InterfacesFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    this.int_interface_fg = entityForm.formGroup.controls['int_interface'];
+
     if (entityForm.isNew) {
       this.rest.get(this.resource_name, []).subscribe((res) => {
         if (res.data.length === 0) {
-          this.dialog.confirm(T("Warning"), T("Please configure the Web UI \
-          interface before adding another interface. This prevents losing \
-          connection to the Web UI." )).subscribe((confirm) => {
-            if (!confirm) {
-              entityForm.goBack();
+          this.ws.call('interfaces.websocket_interface', []).subscribe((wsint) => {
+            if (wsint && wsint.name) {
+              this.wsint = wsint.name;
+              this.translate.get(this.int_warning).subscribe((int_warning) => {
+                this.translate.get(this.int_warning_2).subscribe((int_warning_2) => {
+                  this.int_interface_warning = int_warning + wsint.name + int_warning_2;
+                });
+              });
+              this.int_interface_fg_sub = this.int_interface_fg.valueChanges.subscribe((val) => {
+                if (val !== this.wsint) {
+                  this.int_interface.warnings = this.int_interface_warning;
+                } else {
+                  this.int_interface.warnings = null;
+                }
+              });
+              this.int_interface_fg.setValue(wsint.name);
+              entityForm.formGroup.controls['int_name'].setValue(wsint.name);
             }
+          }, (err) => {
+            new EntityUtils().handleWSError(entityForm, err);
           });
         }
       });
@@ -360,5 +385,8 @@ export class InterfacesFormComponent implements OnDestroy {
   ngOnDestroy() {
     this.int_dhcp_subscription.unsubscribe();
     this.int_ipv6auto_subscription.unsubscribe();
+    if (this.int_interface_fg_sub) {
+      this.int_interface_fg_sub.unsubscribe();
+    }
   }
 }

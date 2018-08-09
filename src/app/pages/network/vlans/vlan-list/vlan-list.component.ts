@@ -16,7 +16,7 @@ export class VlanListComponent {
   protected route_add_tooltip: string = "Add VLAN";
   protected route_edit: string[] = [ 'network', 'vlans', 'edit' ];
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. Do you want to delete the selected interface?"),
+    message: T("Network connectivity will be interrupted. Delete the selected interface?"),
   }
 
   constructor(_rest: RestService, _router: Router) {}

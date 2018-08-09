@@ -39,7 +39,7 @@ export class AdvancedComponent implements OnDestroy {
     id: 'save_debug',
     name: 'Save Debug',
     function: () => {
-      this.dialog.confirm(T("Generate Debug File"), T("This operation may take a long time, do you wish to proceed?")).subscribe((res) => {
+      this.dialog.confirm(T("Generate Debug File"), T("This operation might take a long time. Proceed?"), true, T('Proceed')).subscribe((res) => {
             if (res) {
               this.load.open();
               this.ws.job('system.debug').subscribe((system_debug) => {
@@ -47,11 +47,11 @@ export class AdvancedComponent implements OnDestroy {
                 if (system_debug.state === "SUCCESS") {
                   this.ws.call('core.download', ['filesystem.get', [system_debug.result], 'debug.tgz']).subscribe(
                     (system_debug_result) => {
-                      this.openSnackBar(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"));
+                      this.openSnackBar(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"));
                       window.open(system_debug_result[1]);
                     },
                     (err) => {
-                      this.openSnackBar(T("Please check the network connection"), T("Failed"));
+                      this.openSnackBar(T("Check the network connection."), T("Failed"));
                     }
                   );
                 }
@@ -60,7 +60,7 @@ export class AdvancedComponent implements OnDestroy {
               }, () => {
                 this.load.close();
                 if (this.job.state === 'SUCCESS') {} else if (this.job.state === 'FAILED') {
-                  this.openSnackBar(T("Please check the network connection"), T("Failed"));
+                  this.openSnackBar(T("Check the network connection."), T("Failed"));
                 }
               });
             } else {
@@ -81,8 +81,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'serialconsole',
     placeholder: T('Enable Serial Console'),
-    tooltip: T('<b>Do not</b> set this if the <b>serial port</b>\
-                is disabled.')
+    tooltip: T('Do not set this if the Serial Port is disabled.')
   }, {
     type: 'select',
     name: 'serialport',
@@ -112,7 +111,7 @@ export class AdvancedComponent implements OnDestroy {
         { label: '57600', value: "57600" },
         { label: '115200', value: "115200" },
     ],
-    tooltip: T('Choose the speed in <i>bps</i> used by the serial port.'),
+    tooltip: T('Choose the speed in bps used by the serial port.'),
     relation: [
       {
         action : 'DISABLE',
@@ -122,7 +121,7 @@ export class AdvancedComponent implements OnDestroy {
         }]
       }
     ],
-  }, 
+  },
   {
     type: 'input',
     name: 'swapondrive',
@@ -130,7 +129,7 @@ export class AdvancedComponent implements OnDestroy {
     tooltip: T('By default, all data disks are created with the amount\
                 of swap specified. Changing the value does not affect\
                 the amount of swap on existing disks, only disks added\
-                <i>after</i> the change. Does not affect log or cache\
+                after the change. Does not affect log or cache\
                 devices as they are created without swap. Setting to\
                 <i>0</i> disables swap creation completely. <b>STRONGLY\
                 DISCOURAGED</b>'),
@@ -149,11 +148,11 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'autotune',
     placeholder: T('Enable autotune'),
-    tooltip: T('Enables the <b>autotune</b> script\
-                which attempts to optimize the system depending on the\
-                installed hardware. <b>Warning:</b> Autotuning is\
-                only used as a temporary measure and is not a\
-                permanent fix for system hardware issues. See the\
+    tooltip: T('Enables the autotune script which attempts to optimize\
+                the system depending on the installed hardware.\
+                <b>Warning:</b> Autotuning is only used as a temporary\
+                measure and is not a permanent fix for system hardware\
+                issues. See the\
                 <a href="../docs/system.html#autotune"\
                 target="_blank">Autotune section</a> of the guide for\
                 more information.')
@@ -184,7 +183,7 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'advancedmode',
     placeholder: T('Show advanced fields by default'),
-    tooltip: T('Set to always show advanced fields when available.')
+    tooltip: T('Set to always show advanced fields, when available.')
   }, {
     type: 'checkbox',
     name: 'uploadcrash',
@@ -217,15 +216,14 @@ export class AdvancedComponent implements OnDestroy {
     type: 'checkbox',
     name: 'cpu_in_percentage',
     placeholder: T('Report CPU usage in percentage'),
-    tooltip: T('Set to display CPU usage as percentages in\
-               <b>Reporting</b>.')
+    tooltip: T('Set to display CPU usage as percentages in Reporting.')
   },
   {
     type: 'paragraph',
     name: 'sed_options_message',
     paraText: T('<b>SED (<a href="../docs/system.html#self-encrypting-drives"\
                  target="_blank">Self-Encrypting Drives</a>) Options</b>'),
-// This tooltip wraps to the next line when uncommented. 
+// This tooltip wraps to the next line when uncommented.
 // Erin said it's more than likely the CSS. Commented out for now and
 // linking to the user guide from the test instead.
 //  tooltip: T('See the <a href="../docs/system.html#self-encrypting-drives"\
@@ -288,7 +286,7 @@ export class AdvancedComponent implements OnDestroy {
     this.swapondrive = _.find(this.fieldConfig, { 'name': 'swapondrive' });
     this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
       if (parseInt(value) === 0) {
-        this.swapondrive.warnings = T("Swap size of 0 is STRONGLY DISCOURAGED.");
+        this.swapondrive.warnings = T("A swap size of 0 is STRONGLY DISCOURAGED.");
       } else {
         this.swapondrive.warnings = null;
       }
@@ -296,7 +294,7 @@ export class AdvancedComponent implements OnDestroy {
 
     this.ws.call(this.queryCall).subscribe((adv_values)=>{
       entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
-    }) 
+    })
     this.adv_serialport =
     _.find(this.fieldConfig, { 'name': 'serialport' });
     this.adv_serialspeed =
@@ -334,7 +332,7 @@ export class AdvancedComponent implements OnDestroy {
 
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {
       this.load.close();
-      this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+      this.snackBar.open("Settings saved.", 'close', { duration: 5000 })
       this.adminLayout.onShowConsoleFooterBar(body['consolemsg']);
     }, (res) => {
       this.load.close();

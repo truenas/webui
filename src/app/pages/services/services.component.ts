@@ -126,7 +126,7 @@ export class Services implements OnInit {
     }
 
     if (rpc === 'service.stop') {
-      let confirm = this.confirmService.confirm('Alert', 'Are you sure you want to stop this service?');
+      let confirm = this.confirmService.confirm('Alert', 'Stop this service?');
       confirm.subscribe(res => {
         if (res) {
           this.updateService(rpc, service);
@@ -141,14 +141,14 @@ export class Services implements OnInit {
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
         if (service.state === "RUNNING" && rpc === 'service.stop') {
-          this.dialog.Info(T("Service failed to stop"), 
-              this.name_MAP[service.title] + " " +  T("service failed to stop"));
+          this.dialog.Info(T("Service failed to stop"),
+              this.name_MAP[service.title] + " " +  T("service failed to stop."));
         }
         service.state = 'RUNNING';
       } else {
         if (service.state === 'STOPPED' && rpc === 'service.start') {
-          this.dialog.Info(T("Service failed to start"), 
-              this.name_MAP[service.title] + " " +  T("service failed to start"));
+          this.dialog.Info(T("Service failed to start"),
+              this.name_MAP[service.title] + " " +  T("service failed to start."));
         }
         service.state = 'STOPPED';
       }
@@ -181,7 +181,7 @@ export class Services implements OnInit {
         if(res){
           window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
         } else {
-          this.dialog.Info('Netdata Information', 'Configurable settings for Netdata are not yet exposed. \n Service has not been started yet. Start the service first.');
+          this.dialog.Info('Netdata Information', 'Configurable settings for Netdata are unavailable. \n Start the netdata service.');
         }
       })
     } else if (service === 'cifs') {
