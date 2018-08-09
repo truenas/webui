@@ -294,11 +294,11 @@ export class VolumesListTableConfig implements InputTableConf {
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("WARNING: About to detach '" + row1.name + "'. \
-                           Deleting a pool makes the data unavailable. \
-                           Ensure the risks are understood.\
-                           In addition to detaching the pool,\
-                           the pool data can also be destroyed."),
+              paraText: T("WARNING: Detaching '" + row1.name + "'. \
+                           Detaching a pool makes the data unavailable. \
+                           The pool data can also be wiped by setting the\
+                           related option. Back up any critical data \
+                           before detaching a pool."),
               isHidden: false
             }, {
               type: 'paragraph',
@@ -383,7 +383,7 @@ export class VolumesListTableConfig implements InputTableConf {
           this.getPoolData(row1.id).subscribe((res) => {
             if (res[0]) {
               if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
-                const message = "Stop the scrub for " + row1.name + "?";
+                const message = "Stop the scrub on " + row1.name + "?";
                 this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
                   if (res) {
                     this.loader.open();
@@ -399,7 +399,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 });
               } else {
-                const message = "Start a scrub for " + row1.name + "?";
+                const message = "Start a scrub on " + row1.name + "?";
                 this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                   if (res) {
                     this.loader.open();
@@ -433,8 +433,8 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Upgrade Pool"),
           onClick: (row1) => {
 
-            this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? WARNING: Upgrading a pool is an \
-                                                             irreversible operation that could make some features of \
+            this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
+                                                             one-way operation that might make some features of \
                                                              the pool incompatible with older versions of FreeNAS: ") + row1.name).subscribe((confirmResult) => {
                 if (confirmResult === true) {
                   this.loader.open();
