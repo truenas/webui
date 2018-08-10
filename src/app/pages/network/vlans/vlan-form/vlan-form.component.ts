@@ -35,47 +35,50 @@ export class VlanFormComponent {
 
   public fieldConfig: FieldConfig[] = [
     {
-      type : 'input',
-      name : 'vlan_vint',
-      placeholder : 'Virtual Interface',
-      tooltip : 'Use the format <i>vlanX</i> where <i>X</i> is a number\
-                 representing a non-parent vlan interface.',
+      type: 'input',
+      name: 'vlan_vint',
+      placeholder : T('Virtual Interface'),
+      tooltip: T('Enter the name of the Virtual Interface. Use the\
+                  format <i>vlanX</i> where <i>X</i> is a number\
+                  representing a non-parent VLAN interface.'),
       required: true,
-      validation : [ Validators.required ]
+      validation: [ Validators.required ]
     },
     {
-      type : 'select',
-      name : 'vlan_pint',
-      placeholder : 'Parent Interface',
-      tooltip : 'Usually an ethernet card connected to a configured\
-                 switch port. Newly created link aggregations\
-                 will not appear until the system is rebooted.',
-      options : [],
+      type: 'select',
+      name: 'vlan_pint',
+      placeholder: T('Parent Interface'),
+      tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
+                  card connected to a configured switch port. Newly\
+                  created link aggregations will not be available until\
+                  the system is rebooted.'),
+      options: [],
       required: true,
-      validation : [ Validators.required ]
+      validation: [ Validators.required ]
     },
     {
-      type : 'input',
-      name : 'vlan_tag',
-      placeholder : 'Vlan Tag',
-      tooltip : 'Enter a number between 1 and 4095 which matches the\
-                 numeric tag configured in the switched network.',
+      type: 'input',
+      name: 'vlan_tag',
+      placeholder: T('Vlan Tag'),
+      tooltip: T('Enter the numeric tag configured in the switched \
+                  network.'),
       required: true,
       validation: [Validators.min(1), Validators.max(4095), Validators.required, regexValidator(/^\d+$/)]
     },
     {
-      type : 'input',
-      name : 'vlan_description',
-      placeholder : 'Description',
-      tooltip : 'Enter any notes about this vlan.',
+      type: 'input',
+      name: 'vlan_description',
+      placeholder: T('Description'),
+      tooltip: T('Enter a description of the VLAN.'),
     },
     {
-      type : 'select',
-      name : 'vlan_pcp',
-      placeholder : 'Priority Code Point',
+      type: 'select',
+      name: 'vlan_pcp',
+      placeholder: T('Priority Code Point'),
       options: [],
-      tooltip: 'Available 802.1p Class of Service ranges from\
-                <i>Best Effort</i> to <i>Network Control</i>.'
+      tooltip: T('Select the Class of Service. The available 802.1p\
+                  Class of Service ranges from <i>Best effort (default)\
+                  </i> to <i>Network control (highest)</i>.'),
     }
   ];
 

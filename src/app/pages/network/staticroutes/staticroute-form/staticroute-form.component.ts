@@ -45,7 +45,7 @@ export class StaticRouteFormComponent {
       type : 'input',
       name : 'sr_description',
       placeholder : T('Description'),
-      tooltip : T('Enter any notes about the new static route.'),
+      tooltip : T('Enter a description of the static route.'),
     },
   ];
 
