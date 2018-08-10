@@ -33,11 +33,11 @@ export class UpdateComponent implements OnInit {
   public general_update_error;
   public update_downloaded=false;
   public train_msg = {
-    "NIGHTLY_DOWNGRADE": T("You're not allowed to change away from the nightly train, it is considered a downgrade. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
-    "MINOR_DOWNGRADE": T("Changing minor version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
-    "MAJOR_DOWNGRADE": T("Changing major version is considered a downgrade, thus not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
-    "SDK": T("Changing SDK version is not a supported operation. If you have an existing boot environment that uses that train, boot into it in order to upgrade that train."),
-    "NIGHTLY_UPGRADE": T("Changing to a nightly train is a one way street. Changing back to stable is not supported!")
+    "NIGHTLY_DOWNGRADE": T("Changing away from the nightly train is considered a downgrade and not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "MINOR_DOWNGRADE": T("Changing the minor version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "MAJOR_DOWNGRADE": T("Changing the major version is considered a downgrade and is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "SDK": T("Changing SDK version is not a supported operation. Activate an existing boot environment that uses the desired train and boot into it to switch to that train."),
+    "NIGHTLY_UPGRADE": T("Changing to a nightly train is one-way. Changing back to a stable train is not supported!")
   }
  
   public busy: Subscription;
@@ -190,7 +190,7 @@ export class UpdateComponent implements OnInit {
           }
         })
     } else if (compare === "ALLOWED") {
-      this.dialogService.confirm(T("Switch Train"), T("Do you want to switch trains?")).subscribe((train_res)=>{
+      this.dialogService.confirm(T("Switch Train"), T("Switch update trains?")).subscribe((train_res)=>{
         if(train_res){
           this.check();
           this.train = event.value;
@@ -258,7 +258,7 @@ export class UpdateComponent implements OnInit {
               this.releaseNotes = res.notes.ReleaseNotes;
             }
             const ds  = this.dialogService.confirm(
-              "Download Update", "Do you want to continue?",true,"",true,"Apply updates and reboot system after downloading","update.update",[{ train: this.train, reboot: false }]
+              "Download Update", "Continue with download?",true,"",true,"Apply updates and reboot system after downloading.","update.update",[{ train: this.train, reboot: false }]
             )
             ds.afterClosed().subscribe((status)=>{
               if(status){

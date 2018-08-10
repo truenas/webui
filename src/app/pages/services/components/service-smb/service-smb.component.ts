@@ -333,7 +333,7 @@ export class ServiceSMBComponent implements OnInit {
         if (res[0]) {
           this.idmapID = res[0].id;
         if (new_range_low > new_range_high) {
-          this.error = "Range low larger than range high";
+          this.error = "Range low is greater than range high.";
         } else {
           if (this.idmapID) {
             this.ws.call(

@@ -40,8 +40,8 @@ export class EmailComponent implements OnDestroy {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
         const mailObj = {
-          "subject" : "Test message from FreeNAS",
-          "text" : "This is a test message from FreeNAS",
+          "subject" : "FreeNAS Test Message",
+          "text" : "This is a test message from FreeNAS.",
         };
         const security_table = {
           'plain':'PLAIN',
@@ -63,7 +63,7 @@ export class EmailComponent implements OnDestroy {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((s_res)=>{
             this.dialogRef.close(false);
-            this.dialogservice.Info("email", "Test email sent successfully!")
+            this.dialogservice.Info("email", "Test email sent!")
           });
           this.dialogRef.componentInstance.failure.subscribe((e_res) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
@@ -71,8 +71,8 @@ export class EmailComponent implements OnDestroy {
         });
       }
       else{
-        this.dialogservice.Info("email", "please setup root user email address");
-      }       
+        this.dialogservice.Info("email", "Configure the root user email address.");
+      }
     }
   }
 ];
@@ -81,7 +81,7 @@ export class EmailComponent implements OnDestroy {
       type : 'input',
       name : 'em_fromemail',
       placeholder : T('From E-mail'),
-      tooltip : T('The envelope <b>From</b> address shown in the email.\
+      tooltip : T('The envelope From address shown in the email.\
                    This is set to assist with filtering mail on the\
                    receiving system.'),
     },
@@ -118,8 +118,7 @@ export class EmailComponent implements OnDestroy {
       tooltip : T('Enable/disable\
                    <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
                    target="_blank">SMTP AUTH</a> using PLAIN SASL.\
-                   Enter the required <b>Username</b> and\
-                   <b>Password</b> if checked.'),
+                   Enter the required Username and Password if set.'),
     },
     {
       type : 'input',
@@ -162,7 +161,7 @@ export class EmailComponent implements OnDestroy {
       type : 'input',
       name : 'em_pass2',
       placeholder : T('Confirm Password'),
-      tooltip : T('Confirm previous password.'),
+      tooltip : T(''),
       inputType : 'password',
       relation : [
         {

@@ -64,16 +64,16 @@ export class DeviceListComponent {
     });
     return actions;
   }
-  
+
   deviceDelete(id){
-    this.dialogService.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+    this.dialogService.confirm("Delete", "Delete this device?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
         const data = {};
         if (this.wsDelete) {
           this.busy = this.ws.call(this.wsDelete, ['vm.device',id]).subscribe(
-            (resinner) => { 
+            (resinner) => {
               this.entityList.getData();
               this.loader.close();
             },
@@ -82,7 +82,7 @@ export class DeviceListComponent {
               this.loader.close();
             }
           );
-        } 
+        }
       }
     })
   }

@@ -29,7 +29,7 @@ export class VlanFormComponent {
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save VLAN Interface Changes"),
-    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    message: T("Network connectivity will be interrupted. Proceed?"),
     hideCheckbox: false
   }
 
