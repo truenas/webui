@@ -171,7 +171,7 @@ export class ServiceDDNSComponent {
   }
 
   submitFunction(this: any, entityForm: any,){
-    entityForm.domain = [entityForm.domain]
+    entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/)
 
     return this.ws.call('dyndns.update', [entityForm]);
 
