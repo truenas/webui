@@ -26,7 +26,7 @@ export const routes: Routes = [
       },
       {
         path : 'configuration', component : ConfigurationComponent,
-        data: {title: 'Configuration', breadcrumb:'Configuration', icon: 'settings' }
+        data: {title: 'Global Configuration', breadcrumb:'Global Configuration', icon: 'settings' }
       },
       {
           path : 'ipmi', component : IPMIComponent,
