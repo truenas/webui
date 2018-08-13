@@ -33,7 +33,7 @@ export class PluginsInstalledListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true,
+    multiSelect: true
   };
   public multiActions: Array < any > = [{
       id: "mstart",
@@ -55,6 +55,7 @@ export class PluginsInstalledListComponent {
               new EntityUtils().handleError(this, res);
               this.loader.close();
             });
+            
       }
     },
     {
@@ -107,6 +108,9 @@ export class PluginsInstalledListComponent {
     return [{
         id: "start",
         label: T("Start"),
+        icon: "play_arrow",
+        enable: true,
+        ttpos: "above", // tooltip position
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row[1]]).subscribe(
@@ -119,6 +123,9 @@ export class PluginsInstalledListComponent {
       {
         id: "stop",
         label: T("Stop"),
+        icon: "stop",
+        enable: true,
+        ttpos: "above",
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.stop', [row[1]]).subscribe(
@@ -128,16 +135,19 @@ export class PluginsInstalledListComponent {
               });
         }
       },
-      {
-        id: "management",
-        label: T("Management"),
-        onClick: (row) => {
-          window.open(row[9]);
-        }
-      },
+      // {
+      //   id: "management",
+      //   label: T("Management"),
+      //   onClick: (row) => {
+      //     window.open(row[9]);
+      //   }
+      // },
       {
         id: "delete",
         label: T("Delete"),
+        icon: "delete",
+        enable: true,
+        ttpos: "above",
         onClick: (row) => {
           this.entityList.doDelete(row[1]);
         }
