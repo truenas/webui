@@ -153,7 +153,7 @@ export class RsyncFormComponent {
                     symlinks, permissions, modification times, group,\
                     and special files. When run as root, owner, device\
                     files, and special files are also preserved.\
-                    Equivalent to passing the flags <b>-rlptgoD</b> to\
+                    Equivalent to passing the flags <i>-rlptgoD</i> to\
                     rsync.'),
       }, {
         type: 'checkbox',
@@ -275,10 +275,10 @@ export class RsyncFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['rsync_picker'] = data.rsync_minute + " " + 
-                          data.rsync_hour + " " + 
-                          data.rsync_daymonth + " " + 
-                          data.rsync_month + " " + 
+    data['rsync_picker'] = data.rsync_minute + " " +
+                          data.rsync_hour + " " +
+                          data.rsync_daymonth + " " +
+                          data.rsync_month + " " +
                           data.rsync_dayweek;
     return data;
   }

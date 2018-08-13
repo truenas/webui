@@ -36,8 +36,8 @@ export class ResilverComponent {
     name: 'end',
     placeholder: T('End Time'),
     tooltip: T('Choose the hour and minute when new resilver tasks\
-                can no longer be started.<br>\
-                Note: Does not affect active resilver tasks.'),
+                can no longer be started. This does not affect active\
+                resilver tasks.'),
     options: [],
     value: '',
   }, {

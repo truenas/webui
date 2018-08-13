@@ -198,7 +198,7 @@ export class CloudsyncFormComponent implements OnInit {
       }
     ]
   },
-                                       {
+  {
     type: 'input',
     name: 'encryption_salt',
     placeholder: T('Encryption salt'),
