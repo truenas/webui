@@ -11,7 +11,8 @@ import {RestService,WebSocketService} from '../../services/';
 
 @Component({
   selector: 'dashboard',
-  templateUrl:'./dashboard.html'
+  templateUrl:'./dashboard.html',
+  styleUrls: ['./dashboard.scss'],
 })
 export class DashboardComponent implements OnInit,OnDestroy {
  
@@ -27,6 +28,8 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
   public animation = "stop";
   public shake = false;
+
+  public showSpinner: boolean = true;
 
   constructor(protected core:CoreService, stats: StatsService){
     //this.core.emit({name:"StatsAddListener", data:{name:"CpuAggregate", key:"sum", obj:this }});
@@ -80,6 +83,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
 
       this.disks.push(disk);
     }
+    this.showSpinner = false;
   }
 
   setPoolData(evt:CoreEvent){
@@ -112,6 +116,7 @@ export class DashboardComponent implements OnInit,OnDestroy {
         if(x > y){ return 1}
         return 0;
     });
+    // this.showSpinner = false;
   }
 
   toggleShake(){
