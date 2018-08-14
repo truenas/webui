@@ -37,12 +37,14 @@ export class TunableFormComponent {
       name: 'tun_var',
       placeholder: T('Variable'),
       tooltip: T('Enter the name of the loader, sysctl, or rc.conf\
-                  variable to configure.<br>\
-                  <b>loader</b>: Tunables that can be set only at boot\
-                  and not later.<br>\
-                  <b>rc.conf</b>: Enable or disable system services and\
-                  daemons.<br>\
-                  <b>sysctl</b>: Tunables that can be set anytime.'),
+                  variable to configure. <i>loader</i> tunables are used\
+                  to specify parameters to pass to the kernel or load\
+                  additional modules at boot time. <i>rc.conf</i>\
+                  tunables are for enabling system services and daemons\
+                  and only take effect after a reboot. <i>sysctl</i> \
+                  tunables are used to configure kernel parameters while\
+                  the system is running and generally take effect\
+                  immediately.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -65,12 +67,10 @@ export class TunableFormComponent {
       name: 'tun_type',
       placeholder: T('Type'),
       tooltip: T('Creating or editing a <i>sysctl</i> immediately\
-                  updates the <b>Variable</b> to the configured\
-                  <b>Value</b>. When using a <i>loader</i> or\
-                   <i>rc.conf</i> tunable, a reboot is required to apply\
-                  the <b>Value</b> configured. Tunables configured\
-                  persist across reboots and upgrades until deleted or\
-                  <b>Enabled</b> is unset.'),
+                  updates the Variable to the configured Value. A restart\
+                  is required to apply <i>loader</i> or <i>rc.conf</i>\
+                  tunables. Configured tunables remain in effect until\
+                  deleted or Enabled is unset.'),
       options: [
         { label: 'loader', value: 'loader' },
         { label: 'rc.conf', value: 'rc' },
@@ -82,14 +82,14 @@ export class TunableFormComponent {
       name: 'tun_comment',
       placeholder: T('Comment'),
       tooltip: T('Enter a description of the tunable.'),
-  },
-  {
+    },
+    {
       type: 'checkbox',
       name: 'tun_enabled',
       placeholder: T('Enabled'),
       tooltip: T('Enable this tunable. Unset to disable this tunable\
                   without deleting it.'),
-  },
+    },
   ];
 
 
