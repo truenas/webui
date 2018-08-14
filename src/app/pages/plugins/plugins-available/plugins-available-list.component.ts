@@ -51,7 +51,7 @@ export class PluginsAvailabelListComponent {
 
   getActions(parentRow) {
     return [{
-        id: "Install",
+        id: "install",
         label: T("Install"),
         onClick: (row) => {
           this.router.navigate(
