@@ -110,7 +110,9 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           width:'100%',
           placeholder: 'Menu Label',
           required:true,
-          tooltip: 'Enter how the theme name will appear in the menu.',
+          tooltip: 'Enter a short name for the theme. The Menu Label is \
+                    shown when the theme is registered in the Favorites \
+                    menu.',
         },
         {
           type: 'select',
@@ -119,9 +121,8 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           placeholder: 'Menu Swatch',
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose which color from the palette will be used for \
-                    the label swatch that appears left of the label in \
-                    the menu.",
+          tooltip: "Choose the color to display next to the Menu Label \
+                    in the Favorites menu.",
           class:'inline'
         },
         { type: 'input',
@@ -155,8 +156,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           placeholder: 'Choose Primary',
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose a color from the palette to be primary theme \
-                    color.",
+          tooltip: "Choose the primary color for the theme.",
           class:'inline'
         },
         {
@@ -166,8 +166,7 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
           placeholder: 'Choose Accent',
           required:true,
           options:this.colorOptions,
-          tooltip: "Choose a color from the palette to be the accent \
-                    theme color",
+          tooltip: "Choose the accent color for the theme.",
           class:'inline'
         },
       ]
@@ -532,12 +531,12 @@ export class CustomThemeComponent implements OnInit, OnChanges, OnDestroy {
         // Check for duplicate theme names and labels
         let dupeName = this.isDuplicateOf("name",data.name);
         if(dupeName){
-          messages.push("This theme name is in use. Enter another name.")
+          messages.push("This name is already being used by an existing theme. Please choose a new name.")
         }
 
         let dupeLabel = this.isDuplicateOf("label",data.label);
         if(dupeLabel){
-          messages.push("This theme label is in use. Choose another label.")
+          messages.push("This label is already being used by an existing theme. Please choose a new label.")
         }
       if(messages.length == 0){
         return true;

@@ -29,7 +29,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges {
    */
 
   public themesExist:boolean = false;
-  public emptyMessage: string = "No custom themes. Click 'Create New Theme' to create a new custom theme."
+  public emptyMessage: string = "No custom themes. Click <b>Create New Theme</b> to create a new custom theme."
 
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
