@@ -41,6 +41,7 @@ export class ServiceSNMPComponent {
       placeholder : T('Location'),
       tooltip: T('Enter the location of the system.'),
       label : 'Location',
+      required: true,
       validation : [ Validators.required ]
     },
     {
@@ -50,6 +51,7 @@ export class ServiceSNMPComponent {
       tooltip: T('Enter an email address to receive messages from the\
                   <a href="..//docs/services.html#snmp"\
                   target="_blank">SNMP service</a>.'),
+      required: true,
       validation: [Validators.required, Validators.email]
     },
     {
@@ -60,6 +62,7 @@ export class ServiceSNMPComponent {
                   Can only contain alphanumeric characters, underscores,\
                   dashes, periods, and spaces. This can be left empty\
                   for <i>SNMPv3</i> networks.'),
+      validation: [Validators.pattern(/^[\w\_\-\.\s]*$/)]
     },
     {
       type : 'checkbox',
@@ -78,21 +81,21 @@ export class ServiceSNMPComponent {
       placeholder : T('Username'),
       tooltip: T('Enter a username to register with this service.'),
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'select',
       name : 'v3_authtype',
-      label : 'Authentication',
+      placeholder : T('Authentication Type'),
       tooltip: T('Choose an authentication method.'),
       options : [
         {label : '---', value : ""}, {label : 'MD5', value : 'MD5'},
         {label : 'SHA', value : 'SHA'}
       ],
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ],
     },
@@ -102,10 +105,11 @@ export class ServiceSNMPComponent {
       inputType : 'password',
       placeholder : T('Password'),
       tooltip: T('Enter a password of at least eight characters.'),
+      required: true,
       validation :
-          [ Validators.minLength(8), matchOtherValidator('v3_password2') ],
+          [ Validators.minLength(8), matchOtherValidator('v3_password2'), Validators.required ],
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ]
     },
@@ -114,15 +118,17 @@ export class ServiceSNMPComponent {
       name : 'v3_password2',
       inputType : 'password',
       placeholder : T('Confirm Password'),
+      required: true,
+      validation: [ Validators.required ],
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ]
     },
     {
       type : 'select',
       name : 'v3_privproto',
-      label : 'Privacy Protocol',
+      placeholder : T('Privacy Protocol'),
       tooltip: T('Choose a privacy protocol.'),
       options : [
         {label : '---', value : null},
@@ -130,7 +136,7 @@ export class ServiceSNMPComponent {
         {label : 'DES', value : 'DES'},
       ],
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ]
     },
@@ -145,7 +151,7 @@ export class ServiceSNMPComponent {
         Validators.minLength(8), matchOtherValidator('v3_privpassphrase2')
       ],
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ]
     },
@@ -155,7 +161,7 @@ export class ServiceSNMPComponent {
       inputType : 'password',
       placeholder : T('Confirm Privacy Passphrase'),
       relation : [ {
-        action : 'DISABLE',
+        action : 'HIDE',
         when : [ {name : 'v3', value : false} ]
       } ]
     },
@@ -187,8 +193,6 @@ export class ServiceSNMPComponent {
       ]
     },
   ];
-
-  ngOnInit() {}
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,

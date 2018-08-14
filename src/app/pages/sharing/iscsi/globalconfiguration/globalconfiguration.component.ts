@@ -59,7 +59,7 @@ export class GlobalconfigurationComponent {
       const service = _.find(service_res, {"service": "iscsitarget"});
       if (!service.enable) {
         this.dialogService.confirm(T("Enable service"),
-          T("Would you like to enable this service"),
+          T("Enable this service?"),
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               this.loader.open();

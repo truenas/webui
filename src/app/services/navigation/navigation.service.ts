@@ -180,7 +180,7 @@ export class NavigationService {
       state: 'reportsdashboard',
     },
     {
-      name: T('VMs'),
+      name: T('Virtual Machines'),
       type: 'link',
       tooltip: T('Virtualization'),
       icon: 'laptop_windows',

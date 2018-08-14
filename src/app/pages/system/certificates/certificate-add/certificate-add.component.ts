@@ -25,9 +25,7 @@ export class CertificateAddComponent {
       type : 'input',
       name : 'name',
       placeholder : T('Identifier'),
-      tooltip: T('Enter a descriptive name for the CA using\
-                  only alphanumeric, underscore (_), and dash (-)\
-                  characters.'),
+      tooltip: T('Enter a description of the CA.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -47,7 +45,7 @@ export class CertificateAddComponent {
       name : 'signedby',
       placeholder : T('Signing Certificate Authority'),
       tooltip: T('Select a previously imported or created <a\
-                  href="..//docs/system.html#cas"\
+                  href="../docs/system.html#cas"\
                   target="_blank">CA</a>.'),
       options : [
         {label: '---', value: null}
@@ -61,8 +59,9 @@ export class CertificateAddComponent {
       type : 'select',
       name : 'key_length',
       placeholder : T('Key Length'),
-      tooltip:T('For security reasons, a minimum of <i>2048</i>\
-                 is recommended.'),
+      tooltip:T('The number of bits in the key used by the\
+                 cryptographic algorithm. For security reasons,\
+                 a minimum key length of <i>2048</i> is recommended.'),
       options : [
         {label : '1024', value : 1024},
         {label : '2048', value : 2048},
@@ -77,8 +76,9 @@ export class CertificateAddComponent {
       type : 'select',
       name : 'digest_algorithm',
       placeholder : T('Digest Algorithm'),
-      tooltip: T('The default is acceptable unless the organization\
-                  requires a different algorithm.'),
+      tooltip: T('The cryptographic algorithm to use. The default\
+                  <i>SHA256</i> only needs to be changed if the\
+                  organization requires a different algorithm.'),
       options : [
         {label : 'SHA1', value : 'SHA1'},
         {label : 'SHA224', value : 'SHA224'},
@@ -95,7 +95,7 @@ export class CertificateAddComponent {
       type : 'input',
       name : 'lifetime',
       placeholder : T('Lifetime'),
-      tooltip: T('The lifetime of the CA is specified in days.'),
+      tooltip: T('The lifetime of the CA specified in days.'),
       inputType: 'number',
       required: true,
       value: 3650,
@@ -106,7 +106,7 @@ export class CertificateAddComponent {
       type : 'select',
       name : 'country',
       placeholder : T('Country'),
-      tooltip: T('Select the country for the organization.'),
+      tooltip: T('Select the country of the organization.'),
       options : [
       ],
       value: 'US',
@@ -118,8 +118,7 @@ export class CertificateAddComponent {
       type : 'input',
       name : 'state',
       placeholder : T('State'),
-      tooltip: T('Enter the state or province of the\
-                  organization.'),
+      tooltip: T('Enter the state or province of the organization.'),
       required: true,
       validation: [Validators.required],
       isHidden: false,
@@ -128,7 +127,8 @@ export class CertificateAddComponent {
       type : 'input',
       name : 'city',
       placeholder : T('Locality'),
-      tooltip: T('Enter the location of the organization.'),
+      tooltip: T('Enter the location of the organization. For example,\
+                  the city.'),
       required: true,
       validation: [Validators.required],
       isHidden: false,
@@ -137,8 +137,7 @@ export class CertificateAddComponent {
       type : 'input',
       name : 'organization',
       placeholder : T('Organization'),
-      tooltip: T('Enter the name of the company or\
-                  organization.'),
+      tooltip: T('Enter the name of the company or organization.'),
       required: true,
       validation: [Validators.required],
       isHidden: false,
@@ -147,8 +146,8 @@ export class CertificateAddComponent {
       type : 'input',
       name : 'email',
       placeholder : T('Email'),
-      tooltip: T('Enter the email address for the person\
-                  responsible for the CA.'),
+      tooltip: T('Enter the email address of the person responsible for\
+                  the CA.'),
       required: true,
       validation : [ Validators.email, Validators.required ],
       isHidden: false,
@@ -159,7 +158,7 @@ export class CertificateAddComponent {
       placeholder : T('Common Name'),
       tooltip: T('Enter the <a href="https://kb.iu.edu/d/aiuv"\
                   target="_blank">fully-qualified hostname (FQDN)</a> of\
-                  the system. This name **must** be unique within a\
+                  the system. This name must be unique within a\
                   certificate chain.'),
       required: true,
       validation : [ Validators.required ],
@@ -169,15 +168,17 @@ export class CertificateAddComponent {
       type : 'textarea',
       name : 'san',
       placeholder: T('Subject Alternate Names'),
-      tooltip: T('Multi-domain support. Enter additional space separated\
-                  domains.'),
+      tooltip: T('Multi-domain support. Enter additional domains to\
+                  secure, separated by spaces. For example, if the\
+                  primary domain is example.com, entering www.example.com\
+                  will secure both addresses.'),
       isHidden: false,
     },
     {
       type : 'textarea',
       name : 'certificate',
       placeholder : T('Certificate'),
-      tooltip : T('Enter or paste the certificate for the CA.'),
+      tooltip : T('Paste the certificate for the CA.'),
       required: true,
       validation : [ Validators.required ],
       isHidden: true,
@@ -186,15 +187,15 @@ export class CertificateAddComponent {
       type : 'textarea',
       name : 'privatekey',
       placeholder : T('Private Key'),
-      tooltip : T('Enter or paste the private key when one is associated\
-                   with the <b>Certificate</b>.'),
+      tooltip : T('Paste the private key associated with the\
+                   Certificate when available.'),
       isHidden: true,
     },
     {
       type : 'input',
       name : 'Passphrase',
       placeholder : T('Passphrase'),
-      tooltip : T('Enter the passphrase for the <b>Private Key</b>.'),
+      tooltip : T('Enter the passphrase for the Private Key.'),
       inputType : 'password',
       validation : [ matchOtherValidator('Passphrase2') ],
       isHidden: true,

@@ -153,7 +153,11 @@ export class ServiceDDNSComponent {
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
       entityForm.formGroup.controls['checkip_path'].setValue(res.checkip_path);
       entityForm.formGroup.controls['ssl'].setValue(res.ssl);
-      entityForm.formGroup.controls['domain'].setValue(res.domain);
+      if(!res.domain) {
+        entityForm.formGroup.controls['domain'].setValue([]);
+      } else {
+        entityForm.formGroup.controls['domain'].setValue(res.domain);
+      }
       entityForm.formGroup.controls['username'].setValue(res.username);
       entityForm.formGroup.controls['period'].setValue(res.period);
     })
@@ -167,6 +171,7 @@ export class ServiceDDNSComponent {
   }
 
   submitFunction(this: any, entityForm: any,){
+    entityForm.domain = entityForm.domain.split(/[\s,\t|{}()\[\]"']+/)
 
     return this.ws.call('dyndns.update', [entityForm]);
 
