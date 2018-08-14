@@ -109,8 +109,8 @@ export class DeviceEditComponent implements OnInit {
         {
           name : 'NIC_type',
           placeholder : 'Adapter Type:',
-          tooltip : 'Emulating an <i>Intel e82545 (e1000)</i> ethernet\
-                     card has compatibility with most operating systems.\
+          tooltip : 'Emulating an <i>Intel e82545 (e1000)</i> Ethernet\
+                     card provides compatibility with most operating systems.\
                      Change to <i>VirtIO</i> to provide better\
                      performance on systems with VirtIO paravirtualized\
                      network driver support.',

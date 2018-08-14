@@ -49,6 +49,8 @@ export class InitshutdownFormComponent {
     name: 'ini_script',
     placeholder: T('Script'),
     explorerType: 'file',
+    required: true,
+    validation : [ Validators.required ],
     tooltip: T('Browse to the script location.'),
   }, {
     type: 'select',
@@ -88,6 +90,7 @@ export class InitshutdownFormComponent {
   constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService, ) {}
 
   afterInit(entityForm: any) {
+    this.entityForm = entityForm;
     this.type_control = entityForm.formGroup.controls['ini_type'];
     this.type_control.valueChanges.subscribe((value) => {
       this.formUpdate(value);
@@ -99,10 +102,7 @@ export class InitshutdownFormComponent {
   formUpdate(type) {
     let isCommand = type == 'command' ? true : false;
 
-    let script_control = _.find(this.fieldConfig, { 'name': 'ini_script' });
-    script_control.isHidden = isCommand;
-
-    let command_control = _.find(this.fieldConfig, { 'name': 'ini_command' });
-    command_control.isHidden = !isCommand;
+    this.entityForm.setDisabled('ini_script', isCommand, isCommand);
+    this.entityForm.setDisabled('ini_command', !isCommand, !isCommand);
   }
 }
