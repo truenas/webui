@@ -37,7 +37,7 @@ export class PluginsInstalledListComponent {
   };
   public multiActions: Array < any > = [{
       id: "mstart",
-      label: "Start",
+      label: T("Start"),
       icon: "play_arrow",
       enable: true,
       ttpos: "above", // tooltip position
@@ -62,7 +62,7 @@ export class PluginsInstalledListComponent {
     },
     {
       id: "mstop",
-      label: "Stop",
+      label: T("Stop"),
       icon: "stop",
       enable: true,
       ttpos: "above",
@@ -86,7 +86,7 @@ export class PluginsInstalledListComponent {
     },
     {
       id: "mdelete",
-      label: "Delete",
+      label: T("Delete"),
       icon: "delete",
       enable: true,
       ttpos: "above",
