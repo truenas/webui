@@ -47,7 +47,7 @@ export class SupportComponent  {
       type: 'paragraph',
       name: 'support_text',
       paraText: this.sanitizer.bypassSecurityTrustHtml(
-        "Before filing a bug report or feature request, search https://redmine.ixsystems.com/projects/freenas to ensure the issue has not already been reported. If it has, add a comment to the existing issue instead of creating a new one. For enterprise-grade storage solutions and support, please visit http://www.ixsystems.com/storage/. <br><br> A Redmine account is required to file an issue. Make an account at https://redmine.ixsystems.com/account/register. Use a valid email address when registering to receive issue status updates.")
+        "Search https://redmine.ixsystems.com/projects/freenas to ensure the issue has not already been reported before filing a bug report or feature request. If an issue has already been created, add a comment to the existing issue. Please visit http://www.ixsystems.com/storage/ for enterprise-grade storage solutions and support. <br><br> A Redmine account is required to file an issue. Make an account at https://redmine.ixsystems.com/account/register. Use a valid email address when registering to receive issue status updates.")
     },
 
     {
