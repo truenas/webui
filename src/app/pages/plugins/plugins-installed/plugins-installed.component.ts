@@ -37,8 +37,10 @@ export class PluginsInstalledListComponent {
   };
   public multiActions: Array < any > = [{
       id: "mstart",
-      label: T("Start"),
+      label: "Start",
+      icon: "play_arrow",
       enable: true,
+      ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -60,8 +62,10 @@ export class PluginsInstalledListComponent {
     },
     {
       id: "mstop",
-      label: T("Stop"),
+      label: "Stop",
+      icon: "stop",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -82,8 +86,10 @@ export class PluginsInstalledListComponent {
     },
     {
       id: "mdelete",
-      label: T("Delete"),
+      label: "Delete",
+      icon: "delete",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }
@@ -108,9 +114,6 @@ export class PluginsInstalledListComponent {
     return [{
         id: "start",
         label: T("Start"),
-        icon: "play_arrow",
-        enable: true,
-        ttpos: "above", // tooltip position
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.start', [row[1]]).subscribe(
@@ -123,9 +126,6 @@ export class PluginsInstalledListComponent {
       {
         id: "stop",
         label: T("Stop"),
-        icon: "stop",
-        enable: true,
-        ttpos: "above",
         onClick: (row) => {
           this.entityList.busy =
             this.ws.call('jail.stop', [row[1]]).subscribe(
@@ -135,19 +135,16 @@ export class PluginsInstalledListComponent {
               });
         }
       },
-      // {
-      //   id: "management",
-      //   label: T("Management"),
-      //   onClick: (row) => {
-      //     window.open(row[9]);
-      //   }
-      // },
+      {
+        id: "management",
+        label: T("Management"),
+        onClick: (row) => {
+          window.open(row[9]);
+        }
+      },
       {
         id: "delete",
         label: T("Delete"),
-        icon: "delete",
-        enable: true,
-        ttpos: "above",
         onClick: (row) => {
           this.entityList.doDelete(row[1]);
         }
