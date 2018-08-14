@@ -77,7 +77,7 @@ export class CertificateListComponent {
             if (res[0]) {
               this.ws.call('core.download', ['filesystem.get', [res[0].certificate_path], res[0].name + '.crt']).subscribe(
                 (res) => {
-                  this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                  this.snackBar.open(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"), {
                     duration: 5000
                   });
                   window.open(res[1]);
@@ -98,7 +98,7 @@ export class CertificateListComponent {
             if (res[0]) {
               this.ws.call('core.download', ['filesystem.get', [res[0].privatekey_path], res[0].name + '.key']).subscribe(
                 (res) => {
-                  this.snackBar.open(T("Redirecting to download. Make sure pop-ups are enabled in the browser."), T("Success"), {
+                  this.snackBar.open(T("Opening download window. Make sure pop-ups are enabled in the browser."), T("Success"), {
                     duration: 5000
                   });
                   window.open(res[1]);

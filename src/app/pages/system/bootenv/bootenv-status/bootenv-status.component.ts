@@ -103,7 +103,7 @@ export class BootStatusListComponent implements OnInit {
         (res) => {
 
           if (res) {
-            
+
             // this.poolScan = res.scan;
             this.dataHandler(res);
           }
@@ -129,16 +129,16 @@ export class BootStatusListComponent implements OnInit {
         write_errors: 0,
         checksum_errors: 0,
       };
-  
+
       if (data.stats) {
         stats = data.stats;
       }
-  
+
       // use path as the device name if the device name is null
       if (!data.device || data.device == null) {
         data.device = data.path;
       }
-  
+
       const item: PoolDiskInfo = {
         id: id,
         parentId: parentId,
@@ -176,7 +176,7 @@ export class BootStatusListComponent implements OnInit {
           },
           isHidden: false,
         }];
-       
+
       }
       if(data.type && boot_pool_info && boot_pool_info[0].type === 'disk' && data.path){
         item.actions = [
@@ -188,7 +188,7 @@ export class BootStatusListComponent implements OnInit {
         }];
 
       }
-  
+
       this.topology.push(item);
     }
     parseTopology(data, parentRow: any) {
@@ -250,7 +250,7 @@ export class BootStatusListComponent implements OnInit {
           this._router.navigate(
             new Array('').concat('system','bootenv')
           );
-          this.openSnackBar("Device successfully detached", "Success");
+          this.openSnackBar("Device detached.", "Success");
         },
         (res) => {
           this.loader.close();
@@ -262,9 +262,9 @@ export class BootStatusListComponent implements OnInit {
       this.topology = [];
       this.parseResponse(1, pool, 0);
       this.parseTopology(pool.groups.data, 'data');
-  
+
     }
-  
+
     getReadableDate(data: any) {
       if (data != null) {
         return new Date(data.$date);

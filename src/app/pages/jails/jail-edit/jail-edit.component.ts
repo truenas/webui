@@ -1424,10 +1424,10 @@ export class JailEditComponent implements OnInit {
 
     this.ws.call(this.updateCall, [this.pk, value]).subscribe(
       (res) => {
-        this.loader.close();
         if (updateRelease) {
           this.ws.job(this.upgradeCall, [this.pk, newRelease]).subscribe(
             (res_upgrade) => {
+              this.loader.close();
               if (res_upgrade.error) {
                 this.error = res_upgrade.error;
               } else {
@@ -1435,10 +1435,12 @@ export class JailEditComponent implements OnInit {
               }
             },
             (res_upgrate) => {
-              new EntityUtils().handleError(this, res_upgrate);
+              this.loader.close();
+              new EntityUtils().handleWSError(this, res_upgrate);
             }
           );
         } else {
+          this.loader.close();
           if (res.error) {
             this.error = res.error;
           } else {
