@@ -56,6 +56,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public isEntity = true;
   public isNew = false;
   public parent_dataset: any;
+  protected entityForm: any;
 
 
   public parent: string;
@@ -84,6 +85,7 @@ export class DatasetFormComponent implements Formconfiguration{
       placeholder: T('Name'),
       tooltip: T('Enter a unique name for the dataset.'),
       readonly: true,
+      required: true,
       validation: [Validators.required]
     },
     {
@@ -447,6 +449,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
 
   afterInit(entityForm: EntityFormComponent) {
+    this.entityForm = entityForm;
     if(!entityForm.isNew){
       entityForm.setDisabled('casesensitivity',true);
       entityForm.setDisabled('name',true);
@@ -732,7 +735,7 @@ export class DatasetFormComponent implements Formconfiguration{
         this.route_success));
     }, (res) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error saving dataset"), res.reason, res.trace.formatted);
+      new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
 
