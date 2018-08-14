@@ -202,7 +202,7 @@ export class SMBFormComponent implements OnDestroy {
           this.route_success));
       } else {
           this.dialog.confirm(T("Enable service"),
-          T("Would you like to enable this service"),
+          T("Enable this service?"),
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();

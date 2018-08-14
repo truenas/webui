@@ -16,7 +16,7 @@ export class InterfacesListComponent {
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
-    message: T("Network connectivity will be interrupted. Do you want to delete the selected interface?"),
+    message: T("Network connectivity will be interrupted. Delete the selected interface?"),
   }
 
   public columns: Array<any> = [
