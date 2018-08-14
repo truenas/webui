@@ -87,6 +87,8 @@ class delete_pool_test(unittest.TestCase):
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+            #temporary
+            driver.refresh()
 
     def test_02_delete_pool2(self):
         try:
@@ -102,6 +104,8 @@ class delete_pool_test(unittest.TestCase):
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
+            #temporary
+            driver.refresh()
 
     def test_03_close_navStorage(self):
         try:

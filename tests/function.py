@@ -40,8 +40,11 @@ xpaths = {
         'poolconfirmdestroyCheckbox' : '//*[@id="confirm"]/mat-checkbox/label/div',
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
         'deleteButton': '//*[contains(@name, "ok_button")]',
-        'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]',
-        'closeButton' : '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
+        'detachButton': '//*[contains(text(), "Detach")]',
+        'closeButton' : '//*[contains(text(), "Close")]'
+
+#        'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
+#        'closeButton' : '/html/body/div[5]/div[2]/div/mat-dialog-container/info-dialog/div[2]/button'
         }
 
 
@@ -184,7 +187,17 @@ def pool_detach(driver, self, name):
     driver.find_element_by_xpath(xpaths['poolDetach']).click()
     driver.find_element_by_xpath(xpaths['pooldestroyCheckbox']).click()
     driver.find_element_by_xpath(xpaths['poolconfirmdestroyCheckbox']).click()
-    driver.find_element_by_xpath(xpaths['detachButton']).click()
+    time.sleep(3)
+    print ("clicking on detach")
+    if driver.find_element_by_xpath(xpaths['detachButton']):
+        print ("detach button found")
+        driver.find_element_by_xpath(xpaths['detachButton']).click()
+        print (" alreadyclicked on detach")
+
+#    driver.find_element_by_xpath(xpaths['detachButton']).click()
+#    print ("2nd time  already clicked on detach")
     time.sleep(32)
+    print ("clicking on close")
     driver.find_element_by_xpath(xpaths['closeButton']).click()
+    print ("already clicked on detach")
 

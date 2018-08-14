@@ -43,7 +43,7 @@ xpaths = {
         'createButton': '/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/div/app-manager/mat-card/div[2]/div/div[4]/button[1]',
         #very important and useful
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
-        'okButton': '//*[contains(text(), "Ok")]'
+        'okButton': '//*[contains(text(), "OK")]'
         }
 
 
