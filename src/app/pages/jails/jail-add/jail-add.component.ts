@@ -1148,7 +1148,7 @@ export class JailAddComponent implements OnInit {
               }
             },
             (res_remote) => {
-              this.dialogService.errorReport(T('Error: Displaying remote releases failed.'), res_remote.reason, res_remote.trace.formatted);
+              this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
             });
         },
         (res_local) => {

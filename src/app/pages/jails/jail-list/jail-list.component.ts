@@ -132,12 +132,11 @@ export class JailListComponent implements OnInit {
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
     protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService) {}
 
-  public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the \
-                              iocage jail manager to create the /iocage \
-                              dataset in the selected pool. The /iocage \
+  public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
+                              can create the /iocage dataset. The /iocage \
                               dataset might not be visible until after \
                               the first jail is created. iocage uses \
-                              this dataset to store FreeBSD RELEASES \
+                              this dataset to store FreeBSD releases \
                               and all other jail data.");
 
   ngOnInit(){

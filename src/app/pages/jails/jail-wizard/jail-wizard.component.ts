@@ -255,11 +255,11 @@ export class JailWizardComponent {
                 }
               },
               (res_remote) => {
-                this.dialogService.errorReport(T('Error: Display remote releases failed.'), res_remote.reason, res_remote.trace.formatted);
+                this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
               });
           },
           (res_local) => {
-            this.dialogService.errorReport(T('Error: Display local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
+            this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
           });
       },
       (res) => {
