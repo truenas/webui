@@ -185,13 +185,6 @@ export class AdvancedComponent implements OnDestroy {
     placeholder: T('Show advanced fields by default'),
     tooltip: T('Set to always show advanced fields, when available.')
   }, {
-    type: 'checkbox',
-    name: 'uploadcrash',
-    placeholder: T('Enable automatic upload of kernel crash dumps and\
-                    daily telemetry'),
-    tooltip: T('Report kernel crash dumps and daily performance\
-                measurements to iXsystems.')
-  }, {
     type: 'select',
     name: 'periodic_notifyuser',
     placeholder: T('Periodic Notification User'),
