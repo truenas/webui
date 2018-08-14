@@ -63,7 +63,7 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res);
             });
       }
     },
@@ -91,7 +91,7 @@ export class JailListComponent implements OnInit {
                 },
                 (res) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(this, res);
+                  new EntityUtils().handleWSError(this.entityList, res);
                 });
           }
         })      
@@ -113,7 +113,7 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWSError(this.entityList, res);
             });
       }
     },
@@ -218,7 +218,7 @@ export class JailListComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res);
               });
         }
       },
@@ -240,7 +240,7 @@ export class JailListComponent implements OnInit {
                   },
                   (res) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(this, res);
+                    new EntityUtils().handleWSError(this.entityList, res);
                   });
             }
           })
@@ -258,7 +258,7 @@ export class JailListComponent implements OnInit {
               },
               (res) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWSError(this.entityList, res);
               });
         }
       },
