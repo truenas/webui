@@ -96,7 +96,7 @@ export class GeneralComponent implements OnDestroy {
       name: 'stg_guiport',
       placeholder: T('WebGUI HTTP Port'),
       tooltip: T('Allow configuring a non-standard port to access the GUI\
-                  over <i>HTTP</i>. Changing this setting may require\
+                  over <i>HTTP</i>. Changing this setting might require\
                   changing a <a\
                   href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted"\
                   target="_blank">Firefox configuration setting</a>.'),
@@ -154,8 +154,8 @@ export class GeneralComponent implements OnDestroy {
       type: 'select',
       name: 'stg_sysloglevel',
       placeholder: T('Syslog level'),
-      tooltip: T('When <b>Syslog server</b> is defined, only logs\
-                  matching this level are sent.'),
+      tooltip: T('When Syslog server is defined, only logs matching this\
+                  level are sent.'),
       options: []
     },
     {
@@ -186,8 +186,8 @@ export class GeneralComponent implements OnDestroy {
     {
       type: 'upload',
       name: 'upload_config',
-      placeholder : T('New config to be installed'),
-      tooltip: '',
+      placeholder : T('Select Configuration File'),
+      tooltip: 'Browse to the locally saved configuration file.',
       fileLocation: '',
       hideButton: true,
       updater: this.updater,
@@ -201,8 +201,9 @@ export class GeneralComponent implements OnDestroy {
     saveButtonText: T('Upload'),
     customSubmit: this.uploadConfigSubmit,
     message: '<p>The system will reboot to perform this operation!</p>\
-              <p><font color="red">If the uploaded configuration database file was saved \
-              without the Password Secret Seed, all passwords will be reset.</font></p>',
+              <p><font color="red">All passwords are reset when the \
+              uploaded configuration database file was saved \
+              without the Password Secret Seed. </font></p>',
   }
   public custActions: Array<any> = [
   {
@@ -366,9 +367,9 @@ export class GeneralComponent implements OnDestroy {
         this.http_port !== new_http_port ||
         this.https_port !== new_https_port ||
         this.redirect !== new_redirect) {
-      this.dialog.confirm(T("Restart Web Service"), T("In order for the protocol \
-      changes to take effect the web service will need to be restarted, you will \
-      temporarily lose connection to the UI.  Do you wish to restart the service?"))
+      this.dialog.confirm(T("Restart Web Service"), T("The web service must restart \
+                             for the protocol changes to take effect. The UI will be \
+                             temporarily unavailable. Restart the service?"))
         .subscribe((res)=> {
           if (res) {
             let href = window.location.href;
@@ -424,14 +425,14 @@ export class GeneralComponent implements OnDestroy {
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (res) => {
-            entityDialog.snackBar.open("Redirecting to download. Make sure you have pop up enabled in your browser.", "Success" , {
+            entityDialog.snackBar.open("Opening download window. Make sure pop-ups are enabled in the browser.", "Success" , {
               duration: 5000
             });
             window.open(res[1]);
             entityDialog.dialogRef.close();
           },
           (err) => {
-            entityDialog.snackBar.open("Please check your network connection", "Failed" , {
+            entityDialog.snackBar.open("Check the network connection", "Failed" , {
               duration: 5000
             });
           }

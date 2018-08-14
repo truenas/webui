@@ -66,7 +66,7 @@ export class DashboardNoteEditComponent implements OnInit {
       _.find(this.fieldConfig, {name: 'title'}).readonly = true;
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-  
+
     if (!this.isNew) {
       for (let i in this.cardNote) {
         let fg = this.formGroup.controls[i];
@@ -128,7 +128,7 @@ export class DashboardNoteEditComponent implements OnInit {
       .subscribe(
         (res) => {
           this.loader.close();
-          this.snackBar.open("All your settings are saved.", 'close', { duration: 5000 })
+          this.snackBar.open("All settings are saved.", 'close', { duration: 5000 })
           this.success = true;
           this.onSuccess(attribute_key);
         },
