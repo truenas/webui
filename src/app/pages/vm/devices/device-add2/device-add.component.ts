@@ -3,14 +3,12 @@ import {Validators} from '@angular/forms';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FieldConfig} from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
-import {EntityFormService} from '../../../common/entity/entity-form/services/entity-form.service';
+import {EntityFormService} from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services';
+import {RestService, WebSocketService, SystemGeneralService, NetworkService} from '../../../../services/';
 import {EntityUtils} from '../../../common/entity/utils';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
-import { ZvolValueValidator } from '../../../common/entity/entity-form/validators/zvolvalue-validation';
-
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
@@ -80,7 +78,7 @@ export class DeviceAddComponent implements OnInit {
       explorerType: "zvol",
       initial: '/mnt',
       required: true,
-      validation: [Validators.required, ZvolValueValidator(this)]
+      validation: [Validators.required]
     },
     {
       name : 'DISK_mode',
@@ -128,7 +126,7 @@ export class DeviceAddComponent implements OnInit {
                 to add a new randomized address into this field.',
       type: 'input',
       value: '00:a0:98:FF:FF:FF',
-    validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+      validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
     },
     {
       name: 'nic_attach',
@@ -154,6 +152,7 @@ export class DeviceAddComponent implements OnInit {
       tooltip : 'Browse to a storage location and add the name of the\
                  new raw file on the end of the path.',
       required: true,
+      validation: [Validators.required]
     },
     {
       type : 'input',
