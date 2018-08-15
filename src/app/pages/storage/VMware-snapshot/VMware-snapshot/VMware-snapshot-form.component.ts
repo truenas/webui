@@ -117,16 +117,24 @@ export class VMwareSnapshotFormComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService, 
     protected loader: AppLoaderService,) { }
 
-
+  preInit(entityForm: any) {
+    const queryPayload = []
+    this.route.params.subscribe(params => {
+      queryPayload.push("id");
+      queryPayload.push("=");
+      queryPayload.push(parseInt(params['pk'],10));
+      this.pk = [queryPayload];
+  });
+  }
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
 
-    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+    this.ws.call("pool.filesystem_choices").subscribe((zvols)=>{
       zvols.forEach(zvol => {
         _.find(this.fieldConfig, {name : 'filesystem'}).options.push(
           {
-            label : zvol.id, value : zvol.id
+            label : zvol, value : zvol
           }
         );   
       });
