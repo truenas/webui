@@ -1,6 +1,6 @@
 import {FormControl} from '@angular/forms'
 
-export function ZvolValueValidator(zvolformgroup) {
+export function ZvolValueValidator(zvolstring) {
 
   let thisControl: FormControl;
 
@@ -12,14 +12,14 @@ export function ZvolValueValidator(zvolformgroup) {
 
     if(thisControl.value){
       const zvolpath = thisControl.value.slice(5)
-      zvolformgroup.loader.open();
-      zvolformgroup.ws.call('pool.dataset.query',[[["type","=","VOLUME"],["name","=",zvolpath]]]).subscribe((res)=>{
+      zvolstring.loader.open();
+      zvolstring.ws.call('pool.dataset.query',[[["type","=","VOLUME"],["name","=",zvolpath]]]).subscribe((res)=>{
         if(res.length >0) {
-          zvolformgroup.loader.close();
+          zvolstring.loader.close();
         }
         else {
           thisControl.setValue(null);
-          zvolformgroup.loader.close();
+          zvolstring.loader.close();
         }
       })
     }
