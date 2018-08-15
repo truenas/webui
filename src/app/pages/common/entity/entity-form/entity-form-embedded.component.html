@@ -1,7 +1,7 @@
 <div id="entity-form-embedded.component_html">
   <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
   <p *ngIf="!hasConf">
-    Please <button id="click_here_setup_configuration_button" mat-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to set up configuration first.
+    Please <button id="click_here_setup_configuration_button" mat-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to set up configuration first.
   </p>
   <p *ngIf="success" type="success">{{"Successfully updated." | translate}}</p>
   <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
@@ -23,12 +23,12 @@
       </div>
       <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
       <mat-card-actions>
-        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
-        <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-raised btn-lg btn-primary" type="button" (click)="goBack()" mat-raised-button color="accent">Cancel</button> 
+        <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
+        <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-lg btn-primary" type="button" (click)="goBack()" mat-button color="accent">Cancel</button> 
         <span *ngFor="let custBtn of conf.custActions">
-          <button id="cust_button_{{custBtn.name}}" mat-raised-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name | translate}}</button>
+          <button id="cust_button_{{custBtn.name}}" mat-button *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="submit" (click)="onSubmit($event,custBtn.eventName)">{{custBtn.name | translate}}</button>
         </span>
-        <button id="delete_button" mat-raised-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
+        <button id="delete_button" mat-button *ngIf="conf.route_delete" class="btn btn-block btn-danger" type="button" (click)="gotoDelete()">{{"Delete" | translate}}</button>
         <!-- </div> -->
       </mat-card-actions>
     </form>

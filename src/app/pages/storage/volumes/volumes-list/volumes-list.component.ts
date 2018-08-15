@@ -503,7 +503,7 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row1) => {
 
             this.dialogService.confirm(T("Delete"), T("This action is irreversible and will \
-             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false).subscribe((res) => {
+             delete any existing snapshots of this dataset (" + row1.path + ").  Please confirm."), false, T('Delete Dataset')).subscribe((res) => {
                 if (res) {
 
                   this.loader.open();
@@ -551,7 +551,7 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete zvol"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false).subscribe((confirmed) => {
+          this.dialogService.confirm(T("Delete zvol:" + row1.path), T("Please confirm the deletion of zvol:" + row1.path), false, T('Delete Zvol')).subscribe((confirmed) => {
             if (confirmed === true) {
               this.loader.open();
 
