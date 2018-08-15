@@ -1148,11 +1148,11 @@ export class JailAddComponent implements OnInit {
               }
             },
             (res_remote) => {
-              this.dialogService.errorReport(T('Error: Get remote release choices failed'), res_remote.reason, res_remote.trace.formatted);
+              this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
             });
         },
         (res_local) => {
-          this.dialogService.errorReport(T('Error: Get local fetched release choices failed'), res_local.reason, res_local.trace.formatted);
+          this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
         });
     },
     (res) => {
@@ -1209,7 +1209,7 @@ export class JailAddComponent implements OnInit {
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
@@ -1218,7 +1218,7 @@ export class JailAddComponent implements OnInit {
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
       } else {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
