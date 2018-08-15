@@ -49,4 +49,9 @@ export class InitiatorFormComponent {
   constructor(protected router: Router) {}
 
   afterInit(entityAdd: any) {}
+
+  resourceTransformIncomingRestData(data) {
+    data['iscsi_target_initiator_auth_network'] = data['iscsi_target_initiator_auth_network'].replace(/\n/g, ' ');
+    return data;
+  }
 }
