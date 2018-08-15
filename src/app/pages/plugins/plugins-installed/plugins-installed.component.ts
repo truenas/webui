@@ -33,12 +33,14 @@ export class PluginsInstalledListComponent {
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true,
+    multiSelect: true
   };
   public multiActions: Array < any > = [{
       id: "mstart",
       label: T("Start"),
+      icon: "play_arrow",
       enable: true,
+      ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -55,12 +57,15 @@ export class PluginsInstalledListComponent {
               new EntityUtils().handleError(this, res);
               this.loader.close();
             });
+            
       }
     },
     {
       id: "mstop",
       label: T("Stop"),
+      icon: "stop",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -82,7 +87,9 @@ export class PluginsInstalledListComponent {
     {
       id: "mdelete",
       label: T("Delete"),
+      icon: "delete",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }

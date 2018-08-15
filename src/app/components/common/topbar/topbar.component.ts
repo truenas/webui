@@ -151,15 +151,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   signOut() {
-    this.translate.get('Log out').subscribe((logout: string) => {
-      this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
-        this.dialogService.confirm("Log Out", "Log out of the WebUI?", true, T("Log Out")).subscribe((res) => {
-          if (res) {
-            this.ws.logout();
-          }
-        });
-      });
-    });
+    this.ws.logout();
   }
 
   onShutdown() {

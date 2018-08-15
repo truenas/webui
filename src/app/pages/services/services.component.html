@@ -1,5 +1,10 @@
 <mat-card class="card-filter">
   <mat-card-header>
+      <mat-spinner 
+        [diameter]='40' 
+        id="services-spinner"
+        *ngIf="showSpinner">
+      </mat-spinner> 
     <div class="filter-field">
       <mat-icon role="img">search</mat-icon>
       <div class="card-filter-field">
