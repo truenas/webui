@@ -190,3 +190,9 @@ mat-chip.service-state-on,
   position: relative;
   top: -3px;
 }
+
+#services-spinner {
+  position: relative;
+  top: 25px;
+  left: 47%;
+}

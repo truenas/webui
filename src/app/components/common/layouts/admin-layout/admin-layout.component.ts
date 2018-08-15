@@ -72,7 +72,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       Ps.initialize(navigationHold, {
         suppressScrollX: true
       });
-      console.log('get some')
     }, 500);
 
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
