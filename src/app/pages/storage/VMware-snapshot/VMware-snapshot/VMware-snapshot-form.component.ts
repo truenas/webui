@@ -65,14 +65,13 @@ export class VMwareSnapshotFormComponent {
       hideButton: false
     },
     {
-      type: 'explorer',
+      type: 'select',
       name: 'filesystem',
       placeholder: T('ZFS Filesystem'),
       tooltip: T('Enter the filesystem to snapshot.'),
-      explorerType: "zvol",
-      initial: '/mnt',
       validation: [Validators.required],
-      required: true
+      required: true,
+      options: []
     },
     {
       type: 'select',
@@ -110,7 +109,6 @@ export class VMwareSnapshotFormComponent {
 
   resourceTransformIncomingRestData(data: any): any {
     data.password = '';
-    data.filesystem = '/mnt/' + data.filesystem;
     return data;
   };
 
@@ -123,6 +121,16 @@ export class VMwareSnapshotFormComponent {
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
+
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+      zvols.forEach(zvol => {
+        _.find(this.fieldConfig, {name : 'filesystem'}).options.push(
+          {
+            label : zvol.id, value : zvol.id
+          }
+        );   
+      });
+    });
     if(this.entityForm.pk){
       this.datastore = _.find(this.fieldConfig, { 'name': 'datastore' });
       this.datastore.options.length = 0;
@@ -131,7 +139,7 @@ export class VMwareSnapshotFormComponent {
 
   beforeSubmit(entityForm: any) {
     if (entityForm.filesystem !== undefined) {
-      entityForm.filesystem = entityForm.filesystem.slice(5);
+      entityForm.filesystem = entityForm.filesystem;
     }
   }
 
