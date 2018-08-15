@@ -410,8 +410,6 @@ export class DeviceEditComponent implements OnInit {
       } else if(this.formGroup.controls[i]){
         fg = this.formGroup.controls[i];
       }
-      console.log(fg);
-      console.log(data[i])
       if (fg) {
         fg.setValue(data[i]);
       }
