@@ -208,11 +208,10 @@ export class DeviceEditComponent implements OnInit {
           tooltip : 'Browse to an existing <a\
                      href="..//docs/storage.html#adding-zvols"\
                      target="_blank">Zvol</a>.',
-          type: 'explorer',
-          explorerType: "zvol",
-          initial: '/mnt',
+          type: 'select',
           required: true,
-          validation : [Validators.required]
+          validation : [Validators.required],
+          options:[]
         },
         {
           name : 'DISK_mode',
@@ -375,6 +374,15 @@ export class DeviceEditComponent implements OnInit {
         ];
       }
       else if (device[0].dtype === 'DISK'){
+        this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+          zvols.forEach(zvol => {
+            _.find(this.fieldSets[0].config, {name:'DISK_zvol'}).options.push(
+              {
+                label : zvol.id, value : '/dev/zvol/' + zvol.id
+              }
+            );   
+          });
+        });
         this.DISK_zvol = _.find(this.fieldSets[0].config, {name:'DISK_zvol'});
         this.setgetValues(device[0].attributes, disk_lookup_table);
       }
@@ -402,6 +410,8 @@ export class DeviceEditComponent implements OnInit {
       } else if(this.formGroup.controls[i]){
         fg = this.formGroup.controls[i];
       }
+      console.log(fg);
+      console.log(data[i])
       if (fg) {
         fg.setValue(data[i]);
       }
