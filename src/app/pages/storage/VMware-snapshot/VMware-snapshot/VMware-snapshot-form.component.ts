@@ -130,11 +130,11 @@ export class VMwareSnapshotFormComponent {
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
 
-    this.ws.call("pool.filesystem_choices").subscribe((zvols_response)=>{
-      zvols_response.forEach(zvol_item => {
+    this.ws.call("pool.filesystem_choices").subscribe((filesystem_response)=>{
+      filesystem_response.forEach(filesystem_item => {
         _.find(this.fieldConfig, {name : 'filesystem'}).options.push(
           {
-            label : zvol_item, value : zvol_item
+            label : filesystem_item, value : filesystem_item
           }
         );   
       });
