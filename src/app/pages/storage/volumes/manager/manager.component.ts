@@ -77,15 +77,15 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected extendedSizeMessage = T("Estimated data capacity available after extension.");
 
   public disknumError = null;
-  public disknumErrorMessage = T("WARNING: Adding data VDEVs with different numbers of \
+  public disknumErrorMessage = T("WARNING: Adding data vdevs with different numbers of \
       disks is not recommended.");
-  public disknumErrorConfirmMessage = T("It is not recommended to create a pool with VDEVs \
+  public disknumErrorConfirmMessage = T("It is not recommended to create a pool with vdevs \
       containing different numbers of disks. Continue?");
   public disknumExtendConfirmMessage = T("It is not recommended to extend a pool with one or \
-      more VDEVs containing different numbers of disks. Continue?");
+      more vdevs containing different numbers of disks. Continue?");
 
   public vdevtypeError = null;
-  public vdevtypeErrorMessage = T("Adding data VDEVs of different types is not supported.");
+  public vdevtypeErrorMessage = T("Adding data vdevs of different types is not supported.");
 
   public diskAddWarning = T("The contents of all added disks will be erased.");
   public diskExtendWarning = T("The contents of all newly added disks will be erased. The pool \
@@ -111,7 +111,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
                                  option.');
 
   public suggested_layout_tooltip = T('Create a recommended formation\
-                                       of VDEVs in a pool.');
+                                       of vdevs in a pool.');
 
   public encryption_message = T("Always back up the key! Losing the key \
                                  will also lose all data on the disks with \
@@ -268,9 +268,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isNew) {
       setTimeout(() => { // goofy workaround for stupid angular error
         this.dialog.confirm(T("Warning"), T("Extending the pool adds new\
-                                             VDEVs in a stripe with the\
-                                             existing VDEVs. It is important\
-                                             to only use new VDEVs of the\
+                                             vdevs in a stripe with the\
+                                             existing vdevs. It is important\
+                                             to only use new vdevs of the\
                                              same size and type as those\
                                              already in the pool. This\
                                              operation cannot be reversed.\

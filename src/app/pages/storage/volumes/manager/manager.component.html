@@ -28,7 +28,7 @@
           <mat-input-container>
             <input matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
-          <mat-error *ngIf="isEncrypted">{{"The passphrase and recovery key is reset after extending an encrypted pool!" | translate }}</mat-error>
+          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
       </div>
       <div class="wrapper">
