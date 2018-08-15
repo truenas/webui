@@ -103,6 +103,15 @@ export class ConfigurationComponent {
                    target="_blank">ping(8)</a>. Each address is tried\
                    until one is successful or the list is exhausted.\
                    Leave empty to use the default gateway.'),
+      relation : [
+                    {
+                      action : 'HIDE',
+                      when : [ {
+                        name : 'gc_netwait_enabled',
+                        value : false,
+                      } ]
+                    },
+                  ],
     },
     {
       type : 'textarea',

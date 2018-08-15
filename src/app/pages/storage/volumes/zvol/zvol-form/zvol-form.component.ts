@@ -11,6 +11,7 @@ import { T } from '../../../../../translate-marker';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 
 
@@ -52,6 +53,7 @@ export class ZvolFormComponent {
   public customFilter: any[] = [];
   public pk_dataset: any[] = [];
   public edit_data: any;
+  protected entityForm: any;
 
   public custActions: Array<any> = [
     {
@@ -376,6 +378,7 @@ export class ZvolFormComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
+    this.entityForm = entityForm;
     if(!entityForm.isNew){
     }
   }
@@ -440,7 +443,7 @@ export class ZvolFormComponent {
             this.route_success));
         }, (eres) => {
           this.loader.close();
-          this.dialogService.errorReport(T("Error saving ZVOL"), eres.reason, eres.trace.formatted);
+          new EntityUtils().handleWSError(this.entityForm, eres);
         });
       } else{
         this.loader.close();
@@ -462,7 +465,7 @@ export class ZvolFormComponent {
           this.route_success));
       }, (res) => {
         this.loader.close();
-        this.dialogService.errorReport(T("Error saving ZVOL"), res.reason, res.trace.formatted);
+        new EntityUtils().handleWSError(this.entityForm, res);
       });
     } else{
       this.editSubmit(body);

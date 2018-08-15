@@ -173,7 +173,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.setPaginationInfo();
       });
 
-
+      // Delay spinner 500ms so it won't show up on a fast-loading page
       setTimeout(() => { this.setShowSpinner(); }, 500);
 
       // Next section sets the checked/displayed columns
@@ -190,14 +190,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
         this.currentPreferredCols = this.conf.columns;
       }
         // End of checked/display section ------------
-        
-      setTimeout(() => { this.setShowDefaults(); }, 1000);
-
-    
-  }
-
-  setShowDefaults() {
-    this.showDefaults = true;
+            
   }
 
   setShowSpinner() {
