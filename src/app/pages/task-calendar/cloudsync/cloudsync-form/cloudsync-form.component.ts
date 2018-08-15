@@ -230,8 +230,8 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'scheduler',
     name: 'cloudsync_picker',
     placeholder: T('Schedule the Cloud Sync Task'),
-    tooltip: T('Choose one of the convenient presets\
-      or choose <i>Custom</i> to trigger the advanced scheduler UI'),
+    tooltip: T('Select a schedule preset or choose <i>Custom</i> to open \
+                the advanced scheduler.'),
       required: true
   },
   {
