@@ -75,7 +75,7 @@ export class JailListComponent implements OnInit {
       ttpos: "above",
       onClick: (selected) => {
         let dialog = {};
-        this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
+        this.dialogService.confirm("Stop", "Stop the selected jails?",
           dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res) => {
           if (res) {
             let selectedJails = this.getSelectedNames(selected);
@@ -94,7 +94,7 @@ export class JailListComponent implements OnInit {
                   new EntityUtils().handleError(this, res);
                 });
           }
-        })      
+        })
       }
     },
     {
@@ -113,7 +113,7 @@ export class JailListComponent implements OnInit {
             },
             (res) => {
               this.loader.close();
-              new EntityUtils().handleError(this, res);      
+              new EntityUtils().handleError(this, res);
             });
       }
     },
@@ -132,17 +132,19 @@ export class JailListComponent implements OnInit {
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService, 
     protected loader: AppLoaderService, protected dialogService: DialogService, private translate: TranslateService) {}
 
-  public tooltipMsg: any = T("Choose an existing ZFS Pool to allow the iocage jail manager \
-  to create a /iocage dataset in the selected pool. The '/iocage' dataset may not be visible \
-  until after the first jail is created. iocage uses this dataset to store FreeBSD RELEASES \
-  and all other jail data. To create a new ZFS Pool, navigate Storage/Volumes and click 'Create ZFS Pool'.");
+  public tooltipMsg: any = T("Choose a pool where the iocage jail manager \
+                              can create the /iocage dataset. The /iocage \
+                              dataset might not be visible until after \
+                              the first jail is created. iocage uses \
+                              this dataset to store FreeBSD releases \
+                              and all other jail data.");
 
   ngOnInit(){
     this.getActivatedPool();
     this.getAvailablePools();
   }
   afterInit(entityList: any) {
-    this.entityList = entityList; 
+    this.entityList = entityList;
   }
 
   isActionVisible(actionId: string, row: any) {
@@ -187,7 +189,7 @@ export class JailListComponent implements OnInit {
           this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
             (res) => {
               if (res[0].state == 'up') {
-                this.dialogService.Info(T('Warning'), T('Jails cannot be changed while running. Please stop the jail to make changes.'));
+                this.dialogService.Info(T('Warning'), T('Jails cannot be changed while running. Stop the jail to make changes.'));
               } else {
                 this.router.navigate(
                   new Array('').concat(["jails", "edit", row.host_hostuuid]));
@@ -221,7 +223,7 @@ export class JailListComponent implements OnInit {
         label: "Stop",
         onClick: (row) => {
           let dialog = {};
-          this.dialogService.confirm("Stop", "Are you sure you want to stop selected item(s)?", 
+          this.dialogService.confirm("Stop", "Stop the selected jails?", 
             dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((res) => {
             if (res) {
               this.entityList.busy =

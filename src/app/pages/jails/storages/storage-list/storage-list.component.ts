@@ -74,7 +74,7 @@ export class StorageListComponent {
   }
 
   doDelete(id) {
-    this.dialog.confirm(T("Delete"), T("Are you sure you want to delete it?"), false, T('Delete Mount Point')).subscribe((res) => {
+    this.dialog.confirm(T("Delete"), T("Delete this item?"), false, T('Delete Mount Point')).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
