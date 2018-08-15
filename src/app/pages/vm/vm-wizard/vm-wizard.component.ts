@@ -121,7 +121,6 @@ export class VMWizardComponent {
                       CPU limits the maximum. The VM operating system\
                       might also have operational or licensing\
                       restrictions on the number of CPUs.'),
-          required: true,
         },
         {
           type: 'input',
@@ -130,6 +129,10 @@ export class VMWizardComponent {
           inputType: 'number',
           min: 128,
           validation : [ Validators.required, Validators.min(128)],
+          required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent2,
+          parent: this,
           tooltip: T('Allocate a number of megabytes of RAM for the VM.'),
         },
       ]
@@ -321,16 +324,34 @@ export class VMWizardComponent {
       this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         ( < FormGroup > entityWizard.formArray.get([5]).get('iso_path')).setValue(message);
       })
-      if (res === 'Windows') {
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
-      }
-      else {
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
-        ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(512);
-        ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
-      }
+      this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
+        if (available_memory > 512 * 1024* 1024) {
+          if (res === 'Windows') {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(4096);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
+          }
+          else {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(512);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
+          }
+
+        } else {
+          if (res === 'Windows') {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(2);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(40);
+          }
+          else {
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['vcpus'].setValue(1);
+            ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+            ( < FormGroup > entityWizard.formArray.get([3])).controls['volsize'].setValue(10);
+          }
+
+        }
+      })
+
     });
     ( < FormGroup > entityWizard.formArray.get([3]).get('disk_radio')).valueChanges.subscribe((res) => {
       if (res){
@@ -415,6 +436,19 @@ blurEvent(parent){
     if(vm_wizard_res.length > 0){
       parent.dialogService.Info("Error", `Virtual machine ${vm_wizard_res[0].name} already exists.`).subscribe(()=>{
         parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
+}
+
+blurEvent2(parent){
+  const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[2].memory
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+    if( vm_memory_requested *1024*1024> vm_memory_available){
+      parent.dialogService.Info("Error", `Cannot allocate ${vm_memory_requested} Mib to virtual machine: ${vm_name}.`).subscribe(()=>{
+        parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
       })
 
     }
