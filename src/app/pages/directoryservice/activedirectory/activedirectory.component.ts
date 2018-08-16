@@ -152,12 +152,12 @@ export class ActiveDirectoryComponent {
       type : 'checkbox',
       name : 'ad_allow_trusted_doms',
       placeholder : T('Allow Trusted Domains'),
-      tooltip : T('Set when the network has active <a\
-                   href="https://technet.microsoft.com/en-us/library/cc757352(WS.10).aspx"\
-                   target="_blank">domain/forest trusts</a> and managing\
-                   files on multiple domains is required. Setting will\
-                   generate more winbind traffic and slow down filtering\
-                   through user/group info.'),
+      tooltip : T('When set, usernames do not include a domain name.\
+                   Unset to force domain names to be prepended to user\
+                   names. One possible reason for unsetting this value\
+                   is to prevent username collisions when Allow Trusted\
+                   Domains is set and there are identical usernames in\
+                   more than one domain.'),
     },
     {
       type : 'checkbox',
@@ -203,8 +203,15 @@ export class ActiveDirectoryComponent {
       type : 'input',
       name : 'ad_gcname',
       placeholder : T('Global Catalog Server'),
-      tooltip : T('Ensure the hostname of the global catalog server to\
-                   use is resolvable.'),
+      tooltip : T('This holds a full set of attributes for the domain in\
+                   which it resides and a subset of attributes for all\
+                   objects in the Microsoft Active Directory Forest. The\
+                   primary two functions of a Global Catalog within the\
+                   Microsoft Active Directory are logon capability and\
+                   Microsoft Active Directory queries. See <a\
+                   href="https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.0/com.ibm.websphere.base.doc/ae/csec_was_ad_globcat.html"\
+                   target="_blank">IBM Knowledge Center</a> for more\
+                   details.'),
     },
     {
       type : 'select',
@@ -228,16 +235,16 @@ export class ActiveDirectoryComponent {
       type : 'input',
       name : 'ad_timeout',
       placeholder : T('AD Timeout'),
-      tooltip : T('Increase number of seconds before timeout if the AD\
-                   service does not immediately start after connecting\
-                   to the domain.'),
+      tooltip : T('Number of seconds before timeout. If the AD service\
+                   does not immediately start after connecting to the\
+                   domain, increase this value.'),
     },
     {
       type : 'input',
       name : 'ad_dns_timeout',
       placeholder : T('DNS Timeout'),
-      tooltip : T('Increase the number of seconds before a timeout occurs\
-                   if AD DNS queries timeout.'),
+      tooltip : T('Number of seconds before a timeout. Increase this\
+                   value if AD DNS queries time out.'),
     },
     {
       type : 'select',
@@ -280,14 +287,17 @@ export class ActiveDirectoryComponent {
       type : 'input',
       name : 'ad_netbiosname_a',
       placeholder : 'Netbios Name',
-      tooltip : T('Limited to 15 characters. It must differ from\
-                   the <i>Workgroup</i> name.'),
+      tooltip : T('Netbios Name of this NAS. This name must differ from\
+                   the <i>Workgroup</i> name and be no greater than 15\
+                   characters.'),
     },
     {
       type : 'input',
       name : 'ad_netbiosalias',
       placeholder : T('NetBIOS alias'),
-      tooltip : T('Limited to 15 characters.'),
+      tooltip : T('Alternative names that SMB clients can use when\
+                   connecting to this NAS. Can be no greater than 15\
+                   characters.'),
     }
   ];
 
@@ -396,18 +406,37 @@ export class ActiveDirectoryComponent {
     entityEdit.formGroup.controls['ad_idmap_backend'].valueChanges.subscribe((res)=> {
       if ((this.idmapBacked != null) && (this.idmapBacked !== res)) {
         this.dialogservice.confirm(T("Active Directory IDMAP change!"),
-          T("<font color='red'>STOP</font>:<br><br>\
-          The idmap_ad plugin provides a way for Winbind to read id mappings from \
-          an AD server that uses RFC2307/SFU schema extensions. This module \
-          implements only the \"idmap\" API, and is READONLY. Mappings must be \
-          provided in advance by the administrator by adding the uidNumber \
-          attributes for users and gidNumber attributes for groups in the AD. \
-          Winbind will only map users that have a uidNumber and whose primary \
-          group have a gidNumber attribute set. It is recommended that \
-          all groups in use have gidNumber attributes assigned, otherwise they \
-          will not work. <br><br>\
-          <font color='red'>STOP</font>: If Active Directory is not \
-          configured for this, it will not work. <br>")).subscribe(
+          T('<font color="red">WARNING</font>: use <i>rid</i> or\
+             <i>autorid</i> for networks with only Windows computers,\
+             like most home networks. Mac computers joined to Active\
+             Directory can also be used with <i>rid</i> and\
+             <i>autorid</i>. Both of these backends have been\
+             preconfigured to work with this NAS. Other idmap_backend\
+             values are for use in larger or mixed networks with Windows\
+             and other operating systems. DO NOT CHANGE THE idmap_backend\
+             SETTING UNLESS REQUIRED TO WORK WITH A MIXED NETWORK AND THE\
+             PROPER CONFIGURATION HAS ALREADY BEEN DETERMINED. For\
+             reference, see <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_rid"\
+             target="_blank">idmap_rid(8)</a>, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_autorid"\
+             target="_blank">idmap_autorid(8)</a>\, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ad"\
+             target="_blank">ad</a>\, <a\
+             href="..//docs/directoryservice.html#id12"\
+             target="_blank">fruit</a>\, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_ldap"\
+             target="_blank">idmap_ldap(8)</a>\, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_nss"\
+             target="_blank">idmap_nss(8)</a>\, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_rfc2307"\
+             target="_blank">idmap_rfc2307(8)\, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_script"\
+             target="_blank">idmap_script(8)</a>\, <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb"\
+             target="_blank">tdb</a>\, and <a\
+             href="https://www.freebsd.org/cgi/man.cgi?query=idmap_tdb2"\
+             target="_blank">idmap_tdb2(8)</a>')).subscribe(
         (confirm) => {
           if (confirm) {
             this.idmapBacked = res;

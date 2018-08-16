@@ -66,7 +66,7 @@ export class LdapComponent {
       type : 'input',
       name : 'ldap_hostname',
       placeholder : T('Hostname'),
-      tooltip: T('Enter the hostname or IP address of the LDAP server.'),
+      tooltip: T('The hostname or IP address of the LDAP server.'),
       required: true,
       validation : [ Validators.required ]
     },
@@ -74,22 +74,22 @@ export class LdapComponent {
       type : 'input',
       name : 'ldap_basedn',
       placeholder : T('Base DN'),
-      tooltip: T('Enter the top level of the LDAP directory tree to be\
-                  used when searching for resources. Example:\
+      tooltip: T('Top level of the LDAP directory tree to be used when\
+                  searching for resources. Example:\
                   <i>dc=test,dc=org</i>.')
     },
     {
       type : 'input',
       name : 'ldap_binddn',
       placeholder : T('Bind DN'),
-      tooltip: T('Enter the administrative account name on the LDAP server.\
+      tooltip: T('Administrative account name on the LDAP server.\
                   Example: <i>cn=Manager,dc=test,dc=org</i>.')
     },
     {
       type : 'input',
       name : 'ldap_bindpw',
       placeholder : T('Bind Password'),
-      tooltip: T('Enter the password for the <b>Bind DN</b>.'),
+      tooltip: T('Password for the Bind DN.'),
       inputType : 'password',
       hideButton : false
     },
@@ -104,36 +104,35 @@ export class LdapComponent {
       type : 'input',
       name : 'ldap_usersuffix',
       placeholder : T('User Suffix'),
-      tooltip: T('Enter a suffix to add to a name when the user account is\
-                  added to the LDAP directory.')
+      tooltip: T('Suffix to add to a name when the user account is added\
+                  to the LDAP directory.')
     },
     {
       type : 'input',
       name : 'ldap_groupsuffix',
       placeholder : T('Group Suffix'),
-      tooltip: T('Enter a suffix to add to a name when the group is added\
-                  to the LDAP directory.')
+      tooltip: T('Suffix to add to a name when the group is added to the\
+                  LDAP directory.')
     },
     {
       type : 'input',
       name : 'ldap_passwordsuffix',
       placeholder : T('Password Suffix'),
-      tooltip: T('Enter a suffix to add to the password when it is added\
-                  to the LDAP directory.')
+      tooltip: T('Suffix to add to the password when it is added to the\
+                  LDAP directory.')
     },
     {
       type : 'input',
       name : 'ldap_machinesuffix',
       placeholder : T('Machine Suffix'),
-      tooltip: T('Enter a suffix to add to the system name when it is\
-                  added to the LDAP directory.')
+      tooltip: T('Suffix to add to the system name when it is added to\
+                  the LDAP directory.')
     },
     {
       type : 'input',
       name : 'ldap_sudosuffix',
       placeholder : T('SUDO Suffix'),
-      tooltip: T('Enter the suffix for LDAP-based users that need\
-                  superuser access.')
+      tooltip: T('Suffix for LDAP-based users that need superuser access.')
     },
     {
       type : 'select',
@@ -176,22 +175,23 @@ export class LdapComponent {
       type : 'input',
       name : 'ldap_timeout',
       placeholder : T('LDAP timeout'),
-      tooltip: T('Add more time in seconds if a Kerberos ticket time out\
-                  occurs.')
+      tooltip: T('LDAP timeout in seconds. Increase this value if a\
+                  Kerberos ticket timeout occurs.')
     },
     {
       type : 'input',
       name : 'ldap_dns_timeout',
       placeholder : T('DNS timeout'),
-      tooltip: T('Add more time in seconds if DNS queries timeout.')
+      tooltip: T('DNS timeout in seconds. Increase this value if DNS\
+                  queries timeout.')
     },
     {
       type : 'select',
       name : 'ldap_idmap_backend',
       placeholder : T('Idmap Backend'),
-      tooltip: T('Select the backend used to map Windows security\
-                  identifiers (SIDs) to UNIX UIDs and GIDs. Click\
-                  Edit to configure that backend'),
+      tooltip: T('Backend used to map Windows security identifiers\
+                  (SIDs) to UNIX UIDs and GIDs. Click Edit to configure\
+                  that backend'),
       options : []
     },
     {
@@ -206,7 +206,7 @@ export class LdapComponent {
       type : 'textarea',
       name : 'ldap_auxiliary_parameters',
       placeholder : T('Auxiliary Parameters'),
-      tooltip: T('Enter any additional options for <a\
+      tooltip: T('Additional options for <a\
                   href="https://jhrozek.fedorapeople.org/sssd/1.11.6/man/sssd.conf.5.html"\
                   target="_blank">sssd.conf(5)</a>.')
     },
@@ -221,20 +221,24 @@ export class LdapComponent {
       type : 'checkbox',
       name : 'ldap_enable',
       placeholder : T('Enable'),
-      tooltip: T('Unset to disable the configuration without deleting it.')
+      tooltip: T('Activates the configuration. Unset to disable the\
+                  configuration without deleting it.')
     },
     {
       type : 'input',
       name : 'ldap_netbiosname_a',
       placeholder : T('Netbios Name'),
-      tooltip: T('Limited to 15 characters. This must be different\
-                  from the <i>Workgroup</i> name.')
+      tooltip: T('Netbios Name of this NAS. This name must differ from\
+                  the <i>Workgroup</i> name and be no greater than 15\
+                  characters.')
     },
     {
       type : 'input',
       name : 'ldap_netbiosalias',
       placeholder : T('NetBIOS alias'),
-      tooltip: T('Limited to 15 characters.')
+      tooltip: T('Alternative names that SMB clients can use when\
+                  connecting to this NAS. Can be no greater than 15\
+                  characters.')
     }
   ];
 
