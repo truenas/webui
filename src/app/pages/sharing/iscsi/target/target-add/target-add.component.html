@@ -3,10 +3,10 @@
     <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup">
     </ng-container>
     <mat-card-actions class="buttons">
-      <button class="btn btn-block btn-warning" type="submit" mat-raised-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
-      <button *ngIf="route_success" type="button" (click)="goBack()" mat-raised-button color="accent">{{"Cancel" | translate}}</button>
+      <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid">{{"Save" | translate}}</button>
+      <button *ngIf="route_success" type="button" (click)="goBack()" mat-button color="accent">{{"Cancel" | translate}}</button>
       <span *ngFor="let custBtn of custActions">
-      <button mat-raised-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
+      <button mat-button *ngIf="!isCustActionVisible || isCustActionVisible(custBtn.id)" type="button" (click)="custBtn['function']()">{{custBtn.name | translate}}</button>
     </span>
     </mat-card-actions>
   </form>

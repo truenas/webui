@@ -53,7 +53,6 @@
           <button class="update-btn" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])">{{updateBtnLabel | translate}}</button>
         </div>
       </mat-card-content>
-      <!--<div class="widget-footer"><button md-raised-button color="primary" (click)="toggleConfig()">Flip</button></div>-->
     </mat-card>
 
     <!-- Flip Side -->
@@ -61,7 +60,7 @@
       <mat-card-content>
         <h3>Form goes here</h3>
       </mat-card-content>
-      <div class="widget-footer"><button mat-raised-button color="primary" (click)="toggleConfig()">{{"Flip" | translate}}</button></div>
+      <div class="widget-footer"><button mat-button color="primary" (click)="toggleConfig()">{{"Flip" | translate}}</button></div>
     </mat-card>
   </div>
 </div>

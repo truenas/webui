@@ -21,7 +21,7 @@
           </div>
         </ng-container>
       </div>
-      <!-- <div class="btn-group btn-group-justified btn-group-raised"> -->
+      <!-- <div class="btn-group btn-group-justified"> -->
       <mat-card-actions>
         <button id="submit_button" class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid">{{saveSubmitText | translate}}</button>
         <button *ngIf="conf.goBack" id="goback_button" class="btn btn-block btn-lg btn-primary" type="button" (click)="goBack()" mat-button color="accent">Cancel</button> 

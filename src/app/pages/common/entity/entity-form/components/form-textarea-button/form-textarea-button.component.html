@@ -3,7 +3,7 @@
     <input type="text" #textAreaSSH matInput [placeholder]="config.placeholder | translate" [formControlName]="config.name" [ngClass]="config.class" [required]="config.required" />
   </mat-input-container>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>
+    <button mat-button color="primary" (click)="customEventMethod($event)">{{config.customEventActionLabel}}</button>
   </mat-card-actions>
 	<tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip>
   <mat-error *ngIf="config.hasErrors">{{config.errors}}</mat-error>

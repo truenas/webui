@@ -751,7 +751,7 @@ iscsi .mat-ink-bar {
 }
 
 // Keeps buttons on UI prefs form from overflowing page
-@media (min-width: 600px) and (max-width:715px) {
+@media (min-width: 600px) and (max-width:740px) {
   .prefs-form button {
     display: block;
     margin-bottom: 10px !important;
@@ -805,7 +805,7 @@ iscsi .mat-ink-bar {
   @include variable(background-color, --primary, $primary);
 }
 
-.mat-dialog-container .mat-button {
+.mat-dialog-container .mat-button, .mat-button {
   text-transform: uppercase !important;
   font-weight: 500 !important;
 }
