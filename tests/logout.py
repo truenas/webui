@@ -55,8 +55,8 @@ class logout_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['logoutButton']).click()
             time.sleep(2)
             # Click on OK when re-confirm logout
-            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-            time.sleep(2)
+#            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
+#            time.sleep(2)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:

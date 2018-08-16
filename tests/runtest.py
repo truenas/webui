@@ -22,6 +22,7 @@ from acc_group import run_create_group_test
 from acc_user import run_create_user_test
 from store_pool import run_create_pool_test
 from net_conf import run_conf_network_test
+from plugins import run_plugin_test
 from serv_ssh import run_conf_ssh_test
 from serv_afp import run_conf_afp_test
 from serv_smb import run_conf_smb_test
@@ -79,7 +80,7 @@ if len(argument) == 1:
 
 # list of argument that should be use.
 optionlist = ["ip=", "test-name=", "driver="]
-testlist = ["account", "storage",  "network", "system", "guide", "service", "theme"]
+testlist = ["account", "storage", "plugin",  "network", "system", "guide", "service", "theme"]
 versionlist = ["U"]
 # look if all the argument are there.
 try:
@@ -154,29 +155,39 @@ else:
         run_create_group_test(runDriver)
         run_edit_test(runDriver)
         run_delete_test(runDriver)
-    if (test_name == "storage"):
+
+    elif (test_name == "storage"):
         run_create_pool_test(runDriver)
         run_delete_pool_test(runDriver)
+
+    elif (test_name == "plugin"):
+#        run_create_pool_test(runDriver)
+        run_plugin_test(runDriver)
+
     elif (test_name == "network"):
         run_conf_network_test(runDriver)
+
     elif (test_name == "system"):
         run_check_update_test(runDriver)
         run_conf_email_test(runDriver)
         run_conf_sysadvance_test(runDriver)
+
     elif (test_name == "service"):
         print ("Running: Guide Tests")
         run_conf_afp_test(runDriver)
         run_conf_smb_test(runDriver)
-        run_conf_dc_test(runDriver)
+#        run_conf_dc_test(runDriver)
         run_conf_dns_test(runDriver)
         run_conf_ftp_test(runDriver)
         run_conf_iscsi_test(runDriver)
         run_conf_lldp_test(runDriver)
         run_conf_ssh_test(runDriver)
         run_conf_webdav_test(runDriver)
+
     elif (test_name == "guide"):
         print ("Running: Guide Tests")
         run_view_guide_test(runDriver)
+
     elif (test_name == "theme"):
         print ("Running: Theme Tests")
         run_change_theme_test(runDriver)
@@ -210,6 +221,9 @@ if path.exists('acc_group.pyc'):
 
 if path.exists('store_pool.pyc'):
     call(["rm", "store_pool.pyc"])
+
+if path.exists('plugins.pyc'):
+    call(["rm", "plugins.pyc"])
 
 if path.exists('serv_afp.pyc'):
     call(["rm", "serv_afp.pyc"])

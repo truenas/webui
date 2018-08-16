@@ -31,6 +31,10 @@ xpaths = {
         'navAccount' : '//*[@id="nav-1"]/div/a[1]',
         'submenuUser' : '//*[@id="1-1"]',
         'submenuGroup' : '//*[@id="1-0"]',
+        'navPlugins' : '//*[@id="nav-9"]/div/a[1]',
+        'submenuAvailable' : '//*[@id="9-0"]',
+        'submenuInstalled' : '//*[@id="9-1"]',
+        'buttonSave' : '//*[contains(text(), "Save")]',
         'navStorage' : '//*[@id="nav-5"]/div/a[1]',
         'submenuPool' : '//*[@id="5-0"]',
         'poolID' : '//*[@id="expansionpanel_zfs_',
@@ -40,7 +44,7 @@ xpaths = {
         'poolconfirmdestroyCheckbox' : '//*[@id="confirm"]/mat-checkbox/label/div',
         'confirmCheckbox': '//*[contains(@name, "confirm_checkbox")]',
         'deleteButton': '//*[contains(@name, "ok_button")]',
-        'detachButton': '//*[contains(text(), "Detach")]',
+        'detachButton': '//*[contains(@name, "Detach_button")]',
         'closeButton' : '//*[contains(text(), "Close")]'
 
 #        'detachButton': '/html/body/div[5]/div[3]/div/mat-dialog-container/app-entity-dialog/div[3]/button[2]'
@@ -192,12 +196,52 @@ def pool_detach(driver, self, name):
     if driver.find_element_by_xpath(xpaths['detachButton']):
         print ("detach button found")
         driver.find_element_by_xpath(xpaths['detachButton']).click()
-        print (" alreadyclicked on detach")
-
-#    driver.find_element_by_xpath(xpaths['detachButton']).click()
-#    print ("2nd time  already clicked on detach")
+        print (" clicked on detach")
     time.sleep(32)
     print ("clicking on close")
     driver.find_element_by_xpath(xpaths['closeButton']).click()
     print ("already clicked on detach")
+
+
+def plugin_install(driver, self, action, name):
+    # the convention is set in such a way tha a single funtion can cleanup both type:user/group, name:name of the group or user
+    # path plugs in the xpath of user or group , submenu{User/Group}
+    # num specifies the column of the 3 dots which is different in user/group
+    # delNum speifies the option number where edit is after clicking on the 3 dots
+    if (action == "install"):
+        num = 5
+        delNum = 1
+        path = "Available"
+        #ED = "6"
+    elif (action == "check"):
+        num = 5
+        delNum = 2
+        path = "Installed"
+        #ED = "5"
+
+    # Click User submenu
+    driver.find_element_by_xpath(xpaths['submenu' + path]).click()
+    # wait till the list is loaded
+    time.sleep(2)
+    index = 1
+    ui_text = "null"
+    for x in range(0, 33):
+        if self.is_element_present(By.XPATH, '//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div'):
+            ui_element=driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[1]/div/div')
+            ui_text = ui_element.text
+            print (ui_text)
+        if (ui_text == name):
+            index = x
+            break
+        ui_element = " "
+    print ("index, delNum, num: " + str(x) + ", " + str(delNum) + "," + str(num))
+    time.sleep(1)
+    # click on the 3 dots
+    driver.find_element_by_xpath('//*[@id="entity-table-component"]/div['+ str(num) +']/ngx-datatable/div/datatable-body/datatable-selection/datatable-scroller/datatable-row-wrapper[' + str(x) + ']/datatable-body-row/div[2]/datatable-body-cell[' + str(num) + ']/div/app-entity-table-actions/div/mat-icon').click()
+    time.sleep(1)
+    # click on install option
+    driver.find_element_by_xpath('//*[@id="action_button_install"]').click()
+    # click on save button
+    driver.find_element_by_xpath(xpaths['buttonSave']).click()
+
 
