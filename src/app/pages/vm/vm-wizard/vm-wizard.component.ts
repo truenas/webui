@@ -485,7 +485,7 @@ blurEvent2(parent){
 }
 
 async customSubmit(value) {
-    // value.datastore = value.datastore.replace('/mnt/','')
+    value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const vm_payload = {}
     const zvol_payload = {}
