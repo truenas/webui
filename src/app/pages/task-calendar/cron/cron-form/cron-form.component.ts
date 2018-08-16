@@ -27,7 +27,7 @@ export class CronFormComponent {
 
    protected resource_name: string = 'tasks/cronjob';
    public route_success: string[] = ['tasks', 'cron'];
-   
+
    public formGroup: any;
    public error: string;
    protected pk: any;
@@ -50,57 +50,62 @@ export class CronFormComponent {
            type: 'input',
            name: 'cron_description',
            placeholder: T('Description'),
-           tooltip: T('Optional. Describe the new task.'),
-         }, 
+           tooltip: T('Enter a description of the cron job.'),
+         },
          {
            type: 'input',
            name: 'cron_command',
            placeholder: T('Command'),
            required: true,
            validation : [ Validators.required ],
-           tooltip: T('Enter the full path to the command or script to be run.'),
-         }, 
+           tooltip: T('Enter the full path to the command or script to\
+                       be run.'),
+         },
          {
            type: 'combobox',
            name: 'cron_user',
            placeholder: T('Run As User'),
-           tooltip: T('Choose a user account to run the <b>Command</b>. The\
-             user must have permission to run the <b>Command</b>.'),
+           tooltip: T('Select a user account to run the command. The\
+                       user must have permissions allowing them to run\
+                       the command or script.'),
            options: [],
            required: true,
            validation : [ Validators.required ],
-         }, 
+         },
          {
            type: 'scheduler',
            name: 'cron_picker',
            placeholder: T('Schedule a Cron Job'),
-           tooltip: T('Choose one of the convenient presets\
-             or choose <b>Custom</b> to trigger the advanced scheduler UI'),
+           tooltip: T('Select a schedule preset or choose <i>Custom</i>\
+                       to open the advanced scheduler.'),
            validation: [ Validators.required ],
            required: true,
            value: "0 0 * * *"
-         }, 
+         },
          {
            type: 'checkbox',
            name: 'cron_stdout',
            placeholder: T('Redirect Standard Output'),
-           tooltip: T('Set to disable emailing standard output (stdout) to the\
-             <i>root</i> user account.'),
+           tooltip: T('Redirect stdout to /dev/null. When unset, output\
+                       from the command is mailed to the user running\
+                       the cron job.'),
            value: true,
-         }, 
+         },
          {
            type: 'checkbox',
            name: 'cron_stderr',
-           placeholder: T('Redirect Errors'),
-           tooltip: T('Set to disable emailing errors (stderr) to the\
-             <i>root</i> user account.'),
+           placeholder: T('Redirect Standard Error'),
+           tooltip: T('Redirect stderr to /dev/null. When unset, error\
+                       output from the command is mailed to the user\
+                       running the cron job.'),
            value: false,
-         }, 
+         },
          {
            type: 'checkbox',
            name: 'cron_enabled',
            placeholder: T('Enabled'),
-           tooltip: T('Unset to disable the cron job without deleting it.'),
+           tooltip: T('Enable this cron job. When unset, disable the\
+                       cron job without deleting it.'),
            value: true,
          }
        ]
@@ -111,7 +116,7 @@ export class CronFormComponent {
 
    constructor(
      protected userService: UserService,
-     protected router: Router, 
+     protected router: Router,
      protected rest: RestService,
      protected ws: WebSocketService,
      protected aroute: ActivatedRoute,
@@ -132,16 +137,16 @@ export class CronFormComponent {
 
 
    resourceTransformIncomingRestData(data) {
-     data['cron_picker'] = data.cron_minute + " " + 
-                           data.cron_hour + " " + 
-                           data.cron_daymonth + " " + 
-                           data.cron_month + " " + 
+     data['cron_picker'] = data.cron_minute + " " +
+                           data.cron_hour + " " +
+                           data.cron_daymonth + " " +
+                           data.cron_month + " " +
                            data.cron_dayweek;
      return data;
    }
 
 
-   afterInit(entityForm){ 
+   afterInit(entityForm){
    }
 
    beforeSubmit(value){
@@ -155,4 +160,3 @@ export class CronFormComponent {
    }
 
 }
-

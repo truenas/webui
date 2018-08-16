@@ -21,14 +21,14 @@ export class PluginsInstalledListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: T('Name'), prop: '1' },
-    { name: T('Boot'), prop: '2' },
-    { name: T('State'), prop: '3' },
+    { name: T('Jail'), prop: '1' },
+    { name: T('IPv4 Address'), prop: '6' },
+    { name: T('IPv6 Address'), prop: '7' },
+    { name: T('Status'), prop: '3' },
+    // { name: T('Boot'), prop: '2' },
     // { name: 'Type', prop: '4' },
     { name: T('Release'), prop: '5' },
-    { name: T('IP4 address'), prop: '6' },
-    { name: T('IP6 address'), prop: '7' },
-    { name: T('Template'), prop: '8' }
+    // { name: T('Template'), prop: '8' }
   ];
   public config: any = {
     paging: true,

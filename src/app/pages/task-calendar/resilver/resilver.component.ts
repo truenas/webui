@@ -21,28 +21,30 @@ export class ResilverComponent {
     type: 'checkbox',
     name: 'enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Set to run this task at the configured times.'),
+    tooltip: T('Set to run resilver tasks between the configured times.'),
     value: true,
   }, {
     type: 'select',
     name: 'begin',
-    placeholder: T('Begin'),
-    tooltip: T('Choose a starting hour and minute for the resilver task.'),
+    placeholder: T('Begin Time'),
+    tooltip: T('Choose the hour and minute when resilver tasks can be\
+                started.'),
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'end',
-    placeholder: T('End'),
-    tooltip: T('Choose an ending hour and minute the resilver task\
-                cannot begin after.'),
+    placeholder: T('End Time'),
+    tooltip: T('Choose the hour and minute when new resilver tasks\
+                are not allowed to start. This does not affect active\
+                resilver tasks.'),
     options: [],
     value: '',
   }, {
     type: 'select',
     name: 'weekday',
-    placeholder: T('Day of week'),
-    tooltip: T('Choose the days to run this task.'),
+    placeholder: T('Days of the Week'),
+    tooltip: T('Select the days to run resilver tasks.'),
     multiple: true,
     options: [{
       label: 'Monday',

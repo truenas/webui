@@ -89,13 +89,7 @@ export class JailWizardComponent {
           name: 'ip4_interface',
           placeholder: T('IPv4 interface'),
           tooltip: T('IPv4 interface for the jail.'),
-          options: [
-            {
-              label: 'vnet0',
-              value: 'vnet0',
-            }
-          ],
-          value: 'vnet0',
+          options: [],
           relation: [{
             action: 'DISABLE',
             when: [{
@@ -171,13 +165,7 @@ export class JailWizardComponent {
           name: 'ip6_interface',
           placeholder: T('IPv6 Interface'),
           tooltip: T('IPv6 interface for the jail.'),
-          options: [
-            {
-              label: 'vnet0',
-              value: 'vnet0',
-            }
-          ],
-          value: 'vnet0',
+          options: [],
           class: 'inline',
           width: '30%',
         },
@@ -255,11 +243,11 @@ export class JailWizardComponent {
                 }
               },
               (res_remote) => {
-                this.dialogService.errorReport(T('Error: Get remote release choices failed'), res_remote.reason, res_remote.trace.formatted);
+                this.dialogService.errorReport(T('Error: Fetching remote release choices failed.'), res_remote.reason, res_remote.trace.formatted);
               });
           },
           (res_local) => {
-            this.dialogService.errorReport(T('Error: Get local fetched release choices failed'), res_local.reason, res_local.trace.formatted);
+            this.dialogService.errorReport(T('Error: Displaying local fetched releases failed.'), res_local.reason, res_local.trace.formatted);
           });
       },
       (res) => {
@@ -375,10 +363,21 @@ export class JailWizardComponent {
     });
     ( < FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
       this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
+      if (res) {
+        if (!_.find(this.ip4_interfaceField.options, { label: 'vnet0'})) {
+          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        }
+        if (!_.find(this.ip6_interfaceField.options, { label: 'vnet0'})) {
+          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        }
+      } else {
+        this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+      }
 
       if (( < FormGroup > entityWizard.formArray.get([1])).controls['dhcp'].value && !res) {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
+        _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.wizardConfig[1].fieldConfig, { 'name': 'vnet' }).errors = '';
