@@ -21,8 +21,7 @@ export class DatasetComponent implements OnInit{
     type: 'select',
     name: 'pool',
     placeholder: T('System Dataset Pool'),
-    tooltip: T('Select the ZFS pool to contain the system dataset.<br>\
-                Note: Do not use an encrypted, locked pool.'),
+    tooltip: T('Select the ZFS pool to contain the system dataset.'),
     options: [
       {label: '---', value: null},
       { label: 'freenas-boot', value: 'freenas-boot' },
