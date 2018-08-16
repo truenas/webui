@@ -21,25 +21,26 @@ export class PluginsInstalledListComponent {
   protected entityList: any;
 
   public columns: Array < any > = [
-    { name: T('Name'), prop: '1' },
-    { name: T('Boot'), prop: '2' },
-    { name: T('State'), prop: '3' },
+    { name: T('Jail'), prop: '1' },
+    { name: T('IPv4 Address'), prop: '6' },
+    { name: T('IPv6 Address'), prop: '7' },
+    { name: T('Status'), prop: '3' },
+    // { name: T('Boot'), prop: '2' },
     // { name: 'Type', prop: '4' },
     { name: T('Release'), prop: '5' },
-    { name: T('IP4 address'), prop: '6' },
-    { name: T('IP6 address'), prop: '7' },
-    { name: T('Template'), prop: '8' }
+    // { name: T('Template'), prop: '8' }
   ];
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
-    multiSelect: true,
+    multiSelect: true
   };
   public multiActions: Array < any > = [{
       id: "mstart",
       label: T("Start"),
       icon: "play_arrow",
       enable: true,
+      ttpos: "above", // tooltip position
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -56,6 +57,7 @@ export class PluginsInstalledListComponent {
               new EntityUtils().handleWSError(this, res);
               this.loader.close();
             });
+            
       }
     },
     {
@@ -63,6 +65,7 @@ export class PluginsInstalledListComponent {
       label: T("Stop"),
       icon: "stop",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
@@ -86,6 +89,7 @@ export class PluginsInstalledListComponent {
       label: T("Delete"),
       icon: "delete",
       enable: true,
+      ttpos: "above",
       onClick: (selected) => {
         this.entityList.doMultiDelete(selected);
       }

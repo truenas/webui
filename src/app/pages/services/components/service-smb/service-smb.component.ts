@@ -47,13 +47,14 @@ export class ServiceSMBComponent implements OnInit {
                   of the system. This name is limited to 15 characters and\
                   cannot be the <b>Workgroup</b> name.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required, Validators.maxLength(15) ]
     },
     {
       type: 'input',
       name: 'cifs_srv_netbiosalias',
       placeholder: T('NetBIOS Alias'),
       tooltip: T('Enter an alias. Limited to 15 characters.'),
+      validation: [ Validators.maxLength(15) ]
     },
     {
       type: 'input',
@@ -333,7 +334,7 @@ export class ServiceSMBComponent implements OnInit {
         if (res[0]) {
           this.idmapID = res[0].id;
         if (new_range_low > new_range_high) {
-          this.error = "Range low larger than range high";
+          this.error = "Range low is greater than range high.";
         } else {
           if (this.idmapID) {
             this.ws.call(

@@ -72,10 +72,10 @@ export class GroupListComponent {
     const params = [id, {"delete_users": false}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Are you sure you want to delete the selected item?"), 
+      T("Delete this group?"), 
       false, T("Delete"),
       true,
-      T('Do you want to delete all users with this primary group?'),
+      T('Delete all users with this primary group?'),
       'group.delete',
       params);
     ds.afterClosed().subscribe((status)=>{

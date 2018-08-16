@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
@@ -9,10 +9,9 @@ import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
-import { validateBasis } from '@angular/flex-layout';
+
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 
@@ -96,13 +95,16 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'memory',
           placeholder: T('Memory Size (MiB)'),
-          tooltip: T('Allocate a number of mebibytes of RAM to the\
+          tooltip: T('Allocate a number of megabytes of RAM to the\
                       Docker VM.'),
           value: 2048,
           inputType: 'number',
           min: 2048,
           validation : [ Validators.required],
           required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent2,
+          parent: this,
         },
       ]
     },
@@ -113,7 +115,7 @@ export class DockerVMWizardComponent {
           name : 'NIC_type',
           placeholder : T('Adapter Type'),
           tooltip : T('<i>Intel e82545 (e1000)</i> emulates an\
-                       Intel ethernet card. This provides compatibility\
+                       Intel Ethernet card. This provides compatibility\
                        with most operating systems. <i>VirtIO</i>\
                        provides better performance when the operating\
                        system installed in the VM supports VirtIO\
@@ -126,8 +128,8 @@ export class DockerVMWizardComponent {
         {
           name : 'NIC_mac',
           placeholder : T('MAC Address'),
-          tooltip : T('A randomized MAC address is normally assigned. Enter\
-                       a value here to set a specific MAC address.'),
+          tooltip : T('A randomized MAC address is normally assigned. \
+                       Enter a value here to set a specific MAC address.'),
           type: 'input',
           value : '00:a0:98:FF:FF:FF',
           validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
@@ -159,7 +161,7 @@ export class DockerVMWizardComponent {
           type: 'input',
           name: 'size',
           placeholder : T('Raw file size (GiB)'),
-          tooltip: T('Allocate a number of gibibytes (GiB) to the new\
+          tooltip: T('Allocate a number of gigabytes (GiB) to the new\
                       raw file.'),
           value: 20,
           inputType: 'number',
@@ -254,9 +256,17 @@ export class DockerVMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([2])).get('vcpus').valueChanges.subscribe((vcpus) => {
         this.summary[T('Number of CPUs')] = vcpus;
       });
-      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' Mib';
+      this.summary[T('Memory')] = ( < FormGroup > entityWizard.formArray.get([2])).get('memory').value + ' MiB';
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
-        this.summary[T('Memory')] = memory + ' Mib';
+        this.summary[T('Memory')] = memory + ' MiB';
+      });
+
+      this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
+        if (available_memory > 2048 * 1024* 1024) {
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(2048);
+        } else {
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+        }
       });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
@@ -281,8 +291,20 @@ blurEvent(parent){
   const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
   parent.ws.call('vm.query', [[["name","=",vm_name]]]).subscribe((vm_wizard_res)=>{
     if(vm_wizard_res.length > 0){
-      parent.dialogService.Info("Error", `virtual machine ${vm_wizard_res[0].name} already exists, please use a different name`).subscribe(()=>{
+      parent.dialogService.Info("Error", `Virtual machine ${vm_wizard_res[0].name} already exists.`).subscribe(()=>{
         parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
+}
+blurEvent2(parent){
+  const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[2].memory
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+    if( vm_memory_requested *1024*1024> vm_memory_available){
+      parent.dialogService.Info("Error", `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`).subscribe(()=>{
+        parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
       })
 
     }

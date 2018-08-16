@@ -68,8 +68,10 @@ export class VolumesListTableConfig implements InputTableConf {
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
+  public showSpinner:boolean;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
+
 
 
   constructor(
@@ -95,7 +97,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
         this.rowData = this.resourceTransformIncomingRestData(res.data);
       }, (res) => {
-        this.dialogService.errorReport(T("Error getting volume/dataset data"), res.message, res.stack);
+        this.dialogService.errorReport(T("Error getting pool or dataset data."), res.message, res.stack);
       });
     }
   }
@@ -117,7 +119,7 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({
           label: T("Lock"),
           onClick: (row1) => {
-            this.dialogService.confirm(T("Lock"), T("Proceed with locking the pool: ") + row1.name).subscribe((confirmResult) => {
+            this.dialogService.confirm(T("Lock Pool"), T("Lock ") + row1.name + "?").subscribe((confirmResult) => {
               if (confirmResult === true) {
                 this.loader.open();
                 this.rest.post(this.resource_name + "/" + row1.name + "/lock/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
@@ -126,7 +128,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
                 }, (res) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T("Error locking pool"), res.message, res.stack);
+                  this.dialogService.errorReport(T("Error locking pool."), res.message, res.stack);
                 });
               }
             });
@@ -135,7 +137,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       } else {
         actions.push({
-          label: T("Un-Lock"),
+          label: T("Unlock"),
           onClick: (row1) => {
             let localLoader = this.loader,
             localRest = this.rest,
@@ -144,7 +146,7 @@ export class VolumesListTableConfig implements InputTableConf {
             localSnackBar = this.snackBar;
 
             const conf: DialogFormConfiguration = {
-              title: "Unlock Pool: " + row1.name,
+              title: "Unlock " + row1.name,
               fieldConfig: [{
                 type : 'input',
                 inputType: 'password',
@@ -167,7 +169,7 @@ export class VolumesListTableConfig implements InputTableConf {
               customSubmit: function (entityDialog) {
                 const value = entityDialog.formValue;
                 localLoader.open();
-                return localRest.post("storage/volume/" + row1.name + "/unlock/", 
+                return localRest.post("storage/volume/" + row1.name + "/unlock/",
                   { body: JSON.stringify({
                      passphrase: value.passphrase,
                      recovery_key: value.recovery_key 
@@ -175,8 +177,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   }).subscribe((restPostResp) => {
                   entityDialog.dialogRef.close(true);
                   localLoader.close();
-                  localParentVol.repaintMe();     
-                  localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });       
+                  localParentVol.repaintMe();
+                  localSnackBar.open(row1.name + " has been unlocked.", 'close', { duration: 5000 });
                 }, (res) => {
                   localLoader.close();
                   localDialogService.errorReport(T("Error Unlocking"), res.error, res.stack);
@@ -221,14 +223,14 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Delete Recovery Key"),
         onClick: (row1) => {
-          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for volume: ") + row1.name).subscribe((confirmResult) => {
+          this.dialogService.confirm(T("Delete Recovery Key"), T("Delete recovery key for ") + row1.name + "?").subscribe((confirmResult) => {
             if (confirmResult === true) {
               this.loader.open();
 
               this.rest.delete(this.resource_name + "/" + row1.name + "/recoverykey/", { body: JSON.stringify({}) }).subscribe((restPostResp) => {
                 this.loader.close();
 
-                this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for pool ") + row1.name).subscribe((infoResult) => {
+                this.dialogService.Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for ") + row1.name).subscribe((infoResult) => {
                   this.parentVolumesListComponent.repaintMe();
                 });
               }, (res) => {
@@ -294,18 +296,19 @@ export class VolumesListTableConfig implements InputTableConf {
             fieldConfig: [{
               type: 'paragraph',
               name: 'pool_detach_warning',
-              paraText: T("WARNING: You are about to detach '" + row1.name + "'. \
-                Detaching a pool makes the data unavailable. \
-                Be sure that you understand the risks.\
-                In addition to detaching the pool, you may also choose to destroy its data."),
+              paraText: T("WARNING: Detaching '" + row1.name + "'. \
+                           Detaching a pool makes the data unavailable. \
+                           The pool data can also be wiped by setting the\
+                           related option. Back up any critical data \
+                           before detaching a pool."),
               isHidden: false
             }, {
               type: 'paragraph',
               name: 'pool_detach_warning',
               paraText: T("'" + row1.name + "' is encrypted! If the passphrase for \
-                this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
-                Before detaching encrypted pools, download and safely\
-                store the recovery key."),
+                           this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE! \
+                           Before detaching encrypted pools, download and safely\
+                           store the recovery key."),
               isHidden: encryptedStatus !== '' ? false : true
             }, {
               type: 'checkbox',
@@ -343,23 +346,23 @@ export class VolumesListTableConfig implements InputTableConf {
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + "'");
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached '") + row1.name + "'");
                     localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
-                  localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                  localDialogService.errorReport(T("Error detaching pool."), res.message, res.stack);
                 });
               } else {
                 return localRest.delete("storage/volume/" + row1.name, { body: JSON.stringify({}) 
                   }).subscribe((res) => {
                     entityDialog.dialogRef.close(true);
                     localLoader.close();
-                    localDialogService.Info(T("Detach Pool"), T("Successfully detached pool: '") + row1.name + 
+                    localDialogService.Info(T("Detach Pool"), T("Successfully detached '") + row1.name + 
                       T("'. All data on that pool was destroyed."));
                     localParentVol.repaintMe();
                 }, (res) => {
                   localLoader.close();
-                  localDialogService.errorReport(T("Error detaching pool"), res.message, res.stack);
+                  localDialogService.errorReport(T("Error detaching pool."), res.message, res.stack);
                 });
               }
             }
@@ -382,7 +385,7 @@ export class VolumesListTableConfig implements InputTableConf {
           this.getPoolData(row1.id).subscribe((res) => {
             if (res[0]) {
               if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
-                const message = "Are you sure you want to stop a scrub for pool " + row1.name + "?";
+                const message = "Stop the scrub on " + row1.name + "?";
                 this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
                   if (res) {
                     this.loader.open();
@@ -398,7 +401,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 });
               } else {
-                const message = "Are you sure you want to start a scrub for pool " + row1.name + "?";
+                const message = "Start a scrub on " + row1.name + "?";
                 this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
                   if (res) {
                     this.loader.open();
@@ -432,9 +435,9 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Upgrade Pool"),
           onClick: (row1) => {
 
-            this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? (Upgrading a pool is a \
-                                                        non-reversable operation that could make some features of \
-                                                        the pool incompatible with older versions of FreeNAS): ") + row1.name).subscribe((confirmResult) => {
+            this.dialogService.confirm(T("Upgrade Pool"), T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
+                                                             one-way operation that might make some features of \
+                                                             the pool incompatible with older versions of FreeNAS: ") + row1.name).subscribe((confirmResult) => {
                 if (confirmResult === true) {
                   this.loader.open();
 
@@ -515,7 +518,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     this.parentVolumesListComponent.repaintMe();
                   }, (error) => {
                     this.loader.close();
-                    this.dialogService.errorReport(T("Error deleting dataset"), error.message, error.stack);
+                    this.dialogService.errorReport(T("Error deleting dataset."), error.message, error.stack);
                   });
 
                 }
@@ -599,7 +602,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 type: 'input',
                 name: 'name',
                 placeholder: T('Name'),
-                tooltip: T('Add a name for the new snapshot'),
+                tooltip: T('Add a name for the new snapshot.'),
                 validation: [Validators.required],
                 required: true,
                 value: "manual" + '-' + this.getTimestamp()            },
@@ -625,7 +628,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
             this.dialogService.dialogForm(conf).subscribe((res) => {
               if (res) {
-                this.snackBar.open(T("Snapshot successfully taken"), T('close'), { duration: 5000 });
+                this.snackBar.open(T("Snapshot successfully taken."), T('close'), { duration: 5000 });
               }
             });
           })
@@ -780,6 +783,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   ngOnInit(): void {
+    this.showSpinner = true;
+
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
@@ -813,17 +818,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.paintMe = true;
 
         this.showDefaults = true;
+        this.showSpinner = false;
 
         
       }, (res) => {
         this.showDefaults = true;
+        this.showSpinner = false;
 
-        this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
+        this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
       });
     }, (res) => {
       this.showDefaults = true;
+      this.showSpinner = false;
 
-      this.dialogService.errorReport(T("Error getting pool data"), res.message, res.stack);
+      this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
   }

@@ -27,7 +27,7 @@ export class UserListComponent implements OnInit {
   public columns: Array < any > = [
     { name: 'Username', prop: 'bsdusr_username', always_display: true },
     { name: 'UID', prop: 'bsdusr_uid', hidden: true },
-    { name: 'GID', prop: 'bsdusr_group', hidden: true },
+    { name: 'GID', prop: 'bsdusr_gid', hidden: true },
     { name: 'Home directory', prop: 'bsdusr_home', hidden: false },
     { name: 'Shell', prop: 'bsdusr_shell', hidden: false },
     { name: 'Builtin', prop: 'bsdusr_builtin', hidden: true },
@@ -94,7 +94,7 @@ export class UserListComponent implements OnInit {
     const params = [id, {"delete_group": true}]
     const ds = this.dialogService.confirm(
       T("Delete"), 
-      T("Delete the selected item?"), 
+      T("Delete the user?"), 
       false, T("Delete"),
       true,
       T('Keep user primary group'),
@@ -129,6 +129,15 @@ export class UserListComponent implements OnInit {
     return false
 
 
+  }
+  resourceTransformIncomingRestData(data) {
+    this.ws.call('group.query').subscribe((res)=>{
+      data.forEach(user => {
+        const group = _.find(res, {"id" : user.bsdusr_group});
+        user['bsdusr_gid'] = group.gid;
+      });
+    })
+    return data;
   }
   
 }

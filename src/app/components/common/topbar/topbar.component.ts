@@ -151,15 +151,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   signOut() {
-    this.translate.get('Log out').subscribe((logout: string) => {
-      this.translate.get("Log out of the WebUI?").subscribe((logout_prompt) => {
-        this.dialogService.confirm("Log Out", "Log out of the WebUI?", true, T("Log Out")).subscribe((res) => {
-          if (res) {
-            this.ws.logout();
-          }
-        });
-      });
-    });
+    this.ws.logout();
   }
 
   onShutdown() {
@@ -213,14 +205,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   onGoToLegacy() {
-    this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
-      this.translate.get("Return to the previous graphical user interface.").subscribe((gotolegacy_prompt) => {
-        this.dialogService.confirm("Switch to Legacy UI?", "Return to the previous graphical user interface.", true, T("Switch")).subscribe((res) => {
-          if (res) {
-            window.location.href = '/legacy/';
-          }
-        });
-      });
+    this.dialogService.confirm(T("Switch to Legacy UI?"), T("Switch to the legacy user interface."), true, T("Switch")).subscribe((res) => {
+      if (res) {
+        window.location.href = '/legacy/';
+      }
     });
   }
+
+  // onGoToLegacy() {
+  //   this.translate.get('Switch to Legacy UI?').subscribe((gotolegacy: string) => {
+  //     this.translate.get("Switch to the legacy user interface.").subscribe((gotolegacy_prompt) => {
+  //       this.dialogService.confirm(gotolegacy, gotolegacy_prompt, true, T("Switch")).subscribe((res) => {
+  //         if (res) {
+  //           window.location.href = '/legacy/';
+  //         }
+  //       });
+  //     });
+  //   });
+  // }
 }

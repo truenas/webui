@@ -1,6 +1,6 @@
 <ng-template [ngTemplateOutlet]="templateTop" [ngTemplateOutletContext]="this"></ng-template>
 <p *ngIf="!hasConf">
-    Please <button mat-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to setup configuration first.
+    Please <button mat-raised-button color="primary" class="btn btn-link" type="button" (click)="goConf()">Click here</button> to set up configuration first.
 </p>
 <mat-card class="form-card">
     <div class="mat-content">
@@ -22,7 +22,7 @@
                   <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
                     [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
                     <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'"></div>
-                    <button type="button" *ngIf="field.hideButton===false" mat-button id="show-pw" (click)="togglePW()">Show/Hide Password(s)</button>
+                    <button type="button" *ngIf="field.hideButton===false" mat-button id="show-pw" (click)="togglePW()">Show/Hide Passwords</button>
                   </div>
                 <!--</ng-template>-->
               </div>

@@ -254,8 +254,8 @@ export class AFPFormComponent implements OnDestroy {
         this.router.navigate(new Array('/').concat(
           this.route_success));
       } else {
-          this.dialog.confirm(T("Enable service"), 
-          T("Would you like to enable this service"), 
+          this.dialog.confirm(T("Enable service"),
+          T("Enable this service?"),
           true, T("Enable Service")).subscribe((dialogRes) => {
             if (dialogRes) {
               entityForm.loader.open();

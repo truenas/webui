@@ -74,11 +74,10 @@ export class DeviceAddComponent implements OnInit {
       tooltip : 'Browse to an existing <a\
                  href="..//docs/storage.html#adding-zvols"\
                  target="_blank">Zvol</a>.',
-      type: 'explorer',
-      explorerType: "zvol",
-      initial: '/mnt',
+      type: 'select',
       required: true,
-      validation: [Validators.required]
+      validation : [Validators.required],
+      options:[]
     },
     {
       name : 'DISK_mode',
@@ -108,8 +107,8 @@ export class DeviceAddComponent implements OnInit {
     {
       name: 'NIC_type',
       placeholder: 'Adapter Type:',
-      tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> ethernet card\
-                has compatibility with most operating systems. Change to\
+      tooltip: 'Emulating an <i>Intel e82545 (e1000)</i> Ethernet card\
+                provides compatibility with most operating systems. Change to\
                 <i>VirtIO</i> to provide better performance on systems\
                 with VirtIO paravirtualized network driver support.',
       type: 'select',
@@ -348,6 +347,16 @@ export class DeviceAddComponent implements OnInit {
   }
 
   afterInit() {
+
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+      zvols.forEach(zvol => {
+        _.find(this.diskFieldConfig, {name:'DISK_zvol'}).options.push(
+          {
+            label : zvol.id, value : '/dev/zvol/' + zvol.id
+          }
+        );   
+      });
+    });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option
     this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm)=>{
       if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){

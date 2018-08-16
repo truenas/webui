@@ -29,7 +29,7 @@ export class VlanFormComponent {
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save VLAN Interface Changes"),
-    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    message: T("Network connectivity will be interrupted. Proceed?"),
     hideCheckbox: false
   }
 
@@ -47,7 +47,7 @@ export class VlanFormComponent {
       type : 'select',
       name : 'vlan_pint',
       placeholder : 'Parent Interface',
-      tooltip : 'Usually an ethernet card connected to a configured\
+      tooltip : 'Usually an Ethernet card connected to a configured\
                  switch port. Newly created link aggregations\
                  will not appear until the system is rebooted.',
       options : [],

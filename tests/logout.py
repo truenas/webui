@@ -36,7 +36,7 @@ xpaths = {
          'rootButton' : "/html/body/app-root/app-admin-layout/mat-sidenav-container/mat-sidenav-content/topbar/mat-toolbar/mat-toolbar-row/button[6]/span/mat-icon",
          'logoutButton' : "//*[contains(text(), 'Log out')]",
          'logoutconfirmationCheckbox' : "/html/body/div[3]/div[2]/div[2]/md-dialog-container/confirm-dialog/div[1]/md-checkbox/label/div",
-         'logoutconfirmationButton' : "//*[contains(text(), 'Ok')]"
+         'logoutconfirmationButton' : "//*[contains(@name, 'ok_button')]"
          }
 
 class logout_test(unittest.TestCase):
@@ -55,8 +55,8 @@ class logout_test(unittest.TestCase):
             driver.find_element_by_xpath(xpaths['logoutButton']).click()
             time.sleep(2)
             # Click on OK when re-confirm logout
-            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
-            time.sleep(2)
+#            driver.find_element_by_xpath(xpaths['logoutconfirmationButton']).click()
+#            time.sleep(2)
             #taking screenshot
             function.screenshot(driver, self)
         except Exception:
