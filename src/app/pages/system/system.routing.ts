@@ -143,8 +143,14 @@ export const routes: Routes = [
             },
             {
               path:'saveconfig',
-              component: ManualUpdateConfigSaveComponent,
-              data: {title:'Save Config', breadcrumb: 'config'}
+              data: {title:'Save Config', breadcrumb: 'Save Config'},
+              children:[
+                {
+                  path:'',
+                  component: ManualUpdateConfigSaveComponent,
+                  data: {title:'Save Config', breadcrumb: 'Save Config'}
+                }
+              ]
             }
           ]
         },
