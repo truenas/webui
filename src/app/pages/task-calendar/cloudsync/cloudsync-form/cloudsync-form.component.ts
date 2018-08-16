@@ -32,7 +32,7 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'description',
     placeholder: T('Description'),
-    tooltip: T('Enter a descriptive name of this task.'),
+    tooltip: T('Enter a description of the Cloud Sync Task.'),
     required: true,
     validation : [ Validators.required ]
   }, {
@@ -52,8 +52,8 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'select',
     name: 'credentials',
     placeholder: T('Credential'),
-    tooltip: T('Choose the cloud storage provider credentials from the\
-                list of entered Cloud Credentials.'),
+    tooltip: T('Select the cloud storage provider credentials from the\
+                list of available Cloud Credentials.'),
     options: [{
       label: '----------', value: null
     }],
@@ -77,7 +77,7 @@ export class CloudsyncFormComponent implements OnInit {
         when: [{
           name: 'credentials',
           value: null,
-         }]
+        }]
       }
     ],
     required: true,
@@ -104,7 +104,7 @@ export class CloudsyncFormComponent implements OnInit {
         when: [{
           name: 'credentials',
           value: null,
-         }]
+        }]
       }
     ],
     value: "",
@@ -176,7 +176,7 @@ export class CloudsyncFormComponent implements OnInit {
         when: [{
           name: 'encryption',
           value: true,
-         }]
+        }]
       }
     ]
   },
@@ -184,10 +184,9 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'input',
     name: 'encryption_password',
     placeholder: T('Encryption password'),
-    tooltip: T('The password for encrypting and decrypting remote\
-                data. <b>Warning:</b>\
-                Always save and back up this password. Losing the\
-                encryption password can result in data loss.'),
+    tooltip: T('Enter the password to encrypt and decrypt remote data.\
+                <b>Warning</b>: Always save and back up this password.\
+                Losing the encryption password can result in data loss.'),
     isHidden: true,
     relation: [
       {
@@ -195,7 +194,7 @@ export class CloudsyncFormComponent implements OnInit {
         when: [{
           name: 'encryption',
           value: true,
-         }]
+        }]
       }
     ]
   },
@@ -206,8 +205,8 @@ export class CloudsyncFormComponent implements OnInit {
     tooltip: T('Enter a long string of random characters for use as\
                 <a href="https://searchsecurity.techtarget.com/definition/salt"\
                 target="_blank">salt</a> for the encryption password.\
-                <b>Warning:</b> Save and back up the encryption salt value.\
-                Losing the salt value can result in data loss.'),
+                <b>Warning:</b> Save and back up the encryption salt\
+                value. Losing the salt value can result in data loss.'),
     isHidden: true,
     relation: [
       {
@@ -215,7 +214,7 @@ export class CloudsyncFormComponent implements OnInit {
         when: [{
           name: 'encryption',
           value: true,
-         }]
+        }]
       }
     ]
   },
@@ -230,15 +229,16 @@ export class CloudsyncFormComponent implements OnInit {
     type: 'scheduler',
     name: 'cloudsync_picker',
     placeholder: T('Schedule the Cloud Sync Task'),
-    tooltip: T('Choose one of the convenient presets\
-      or choose <b>Custom</b> to trigger the advanced scheduler UI'),
-      required: true
+    tooltip: T('Select a schedule preset or choose <i>Custom</i> to open\
+                the advanced scheduler.'),
+    required: true
   },
   {
     type: 'checkbox',
     name: 'enabled',
     placeholder: T('Enabled'),
-    tooltip: T('Unset to disable the task without deleting it.'),
+    tooltip: T('Enable this Cloud Sync Task. Unset to disable this Cloud\
+                Sync Task without deleting it.'),
     value: true,
   }];
 

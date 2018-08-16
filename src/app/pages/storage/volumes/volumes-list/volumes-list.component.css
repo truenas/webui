@@ -27,3 +27,9 @@
 /*.global_volume_based_action_menu {
     padding-right: 20px;
 }*/
+
+#pools-spinner {
+    position: absolute;
+    left: 47%;
+    top: 12px;
+}

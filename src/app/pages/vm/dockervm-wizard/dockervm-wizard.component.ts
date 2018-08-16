@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService, WebSocketService, NetworkService } from '../../../services';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
@@ -9,10 +9,9 @@ import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 import {VmService} from '../../../services/vm.service';
 import {regexValidator} from '../../common/entity/entity-form/validators/regex-validation';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material';
-import { validateBasis } from '@angular/flex-layout';
+
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 
@@ -103,6 +102,9 @@ export class DockerVMWizardComponent {
           min: 2048,
           validation : [ Validators.required],
           required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent2,
+          parent: this,
         },
       ]
     },
@@ -258,6 +260,14 @@ export class DockerVMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([2])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] = memory + ' MiB';
       });
+
+      this.ws.call('vm.get_available_memory').subscribe((available_memory)=>{
+        if (available_memory > 2048 * 1024* 1024) {
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(2048);
+        } else {
+          ( < FormGroup > entityWizard.formArray.get([2])).controls['memory'].setValue(0);
+        }
+      });
       ( < FormGroup > entityWizard.formArray.get([4])).get('raw_filename').valueChanges.subscribe((raw_filename) => {
         ( < FormGroup > entityWizard.formArray.get([4])).get('raw_file_directory').valueChanges.subscribe((raw_file_directory)=>{
           this.summary[T('Raw file location')] = raw_file_directory + "/" +raw_filename+"_"+name;
@@ -283,6 +293,18 @@ blurEvent(parent){
     if(vm_wizard_res.length > 0){
       parent.dialogService.Info("Error", `Virtual machine ${vm_wizard_res[0].name} already exists.`).subscribe(()=>{
         parent.entityWizard.formArray.get([1]).get('name').setValue("");
+      })
+
+    }
+  })
+}
+blurEvent2(parent){
+  const vm_memory_requested = parent.entityWizard.formGroup.value.formArray[2].memory
+  const vm_name = parent.entityWizard.formGroup.value.formArray[1].name
+  parent.ws.call('vm.get_available_memory').subscribe((vm_memory_available)=>{
+    if( vm_memory_requested *1024*1024> vm_memory_available){
+      parent.dialogService.Info("Error", `Cannot allocate ${vm_memory_requested} Mib to docker: ${vm_name}.`).subscribe(()=>{
+        parent.entityWizard.formArray.get([2]).get('memory').setValue(0);
       })
 
     }
