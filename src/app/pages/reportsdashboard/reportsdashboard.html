@@ -1,8 +1,13 @@
+<mat-spinner 
+  [diameter]='40' 
+  id="reporting-spinner"
+  *ngIf="showSpinner"
+>
+</mat-spinner> 
 <div id="dashboardcontainerdiv">
   <mat-tab-group *ngIf="drawTabs" (selectChange)="tabSelectChangeHandler($event)">
     <mat-tab *ngFor="let tabChartsMappingDataItem of tabChartsMappingDataArray" label="{{ tabChartsMappingDataItem.keyName | translate }}">
       <div *ngIf="tabChartsMappingDataSelected.keyName === tabChartsMappingDataItem.keyName">
-
 
         <div *ngIf="paginationLength > paginationPageSize">
           <mat-paginator [length]="paginationLength" [pageSize]="paginationPageSize" [pageSizeOptions]="paginationPageSizeOptions" (page)="paginationUpdate($event)">

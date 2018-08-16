@@ -68,8 +68,10 @@ export class VolumesListTableConfig implements InputTableConf {
   public route_add = ["storage", "pools", "import"];
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
+  public showSpinner:boolean;
   public encryptedStatus: any;
   public custActions: Array<any> = [];
+
 
 
   constructor(
@@ -781,6 +783,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   ngOnInit(): void {
+    this.showSpinner = true;
+
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
     }
@@ -814,15 +818,18 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.paintMe = true;
 
         this.showDefaults = true;
+        this.showSpinner = false;
 
         
       }, (res) => {
         this.showDefaults = true;
+        this.showSpinner = false;
 
         this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
       });
     }, (res) => {
       this.showDefaults = true;
+      this.showSpinner = false;
 
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });

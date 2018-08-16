@@ -47,8 +47,9 @@ export class RsyncFormComponent {
         type: 'combobox',
         name: 'rsync_user',
         placeholder: T('User'),
-        tooltip: T('The chosen user must have permission to write to the\
-                    specified directory on the remote system.'),
+        tooltip: T('Select the user to run the rsync task. The user\
+                    selected must have permissions to write to the\
+                    specified directory on the remote host.'),
         options: [],
         required: true,
         validation : [ Validators.required ],
@@ -73,9 +74,11 @@ export class RsyncFormComponent {
         type: 'select',
         name: 'rsync_mode',
         placeholder: T('Rsync mode'),
-        tooltip: T('Choose <a href="guide" target="_blank">Rsync\
-                    module</a> or <a href="guide" target="_blank">Rsync\
-                    over SSH</a>'),
+        tooltip: T('Choose <a \
+                    href="../docs/tasks.html#rsync-module-mode"\
+                    target="_blank">rsync module mode</a> or <a \
+                    href="../docs/tasks.html#rsync-over-ssh-mode"\
+                    target="_blank">rsync over SSH mode</a>'),
         options: [],
       }, {
         type: 'input',
@@ -113,21 +116,21 @@ export class RsyncFormComponent {
         type: 'input',
         name: 'rsync_description',
         placeholder: T('Short Description'),
-        tooltip: T('Optional. Enter an informative description of the\
-                    new rsync task.'),
+        tooltip: T('Enter a description of the rsync task.'),
       }, {
         type: 'scheduler',
         name: 'rsync_picker',
         placeholder: T('Schedule the Rsync Task'),
-        tooltip: T('Choose one of the convenient presets\
-          or choose <b>Custom</b> to trigger the advanced scheduler UI'),
-          required: true
+        tooltip: T('Select a schedule preset or choose <i>Custom</i>\
+                    to open the advanced scheduler.'),
+        required: true
       }, {
         type: 'checkbox',
         name: 'rsync_recursive',
         placeholder: T('Recursive'),
         tooltip: T('Set to include all subdirectories of the specified\
-                    pool during the rsync task.'),
+                    directory. When unset, only the specified directory\
+                    is included.'),
         value: true,
       }, {
         type: 'checkbox',
@@ -146,17 +149,18 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_archive',
         placeholder: T('Archive'),
-        tooltip: T('Equivalent to the <b>-rlptgoD</b> flag. This will\
-                    run the task as recursive, copy symlinks as symlinks,\
-                    preserve permissions, preserve modification times,\
-                    preserve group, preserve owner (root only), preserve\
-                    device files (root only), and preserve special files.'),
+        tooltip: T('When set, rsync is run recursively, preserving\
+                    symlinks, permissions, modification times, group,\
+                    and special files. When run as root, owner, device\
+                    files, and special files are also preserved.\
+                    Equivalent to passing the flags <i>-rlptgoD</i> to\
+                    rsync.'),
       }, {
         type: 'checkbox',
         name: 'rsync_delete',
         placeholder: T('Delete'),
-        tooltip: T('Set to delete files in the destination directory\
-                    that do not exist in the sending directory.'),
+        tooltip: T('Delete files in the destination directory\
+                    that do not exist in the source directory.'),
       }, {
         type: 'checkbox',
         name: 'rsync_quiet',
@@ -173,9 +177,9 @@ export class RsyncFormComponent {
         type: 'checkbox',
         name: 'rsync_preserveattr',
         placeholder: T('Preserve extended attributes'),
-        tooltip: T('Both systems must support <a\
-                    href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
-                    target="_blank">extended attributes</a> to set.'),
+        tooltip: T('<a\ href="https://en.wikipedia.org/wiki/Extended_file_attributes"\
+                    target="_blank">Extended attributes</a> are\
+                    preserved, but must be supported by both systems.'),
       }, {
         type: 'checkbox',
         name: 'rsync_delayupdates',
@@ -189,20 +193,18 @@ export class RsyncFormComponent {
         type: 'textarea',
         name: 'rsync_extra',
         placeholder: T('Extra options'),
-        tooltip: T('Add any other <a\
+        tooltip: T('Additional <a\
                     href="https://rsync.samba.org/ftp/rsync/rsync.html"\
-                    target="_blank">rsync(1)</a> options. The "*"\
-                    character must be escaped with a backslash (\\*.txt)\
-                    or used inside single quotes(\'*.txt\').'),
+                    target="_blank">rsync(1)</a> options to include.<br>\
+                    Note: The "*" character must be escaped with a\
+                    backslash (\\*.txt) or used inside single quotes\
+                    (\'*.txt\').'),
       }, {
         type: 'checkbox',
         name: 'rsync_enabled',
         placeholder: T('Enabled'),
-        tooltip: T('Unset to disable the rsync task without deleting it.\
-                    When the <a href="..//docs/services.html#rsync"\
-                    target="_blank">Rsync service</a> is OFF, the rsync\
-                    task continues to look for the server unless this\
-                    option is unset.'),
+        tooltip: T('Enable this rsync task. Unset to disable this\
+                    rsync task without deleting it.'),
         value: true,
       }
     ]
@@ -273,10 +275,10 @@ export class RsyncFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['rsync_picker'] = data.rsync_minute + " " + 
-                          data.rsync_hour + " " + 
-                          data.rsync_daymonth + " " + 
-                          data.rsync_month + " " + 
+    data['rsync_picker'] = data.rsync_minute + " " +
+                          data.rsync_hour + " " +
+                          data.rsync_daymonth + " " +
+                          data.rsync_month + " " +
                           data.rsync_dayweek;
     return data;
   }

@@ -90,13 +90,7 @@ export class JailEditComponent implements OnInit {
       name: 'ip4_interface',
       placeholder: T('IPv4 interface'),
       tooltip: T('IPv4 interface for the jail.'),
-      options: [
-        {
-          label: 'vnet0',
-          value: 'vnet0',
-        }
-      ],
-      value: 'vnet0',
+      options: [],
       relation: [{
         action: 'DISABLE',
         when: [{
@@ -184,13 +178,7 @@ export class JailEditComponent implements OnInit {
       name: 'ip6_interface',
       placeholder: T('IPv6 Interface'),
       tooltip: T('IPv6 interface for the jail.'),
-      options: [
-        {
-          label: 'vnet0',
-          value: 'vnet0',
-        }
-      ],
-      value: 'vnet0',
+      options: [],
       class: 'inline',
       width: '30%',
     },
@@ -1213,9 +1201,21 @@ export class JailEditComponent implements OnInit {
       }
     });
     this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
+      if (res) {
+        if (!_.find(this.ip4_interfaceField.options, { label: 'vnet0'})) {
+          this.ip4_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        }
+        if (!_.find(this.ip6_interfaceField.options, { label: 'vnet0'})) {
+          this.ip6_interfaceField.options.push({ label: 'vnet0', value: 'vnet0'});
+        }
+      } else {
+        this.ip4_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+        this.ip6_interfaceField.options.pop({ label: 'vnet0', value: 'vnet0'});
+      }
+
       if (this.formGroup.controls['dhcp'].value && !res) {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'Vnet is required';
+        _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = 'VNET is required.';
       } else {
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'vnet' }).errors = '';
@@ -1224,7 +1224,7 @@ export class JailEditComponent implements OnInit {
     this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
       if (this.formGroup.controls['dhcp'].value && !res) {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = true;
-        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required';
+        _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = 'BPF is required.';
       } else {
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).hasErrors = false;
         _.find(this.basicfieldConfig, { 'name': 'bpf' }).errors = '';
