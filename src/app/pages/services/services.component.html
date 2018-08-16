@@ -39,7 +39,12 @@
               <mat-icon>power_settings_new</mat-icon>
             </button>
             <h3>{{ card.label }}</h3>
-            <mat-chip class="service-state">{{ card.state }}</mat-chip>
+            <div [ngClass]="card.onChanging ? 'service-inline-spinner' : ''">
+              <mat-spinner [diameter]='32' *ngIf="card.onChanging; else chipState"></mat-spinner>
+            </div>
+            <ng-template #chipState>
+              <mat-chip>{{ card.state }}</mat-chip>
+            </ng-template>
           </div>
           <div class="stats-info">
             <mat-checkbox 
@@ -52,7 +57,8 @@
 
           </div>
           <div class="service-controls">
-            <button mat-raised-button color="primary" (click)="editService(card.title)">Configure</button>
+            <button mat-raised-button color="primary" (click)="editService(card.title)" *ngIf="card.title != 'netdata'">Configure</button>
+            <button mat-raised-button color="primary" (click)="editService(card.title)" *ngIf="card.title == 'netdata' && card.state == 'RUNNING'">Launch</button>
           </div>
         </div>
       </div>

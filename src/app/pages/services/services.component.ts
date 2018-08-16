@@ -65,7 +65,8 @@ export class Services implements OnInit {
       state: data.state,
       lazyLoaded: false,
       template: 'none',
-      isNew: false
+      isNew: false,
+      onChanging: false,
     }
     return card;
   }
@@ -140,6 +141,7 @@ export class Services implements OnInit {
   }
 
   updateService(rpc, service) {
+    service['onChanging'] = true;
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
         if (service.state === "RUNNING" && rpc === 'service.stop') {
@@ -147,12 +149,14 @@ export class Services implements OnInit {
               this.name_MAP[service.title] + " " +  T("service failed to stop."));
         }
         service.state = 'RUNNING';
+        service['onChanging'] = false;
       } else {
         if (service.state === 'STOPPED' && rpc === 'service.start') {
           this.dialog.Info(T("Service failed to start"),
               this.name_MAP[service.title] + " " +  T("service failed to start."));
         }
         service.state = 'STOPPED';
+        service['onChanging'] = false;
       }
     }, (res) => {
       let message = T("Error starting service ");
@@ -160,6 +164,7 @@ export class Services implements OnInit {
         message = T("Error stopping service ");
       }
       this.dialog.errorReport(message + this.name_MAP[service.title], res.message, res.stack);
+      service['onChanging'] = false;
     });
   }
 
@@ -179,13 +184,8 @@ export class Services implements OnInit {
       const route = ['sharing', 'iscsi'];
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
-      this.ws.call('service.started', [service]).subscribe((res)=>{
-        if(res){
-          window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
-        } else {
-          this.dialog.Info('Netdata Information', 'Configurable settings for Netdata are unavailable. \n Start the netdata service.');
-        }
-      })
+      // launch netdata
+      window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
