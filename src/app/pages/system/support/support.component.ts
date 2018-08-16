@@ -40,6 +40,7 @@ export class SupportComponent  {
   public route_cancel: string[] = ['system'];
   public saveSubmitText = "Submit";
   public registerUrl = " https://redmine.ixsystems.com/account/register"
+  public hide_cancel = true;
 
 
   public fieldConfig: FieldConfig[] = [
