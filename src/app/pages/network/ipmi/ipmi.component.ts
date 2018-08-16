@@ -102,14 +102,13 @@ export class IPMIComponent {
       type : 'input',
       name : 'ipaddress',
       placeholder : T('IPv4 Address'),
-      tooltip : T('Enter the static IP address of the IPv4 connection\
-                   used to connect to the IPMI web interface'),
+      tooltip : T('Static IPv4 address of the IPMI web interface.'),
     },
     {
       type : 'input',
       name : 'netmask',
       placeholder : T('IPv4 Netmask'),
-      tooltip : T('Enter the subnet mask of the IPv4 connection.'),
+      tooltip : T('Subnet mask of the IPv4 address.'),
     },
     {
       type : 'input',
@@ -121,9 +120,9 @@ export class IPMIComponent {
       type : 'input',
       name : 'vlan',
       placeholder : T('VLAN ID'),
-      tooltip : T('Enter the VLAN identifier if the IPMI out-of-band\
-management interface is not on the same VLAN as\
-management networking.'),
+      tooltip : T('If the IPMI out-of-band management interface is on a\
+                   different VLAN from the management network, enter the\
+                   IPMI VLAN.'),
       inputType: 'number',
     },
   ];

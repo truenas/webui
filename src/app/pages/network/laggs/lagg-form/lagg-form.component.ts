@@ -28,7 +28,7 @@ export class LaggFormComponent {
       type : 'input',
       name : 'lagg_interface',
       placeholder : T('Lagg Interface'),
-      tooltip : T('Enter a description of the lagg interface.'),
+      tooltip : T('Description of the lagg interface.'),
     },
     {
       type : 'select',

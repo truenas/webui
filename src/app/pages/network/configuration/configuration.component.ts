@@ -31,19 +31,19 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_hostname',
       placeholder : T('Hostname'),
-      tooltip : T('Enter the system hostname.'),
+      tooltip : T('System hostname.'),
     },
     {
       type : 'input',
       name : 'gc_domain',
       placeholder : T('Domain'),
-      tooltip : T('Enter the system domain name.'),
+      tooltip : T('System domain name, like <i>example.com</i>'),
     },
     {
       type : 'textarea',
       name : 'gc_domains',
       placeholder: T('Additional Domains'),
-      tooltip : T('Enter additional space-delimited domains to search.\
+      tooltip : T('Additional space-delimited domains to search.\
                    Adding search domains can cause slow DNS lookups.'),
     },
     {
@@ -64,19 +64,19 @@ export class ConfigurationComponent {
       type : 'input',
       name : 'gc_nameserver1',
       placeholder : T('Nameserver 1'),
-      tooltip : T('Enter the primary DNS server.'),
+      tooltip : T('Primary DNS server.'),
     },
     {
       type : 'input',
       name : 'gc_nameserver2',
       placeholder : T('Nameserver 2'),
-      tooltip : T('Enter the secondary DNS server.'),
+      tooltip : T('Secondary DNS server.'),
     },
     {
       type : 'input',
       name : 'gc_nameserver3',
       placeholder : T('Nameserver 3'),
-      tooltip : T('Enter the tertiary DNS server'),
+      tooltip : T('Third DNS server'),
     },
     {
       type : 'input',

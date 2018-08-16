@@ -69,7 +69,7 @@ export class VlanFormComponent {
       type: 'input',
       name: 'vlan_description',
       placeholder: T('Description'),
-      tooltip: T('Enter a description of the VLAN.'),
+      tooltip: T('Description of the VLAN.'),
     },
     {
       type: 'select',
@@ -77,8 +77,8 @@ export class VlanFormComponent {
       placeholder: T('Priority Code Point'),
       options: [],
       tooltip: T('Select the Class of Service. The available 802.1p\
-                  Class of Service ranges from <i>Best effort (default)\
-                  </i> to <i>Network control (highest)</i>.'),
+                  Class of Service ranges from <i>Best effort (default)</i> \
+                  to <i>Network control (highest)</i>.'),
     }
   ];
 
