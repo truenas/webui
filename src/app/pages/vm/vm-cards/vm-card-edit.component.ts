@@ -95,7 +95,7 @@ export class VmCardEditComponent implements OnChanges {
             name: 'memory',
             width:'60%',
             placeholder: 'Memory Size (MiB)',
-            tooltip: 'Allocate a number of mebibytes of RAM to the VM.',
+            tooltip: 'Allocate a number of megabytes of RAM to the VM.',
             class:'inline',
             required: true,
             validation:[Validators.required]

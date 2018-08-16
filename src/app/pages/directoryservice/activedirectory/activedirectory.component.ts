@@ -185,20 +185,6 @@ export class ActiveDirectoryComponent {
     },
     {
       type : 'input',
-      name : 'ad_userdn',
-      placeholder : T('User Base'),
-      tooltip : T('Enter the Distinguished Name (DN) of the user container\
-                 in the Active Directory.'),
-    },
-    {
-      type : 'input',
-      name : 'ad_groupdn',
-      placeholder : T('Group Base'),
-      tooltip : T('Enter the Distinguished Name (DN) of the group\
-                 container in the Active Directory.'),
-    },
-    {
-      type : 'input',
       name : 'ad_site',
       placeholder : T('Site Name'),
       tooltip : T('Enter the relative distinguished name of the\
@@ -314,8 +300,6 @@ export class ActiveDirectoryComponent {
     'ad_use_default_domain',
     'ad_allow_dns_updates',
     'ad_disable_freenas_cache',
-    'ad_userdn',
-    'ad_groupdn',
     'ad_site',
     'ad_dcname',
     'ad_gcname',

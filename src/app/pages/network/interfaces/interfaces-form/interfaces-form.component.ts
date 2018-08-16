@@ -143,8 +143,8 @@ export class InterfacesFormComponent implements OnDestroy {
       formarray: [{
         name: 'alias_address',
         placeholder: T('IPv6 Address'),
-        tooltip: T('Enter a static IPv6 address. Example:\
-                    <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
+        tooltip: T('Enter a static IPv6 address if DHCP is unset.\
+                    Example: <i>2001:0db8:85a3:0000:0000:8a2e:0370:7334</i>'),
         type: 'input',
         validation : [ regexValidator(this.networkService.ipv6_regex) ]
       },
@@ -187,7 +187,7 @@ export class InterfacesFormComponent implements OnDestroy {
   public confirmSubmit = false;
   public confirmSubmitDialog = {
     title: T("Save Network Interface Changes"),
-    message: T("Network connectivity will be interrupted. Do you want to proceed?"),
+    message: T("Network connectivity will be interrupted. Proceed?"),
     hideCheckbox: false
   }
 
