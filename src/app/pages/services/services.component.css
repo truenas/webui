@@ -126,6 +126,10 @@ service-cards mat-card.front {
   position: absolute;
 }
 
+div.service-inline-spinner {
+  padding-left: 126.5px;
+}
+
 mat-chip.service-state,
 mat-chip.service-state-on,
 mat-chip.service-state-off {

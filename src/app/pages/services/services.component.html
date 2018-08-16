@@ -39,7 +39,12 @@
               <mat-icon>power_settings_new</mat-icon>
             </button>
             <h3>{{ card.label }}</h3>
-            <mat-chip class="service-state">{{ card.state }}</mat-chip>
+            <div [ngClass]="card.onChanging ? 'service-inline-spinner' : ''">
+              <mat-spinner [diameter]='32' *ngIf="card.onChanging; else chipState"></mat-spinner>
+            </div>
+            <ng-template #chipState>
+              <mat-chip>{{ card.state }}</mat-chip>
+            </ng-template>
           </div>
           <div class="stats-info">
             <mat-checkbox 
