@@ -184,13 +184,8 @@ export class Services implements OnInit {
       const route = ['sharing', 'iscsi'];
       this.router.navigate(new Array('').concat(route));
     } else if (service === 'netdata') {
-      this.ws.call('service.started', [service]).subscribe((res)=>{
-        if(res){
-          window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
-        } else {
-          this.dialog.Info('Netdata Information', 'Configurable settings for Netdata are unavailable. \n Start the netdata service.');
-        }
-      })
+      // launch netdata
+      window.open("http://" + environment.remote + "/netdata/#menu_system_submenu_swap;theme=slate");
     } else if (service === 'cifs') {
       this.router.navigate(new Array('').concat(['services', 'smb']));
     } else {
