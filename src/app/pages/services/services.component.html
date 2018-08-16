@@ -57,7 +57,8 @@
 
           </div>
           <div class="service-controls">
-            <button mat-raised-button color="primary" (click)="editService(card.title)">Configure</button>
+            <button mat-raised-button color="primary" (click)="editService(card.title)" *ngIf="card.title != 'netdata'">Configure</button>
+            <button mat-raised-button color="primary" (click)="editService(card.title)" *ngIf="card.title == 'netdata' && card.state == 'RUNNING'">Launch</button>
           </div>
         </div>
       </div>
