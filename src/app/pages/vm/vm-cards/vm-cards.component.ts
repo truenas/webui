@@ -17,6 +17,7 @@ import { EntityUtils } from '../../../pages/common/entity/utils';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../translate-marker';
+import 'rxjs/add/observable/interval';
 
 interface VmProfile {
   name?:string;
@@ -88,6 +89,9 @@ export class VmCardsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.viewMode.value = "cards";
+    Observable.interval(1000).subscribe((val) => { 
+      this.checkStatus();
+     })
     /*
      * Communication Downwards:
      * Listen for events from UI controls

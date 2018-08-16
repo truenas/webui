@@ -47,13 +47,14 @@ export class ServiceSMBComponent implements OnInit {
                   of the system. This name is limited to 15 characters and\
                   cannot be the <b>Workgroup</b> name.'),
       required: true,
-      validation : [ Validators.required ]
+      validation : [ Validators.required, Validators.maxLength(15) ]
     },
     {
       type: 'input',
       name: 'cifs_srv_netbiosalias',
       placeholder: T('NetBIOS Alias'),
       tooltip: T('Enter an alias. Limited to 15 characters.'),
+      validation: [ Validators.maxLength(15) ]
     },
     {
       type: 'input',

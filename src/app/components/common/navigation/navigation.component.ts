@@ -3,6 +3,7 @@ import { NavigationService } from "../../../services/navigation/navigation.servi
 import { WebSocketService } from "../../../services/";
 import {Router} from "@angular/router";
 import * as _ from 'lodash';
+import * as Ps from 'perfect-scrollbar';
 
 @Component({
   selector: 'navigation',
@@ -31,5 +32,13 @@ export class NavigationComponent {
       //Checks item list has any icon type.
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
     });
+  }
+
+  // Workaround to keep scrollbar displaying as needed
+  updateScroll() {
+    let navigationHold = document.getElementById('scroll-area');
+    setTimeout(() => {
+      Ps.update(navigationHold);
+    }, 500);
   }
 }

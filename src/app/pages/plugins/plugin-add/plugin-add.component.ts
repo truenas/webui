@@ -12,7 +12,8 @@ import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import { MatSnackBar } from '@angular/material';
+import { EntityJobComponent } from '../../common/entity/entity-job';
+import { MatSnackBar, MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-plugin-add',
@@ -181,15 +182,17 @@ export class PluginAddComponent implements OnInit {
   protected ip6_interfaceField: any;
   protected ip6_prefixField: any;
 
+  protected dialogRef: any;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
-    protected dialogService: DialogService,
+    protected dialog: DialogService,
     protected networkService: NetworkService,
-    protected snackBar: MatSnackBar) {}
+    protected snackBar: MatSnackBar,
+    protected matdialog: MatDialog) {}
 
   ngOnInit() {
     this.ip4_interfaceField = _.find(this.fieldConfig, {'name': 'ip4_interface'});
@@ -326,28 +329,46 @@ export class PluginAddComponent implements OnInit {
       value['accept'] = true;
     }
 
-    this.loader.open();
-    this.ws.job(this.addCall, [value]).subscribe(
-      (res) => {
-        this.loader.close();
-        if (res.error) {
-          this.dialogService.errorReport(res.error, '', res.exception);
-          this.ws.call('jail.delete', [this.pluginName]).subscribe(
-            (jailDeleteRes) => {},
-            (jailDeleteRes) => {
-              new EntityUtils().handleError(this, jailDeleteRes);
-            }
-          );
-        } else {
-          this.snackBar.open(T("Plugin sucessfully installed"), T("Close"), { duration: 5000 });
-          this.router.navigate(new Array('/').concat(this.route_success));
-        }
-      },
-      (res) => {
-        this.loader.close();
-        this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
-      }
-    );
+    this.dialogRef = this.matdialog.open(EntityJobComponent, { data: { "title": T("Install") }, disableClose: true });
+    this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
+    this.dialogRef.componentInstance.setCall(this.addCall, [value]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close(false);
+      this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
+      this.router.navigate(new Array('/').concat(this.route_success));
+    });
+    this.dialogRef.componentInstance.failure.subscribe((error) => {
+      this.ws.call('jail.delete', [this.pluginName]).subscribe(
+          (jailDeleteRes) => {},
+          (jailDeleteRes) => {
+            new EntityUtils().handleWSError(this, jailDeleteRes);
+          }
+        );
+    });
+
+    // this.loader.open();
+    // this.ws.job(this.addCall, [value]).subscribe(
+    //   (res) => {
+    //     this.loader.close();
+    //     if (res.error) {
+    //       this.dialogService.errorReport(res.error, '', res.exception);
+    //       this.ws.call('jail.delete', [this.pluginName]).subscribe(
+    //         (jailDeleteRes) => {},
+    //         (jailDeleteRes) => {
+    //           new EntityUtils().handleError(this, jailDeleteRes);
+    //         }
+    //       );
+    //     } else {
+    //       this.snackBar.open(T("Plugin installed."), T("Close"), { duration: 5000 });
+    //       this.router.navigate(new Array('/').concat(this.route_success));
+    //     }
+    //   },
+    //   (res) => {
+    //     this.loader.close();
+    //     this.dialogService.errorReport('Error ' + res.error + ':' + res.reason, res.trace.class, res.trace.formatted);
+    //   }
+    // );
   }
 
   setDisabled(name: string, disable: boolean) {

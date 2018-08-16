@@ -73,7 +73,7 @@ export class StorageListComponent {
   }
 
   doDelete(id) {
-    this.dialog.confirm("Delete", "Are you sure you want to delete it?").subscribe((res) => {
+    this.dialog.confirm("Delete", "Delete this item?").subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

@@ -1,4 +1,11 @@
 <div> <!-- Important wrapper div. Removing this will break flex layout -->
+  <mat-spinner 
+    [diameter]='40' 
+    id="dashboard-spinner"
+    *ngIf="showSpinner"
+  >
+  </mat-spinner> 
+  
   <div class="widgets-wrapper"
        fxLayout="row wrap"
        fxLayoutAlign="center center"
