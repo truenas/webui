@@ -289,11 +289,11 @@ class create_user_test(unittest.TestCase):
         try:
             print (" closing account menu")
             driver.find_element_by_xpath(xpaths['navAccount']).click()
-            self.screenshot("_")
+            function.screenshot(driver, self)
             time.sleep(20)
         except Exception:
             exc_info_p = traceback.format_exception(*sys.exc_info())
-            self.screenshot("-e")
+            function.screenshot(driver, self)
             for i in range(1,len(exc_info_p)):
                 print (exc_info_p[i])
             self.assertEqual("Just for fail", str(Exception), msg="Test fail: Please check the traceback")
