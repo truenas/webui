@@ -175,13 +175,12 @@ export class VMWizardComponent {
           explorerType: 'directory'
         },
         {
-          type: 'explorer',
+          type: 'select',
           name: 'hdd_path',
           placeholder: T('Select an existing disk'),
           tooltip: T('Browse to the desired pool or dataset on the disk.'),
-          explorerType: "zvol",
-          initial: '/mnt',
-          isHidden: true
+          isHidden: true,
+          options:[]
         },
       ]
     },
@@ -286,6 +285,16 @@ export class VMWizardComponent {
     this.entityWizard = entityWizard;
   }
   afterInit(entityWizard: EntityWizardComponent) {
+
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+      zvols.forEach(zvol => {
+        _.find(this.wizardConfig[3].fieldConfig, {name : 'hdd_path'}).options.push(
+          {
+            label : zvol.id, value : zvol.id
+          }
+        );   
+      });
+    });
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('wizard_type')).valueChanges.subscribe((res) => {
       if (res === 'docker') {
@@ -456,7 +465,6 @@ blurEvent2(parent){
 }
 
 async customSubmit(value) {
-    value.datastore = value.datastore.replace('/mnt/','')
     const hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
     const vm_payload = {}
     const zvol_payload = {}
@@ -487,7 +495,7 @@ async customSubmit(value) {
     if( value.hdd_path ){
       for (const device of vm_payload["devices"]){
         if (device.dtype === "DISK"){
-          device.attributes.path = '/dev/zvol/'+ value.hdd_path.substring(5);
+          device.attributes.path = '/dev/zvol/'+ value.hdd_path;
         };
       };
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
