@@ -201,7 +201,7 @@ export class ServiceFTPComponent implements OnInit {
       type : 'input',
       name : 'localuserbw',
       placeholder : T('Local User Upload Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
       validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
     },
@@ -209,7 +209,7 @@ export class ServiceFTPComponent implements OnInit {
       type : 'input',
       name : 'localuserdlbw',
       placeholder : T('Local User Download Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
       validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
     },
@@ -217,7 +217,7 @@ export class ServiceFTPComponent implements OnInit {
       type : 'input',
       name : 'anonuserbw',
       placeholder : T('Anonymous User Upload Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
       validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
     },
@@ -225,7 +225,7 @@ export class ServiceFTPComponent implements OnInit {
       type : 'input',
       name : 'anonuserdlbw',
       placeholder : T('Anonymous User Download Bandwidth'),
-      tooltip: T('In KB/s. A default of <i>0</i> means unlimited.'),
+      tooltip: T('In KiB/s. A default of <i>0</i> means unlimited.'),
       required: true,
       validation: [Validators.min(0), Validators.required, regexValidator(/^\d+$/)]
     },

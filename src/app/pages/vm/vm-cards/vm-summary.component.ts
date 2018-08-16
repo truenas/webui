@@ -68,9 +68,9 @@ export class VmSummaryComponent implements AfterViewInit {
 
   setMemData(evt:CoreEvent){
     this.memChart.title = "vMemory in Use";
-    this.memChart.units="GB";
+    this.memChart.units="GiB";
 
-    // Convert to GB
+    // Convert to GiB
     let RNP = (<any>window).filesize(evt.data.RNP, {output: "object", exponent:3});
     let PRD = (<any>window).filesize(evt.data.PRD, {output: "object", exponent:3});
     let RPRD = (<any>window).filesize(evt.data.RPRD, {output: "object", exponent:3});
@@ -106,17 +106,17 @@ export class VmSummaryComponent implements AfterViewInit {
   setPoolData(evt:CoreEvent){
     let usedObj = (<any>window).filesize(evt.data[0].used, {output: "object", exponent:3});
     let used: ChartData = {
-      legend: 'Used', 
+      legend: 'Used',
       data: [usedObj.value]
     };
 
     let  availableObj = (<any>window).filesize(evt.data[0].avail, {output: "object", exponent:3});
     let available: ChartData = {
-      legend:'Available', 
+      legend:'Available',
       data: [availableObj.value]
     };
 
-    this.zpoolChart.units = 'GB';
+    this.zpoolChart.units = 'GiB';
     this.zpoolChart.title = 'Zpool';
     this.zpoolChart.data = [used,available];
     console.log(this.zpoolChart.data);
