@@ -835,7 +835,7 @@ iscsi .mat-ink-bar {
 }
 
 // pw show button on entity tables
-#show-pw {
-  @include variable(background-color, --primary, $primary);
-  color: white;
-}
+// #show-pw {
+//   @include variable(background-color, --primary, $primary);
+//   color: white;
+// }
