@@ -8,6 +8,7 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { ChangeDetectorRef } from '@angular/core';
+import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'app-device-list',
@@ -50,14 +51,14 @@ export class DeviceListComponent {
   getActions(row) {
     const actions = [];
     actions.push({
-      label : "Edit",
+      label : T("Edit"),
       onClick : (edit_row) => {
         this.router.navigate(new Array('').concat(
             [ "vm", this.pk, "devices", this.vm, "edit", edit_row.id, edit_row.dtype ]));
       }
     });
     actions.push({
-      label : "Delete",
+      label : T("Delete"),
       onClick : (delete_row) => {
         this.deviceDelete(delete_row.id);
       },
@@ -66,7 +67,7 @@ export class DeviceListComponent {
   }
 
   deviceDelete(id){
-    this.dialogService.confirm("Delete", "Delete this device?").subscribe((res) => {
+    this.dialogService.confirm(T("Delete"), T("Delete this device?"), true, T('Delete Device')).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
