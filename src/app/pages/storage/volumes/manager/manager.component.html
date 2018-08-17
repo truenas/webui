@@ -28,7 +28,7 @@
           <mat-input-container>
             <input matInput placeholder="Name" [value]="name" disabled>
           </mat-input-container>
-          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool will reset the passphrase and recovery key!" | translate }}</mat-error>
+          <mat-error *ngIf="isEncrypted">{{"Extending an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
         </ng-template>
       </div>
       <div class="wrapper">
@@ -52,7 +52,7 @@
                       <mat-checkbox [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
                     </div>
                   </ng-template>
-          
+
                   <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                     <div>
                       <mat-checkbox name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
@@ -66,13 +66,13 @@
                   [draggable]="false"
                   [resizeable]="false">
                 </ngx-datatable-column>
-                <ngx-datatable-column 
-                  [width]="120" 
-                  name="Disk" 
+                <ngx-datatable-column
+                  [width]="120"
+                  name="Disk"
                   prop="devname"></ngx-datatable-column>
-                <ngx-datatable-column 
-                  [width]="120" 
-                  name="Capacity" 
+                <ngx-datatable-column
+                  [width]="120"
+                  name="Capacity"
                   prop="capacity"></ngx-datatable-column>
               </ngx-datatable>
               <mat-input-container>
