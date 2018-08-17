@@ -44,7 +44,7 @@ export class RsyncListComponent {
       label : T("Run Now"),
       id: "run",
       onClick : (members) => {
-        this.dialog.confirm(T("Run Now"), T(" Would you like to run this rsync task now?"), true).subscribe((run) => {
+        this.dialog.confirm(T("Run Now"), T("Run this rsync now?"), true).subscribe((run) => {
           if (run) {
             this.rest.post(this.resource_name + '/' + row.id + '/run/', {} ).subscribe((res) => {
               this.translate.get("close").subscribe((close) => {
