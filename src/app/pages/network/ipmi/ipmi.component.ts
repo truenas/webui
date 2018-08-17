@@ -89,6 +89,7 @@ export class IPMIComponent {
       name : 'conf_password',
       inputType: 'password',
       placeholder : T('Confirm Password'),
+      hideButton: false,
       validation : [ matchOtherValidator('password') ]
     },
     {

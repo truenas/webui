@@ -109,6 +109,7 @@ export class ServiceDCComponent {
       name : 'dc_passwd2',
       inputType : T('password'),
       placeholder : T('Confirm password'),
+      hideButton: false
     },
     {
       type : 'select',

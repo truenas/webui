@@ -131,7 +131,8 @@ export class ServiceDDNSComponent {
       name : 'password2',
       placeholder : T('Confirm Password'),
       inputType : 'password',
-      required: true
+      required: true,
+      hideButton: false
     },
     {
       type : 'input',

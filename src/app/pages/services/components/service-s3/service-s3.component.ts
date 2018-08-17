@@ -88,6 +88,7 @@ export class ServiceS3Component implements OnDestroy {
       name : 'secret_key2',
       placeholder : T('Confirm Secret Key'),
       inputType : 'password',
+      hideButton: false,
       required: true,
       validation : [ matchOtherValidator('secret_key'), Validators.required,
                                regexValidator(/^\w+$/)],

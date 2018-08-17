@@ -61,7 +61,8 @@ export class VolumeCreatekeyFormComponent implements Formconfiguration {
       placeholder: T('Verify passphrase'),
       tooltip: T('Confirm the GELI passphrase.'),
       validation: [Validators.required],
-      required: true
+      required: true,
+      hideButton: false
     }
   ];
 

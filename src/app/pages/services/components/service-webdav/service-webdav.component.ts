@@ -103,6 +103,7 @@ export class ServiceWebdavComponent implements OnInit, OnDestroy {
       name : 'password2',
       placeholder : T('Confirm Password'),
       inputType : 'password',
+      hideButton: false
     },
   ];
 
