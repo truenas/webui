@@ -38,8 +38,8 @@ export class SigninComponent implements OnInit {
     if (window['MIDDLEWARE_TOKEN']) {
       this.ws.login_token(window['MIDDLEWARE_TOKEN'])
       .subscribe((result) => {
-        this.loginCallback(result);
         window['MIDDLEWARE_TOKEN'] = null;
+        this.loginCallback(result);
        });
     }
     if (this.ws.token && this.ws.redirectUrl) {
