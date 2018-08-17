@@ -56,6 +56,11 @@ export class SnapshotListComponent {
         return row[attr];
     }
   }
+
+  sortValue(row, attr) {
+    return row[attr];
+  }
+
   afterInit(entityList: any) {
     this.entityList = entityList;
   }

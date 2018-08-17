@@ -47,6 +47,7 @@ export interface InputTableConf {
   getActions?(row): any [];
   getAddActions?(): any [];
   rowValue?(row, attr): any;
+  sortValue?(col, attr): any;
   wsDelete?(resp): any;
   wsMultiDelete?(resp): any;
   wsMultiDeleteParams?(selected): any;
@@ -454,16 +455,29 @@ export class EntityTableComponent implements OnInit, AfterViewInit {
 
   }
 
-  reorderEvent($event) {
+  sortValue(col, attr) {
+    if (this.conf.sortValue) {
+      try {
+        return this.conf.sortValue(col, attr);
+      } catch(e) {
+        return col[attr];
+      }
+    }
+
+    return col[attr];
+  }
+
+  reorderEvent(event) {
     // this.paginationPageIndex = 0;
-    let colProp = $event.column.prop;
+    let colProp = event.column.prop;
     // console.log($event.column.prop, this.currentRows[0])
-    const sort = $event.sorts[0];
+    const sort = event.sorts[0];
+    console.log(sort)
     const rows = this.currentRows;
     rows.sort((a, b) => {
       return a[sort.prop].localeCompare(b[sort.prop]) * (sort.dir === 'desc' ? -1 : 1);
     });
-    console.log(rows[0])
+    // console.log(rows[0])
     this.rows = rows;
     this.currentRows = rows;
   }
