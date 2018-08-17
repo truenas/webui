@@ -403,7 +403,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       diskWarning = this.diskExtendWarning;
     }
 
-    this.dialog.confirm(T("Warning"), diskWarning).subscribe((res) => {
+    this.dialog.confirm(T("Warning"), diskWarning, false, T('Create Pool')).subscribe((res) => {
       if (res) {
         this.error = null;
 
@@ -472,7 +472,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openDialog() {
     if(this.isEncrypted) {
-      this.dialog.confirm(T("Warning"), this.encryption_message).subscribe((res) => {
+      this.dialog.confirm(T("Warning"), this.encryption_message, false, T('I Understand')).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1

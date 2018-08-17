@@ -80,7 +80,7 @@
                 class="form-error-msg"> You must agree to the terms and conditions </small>
           </div>
 
-          <button mat-raised-button class="mat-primary full-width mb-1" [disabled]="signupForm.invalid || !isAgreed.value">Sign up</button>
+          <button mat-button class="mat-primary full-width mb-1" [disabled]="signupForm.invalid || !isAgreed.value">Sign up</button>
           <div class="text-center">
             <a [routerLink]="['/sessions/signin']" class="mat-primary text-center full-width">Sign in to existing account</a>
           </div>
