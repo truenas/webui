@@ -35,6 +35,13 @@ export class SigninComponent implements OnInit {
    }
 
   ngOnInit() {
+    if (window['MIDDLEWARE_TOKEN']) {
+      this.ws.login_token(window['MIDDLEWARE_TOKEN'])
+      .subscribe((result) => {
+        this.loginCallback(result);
+        window['MIDDLEWARE_TOKEN'] = null;
+       });
+    }
     if (this.ws.token && this.ws.redirectUrl) {
       if (this.submitButton) {
         this.submitButton.disabled = true;
